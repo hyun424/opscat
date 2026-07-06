@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.models import ActionProposal
 from app.models.action import ActionRequest, RiskLevel
 from app.schemas.incidents import MockAlertRequest, NightAutopilotConfig, NightAutopilotResult
+from app.services.escalation import build_escalation_payload, record_human_escalation
 from app.services.incident_service import create_mock_incident, get_incident
 from app.services.policy_engine import NightAutopilotConfig as PolicyNightAutopilotConfig
 from app.services.policy_engine import PolicyContext, PolicyEngine
@@ -59,7 +60,8 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             preconditions=["runbook marks restart reversible", "environment is not production"],
             post_checks=["worker heartbeat is healthy", "queue latency decreases"],
             policy_decision=policy.decision,
-            policy_reasons=[policy.reason],
+            policy_reasons=policy.reasons,
+            confidence=0.82,
             status="approved",
         )
         db.add(action)
@@ -89,15 +91,36 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
                 )
             )
         else:
-            db.add(transition_incident(incident, "escalated", actor="night-autopilot", reason="verification failed"))
-            escalations.append({"incident_id": incident.id, "reason": "verification failed"})
-    else:
-        db.add(
-            transition_incident(
-                incident, "escalated", actor="night-autopilot", reason="policy did not allow automatic action"
+            payload = build_escalation_payload(
+                incident,
+                trigger="post_check_failed",
+                triggers=["post_check_failed"],
+                action=action,
+                policy=policy,
+                verification=verification,
+                recommended_next_action=(
+                    "Wake the configured on-call contact; automatic quiet-hours remediation did not verify."
+                ),
             )
+            record_human_escalation(db, incident, payload, action=action, transition_to_escalated=True)
+            escalations.append(payload)
+    else:
+        trigger = (
+            "max_attempts_reached"
+            if config.max_attempts_per_incident < 1
+            else "policy_escalated_action"
+            if policy.decision == "ESCALATE"
+            else "policy_denied_action"
         )
-        escalations.append({"incident_id": incident.id, "reason": "; ".join(policy.reasons)})
+        payload = build_escalation_payload(
+            incident,
+            trigger=trigger,
+            triggers=[trigger],
+            policy=policy,
+            recommended_next_action="Wake the configured on-call contact; Night Autopilot cannot proceed safely.",
+        )
+        record_human_escalation(db, incident, payload, transition_to_escalated=True)
+        escalations.append(payload)
 
     db.commit()
     refreshed = get_incident(db, incident.id)

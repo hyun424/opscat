@@ -71,7 +71,8 @@ class PolicyActionTests(TestCase):
             ),
             context,
         )
-        self.assertEqual(mock_pr.evaluation.decision, PolicyDecision.REQUIRE_APPROVAL)
+        self.assertEqual(prod.evaluation.decision, PolicyDecision.REQUIRE_APPROVAL)
+        self.assertEqual(prod.status, ActionStatus.PROPOSED)
 
         shell = svc.propose(
             ActionRequest(

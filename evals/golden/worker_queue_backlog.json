@@ -1,0 +1,25 @@
+{
+  "scenario": "worker_queue_backlog",
+  "input_alert": {
+    "scenario": "worker_queue_backlog",
+    "source": "mock",
+    "service": "worker",
+    "environment": "staging",
+    "severity": "high",
+    "message": "Queue worker backlog p95 latency spike",
+    "fingerprint": "worker:queue-backlog:broker-maintenance"
+  },
+  "expected": {
+    "top_cause_contains": "worker degradation",
+    "recommended_actions": [
+      "mock.execute_restart_worker",
+      "restart"
+    ],
+    "minimum_supporting_evidence": 2,
+    "required_policy_decision": "REQUIRE_APPROVAL",
+    "required_post_checks": [
+      "worker heartbeat is healthy",
+      "queue latency decreases"
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "scenario": "external_api_timeout",
+  "input_alert": {
+    "scenario": "external_api_timeout",
+    "source": "mock",
+    "service": "payment-api",
+    "environment": "production",
+    "severity": "high",
+    "message": "Payment processor upstream timeout spike",
+    "fingerprint": "payment-api:processor-timeout:v1"
+  },
+  "expected": {
+    "top_cause_contains": "processor timeout",
+    "recommended_actions": [
+      "mock.create_incident_ticket",
+      "ticket"
+    ],
+    "minimum_supporting_evidence": 2,
+    "required_policy_decision": "REQUIRE_APPROVAL",
+    "required_post_checks": [
+      "ticket_id_recorded",
+      "error budget monitored"
+    ]
+  }
+}

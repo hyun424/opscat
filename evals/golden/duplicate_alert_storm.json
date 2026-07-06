@@ -1,0 +1,24 @@
+{
+  "scenario": "duplicate_alert_storm",
+  "input_alert": {
+    "scenario": "duplicate_alert_storm",
+    "source": "mock",
+    "service": "payment-api",
+    "environment": "staging",
+    "severity": "medium",
+    "message": "Duplicate alert storm after recovery",
+    "fingerprint": "payment-api:duplicate-alert:inc-2026-104"
+  },
+  "expected": {
+    "top_cause_contains": "false positive duplicate",
+    "recommended_actions": [
+      "timeline.add_note",
+      "false_positive_duplicate"
+    ],
+    "minimum_supporting_evidence": 2,
+    "required_policy_decision": "ALLOW",
+    "required_post_checks": [
+      "timeline_contains_false_positive_note"
+    ]
+  }
+}

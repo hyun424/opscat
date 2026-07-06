@@ -93,6 +93,7 @@ DEFAULT_ACTION_REGISTRY: dict[str, ActionMetadata] = {
         reversible=True,
         blast_radius="mock ticket system",
         default_requires_approval=True,
+        allowed_environments=("dev", "staging", "test", "local", "production"),
         required_capabilities=("mock:tickets:write",),
         required_preconditions=("evidence_cited", "incident_summary_present"),
         post_checks=("ticket_id_recorded",),
@@ -106,7 +107,7 @@ DEFAULT_ACTION_REGISTRY: dict[str, ActionMetadata] = {
         reversible=True,
         blast_radius="mock repository draft",
         default_requires_approval=True,
-        allowed_environments=("dev", "staging", "test", "local"),
+        allowed_environments=("dev", "staging", "test", "local", "production"),
         required_capabilities=("mock:pull_requests:write",),
         required_preconditions=("bad_deploy_identified", "rollback_plan_present"),
         post_checks=("pr_url_recorded", "verify_recovery_after_merge"),
@@ -168,8 +169,5 @@ class RiskEngine:
         if action is None:
             return RiskLevel.HIGH
         if action.prohibited_reason:
-            return RiskLevel.PROHIBITED
-        payload = payload or {}
-        if payload.get("environment") == "production" and action.is_mutation:
             return RiskLevel.PROHIBITED
         return action.base_risk

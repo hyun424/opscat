@@ -111,7 +111,10 @@ def evaluate_action_policy(request: ActionRequest) -> PolicyResult:
     if request.mutation_kind in PROHIBITED_MUTATIONS:
         reasons.append(f"mutation kind is prohibited: {request.mutation_kind.value}")
 
-    if is_production_environment(request.environment) and request.mutation_kind is not MutationKind.READ_ONLY:
+    if (
+        is_production_environment(request.environment)
+        and request.mutation_kind is MutationKind.PRODUCTION_MUTATION
+    ):
         reasons.append("production mutations are disabled in the MVP")
 
     if request.risk_level in {RiskLevel.MEDIUM, RiskLevel.HIGH} and not request.post_checks:

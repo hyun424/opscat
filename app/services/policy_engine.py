@@ -1,9 +1,10 @@
 """Policy evaluation for approval-gated OpsCat actions."""
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from datetime import time
+from typing import Any
 
 from app.models.action import ActionRequest, PolicyDecision, PolicyEvaluation, RiskLevel
 from app.services.risk_engine import RiskEngine
@@ -179,3 +180,48 @@ def default_capabilities(extra: Iterable[str] = ()) -> frozenset[str]:
             *extra,
         }
     )
+
+
+DANGEROUS_ACTION_ALIASES = {
+    "production_rollback": "production.rollback",
+    "production_restart": "production.restart_service",
+    "database_mutation": "database.mutate",
+    "arbitrary_shell": "shell.execute",
+    "cloud_delete": "cloud.delete_resource",
+    "secret_access": "secret.read",
+}
+
+
+def evaluate_policy(action: Mapping[str, Any]) -> PolicyEvaluation:
+    """Evaluate a dict-shaped action proposal before execution.
+
+    This adapter keeps tests and API call sites fail-closed while the service
+    layer still uses the typed ``PolicyEngine``/``PolicyContext`` contract.
+    """
+
+    payload = action.get("payload", {})
+    if not isinstance(payload, Mapping):
+        payload = {}
+    raw_action_type = str(action.get("action_type", ""))
+    action_type = DANGEROUS_ACTION_ALIASES.get(raw_action_type, raw_action_type)
+    environment = str(action.get("environment", payload.get("environment", "staging")))
+    service = str(action.get("service", payload.get("service", "payment-api")))
+    request = ActionRequest(
+        action_type=action_type,
+        target=str(action.get("target", service)),
+        environment=environment,
+        payload=payload,
+        approved=bool(action.get("approved", False)),
+    )
+    context = PolicyContext(
+        capabilities=default_capabilities(
+            (
+                "mock:tickets:write",
+                "mock:pull_requests:write",
+                "mock:workers:restart",
+            )
+        ),
+        service=service,
+        environment=environment,
+    )
+    return PolicyEngine().evaluate(request, context)

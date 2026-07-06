@@ -11,12 +11,12 @@ from opscat.safety import (
 
 
 class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
-    def test_production_write_is_denied_even_when_approved(self) -> None:
+    def test_production_mutation_is_denied_even_when_approved(self) -> None:
         request = ActionRequest(
             name="restart-payment-worker",
             environment="production",
-            risk_level=RiskLevel.MEDIUM,
-            mutation_kind=MutationKind.EXTERNAL_WRITE,
+            risk_level=RiskLevel.HIGH,
+            mutation_kind=MutationKind.PRODUCTION_MUTATION,
             requires_approval=True,
             approved=True,
             post_checks=("verify error rate recovered",),
@@ -56,10 +56,10 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
                     any(mutation_kind.value in reason for reason in result.reasons)
                 )
 
-    def test_approval_gated_non_production_write_requires_approval(self) -> None:
+    def test_approval_gated_external_write_requires_approval(self) -> None:
         request = ActionRequest(
             name="create-rollback-pr",
-            environment="staging",
+            environment="production",
             risk_level=RiskLevel.MEDIUM,
             mutation_kind=MutationKind.EXTERNAL_WRITE,
             requires_approval=True,

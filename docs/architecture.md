@@ -1,10 +1,28 @@
 # OpsCat MVP Architecture Notes
 
-These notes describe the intended local MVP architecture from the build contract and the integrated worker branches inspected by worker-5 on 2026-07-06 UTC.
+These notes describe the intended local MVP architecture from the build contract, portfolio quality bar, and integrated worker branches inspected by worker-5.
 
-## Runtime boundary
+## Product architecture
 
-OpsCat's MVP runtime is a local FastAPI API backed by SQLAlchemy persistence. SQLite is used for fast local/test fallback; Docker Compose provides the app plus PostgreSQL path. The MVP deliberately stays in mock mode: no real Sentry, GitHub, Slack, production rollback, database mutation action, or arbitrary shell execution.
+OpsCat is designed as a web control plane plus a future customer-side connector:
+
+- **Control plane:** incident state, timeline, policy decisions, approval UX, reports, and audit trail.
+- **Customer-side connector:** future deployment unit that runs near observability data and executes least-privilege tool calls.
+- **Local MVP:** a single FastAPI service with mock tools and local persistence that demonstrates the control loop without external side effects.
+
+The MVP uses SQLite for fast local/test fallback and Docker Compose for the FastAPI + PostgreSQL path.
+
+## Data boundary
+
+OpsCat should not ingest all raw logs by default. The intended data boundary is:
+
+1. Query only incident-relevant windows.
+2. Redact secrets, tokens, PII, and customer data before any model/tool summary.
+3. Store minimal evidence snippets, source references, hashes, timestamps, and action decisions.
+4. Keep full raw evidence in source systems where possible.
+5. Make cloud upload optional and configurable in future SaaS mode.
+
+The current MVP uses mock evidence only and does not call real Sentry, GitHub, Slack, cloud, or shell surfaces.
 
 ## Main data flow
 
@@ -20,7 +38,7 @@ OpsCat's MVP runtime is a local FastAPI API backed by SQLAlchemy persistence. SQ
 6. If approval is required, `POST /approvals/{action_id}` records an approval or rejection.
 7. Approved mock actions execute against safe local stubs only.
 8. Verification and report generation update the incident timeline and write a markdown incident report.
-9. `POST /night-autopilot/simulate` exercises the conservative autopilot policy path with low-risk allowlisted actions only.
+9. `POST /night-autopilot/simulate` exercises the conservative quiet-hours automation path with low-risk allowlisted actions only.
 
 ## Module map
 
@@ -55,4 +73,4 @@ Expected implementation modules:
 
 ## Current integration risk
 
-The docs lane found API/service drift between concurrently integrated branches: code imports `execute_mock_action` and `verify_recovery` from `app.tools.mock_actions`, but the inspected integrated head's mock action module exposes a class-oriented executor instead. Tests also reference older policy API shapes. See `docs/integration-verification.md` for exact command evidence.
+The latest inspected leader head (`055ac28158b98cd757861041548ed35bfaac3073`) fails before app import because `app/models/action.py` contains an indentation syntax error in the SQLAlchemy relationship block. Until that is fixed, the API, demo, and tests cannot prove the intended flow. See `docs/integration-verification.md` for exact command evidence.

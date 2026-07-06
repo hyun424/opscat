@@ -1,26 +1,61 @@
 # OpsCat
 
-OpsCat is a local AI on-call / agentic operations automation MVP. It receives mock alerts, gathers sanitized mock observability, deploy, runbook, and prior-incident context, generates deterministic evidence-backed hypotheses, proposes safe remediation, enforces policy/risk checks, supports approval/rejection, executes mock actions, verifies recovery, and writes an auditable incident report.
+OpsCat is a local **agentic AI on-call system** for incident response automation. It receives a mock alert, builds incident state, gathers sanitized operational context with tools, produces evidence-backed hypotheses, proposes remediation, runs the action through deterministic policy/risk gates, requires approval for unsafe writes, executes only local/mock actions, verifies recovery, and writes an auditable incident report.
 
-This MVP intentionally uses **mock Sentry/GitHub/Slack-style tools only**. There is no real Sentry, GitHub, or Slack integration yet; no production rollback; no database mutation tool; and no arbitrary shell execution tool.
+This repository is intended as a portfolio-grade Agentic AI Engineer artifact: it emphasizes state, tools, policy, approvals, verification, auditability, and safety boundaries rather than chatbot-style prompting.
 
-## What the local MVP is expected to include
+> Current status: the docs and design contract are portfolio-ready, but the latest inspected integrated code is not yet green. Worker-5 verification on current leader head `055ac28158b98cd757861041548ed35bfaac3073` found a syntax blocker in `app/models/action.py`; see [`docs/integration-verification.md`](docs/integration-verification.md). The README demo flow below is the intended copy-paste path once that blocker is fixed.
+
+## Portfolio story
+
+OpsCat demonstrates a production-minded agent loop:
+
+1. Observe a Sentry-like mock alert.
+2. Persist incident state and timeline.
+3. Gather context through mock read-only tools.
+4. Generate structured hypotheses with evidence IDs.
+5. Propose a remediation action with preconditions and post-checks.
+6. Classify action risk and evaluate policy.
+7. Require approval for risky writes.
+8. Execute only local/mock safe actions.
+9. Verify recovery.
+10. Generate an auditable markdown report.
+
+## Safety boundary
+
+This MVP intentionally uses **mock Sentry/GitHub/Slack-style tools only**.
+
+It does **not** include:
+
+- real Sentry, GitHub, or Slack side effects;
+- production rollback;
+- Kubernetes/cloud mutation;
+- database mutation actions;
+- arbitrary shell execution as a product tool;
+- secret or PII collection in sample evidence.
+
+Safety is enforced by explicit action metadata, risk classification, approval state, and policy decisions: `ALLOW`, `REQUIRE_APPROVAL`, `DENY`, and `ESCALATE`.
+
+## Included surfaces
 
 - FastAPI API with `/health`, mock alert ingestion, incident reads, approval API, reports, and Night Autopilot simulation.
 - SQLAlchemy persistence for incidents, evidence, action proposals, approval decisions, and timeline events.
 - Deterministic mock agent; no LLM key is required for the demo path.
 - Action registry with risk metadata, preconditions, approval requirements, allowed environments, and post-checks.
-- Policy engine decisions: `ALLOW`, `REQUIRE_APPROVAL`, `DENY`, `ESCALATE`.
 - Mock action execution for rollback PR draft, incident ticket, non-production worker restart, verification, and report generation.
 - Recovery verification and markdown incident reports under `data/mock_reports/`.
 - Docker Compose for FastAPI + PostgreSQL.
-- Pytest coverage for state machine, policy, full mock alert flow, approval/rejection, and Night Autopilot.
+- Pytest coverage for state machine, policy, full mock alert flow, approval/rejection, and Night Autopilot once integration blockers are repaired.
 
-See also:
+## Documentation map
 
-- [`docs/architecture.md`](docs/architecture.md) for the intended module boundaries and data flow.
-- [`docs/integration-verification.md`](docs/integration-verification.md) for the current worker-5 smoke-check results and blockers.
-- `.omx/plans/opscat-master-build-prompt.md` for the original build contract.
+- [`docs/portfolio-summary.md`](docs/portfolio-summary.md) — recruiter-facing project summary.
+- [`docs/portfolio-quality-bar.md`](docs/portfolio-quality-bar.md) — completion gates and quality contract.
+- [`docs/architecture.md`](docs/architecture.md) — runtime architecture, control-plane/connector model, and data boundary.
+- [`docs/demo-walkthrough.md`](docs/demo-walkthrough.md) — demo script, API walkthrough, and current blocker behavior.
+- [`docs/sample-incident-report.md`](docs/sample-incident-report.md) — representative incident report output.
+- [`docs/integration-verification.md`](docs/integration-verification.md) — exact PASS/FAIL verification evidence.
+- [`.omx/plans/opscat-master-build-prompt.md`](.omx/plans/opscat-master-build-prompt.md) — original autonomous build contract.
 
 ## Local setup
 
@@ -44,24 +79,26 @@ docker compose up --build
 curl http://localhost:8000/health
 ```
 
-## Deterministic README demo
+## Deterministic in-process demo
 
-Run the deterministic in-process demo without external services:
+Once the current syntax blocker is repaired, run the deterministic demo without external services:
 
 ```bash
 python scripts/demo.py
 ```
 
-Expected output includes:
+Expected output shape:
 
-- `Health: {'status': 'ok', 'service': 'opscat'}`
-- an incident initially in `waiting_approval`
-- a `mock.create_rollback_pr` proposal requiring approval
-- final incident status `resolved`
-- a generated report path
-- one Night Autopilot simulated action
+```text
+Health: {'status': 'ok', 'service': 'opscat'}
+Incident: <incident-id> initial_status= waiting_approval
+Action: mock.create_rollback_pr REQUIRE_APPROVAL
+Final status: resolved
+Report path: data/mock_reports/incident-<incident-id>.md
+Night Autopilot actions: 1
+```
 
-## Manual API flow
+## Manual API walkthrough
 
 Start the API first:
 
@@ -138,12 +175,4 @@ python -m compileall app tests scripts
 docker compose config
 ```
 
-Worker-5's integration smoke on **2026-07-06 UTC** found blockers in the latest inspected integrated head; see [`docs/integration-verification.md`](docs/integration-verification.md). Do not call the full demo verified until those failures are fixed and the commands above pass.
-
-## Safety boundaries
-
-- Read-only context gathering is automatic.
-- Mock rollback PR and incident-ticket writes require approval in Smart Approval Mode.
-- Night Autopilot can only run allowlisted low-risk mock actions in covered services/environments.
-- Prohibited actions such as arbitrary shell execution, database mutation, cloud deletion, secret access, and production mutation are denied by policy.
-- Evidence stores sanitized snippets and metadata, not wholesale raw logs.
+Current worker-5 evidence is in [`docs/integration-verification.md`](docs/integration-verification.md). Do not claim the full demo is verified until all core checks are green.

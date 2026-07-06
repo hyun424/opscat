@@ -9,6 +9,8 @@ from enum import StrEnum
 from typing import Any
 from uuid import uuid4
 
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 class RiskLevel(StrEnum):
     READ_ONLY = "read_only"

@@ -25,17 +25,13 @@ def test_payment_bad_deploy_eval_contract(client: Any) -> None:
     golden = _load_golden("payment_bad_deploy")
     created = client.post("/webhooks/alerts/mock", json=golden["input_alert"])
     assert created.status_code in {200, 201, 202}, created.text
-    incident_id = created.json().get("id") or created.json().get("incident_id")
-
-    investigation = client.post(f"/incidents/{incident_id}/investigate")
-    assert investigation.status_code in {200, 202}, investigation.text
-    result = investigation.json()
+    result = created.json()
     text = json.dumps(result).lower()
 
     assert golden["expected"]["top_cause_contains"].lower() in text
     assert any(action in text for action in golden["expected"]["recommended_actions"])
 
     evidence_ids = set()
-    for hypothesis in result.get("hypotheses", []):
-        evidence_ids.update(hypothesis.get("supporting_evidence_ids", []))
+    for action in result.get("actions", []):
+        evidence_ids.update(action.get("evidence_ids", []))
     assert len(evidence_ids) >= golden["expected"]["minimum_supporting_evidence"]

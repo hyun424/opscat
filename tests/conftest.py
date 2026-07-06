@@ -22,10 +22,9 @@ REQUIRED_ENDPOINTS = {
     "list_incidents": ("GET", "/incidents"),
     "get_incident": ("GET", "/incidents/{incident_id}"),
     "investigate": ("POST", "/incidents/{incident_id}/investigate"),
-    "approve_action": ("POST", "/incidents/{incident_id}/actions/{action_id}/approve"),
-    "reject_action": ("POST", "/incidents/{incident_id}/actions/{action_id}/reject"),
-    "verify": ("POST", "/incidents/{incident_id}/verify"),
+    "approval_decision": ("POST", "/approvals/{action_id}"),
     "report": ("GET", "/incidents/{incident_id}/report"),
+    "night_autopilot": ("POST", "/night-autopilot/simulate"),
 }
 
 
@@ -58,9 +57,14 @@ def db_session() -> Generator[Session]:
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
+    testing_session = sessionmaker(
+        bind=engine,
+        autoflush=False,
+        autocommit=False,
+        expire_on_commit=False,
+    )
     Base.metadata.create_all(bind=engine)
-    session = TestingSessionLocal()
+    session = testing_session()
     try:
         yield session
     finally:
@@ -74,8 +78,11 @@ def client(db_session: Session, app: Any) -> Generator[TestClient]:
         yield db_session
 
     app.dependency_overrides[get_db] = override_get_db
-    with TestClient(app) as test_client:
-        yield test_client
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.dependency_overrides.clear()
 
 
 def route_fingerprint(app: Any) -> set[tuple[str, str]]:

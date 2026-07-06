@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.models import ActionProposal
-from app.models.action import ActionRequest
+from app.models.action import ActionRequest, RiskLevel
 from app.schemas.incidents import MockAlertRequest, NightAutopilotConfig, NightAutopilotResult
 from app.services.incident_service import create_mock_incident, get_incident
 from app.services.policy_engine import NightAutopilotConfig as PolicyNightAutopilotConfig
@@ -36,7 +36,7 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             environment=incident.environment,
             night_autopilot=True,
             autopilot=PolicyNightAutopilotConfig(
-                max_automatic_risk=config.max_automatic_risk,
+                max_automatic_risk=RiskLevel(config.max_automatic_risk),
                 max_attempts_per_incident=config.max_attempts_per_incident,
                 allowed_services=tuple(config.allowed_services),
                 allowed_environments=tuple(config.allowed_environments),

@@ -73,7 +73,7 @@ def analyze_incident(incident: Incident, evidence: list[Evidence]) -> AgentAnaly
         ),
         affected_service=incident.service,
         environment=incident.environment,
-        severity=incident.severity,
+        severity=incident.severity
         hypotheses=hypotheses,
         recommended_action=action,
         verification_plan=["Execute mock.verify_recovery", "Confirm error rate decreases", "Write final report"],

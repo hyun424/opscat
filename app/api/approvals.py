@@ -48,7 +48,7 @@ def create_router(action_service: ActionService | None = None):
     router = APIRouter(prefix="/approvals", tags=["approvals"])
 
     @router.post("")
-    def propose_action(payload: ApprovalProposalPayload):
+    def propose_action(payload: ApprovalProposalPayload) -> dict[str, Any]:
         request = ActionRequest(
             action_type=payload.action_type,
             target=payload.target,

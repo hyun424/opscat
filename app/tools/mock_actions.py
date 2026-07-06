@@ -3,6 +3,7 @@
 This module intentionally performs no external network calls, production mutations, or
 shell execution. It returns deterministic artifacts for demos and tests.
 """
+
 from __future__ import annotations
 
 from hashlib import sha1
@@ -37,7 +38,10 @@ class MockActionExecutor:
             target=request.target,
             status=ActionStatus.EXECUTED,
             message="Mock incident ticket created.",
-            output={"ticket_id": ticket_id, "title": request.payload.get("title", "OpsCat incident")},
+            output={
+                "ticket_id": ticket_id,
+                "title": request.payload.get("title", "OpsCat incident"),
+            },
             verification={"ticket_id_recorded": True},
         )
 
@@ -62,7 +66,11 @@ class MockActionExecutor:
             target=request.target,
             status=ActionStatus.EXECUTED,
             message="Mock non-production worker restart simulated.",
-            output={"worker": request.target, "environment": request.environment, "restart": "simulated"},
+            output={
+                "worker": request.target,
+                "environment": request.environment,
+                "restart": "simulated",
+            },
             verification={"mock.verify_recovery": "required"},
         )
 
@@ -98,5 +106,6 @@ class MockActionExecutor:
 
 
 def _stable_suffix(request: ActionRequest) -> str:
-    raw = f"{request.incident_id}|{request.action_type}|{request.target}|{sorted(request.payload.items())}"
+    payload_items = sorted(request.payload.items())
+    raw = f"{request.incident_id}|{request.action_type}|{request.target}|{payload_items}"
     return sha1(raw.encode("utf-8")).hexdigest()[:6].upper()

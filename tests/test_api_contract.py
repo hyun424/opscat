@@ -45,11 +45,10 @@ def test_payment_bad_deploy_happy_path_contract(client: Any) -> None:
     assert incident.get("service") == "payment-api"
     assert incident.get("environment") == "production"
 
-    investigation = client.post(f"/incidents/{incident_id}/investigate")
-    assert investigation.status_code in {200, 202}, investigation.text
-    analysis = investigation.json()
+    analysis = incident
     assert analysis.get("summary")
-    assert analysis.get("hypotheses"), analysis
+    assert analysis.get("actions"), analysis
+    assert len(analysis.get("evidence", [])) >= 2
 
     evidence_ids = set()
     for hypothesis in analysis.get("hypotheses", []):
@@ -60,6 +59,7 @@ def test_payment_bad_deploy_happy_path_contract(client: Any) -> None:
     assert recommended, analysis
     assert recommended.get("risk_level") in {"low", "medium", "high", "prohibited"}
     assert recommended.get("post_checks"), "actions must define post-checks before execution"
+    assert len(recommended.get("evidence_ids", [])) >= 2
 
     listed = client.get("/incidents")
     assert listed.status_code == 200

@@ -54,7 +54,7 @@ class AgentLoop:
             post_checks=recommended.post_checks,
             evidence_ids=recommended.evidence_ids,
             policy_decision=policy.decision,
-            policy_reasons=policy.reasons,
+            policy_reasons=[policy.reason],
             status="proposed",
         )
         db.add(action)
@@ -65,7 +65,7 @@ class AgentLoop:
             actor="policy",
             event_type="policy_decision",
             content=f"Policy decision for {action.action_type}: {policy.decision}",
-            metadata={"action_id": action.id, "reasons": policy.reasons},
+            metadata={"action_id": action.id, "reasons": [policy.reason]},
         )
         if policy.decision == "ALLOW" and not action.requires_approval:
             db.add(transition_incident(incident, "executing", actor="policy", reason="action auto allowed"))

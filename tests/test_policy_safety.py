@@ -31,7 +31,8 @@ def _policy_decision(policy_module: Any, action: dict[str, Any]) -> str:
         return result
     if isinstance(result, dict):
         return str(result.get("decision"))
-    return str(getattr(result, "decision", result))
+    decision = getattr(result, "decision", result)
+    return getattr(decision, "value", str(decision))
 
 
 @pytest.mark.parametrize(

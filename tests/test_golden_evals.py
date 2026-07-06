@@ -6,36 +6,60 @@ import json
 from pathlib import Path
 from typing import Any
 
+import pytest
+
+GOLDEN_DIR = Path("evals/golden")
+REQUIRED_SCENARIOS = {
+    "payment_bad_deploy",
+    "external_api_timeout",
+    "worker_queue_backlog",
+    "duplicate_alert_storm",
+}
+
 
 def _load_golden(name: str) -> dict[str, Any]:
-    path = Path("evals/golden") / f"{name}.json"
+    path = GOLDEN_DIR / f"{name}.json"
     return json.loads(path.read_text())
 
 
-def test_payment_bad_deploy_golden_file_is_complete() -> None:
-    golden = _load_golden("payment_bad_deploy")
-    assert golden["scenario"] == "payment_bad_deploy"
-    assert golden["input_alert"]["service"] == "payment-api"
-    assert golden["expected"]["top_cause_contains"]
-    assert golden["expected"]["recommended_actions"]
-    assert golden["expected"]["minimum_supporting_evidence"] >= 2
+def _golden_names() -> list[str]:
+    return sorted(path.stem for path in GOLDEN_DIR.glob("*.json"))
 
 
-def test_payment_bad_deploy_eval_contract(client: Any) -> None:
-    golden = _load_golden("payment_bad_deploy")
+def test_portfolio_golden_scenarios_exist() -> None:
+    assert REQUIRED_SCENARIOS.issubset(set(_golden_names()))
+
+
+@pytest.mark.parametrize("name", _golden_names())
+def test_golden_file_is_complete(name: str) -> None:
+    golden = _load_golden(name)
+    expected = golden["expected"]
+
+    assert golden["scenario"] == name
+    assert golden["input_alert"]["scenario"] == name
+    assert golden["input_alert"]["service"]
+    assert expected["top_cause_contains"]
+    assert expected["recommended_actions"]
+    assert expected["minimum_supporting_evidence"] >= 2
+    assert expected["required_policy_decision"] in {"ALLOW", "REQUIRE_APPROVAL", "DENY", "ESCALATE"}
+    assert expected["required_post_checks"]
+
+
+@pytest.mark.parametrize("name", _golden_names())
+def test_golden_eval_contract(client: Any, name: str) -> None:
+    golden = _load_golden(name)
     created = client.post("/webhooks/alerts/mock", json=golden["input_alert"])
     assert created.status_code in {200, 201, 202}, created.text
-    incident_id = created.json().get("id") or created.json().get("incident_id")
-
-    investigation = client.post(f"/incidents/{incident_id}/investigate")
-    assert investigation.status_code in {200, 202}, investigation.text
-    result = investigation.json()
+    result = created.json()
     text = json.dumps(result).lower()
+    expected = golden["expected"]
 
-    assert golden["expected"]["top_cause_contains"].lower() in text
-    assert any(action in text for action in golden["expected"]["recommended_actions"])
+    assert expected["top_cause_contains"].lower() in text
+    assert any(action in text for action in expected["recommended_actions"])
+    assert expected["required_policy_decision"].lower() in text
 
     evidence_ids = set()
-    for hypothesis in result.get("hypotheses", []):
-        evidence_ids.update(hypothesis.get("supporting_evidence_ids", []))
-    assert len(evidence_ids) >= golden["expected"]["minimum_supporting_evidence"]
+    for action in result.get("actions", []):
+        evidence_ids.update(action.get("evidence_ids", []))
+        assert set(expected["required_post_checks"]).intersection(set(action.get("post_checks", [])))
+    assert len(evidence_ids) >= expected["minimum_supporting_evidence"]

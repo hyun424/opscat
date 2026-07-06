@@ -27,6 +27,7 @@ DEFAULT_ACTION_REGISTRY: dict[str, ActionMetadata] = {
         reversible=True,
         blast_radius="none",
         default_requires_approval=False,
+        allowed_environments=("dev", "staging", "test", "local", "production"),
         required_capabilities=("mock:context:read",),
     ),
     "mock.get_recent_deploys": ActionMetadata(
@@ -38,6 +39,7 @@ DEFAULT_ACTION_REGISTRY: dict[str, ActionMetadata] = {
         reversible=True,
         blast_radius="none",
         default_requires_approval=False,
+        allowed_environments=("dev", "staging", "test", "local", "production"),
         required_capabilities=("mock:deploys:read",),
     ),
     "mock.get_runbook": ActionMetadata(
@@ -49,6 +51,7 @@ DEFAULT_ACTION_REGISTRY: dict[str, ActionMetadata] = {
         reversible=True,
         blast_radius="none",
         default_requires_approval=False,
+        allowed_environments=("dev", "staging", "test", "local", "production"),
         required_capabilities=("mock:runbooks:read",),
     ),
     "mock.search_prior_incidents": ActionMetadata(
@@ -60,6 +63,7 @@ DEFAULT_ACTION_REGISTRY: dict[str, ActionMetadata] = {
         reversible=True,
         blast_radius="none",
         default_requires_approval=False,
+        allowed_environments=("dev", "staging", "test", "local", "production"),
         required_capabilities=("mock:incidents:read",),
     ),
     "report.generate": ActionMetadata(
@@ -136,6 +140,7 @@ DEFAULT_ACTION_REGISTRY: dict[str, ActionMetadata] = {
         reversible=True,
         blast_radius="none",
         default_requires_approval=False,
+        allowed_environments=("dev", "staging", "test", "local", "production"),
         required_capabilities=("mock:verification:read",),
     ),
 }

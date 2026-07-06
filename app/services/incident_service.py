@@ -4,7 +4,7 @@ from app.agent.loop import AgentLoop
 from app.models import ActionProposal, ApprovalDecision, Incident
 from app.models.action import ActionRequest
 from app.schemas.incidents import MockAlertRequest
-from app.services.policy_engine import PolicyContext, PolicyEngine
+from app.services.policy_engine import PolicyContext, PolicyEngine, default_capabilities
 from app.services.report_service import save_incident_report
 from app.services.state_machine import transition_incident
 from app.services.timeline_service import add_timeline_event
@@ -105,14 +105,14 @@ def decide_action(
     if policy.decision != "ALLOW":
         action.status = "denied"
         action.policy_decision = policy.decision
-        action.policy_reasons = policy.reasons
+        action.policy_reasons = [policy.reason]
         db.add(transition_incident(incident, "failed", actor="policy", reason="approval could not override policy"))
         db.commit()
         return action, get_incident(db, incident.id), None
 
     action.status = "approved"
     action.policy_decision = policy.decision
-    action.policy_reasons = policy.reasons
+    action.policy_reasons = [policy.reason]
     add_timeline_event(db, incident.id, actor=actor, event_type="approval_granted", content="Action approved")
     db.add(transition_incident(incident, "executing", actor="executor", reason="approved action"))
     result = execute_mock_action(db, incident, action)

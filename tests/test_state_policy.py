@@ -1,7 +1,13 @@
 import pytest
 
 from app.models import Incident
-from app.services.policy_engine import PolicyContext, PolicyEngine
+from app.models.action import ActionRequest, PolicyDecision, RiskLevel
+from app.services.policy_engine import (
+    NightAutopilotConfig,
+    PolicyContext,
+    PolicyEngine,
+    default_capabilities,
+)
 from app.services.state_machine import InvalidStateTransition, transition_incident
 
 
@@ -19,24 +25,49 @@ def test_state_machine_allows_ordered_transition() -> None:
 
 
 def test_policy_blocks_prohibited_actions() -> None:
-    result = PolicyEngine().evaluate("prohibited.arbitrary_shell", PolicyContext())
-    assert result.decision == "DENY"
-    assert result.risk_level == "prohibited"
+    result = PolicyEngine().evaluate(
+        ActionRequest(action_type="shell.execute", target="host", payload={"cmd": "rm -rf /"}),
+        PolicyContext(),
+    )
+    assert result.decision == PolicyDecision.DENY
+    assert result.risk_level == RiskLevel.PROHIBITED
 
 
 def test_policy_requires_approval_for_mock_pr() -> None:
     result = PolicyEngine().evaluate(
-        "mock.create_rollback_pr",
-        PolicyContext(environment="staging", service="payment-api"),
+        ActionRequest(
+            action_type="mock.create_rollback_pr",
+            target="payment-api",
+            environment="staging",
+        ),
+        PolicyContext(
+            capabilities=default_capabilities({"mock:pull_requests:write"}),
+            environment="staging",
+            service="payment-api",
+        ),
     )
-    assert result.decision == "REQUIRE_APPROVAL"
+    assert result.decision == PolicyDecision.REQUIRE_APPROVAL
     assert result.requires_approval is True
 
 
 def test_policy_allows_night_autopilot_allowlisted_low_risk_action() -> None:
     result = PolicyEngine().evaluate(
-        "mock.execute_restart_worker",
-        PolicyContext(mode="night_autopilot", environment="staging", service="worker"),
+        ActionRequest(
+            action_type="mock.execute_restart_worker",
+            target="worker:staging",
+            environment="staging",
+        ),
+        PolicyContext(
+            capabilities=default_capabilities({"mock:workers:restart"}),
+            environment="staging",
+            service="worker",
+            night_autopilot=True,
+            autopilot=NightAutopilotConfig(
+                allowed_services=("worker",),
+                allowed_environments=("staging",),
+                allowed_actions=("mock.execute_restart_worker",),
+            ),
+        ),
     )
-    assert result.decision == "ALLOW"
+    assert result.decision == PolicyDecision.ALLOW
     assert result.requires_approval is False

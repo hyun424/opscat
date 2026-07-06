@@ -59,7 +59,7 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             preconditions=["runbook marks restart reversible", "environment is not production"],
             post_checks=["worker heartbeat is healthy", "queue latency decreases"],
             policy_decision=policy.decision,
-            policy_reasons=policy.reasons,
+            policy_reasons=[policy.reason],
             status="approved",
         )
         db.add(action)

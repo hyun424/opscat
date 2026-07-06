@@ -7,8 +7,18 @@ ERROR_CONTEXT = {
         "Sanitized error window: PaymentTimeoutError rose from 2/min to 180/min "
         "after deploy v1.42.0. Redacted request ids only; no raw cardholder data stored."
     ),
+    "payment_bad_deploy": (
+        "Sanitized error window: PaymentTimeoutError rose from 2/min to 180/min "
+        "after deploy v1.42.0. Redacted request ids only; no raw cardholder data stored."
+    ),
+    "external_api_timeout": (
+        "Sanitized dependency window: payment processor p95 latency rose to 9s while app error logs show upstream timeout codes."
+    ),
     "worker_queue_backlog": (
         "Sanitized metric window: queue latency p95 increased to 12m after worker heartbeat degradation."
+    ),
+    "duplicate_alert_storm": (
+        "Sanitized alert window: 42 duplicate fingerprints arrived after recovery metrics returned below threshold."
     ),
 }
 
@@ -16,8 +26,17 @@ DEPLOY_CONTEXT = {
     "payment_api_deploy_regression": (
         "Deploy v1.42.0 by mock-ci changed payment-api DB pool timeout handling 8 minutes before alert."
     ),
+    "payment_bad_deploy": (
+        "Deploy v1.42.0 by mock-ci changed payment-api DB pool timeout handling 8 minutes before alert."
+    ),
+    "external_api_timeout": (
+        "No payment-api deploy in the last 2h; dependency provider status is degraded in mock context."
+    ),
     "worker_queue_backlog": (
         "No app deploy in last 2h; infra maintenance restarted queue broker 15 minutes before alert."
+    ),
+    "duplicate_alert_storm": (
+        "No deploy or code change in last 4h; alert fingerprint matches resolved incident INC-2026-104."
     ),
 }
 

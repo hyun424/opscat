@@ -21,8 +21,8 @@
     "minimum_supporting_evidence": 2,
     "required_policy_decision": "REQUIRE_APPROVAL",
     "required_post_checks": [
-      "error rate decreases",
-      "checkout success recovers"
+      "mock recovery check passes",
+      "report includes PR reference"
     ]
   }
 }

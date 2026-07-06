@@ -56,7 +56,7 @@ def test_golden_eval_contract(client: Any, name: str) -> None:
 
     assert expected["top_cause_contains"].lower() in text
     assert any(action in text for action in expected["recommended_actions"])
-    assert expected["required_policy_decision"] in text
+    assert expected["required_policy_decision"].lower() in text
 
     evidence_ids = set()
     for action in result.get("actions", []):

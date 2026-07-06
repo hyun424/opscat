@@ -9,9 +9,6 @@ from collections.abc import Iterator
 from typing import Any
 
 import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
 
 REQUIRED_ENDPOINTS = {
     "health": ("GET", "/health"),
@@ -49,24 +46,20 @@ def app(app_module: Any) -> Any:
 
 
 @pytest.fixture()
-def db_session() -> Generator[Session]:
-    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
-    TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
-    Base.metadata.create_all(bind=engine)
-    session = TestingSessionLocal()
+def client(app: Any, tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> Iterator[Any]:
+    # Keep tests independent from developer machines and production credentials.
+    db_path = tmp_path / "opscat-test.db"
+    monkeypatch.setenv("DATABASE_URL", f"sqlite:///{db_path}")
+    monkeypatch.setenv("OPSCAT_MODE", "test")
+    monkeypatch.delenv("SENTRY_AUTH_TOKEN", raising=False)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    monkeypatch.delenv("SLACK_BOT_TOKEN", raising=False)
+
     try:
-        yield session
-    finally:
-        session.close()
-        Base.metadata.drop_all(bind=engine)
+        from fastapi.testclient import TestClient
+    except ModuleNotFoundError as exc:
+        pytest.skip(f"FastAPI test dependencies are not installed yet: {exc}")
 
-
-@pytest.fixture()
-def client(db_session: Session) -> Generator[TestClient]:
-    def override_get_db() -> Generator[Session]:
-        yield db_session
-
-    app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as test_client:
         yield test_client
 

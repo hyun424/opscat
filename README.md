@@ -1,8 +1,8 @@
 # OpsCat
 
-OpsCat is a local **agentic AI on-call system** for incident response automation. It receives a mock alert, builds incident state, gathers sanitized operational context with tools, produces evidence-backed hypotheses, proposes remediation, runs the action through deterministic policy/risk gates, requires approval for unsafe writes, executes only local/mock actions, verifies recovery, and writes an auditable incident report.
+OpsCat is a local **agentic AI on-call system** for human-on-exception operations. It receives a mock alert, builds incident state, gathers sanitized operational context with tools, produces evidence-backed hypotheses, proposes remediation, runs the action through deterministic policy/risk gates, requires approval for unsafe writes, executes only local/mock actions, verifies recovery, wakes humans only on exception, and writes an auditable incident report.
 
-This repository is intended as a portfolio-grade Agentic AI Engineer artifact: it emphasizes state, tools, policy, approvals, verification, auditability, and safety boundaries rather than chatbot-style prompting.
+This repository is intended as a portfolio-grade Agentic AI Engineer artifact and paid-beta design seed: it emphasizes state, tools, tenant boundaries, policy, approvals, verification, wake-up contracts, auditability, privacy, and safety boundaries rather than chatbot-style prompting.
 
 > Current status: the docs and design contract are portfolio-ready, but the latest inspected integrated code is not yet green. Worker-5 verification on current leader head `055ac28158b98cd757861041548ed35bfaac3073` found a syntax blocker in `app/models/action.py`; see [`docs/integration-verification.md`](docs/integration-verification.md). The README demo flow below is the intended copy-paste path once that blocker is fixed.
 
@@ -20,6 +20,17 @@ OpsCat demonstrates a production-minded agent loop:
 8. Execute only local/mock safe actions.
 9. Verify recovery.
 10. Generate an auditable markdown report.
+
+
+## Human-on-exception promise
+
+OpsCat is meant to replace continuous human monitoring, not human accountability. Routine known incidents should be classified, investigated, safely acted on, verified, and reported automatically. Humans are woken when the incident is high-risk, low-confidence, protected-domain, policy-denied, unverified, or exceeds bounded retry limits.
+
+See [`docs/human-on-exception-operations.md`](docs/human-on-exception-operations.md) and [`docs/wake-up-report.md`](docs/wake-up-report.md).
+
+## Paid-beta readiness stance
+
+The MVP remains local/mock-only. It is not production-ready until authentication, tenant-scoped authorization, encrypted integration token storage, real connector deployment, and redaction/idempotency tests exist. The paid-beta readiness bar and threat model are explicit in [`docs/paid-beta-readiness.md`](docs/paid-beta-readiness.md) and [`docs/threat-model.md`](docs/threat-model.md).
 
 ## Safety boundary
 
@@ -49,7 +60,7 @@ Safety is enforced by explicit action metadata, risk classification, approval st
 
 ## Documentation map
 
-- [`docs/portfolio-summary.md`](docs/portfolio-summary.md) — recruiter-facing project summary.
+- [`docs/portfolio-summary.md`](docs/portfolio-summary.md) — recruiter-facing and paid-beta framing summary.
 - [`docs/portfolio-quality-bar.md`](docs/portfolio-quality-bar.md) — completion gates and quality contract.
 - [`docs/architecture.md`](docs/architecture.md) — runtime architecture, control-plane/connector model, and data boundary.
 - [`docs/demo-walkthrough.md`](docs/demo-walkthrough.md) — demo script, API walkthrough, and current blocker behavior.

@@ -37,3 +37,22 @@
 - 2026-07-06T17:00:22+00:00 [integration] action_executed: Mock rollback PR draft created locally with no external side effects.
 - 2026-07-06T17:00:30+00:00 [agent] recovery_verified: Mock recovery checks passed.
 - 2026-07-06T17:00:31+00:00 [system] incident_resolved: Incident marked resolved and report generated.
+
+
+## Wake-Up Packet
+
+- Wake-up required: yes
+- Wake-up reason: medium-risk rollback PR draft requires approval before execution.
+- Human recipient: primary-oncall
+- Recommended human action: approve rollback PR draft or request more investigation.
+- No-silent-failure status: OpsCat escalated because execution authority required human approval.
+
+## Morning Report Entry
+
+- Incident: incident-demo-payment-api-001
+- Overnight status: resolved after approved mock rollback PR draft and recovery verification.
+- Actions attempted: 2
+- Actions blocked by policy: 0
+- Human approvals requested: 1
+- Verification outcome: timeout rate and synthetic checkout recovered.
+- Follow-up: inspect deployment timeout middleware before promoting to production.

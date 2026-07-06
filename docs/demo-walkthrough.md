@@ -120,3 +120,16 @@ docker compose config
 ```
 
 All core checks should pass without generated artifacts being committed.
+
+
+## Human-on-exception proof points
+
+The demo should prove these claims once green:
+
+- Detect: mock alert creates an incident.
+- Classify: service, environment, severity, and scenario are persisted.
+- Investigate: read-only mock context tools attach evidence.
+- Act: policy-approved or approval-gated local mock actions execute only after the gate passes.
+- Verify: post-checks run and update the incident outcome.
+- Escalate: denied, high-risk, low-confidence, or failed-verification paths wake a human instead of failing silently.
+- Report: incident report and morning/wake-up packet explain what happened and why.

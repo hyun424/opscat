@@ -61,6 +61,22 @@ Expected implementation modules:
 - `app/services/report_service.py` renders markdown reports.
 - `app/services/night_autopilot.py` simulates quiet-hours automation.
 
+
+## Paid-beta hardening model
+
+Before real customer use, the local MVP needs these production-facing boundaries:
+
+- tenant/workspace ownership on every incident, evidence item, policy, action, approval, and integration;
+- tenant-scoped authorization in every API/service path;
+- encrypted integration token storage;
+- typed connector execution instead of broad credentials;
+- idempotency keys for webhooks and action execution;
+- duplicate alert grouping;
+- redaction before model input and report generation;
+- escalation on uncertainty rather than silent failure.
+
+These are not fully implemented in the local MVP; they are documented as paid-beta requirements in `paid-beta-readiness.md` and `threat-model.md`.
+
 ## Safety and policy invariants
 
 - Production-affecting actions must not execute in the MVP.
@@ -70,6 +86,7 @@ Expected implementation modules:
 - Night Autopilot is simulated and limited to low-risk, allowlisted, non-production actions.
 - Every action proposal should include rationale, evidence IDs, preconditions, post-checks, risk, and approval requirement.
 - Every incident report should include status, service/environment/severity, summary, root-cause candidate, confidence, evidence, actions, execution result, and timeline.
+- No silent failure: unresolved, uncertain, high-risk, or unverified incidents must wake humans with evidence.
 
 ## Current integration risk
 

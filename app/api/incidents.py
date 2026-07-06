@@ -12,12 +12,7 @@ router = APIRouter(prefix="/incidents", tags=["incidents"])
 
 @router.get("", response_model=list[IncidentRead])
 def list_incidents(db: Session = Depends(get_db)) -> list[Incident]:
-    return (
-        db.query(Incident)
-        .options(selectinload(Incident.evidence), selectinload(Incident.actions), selectinload(Incident.timeline))
-        .order_by(Incident.created_at.desc())
-        .all()
-    )
+    return db.query(Incident).options(selectinload(Incident.evidence), selectinload(Incident.actions), selectinload(Incident.timeline)).order_by(Incident.created_at.desc()).all()
 
 
 @router.get("/{incident_id}", response_model=IncidentRead)

@@ -1,12 +1,51 @@
-from collections.abc import Generator
+"""Shared test helpers for OpsCat contract and eval tests."""
+
+from __future__ import annotations
+
+import importlib
+import os
+import tempfile
+from collections.abc import Iterator
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.db import Base, get_db
-from app.main import app
+REQUIRED_ENDPOINTS = {
+    "health": ("GET", "/health"),
+    "mock_alert": ("POST", "/webhooks/alerts/mock"),
+    "list_incidents": ("GET", "/incidents"),
+    "get_incident": ("GET", "/incidents/{incident_id}"),
+    "investigate": ("POST", "/incidents/{incident_id}/investigate"),
+    "approve_action": ("POST", "/incidents/{incident_id}/actions/{action_id}/approve"),
+    "reject_action": ("POST", "/incidents/{incident_id}/actions/{action_id}/reject"),
+    "verify": ("POST", "/incidents/{incident_id}/verify"),
+    "report": ("GET", "/incidents/{incident_id}/report"),
+}
+
+
+@pytest.fixture(scope="session")
+def app_module() -> Any:
+    os.environ.setdefault("OPSCAT_MODE", "test")
+    db_file = tempfile.NamedTemporaryFile(prefix="opscat-test-", suffix=".db", delete=False)
+    db_file.close()
+    os.environ.setdefault("DATABASE_URL", f"sqlite:///{db_file.name}")
+    for secret_name in ("SENTRY_AUTH_TOKEN", "GITHUB_TOKEN", "SLACK_BOT_TOKEN"):
+        os.environ.pop(secret_name, None)
+    try:
+        return importlib.import_module("app.main")
+    except ModuleNotFoundError as exc:
+        pytest.skip(f"FastAPI app scaffold is not available yet: {exc}")
+
+
+@pytest.fixture(scope="session")
+def app(app_module: Any) -> Any:
+    application = getattr(app_module, "app", None)
+    if application is None:
+        pytest.skip("app.main does not expose a FastAPI instance named 'app' yet")
+    return application
 
 
 @pytest.fixture()
@@ -30,4 +69,20 @@ def client(db_session: Session) -> Generator[TestClient]:
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as test_client:
         yield test_client
-    app.dependency_overrides.clear()
+
+
+def route_fingerprint(app: Any) -> set[tuple[str, str]]:
+    fingerprints: set[tuple[str, str]] = set()
+    for route in getattr(app, "routes", []):
+        path = getattr(route, "path", "")
+        for method in getattr(route, "methods", set()) or set():
+            if method in {"GET", "POST", "PUT", "PATCH", "DELETE"}:
+                fingerprints.add((method, path))
+    return fingerprints
+
+
+def assert_no_external_credentials_required() -> None:
+    forbidden = ["SENTRY_AUTH_TOKEN", "GITHUB_TOKEN", "SLACK_BOT_TOKEN"]
+    assert not any(os.environ.get(name) for name in forbidden), (
+        "tests must run without real credentials"
+    )

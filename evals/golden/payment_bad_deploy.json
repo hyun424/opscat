@@ -1,0 +1,28 @@
+{
+  "scenario": "payment_bad_deploy",
+  "input_alert": {
+    "scenario": "payment_bad_deploy",
+    "source": "mock",
+    "service": "payment-api",
+    "environment": "production",
+    "severity": "high",
+    "title": "Payment API checkout timeout spike",
+    "fingerprint": "payment-api:checkout-timeout:v42",
+    "error_rate_per_minute": 148,
+    "started_at": "2026-07-06T17:00:00Z"
+  },
+  "expected": {
+    "top_cause_contains": "deploy",
+    "recommended_actions": [
+      "mock.create_rollback_pr",
+      "mock.create_incident_ticket",
+      "rollback"
+    ],
+    "minimum_supporting_evidence": 2,
+    "required_policy_decision": "REQUIRE_APPROVAL",
+    "required_post_checks": [
+      "error rate decreases",
+      "checkout success recovers"
+    ]
+  }
+}

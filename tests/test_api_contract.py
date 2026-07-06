@@ -4,7 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from tests.conftest import REQUIRED_ENDPOINTS, assert_no_external_credentials_required, route_fingerprint
+from tests.conftest import (
+    REQUIRED_ENDPOINTS,
+    assert_no_external_credentials_required,
+    route_fingerprint,
+)
 
 
 def test_required_mvp_routes_are_registered(app: Any) -> None:
@@ -54,7 +58,9 @@ def test_payment_bad_deploy_happy_path_contract(client: Any) -> None:
     evidence_ids = set()
     for hypothesis in analysis.get("hypotheses", []):
         evidence_ids.update(hypothesis.get("supporting_evidence_ids", []))
-    assert len(evidence_ids) >= 2, "top recommendation must be backed by at least two evidence items"
+    assert len(evidence_ids) >= 2, (
+        "top recommendation must be backed by at least two evidence items"
+    )
 
     recommended = analysis.get("recommended_action") or analysis.get("action")
     assert recommended, analysis

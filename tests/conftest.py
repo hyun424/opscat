@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import importlib
 import os
+import tempfile
 from collections.abc import Iterator
 from typing import Any
 
 import pytest
-
 
 REQUIRED_ENDPOINTS = {
     "health": ("GET", "/health"),
@@ -25,6 +25,12 @@ REQUIRED_ENDPOINTS = {
 
 @pytest.fixture(scope="session")
 def app_module() -> Any:
+    os.environ.setdefault("OPSCAT_MODE", "test")
+    db_file = tempfile.NamedTemporaryFile(prefix="opscat-test-", suffix=".db", delete=False)
+    db_file.close()
+    os.environ.setdefault("DATABASE_URL", f"sqlite:///{db_file.name}")
+    for secret_name in ("SENTRY_AUTH_TOKEN", "GITHUB_TOKEN", "SLACK_BOT_TOKEN"):
+        os.environ.pop(secret_name, None)
     try:
         return importlib.import_module("app.main")
     except ModuleNotFoundError as exc:
@@ -70,4 +76,6 @@ def route_fingerprint(app: Any) -> set[tuple[str, str]]:
 
 def assert_no_external_credentials_required() -> None:
     forbidden = ["SENTRY_AUTH_TOKEN", "GITHUB_TOKEN", "SLACK_BOT_TOKEN"]
-    assert not any(os.environ.get(name) for name in forbidden), "tests must run without real credentials"
+    assert not any(os.environ.get(name) for name in forbidden), (
+        "tests must run without real credentials"
+    )

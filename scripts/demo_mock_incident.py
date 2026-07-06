@@ -17,7 +17,6 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-
 DEFAULT_ALERT: dict[str, Any] = {
     "scenario": "payment_bad_deploy",
     "source": "mock",
@@ -29,7 +28,12 @@ DEFAULT_ALERT: dict[str, Any] = {
 }
 
 
-def request_json(base_url: str, method: str, path: str, payload: dict[str, Any] | None = None) -> Any:
+def request_json(
+    base_url: str,
+    method: str,
+    path: str,
+    payload: dict[str, Any] | None = None,
+) -> Any:
     body = None if payload is None else json.dumps(payload).encode("utf-8")
     request = urllib.request.Request(
         f"{base_url.rstrip('/')}{path}",
@@ -82,10 +86,17 @@ def main() -> int:
         if not action_id:
             raise SystemExit("Cannot approve action: investigation did not return an action id")
         print(f"4. Approving proposed action {action_id}")
-        approval = request_json(args.base_url, "POST", f"/incidents/{incident_id}/actions/{action_id}/approve")
+        approval = request_json(
+            args.base_url,
+            "POST",
+            f"/incidents/{incident_id}/actions/{action_id}/approve",
+        )
         print(json.dumps(approval, indent=2))
     else:
-        print("4. Approval skipped; rerun with --approve to execute the first approval-gated action")
+        print(
+            "4. Approval skipped; rerun with --approve "
+            "to execute the first approval-gated action"
+        )
 
     print("5. Verifying recovery")
     verification = request_json(args.base_url, "POST", f"/incidents/{incident_id}/verify")

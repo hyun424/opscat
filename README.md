@@ -187,3 +187,7 @@ docker compose config
 ```
 
 Current worker-5 evidence is in [`docs/integration-verification.md`](docs/integration-verification.md). Do not claim the full demo is verified until all core checks are green.
+
+## Documentation
+- [AI Development Team](docs/operations/ai-development-team.md)
+- [Production AI Team Plan](docs/operations/production-ai-team-plan.md)

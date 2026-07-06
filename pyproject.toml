@@ -46,3 +46,6 @@ ignore_missing_imports = true
 [tool.setuptools.packages.find]
 include = ["app*"]
 exclude = ["tests*", "data*"]
+
+[tool.opscat.coverage]
+min_total = 60.0

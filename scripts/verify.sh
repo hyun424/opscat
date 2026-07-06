@@ -30,6 +30,9 @@ section "Mypy typecheck"
 section "Pytest regression suite"
 "${UV_DEV[@]}" pytest -q
 
+section "Coverage gate"
+"${UV_DEV[@]}" python scripts/coverage_gate.py --json-output "$VERIFY_TMPDIR/coverage-summary.json"
+
 section "Local demo smoke"
 "${UV_DEV[@]}" python scripts/demo.py
 

@@ -25,7 +25,11 @@ class NightAutopilotConfig:
         "worker",
     )
     allowed_environments: tuple[str, ...] = ("staging", "local", "test")
-    allowed_actions: tuple[str, ...] = ("report.generate", "timeline.add_note", "mock.execute_restart_worker")
+    allowed_actions: tuple[str, ...] = (
+        "report.generate",
+        "timeline.add_note",
+        "mock.execute_restart_worker",
+    )
     wake_up_conditions: tuple[str, ...] = (
         "critical severity",
         "production environment",
@@ -92,7 +96,6 @@ class PolicyEngine:
     def evaluate(self, request: ActionRequest | str, context: PolicyContext | None = None) -> PolicyEvaluation:
         if isinstance(request, str):
             context = context or PolicyContext()
-            request = DANGEROUS_ACTION_ALIASES.get(request, request)
             request = ActionRequest(
                 action_type=DANGEROUS_ACTION_ALIASES.get(request, request),
                 target=context.service,

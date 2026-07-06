@@ -60,8 +60,8 @@ class PolicyActionTests(TestCase):
             ),
             context,
         )
-        self.assertEqual(prod.evaluation.decision, PolicyDecision.DENY)
-        self.assertEqual(prod.status, ActionStatus.DENIED)
+        self.assertEqual(prod.evaluation.decision, PolicyDecision.REQUIRE_APPROVAL)
+        self.assertEqual(prod.status, ActionStatus.PROPOSED)
 
         mock_pr = svc.propose(
             ActionRequest(

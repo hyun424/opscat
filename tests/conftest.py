@@ -57,12 +57,7 @@ def db_session() -> Generator[Session]:
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    testing_session = sessionmaker(
-        bind=engine,
-        autoflush=False,
-        autocommit=False,
-        expire_on_commit=False,
-    )
+    TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
     Base.metadata.create_all(bind=engine)
     session = testing_session()
     try:

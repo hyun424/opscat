@@ -3,6 +3,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, selectinload
 
+from app.api.workspace import get_workspace_id
 from app.db import get_db
 from app.models import Incident
 from app.schemas.incidents import ActionRead, ApprovalRequest, ApprovalResponse, IncidentRead
@@ -13,16 +14,32 @@ router = APIRouter(prefix="/incidents", tags=["incidents"])
 
 
 @router.get("", response_model=list[IncidentRead])
-def list_incidents(db: Session = Depends(get_db)) -> list[Incident]:
-    return db.query(Incident).options(selectinload(Incident.evidence), selectinload(Incident.actions), selectinload(Incident.timeline)).order_by(Incident.created_at.desc()).all()
+def list_incidents(
+    workspace_id: str = Depends(get_workspace_id),
+    db: Session = Depends(get_db),
+) -> list[Incident]:
+    return (
+        db.query(Incident)
+        .options(selectinload(Incident.evidence), selectinload(Incident.actions), selectinload(Incident.timeline))
+        .filter(Incident.workspace_id == workspace_id)
+        .order_by(Incident.created_at.desc())
+        .all()
+    )
 
 
 @router.get("/{incident_id}", response_model=IncidentRead)
-def read_incident(incident_id: str, db: Session = Depends(get_db)) -> Incident:
+def read_incident(
+    incident_id: str,
+    workspace_id: str = Depends(get_workspace_id),
+    db: Session = Depends(get_db),
+) -> Incident:
     try:
-        return get_incident(db, incident_id)
+        incident = get_incident(db, incident_id)
     except Exception as exc:  # pragma: no cover - FastAPI boundary
         raise HTTPException(status_code=404, detail="incident not found") from exc
+    if incident.workspace_id != workspace_id:
+        raise HTTPException(status_code=404, detail={"message": "incident not found", "workspace_id": workspace_id})
+    return incident
 
 
 @router.post("/{incident_id}/investigate", response_model=dict[str, Any])

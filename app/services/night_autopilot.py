@@ -30,11 +30,15 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             action_type="mock.execute_restart_worker",
             target="worker:staging",
             environment=incident.environment,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
             incident_id=incident.id,
         ),
         PolicyContext(
             service=incident.service,
             environment=incident.environment,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
             night_autopilot=True,
             autopilot=PolicyNightAutopilotConfig(
                 max_automatic_risk=RiskLevel(config.max_automatic_risk),
@@ -50,6 +54,8 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
     if policy.decision == "ALLOW" and config.max_attempts_per_incident >= 1:
         action = ActionProposal(
             incident_id=incident.id,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
             action_type="mock.execute_restart_worker",
             target="worker:staging",
             environment="staging",
@@ -77,6 +83,8 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         add_timeline_event(
             db,
             incident.id,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
             actor="night-autopilot",
             event_type="action_executed",
             content="Automatic mock worker restart executed",

@@ -25,6 +25,8 @@ class AgentLoop:
         add_timeline_event(
             db,
             incident.id,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
             actor="agent",
             event_type="context_gathered",
             content=f"Gathered {len(evidence)} read-only mock evidence records.",
@@ -42,13 +44,22 @@ class AgentLoop:
                 action_type=recommended.action_type,
                 target=recommended.target,
                 environment=incident.environment,
+                tenant_id=incident.tenant_id,
+                workspace_id=incident.workspace_id,
                 payload=recommended.payload,
                 incident_id=incident.id,
             ),
-            PolicyContext(environment=incident.environment, service=incident.service),
+            PolicyContext(
+                environment=incident.environment,
+                service=incident.service,
+                tenant_id=incident.tenant_id,
+                workspace_id=incident.workspace_id,
+            ),
         )
         action = ActionProposal(
             incident_id=incident.id,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
             action_type=recommended.action_type,
             target=recommended.target,
             environment=incident.environment,
@@ -94,6 +105,8 @@ class AgentLoop:
         add_timeline_event(
             db,
             incident.id,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
             actor="policy",
             event_type="policy_decision",
             content=f"Policy decision for {action.action_type}: {policy.decision}",

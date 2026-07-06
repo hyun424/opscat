@@ -62,6 +62,8 @@ class ActionRequest:
     action_type: str
     target: str
     environment: str = "local"
+    tenant_id: str = "demo"
+    workspace_id: str = "demo"
     payload: Mapping[str, Any] = field(default_factory=dict)
     requester: str = "agent"
     incident_id: str | None = None
@@ -133,6 +135,8 @@ class ActionProposal(Base):
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid4()))
     incident_id: Mapped[str] = mapped_column(ForeignKey("incidents.id"), index=True)
+    tenant_id: Mapped[str] = mapped_column(String, default="demo", index=True)
+    workspace_id: Mapped[str] = mapped_column(String, default="demo", index=True)
     action_type: Mapped[str] = mapped_column(String, index=True)
     target: Mapped[str] = mapped_column(String)
     environment: Mapped[str] = mapped_column(String)

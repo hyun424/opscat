@@ -52,6 +52,8 @@ def app(app_module: Any) -> Any:
 
 @pytest.fixture()
 def db_session() -> Generator[Session]:
+    from app.models import action, evidence, incident, policy, timeline  # noqa: F401
+
     engine = create_engine(
         "sqlite:///:memory:",
         connect_args={"check_same_thread": False},

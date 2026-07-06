@@ -20,9 +20,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# FastAPI 0.139 stores included routers as wrapper routes.  The MVP contract
-# tests inspect concrete route fingerprints, so register the route objects
-# directly while retaining each module-level APIRouter as the source of truth.
 for source_router in (
     health.router,
     mock_alerts.router,
@@ -30,4 +27,4 @@ for source_router in (
     approvals.router,
     night_autopilot.router,
 ):
-    app.router.routes.extend(source_router.routes)
+    app.include_router(source_router)

@@ -12,6 +12,9 @@ class Incident(Base):
     __tablename__ = "incidents"
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid4()))
+    tenant_id: Mapped[str] = mapped_column(String, default="demo", index=True)
+    workspace_id: Mapped[str] = mapped_column(String, default="demo", index=True)
+    alert_fingerprint: Mapped[str] = mapped_column(String, default=lambda: str(uuid4()), index=True)
     source: Mapped[str] = mapped_column(String, default="mock")
     status: Mapped[str] = mapped_column(String, default="new", index=True)
     service: Mapped[str] = mapped_column(String, index=True)

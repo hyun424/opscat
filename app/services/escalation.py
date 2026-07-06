@@ -178,6 +178,8 @@ def record_human_escalation(
     add_timeline_event(
         db,
         incident.id,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
         actor="escalation",
         event_type="human_escalation_required",
         content=f"Human wake-up required: {payload.get('trigger')}",
@@ -197,6 +199,8 @@ def record_human_escalation(
             add_timeline_event(
                 db,
                 incident.id,
+                tenant_id=incident.tenant_id,
+                workspace_id=incident.workspace_id,
                 actor="escalation",
                 event_type="escalation_state_transition_blocked",
                 content="Escalation recorded without changing terminal incident state.",

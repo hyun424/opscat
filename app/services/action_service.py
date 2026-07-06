@@ -62,6 +62,8 @@ class ActionService:
                 action_type=request.action_type,
                 target=request.target,
                 environment=request.environment,
+                tenant_id=request.tenant_id,
+                workspace_id=request.workspace_id,
                 payload=request.payload,
                 requester=request.requester,
                 incident_id=request.incident_id,
@@ -96,6 +98,17 @@ class ActionService:
         data["status"] = record.status.value
         data["evaluation"]["decision"] = record.evaluation.decision.value
         data["evaluation"]["risk_level"] = record.evaluation.risk_level.value
+        data["audit_context"] = {
+            "tenant_id": record.action_request.tenant_id,
+            "workspace_id": record.action_request.workspace_id,
+            "incident_id": record.action_request.incident_id,
+            "action_type": record.action_request.action_type,
+            "decision": record.evaluation.decision.value,
+            "risk_level": record.evaluation.risk_level.value,
+            "requires_approval": record.evaluation.requires_approval,
+            "preconditions": list(record.evaluation.preconditions),
+            "post_checks": list(record.evaluation.post_checks),
+        }
         if record.evaluation.action:
             data["evaluation"]["action"]["base_risk"] = record.evaluation.action.base_risk.value
         return data

@@ -37,6 +37,8 @@ def transition_incident(
     incident.updated_at = datetime.now(UTC)
     return TimelineEvent(
         incident_id=incident.id,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
         actor=actor,
         event_type="state_transition",
         content=f"Incident moved from {previous} to {target_state}" + (f": {reason}" if reason else ""),

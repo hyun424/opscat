@@ -13,6 +13,8 @@ class ApprovalDecision(Base):
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid4()))
     action_id: Mapped[str] = mapped_column(ForeignKey("action_proposals.id"), index=True)
+    tenant_id: Mapped[str] = mapped_column(String, default="demo", index=True)
+    workspace_id: Mapped[str] = mapped_column(String, default="demo", index=True)
     decision: Mapped[str] = mapped_column(String)
     actor: Mapped[str] = mapped_column(String, default="human")
     reason: Mapped[str | None] = mapped_column(Text)

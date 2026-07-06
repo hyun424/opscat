@@ -86,6 +86,8 @@ def _scenario(incident: Incident) -> str:
 def _add_evidence(db: Session, incident: Incident, ev_type: str, content: str, metadata: dict[str, object]) -> Evidence:
     evidence = Evidence(
         incident_id=incident.id,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
         type=ev_type,
         source="mock",
         source_url=f"mock://{ev_type}/{incident.service}",

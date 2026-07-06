@@ -13,6 +13,8 @@ class TimelineEvent(Base):
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid4()))
     incident_id: Mapped[str] = mapped_column(ForeignKey("incidents.id"), index=True)
+    tenant_id: Mapped[str] = mapped_column(String, default="demo", index=True)
+    workspace_id: Mapped[str] = mapped_column(String, default="demo", index=True)
     timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
     actor: Mapped[str] = mapped_column(String, default="system")
     event_type: Mapped[str] = mapped_column(String, index=True)

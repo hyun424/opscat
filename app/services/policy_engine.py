@@ -58,6 +58,8 @@ class PolicyContext:
     )
     service: str = "demo-service"
     environment: str = "local"
+    tenant_id: str = "demo"
+    workspace_id: str = "demo"
     severity: str = "medium"
     night_autopilot: bool = False
     autopilot_attempts: int = 0

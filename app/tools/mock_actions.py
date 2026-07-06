@@ -130,6 +130,8 @@ def execute_mock_action(db: Session, incident: Incident, action: ActionProposal)
         action_type=action.action_type,
         target=action.target,
         environment=action.environment or incident.environment,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
         payload=action.payload or {},
         incident_id=incident.id,
         approved=True,
@@ -156,6 +158,8 @@ def verify_recovery(incident: Incident, action: ActionProposal) -> dict[str, obj
         action_type="mock.verify_recovery",
         target=action.target or incident.service,
         environment=incident.environment,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
         incident_id=incident.id,
         payload={"action_type": action.action_type},
     )

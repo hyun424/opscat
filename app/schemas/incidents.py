@@ -22,6 +22,9 @@ PolicyDecision = Literal["ALLOW", "REQUIRE_APPROVAL", "DENY", "ESCALATE"]
 
 
 class MockAlertRequest(BaseModel):
+    tenant_id: str = "demo"
+    workspace_id: str = "demo"
+    idempotency_key: str | None = None
     scenario: str = "payment_api_deploy_regression"
     service: str | None = None
     environment: str = "staging"
@@ -32,6 +35,8 @@ class MockAlertRequest(BaseModel):
 
 class EvidenceRead(BaseModel):
     id: str
+    tenant_id: str = "demo"
+    workspace_id: str = "demo"
     type: str
     source: str
     source_url: str | None
@@ -44,6 +49,8 @@ class EvidenceRead(BaseModel):
 
 class ActionRead(BaseModel):
     id: str
+    tenant_id: str = "demo"
+    workspace_id: str = "demo"
     action_type: str
     target: str
     environment: str
@@ -69,6 +76,8 @@ class ActionRead(BaseModel):
 
 class TimelineRead(BaseModel):
     id: str
+    tenant_id: str = "demo"
+    workspace_id: str = "demo"
     timestamp: datetime
     actor: str
     event_type: str
@@ -80,6 +89,9 @@ class TimelineRead(BaseModel):
 
 class IncidentRead(BaseModel):
     id: str
+    tenant_id: str = "demo"
+    workspace_id: str = "demo"
+    alert_fingerprint: str = ""
     source: str
     status: str
     service: str

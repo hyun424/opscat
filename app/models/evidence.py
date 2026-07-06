@@ -13,6 +13,8 @@ class Evidence(Base):
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid4()))
     incident_id: Mapped[str] = mapped_column(ForeignKey("incidents.id"), index=True)
+    tenant_id: Mapped[str] = mapped_column(String, default="demo", index=True)
+    workspace_id: Mapped[str] = mapped_column(String, default="demo", index=True)
     type: Mapped[str] = mapped_column(String, index=True)
     source: Mapped[str] = mapped_column(String, default="mock")
     source_url: Mapped[str | None] = mapped_column(String)

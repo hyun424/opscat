@@ -1,90 +1,104 @@
-"""Optional FastAPI approval routes for OpsCat.
-
-The domain service is dependency-light; this router activates when FastAPI and
-Pydantic are installed by the app scaffold.
-"""
-
-from __future__ import annotations
-
 from typing import Any
 
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
+from app.db import get_db
 from app.models.action import ActionRequest
+from app.schemas.incidents import ActionRead, ApprovalRequest, ApprovalResponse, IncidentRead
 from app.services.action_service import ActionService
+from app.services.incident_service import decide_action
 from app.services.policy_engine import PolicyContext, default_capabilities
 
-try:  # pragma: no cover - exercised in integration once FastAPI scaffold exists.
-    from fastapi import APIRouter, HTTPException  # type: ignore[import-not-found]
-    from pydantic import BaseModel, Field  # type: ignore[import-not-found]
-except ModuleNotFoundError:  # pragma: no cover
-    APIRouter = None  # type: ignore[assignment]
-    HTTPException = None  # type: ignore[assignment]
-    BaseModel = object  # type: ignore[assignment,misc]
-    Field = None  # type: ignore[assignment]
 
-
-class ApprovalProposalPayload(BaseModel):  # type: ignore[misc]
+class ApprovalProposalPayload(BaseModel):
     action_type: str
     target: str
     environment: str = "local"
     incident_id: str | None = None
-    payload: dict[str, Any] = {} if Field is None else Field(default_factory=dict)
-    capabilities: list[str] = [] if Field is None else Field(default_factory=list)
+    payload: dict[str, Any] = Field(default_factory=dict)
+    capabilities: list[str] = Field(default_factory=list)
 
 
-class ApprovalDecisionPayload(BaseModel):  # type: ignore[misc]
+class ApprovalDecisionPayload(BaseModel):
     actor: str = "human"
     reason: str = "approved"
 
 
 service = ActionService()
+router = APIRouter(prefix="/approvals", tags=["approvals"])
 
 
-def create_router(action_service: ActionService | None = None):
-    if APIRouter is None:  # pragma: no cover
-        raise RuntimeError(
-            "FastAPI is not installed; install app dependencies to enable approval routes."
+@router.post("")
+def propose_action(payload: ApprovalProposalPayload) -> dict[str, Any]:
+    request = ActionRequest(
+        action_type=payload.action_type,
+        target=payload.target,
+        environment=payload.environment,
+        incident_id=payload.incident_id,
+        payload=payload.payload,
+    )
+    context = PolicyContext(
+        capabilities=default_capabilities(payload.capabilities),
+        environment=payload.environment,
+    )
+    record = service.propose(request, context)
+    return service.serialize_record(record)
+
+
+@router.post("/{action_id}", response_model=ApprovalResponse)
+def decide_persisted_action(
+    action_id: str,
+    payload: ApprovalRequest,
+    db: Session = Depends(get_db),
+) -> ApprovalResponse:
+    try:
+        action, incident, report = decide_action(
+            db,
+            action_id,
+            decision=payload.decision,
+            actor=payload.actor,
+            reason=payload.reason,
         )
-    svc = action_service or service
-    router = APIRouter(prefix="/approvals", tags=["approvals"])
+    except Exception as exc:  # pragma: no cover - FastAPI boundary
+        raise HTTPException(status_code=404, detail="action not found or invalid") from exc
+    return ApprovalResponse(
+        action=ActionRead.model_validate(action),
+        incident=IncidentRead.model_validate(incident),
+        report=report,
+    )
 
-    @router.post("")
-    def propose_action(payload: ApprovalProposalPayload) -> dict[str, Any]:
-        request = ActionRequest(
-            action_type=payload.action_type,
-            target=payload.target,
-            environment=payload.environment,
-            incident_id=payload.incident_id,
-            payload=payload.payload,
-        )
-        context = PolicyContext(
-            capabilities=default_capabilities(payload.capabilities),
-            environment=payload.environment,
-        )
-        record = svc.propose(request, context)
-        return svc.serialize_record(record)
 
-    @router.post("/{approval_id}/approve")
-    def approve_action(approval_id: str, payload: ApprovalDecisionPayload):
-        try:
-            record = svc.approve(approval_id, payload.actor, payload.reason)
-        except (KeyError, ValueError) as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        return svc.serialize_record(record)
+@router.post("/{approval_id}/approve")
+def approve_action(approval_id: str, payload: ApprovalDecisionPayload) -> dict[str, Any]:
+    try:
+        record = service.approve(approval_id, payload.actor, payload.reason)
+    except (KeyError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return service.serialize_record(record)
 
-    @router.post("/{approval_id}/reject")
-    def reject_action(approval_id: str, payload: ApprovalDecisionPayload):
-        try:
-            record = svc.reject(approval_id, payload.actor, payload.reason)
-        except (KeyError, ValueError) as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        return svc.serialize_record(record)
 
-    @router.post("/{approval_id}/execute")
-    def execute_action(approval_id: str):
-        try:
-            result = svc.execute(approval_id)
-        except KeyError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-        return result.__dict__
+@router.post("/{approval_id}/reject")
+def reject_action(approval_id: str, payload: ApprovalDecisionPayload) -> dict[str, Any]:
+    try:
+        record = service.reject(approval_id, payload.actor, payload.reason)
+    except (KeyError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return service.serialize_record(record)
 
-    return router
+
+@router.post("/{approval_id}/execute")
+def execute_action(approval_id: str) -> dict[str, Any]:
+    try:
+        result = service.execute(approval_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {
+        "action_type": result.action_type,
+        "target": result.target,
+        "status": result.status,
+        "message": result.message,
+        "output": dict(result.output),
+        "verification": dict(result.verification),
+    }

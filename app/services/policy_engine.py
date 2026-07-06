@@ -38,6 +38,12 @@ class PolicyContext:
     night_autopilot: bool = False
     autopilot_attempts: int = 0
     autopilot: NightAutopilotConfig = field(default_factory=NightAutopilotConfig)
+    approved: bool = False
+    mode: str = "smart_approval"
+    allowed_services: tuple[str, ...] | None = None
+    allowed_environments: tuple[str, ...] | None = None
+    max_automatic_risk: str | RiskLevel | None = None
+    allowlisted_actions: tuple[str, ...] | None = None
 
 
 class PolicyEngine:
@@ -45,9 +51,40 @@ class PolicyEngine:
         self.risk_engine = risk_engine or RiskEngine()
 
     def evaluate(
-        self, request: ActionRequest, context: PolicyContext | None = None
+        self, request: ActionRequest | str, context: PolicyContext | None = None
     ) -> PolicyEvaluation:
+        if isinstance(request, str):
+            context = context or PolicyContext()
+            request = ActionRequest(
+                action_type=request,
+                target=context.service,
+                environment=context.environment,
+                approved=context.approved,
+            )
         context = context or PolicyContext(environment=request.environment)
+        if context.mode == "night_autopilot":
+            cfg = context.autopilot
+            context = PolicyContext(
+                capabilities=context.capabilities,
+                service=context.service,
+                environment=context.environment,
+                severity=context.severity,
+                night_autopilot=True,
+                autopilot_attempts=context.autopilot_attempts,
+                autopilot=NightAutopilotConfig(
+                    quiet_hours_start=cfg.quiet_hours_start,
+                    quiet_hours_end=cfg.quiet_hours_end,
+                    timezone=cfg.timezone,
+                    max_automatic_risk=RiskLevel(str(context.max_automatic_risk or cfg.max_automatic_risk)),
+                    max_attempts_per_incident=cfg.max_attempts_per_incident,
+                    allowed_services=context.allowed_services or cfg.allowed_services,
+                    allowed_environments=context.allowed_environments or cfg.allowed_environments,
+                    allowed_actions=context.allowlisted_actions or cfg.allowed_actions,
+                    wake_up_conditions=cfg.wake_up_conditions,
+                ),
+                approved=context.approved,
+                mode=context.mode,
+            )
         action = self.risk_engine.get_action(request.action_type)
         if action is None:
             return PolicyEvaluation(
@@ -93,7 +130,12 @@ class PolicyEngine:
                 post_checks=action.post_checks,
             )
 
-        missing = tuple(sorted(set(action.required_capabilities) - set(context.capabilities)))
+        effective_capabilities = context.capabilities or default_capabilities((
+            "mock:tickets:write",
+            "mock:pull_requests:write",
+            "mock:workers:restart",
+        ))
+        missing = tuple(sorted(set(action.required_capabilities) - set(effective_capabilities)))
         if missing:
             return PolicyEvaluation(
                 decision=PolicyDecision.ESCALATE,

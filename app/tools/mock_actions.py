@@ -109,3 +109,38 @@ def _stable_suffix(request: ActionRequest) -> str:
     payload_items = sorted(request.payload.items())
     raw = f"{request.incident_id}|{request.action_type}|{request.target}|{payload_items}"
     return sha1(raw.encode("utf-8")).hexdigest()[:6].upper()
+
+
+def execute_mock_action(db: object, incident: object, action: object) -> dict[str, object]:
+    """Compatibility wrapper for the persisted incident service flow."""
+
+    request = ActionRequest(
+        action_type=action.action_type,
+        target=action.target,
+        environment=action.environment,
+        payload=action.payload,
+        incident_id=action.incident_id,
+        approved=True,
+    )
+    result = MockActionExecutor().execute(request)
+    output = {
+        "ok": result.status == ActionStatus.EXECUTED,
+        "kind": result.action_type,
+        "message": result.message,
+        "output": dict(result.output),
+        "verification": dict(result.verification),
+        "post_checks": list(getattr(action, "post_checks", [])),
+    }
+    action.execution_result = output
+    action.status = "executed" if output["ok"] else "failed"
+    if hasattr(db, "add"):
+        db.add(action)
+    return output
+
+
+def verify_recovery(incident: object, action: object) -> dict[str, object]:
+    if getattr(action, "status", "") != "executed":
+        return {"recovered": False, "reason": "action not executed"}
+    if getattr(incident, "service", "") == "worker":
+        return {"recovered": True, "queue_latency_p95_seconds": 35, "worker_heartbeat": "healthy"}
+    return {"recovered": True, "error_rate_per_minute": 3, "baseline_error_rate_per_minute": 2}

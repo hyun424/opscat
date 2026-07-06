@@ -78,6 +78,12 @@ class PolicyEvaluation:
     def executable_now(self) -> bool:
         return self.decision == PolicyDecision.ALLOW and not self.requires_approval
 
+    @property
+    def reasons(self) -> list[str]:
+        """Compatibility list for persisted incident flow policy annotations."""
+
+        return [self.reason]
+
 
 @dataclass
 class ApprovalRecord:

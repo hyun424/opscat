@@ -64,7 +64,7 @@ def analyze_incident(incident: Incident, evidence: list[Evidence]) -> AgentAnaly
         summary=f"{incident.severity.upper()} {incident.service} incident in {incident.environment}: deterministic mock analysis found {hypotheses[0].title.lower()}.",
         affected_service=incident.service,
         environment=incident.environment,
-        severity=incident.severity,  # type: ignore[arg-type]
+        severity=incident.severity,
         hypotheses=hypotheses,
         recommended_action=action,
         verification_plan=["Execute mock.verify_recovery", "Confirm error rate decreases", "Write final report"],

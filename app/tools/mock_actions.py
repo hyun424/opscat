@@ -7,6 +7,7 @@ shell execution. It returns deterministic artifacts for demos and tests.
 from __future__ import annotations
 
 from hashlib import sha1
+from typing import Any
 
 from app.models.action import ActionExecutionResult, ActionRequest, ActionStatus
 
@@ -111,7 +112,7 @@ def _stable_suffix(request: ActionRequest) -> str:
     return sha1(raw.encode("utf-8")).hexdigest()[:6].upper()
 
 
-def execute_mock_action(db: object, incident: object, action: object) -> dict[str, object]:
+def execute_mock_action(db: Any, incident: Any, action: Any) -> dict[str, object]:
     """Compatibility wrapper for the persisted incident service flow."""
 
     request = ActionRequest(

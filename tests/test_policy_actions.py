@@ -6,7 +6,7 @@ from app.services.policy_engine import PolicyContext, default_capabilities
 
 
 class PolicyActionTests(TestCase):
-    def test_read_only_context_action_is_allowed(self):
+    def test_read_only_context_action_is_allowed(self) -> None:
         svc = ActionService()
         record = svc.propose(
             ActionRequest(action_type="mock.get_error_context", target="payment-api"),
@@ -17,7 +17,7 @@ class PolicyActionTests(TestCase):
         self.assertEqual(record.evaluation.risk_level, RiskLevel.READ_ONLY)
         self.assertFalse(record.evaluation.requires_approval)
 
-    def test_ticket_creation_requires_approval_then_executes_mock(self):
+    def test_ticket_creation_requires_approval_then_executes_mock(self) -> None:
         svc = ActionService()
         context = PolicyContext(
             capabilities=default_capabilities({"mock:tickets:write"}),
@@ -45,7 +45,7 @@ class PolicyActionTests(TestCase):
         self.assertTrue(result.output["ticket_id"].startswith("OPSCAT-"))
         self.assertTrue(result.verification["ticket_id_recorded"])
 
-    def test_production_and_shell_actions_are_denied(self):
+    def test_production_and_shell_actions_are_denied(self) -> None:
         svc = ActionService()
         context = PolicyContext(
             capabilities=default_capabilities({"mock:pull_requests:write"}),
@@ -83,7 +83,7 @@ class PolicyActionTests(TestCase):
         self.assertEqual(shell.evaluation.decision, PolicyDecision.DENY)
         self.assertEqual(shell.evaluation.risk_level, RiskLevel.PROHIBITED)
 
-    def test_night_autopilot_allows_only_low_risk_allowlisted_actions(self):
+    def test_night_autopilot_allows_only_low_risk_allowlisted_actions(self) -> None:
         svc = ActionService()
         context = PolicyContext(
             capabilities=default_capabilities({"mock:tickets:write"}),

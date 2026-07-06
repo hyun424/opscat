@@ -14,11 +14,7 @@ router = APIRouter(prefix="/incidents", tags=["incidents"])
 def list_incidents(db: Session = Depends(get_db)) -> list[Incident]:
     return (
         db.query(Incident)
-        .options(
-            selectinload(Incident.evidence),
-            selectinload(Incident.actions),
-            selectinload(Incident.timeline),
-        )
+        .options(selectinload(Incident.evidence), selectinload(Incident.actions), selectinload(Incident.timeline))
         .order_by(Incident.created_at.desc())
         .all()
     )

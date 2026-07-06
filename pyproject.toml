@@ -25,7 +25,7 @@ pythonpath = ["."]
 addopts = "-q"
 
 [tool.ruff]
-line-length = 200
+line-length = 120
 target-version = "py312"
 
 [tool.ruff.lint]

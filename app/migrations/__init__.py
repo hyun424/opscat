@@ -1,0 +1,1 @@
+"""OpsCat lightweight migration framework."""

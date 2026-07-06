@@ -181,6 +181,13 @@ Run the full local release gate before claiming a build is ready:
 bash scripts/verify.sh
 ```
 
+Run local database migrations explicitly when preparing a database outside app startup:
+
+```bash
+python scripts/migrate.py upgrade
+python scripts/migrate.py status
+```
+
 The gate runs compileall, Ruff, mypy, pytest, a stdlib coverage gate, local demo smoke, Docker Compose config validation, tracked generated artifact scan, and whitespace diff checks.
 
 Current worker-5 evidence is in [`docs/integration-verification.md`](docs/integration-verification.md). Do not claim the full demo is verified until all core checks are green.

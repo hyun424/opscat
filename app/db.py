@@ -25,9 +25,9 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expi
 
 
 def init_db() -> None:
-    from app.models import action, evidence, incident, policy, timeline  # noqa: F401
+    from app.migrations.runner import run_migrations
 
-    Base.metadata.create_all(bind=engine)
+    run_migrations(engine)
 
 
 def get_db() -> Generator[Session]:

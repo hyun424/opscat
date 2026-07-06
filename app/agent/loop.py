@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.agent.mock_agent import analyze_incident
 from app.models import ActionProposal, Incident
+from app.models.action import ActionRequest
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.state_machine import transition_incident
 from app.services.timeline_service import add_timeline_event
@@ -31,7 +32,13 @@ class AgentLoop:
 
         recommended = analysis.recommended_action
         policy = self.policy_engine.evaluate(
-            recommended.action_type,
+            ActionRequest(
+                action_type=recommended.action_type,
+                target=recommended.target,
+                environment=incident.environment,
+                payload=recommended.payload,
+                incident_id=incident.id,
+            ),
             PolicyContext(environment=incident.environment, service=incident.service),
         )
         action = ActionProposal(

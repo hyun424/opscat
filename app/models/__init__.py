@@ -9,6 +9,7 @@ from importlib import import_module
 from typing import Any
 
 _EXPORTS = {
+    "ActionProposal": ("app.models.action", "ActionProposal"),
     "ActionExecutionResult": ("app.models.action", "ActionExecutionResult"),
     "ActionMetadata": ("app.models.action", "ActionMetadata"),
     "ActionRequest": ("app.models.action", "ActionRequest"),

@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
 
 from app.models import ActionProposal
+from app.models.action import ActionRequest
 from app.schemas.incidents import MockAlertRequest, NightAutopilotConfig, NightAutopilotResult
 from app.services.incident_service import create_mock_incident, get_incident
+from app.services.policy_engine import NightAutopilotConfig as PolicyNightAutopilotConfig
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.report_service import render_incident_report
 from app.services.state_machine import transition_incident
@@ -23,14 +25,23 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
     )
     db.add(transition_incident(incident, "investigating", actor="night-autopilot", reason="quiet-hours simulation"))
     policy = PolicyEngine().evaluate(
-        "mock.execute_restart_worker",
+        ActionRequest(
+            action_type="mock.execute_restart_worker",
+            target="worker:staging",
+            environment=incident.environment,
+            incident_id=incident.id,
+        ),
         PolicyContext(
-            mode="night_autopilot",
             service=incident.service,
             environment=incident.environment,
-            allowed_services=tuple(config.allowed_services),
-            allowed_environments=tuple(config.allowed_environments),
-            max_automatic_risk=config.max_automatic_risk,
+            night_autopilot=True,
+            autopilot=PolicyNightAutopilotConfig(
+                max_automatic_risk=config.max_automatic_risk,
+                max_attempts_per_incident=config.max_attempts_per_incident,
+                allowed_services=tuple(config.allowed_services),
+                allowed_environments=tuple(config.allowed_environments),
+                allowed_actions=("mock.execute_restart_worker",),
+            ),
         ),
     )
     actions_taken: list[dict[str, object]] = []

@@ -31,19 +31,57 @@ class NightAutopilotConfig:
 
 @dataclass(frozen=True)
 class PolicyContext:
-    capabilities: frozenset[str] = field(default_factory=frozenset)
+    capabilities: frozenset[str] = field(
+        default_factory=lambda: frozenset(
+            {
+                "mock:context:read",
+                "mock:deploys:read",
+                "mock:runbooks:read",
+                "mock:incidents:read",
+                "mock:verification:read",
+                "mock:tickets:write",
+                "mock:pull_requests:write",
+                "mock:workers:restart",
+                "timeline:write",
+                "report:write",
+            }
+        )
+    )
     service: str = "demo-service"
     environment: str = "local"
     severity: str = "medium"
     night_autopilot: bool = False
     autopilot_attempts: int = 0
     autopilot: NightAutopilotConfig = field(default_factory=NightAutopilotConfig)
-    approved: bool = False
-    mode: str = "smart_approval"
+    mode: str = "manual"
     allowed_services: tuple[str, ...] | None = None
     allowed_environments: tuple[str, ...] | None = None
-    max_automatic_risk: str | RiskLevel | None = None
-    allowlisted_actions: tuple[str, ...] | None = None
+    max_automatic_risk: RiskLevel | str | None = None
+
+    def autopilot_enabled(self) -> bool:
+        return self.night_autopilot or self.mode == "night_autopilot"
+
+    def resolved_autopilot(self) -> NightAutopilotConfig:
+        if (
+            self.allowed_services is None
+            and self.allowed_environments is None
+            and self.max_automatic_risk is None
+        ):
+            return self.autopilot
+        risk = self.max_automatic_risk or self.autopilot.max_automatic_risk
+        if isinstance(risk, str):
+            risk = RiskLevel(risk)
+        return NightAutopilotConfig(
+            quiet_hours_start=self.autopilot.quiet_hours_start,
+            quiet_hours_end=self.autopilot.quiet_hours_end,
+            timezone=self.autopilot.timezone,
+            max_automatic_risk=risk,
+            max_attempts_per_incident=self.autopilot.max_attempts_per_incident,
+            allowed_services=self.allowed_services or self.autopilot.allowed_services,
+            allowed_environments=self.allowed_environments or self.autopilot.allowed_environments,
+            allowed_actions=self.autopilot.allowed_actions,
+            wake_up_conditions=self.autopilot.wake_up_conditions,
+        )
 
 
 class PolicyEngine:
@@ -56,10 +94,9 @@ class PolicyEngine:
         if isinstance(request, str):
             context = context or PolicyContext()
             request = ActionRequest(
-                action_type=request,
+                action_type=DANGEROUS_ACTION_ALIASES.get(request, request),
                 target=context.service,
                 environment=context.environment,
-                approved=context.approved,
             )
         context = context or PolicyContext(environment=request.environment)
         if context.mode == "night_autopilot":
@@ -148,7 +185,7 @@ class PolicyEngine:
                 post_checks=action.post_checks,
             )
 
-        if context.night_autopilot:
+        if context.autopilot_enabled():
             autopilot_decision = self._evaluate_night_autopilot(request, context, risk_level)
             if autopilot_decision:
                 return PolicyEvaluation(
@@ -198,7 +235,7 @@ class PolicyEngine:
         context: PolicyContext,
         risk_level: RiskLevel,
     ) -> PolicyDecision | None:
-        cfg = context.autopilot
+        cfg = context.resolved_autopilot()
         if context.severity == "critical" or request.environment == "production":
             return PolicyDecision.ESCALATE
         if context.autopilot_attempts >= cfg.max_attempts_per_incident:
@@ -245,6 +282,8 @@ DANGEROUS_ACTION_ALIASES = {
     "production_restart": "production.restart_service",
     "database_mutation": "database.mutate",
     "arbitrary_shell": "shell.execute",
+    "prohibited.arbitrary_shell": "shell.execute",
+    "prohibited.arbitrary_shell": "shell.execute",
     "cloud_delete": "cloud.delete_resource",
     "secret_access": "secret.read",
 }

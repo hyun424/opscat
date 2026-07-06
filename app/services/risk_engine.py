@@ -174,4 +174,7 @@ class RiskEngine:
             return RiskLevel.HIGH
         if action.prohibited_reason:
             return RiskLevel.PROHIBITED
+        payload = payload or {}
+        if payload.get("environment") == "production" and action.is_mutation:
+            return RiskLevel.PROHIBITED
         return action.base_risk

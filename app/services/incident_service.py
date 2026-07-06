@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.agent.loop import AgentLoop
 from app.models import ActionProposal, ApprovalDecision, Incident
+from app.models.action import ActionRequest
 from app.schemas.incidents import MockAlertRequest
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.report_service import save_incident_report
@@ -90,12 +91,16 @@ def decide_action(
         return action, get_incident(db, incident.id), None
 
     policy = PolicyEngine().evaluate(
-        action.action_type,
-        PolicyContext(
+        ActionRequest(
+            action_type=action.action_type,
+            target=action.target,
             environment=incident.environment,
-            service=incident.service,
+            payload=action.payload,
+            incident_id=incident.id,
             approved=True,
+            approval_id=approval.id,
         ),
+        PolicyContext(environment=incident.environment, service=incident.service),
     )
     if policy.decision != "ALLOW":
         action.status = "denied"

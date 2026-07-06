@@ -99,11 +99,7 @@ class AgentLoop:
             content=f"Policy decision for {action.action_type}: {policy.decision}",
             metadata={"action_id": action.id, "reasons": policy.reasons, "escalation_triggers": triggers},
         )
-        if incident.status == "escalated":
-            pass
-        elif policy.decision == "ALLOW" and not action.requires_approval:
-            db.add(transition_incident(incident, "executing", actor="policy", reason="action auto allowed"))
-        elif policy.decision == "DENY":
+        if policy.decision == "DENY":
             action.status = "denied"
             if incident.status != "escalated":
                 db.add(transition_incident(incident, "escalated", actor="policy", reason="action denied"))
@@ -111,6 +107,10 @@ class AgentLoop:
             action.status = "escalated"
             if incident.status != "escalated":
                 db.add(transition_incident(incident, "escalated", actor="policy", reason="policy escalation"))
+        elif incident.status == "escalated":
+            pass
+        elif policy.decision == "ALLOW" and not action.requires_approval:
+            db.add(transition_incident(incident, "executing", actor="policy", reason="action auto allowed"))
         else:
             db.add(
                 transition_incident(

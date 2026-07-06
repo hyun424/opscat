@@ -74,14 +74,8 @@ def test_policy_denial_escalates_with_blocked_action_payload(db_session: Session
     assert action.escalation_payload is not None
     assert "policy_denied_action" in action.escalation_payload["triggers"]
     assert action.escalation_payload["actions_blocked"][0]["policy_decision"] == "DENY"
-    assert (
-        db_session.query(Incident)
-        .filter(Incident.id == incident.id)
-        .one()
-        .timeline[-1]
-        .event_type
-        in {"state_transition", "human_escalation_required"}
-    )
+    recorded = db_session.query(Incident).filter(Incident.id == incident.id).one()
+    assert any(event.event_type == "human_escalation_required" for event in recorded.timeline)
 
 
 def test_failed_post_check_escalates_instead_of_silent_success(

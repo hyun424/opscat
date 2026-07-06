@@ -175,19 +175,17 @@ curl -s -X POST http://localhost:8000/night-autopilot/simulate \
 
 ## Verification commands
 
-Run these before claiming an integrated MVP build is complete:
+Run the full local release gate before claiming a build is ready:
 
 ```bash
-ruff check app tests scripts
-mypy app tests scripts
-python -m pytest
-python scripts/demo.py
-python -m compileall app tests scripts
-docker compose config
+bash scripts/verify.sh
 ```
+
+The gate runs compileall, Ruff, mypy, pytest, local demo smoke, Docker Compose config validation, tracked generated artifact scan, and whitespace diff checks.
 
 Current worker-5 evidence is in [`docs/integration-verification.md`](docs/integration-verification.md). Do not claim the full demo is verified until all core checks are green.
 
 ## Documentation
+
 - [AI Development Team](docs/operations/ai-development-team.md)
 - [Production AI Team Plan](docs/operations/production-ai-team-plan.md)

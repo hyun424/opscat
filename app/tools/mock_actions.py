@@ -112,36 +112,55 @@ def _stable_suffix(request: ActionRequest) -> str:
     return sha1(raw.encode("utf-8")).hexdigest()[:6].upper()
 
 
-def execute_mock_action(db: Any, incident: Any, action: Any) -> dict[str, object]:
-    """Compatibility wrapper for the persisted incident service flow."""
+def execute_mock_action(db: object, incident: object, action: object) -> dict[str, object]:
+    """Execute a persisted ActionProposal through the safe mock executor.
+
+    The DB scaffold stores action proposals as SQLAlchemy objects. This adapter
+    converts them to the dependency-light ActionRequest contract, persists the
+    deterministic mock result back onto the proposal, and intentionally performs
+    no network, shell, or production side effect.
+    """
 
     request = ActionRequest(
-        action_type=action.action_type,
-        target=action.target,
-        environment=action.environment,
-        payload=action.payload,
-        incident_id=action.incident_id,
+        action_type=str(getattr(action, "action_type")),
+        target=str(getattr(action, "target")),
+        environment=str(getattr(action, "environment", getattr(incident, "environment", "local"))),
+        payload=getattr(action, "payload", {}) or {},
+        incident_id=str(getattr(incident, "id")),
         approved=True,
     )
     result = MockActionExecutor().execute(request)
-    output = {
-        "ok": result.status == ActionStatus.EXECUTED,
-        "kind": result.action_type,
+    ok = result.status == ActionStatus.EXECUTED
+    payload: dict[str, object] = {
+        "ok": ok,
+        "status": result.status.value,
         "message": result.message,
         "output": dict(result.output),
         "verification": dict(result.verification),
-        "post_checks": list(getattr(action, "post_checks", [])),
     }
-    action.execution_result = output
-    action.status = "executed" if output["ok"] else "failed"
-    if hasattr(db, "add"):
-        db.add(action)
-    return output
+    setattr(action, "execution_result", payload)
+    setattr(action, "status", "executed" if ok else "failed")
+    add = getattr(db, "add", None)
+    if callable(add):
+        add(action)
+    return payload
 
 
 def verify_recovery(incident: object, action: object) -> dict[str, object]:
-    if getattr(action, "status", "") != "executed":
-        return {"recovered": False, "reason": "action not executed"}
-    if getattr(incident, "service", "") == "worker":
-        return {"recovered": True, "queue_latency_p95_seconds": 35, "worker_heartbeat": "healthy"}
-    return {"recovered": True, "error_rate_per_minute": 3, "baseline_error_rate_per_minute": 2}
+    """Return deterministic mock recovery evidence for an executed action."""
+
+    request = ActionRequest(
+        action_type="mock.verify_recovery",
+        target=str(getattr(action, "target", getattr(incident, "service", "unknown"))),
+        environment=str(getattr(incident, "environment", "local")),
+        incident_id=str(getattr(incident, "id")),
+        payload={"action_type": getattr(action, "action_type", "unknown")},
+    )
+    result = MockActionExecutor().execute(request)
+    recovered = bool(result.output.get("recovered", False))
+    return {
+        "recovered": recovered,
+        "message": result.message,
+        "output": dict(result.output),
+        "verification": dict(result.verification),
+    }

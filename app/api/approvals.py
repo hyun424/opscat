@@ -30,27 +30,45 @@ service = ActionService()
 router = APIRouter(prefix="/approvals", tags=["approvals"])
 
 
-def create_router(action_service: ActionService | None = None):
-    if APIRouter is None:  # pragma: no cover
-        raise RuntimeError("FastAPI is not installed; install app dependencies to enable approval routes.")
-    svc = action_service or service
-    router = APIRouter(prefix="/approvals", tags=["approvals"])
+@router.post("")
+def propose_action(payload: ApprovalProposalPayload) -> dict[str, Any]:
+    request = ActionRequest(
+        action_type=payload.action_type,
+        target=payload.target,
+        environment=payload.environment,
+        incident_id=payload.incident_id,
+        payload=payload.payload,
+    )
+    context = PolicyContext(
+        capabilities=default_capabilities(payload.capabilities),
+        environment=payload.environment,
+    )
+    record = service.propose(request, context)
+    return service.serialize_record(record)
 
-    @router.post("")
-    def propose_action(payload: ApprovalProposalPayload) -> dict[str, Any]:
-        request = ActionRequest(
-            action_type=payload.action_type,
-            target=payload.target,
-            environment=payload.environment,
-            incident_id=payload.incident_id,
-            payload=payload.payload,
+
+@router.post("/{action_id}", response_model=ApprovalResponse)
+def decide_persisted_action(
+    action_id: str,
+    payload: ApprovalRequest,
+    db: Session = Depends(get_db),
+) -> ApprovalResponse:
+    try:
+        action, incident, report = decide_action(
+            db,
+            action_id,
+            decision=payload.decision,
+            actor=payload.actor,
+            reason=payload.reason,
         )
-        context = PolicyContext(
-            capabilities=default_capabilities(payload.capabilities),
-            environment=payload.environment,
-        )
-        record = svc.propose(request, context)
-        return svc.serialize_record(record)
+    except Exception as exc:  # pragma: no cover - FastAPI boundary
+        raise HTTPException(status_code=404, detail="action not found or invalid") from exc
+    return ApprovalResponse(
+        action=ActionRead.model_validate(action),
+        incident=IncidentRead.model_validate(incident),
+        report=report,
+    )
+
 
 @router.post("/{approval_id}/approve")
 def approve_action(approval_id: str, payload: ApprovalDecisionPayload) -> dict[str, Any]:

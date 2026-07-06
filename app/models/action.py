@@ -9,7 +9,7 @@ from enum import StrEnum
 from typing import Any
 from uuid import uuid4
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, String, Text
+from sqlalchemy import JSON, Boolean, DateTime, Float, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -37,6 +37,7 @@ class ActionStatus(StrEnum):
     EXECUTED = "executed"
     FAILED = "failed"
     DENIED = "denied"
+    ESCALATED = "escalated"
 
 
 @dataclass(frozen=True)
@@ -144,6 +145,11 @@ class ActionProposal(Base):
     evidence_ids: Mapped[list[str]] = mapped_column(JSON, default=list)
     policy_decision: Mapped[str] = mapped_column(String, default="REQUIRE_APPROVAL")
     policy_reasons: Mapped[list[str]] = mapped_column(JSON, default=list)
+    confidence: Mapped[float | None] = mapped_column(Float)
+    escalation_required: Mapped[bool] = mapped_column(Boolean, default=False)
+    escalation_decision: Mapped[str | None] = mapped_column(String)
+    escalation_reason: Mapped[str | None] = mapped_column(Text)
+    escalation_payload: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     status: Mapped[str] = mapped_column(String, default="proposed", index=True)
     execution_result: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))

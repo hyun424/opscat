@@ -3,6 +3,12 @@ from sqlalchemy.orm import Session
 from app.agent.mock_agent import analyze_incident
 from app.models import ActionProposal, Incident
 from app.models.action import ActionRequest
+from app.services.escalation import (
+    build_escalation_payload,
+    decision_escalation_triggers,
+    hard_escalation_required,
+    record_human_escalation,
+)
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.state_machine import transition_incident
 from app.services.timeline_service import add_timeline_event
@@ -54,27 +60,52 @@ class AgentLoop:
             post_checks=recommended.post_checks,
             evidence_ids=recommended.evidence_ids,
             policy_decision=policy.decision,
-            policy_reasons=[policy.reason],
+            policy_reasons=policy.reasons,
+            confidence=incident.confidence,
             status="proposed",
         )
         db.add(action)
         db.flush()
+        triggers = decision_escalation_triggers(
+            incident,
+            action,
+            policy,
+            evidence_count=len(evidence),
+            confidence=incident.confidence,
+        )
+        if triggers:
+            payload = build_escalation_payload(
+                incident,
+                trigger=triggers[0],
+                triggers=triggers,
+                action=action,
+                policy=policy,
+            )
+            record_human_escalation(
+                db,
+                incident,
+                payload,
+                action=action,
+                transition_to_escalated=hard_escalation_required(triggers),
+            )
         add_timeline_event(
             db,
             incident.id,
             actor="policy",
             event_type="policy_decision",
             content=f"Policy decision for {action.action_type}: {policy.decision}",
-            metadata={"action_id": action.id, "reasons": [policy.reason]},
+            metadata={"action_id": action.id, "reasons": policy.reasons, "escalation_triggers": triggers},
         )
         if policy.decision == "ALLOW" and not action.requires_approval:
             db.add(transition_incident(incident, "executing", actor="policy", reason="action auto allowed"))
         elif policy.decision == "DENY":
             action.status = "denied"
-            db.add(transition_incident(incident, "escalated", actor="policy", reason="action denied"))
+            if incident.status != "escalated":
+                db.add(transition_incident(incident, "escalated", actor="policy", reason="action denied"))
         elif policy.decision == "ESCALATE":
             action.status = "escalated"
-            db.add(transition_incident(incident, "escalated", actor="policy", reason="policy escalation"))
+            if incident.status != "escalated":
+                db.add(transition_incident(incident, "escalated", actor="policy", reason="policy escalation"))
         else:
             db.add(
                 transition_incident(

@@ -56,6 +56,11 @@ class ActionRead(BaseModel):
     evidence_ids: list[str]
     policy_decision: str
     policy_reasons: list[str]
+    confidence: float | None = None
+    escalation_required: bool = False
+    escalation_decision: str | None = None
+    escalation_reason: str | None = None
+    escalation_payload: dict[str, Any] | None = None
     status: str
     execution_result: dict[str, Any] | None
 

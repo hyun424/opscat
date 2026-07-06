@@ -9,7 +9,7 @@ ALLOWED_TRANSITIONS: dict[str, set[str]] = {
     "needs_more_context": {"investigating", "escalated", "failed"},
     "action_proposed": {"waiting_approval", "executing", "escalated", "failed"},
     "waiting_approval": {"executing", "escalated", "failed"},
-    "executing": {"verifying", "failed"},
+    "executing": {"verifying", "escalated", "failed"},
     "verifying": {"resolved", "escalated", "failed"},
     "resolved": set(),
     "escalated": {"investigating", "failed"},

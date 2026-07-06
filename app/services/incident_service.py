@@ -4,6 +4,7 @@ from app.agent.loop import AgentLoop
 from app.models import ActionProposal, ApprovalDecision, Incident
 from app.models.action import ActionRequest
 from app.schemas.incidents import MockAlertRequest
+from app.services.escalation import build_escalation_payload, record_human_escalation
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.report_service import save_incident_report
 from app.services.state_machine import transition_incident
@@ -105,8 +106,16 @@ def decide_action(
     if policy.decision != "ALLOW":
         action.status = "denied"
         action.policy_decision = policy.decision
-        action.policy_reasons = [policy.reason]
-        db.add(transition_incident(incident, "failed", actor="policy", reason="approval could not override policy"))
+        action.policy_reasons = policy.reasons
+        payload = build_escalation_payload(
+            incident,
+            trigger="policy_denied_action",
+            triggers=["policy_denied_action"],
+            action=action,
+            policy=policy,
+            recommended_next_action="Do not execute the denied action; choose a safer runbook.",
+        )
+        record_human_escalation(db, incident, payload, action=action, transition_to_escalated=True)
         db.commit()
         return action, get_incident(db, incident.id), None
 
@@ -124,6 +133,18 @@ def decide_action(
         content=f"Executed {action.action_type}: ok={result['ok']}",
         metadata=result,
     )
+    if not result["ok"]:
+        payload = build_escalation_payload(
+            incident,
+            trigger="execution_failed",
+            triggers=["execution_failed"],
+            action=action,
+            verification={"execution": result},
+            recommended_next_action="Stop automatic execution and inspect the failed mock action result.",
+        )
+        record_human_escalation(db, incident, payload, action=action, transition_to_escalated=True)
+        db.commit()
+        return action, get_incident(db, incident.id), None
     db.add(transition_incident(incident, "verifying", actor="verifier", reason="post-check started"))
     verification = verify_recovery(incident, action)
     add_timeline_event(
@@ -137,7 +158,14 @@ def decide_action(
     if verification["recovered"]:
         db.add(transition_incident(incident, "resolved", actor="verifier", reason="mock recovery passed"))
     else:
-        db.add(transition_incident(incident, "escalated", actor="verifier", reason="mock recovery failed"))
+        payload = build_escalation_payload(
+            incident,
+            trigger="post_check_failed",
+            triggers=["post_check_failed"],
+            action=action,
+            verification=verification,
+        )
+        record_human_escalation(db, incident, payload, action=action, transition_to_escalated=True)
     db.flush()
     report = save_incident_report(db, incident)
     add_timeline_event(db, incident.id, actor="reporter", event_type="report_generated", content=report)

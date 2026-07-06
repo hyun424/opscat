@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.agent.mock_agent import analyze_incident
 from app.models import ActionProposal, Incident
 from app.models.action import ActionRequest
+from app.services.audit_service import record_audit_event
 from app.services.escalation import (
     build_escalation_payload,
     decision_escalation_triggers,
@@ -77,6 +78,17 @@ class AgentLoop:
         )
         db.add(action)
         db.flush()
+        record_audit_event(
+            db,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
+            actor="agent",
+            event_type="action_proposed",
+            resource_type="action",
+            resource_id=action.id,
+            action_id=action.id,
+            metadata={"action_type": action.action_type, "risk_level": action.risk_level, "evidence_ids": action.evidence_ids},
+        )
         triggers = decision_escalation_triggers(
             incident,
             action,
@@ -102,6 +114,7 @@ class AgentLoop:
             )
             if hard_escalation:
                 action.status = "escalated"
+        policy_metadata = {"action_id": action.id, "decision": policy.decision, "reasons": policy.reasons, "escalation_triggers": triggers}
         add_timeline_event(
             db,
             incident.id,
@@ -110,7 +123,18 @@ class AgentLoop:
             actor="policy",
             event_type="policy_decision",
             content=f"Policy decision for {action.action_type}: {policy.decision}",
-            metadata={"action_id": action.id, "reasons": policy.reasons, "escalation_triggers": triggers},
+            metadata=policy_metadata,
+        )
+        record_audit_event(
+            db,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
+            actor="policy",
+            event_type="policy_decision",
+            resource_type="action",
+            resource_id=action.id,
+            action_id=action.id,
+            metadata=policy_metadata,
         )
         if policy.decision == "DENY":
             action.status = "denied"

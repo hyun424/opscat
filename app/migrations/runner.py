@@ -22,6 +22,7 @@ from app.config import get_settings
 MIGRATION_MODULES = (
     "app.migrations.versions.0001_initial",
     "app.migrations.versions.0002_identity_memberships",
+    "app.migrations.versions.0003_audit_events",
 )
 
 metadata = MetaData()

@@ -10,6 +10,7 @@ from importlib import import_module
 from typing import Any
 
 _EXPORTS = {
+    "AuditEvent": ("app.models.audit", "AuditEvent"),
     "ActionProposal": ("app.models.action", "ActionProposal"),
     "ActionExecutionResult": ("app.models.action", "ActionExecutionResult"),
     "ActionMetadata": ("app.models.action", "ActionMetadata"),
@@ -36,6 +37,7 @@ def _load_persistence_models() -> None:
     # exports for lightweight policy modules.
     for module_name in (
         "app.models.action",
+        "app.models.audit",
         "app.models.evidence",
         "app.models.incident",
         "app.models.policy",
@@ -48,7 +50,7 @@ def _load_persistence_models() -> None:
 def __getattr__(name: str) -> Any:
     if name not in _EXPORTS:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-    if name in {"ActionProposal", "ApprovalDecision", "Evidence", "Incident", "TimelineEvent", "User", "WorkspaceMembership"}:
+    if name in {"ActionProposal", "ApprovalDecision", "AuditEvent", "Evidence", "Incident", "TimelineEvent", "User", "WorkspaceMembership"}:
         _load_persistence_models()
     module_name, attr_name = _EXPORTS[name]
     value = getattr(import_module(module_name), attr_name)

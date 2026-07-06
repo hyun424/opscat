@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.models import ActionProposal, Incident
 from app.models.action import PolicyDecision, PolicyEvaluation
+from app.services.audit_service import record_audit_event
 from app.services.state_machine import InvalidStateTransition, transition_incident
 from app.services.timeline_service import add_timeline_event
 
@@ -183,6 +184,17 @@ def record_human_escalation(
         actor="escalation",
         event_type="human_escalation_required",
         content=f"Human wake-up required: {payload.get('trigger')}",
+        metadata=payload,
+    )
+    record_audit_event(
+        db,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        actor="escalation",
+        event_type="human_escalation_required",
+        resource_type="incident",
+        resource_id=incident.id,
+        action_id=action.id if action is not None else None,
         metadata=payload,
     )
     if transition_to_escalated and incident.status != "escalated":

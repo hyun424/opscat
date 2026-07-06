@@ -7,6 +7,7 @@ from app.agent.loop import AgentLoop
 from app.models import ActionProposal, ApprovalDecision, Incident
 from app.models.action import ActionRequest
 from app.schemas.incidents import MockAlertRequest
+from app.services.audit_service import record_audit_event
 from app.services.authorization import require_action_approval_authority, require_same_scope
 from app.services.escalation import build_escalation_payload, record_human_escalation
 from app.services.identity_service import Principal
@@ -60,6 +61,7 @@ def create_mock_incident(db: Session, payload: MockAlertRequest) -> Incident:
     )
     db.add(incident)
     db.flush()
+    alert_metadata = {"source": "mock", "fingerprint": payload.fingerprint, "alert_fingerprint": fingerprint}
     add_timeline_event(
         db,
         incident.id,
@@ -68,7 +70,17 @@ def create_mock_incident(db: Session, payload: MockAlertRequest) -> Incident:
         actor="integration",
         event_type="alert_received",
         content=incident.summary or "Mock alert received",
-        metadata={"source": "mock", "fingerprint": payload.fingerprint, "alert_fingerprint": fingerprint},
+        metadata=alert_metadata,
+    )
+    record_audit_event(
+        db,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        actor="integration",
+        event_type="alert_received",
+        resource_type="incident",
+        resource_id=incident.id,
+        metadata=alert_metadata,
     )
     db.add(transition_incident(incident, "queued", actor="system", reason="mock alert accepted"))
     return incident
@@ -144,6 +156,17 @@ def decide_action(
             event_type="approval_rejected",
             content="Action rejected",
         )
+        record_audit_event(
+            db,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
+            actor=actor,
+            event_type="approval_rejected",
+            resource_type="action",
+            resource_id=action.id,
+            action_id=action.id,
+            metadata={"reason": reason},
+        )
         db.commit()
         return action, get_incident(db, incident.id), None
 
@@ -194,6 +217,17 @@ def decide_action(
         event_type="approval_granted",
         content="Action approved",
     )
+    record_audit_event(
+        db,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        actor=actor,
+        event_type="approval_granted",
+        resource_type="action",
+        resource_id=action.id,
+        action_id=action.id,
+        metadata={"reason": reason, "approval_id": approval.id},
+    )
     db.add(transition_incident(incident, "executing", actor="executor", reason="approved action"))
     result = execute_mock_action(db, incident, action)
     add_timeline_event(
@@ -204,6 +238,17 @@ def decide_action(
         actor="executor",
         event_type="action_executed",
         content=f"Executed {action.action_type}: ok={result['ok']}",
+        metadata=result,
+    )
+    record_audit_event(
+        db,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        actor="executor",
+        event_type="action_executed",
+        resource_type="action",
+        resource_id=action.id,
+        action_id=action.id,
         metadata=result,
     )
     if not result["ok"]:
@@ -230,6 +275,17 @@ def decide_action(
         content=f"Recovery verified={verification['recovered']}",
         metadata=verification,
     )
+    record_audit_event(
+        db,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        actor="verifier",
+        event_type="recovery_verified",
+        resource_type="incident",
+        resource_id=incident.id,
+        action_id=action.id,
+        metadata=verification,
+    )
     if verification["recovered"]:
         db.add(transition_incident(incident, "resolved", actor="verifier", reason="mock recovery passed"))
     else:
@@ -251,6 +307,17 @@ def decide_action(
         actor="reporter",
         event_type="report_generated",
         content=report,
+    )
+    record_audit_event(
+        db,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        actor="reporter",
+        event_type="report_generated",
+        resource_type="incident",
+        resource_id=incident.id,
+        action_id=action.id,
+        metadata={"report": report},
     )
     db.commit()
     return action, get_incident(db, incident.id), report

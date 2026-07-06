@@ -81,11 +81,20 @@ def client(db_session: Session, app: Any) -> Generator[TestClient]:
 
 def route_fingerprint(app: Any) -> set[tuple[str, str]]:
     fingerprints: set[tuple[str, str]] = set()
-    for route in getattr(app, "routes", []):
+
+    def visit(route: Any) -> None:
+        original_router = getattr(route, "original_router", None)
+        if original_router is not None:
+            for nested in getattr(original_router, "routes", []):
+                visit(nested)
+            return
         path = getattr(route, "path", "")
         for method in getattr(route, "methods", set()) or set():
             if method in {"GET", "POST", "PUT", "PATCH", "DELETE"}:
                 fingerprints.add((method, path))
+
+    for route in getattr(app, "routes", []):
+        visit(route)
     return fingerprints
 
 

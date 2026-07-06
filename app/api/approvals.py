@@ -36,6 +36,21 @@ def create_router(action_service: ActionService | None = None):
     svc = action_service or service
     router = APIRouter(prefix="/approvals", tags=["approvals"])
 
+    @router.post("")
+    def propose_action(payload: ApprovalProposalPayload) -> dict[str, Any]:
+        request = ActionRequest(
+            action_type=payload.action_type,
+            target=payload.target,
+            environment=payload.environment,
+            incident_id=payload.incident_id,
+            payload=payload.payload,
+        )
+        context = PolicyContext(
+            capabilities=default_capabilities(payload.capabilities),
+            environment=payload.environment,
+        )
+        record = svc.propose(request, context)
+        return svc.serialize_record(record)
 
 @router.post("/{approval_id}/approve")
 def approve_action(approval_id: str, payload: ApprovalDecisionPayload) -> dict[str, Any]:

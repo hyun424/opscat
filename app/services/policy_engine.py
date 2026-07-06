@@ -94,29 +94,6 @@ class PolicyEngine:
                 environment=context.environment,
             )
         context = context or PolicyContext(environment=request.environment)
-        if context.mode == "night_autopilot":
-            cfg = context.autopilot
-            context = PolicyContext(
-                capabilities=context.capabilities,
-                service=context.service,
-                environment=context.environment,
-                severity=context.severity,
-                night_autopilot=True,
-                autopilot_attempts=context.autopilot_attempts,
-                autopilot=NightAutopilotConfig(
-                    quiet_hours_start=cfg.quiet_hours_start,
-                    quiet_hours_end=cfg.quiet_hours_end,
-                    timezone=cfg.timezone,
-                    max_automatic_risk=RiskLevel(str(context.max_automatic_risk or cfg.max_automatic_risk)),
-                    max_attempts_per_incident=cfg.max_attempts_per_incident,
-                    allowed_services=context.allowed_services or cfg.allowed_services,
-                    allowed_environments=context.allowed_environments or cfg.allowed_environments,
-                    allowed_actions=context.allowlisted_actions or cfg.allowed_actions,
-                    wake_up_conditions=cfg.wake_up_conditions,
-                ),
-                approved=context.approved,
-                mode=context.mode,
-            )
         action = self.risk_engine.get_action(request.action_type)
         if action is None:
             return PolicyEvaluation(

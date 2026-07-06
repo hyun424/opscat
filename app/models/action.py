@@ -80,9 +80,10 @@ class PolicyEvaluation:
 
     @property
     def reasons(self) -> list[str]:
-        """Compatibility list for persisted incident flow policy annotations."""
-
-        return [self.reason]
+        details = [self.reason]
+        if self.missing_capabilities:
+            details.append("missing capabilities: " + ", ".join(self.missing_capabilities))
+        return details
 
 
 @dataclass

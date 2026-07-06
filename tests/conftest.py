@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.db import Base, get_db
+from app.main import app
 
 REQUIRED_ENDPOINTS = {
     "health": ("GET", "/health"),
@@ -90,6 +91,4 @@ def route_fingerprint(app: Any) -> set[tuple[str, str]]:
 
 def assert_no_external_credentials_required() -> None:
     forbidden = ["SENTRY_AUTH_TOKEN", "GITHUB_TOKEN", "SLACK_BOT_TOKEN"]
-    assert not any(os.environ.get(name) for name in forbidden), (
-        "tests must run without real credentials"
-    )
+    assert not any(os.environ.get(name) for name in forbidden), "tests must run without real credentials"

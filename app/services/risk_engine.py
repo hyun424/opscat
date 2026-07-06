@@ -10,8 +10,7 @@ from app.models.action import ActionMetadata, RiskLevel
 PROHIBITED_ACTIONS: dict[str, str] = {
     "production.rollback": "Production rollback is disabled in the MVP.",
     "production.restart_service": (
-        "Production service restarts require a future hardened integration "
-        "and explicit approval flow."
+        "Production service restarts require a future hardened integration and explicit approval flow."
     ),
     "database.mutate": "Database mutations are prohibited by default.",
     "shell.execute": "Arbitrary shell execution is prohibited.",
@@ -119,7 +118,7 @@ DEFAULT_ACTION_REGISTRY: dict[str, ActionMetadata] = {
     "mock.execute_restart_worker": ActionMetadata(
         name="mock.execute_restart_worker",
         description="Simulate restarting a non-production worker.",
-        base_risk=RiskLevel.MEDIUM,
+        base_risk=RiskLevel.LOW,
         is_read_only=False,
         is_mutation=True,
         reversible=True,

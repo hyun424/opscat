@@ -13,11 +13,7 @@ from tests.conftest import (
 
 def test_required_mvp_routes_are_registered(app: Any) -> None:
     registered = route_fingerprint(app)
-    missing = {
-        name: route
-        for name, route in REQUIRED_ENDPOINTS.items()
-        if route not in registered
-    }
+    missing = {name: route for name, route in REQUIRED_ENDPOINTS.items() if route not in registered}
     assert not missing, f"Missing MVP API routes: {missing}"
 
 
@@ -58,9 +54,7 @@ def test_payment_bad_deploy_happy_path_contract(client: Any) -> None:
     evidence_ids = set()
     for hypothesis in analysis.get("hypotheses", []):
         evidence_ids.update(hypothesis.get("supporting_evidence_ids", []))
-    assert len(evidence_ids) >= 2, (
-        "top recommendation must be backed by at least two evidence items"
-    )
+    assert len(evidence_ids) >= 2, "top recommendation must be backed by at least two evidence items"
 
     recommended = analysis.get("recommended_action") or analysis.get("action")
     assert recommended, analysis

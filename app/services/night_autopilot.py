@@ -64,20 +64,39 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         )
         db.add(action)
         db.flush()
-        db.add(transition_incident(incident, "action_proposed", actor="night-autopilot", reason="allowlisted action selected"))
+        db.add(
+            transition_incident(
+                incident, "action_proposed", actor="night-autopilot", reason="allowlisted action selected"
+            )
+        )
         db.add(transition_incident(incident, "executing", actor="night-autopilot", reason="automatic action allowed"))
         result = execute_mock_action(db, incident, action)
         actions_taken.append({"action_id": action.id, "action_type": action.action_type, "result": result})
-        add_timeline_event(db, incident.id, actor="night-autopilot", event_type="action_executed", content="Automatic mock worker restart executed", metadata=result)
+        add_timeline_event(
+            db,
+            incident.id,
+            actor="night-autopilot",
+            event_type="action_executed",
+            content="Automatic mock worker restart executed",
+            metadata=result,
+        )
         db.add(transition_incident(incident, "verifying", actor="night-autopilot", reason="post-check"))
         verification = verify_recovery(incident, action)
         if verification["recovered"]:
-            db.add(transition_incident(incident, "resolved", actor="night-autopilot", reason="recovered during quiet hours"))
+            db.add(
+                transition_incident(
+                    incident, "resolved", actor="night-autopilot", reason="recovered during quiet hours"
+                )
+            )
         else:
             db.add(transition_incident(incident, "escalated", actor="night-autopilot", reason="verification failed"))
             escalations.append({"incident_id": incident.id, "reason": "verification failed"})
     else:
-        db.add(transition_incident(incident, "escalated", actor="night-autopilot", reason="policy did not allow automatic action"))
+        db.add(
+            transition_incident(
+                incident, "escalated", actor="night-autopilot", reason="policy did not allow automatic action"
+            )
+        )
         escalations.append({"incident_id": incident.id, "reason": "; ".join(policy.reasons)})
 
     db.commit()

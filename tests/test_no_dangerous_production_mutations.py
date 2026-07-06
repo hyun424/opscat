@@ -52,9 +52,7 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
                 result = evaluate_action_policy(request)
 
                 self.assertEqual(result.decision.value, PolicyDecision.DENY.value)
-                self.assertTrue(
-                    any(mutation_kind.value in reason for reason in result.reasons)
-                )
+                self.assertTrue(any(mutation_kind.value in reason for reason in result.reasons))
 
     def test_approval_gated_external_write_requires_approval(self) -> None:
         request = ActionRequest(
@@ -135,7 +133,6 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
         )
 
         self.assertEqual(result.decision.value, PolicyDecision.REQUIRE_APPROVAL.value)
-
 
     def test_production_environment_aliases_are_detected(self) -> None:
         self.assertTrue(is_production_environment("prod"))

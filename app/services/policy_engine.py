@@ -20,7 +20,11 @@ class NightAutopilotConfig:
     max_attempts_per_incident: int = 1
     allowed_services: tuple[str, ...] = ("payment-api", "checkout-worker", "demo-service")
     allowed_environments: tuple[str, ...] = ("staging", "local", "test")
-    allowed_actions: tuple[str, ...] = ("report.generate", "timeline.add_note")
+    allowed_actions: tuple[str, ...] = (
+        "report.generate",
+        "timeline.add_note",
+        "mock.execute_restart_worker",
+    )
     wake_up_conditions: tuple[str, ...] = (
         "critical severity",
         "production environment",
@@ -62,11 +66,7 @@ class PolicyContext:
         return self.night_autopilot or self.mode == "night_autopilot"
 
     def resolved_autopilot(self) -> NightAutopilotConfig:
-        if (
-            self.allowed_services is None
-            and self.allowed_environments is None
-            and self.max_automatic_risk is None
-        ):
+        if self.allowed_services is None and self.allowed_environments is None and self.max_automatic_risk is None:
             return self.autopilot
         risk = self.max_automatic_risk or self.autopilot.max_automatic_risk
         if isinstance(risk, str):
@@ -88,9 +88,7 @@ class PolicyEngine:
     def __init__(self, risk_engine: RiskEngine | None = None) -> None:
         self.risk_engine = risk_engine or RiskEngine()
 
-    def evaluate(
-        self, request: ActionRequest | str, context: PolicyContext | None = None
-    ) -> PolicyEvaluation:
+    def evaluate(self, request: ActionRequest | str, context: PolicyContext | None = None) -> PolicyEvaluation:
         if isinstance(request, str):
             context = context or PolicyContext()
             request = ActionRequest(
@@ -140,10 +138,7 @@ class PolicyEngine:
                 decision=PolicyDecision.DENY,
                 risk_level=RiskLevel.PROHIBITED,
                 requires_approval=False,
-                reason=(
-                    action.prohibited_reason
-                    or "Production or prohibited mutation is denied by default policy."
-                ),
+                reason=(action.prohibited_reason or "Production or prohibited mutation is denied by default policy."),
                 action=action,
                 preconditions=action.required_preconditions,
                 post_checks=action.post_checks,
@@ -158,10 +153,7 @@ class PolicyEngine:
                 decision=PolicyDecision.DENY,
                 risk_level=RiskLevel.PROHIBITED,
                 requires_approval=False,
-                reason=(
-                    f"Action {request.action_type} is not allowed in "
-                    f"environment {request.environment}."
-                ),
+                reason=(f"Action {request.action_type} is not allowed in environment {request.environment}."),
                 action=action,
                 preconditions=action.required_preconditions,
                 post_checks=action.post_checks,
@@ -240,10 +232,7 @@ class PolicyEngine:
             return PolicyDecision.ESCALATE
         if context.autopilot_attempts >= cfg.max_attempts_per_incident:
             return PolicyDecision.ESCALATE
-        if (
-            context.service not in cfg.allowed_services
-            or request.environment not in cfg.allowed_environments
-        ):
+        if context.service not in cfg.allowed_services or request.environment not in cfg.allowed_environments:
             return PolicyDecision.ESCALATE
         if request.action_type not in cfg.allowed_actions:
             return PolicyDecision.REQUIRE_APPROVAL
@@ -282,7 +271,6 @@ DANGEROUS_ACTION_ALIASES = {
     "production_restart": "production.restart_service",
     "database_mutation": "database.mutate",
     "arbitrary_shell": "shell.execute",
-    "prohibited.arbitrary_shell": "shell.execute",
     "prohibited.arbitrary_shell": "shell.execute",
     "cloud_delete": "cloud.delete_resource",
     "secret_access": "secret.read",

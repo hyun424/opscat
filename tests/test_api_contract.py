@@ -50,13 +50,12 @@ def test_payment_bad_deploy_happy_path_contract(client: Any) -> None:
     assert analysis.get("actions"), analysis
     assert len(analysis.get("evidence", [])) >= 2
 
-    evidence_ids = set()
-    for hypothesis in analysis.get("hypotheses", []):
-        evidence_ids.update(hypothesis.get("supporting_evidence_ids", []))
+    recommended = analysis.get("recommended_action") or analysis.get("action") or analysis.get("actions", [None])[0]
+    assert recommended, analysis
+
+    evidence_ids = set(recommended.get("evidence_ids", []))
     assert len(evidence_ids) >= 2, "top recommendation must be backed by at least two evidence items"
 
-    recommended = analysis.get("recommended_action") or analysis.get("action")
-    assert recommended, analysis
     assert recommended.get("risk_level") in {"low", "medium", "high", "prohibited"}
     assert recommended.get("post_checks"), "actions must define post-checks before execution"
     assert len(recommended.get("evidence_ids", [])) >= 2

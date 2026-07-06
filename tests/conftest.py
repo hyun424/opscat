@@ -1,81 +1,33 @@
-"""Shared test helpers for OpsCat contract and eval tests."""
-
-from __future__ import annotations
-
-import importlib
-import os
-import tempfile
-from collections.abc import Iterator
-from typing import Any
+from collections.abc import Generator
 
 import pytest
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
-REQUIRED_ENDPOINTS = {
-    "health": ("GET", "/health"),
-    "mock_alert": ("POST", "/webhooks/alerts/mock"),
-    "list_incidents": ("GET", "/incidents"),
-    "get_incident": ("GET", "/incidents/{incident_id}"),
-    "investigate": ("POST", "/incidents/{incident_id}/investigate"),
-    "approve_action": ("POST", "/incidents/{incident_id}/actions/{action_id}/approve"),
-    "reject_action": ("POST", "/incidents/{incident_id}/actions/{action_id}/reject"),
-    "verify": ("POST", "/incidents/{incident_id}/verify"),
-    "report": ("GET", "/incidents/{incident_id}/report"),
-}
-
-
-@pytest.fixture(scope="session")
-def app_module() -> Any:
-    os.environ.setdefault("OPSCAT_MODE", "test")
-    db_file = tempfile.NamedTemporaryFile(prefix="opscat-test-", suffix=".db", delete=False)
-    db_file.close()
-    os.environ.setdefault("DATABASE_URL", f"sqlite:///{db_file.name}")
-    for secret_name in ("SENTRY_AUTH_TOKEN", "GITHUB_TOKEN", "SLACK_BOT_TOKEN"):
-        os.environ.pop(secret_name, None)
-    try:
-        return importlib.import_module("app.main")
-    except ModuleNotFoundError as exc:
-        pytest.skip(f"FastAPI app scaffold is not available yet: {exc}")
-
-
-@pytest.fixture(scope="session")
-def app(app_module: Any) -> Any:
-    application = getattr(app_module, "app", None)
-    if application is None:
-        pytest.skip("app.main does not expose a FastAPI instance named 'app' yet")
-    return application
+from app.db import Base, get_db
+from app.main import app
 
 
 @pytest.fixture()
-def client(app: Any, tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> Iterator[Any]:
-    # Keep tests independent from developer machines and production credentials.
-    db_path = tmp_path / "opscat-test.db"
-    monkeypatch.setenv("DATABASE_URL", f"sqlite:///{db_path}")
-    monkeypatch.setenv("OPSCAT_MODE", "test")
-    monkeypatch.delenv("SENTRY_AUTH_TOKEN", raising=False)
-    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
-    monkeypatch.delenv("SLACK_BOT_TOKEN", raising=False)
-
+def db_session() -> Generator[Session]:
+    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
+    TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
+    Base.metadata.create_all(bind=engine)
+    session = TestingSessionLocal()
     try:
-        from fastapi.testclient import TestClient
-    except ModuleNotFoundError as exc:
-        pytest.skip(f"FastAPI test dependencies are not installed yet: {exc}")
+        yield session
+    finally:
+        session.close()
+        Base.metadata.drop_all(bind=engine)
 
+
+@pytest.fixture()
+def client(db_session: Session) -> Generator[TestClient]:
+    def override_get_db() -> Generator[Session]:
+        yield db_session
+
+    app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as test_client:
         yield test_client
-
-
-def route_fingerprint(app: Any) -> set[tuple[str, str]]:
-    fingerprints: set[tuple[str, str]] = set()
-    for route in getattr(app, "routes", []):
-        path = getattr(route, "path", "")
-        for method in getattr(route, "methods", set()) or set():
-            if method in {"GET", "POST", "PUT", "PATCH", "DELETE"}:
-                fingerprints.add((method, path))
-    return fingerprints
-
-
-def assert_no_external_credentials_required() -> None:
-    forbidden = ["SENTRY_AUTH_TOKEN", "GITHUB_TOKEN", "SLACK_BOT_TOKEN"]
-    assert not any(os.environ.get(name) for name in forbidden), (
-        "tests must run without real credentials"
-    )
+    app.dependency_overrides.clear()

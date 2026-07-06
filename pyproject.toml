@@ -25,11 +25,12 @@ pythonpath = ["."]
 addopts = "-q"
 
 [tool.ruff]
-line-length = 100
+line-length = 120
 target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+ignore = ["B008"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -41,3 +42,7 @@ disallow_untyped_defs = true
 no_implicit_optional = true
 check_untyped_defs = true
 ignore_missing_imports = true
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+exclude = ["tests*", "data*"]

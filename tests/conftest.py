@@ -9,6 +9,10 @@ from collections.abc import Iterator
 from typing import Any
 
 import pytest
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import StaticPool
 
 REQUIRED_ENDPOINTS = {
     "health": ("GET", "/health"),
@@ -23,14 +27,16 @@ REQUIRED_ENDPOINTS = {
 }
 
 
-@pytest.fixture(scope="session")
-def app_module() -> Any:
-    os.environ.setdefault("OPSCAT_MODE", "test")
-    db_file = tempfile.NamedTemporaryFile(prefix="opscat-test-", suffix=".db", delete=False)
-    db_file.close()
-    os.environ.setdefault("DATABASE_URL", f"sqlite:///{db_file.name}")
-    for secret_name in ("SENTRY_AUTH_TOKEN", "GITHUB_TOKEN", "SLACK_BOT_TOKEN"):
-        os.environ.pop(secret_name, None)
+@pytest.fixture()
+def db_session() -> Generator[Session]:
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
+    Base.metadata.create_all(bind=engine)
+    session = TestingSessionLocal()
     try:
         return importlib.import_module("app.main")
     except ModuleNotFoundError as exc:

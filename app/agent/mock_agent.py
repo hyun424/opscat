@@ -4,7 +4,6 @@ from app.schemas.agent import AgentAnalysis, Hypothesis, RecommendedAction
 
 def analyze_incident(incident: Incident, evidence: list[Evidence]) -> AgentAnalysis:
     evidence_ids = [item.id for item in evidence]
-    contents = "\n".join(item.content for item in evidence)
 
     if incident.service == "worker":
         action = RecommendedAction(

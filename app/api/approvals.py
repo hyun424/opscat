@@ -1,8 +1,8 @@
 """Optional FastAPI approval routes for OpsCat.
 
-The domain service is dependency-light; this router activates when FastAPI and
-Pydantic are installed by the app scaffold.
-"""
+from app.db import get_db
+from app.schemas.incidents import ActionRead, ApprovalRequest, ApprovalResponse, IncidentRead
+from app.services.incident_service import decide_action
 
 from __future__ import annotations
 
@@ -44,47 +44,10 @@ def create_router(action_service: ActionService | None = None):
         raise RuntimeError(
             "FastAPI is not installed; install app dependencies to enable approval routes."
         )
-    svc = action_service or service
-    router = APIRouter(prefix="/approvals", tags=["approvals"])
-
-    @router.post("")
-    def propose_action(payload: ApprovalProposalPayload):
-        request = ActionRequest(
-            action_type=payload.action_type,
-            target=payload.target,
-            environment=payload.environment,
-            incident_id=payload.incident_id,
-            payload=payload.payload,
-        )
-        context = PolicyContext(
-            capabilities=default_capabilities(payload.capabilities),
-            environment=payload.environment,
-        )
-        record = svc.propose(request, context)
-        return svc.serialize_record(record)
-
-    @router.post("/{approval_id}/approve")
-    def approve_action(approval_id: str, payload: ApprovalDecisionPayload):
-        try:
-            record = svc.approve(approval_id, payload.actor, payload.reason)
-        except (KeyError, ValueError) as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        return svc.serialize_record(record)
-
-    @router.post("/{approval_id}/reject")
-    def reject_action(approval_id: str, payload: ApprovalDecisionPayload):
-        try:
-            record = svc.reject(approval_id, payload.actor, payload.reason)
-        except (KeyError, ValueError) as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        return svc.serialize_record(record)
-
-    @router.post("/{approval_id}/execute")
-    def execute_action(approval_id: str):
-        try:
-            result = svc.execute(approval_id)
-        except KeyError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-        return result.__dict__
-
-    return router
+    except Exception as exc:  # pragma: no cover - FastAPI boundary
+        raise HTTPException(status_code=404, detail="action not found or invalid") from exc
+    return ApprovalResponse(
+        action=ActionRead.model_validate(action),
+        incident=IncidentRead.model_validate(incident),
+        report=report,
+    )

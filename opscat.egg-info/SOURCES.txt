@@ -21,6 +21,8 @@ app/models/timeline.py
 app/schemas/__init__.py
 app/schemas/agent.py
 app/schemas/incidents.py
+app/services/__init__.py
+app/services/action_service.py
 app/services/incident_service.py
 app/services/night_autopilot.py
 app/services/policy_engine.py
@@ -28,6 +30,7 @@ app/services/report_service.py
 app/services/risk_engine.py
 app/services/state_machine.py
 app/services/timeline_service.py
+app/tools/__init__.py
 app/tools/mock_actions.py
 app/tools/mock_context.py
 opscat.egg-info/PKG-INFO
@@ -35,5 +38,10 @@ opscat.egg-info/SOURCES.txt
 opscat.egg-info/dependency_links.txt
 opscat.egg-info/requires.txt
 opscat.egg-info/top_level.txt
+tests/test_api_contract.py
+tests/test_golden_evals.py
 tests/test_mvp_flow.py
+tests/test_no_dangerous_production_mutations.py
+tests/test_policy_actions.py
+tests/test_policy_safety.py
 tests/test_state_policy.py

@@ -117,7 +117,7 @@ def _stable_suffix(request: ActionRequest) -> str:
     return sha1(raw.encode("utf-8")).hexdigest()[:6].upper()
 
 
-def execute_mock_action(db: "Session", incident: "Incident", action: "ActionProposal") -> dict[str, object]:
+def execute_mock_action(db: Session, incident: Incident, action: ActionProposal) -> dict[str, object]:
     """Execute a persisted ActionProposal through the safe mock executor.
 
     The DB scaffold stores action proposals as SQLAlchemy objects. This adapter
@@ -149,7 +149,7 @@ def execute_mock_action(db: "Session", incident: "Incident", action: "ActionProp
     return payload
 
 
-def verify_recovery(incident: "Incident", action: "ActionProposal") -> dict[str, object]:
+def verify_recovery(incident: Incident, action: ActionProposal) -> dict[str, object]:
     """Return deterministic mock recovery evidence for an executed action."""
 
     request = ActionRequest(

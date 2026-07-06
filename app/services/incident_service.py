@@ -7,7 +7,9 @@ from app.agent.loop import AgentLoop
 from app.models import ActionProposal, ApprovalDecision, Incident
 from app.models.action import ActionRequest
 from app.schemas.incidents import MockAlertRequest
+from app.services.authorization import require_action_approval_authority, require_same_scope
 from app.services.escalation import build_escalation_payload, record_human_escalation
+from app.services.identity_service import Principal
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.redaction import redact_text
 from app.services.report_service import save_incident_report
@@ -88,7 +90,7 @@ def create_and_investigate(db: Session, payload: MockAlertRequest) -> Incident:
     return get_incident(db, incident_id)
 
 
-def get_incident(db: Session, incident_id: str) -> Incident:
+def get_incident(db: Session, incident_id: str, principal: Principal | None = None) -> Incident:
     incident = (
         db.query(Incident)
         .options(
@@ -99,6 +101,8 @@ def get_incident(db: Session, incident_id: str) -> Incident:
         .filter(Incident.id == incident_id)
         .one()
     )
+    if principal is not None:
+        require_same_scope(principal, incident, action="read incident")
     return incident
 
 
@@ -109,9 +113,15 @@ def decide_action(
     decision: str,
     actor: str,
     reason: str | None = None,
+    principal: Principal | None = None,
 ) -> tuple[ActionProposal, Incident, str | None]:
     action = db.query(ActionProposal).filter(ActionProposal.id == action_id).one()
     incident = db.query(Incident).filter(Incident.id == action.incident_id).one()
+    if principal is not None:
+        require_same_scope(principal, incident, action="decide action")
+        require_same_scope(principal, action, action="decide action")
+        require_action_approval_authority(principal)
+        actor = principal.email
     approval = ApprovalDecision(
         action_id=action.id,
         tenant_id=incident.tenant_id,

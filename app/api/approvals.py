@@ -7,7 +7,10 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.models.action import ActionRequest
 from app.schemas.incidents import ActionRead, ApprovalRequest, ApprovalResponse, IncidentRead
+from app.security.dependencies import get_current_principal
 from app.services.action_service import ActionService
+from app.services.authorization import AuthorizationError
+from app.services.identity_service import Principal
 from app.services.incident_service import decide_action
 from app.services.policy_engine import PolicyContext, default_capabilities
 
@@ -51,6 +54,7 @@ def propose_action(payload: ApprovalProposalPayload) -> dict[str, Any]:
 def decide_persisted_action(
     action_id: str,
     payload: ApprovalRequest,
+    principal: Principal = Depends(get_current_principal),
     db: Session = Depends(get_db),
 ) -> ApprovalResponse:
     try:
@@ -60,7 +64,10 @@ def decide_persisted_action(
             decision=payload.decision,
             actor=payload.actor,
             reason=payload.reason,
+            principal=principal,
         )
+    except AuthorizationError as exc:
+        raise HTTPException(status_code=403, detail={"message": str(exc), "workspace_id": exc.workspace_id}) from exc
     except Exception as exc:  # pragma: no cover - FastAPI boundary
         raise HTTPException(status_code=404, detail="action not found or invalid") from exc
     return ApprovalResponse(

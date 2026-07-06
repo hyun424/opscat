@@ -3,10 +3,12 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, selectinload
 
-from app.api.workspace import get_workspace_id
 from app.db import get_db
 from app.models import Incident
 from app.schemas.incidents import ActionRead, ApprovalRequest, ApprovalResponse, IncidentRead
+from app.security.dependencies import get_current_principal
+from app.services.authorization import AuthorizationError
+from app.services.identity_service import Principal
 from app.services.incident_service import decide_action, get_incident, run_investigation
 from app.services.report_service import render_incident_report
 
@@ -15,13 +17,13 @@ router = APIRouter(prefix="/incidents", tags=["incidents"])
 
 @router.get("", response_model=list[IncidentRead])
 def list_incidents(
-    workspace_id: str = Depends(get_workspace_id),
+    principal: Principal = Depends(get_current_principal),
     db: Session = Depends(get_db),
 ) -> list[Incident]:
     return (
         db.query(Incident)
         .options(selectinload(Incident.evidence), selectinload(Incident.actions), selectinload(Incident.timeline))
-        .filter(Incident.workspace_id == workspace_id)
+        .filter(Incident.tenant_id == principal.tenant_id, Incident.workspace_id == principal.workspace_id)
         .order_by(Incident.created_at.desc())
         .all()
     )
@@ -30,23 +32,30 @@ def list_incidents(
 @router.get("/{incident_id}", response_model=IncidentRead)
 def read_incident(
     incident_id: str,
-    workspace_id: str = Depends(get_workspace_id),
+    principal: Principal = Depends(get_current_principal),
     db: Session = Depends(get_db),
 ) -> Incident:
     try:
-        incident = get_incident(db, incident_id)
+        return get_incident(db, incident_id, principal=principal)
+    except AuthorizationError as exc:
+        raise HTTPException(status_code=404, detail={"message": "incident not found", "workspace_id": exc.workspace_id}) from exc
     except Exception as exc:  # pragma: no cover - FastAPI boundary
         raise HTTPException(status_code=404, detail="incident not found") from exc
-    if incident.workspace_id != workspace_id:
-        raise HTTPException(status_code=404, detail={"message": "incident not found", "workspace_id": workspace_id})
-    return incident
 
 
 @router.post("/{incident_id}/investigate", response_model=dict[str, Any])
-def investigate_incident(incident_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
+def investigate_incident(
+    incident_id: str,
+    principal: Principal = Depends(get_current_principal),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
     incident = db.query(Incident).filter(Incident.id == incident_id).one_or_none()
     if not incident:
         raise HTTPException(status_code=404, detail="incident not found")
+    try:
+        get_incident(db, incident_id, principal=principal)
+    except AuthorizationError as exc:
+        raise HTTPException(status_code=403, detail={"message": str(exc), "workspace_id": exc.workspace_id}) from exc
     if not incident.actions:
         run_investigation(db, incident)
         db.commit()
@@ -54,9 +63,15 @@ def investigate_incident(incident_id: str, db: Session = Depends(get_db)) -> dic
 
 
 @router.get("/{incident_id}/report", response_model=dict[str, str])
-def incident_report(incident_id: str, db: Session = Depends(get_db)) -> dict[str, str]:
+def incident_report(
+    incident_id: str,
+    principal: Principal = Depends(get_current_principal),
+    db: Session = Depends(get_db),
+) -> dict[str, str]:
     try:
-        incident = get_incident(db, incident_id)
+        incident = get_incident(db, incident_id, principal=principal)
+    except AuthorizationError as exc:
+        raise HTTPException(status_code=403, detail={"message": str(exc), "workspace_id": exc.workspace_id}) from exc
     except Exception as exc:  # pragma: no cover - FastAPI boundary
         raise HTTPException(status_code=404, detail="incident not found") from exc
     return {"report": render_incident_report(incident)}
@@ -70,9 +85,10 @@ def approve_incident_action_alias(
     incident_id: str,
     action_id: str,
     payload: ApprovalRequest | None = None,
+    principal: Principal = Depends(get_current_principal),
     db: Session = Depends(get_db),
 ) -> ApprovalResponse:
-    return _decide_incident_action(incident_id, action_id, payload or ApprovalRequest(decision="approve"), db)
+    return _decide_incident_action(incident_id, action_id, payload or ApprovalRequest(decision="approve"), db, principal)
 
 
 @router.post(
@@ -83,20 +99,25 @@ def reject_incident_action_alias(
     incident_id: str,
     action_id: str,
     payload: ApprovalRequest | None = None,
+    principal: Principal = Depends(get_current_principal),
     db: Session = Depends(get_db),
 ) -> ApprovalResponse:
     request = payload or ApprovalRequest(decision="reject")
     if request.decision != "reject":
         request = ApprovalRequest(decision="reject", actor=request.actor, reason=request.reason)
-    return _decide_incident_action(incident_id, action_id, request, db)
+    return _decide_incident_action(incident_id, action_id, request, db, principal)
 
 
 @router.post("/{incident_id}/verify", response_model=IncidentRead)
-def verify_incident_alias(incident_id: str, db: Session = Depends(get_db)) -> Incident:
+def verify_incident_alias(
+    incident_id: str,
+    principal: Principal = Depends(get_current_principal),
+    db: Session = Depends(get_db),
+) -> Incident:
     # Verification runs during mock execution in the MVP; this endpoint returns
     # the current auditable incident state for contract compatibility.
     try:
-        return get_incident(db, incident_id)
+        return get_incident(db, incident_id, principal=principal)
     except Exception as exc:  # pragma: no cover - FastAPI boundary
         raise HTTPException(status_code=404, detail="incident not found") from exc
 
@@ -106,6 +127,7 @@ def _decide_incident_action(
     action_id: str,
     payload: ApprovalRequest,
     db: Session,
+    principal: Principal,
 ) -> ApprovalResponse:
     try:
         action, incident, report = decide_action(
@@ -114,7 +136,10 @@ def _decide_incident_action(
             decision=payload.decision,
             actor=payload.actor,
             reason=payload.reason,
+            principal=principal,
         )
+    except AuthorizationError as exc:
+        raise HTTPException(status_code=403, detail={"message": str(exc), "workspace_id": exc.workspace_id}) from exc
     except Exception as exc:  # pragma: no cover - FastAPI boundary
         raise HTTPException(status_code=404, detail="action not found or invalid") from exc
     if incident.id != incident_id:

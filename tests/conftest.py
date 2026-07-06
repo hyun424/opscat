@@ -5,7 +5,7 @@ from __future__ import annotations
 import importlib
 import os
 import tempfile
-from collections.abc import Iterator
+from collections.abc import Generator
 from typing import Any
 
 import pytest
@@ -13,6 +13,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
+
+from app.db import Base, get_db
 
 REQUIRED_ENDPOINTS = {
     "health": ("GET", "/health"),
@@ -67,7 +69,7 @@ def db_session() -> Generator[Session]:
 
 
 @pytest.fixture()
-def client(db_session: Session) -> Generator[TestClient]:
+def client(app: Any, db_session: Session) -> Generator[TestClient]:
     def override_get_db() -> Generator[Session]:
         yield db_session
 

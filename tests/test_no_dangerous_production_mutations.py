@@ -101,6 +101,42 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
         self.assertIs(result.decision, PolicyDecision.DENY)
         self.assertIn("medium/high risk actions require post-checks", result.reasons)
 
+    def test_app_policy_denies_dangerous_action_aliases(self) -> None:
+        from app.services.policy_engine import evaluate_policy
+
+        for action_type in (
+            "production_rollback",
+            "database_mutation",
+            "arbitrary_shell",
+            "cloud_delete",
+            "secret_access",
+        ):
+            with self.subTest(action_type=action_type):
+                result = evaluate_policy(
+                    {
+                        "action_type": action_type,
+                        "environment": "production",
+                        "payload": {"service": "payment-api"},
+                        "approved": True,
+                    }
+                )
+                self.assertIs(result.decision, PolicyDecision.DENY)
+
+    def test_app_policy_keeps_mock_pr_approval_gated(self) -> None:
+        from app.services.policy_engine import evaluate_policy
+
+        result = evaluate_policy(
+            {
+                "action_type": "mock.create_rollback_pr",
+                "environment": "production",
+                "payload": {"service": "payment-api", "candidate_deploy": "deploy-42"},
+                "approved": False,
+            }
+        )
+
+        self.assertIs(result.decision, PolicyDecision.REQUIRE_APPROVAL)
+
+
     def test_production_environment_aliases_are_detected(self) -> None:
         self.assertTrue(is_production_environment("prod"))
         self.assertTrue(is_production_environment(" production "))

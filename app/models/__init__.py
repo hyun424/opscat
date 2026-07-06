@@ -1,7 +1,35 @@
-from app.models.action import ActionProposal
-from app.models.evidence import Evidence
-from app.models.incident import Incident
-from app.models.policy import ApprovalDecision
-from app.models.timeline import TimelineEvent
+"""Domain model exports.
 
-__all__ = ["ActionProposal", "ApprovalDecision", "Evidence", "Incident", "TimelineEvent"]
+Keep exports lazy so policy/risk modules can import action dataclasses without
+requiring every persistence model to be importable during lightweight checks.
+"""
+from __future__ import annotations
+
+from importlib import import_module
+from typing import Any
+
+_EXPORTS = {
+    "ActionExecutionResult": ("app.models.action", "ActionExecutionResult"),
+    "ActionMetadata": ("app.models.action", "ActionMetadata"),
+    "ActionRequest": ("app.models.action", "ActionRequest"),
+    "ActionStatus": ("app.models.action", "ActionStatus"),
+    "ApprovalRecord": ("app.models.action", "ApprovalRecord"),
+    "PolicyDecision": ("app.models.action", "PolicyDecision"),
+    "PolicyEvaluation": ("app.models.action", "PolicyEvaluation"),
+    "RiskLevel": ("app.models.action", "RiskLevel"),
+    "ApprovalDecision": ("app.models.policy", "ApprovalDecision"),
+    "Evidence": ("app.models.evidence", "Evidence"),
+    "Incident": ("app.models.incident", "Incident"),
+    "TimelineEvent": ("app.models.timeline", "TimelineEvent"),
+}
+
+__all__ = sorted(_EXPORTS)
+
+
+def __getattr__(name: str) -> Any:
+    if name not in _EXPORTS:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    module_name, attr_name = _EXPORTS[name]
+    value = getattr(import_module(module_name), attr_name)
+    globals()[name] = value
+    return value

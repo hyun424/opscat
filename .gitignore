@@ -7,3 +7,7 @@ __pycache__/
 opscat.db
 .env
 data/mock_reports/*.md
+*.egg-info/
+.coverage
+htmlcov/
+venv/

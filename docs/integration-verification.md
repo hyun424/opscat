@@ -1,55 +1,64 @@
 # OpsCat Integration Verification Report
 
-Worker-5 inspected the docs/integration lane on 2026-07-06 UTC. The verification target was a temporary archive checkout of the latest integrated worker-4 head available at the time:
+Worker-5 re-ran integration verification on 2026-07-06 UTC after the portfolio quality bar was raised.
 
-- Commit inspected: `9cee31c2fe67538b4ca9cc928bec604f368dc255`
-- Verification checkout: `/tmp/opscat-worker5-verify`
+## Latest inspected state
+
+- Commit inspected: `055ac28158b98cd757861041548ed35bfaac3073`
+- Source: current leader worktree `/Users/gimdonghyeon/projects/opscat`
+- Verification checkout: `/tmp/opscat-worker5-portfolio-verify`
 - External credentials used: none
 - Production systems touched: none
 
 ## Summary
 
-The implementation shape matches the intended local mock MVP at a high level, but the current integrated head is **not yet end-to-end verified**. Static checks, tests, and the README demo fail due to app/test API drift introduced across concurrent lanes. Compile and Docker Compose config checks pass.
+The current integrated head is **not yet green**. The previous app/test API drift blockers were superseded by an earlier syntax blocker: `app/models/action.py` has an unexpected indentation in the SQLAlchemy relationship block. Because the app cannot import, the API, tests, and demo cannot prove the portfolio story yet.
+
+Docker Compose config still validates. Core code checks, tests, demo, and compileall fail until the syntax blocker is repaired.
 
 ## Smoke-check evidence
 
 | Check | Result | Evidence |
 | --- | --- | --- |
-| `ruff check app tests scripts` | FAIL | `app/models/action.py` has E402/I001 import ordering issues; `tests/conftest.py` has unused `Iterator` plus undefined `Generator`, `Base`, and `get_db`. |
-| `mypy --cache-dir /tmp/opscat-worker5-mypy-cache app tests scripts` | FAIL | 27 errors across 7 files, including missing `execute_mock_action` / `verify_recovery`, stale `PolicyEvaluation.reasons`, stale policy test call shapes, and missing test fixture imports. |
-| `python -m pytest -q -p no:cacheprovider` | FAIL | 29 passed, 3 failed, 7 errors. Import failure: `cannot import name 'execute_mock_action' from app.tools.mock_actions`; fixture failures from missing `Base`; stale policy tests pass strings where `ActionRequest` is expected. |
-| `python scripts/demo.py` | FAIL | ImportError loading `app.main` because `app.services.incident_service` imports missing `execute_mock_action` and `verify_recovery`. |
-| `python -m compileall -q app tests scripts` | PASS | Exit 0. |
-| `docker compose config` | PASS | Config rendered successfully. |
+| `ruff check app tests scripts` | FAIL | `app/models/__init__.py` has repeated dictionary key `"ActionProposal"`; `app/models/action.py:133` has unexpected indentation and invalid syntax. |
+| `mypy --cache-dir /tmp/opscat-worker5-portfolio-mypy app tests scripts` | FAIL | Stops at `app/models/action.py:133: error: Unexpected indent [syntax]`. |
+| `python -m pytest -q -p no:cacheprovider` | FAIL | Collection errors in `tests/test_policy_actions.py` and `tests/test_state_policy.py`; both hit `IndentationError: unexpected indent` importing `app/models/action.py`. |
+| `python scripts/demo.py` | FAIL | Importing `app.main` fails with `IndentationError: unexpected indent` in `app/models/action.py`. |
+| `python -m compileall -q app tests scripts` | FAIL | Compile error: `IndentationError: unexpected indent (action.py, line 133)`. |
+| `docker compose config` | PASS | Compose config rendered successfully. |
+| Generated artifact hygiene | FAIL in worker-5 branch before cleanup | This worker branch had tracked `__pycache__`, `.pyc`, and `opscat.egg-info` files. Task 12 removes them from the worker-5 branch; leader main already had no tracked generated artifacts at inspection time. |
 
-## Primary blockers
+## Current primary blockers
 
-1. **Mock action API drift**
-   - `app/services/incident_service.py` and `app/services/night_autopilot.py` import `execute_mock_action` and `verify_recovery`.
-   - The inspected `app/tools/mock_actions.py` exposes class-based execution helpers instead.
-   - Impact: FastAPI app import fails, pytest route tests error, and `scripts/demo.py` cannot start.
+1. **Syntax blocker in `app/models/action.py`**
+   - Relationship declarations under `class ActionProposal(Base)` are over-indented.
+   - Impact: app import, pytest collection, demo, mypy, ruff, and compileall all fail.
 
-2. **Policy API drift in tests and services**
-   - Current `PolicyEngine.evaluate` expects an `ActionRequest`.
-   - Some tests still call it with action-type strings and an older `PolicyContext(mode=...)` shape.
-   - Some services/tests expect `PolicyEvaluation.reasons`, while the inspected policy object exposes a singular `reason` field.
-   - Impact: mypy errors and policy tests fail.
+2. **Duplicate export key in `app/models/__init__.py`**
+   - `"ActionProposal"` appears twice in the lazy export map.
+   - Impact: ruff `F601` failure after syntax cleanup.
 
-3. **Test fixture import gaps**
-   - `tests/conftest.py` references `Generator`, `Base`, and `get_db` without valid imports in the inspected head.
-   - Impact: API and MVP-flow tests error during fixture setup.
+3. **Full end-to-end demo remains unproven**
+   - `python scripts/demo.py` cannot run until the syntax blocker is fixed.
+   - Current docs therefore describe the intended flow and explicitly mark verification as blocked.
 
-4. **Lint import placement**
-   - `app/models/action.py` appends SQLAlchemy imports after dataclass/domain definitions.
-   - Impact: ruff E402/I001 failures.
+## Recommended next fix order
 
-## Recommended next integration fix order
+1. Repair `app/models/action.py` indentation without changing model semantics.
+2. Remove duplicate `"ActionProposal"` export key in `app/models/__init__.py`.
+3. Re-run:
+   - `ruff check app tests scripts`
+   - `mypy app tests scripts`
+   - `python -m pytest`
+   - `python scripts/demo.py`
+   - `python -m compileall app tests scripts`
+   - `docker compose config`
+4. If new app/test API drift appears after the syntax blocker is removed, fix those narrowly and update this report.
+5. Only mark the README demo verified when all core checks are green.
 
-1. Reconcile `app.tools.mock_actions` with incident/night-autopilot service imports, either by restoring wrapper functions or changing services to call the class-based executor consistently.
-2. Normalize `PolicyEvaluation` and `PolicyContext` usage across app services and tests.
-3. Repair `tests/conftest.py` imports and route dependency overrides.
-4. Re-run the full command set from `README.md`.
-5. Only after all checks pass, mark the README deterministic demo as verified for the integrated branch.
+## Superseded earlier blocker snapshot
+
+Earlier worker-5 verification against worker-4 head `9cee31c2fe67538b4ca9cc928bec604f368dc255` found API drift around `execute_mock_action`, `verify_recovery`, policy object fields, and fixture imports. The current verification cannot confirm whether those are fully resolved because the syntax blocker prevents collection/import. Keep those historical drift areas in mind if failures reappear after syntax repair.
 
 ## Full-demo gap
 

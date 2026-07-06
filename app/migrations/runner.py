@@ -19,7 +19,10 @@ from sqlalchemy.engine import Connection, Engine
 
 from app.config import get_settings
 
-MIGRATION_MODULES = ("app.migrations.versions.0001_initial",)
+MIGRATION_MODULES = (
+    "app.migrations.versions.0001_initial",
+    "app.migrations.versions.0002_identity_memberships",
+)
 
 metadata = MetaData()
 schema_migrations = Table(

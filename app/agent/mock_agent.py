@@ -57,7 +57,7 @@ def _human_escalation_analysis(
             title=title,
             confidence=confidence,
             supporting_evidence_ids=evidence_ids[: max(2, min(len(evidence_ids), 4))],
-            status="needs_human",
+            status="unknown",
         )
     ]
     return _analysis(incident, hypotheses, action)
@@ -80,7 +80,7 @@ def _protected_domain_analysis(incident: Incident, evidence_ids: list[str]) -> A
             title="Protected domain incident requires human judgment",
             confidence=0.78,
             supporting_evidence_ids=evidence_ids[: max(2, min(len(evidence_ids), 4))],
-            status="escalate",
+            status="unknown",
         )
     ]
     return _analysis(incident, hypotheses, action)

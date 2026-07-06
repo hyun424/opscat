@@ -60,8 +60,8 @@ class PolicyActionTests(TestCase):
             ),
             context,
         )
-        self.assertEqual(prod.evaluation.decision, PolicyDecision.REQUIRE_APPROVAL)
-        self.assertEqual(prod.status, ActionStatus.PROPOSED)
+        self.assertEqual(prod.evaluation.decision, PolicyDecision.DENY)
+        self.assertEqual(prod.status, ActionStatus.DENIED)
 
         mock_pr = svc.propose(
             ActionRequest(
@@ -71,8 +71,8 @@ class PolicyActionTests(TestCase):
             ),
             context,
         )
-        self.assertEqual(prod.evaluation.decision, PolicyDecision.REQUIRE_APPROVAL)
-        self.assertEqual(prod.status, ActionStatus.PROPOSED)
+        self.assertEqual(mock_pr.evaluation.decision, PolicyDecision.REQUIRE_APPROVAL)
+        self.assertEqual(mock_pr.status, ActionStatus.PROPOSED)
 
         shell = svc.propose(
             ActionRequest(

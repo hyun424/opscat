@@ -24,7 +24,7 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
 
         result = evaluate_action_policy(request)
 
-        self.assertIs(result.decision, PolicyDecision.DENY)
+        self.assertEqual(result.decision.value, PolicyDecision.DENY.value)
         self.assertFalse(result.allowed)
         self.assertIn("production mutations are disabled in the MVP", result.reasons)
 
@@ -51,7 +51,7 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
 
                 result = evaluate_action_policy(request)
 
-                self.assertIs(result.decision, PolicyDecision.DENY)
+                self.assertEqual(result.decision.value, PolicyDecision.DENY.value)
                 self.assertTrue(
                     any(mutation_kind.value in reason for reason in result.reasons)
                 )
@@ -69,7 +69,7 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
 
         result = evaluate_action_policy(request)
 
-        self.assertIs(result.decision, PolicyDecision.REQUIRE_APPROVAL)
+        self.assertEqual(result.decision.value, PolicyDecision.REQUIRE_APPROVAL.value)
         self.assertFalse(result.allowed)
 
     def test_safe_read_only_action_is_allowed_in_production(self) -> None:
@@ -83,7 +83,7 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
 
         result = evaluate_action_policy(request)
 
-        self.assertIs(result.decision, PolicyDecision.ALLOW)
+        self.assertEqual(result.decision.value, PolicyDecision.ALLOW.value)
         self.assertTrue(result.allowed)
 
     def test_medium_risk_action_without_post_checks_is_denied(self) -> None:
@@ -98,7 +98,7 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
 
         result = evaluate_action_policy(request)
 
-        self.assertIs(result.decision, PolicyDecision.DENY)
+        self.assertEqual(result.decision.value, PolicyDecision.DENY.value)
         self.assertIn("medium/high risk actions require post-checks", result.reasons)
 
     def test_app_policy_denies_dangerous_action_aliases(self) -> None:
@@ -120,7 +120,7 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
                         "approved": True,
                     }
                 )
-                self.assertIs(result.decision, PolicyDecision.DENY)
+                self.assertEqual(result.decision.value, PolicyDecision.DENY.value)
 
     def test_app_policy_keeps_mock_pr_approval_gated(self) -> None:
         from app.services.policy_engine import evaluate_policy
@@ -134,7 +134,7 @@ class NoDangerousProductionMutationPolicyTest(unittest.TestCase):
             }
         )
 
-        self.assertIs(result.decision, PolicyDecision.REQUIRE_APPROVAL)
+        self.assertEqual(result.decision.value, PolicyDecision.REQUIRE_APPROVAL.value)
 
 
     def test_production_environment_aliases_are_detected(self) -> None:

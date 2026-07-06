@@ -4,7 +4,7 @@ from app.agent.loop import AgentLoop
 from app.models import ActionProposal, ApprovalDecision, Incident
 from app.models.action import ActionRequest
 from app.schemas.incidents import MockAlertRequest
-from app.services.policy_engine import PolicyContext, PolicyEngine, default_capabilities
+from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.report_service import save_incident_report
 from app.services.state_machine import transition_incident
 from app.services.timeline_service import add_timeline_event

@@ -12,6 +12,7 @@ from app.models.action import ActionRequest, PolicyDecision, PolicyEvaluation, R
 from app.schemas.incidents import MockAlertRequest
 from app.services import incident_service
 from app.services.incident_service import create_mock_incident, decide_action
+from app.services.night_autopilot import simulate_night_autopilot
 from app.services.policy_engine import PolicyContext
 
 
@@ -120,3 +121,19 @@ def test_failed_post_check_escalates_instead_of_silent_success(
     assert action.escalation_payload["trigger"] == "post_check_failed"
     assert action.escalation_payload["verification"]["recovered"] is False
     assert any(event.event_type == "human_escalation_required" for event in updated.timeline)
+
+
+def test_night_autopilot_max_attempts_escalates_with_wake_payload(db_session: Session) -> None:
+    from app.schemas.incidents import NightAutopilotConfig
+
+    result = simulate_night_autopilot(
+        db_session,
+        NightAutopilotConfig(max_attempts_per_incident=0),
+    )
+
+    assert result.actions_taken == []
+    assert result.escalations
+    payload = result.escalations[0]
+    assert payload["wake_human"] is True
+    assert payload["trigger"] == "max_attempts_reached"
+    assert payload["recommended_next_action"].startswith("Wake the configured on-call contact")

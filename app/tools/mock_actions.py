@@ -161,9 +161,16 @@ def verify_recovery(incident: Incident, action: ActionProposal) -> dict[str, obj
     )
     result = MockActionExecutor().execute(request)
     recovered = bool(result.output.get("recovered", False))
+    if incident.alert_payload.get("scenario") == "verification_failure" or action.payload.get("force_verification_failure"):
+        recovered = False
+        result_output = {**dict(result.output), "forced_failure": True}
+        message = "Mock recovery verification failed; waking human with evidence."
+    else:
+        result_output = dict(result.output)
+        message = result.message
     return {
         "recovered": recovered,
-        "message": result.message,
-        "output": dict(result.output),
+        "message": message,
+        "output": result_output,
         "verification": dict(result.verification),
     }

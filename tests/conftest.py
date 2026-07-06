@@ -59,7 +59,7 @@ def db_session() -> Generator[Session]:
     )
     TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
     Base.metadata.create_all(bind=engine)
-    session = testing_session()
+    session = TestingSessionLocal()
     try:
         yield session
     finally:

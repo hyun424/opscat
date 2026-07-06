@@ -7,8 +7,30 @@ ERROR_CONTEXT = {
         "Sanitized error window: PaymentTimeoutError rose from 2/min to 180/min "
         "after deploy v1.42.0. Redacted request ids only; no raw cardholder data stored."
     ),
+    "payment_bad_deploy": (
+        "Sanitized error window: PaymentTimeoutError rose from 2/min to 180/min "
+        "after deploy v1.42.0. Redacted request ids only; no raw cardholder data stored."
+    ),
+    "verification_failure": (
+        "Sanitized error window: PaymentTimeoutError remains elevated after mock rollback action; verification must wake a human."
+    ),
+    "external_api_timeout": (
+        "Sanitized dependency window: payment processor p95 latency rose to 9s while app error logs show upstream timeout codes."
+    ),
     "worker_queue_backlog": (
         "Sanitized metric window: queue latency p95 increased to 12m after worker heartbeat degradation."
+    ),
+    "duplicate_alert_storm": (
+        "Sanitized alert window: 42 duplicate fingerprints arrived after recovery metrics returned below threshold."
+    ),
+    "low_confidence_ambiguous": (
+        "Sanitized signal window: weak symptoms appear across checkout, auth, and queue workers without a dominant source."
+    ),
+    "missing_runbook_context": (
+        "Sanitized alert window: unknown-service emitted elevated 5xx but no trusted runbook or owner mapping exists."
+    ),
+    "protected_auth_incident": (
+        "Sanitized auth signal: login failures increased for customer-critical auth flow; no secrets or PII included."
     ),
 }
 
@@ -16,9 +38,18 @@ DEPLOY_CONTEXT = {
     "payment_api_deploy_regression": (
         "Deploy v1.42.0 by mock-ci changed payment-api DB pool timeout handling 8 minutes before alert."
     ),
-    "worker_queue_backlog": (
-        "No app deploy in last 2h; infra maintenance restarted queue broker 15 minutes before alert."
+    "payment_bad_deploy": (
+        "Deploy v1.42.0 by mock-ci changed payment-api DB pool timeout handling 8 minutes before alert."
     ),
+    "verification_failure": (
+        "Deploy v1.42.0 by mock-ci changed payment-api DB pool timeout handling; rollback verification still fails."
+    ),
+    "external_api_timeout": "No payment-api deploy in the last 2h; dependency provider status is degraded in mock context.",
+    "worker_queue_backlog": "No app deploy in last 2h; infra maintenance restarted queue broker 15 minutes before alert.",
+    "duplicate_alert_storm": "No deploy or code change in last 4h; alert fingerprint matches resolved incident INC-2026-104.",
+    "low_confidence_ambiguous": "Multiple unrelated deploys in the last 24h; no deploy correlates strongly with the alert.",
+    "missing_runbook_context": "No deployment metadata exists for unknown-service in the mock connector catalog.",
+    "protected_auth_incident": "No auth-api deploy in last 2h; protected-domain impact requires human judgment.",
 }
 
 RUNBOOKS = {
@@ -40,15 +71,13 @@ RUNBOOKS = {
 
 PRIORS = {
     "payment-api": (
-        "Prior incident INC-2026-041: same PaymentTimeoutError after deploy; "
-        "rollback PR resolved staging within 5 minutes."
+        "Prior incident INC-2026-041: same PaymentTimeoutError after deploy; rollback PR resolved staging within 5 minutes."
     ),
     "worker": (
-        "Prior incident INC-2026-088: queue broker maintenance caused transient "
-        "worker lag; restart cleared non-prod backlog."
+        "Prior incident INC-2026-088: queue broker maintenance caused transient worker lag; restart cleared non-prod backlog."
     ),
+    "auth-api": "Protected auth incidents require human incident commander review before any action.",
 }
-
 
 def _scenario(incident: Incident) -> str:
     return str(incident.alert_payload.get("scenario", "payment_api_deploy_regression"))
@@ -91,7 +120,15 @@ def get_recent_deploys(db: Session, incident: Incident) -> Evidence:
 
 
 def get_runbook(db: Session, incident: Incident) -> Evidence:
-    runbook = RUNBOOKS.get(incident.service, RUNBOOKS["payment-api"])
+    runbook = RUNBOOKS.get(incident.service)
+    if runbook is None:
+        return _add_evidence(
+            db,
+            incident,
+            "runbook",
+            f"No trusted runbook matched service={incident.service}; human escalation required.",
+            {"tool": "mock.get_runbook", "runbook": None, "missing_runbook": True},
+        )
     return _add_evidence(
         db,
         incident,

@@ -3,13 +3,22 @@ from sqlalchemy.orm import Session
 from app.models import Evidence, Incident
 
 ERROR_CONTEXT = {
-    "payment_api_deploy_regression": "Sanitized error window: PaymentTimeoutError rose from 2/min to 180/min after deploy v1.42.0. Redacted request ids only; no raw cardholder data stored.",
-    "worker_queue_backlog": "Sanitized metric window: queue latency p95 increased to 12m after worker heartbeat degradation.",
+    "payment_api_deploy_regression": (
+        "Sanitized error window: PaymentTimeoutError rose from 2/min to 180/min "
+        "after deploy v1.42.0. Redacted request ids only; no raw cardholder data stored."
+    ),
+    "worker_queue_backlog": (
+        "Sanitized metric window: queue latency p95 increased to 12m after worker heartbeat degradation."
+    ),
 }
 
 DEPLOY_CONTEXT = {
-    "payment_api_deploy_regression": "Deploy v1.42.0 by mock-ci changed payment-api DB pool timeout handling 8 minutes before alert.",
-    "worker_queue_backlog": "No app deploy in last 2h; infra maintenance restarted queue broker 15 minutes before alert.",
+    "payment_api_deploy_regression": (
+        "Deploy v1.42.0 by mock-ci changed payment-api DB pool timeout handling 8 minutes before alert."
+    ),
+    "worker_queue_backlog": (
+        "No app deploy in last 2h; infra maintenance restarted queue broker 15 minutes before alert."
+    ),
 }
 
 RUNBOOKS = {
@@ -30,8 +39,14 @@ RUNBOOKS = {
 }
 
 PRIORS = {
-    "payment-api": "Prior incident INC-2026-041: same PaymentTimeoutError after deploy; rollback PR resolved staging within 5 minutes.",
-    "worker": "Prior incident INC-2026-088: queue broker maintenance caused transient worker lag; restart cleared non-prod backlog.",
+    "payment-api": (
+        "Prior incident INC-2026-041: same PaymentTimeoutError after deploy; "
+        "rollback PR resolved staging within 5 minutes."
+    ),
+    "worker": (
+        "Prior incident INC-2026-088: queue broker maintenance caused transient "
+        "worker lag; restart cleared non-prod backlog."
+    ),
 }
 
 
@@ -81,7 +96,11 @@ def get_runbook(db: Session, incident: Incident) -> Evidence:
         db,
         incident,
         "runbook",
-        f"Runbook for {incident.service}: owner={runbook['owner']}; safe_actions={','.join(runbook['safe_actions'])}; verification={','.join(runbook['verification_checks'])}",
+        (
+            f"Runbook for {incident.service}: owner={runbook['owner']}; "
+            f"safe_actions={','.join(runbook['safe_actions'])}; "
+            f"verification={','.join(runbook['verification_checks'])}"
+        ),
         {"tool": "mock.get_runbook", "runbook": runbook},
     )
 

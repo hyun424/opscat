@@ -11,7 +11,9 @@ def analyze_incident(incident: Incident, evidence: list[Evidence]) -> AgentAnaly
             target=f"{incident.service}:{incident.environment}",
             risk_level="low",
             requires_approval=True,
-            rationale="Runbook marks non-production worker restart reversible and prior incident recovered after restart.",
+            rationale=(
+                "Runbook marks non-production worker restart reversible and prior incident recovered after restart."
+            ),
             payload={"worker_pool": "default", "mode": "mock_restart"},
             preconditions=["runbook marks restart reversible", "environment is not production"],
             post_checks=["worker heartbeat is healthy", "queue latency decreases"],
@@ -38,7 +40,10 @@ def analyze_incident(incident: Incident, evidence: list[Evidence]) -> AgentAnaly
             target=f"{incident.service}:{incident.environment}",
             risk_level="medium",
             requires_approval=True,
-            rationale="Error spike began immediately after deploy v1.42.0 and prior matching incident recovered via rollback PR draft.",
+            rationale=(
+                "Error spike began immediately after deploy v1.42.0 and prior "
+                "matching incident recovered via rollback PR draft."
+            ),
             payload={"from_version": "v1.42.0", "to_version": "v1.41.3", "dry_run": True},
             preconditions=["bad deploy evidence present", "rollback target identified"],
             post_checks=["mock recovery check passes", "report includes PR reference"],
@@ -61,12 +66,18 @@ def analyze_incident(incident: Incident, evidence: list[Evidence]) -> AgentAnaly
         ]
 
     return AgentAnalysis(
-        summary=f"{incident.severity.upper()} {incident.service} incident in {incident.environment}: deterministic mock analysis found {hypotheses[0].title.lower()}.",
+        summary=(
+            f"{incident.severity.upper()} {incident.service} incident in "
+            f"{incident.environment}: deterministic mock analysis found "
+            f"{hypotheses[0].title.lower()}."
+        ),
         affected_service=incident.service,
         environment=incident.environment,
         severity=incident.severity,
         hypotheses=hypotheses,
         recommended_action=action,
         verification_plan=["Execute mock.verify_recovery", "Confirm error rate decreases", "Write final report"],
-        escalation_condition="Escalate if confidence drops below 0.70, verification fails, or requested action is denied.",
+        escalation_condition=(
+            "Escalate if confidence drops below 0.70, verification fails, or requested action is denied."
+        ),
     )

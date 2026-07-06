@@ -7,9 +7,14 @@ shell execution. It returns deterministic artifacts for demos and tests.
 from __future__ import annotations
 
 from hashlib import sha1
-from typing import Any
+from typing import TYPE_CHECKING
 
 from app.models.action import ActionExecutionResult, ActionRequest, ActionStatus
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
+
+    from app.models import ActionProposal, Incident
 
 
 class MockActionExecutor:
@@ -112,7 +117,7 @@ def _stable_suffix(request: ActionRequest) -> str:
     return sha1(raw.encode("utf-8")).hexdigest()[:6].upper()
 
 
-def execute_mock_action(db: object, incident: object, action: object) -> dict[str, object]:
+def execute_mock_action(db: "Session", incident: "Incident", action: "ActionProposal") -> dict[str, object]:
     """Execute a persisted ActionProposal through the safe mock executor.
 
     The DB scaffold stores action proposals as SQLAlchemy objects. This adapter
@@ -122,11 +127,11 @@ def execute_mock_action(db: object, incident: object, action: object) -> dict[st
     """
 
     request = ActionRequest(
-        action_type=str(getattr(action, "action_type")),
-        target=str(getattr(action, "target")),
-        environment=str(getattr(action, "environment", getattr(incident, "environment", "local"))),
-        payload=getattr(action, "payload", {}) or {},
-        incident_id=str(getattr(incident, "id")),
+        action_type=action.action_type,
+        target=action.target,
+        environment=action.environment or incident.environment,
+        payload=action.payload or {},
+        incident_id=incident.id,
         approved=True,
     )
     result = MockActionExecutor().execute(request)
@@ -138,23 +143,21 @@ def execute_mock_action(db: object, incident: object, action: object) -> dict[st
         "output": dict(result.output),
         "verification": dict(result.verification),
     }
-    setattr(action, "execution_result", payload)
-    setattr(action, "status", "executed" if ok else "failed")
-    add = getattr(db, "add", None)
-    if callable(add):
-        add(action)
+    action.execution_result = payload
+    action.status = "executed" if ok else "failed"
+    db.add(action)
     return payload
 
 
-def verify_recovery(incident: object, action: object) -> dict[str, object]:
+def verify_recovery(incident: "Incident", action: "ActionProposal") -> dict[str, object]:
     """Return deterministic mock recovery evidence for an executed action."""
 
     request = ActionRequest(
         action_type="mock.verify_recovery",
-        target=str(getattr(action, "target", getattr(incident, "service", "unknown"))),
-        environment=str(getattr(incident, "environment", "local")),
-        incident_id=str(getattr(incident, "id")),
-        payload={"action_type": getattr(action, "action_type", "unknown")},
+        target=action.target or incident.service,
+        environment=incident.environment,
+        incident_id=incident.id,
+        payload={"action_type": action.action_type},
     )
     result = MockActionExecutor().execute(request)
     recovered = bool(result.output.get("recovered", False))

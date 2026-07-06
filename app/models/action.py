@@ -1,4 +1,5 @@
 """Action, risk, policy, and approval domain models for OpsCat MVP."""
+
 from __future__ import annotations
 
 from collections.abc import Mapping

@@ -1,4 +1,5 @@
 """Policy evaluation for approval-gated OpsCat actions."""
+
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
@@ -43,7 +44,9 @@ class PolicyEngine:
     def __init__(self, risk_engine: RiskEngine | None = None) -> None:
         self.risk_engine = risk_engine or RiskEngine()
 
-    def evaluate(self, request: ActionRequest, context: PolicyContext | None = None) -> PolicyEvaluation:
+    def evaluate(
+        self, request: ActionRequest, context: PolicyContext | None = None
+    ) -> PolicyEvaluation:
         context = context or PolicyContext(environment=request.environment)
         action = self.risk_engine.get_action(request.action_type)
         if action is None:
@@ -63,7 +66,10 @@ class PolicyEngine:
                 decision=PolicyDecision.DENY,
                 risk_level=RiskLevel.PROHIBITED,
                 requires_approval=False,
-                reason=action.prohibited_reason or "Production or prohibited mutation is denied by default policy.",
+                reason=(
+                    action.prohibited_reason
+                    or "Production or prohibited mutation is denied by default policy."
+                ),
                 action=action,
                 preconditions=action.required_preconditions,
                 post_checks=action.post_checks,
@@ -74,7 +80,10 @@ class PolicyEngine:
                 decision=PolicyDecision.DENY,
                 risk_level=RiskLevel.PROHIBITED,
                 requires_approval=False,
-                reason=f"Action {request.action_type} is not allowed in environment {request.environment}.",
+                reason=(
+                    f"Action {request.action_type} is not allowed in "
+                    f"environment {request.environment}."
+                ),
                 action=action,
                 preconditions=action.required_preconditions,
                 post_checks=action.post_checks,
@@ -148,7 +157,10 @@ class PolicyEngine:
             return PolicyDecision.ESCALATE
         if context.autopilot_attempts >= cfg.max_attempts_per_incident:
             return PolicyDecision.ESCALATE
-        if context.service not in cfg.allowed_services or request.environment not in cfg.allowed_environments:
+        if (
+            context.service not in cfg.allowed_services
+            or request.environment not in cfg.allowed_environments
+        ):
             return PolicyDecision.ESCALATE
         if request.action_type not in cfg.allowed_actions:
             return PolicyDecision.REQUIRE_APPROVAL

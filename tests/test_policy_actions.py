@@ -1,8 +1,7 @@
 from unittest import TestCase
 
-from app.services.action_service import ActionService
-
 from app.models.action import ActionRequest, ActionStatus, PolicyDecision, RiskLevel
+from app.services.action_service import ActionService
 from app.services.policy_engine import PolicyContext, default_capabilities
 
 
@@ -48,7 +47,10 @@ class PolicyActionTests(TestCase):
 
     def test_production_and_shell_actions_are_denied(self):
         svc = ActionService()
-        context = PolicyContext(capabilities=default_capabilities({"mock:pull_requests:write"}), environment="production")
+        context = PolicyContext(
+            capabilities=default_capabilities({"mock:pull_requests:write"}),
+            environment="production",
+        )
 
         prod = svc.propose(
             ActionRequest(
@@ -61,7 +63,13 @@ class PolicyActionTests(TestCase):
         self.assertEqual(prod.evaluation.decision, PolicyDecision.DENY)
         self.assertEqual(prod.status, ActionStatus.DENIED)
 
-        shell = svc.propose(ActionRequest(action_type="shell.execute", target="host", payload={"cmd": "rm -rf /"}))
+        shell = svc.propose(
+            ActionRequest(
+                action_type="shell.execute",
+                target="host",
+                payload={"cmd": "rm -rf /"},
+            )
+        )
         self.assertEqual(shell.evaluation.decision, PolicyDecision.DENY)
         self.assertEqual(shell.evaluation.risk_level, RiskLevel.PROHIBITED)
 

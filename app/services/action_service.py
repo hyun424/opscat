@@ -1,4 +1,5 @@
 """Approval-aware action orchestration service for the OpsCat MVP."""
+
 from __future__ import annotations
 
 from dataclasses import asdict
@@ -15,12 +16,18 @@ from app.tools.mock_actions import MockActionExecutor
 
 
 class ActionService:
-    def __init__(self, policy_engine: PolicyEngine | None = None, executor: MockActionExecutor | None = None) -> None:
+    def __init__(
+        self,
+        policy_engine: PolicyEngine | None = None,
+        executor: MockActionExecutor | None = None,
+    ) -> None:
         self.policy_engine = policy_engine or PolicyEngine()
         self.executor = executor or MockActionExecutor()
         self.approvals: dict[str, ApprovalRecord] = {}
 
-    def propose(self, request: ActionRequest, context: PolicyContext | None = None) -> ApprovalRecord:
+    def propose(
+        self, request: ActionRequest, context: PolicyContext | None = None
+    ) -> ApprovalRecord:
         evaluation = self.policy_engine.evaluate(request, context)
         record = ApprovalRecord(action_request=request, evaluation=evaluation)
         if evaluation.decision == PolicyDecision.DENY:
@@ -31,18 +38,24 @@ class ActionService:
     def approve(self, approval_id: str, actor: str, reason: str = "approved") -> ApprovalRecord:
         record = self._get(approval_id)
         if record.status != ActionStatus.PROPOSED:
-            raise ValueError(f"Approval {approval_id} is not pending; current status={record.status}.")
+            raise ValueError(
+                f"Approval {approval_id} is not pending; current status={record.status}."
+            )
         record.approve(actor, reason)
         return record
 
     def reject(self, approval_id: str, actor: str, reason: str = "rejected") -> ApprovalRecord:
         record = self._get(approval_id)
         if record.status != ActionStatus.PROPOSED:
-            raise ValueError(f"Approval {approval_id} is not pending; current status={record.status}.")
+            raise ValueError(
+                f"Approval {approval_id} is not pending; current status={record.status}."
+            )
         record.reject(actor, reason)
         return record
 
-    def execute(self, approval_id: str, context: PolicyContext | None = None) -> ActionExecutionResult:
+    def execute(
+        self, approval_id: str, context: PolicyContext | None = None
+    ) -> ActionExecutionResult:
         record = self._get(approval_id)
         request = record.action_request
         if record.evaluation.decision == PolicyDecision.REQUIRE_APPROVAL:

@@ -3,6 +3,7 @@
 The domain service is dependency-light; this router activates when FastAPI and
 Pydantic are installed by the app scaffold.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -12,8 +13,8 @@ from app.services.action_service import ActionService
 from app.services.policy_engine import PolicyContext, default_capabilities
 
 try:  # pragma: no cover - exercised in integration once FastAPI scaffold exists.
-    from fastapi import APIRouter, HTTPException
-    from pydantic import BaseModel, Field
+    from fastapi import APIRouter, HTTPException  # type: ignore[import-not-found]
+    from pydantic import BaseModel, Field  # type: ignore[import-not-found]
 except ModuleNotFoundError:  # pragma: no cover
     APIRouter = None  # type: ignore[assignment]
     HTTPException = None  # type: ignore[assignment]
@@ -40,7 +41,9 @@ service = ActionService()
 
 def create_router(action_service: ActionService | None = None):
     if APIRouter is None:  # pragma: no cover
-        raise RuntimeError("FastAPI is not installed; install app dependencies to enable approval routes.")
+        raise RuntimeError(
+            "FastAPI is not installed; install app dependencies to enable approval routes."
+        )
     svc = action_service or service
     router = APIRouter(prefix="/approvals", tags=["approvals"])
 

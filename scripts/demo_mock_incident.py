@@ -93,10 +93,7 @@ def main() -> int:
         )
         print(json.dumps(approval, indent=2))
     else:
-        print(
-            "4. Approval skipped; rerun with --approve "
-            "to execute the first approval-gated action"
-        )
+        print("4. Approval skipped; rerun with --approve to execute the first approval-gated action")
 
     print("5. Verifying recovery")
     verification = request_json(args.base_url, "POST", f"/incidents/{incident_id}/verify")

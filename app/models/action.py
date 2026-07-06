@@ -9,6 +9,11 @@ from enum import StrEnum
 from typing import Any
 from uuid import uuid4
 
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.db import Base
+
 
 class RiskLevel(StrEnum):
     READ_ONLY = "read_only"
@@ -120,14 +125,7 @@ class ActionExecutionResult:
     verification: Mapping[str, Any] = field(default_factory=dict)
 
 
-# SQLAlchemy persistence model used by the incident API.  The dataclass
-# action-policy types above remain dependency-light for policy/action services.
-from sqlalchemy import Boolean, DateTime, ForeignKey, JSON, String, Text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.db import Base
-
-
+# SQLAlchemy persistence model used by the incident workflow.
 class ActionProposal(Base):
     __tablename__ = "action_proposals"
 
@@ -147,8 +145,14 @@ class ActionProposal(Base):
     policy_reasons: Mapped[list[str]] = mapped_column(JSON, default=list)
     status: Mapped[str] = mapped_column(String, default="proposed", index=True)
     execution_result: Mapped[dict[str, Any] | None] = mapped_column(JSON)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+    )
 
     incident = relationship("Incident", back_populates="actions")
     approvals = relationship("ApprovalDecision", back_populates="action", cascade="all, delete-orphan")

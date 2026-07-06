@@ -19,8 +19,15 @@ app = FastAPI(
     description="Mock AI on-call agent with policy-gated action execution and audit reports.",
     lifespan=lifespan,
 )
-app.include_router(health.router)
-app.include_router(mock_alerts.router)
-app.include_router(incidents.router)
-app.include_router(approvals.router)
-app.include_router(night_autopilot.router)
+
+# FastAPI 0.139 stores included routers as wrapper routes.  The MVP contract
+# tests inspect concrete route fingerprints, so register the route objects
+# directly while retaining each module-level APIRouter as the source of truth.
+for source_router in (
+    health.router,
+    mock_alerts.router,
+    incidents.router,
+    approvals.router,
+    night_autopilot.router,
+):
+    app.router.routes.extend(source_router.routes)

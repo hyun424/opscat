@@ -13,6 +13,7 @@ _EXPORTS = {
     "ActionProposal": ("app.models.action", "ActionProposal"),
     "ActionExecutionResult": ("app.models.action", "ActionExecutionResult"),
     "ActionMetadata": ("app.models.action", "ActionMetadata"),
+    "ActionProposal": ("app.models.action", "ActionProposal"),
     "ActionRequest": ("app.models.action", "ActionRequest"),
     "ActionStatus": ("app.models.action", "ActionStatus"),
     "ApprovalRecord": ("app.models.action", "ApprovalRecord"),

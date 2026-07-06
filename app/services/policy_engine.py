@@ -18,13 +18,9 @@ class NightAutopilotConfig:
     timezone: str = "UTC"
     max_automatic_risk: RiskLevel = RiskLevel.LOW
     max_attempts_per_incident: int = 1
-    allowed_services: tuple[str, ...] = ("payment-api", "checkout-worker", "demo-service")
+    allowed_services: tuple[str, ...] = ("payment-api", "checkout-worker", "demo-service", "worker")
     allowed_environments: tuple[str, ...] = ("staging", "local", "test")
-    allowed_actions: tuple[str, ...] = (
-        "report.generate",
-        "timeline.add_note",
-        "mock.execute_restart_worker",
-    )
+    allowed_actions: tuple[str, ...] = ("report.generate", "timeline.add_note", "mock.execute_restart_worker")
     wake_up_conditions: tuple[str, ...] = (
         "critical severity",
         "production environment",
@@ -91,6 +87,7 @@ class PolicyEngine:
     def evaluate(self, request: ActionRequest | str, context: PolicyContext | None = None) -> PolicyEvaluation:
         if isinstance(request, str):
             context = context or PolicyContext()
+            request = DANGEROUS_ACTION_ALIASES.get(request, request)
             request = ActionRequest(
                 action_type=DANGEROUS_ACTION_ALIASES.get(request, request),
                 target=context.service,
@@ -144,11 +141,7 @@ class PolicyEngine:
                 post_checks=action.post_checks,
             )
 
-        if (
-            action.allowed_environments
-            and request.environment not in action.allowed_environments
-            and not action.is_read_only
-        ):
+        if action.allowed_environments and request.environment not in action.allowed_environments and not action.is_read_only:
             return PolicyEvaluation(
                 decision=PolicyDecision.DENY,
                 risk_level=RiskLevel.PROHIBITED,
@@ -159,11 +152,13 @@ class PolicyEngine:
                 post_checks=action.post_checks,
             )
 
-        effective_capabilities = context.capabilities or default_capabilities((
-            "mock:tickets:write",
-            "mock:pull_requests:write",
-            "mock:workers:restart",
-        ))
+        effective_capabilities = context.capabilities or default_capabilities(
+            (
+                "mock:tickets:write",
+                "mock:pull_requests:write",
+                "mock:workers:restart",
+            )
+        )
         missing = tuple(sorted(set(action.required_capabilities) - set(effective_capabilities)))
         if missing:
             return PolicyEvaluation(

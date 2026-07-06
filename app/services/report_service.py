@@ -24,10 +24,7 @@ def render_incident_report(incident: Incident) -> str:
         lines.append(f"- `{evidence.id}` {evidence.type}: {evidence.content}")
     lines.extend(["", "## Actions"])
     for action in incident.actions:
-        lines.append(
-            f"- `{action.id}` {action.action_type} "
-            f"status={action.status} risk={action.risk_level} policy={action.policy_decision}"
-        )
+        lines.append(f"- `{action.id}` {action.action_type} status={action.status} risk={action.risk_level} policy={action.policy_decision}")
         lines.append(f"  - Rationale: {action.rationale}")
         lines.append(f"  - Post-checks: {', '.join(action.post_checks)}")
         if action.execution_result:

@@ -133,12 +133,18 @@ def build_escalation_payload(
             {
                 "title": incident.root_cause_candidate or "Unknown root cause",
                 "confidence": incident.confidence,
-                "status": "supported" if incident.confidence and incident.confidence >= MIN_AUTO_CONFIDENCE else "uncertain",
+                "status": (
+                    "supported"
+                    if incident.confidence and incident.confidence >= MIN_AUTO_CONFIDENCE
+                    else "uncertain"
+                ),
             }
         ],
         "confidence": incident.confidence,
         "risk_level": action.risk_level if action is not None else (policy.risk_level if policy is not None else None),
-        "policy_decision": action.policy_decision if action is not None else (policy.decision if policy is not None else None),
+        "policy_decision": (
+            action.policy_decision if action is not None else (policy.decision if policy is not None else None)
+        ),
         "policy_reasons": policy_reasons,
         "evidence_collected": evidence,
         "actions_already_taken": actions_taken,

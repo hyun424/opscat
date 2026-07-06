@@ -73,6 +73,7 @@ class AgentLoop:
             evidence_count=len(evidence),
             confidence=incident.confidence,
         )
+        hard_escalation = hard_escalation_required(triggers)
         if triggers:
             payload = build_escalation_payload(
                 incident,
@@ -86,8 +87,10 @@ class AgentLoop:
                 incident,
                 payload,
                 action=action,
-                transition_to_escalated=hard_escalation_required(triggers),
+                transition_to_escalated=hard_escalation,
             )
+            if hard_escalation:
+                action.status = "escalated"
         add_timeline_event(
             db,
             incident.id,
@@ -96,7 +99,9 @@ class AgentLoop:
             content=f"Policy decision for {action.action_type}: {policy.decision}",
             metadata={"action_id": action.id, "reasons": policy.reasons, "escalation_triggers": triggers},
         )
-        if policy.decision == "ALLOW" and not action.requires_approval:
+        if incident.status == "escalated":
+            pass
+        elif policy.decision == "ALLOW" and not action.requires_approval:
             db.add(transition_incident(incident, "executing", actor="policy", reason="action auto allowed"))
         elif policy.decision == "DENY":
             action.status = "denied"

@@ -75,7 +75,11 @@ class PolicyEngine:
                 post_checks=action.post_checks,
             )
 
-        if action.allowed_environments and request.environment not in action.allowed_environments:
+        if (
+            action.allowed_environments
+            and request.environment not in action.allowed_environments
+            and not action.is_read_only
+        ):
             return PolicyEvaluation(
                 decision=PolicyDecision.DENY,
                 risk_level=RiskLevel.PROHIBITED,

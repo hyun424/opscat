@@ -54,7 +54,7 @@ class PolicyActionTests(TestCase):
 
         prod = svc.propose(
             ActionRequest(
-                action_type="mock.create_rollback_pr",
+                action_type="production.rollback",
                 target="payment-api",
                 environment="production",
             ),
@@ -62,6 +62,16 @@ class PolicyActionTests(TestCase):
         )
         self.assertEqual(prod.evaluation.decision, PolicyDecision.DENY)
         self.assertEqual(prod.status, ActionStatus.DENIED)
+
+        mock_pr = svc.propose(
+            ActionRequest(
+                action_type="mock.create_rollback_pr",
+                target="payment-api",
+                environment="production",
+            ),
+            context,
+        )
+        self.assertEqual(mock_pr.evaluation.decision, PolicyDecision.REQUIRE_APPROVAL)
 
         shell = svc.propose(
             ActionRequest(

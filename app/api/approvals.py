@@ -1,8 +1,8 @@
 """Optional FastAPI approval routes for OpsCat.
 
-from app.db import get_db
-from app.schemas.incidents import ActionRead, ApprovalRequest, ApprovalResponse, IncidentRead
-from app.services.incident_service import decide_action
+The domain service is dependency-light; this router activates when FastAPI and
+Pydantic are installed by the app scaffold.
+"""
 
 from __future__ import annotations
 
@@ -43,6 +43,18 @@ def create_router(action_service: ActionService | None = None):
     if APIRouter is None:  # pragma: no cover
         raise RuntimeError(
             "FastAPI is not installed; install app dependencies to enable approval routes."
+        )
+    svc = action_service or service
+    router = APIRouter(prefix="/approvals", tags=["approvals"])
+
+    @router.post("")
+    def propose_action(payload: ApprovalProposalPayload):
+        request = ActionRequest(
+            action_type=payload.action_type,
+            target=payload.target,
+            environment=payload.environment,
+            incident_id=payload.incident_id,
+            payload=payload.payload,
         )
     except Exception as exc:  # pragma: no cover - FastAPI boundary
         raise HTTPException(status_code=404, detail="action not found or invalid") from exc

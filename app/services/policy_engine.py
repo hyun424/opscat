@@ -18,7 +18,12 @@ class NightAutopilotConfig:
     timezone: str = "UTC"
     max_automatic_risk: RiskLevel = RiskLevel.LOW
     max_attempts_per_incident: int = 1
-    allowed_services: tuple[str, ...] = ("payment-api", "checkout-worker", "demo-service", "worker")
+    allowed_services: tuple[str, ...] = (
+        "payment-api",
+        "checkout-worker",
+        "demo-service",
+        "worker",
+    )
     allowed_environments: tuple[str, ...] = ("staging", "local", "test")
     allowed_actions: tuple[str, ...] = ("report.generate", "timeline.add_note", "mock.execute_restart_worker")
     wake_up_conditions: tuple[str, ...] = (

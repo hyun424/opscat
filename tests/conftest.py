@@ -70,7 +70,7 @@ def db_session() -> Generator[Session]:
 
 
 @pytest.fixture()
-def client(app: Any, db_session: Session) -> Generator[TestClient]:
+def client(db_session: Session, app: Any) -> Generator[TestClient]:
     def override_get_db() -> Generator[Session]:
         yield db_session
 

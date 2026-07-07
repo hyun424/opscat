@@ -145,6 +145,7 @@ def test_waiting_or_terminal_paths_have_report_or_escalation_payload(client: Any
     assert "# Incident Report:" in report_text
     assert "## Evidence" in report_text
     assert "## Actions" in report_text
+    assert "## Failure Mode Analysis" in report_text
     assert "## Timeline" in report_text
     assert action["action_type"] in report_text
 

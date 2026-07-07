@@ -244,7 +244,7 @@ Files likely touched:
 - `docs/release-evidence.md`
 - `tests/test_release_evidence_index.py`
 
-### P5-010 — Beta onboarding and deployment dry-run guide
+### P5-010 ✅ — Beta onboarding and deployment dry-run guide
 
 Goal: make the project understandable as a paid-beta candidate.
 
@@ -320,6 +320,7 @@ Files likely touched:
 - P5-009: completed with named verify profiles and secret-free GitHub Actions full verification.
 - P5-017: completed with OSS security policy, P5 threat-model coverage, and contributor safety checklist.
 - P5-018: completed with changelog, deployment dry-run, and versioned release evidence docs.
+- P5-010: completed with 10-minute beta walkthrough and README onboarding links.
 - P5-013: completed with `.env.example`, `Makefile`, README quickstart, and `make demo` validation.
 - P5-014: completed with `CONTRIBUTING.md`, `ROADMAP.md`, and safe issue templates.
 - P5-015: completed with `docs/connector-sdk.md` and executable fixture connector template.

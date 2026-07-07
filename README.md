@@ -61,6 +61,9 @@ Safety is enforced by explicit action metadata, risk classification, approval st
 ## Documentation map
 
 - [`docs/portfolio-summary.md`](docs/portfolio-summary.md) — recruiter-facing and paid-beta framing summary.
+- [`docs/beta-walkthrough.md`](docs/beta-walkthrough.md) — 10-minute local beta walkthrough from connector preview to report.
+- [`docs/connector-permissions.md`](docs/connector-permissions.md) — least-privilege connector permission preview.
+- [`docs/release-evidence.md`](docs/release-evidence.md) — release gate, eval artifacts, and verification profiles.
 - [`docs/portfolio-quality-bar.md`](docs/portfolio-quality-bar.md) — completion gates and quality contract.
 - [`docs/architecture.md`](docs/architecture.md) — runtime architecture, control-plane/connector model, and data boundary.
 - [`docs/demo-walkthrough.md`](docs/demo-walkthrough.md) — demo script, API walkthrough, and current blocker behavior.
@@ -72,7 +75,7 @@ Safety is enforced by explicit action metadata, risk classification, approval st
 
 ## Open-source quickstart
 
-A new contributor can run OpsCat locally without auth setup, cloud accounts, or production credentials. No auth setup is required for the P5 quickstart; OpsCat uses the existing local-header demo identity in local/mock mode.
+A new contributor can run OpsCat locally without auth setup, cloud accounts, or production credentials. No auth setup is required for the P5 quickstart; auth is deferred; OpsCat uses the existing local-header demo identity in local/mock mode.
 
 ```bash
 git clone <your-fork-or-repo-url>

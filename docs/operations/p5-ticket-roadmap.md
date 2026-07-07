@@ -134,7 +134,7 @@ Files likely touched:
 - `tests/test_workflow_cli.py`
 - `scripts/verify.sh`
 
-### P5-005 — Approval console without auth/session work
+### P5-005 ✅ — Approval console without auth/session work
 
 Goal: build a useful operator approval console while keeping auth deferred.
 
@@ -313,6 +313,7 @@ Files likely touched:
 - P5-002: completed with metadata-only secret lifecycle API and audit-safe redaction tests.
 - P5-003: completed with fixture signal normalization for Sentry/Datadog/Loki/generic envelopes.
 - P5-004: completed with `scripts/workflow_cli.py` stats/drain/dead-letter local worker operations.
+- P5-005: completed with scoped pending approval list and action preview pages without browser mutation forms.
 - P5-013: completed with `.env.example`, `Makefile`, README quickstart, and `make demo` validation.
 - P5-014: completed with `CONTRIBUTING.md`, `ROADMAP.md`, and safe issue templates.
 - P5-015: completed with `docs/connector-sdk.md` and executable fixture connector template.

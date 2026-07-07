@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from html import escape
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -9,9 +10,9 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from app.db import get_db
-from app.models import Incident
+from app.models import ActionProposal, Incident
 from app.security.dependencies import get_current_principal
-from app.services.authorization import AuthorizationError
+from app.services.authorization import AuthorizationError, require_same_scope
 from app.services.identity_service import Principal
 from app.services.incident_service import get_incident
 
@@ -53,8 +54,44 @@ def operator_inbox(principal: Principal = Depends(get_current_principal), db: Se
             f"<td>{escape(message)}</td>"
             "</tr>"
         )
+    pending_actions = (
+        db.query(ActionProposal)
+        .filter(
+            ActionProposal.tenant_id == principal.tenant_id,
+            ActionProposal.workspace_id == principal.workspace_id,
+            ActionProposal.requires_approval.is_(True),
+            ActionProposal.status.in_(("proposed", "approved")),
+        )
+        .order_by(ActionProposal.created_at.desc())
+        .all()
+    )
+    pending_rows = []
+    for action in pending_actions:
+        incident = action.incident
+        message = ""
+        if incident is not None:
+            message = str((incident.alert_payload or {}).get("message") or incident.summary or "")
+        pending_rows.append(
+            '<tr data-testid="pending-approval-row">'
+            f"<td><a href='/operator/actions/{escape(action.id)}'>{escape(action.id)}</a></td>"
+            f"<td><a href='/operator/incidents/{escape(action.incident_id)}'>{escape(action.incident_id)}</a></td>"
+            f"<td>{escape(action.action_type)}</td>"
+            f"<td><code>{escape(action.policy_decision)}</code></td>"
+            f"<td><code>{escape(action.risk_level)}</code></td>"
+            f"<td>{escape(action.status)}</td>"
+            f"<td>{escape(message)}</td>"
+            "</tr>"
+        )
     body = (
         f"<p>Workspace: <code>{escape(principal.tenant_id)}/{escape(principal.workspace_id)}</code></p>"
+        '<section data-testid="pending-approvals">'
+        "<h2>Pending approvals</h2>"
+        "<p>Review proposed actions here, then approve/reject through the local API instructions on each action page.</p>"
+        '<table data-testid="pending-approval-table"><thead><tr>'
+        "<th>Action</th><th>Incident</th><th>Type</th><th>Policy</th><th>Risk</th><th>Status</th><th>Summary</th>"
+        "</tr></thead>"
+        f"<tbody>{''.join(pending_rows)}</tbody></table>"
+        "</section>"
         '<section data-testid="incident-inbox">'
         "<h2>Incident inbox</h2>"
         '<table data-testid="incident-table"><thead><tr><th>ID</th><th>Service</th><th>Env</th><th>Status</th><th>Severity</th><th>Summary</th></tr></thead>'
@@ -62,6 +99,56 @@ def operator_inbox(principal: Principal = Depends(get_current_principal), db: Se
         "</section>"
     )
     return _page("OpsCat Operator", body)
+
+
+@router.get("/actions/{action_id}", response_class=HTMLResponse)
+def operator_action_detail(action_id: str, principal: Principal = Depends(get_current_principal), db: Session = Depends(get_db)) -> HTMLResponse:
+    try:
+        action = db.query(ActionProposal).filter(ActionProposal.id == action_id).one()
+        require_same_scope(principal, action, action="read action")
+        incident = get_incident(db, action.incident_id, principal=principal)
+    except AuthorizationError as exc:
+        raise HTTPException(status_code=404, detail={"message": "action not found", "workspace_id": exc.workspace_id}) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail="action not found") from exc
+
+    body = f"""
+<p><a href="/operator">← Inbox</a> · <a href="/operator/incidents/{escape(incident.id)}">Incident detail</a></p>
+<main data-testid="action-detail">
+<h2>Action {escape(action.id)}</h2>
+<section data-testid="action-preview">
+<h3>{escape(action.action_type)} → {escape(action.target)}</h3>
+<p>Status <code>{escape(action.status)}</code> Environment <code>{escape(action.environment)}</code></p>
+<p>{escape(action.rationale)}</p>
+<h4>Dry-run payload preview</h4>
+<pre><code>{escape(_json_block(action.payload))}</code></pre>
+</section>
+<section data-testid="action-risk">
+<h3>Risk and policy</h3>
+<p>Risk <code>{escape(action.risk_level)}</code> Policy <code>{escape(action.policy_decision)}</code> Requires approval <code>{action.requires_approval}</code></p>
+<ul>{_list_items(action.policy_reasons)}</ul>
+</section>
+<section data-testid="action-preconditions">
+<h3>Preconditions</h3>
+<ul>{_list_items(action.preconditions)}</ul>
+</section>
+<section data-testid="action-post-checks">
+<h3>Post-checks</h3>
+<ul>{_list_items(action.post_checks)}</ul>
+</section>
+<section data-testid="action-evidence-ids">
+<h3>Evidence IDs</h3>
+<ul>{_list_items(action.evidence_ids)}</ul>
+</section>
+<section data-testid="action-approval-api">
+<h3>Approval API instructions</h3>
+<p>No browser mutation form is rendered while auth/session work is deferred.</p>
+<p>Approve: <code>POST /approvals/{escape(action.id)}</code> with <code>decision=approve</code>.</p>
+<p>Reject: <code>POST /approvals/{escape(action.id)}</code> with <code>decision=reject</code>.</p>
+</section>
+</main>
+"""
+    return _page(f"OpsCat Action {action.id}", body)
 
 
 @router.get("/incidents/{incident_id}", response_class=HTMLResponse)
@@ -107,3 +194,13 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
 </main>
 """
     return _page(f"OpsCat Incident {incident.id}", body)
+
+
+def _list_items(values: list[str]) -> str:
+    if not values:
+        return "<li>None recorded</li>"
+    return "".join(f"<li><code>{escape(str(value))}</code></li>" for value in values)
+
+
+def _json_block(value: object) -> str:
+    return json.dumps(value or {}, indent=2, sort_keys=True, default=str)

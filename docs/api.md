@@ -117,6 +117,18 @@ curl -s http://localhost:8000/operator \
   -H 'X-OpsCat-Role: admin'
 ```
 
+The operator dashboard includes a workspace-scoped pending approvals table. Action detail pages are read-only and provide API instructions instead of browser mutation forms while auth/session work is deferred.
+
+### GET /operator/actions/{action_id}
+
+```bash
+curl -s http://localhost:8000/operator/actions/$ACTION_ID \
+  -H 'X-OpsCat-Actor: demo-user@opscat.local' \
+  -H 'X-OpsCat-Tenant: demo' \
+  -H 'X-OpsCat-Workspace: demo' \
+  -H 'X-OpsCat-Role: admin'
+```
+
 ## Local secret metadata lifecycle
 
 Secret setup remains local/mock and auth is deferred. Use admin local-header role for metadata-only secret setup. Responses never return plaintext or ciphertext.

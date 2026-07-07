@@ -27,6 +27,8 @@ def test_public_api_docs_cover_core_local_surfaces() -> None:
         "POST /approvals/{action_id}",
         "GET /incidents/{incident_id}/report",
         "GET /operator",
+        "GET /operator/actions/{action_id}",
+        "pending approvals",
         "POST /night-autopilot/simulate",
         "Workflow worker CLI",
         "scripts/workflow_cli.py stats",

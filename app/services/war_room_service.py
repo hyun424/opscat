@@ -23,6 +23,8 @@ def build_war_room(incident: Incident | Mapping[str, Any]) -> dict[str, Any]:
     primary_action = actions[0] if actions else None
     score = score_agent_reliability(_score_inputs(incident, evidence, primary_action))
     score_payload = score.to_dict()
+    root_cause_candidates = _root_cause_candidates(incident, evidence)
+    policy_decision = _policy_decision(primary_action)
     return _redacted_dict(
         {
             "incident_id": str(_get(incident, "id", "")),
@@ -39,11 +41,13 @@ def build_war_room(incident: Incident | Mapping[str, Any]) -> dict[str, Any]:
             "timeline": _timeline(timeline),
             "decision_trace": render_trace_json(incident),
             "current_hypothesis": _get(incident, "root_cause_candidate", None) or "No deterministic root-cause candidate recorded yet",
-            "root_cause_candidates": _root_cause_candidates(incident, evidence),
+            "root_cause_candidates": root_cause_candidates,
+            "hypotheses": root_cause_candidates,
             "evidence": _evidence(evidence),
             "missing_evidence": _missing_evidence(incident, evidence, primary_action),
             "proposed_action": _proposed_action(primary_action),
-            "policy_decision": _policy_decision(primary_action),
+            "policy_decision": policy_decision,
+            "policy_gates": _policy_gates(policy_decision),
             "blast_radius": _payload_section(primary_action, "blast_radius") or {"scope": "unknown", "allowed_for_auto": False},
             "simulation": _payload_section(primary_action, "simulation") or {"status": "not_recorded", "ok": False, "success": False},
             "memory_matches": _memory_matches(primary_action),
@@ -54,6 +58,9 @@ def build_war_room(incident: Incident | Mapping[str, Any]) -> dict[str, Any]:
                 "components_by_name": score_payload["components_by_name"],
             },
             "human_questions": _human_questions(score, primary_action),
+            "runbook_critique": _runbook_critique(primary_action),
+            "why_not_auto_execute": _why_not_auto_execute(score, policy_decision),
+            "final_decision": _final_decision(incident, primary_action, score),
             "reliability_score": score_payload,
         }
     )
@@ -150,6 +157,19 @@ def _policy_decision(action: Any) -> dict[str, Any]:
     }
 
 
+def _policy_gates(policy_decision: dict[str, Any]) -> list[dict[str, Any]]:
+    decision = str(policy_decision.get("decision", "not_recorded"))
+    reasons = _as_list(policy_decision.get("reasons", []))
+    requires_approval = bool(policy_decision.get("requires_approval", True))
+    status = "passed" if decision in {"ALLOW", "REQUIRE_APPROVAL"} else "blocked"
+    gates = [
+        {"name": "policy_decision", "status": status, "reason": decision},
+        {"name": "approval_required", "status": "needs_human" if requires_approval else "passed", "reason": "human approval required" if requires_approval else "no approval required"},
+    ]
+    gates.extend({"name": "policy_reason", "status": "info", "reason": str(reason)} for reason in reasons)
+    return gates
+
+
 def _payload_section(action: Any, key: str) -> dict[str, Any]:
     if action is None:
         return {}
@@ -178,6 +198,39 @@ def _human_questions(score: Any, action: Any) -> list[dict[str, str]]:
     if not questions:
         questions.append({"question": "Is there any operator context missing from the local/mock evidence?", "why_it_matters": "Additional context can reduce ambiguity before approval."})
     return questions
+
+
+def _runbook_critique(action: Any) -> dict[str, Any]:
+    embedded = _payload_section(action, "runbook_critique")
+    if embedded:
+        return embedded
+    self_critique = _payload_section(action, "self_critique")
+    if self_critique:
+        missing = _as_list(self_critique.get("missing_evidence", []))
+        objections = _as_list(self_critique.get("action_risk_objections", []))
+        fit = "weak_fit" if missing or objections else "good_fit"
+        return {"fit": fit, "reasons": missing + objections, "suggestions": ["keep remediation local/mock and policy-gated"]}
+    return {"fit": "insufficient_evidence", "reasons": ["no runbook critique payload recorded"], "suggestions": ["review local/mock evidence before action"]}
+
+def _why_not_auto_execute(score: Any, policy_decision: dict[str, Any]) -> list[str]:
+    reasons: list[str] = []
+    if score.human_on_exception_reason:
+        reasons.append(str(score.human_on_exception_reason))
+    if bool(policy_decision.get("requires_approval", True)):
+        reasons.append("human approval required")
+    if str(policy_decision.get("decision", "")) not in {"ALLOW", "REQUIRE_APPROVAL"}:
+        reasons.append(f"policy decision {policy_decision.get('decision', 'not_recorded')}")
+    return sorted(set(reasons)) or ["execution remains policy-gated and local/mock only"]
+
+def _final_decision(incident: Incident | Mapping[str, Any], action: Any, score: Any) -> dict[str, Any]:
+    action_status = str(_get(action, "status", "not_proposed")) if action is not None else "not_proposed"
+    route = score.action_route if hasattr(score, "action_route") else "human_required"
+    return {
+        "incident_status": str(_get(incident, "status", "unknown")),
+        "action_status": action_status,
+        "route": route,
+        "summary": f"Incident {_get(incident, 'status', 'unknown')}; action {action_status}; route {route}.",
+    }
 
 
 def _score_inputs(incident: Incident | Mapping[str, Any], evidence: list[Any], action: Any) -> dict[str, Any]:

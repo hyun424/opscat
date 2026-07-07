@@ -16,6 +16,11 @@ This document records the P7 documentation/review lane, the five coordinated lan
 
 The coordinated lanes preserve the **no-auth/local-mock** constraint. P7 does not reopen OIDC/SSO/login/session UI, real customer credential collection, hosted SaaS operation, or unrestricted production mutation.
 
+
+## Current implementation status
+
+This summary is a review/documentation handoff, not a claim that all P7 services are wired in this worktree. Structured blast-radius scope derivation, a dedicated action-simulation precondition service, explicit self-critique trace stages, replay eval runner artifacts, and reliability dashboard read models must be supplied by the implementation lanes before the final P7 release claim is closed.
+
 ## Documentation delivered by this review lane
 
 - `docs/security-review-p7.md` — P7 assets, threats, mitigations, and remaining gaps.

@@ -13,6 +13,11 @@ P7 adds reliability and safety-lab assets around the existing local/mock agent l
 
 The boundary remains **local/mock**. Auth/OIDC/SSO/session login remains explicitly deferred. P7 must not collect production credentials, perform unrestricted shell/cloud/database mutation, or imply hosted multi-tenant production operation.
 
+
+## Current implementation status
+
+In this worktree, the P7 roadmap is the target contract while several implementation services remain pending integration. Current action metadata still represents blast radius as string action metadata; structured scope derivation over payloads is pending P7-005. Current mock action execution is deterministic and local, but a dedicated simulator precondition record is pending P7-006. The shared decision trace still uses the P6 stages (`observe`, `correlate`, `diagnose`, `plan`, `risk`, `act`, `verify`); the explicit P7 self-critique stage is pending P7-004 integration.
+
 ## Threats and mitigations
 
 - **replay poisoning**: fixture inputs can bias confidence or make unsafe routes appear safe. Mitigation: replay scenarios remain deterministic, reviewed as repo data, and scored against explicit expected route/action/verification fields.

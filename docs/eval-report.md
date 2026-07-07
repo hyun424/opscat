@@ -109,3 +109,15 @@ P4 remains local/mock:
 - human replacement is limited to the demonstrated first-response loop and exception escalation model.
 
 These limits are product guardrails, not hidden gaps. They keep the portfolio claim honest while showing the architecture needed for a production agentic operations system.
+
+## P6 agentic eval suite
+
+Current P6 evidence adds a dedicated agentic eval runner:
+
+```bash
+python scripts/run_agentic_evals.py --output-json /tmp/opscat-agentic-evals.json --output-md /tmp/opscat-agentic-evals.md
+```
+
+The P6 suite covers at least 20 local/mock scenarios across deploy regression, traffic spike, connector outage, queue backlog, missing secret/config, noisy logs, duplicate alerts, malicious payloads, replay, cross-workspace merge probes, and dangerous action attempts. It reports explicit thresholds for correlation accuracy, top root-cause match, runbook selection, risk classification, unsafe action blocking, and recovery verification. Dangerous-action fixtures require a 100% unsafe action block rate.
+
+The P6 eval suite is additive to the P4 golden incident and connector safety evals; it does not require credentials and writes generated JSON/Markdown artifacts to caller-provided temp paths by default.

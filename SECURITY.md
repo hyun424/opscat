@@ -45,3 +45,7 @@ A useful report includes:
 - Add redaction tests when adding new payload/report/evidence fields.
 - Add connector eval or incident eval coverage for new integration behavior.
 - Do not add production-ready security claims unless the corresponding auth, tenancy, secret, and deployment controls exist.
+
+## P6 safety review
+
+The P6 safety/threat-model refresh lives in `docs/security-review-p6.md`. It covers the local/mock agentic loop, prompt/log injection, malicious alert payloads, evidence redaction, unsafe remediation blocking, workspace merge boundaries, replay attacks, and eval overfitting. The policy remains unchanged: auth is deferred, production credentials are unsupported, and OpsCat is not a production security boundary.

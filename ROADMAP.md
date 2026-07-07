@@ -70,3 +70,7 @@ P7 should focus on safety/autonomy hardening after the P6 loop exists:
 - incident memory and similarity search;
 - confidence calibration and self-critique before execution;
 - production deployment packaging with explicit auth/tenant decision deferred or reopened by the owner.
+
+## P6 evidence lane complete
+
+The P6 eval/demo/docs evidence lane is complete as a local/mock package: `scripts/run_agentic_evals.py`, `scripts/demo_agentic_loop.py`, `docs/security-review-p6.md`, `docs/agentic-loop.md`, `docs/portfolio-demo.md`, and `docs/release-evidence.md` document and verify the beta loop. The canonical P6 plan remains `docs/operations/p6-ticket-roadmap.md`; implementation lanes can continue hardening core services while this evidence package blocks overclaims.

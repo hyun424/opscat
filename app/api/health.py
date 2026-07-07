@@ -8,6 +8,7 @@ from app.db import get_db
 from app.models import Incident
 from app.security.dependencies import get_current_principal
 from app.services.identity_service import Principal
+from app.services.observability import build_metrics_snapshot
 
 router = APIRouter(tags=["health"])
 
@@ -41,3 +42,11 @@ def status(
             "real Sentry/GitHub/Slack connectors are out of scope",
         ],
     }
+
+
+@router.get("/metrics")
+def metrics(
+    principal: Principal = Depends(get_current_principal),
+    db: Session = Depends(get_db),
+) -> dict[str, object]:
+    return build_metrics_snapshot(db, principal)

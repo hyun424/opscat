@@ -21,6 +21,8 @@ def test_public_api_docs_cover_core_local_surfaces() -> None:
     for required in [
         "# OpsCat Local API",
         "GET /health",
+        "GET /metrics",
+        "docs/operations/self-observability.md",
         "POST /webhooks/alerts/mock",
         "GET /incidents",
         "GET /incidents/{incident_id}",
@@ -98,6 +100,23 @@ def test_night_autopilot_docs_explain_safe_overnight_mode() -> None:
         "night_autopilot_policy_updated",
         "blocked actions",
         "verification outcomes",
+        "Auth remains deferred",
+    ]:
+        assert required in text
+    assert all(marker not in text for marker in SECRET_MARKERS)
+
+
+def test_self_observability_docs_explain_secret_free_metrics() -> None:
+    doc = Path("docs/operations/self-observability.md")
+
+    assert doc.exists()
+    text = doc.read_text()
+    for required in [
+        "GET /metrics",
+        "counts only",
+        "connector failures",
+        "human escalations",
+        "registered connector eval scenario count",
         "Auth remains deferred",
     ]:
         assert required in text

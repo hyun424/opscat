@@ -200,7 +200,7 @@ Files likely touched:
 - `docs/eval-report.md`
 - `docs/release-evidence.md`
 
-### P5-008 — Self-observability for OpsCat itself
+### P5-008 ✅ — Self-observability for OpsCat itself
 
 Goal: make OpsCat observable as an agentic operations system.
 
@@ -316,6 +316,7 @@ Files likely touched:
 - P5-005: completed with scoped pending approval list and action preview pages without browser mutation forms.
 - P5-006: completed with scoped policy audit API, safe overnight escalation gates, and morning report evidence.
 - P5-007: completed with connector setup/permission/secret/import-normalization eval scenarios and release evidence.
+- P5-008: completed with scoped `/metrics` counters and self-observability docs.
 - P5-013: completed with `.env.example`, `Makefile`, README quickstart, and `make demo` validation.
 - P5-014: completed with `CONTRIBUTING.md`, `ROADMAP.md`, and safe issue templates.
 - P5-015: completed with `docs/connector-sdk.md` and executable fixture connector template.

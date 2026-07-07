@@ -25,6 +25,18 @@ curl -s http://localhost:8000/health
 
 Returns service status, mode, and workspace hint.
 
+### GET /metrics
+
+```bash
+curl -s http://localhost:8000/metrics \
+  -H 'X-OpsCat-Actor: demo-user@opscat.local' \
+  -H 'X-OpsCat-Tenant: demo' \
+  -H 'X-OpsCat-Workspace: demo' \
+  -H 'X-OpsCat-Role: admin'
+```
+
+Returns workspace-scoped numeric counters for incidents, workflow jobs, actions, connector failures, escalations, and eval scenario registration. See [`docs/operations/self-observability.md`](operations/self-observability.md).
+
 ## Mock alert ingestion
 
 ### POST /webhooks/alerts/mock

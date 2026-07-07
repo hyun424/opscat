@@ -1,6 +1,6 @@
 # OpsCat Integration Verification Report
 
-Verification updated on 2026-07-07 KST after the P2/P3 workflow/dashboard implementation pass.
+Verification updated on 2026-07-07 KST after the P4 eval/QA evidence implementation pass. See [`docs/release-evidence.md`](release-evidence.md) for the release evidence index.
 
 ## Latest inspected state
 
@@ -19,7 +19,9 @@ The local/mock MVP is green for the current P2/P3 scope. The previous syntax/imp
 - connector call idempotency replay/conflict protection with redacted persisted results;
 - workspace-scoped server-rendered operator dashboard routes;
 - updated migrations through `0007_connector_call_records`;
-- P4 deterministic eval runner with 20+ golden scenarios and JSON/Markdown reports.
+- P4 deterministic eval runner with 23 golden scenarios and JSON/Markdown reports;
+- Connector eval runner with 7 fake/local safety scenarios and JSON/Markdown reports;
+- browser-contract dashboard E2E tests and eval coverage taxonomy gates.
 
 OpsCat remains intentionally **not production-grade**: demo identity is header-based, workflow queueing is local SQLite/process-bound, connectors are mock/fixture/dry-run only, and no real provider side effects are enabled.
 
@@ -31,7 +33,8 @@ OpsCat remains intentionally **not production-grade**: demo identity is header-b
 | `uv run --no-sync --extra dev ruff check app tests scripts` | PASS | Ruff reports all checks passed. |
 | `uv run --no-sync --extra dev mypy app tests scripts` | PASS | Mypy reports success across 95 source files. |
 | `uv run --no-sync --extra dev pytest -q` | PASS | Regression suite passes, including P4 eval runner/schema tests. |
-| `uv run --no-sync --extra dev python scripts/run_evals.py --output-json /tmp/opscat-evals.json --output-md /tmp/opscat-evals.md` | PASS | 20+ deterministic golden eval scenarios pass and reports are written. |
+| `uv run --no-sync --extra dev python scripts/run_evals.py --output-json /tmp/opscat-evals.json --output-md /tmp/opscat-evals.md` | PASS | 23 deterministic golden eval scenarios pass and reports are written. |
+| `uv run --no-sync --extra dev python scripts/run_connector_evals.py --output-json /tmp/opscat-connector-evals.json --output-md /tmp/opscat-connector-evals.md` | PASS | Connector eval runner covers 7 fake/local safety scenarios. |
 | Target P2/P3 tests | PASS | `tests/test_workflow_queue.py`, `tests/test_action_execution_attempts.py`, `tests/test_connector_contract.py`, and `tests/test_operator_dashboard.py` passed together: 33 tests. |
 | `python scripts/demo.py` | PASS via release gate | Deterministic local demo is part of `scripts/verify.sh`. |
 | `docker compose config` | PASS via release gate | Compose config validates without contacting production systems. |
@@ -72,6 +75,8 @@ OpsCat remains intentionally **not production-grade**: demo identity is header-b
 5. Add load/soak tests, CI, deployment guides, backup/restore, and OpsCat self-observability.
 
 ## P4 eval coverage
+
+The P4 release evidence index is [`docs/release-evidence.md`](release-evidence.md).
 
 The golden corpus now covers bad deploys, external dependency timeouts/rate limits, worker backlog and heartbeat loss, duplicate/stale/false-positive alerts, low-confidence ambiguity, missing runbooks, protected auth/security/data domains, verification failure, prompt-injection-like log text, and secret-bearing alerts.
 

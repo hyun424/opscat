@@ -55,6 +55,26 @@ GitHub Actions runs the secret-free full profile from `.github/workflows/ci.yml`
 | Reviewer-facing narrative is stable | `tests/test_portfolio_evidence_docs.py` | `docs/eval-report.md` |
 | Release evidence map is stable | `tests/test_release_evidence_index.py` | `docs/release-evidence.md` |
 
+
+## Versioned release evidence snapshot
+
+Before tagging or publishing an OSS snapshot, run the full local gate:
+
+```bash
+bash scripts/verify.sh --profile full
+```
+
+This versioned release evidence snapshot should reference:
+
+- `docs/release-evidence.md`;
+- `CHANGELOG.md`;
+- `docs/deployment-dry-run.md`;
+- `/tmp/opscat-evals-latest.md`;
+- `/tmp/opscat-connector-evals-latest.md`;
+- the current git commit SHA.
+
+stable vs experimental status is documented in `CHANGELOG.md` and `docs/deployment-dry-run.md`.
+
 ## Manual artifact commands
 
 Golden incident evals:

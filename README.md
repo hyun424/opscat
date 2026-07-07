@@ -66,6 +66,8 @@ Safety is enforced by explicit action metadata, risk classification, approval st
 - [`docs/demo-walkthrough.md`](docs/demo-walkthrough.md) — demo script, API walkthrough, and current blocker behavior.
 - [`docs/sample-incident-report.md`](docs/sample-incident-report.md) — representative incident report output.
 - [`docs/integration-verification.md`](docs/integration-verification.md) — exact PASS/FAIL verification evidence.
+- [`docs/deployment-dry-run.md`](docs/deployment-dry-run.md) — local Docker/Postgres deployment dry run and stable vs experimental boundary.
+- [`CHANGELOG.md`](CHANGELOG.md) — versioned local/mock release evidence notes.
 - [`.omx/plans/opscat-master-build-prompt.md`](.omx/plans/opscat-master-build-prompt.md) — original autonomous build contract.
 
 ## Open-source quickstart

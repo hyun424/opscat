@@ -192,3 +192,7 @@ P19 active scope: Operator Judgment Improvement Loop. P19 converts P18B raw mode
 ## P19 implemented
 
 P19 implemented as Operator Judgment Improvement Loop evidence. P19 adds failure intake, safety-first prioritization, non-mutating recommendations, read-only missing-evidence planning, regression pack generation, trend comparison, CLI reporting, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.
+
+## P20 active
+
+P20 active scope: Closed-loop Agentic Incident Response. P20 connects observation, initial LLM-shaped judgment, missing-evidence detection, safe read-only local/mock diagnostic tool execution, revised judgment, action proposal, dry-run simulation, final approval/escalation routing, CLI reports, verification integration, and release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.

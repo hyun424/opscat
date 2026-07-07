@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from html import escape
+from typing import Any, cast
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
@@ -18,6 +19,7 @@ from app.services.identity_service import Principal
 from app.services.incident_service import get_incident
 from app.services.reliability_dashboard import build_reliability_dashboard
 from app.services.replay_service import ReplayService, load_replay_scenarios
+from app.services.war_room_service import build_war_room
 
 router = APIRouter(prefix="/operator", tags=["operator"])
 
@@ -204,7 +206,7 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
 <h2>Incident {escape(incident.id)}</h2>
 <p>Status <span class="pill">{escape(incident.status)}</span> Service <code>{escape(incident.service)}</code> Severity <code>{escape(incident.severity)}</code></p>
 <p>{escape(incident.summary or "")}</p>
-{_p8_war_room_panel(incident)}
+{_war_room_panel(build_war_room(incident))}
 <h2>Decision trace</h2>{decision_trace}
 <h2>Evidence</h2><ul data-testid="evidence-list">{evidence}</ul>
 <h2>Timeline</h2><ul data-testid="timeline-list">{timeline}</ul>
@@ -220,23 +222,19 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
     return _page(f"OpsCat Incident {incident.id}", body)
 
 
-def _p8_war_room_panel(incident: Incident) -> str:
-    action = incident.actions[0] if incident.actions else None
-    reliability_score = incident.confidence if incident.confidence is not None else 0.0
-    policy_decision = action.policy_decision if action is not None else "REVIEW"
-    action_status = action.status if action is not None else "none"
-    action_target = action.target if action is not None else "no action proposed"
-    runbook_evidence = next((item.content for item in incident.evidence if item.type == "runbook"), "Runbook critique unavailable; keep diagnostic-only review until trusted runbook evidence exists.")
-    critique = _payload_section(action.payload if action is not None else None, "self_critique")
-    missing_evidence = critique.get("missing_evidence", []) if critique else []
-    human_question = (
-        "Can the operator confirm the proposed local/mock remediation and any missing evidence before approval?"
-        if missing_evidence
-        else "Does the operator agree this local/mock action remains bounded, reversible, and approval-gated?"
-    )
+
+def _war_room_panel(war_room: dict[str, Any]) -> str:
+    impact = _dict_field(war_room, "impact")
+    reliability = _dict_field(war_room, "reliability_score")
+    runbook = _dict_field(war_room, "runbook_critique")
+    questions = _list_field(war_room, "human_questions")
+    gates = _list_field(war_room, "policy_gates")
+    final = _dict_field(war_room, "final_decision")
+    question_items = _war_room_question_items(questions)
+    gate_items = _war_room_gate_items(gates)
     return f"""
-<section data-testid="p8-war-room">
-<h2>P8 War Room</h2>
+<section data-testid=\"war-room-panel\">
+<h2>War Room</h2>
 <p><strong>P8 flow:</strong> alert -> war room -> score -> runbook critique -> action gate -> report.</p>
 <p>This portfolio demo is <strong>local/mock</strong>; it does not claim unattended production operation.</p>
 <section data-testid="p8-reliability-score">

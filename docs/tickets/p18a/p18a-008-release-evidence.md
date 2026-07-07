@@ -1,6 +1,6 @@
 # P18A-008 — Release evidence
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

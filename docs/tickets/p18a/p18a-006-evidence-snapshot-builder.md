@@ -1,6 +1,6 @@
 # P18A-006 — Evidence snapshot builder
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

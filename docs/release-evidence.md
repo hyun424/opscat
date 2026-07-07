@@ -400,3 +400,24 @@ Verification:
 - `bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.
+
+## P18A Realtime Source Reader Evidence
+
+P18A adds source-native incremental local/mock ingestion for logs and metrics. Runtime readers process original files incrementally, maintain rolling windows, detect triggers, and emit JSON evidence snapshots only for judgment, replay, and audit.
+
+Artifacts:
+
+- `docs/operations/p18a-ticket-roadmap.md`
+- `docs/operations/p18a-final-summary.md`
+- `app/services/realtime_source_reader.py`
+- `scripts/replay_realtime_sources.py`
+- `tests/test_realtime_source_reader.py`
+- `tests/test_p18a_release_evidence.py`
+- `/tmp/opscat-realtime-replay-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_realtime_source_reader.py tests/test_p18a_release_evidence.py`
+- `bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.

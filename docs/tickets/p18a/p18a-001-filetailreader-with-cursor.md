@@ -1,6 +1,6 @@
 # P18A-001 — FileTailReader with cursor
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

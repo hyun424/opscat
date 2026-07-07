@@ -1,6 +1,6 @@
 # P18A-002 — Lightweight log parsers
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

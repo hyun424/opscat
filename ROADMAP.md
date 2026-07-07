@@ -172,3 +172,7 @@ P17 implemented as LLM Policy Calibration evidence. P17 adds a deterministic app
 ## P18A active
 
 P18A active scope: Realtime Source Reader. P18A adds local/mock source-native incremental ingestion for logs and metrics before model judgment quality evaluation. Runtime reads original files/streams incrementally, keeps bounded rolling windows, detects triggers, and emits JSON evidence snapshots only when judgment/replay/audit requires them. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.
+
+## P18A implemented
+
+P18A implemented as Realtime Source Reader evidence. P18A adds local/mock source-native incremental ingestion for logs and metrics, bounded rolling windows, realtime trigger detection, and JSON evidence snapshot generation for later model-quality evaluation. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.

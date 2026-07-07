@@ -1,6 +1,6 @@
 # P18A-004 — Rolling incident window
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

@@ -1,6 +1,6 @@
 # P18A-005 — Trigger detector
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

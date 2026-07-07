@@ -181,6 +181,28 @@ policy_calibration_smoke() {
   printf 'Wrote /tmp/opscat-policy-calibration-latest.md and %s/opscat-policy-calibration.json\n' "$VERIFY_TMPDIR"
 }
 
+
+realtime_source_replay_smoke() {
+  section "P18A realtime source replay smoke"
+  cat >"$VERIFY_TMPDIR/p18a-smoke.log" <<'LOG'
+ERROR api failed request one
+ERROR api failed request two
+ERROR api failed request three
+LOG
+  cat >"$VERIFY_TMPDIR/p18a-metric.csv" <<'CSV'
+timestamp,value
+2026-07-08T01:00:00Z,10
+2026-07-08T01:01:00Z,50
+CSV
+  "${UV_DEV[@]}" python scripts/replay_realtime_sources.py \
+    --log-file "$VERIFY_TMPDIR/p18a-smoke.log" \
+    --metric-csv "$VERIFY_TMPDIR/p18a-metric.csv" \
+    --output-json "$VERIFY_TMPDIR/opscat-realtime-replay.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-realtime-replay.md" >/tmp/opscat-realtime-replay-latest.json
+  cp "$VERIFY_TMPDIR/opscat-realtime-replay.md" /tmp/opscat-realtime-replay-latest.md
+  printf 'Wrote /tmp/opscat-realtime-replay-latest.md and %s/opscat-realtime-replay.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -255,7 +277,9 @@ docs_contract_tests() {
     tests/test_p13_release_evidence.py \
     tests/test_p14_release_evidence.py \
     tests/test_p15_release_evidence.py \
-    tests/test_p16_release_evidence.py
+    tests/test_p16_release_evidence.py \
+    tests/test_p17_release_evidence.py \
+    tests/test_p18a_release_evidence.py
 }
 
 run_fast() {
@@ -278,6 +302,7 @@ run_eval() {
   llm_judgment_smoke
   llm_provider_eval_smoke
   policy_calibration_smoke
+  realtime_source_replay_smoke
 }
 
 run_docs() {

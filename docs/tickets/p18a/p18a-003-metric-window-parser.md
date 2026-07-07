@@ -1,6 +1,6 @@
 # P18A-003 — Metric window parser
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

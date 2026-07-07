@@ -187,13 +187,21 @@ curl -s -X POST http://localhost:8000/night-autopilot/simulate \
 
 ## Golden evals
 
-OpsCat includes a deterministic local eval corpus for operator-replacement trust evidence:
+OpsCat includes deterministic local eval evidence for operator-replacement trust. The reviewer-facing evidence pack is [`docs/eval-report.md`](docs/eval-report.md).
+
+Run incident golden evals:
 
 ```bash
 python scripts/run_evals.py --output-json /tmp/opscat-evals.json --output-md /tmp/opscat-evals.md
 ```
 
-The current P4 corpus covers 20+ scenarios across bad deploys, external dependency failures, worker backlog, duplicate/stale alerts, low-confidence ambiguity, missing runbooks, protected auth/security/data domains, verification failure, prompt-injection-like logs, and secret-bearing alerts. The report is intentionally local/mock-only and is included in `bash scripts/verify.sh`.
+Run Connector evals:
+
+```bash
+python scripts/run_connector_evals.py --output-json /tmp/opscat-connector-evals.json --output-md /tmp/opscat-connector-evals.md
+```
+
+The current P4 corpus covers 23 incident scenarios across bad deploys, external dependency failures, worker backlog, duplicate/stale alerts, low-confidence ambiguity, missing runbooks, protected auth/security/data domains, verification failure, prompt-injection-like logs, and secret-bearing alerts. Connector evals add 7 fake/local safety scenarios covering missing credentials, provider timeouts, malformed results, read-only contract violations, idempotency replay, and idempotency conflict handling. Both reports are intentionally local/mock-only and are included in `bash scripts/verify.sh`.
 
 ## Verification commands
 

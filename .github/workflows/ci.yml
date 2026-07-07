@@ -1,0 +1,29 @@
+name: OpsCat CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      OPSCAT_MODE: test
+      DATABASE_URL: sqlite:///opscat-ci.db
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+      - name: Install project dependencies
+        run: uv sync --extra dev
+      - name: Run full verification
+        run: bash scripts/verify.sh --profile full

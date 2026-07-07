@@ -4,6 +4,44 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
+VERIFY_PROFILE="full"
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --profile)
+      VERIFY_PROFILE="${2:-}"
+      shift 2
+      ;;
+    --profile=*)
+      VERIFY_PROFILE="${1#--profile=}"
+      shift
+      ;;
+    -h|--help)
+      cat <<'HELP'
+Usage: bash scripts/verify.sh [--profile fast|full|eval|docs]
+
+Profiles:
+  fast  Compile, lint, typecheck, and pytest regression suite.
+  full  Complete release gate, including coverage, evals, demos, Docker config, and hygiene checks.
+  eval  Golden incident evals and connector evals only.
+  docs  Documentation/release evidence contract tests plus repo hygiene checks.
+HELP
+      exit 0
+      ;;
+    *)
+      printf 'Unknown verify argument: %s\n' "$1" >&2
+      exit 2
+      ;;
+  esac
+done
+
+case "$VERIFY_PROFILE" in
+  fast|full|eval|docs) ;;
+  *)
+    printf 'Unknown verify profile: %s\n' "$VERIFY_PROFILE" >&2
+    exit 2
+    ;;
+esac
+
 section() {
   printf '\n==> %s\n' "$1"
 }
@@ -18,50 +56,124 @@ mkdir -p "$VERIFY_TMPDIR/reports"
 export DATABASE_URL="sqlite:///$VERIFY_TMPDIR/opscat-verify.db"
 export REPORT_DIR="$VERIFY_TMPDIR/reports"
 
-section "Python bytecode compile"
-PYTHONDONTWRITEBYTECODE=1 python3 -m compileall -q app tests scripts
+compile_check() {
+  section "Python bytecode compile"
+  PYTHONDONTWRITEBYTECODE=1 python3 -m compileall -q app tests scripts
+}
 
-section "Ruff lint"
-"${UV_DEV[@]}" ruff check app tests scripts
+lint_check() {
+  section "Ruff lint"
+  "${UV_DEV[@]}" ruff check app tests scripts
+}
 
-section "Mypy typecheck"
-"${UV_DEV[@]}" mypy app tests scripts
+type_check() {
+  section "Mypy typecheck"
+  "${UV_DEV[@]}" mypy app tests scripts
+}
 
-section "Pytest regression suite"
-"${UV_DEV[@]}" pytest -q
+pytest_suite() {
+  section "Pytest regression suite"
+  "${UV_DEV[@]}" pytest -q
+}
 
-section "Coverage gate"
-"${UV_DEV[@]}" python scripts/coverage_gate.py --json-output "$VERIFY_TMPDIR/coverage-summary.json"
+coverage_gate() {
+  section "Coverage gate"
+  "${UV_DEV[@]}" python scripts/coverage_gate.py --json-output "$VERIFY_TMPDIR/coverage-summary.json"
+}
 
-section "Golden eval runner"
-"${UV_DEV[@]}" python scripts/run_evals.py --output-json "$VERIFY_TMPDIR/opscat-evals.json" --output-md "$VERIFY_TMPDIR/opscat-evals.md" >/tmp/opscat-evals-latest.md
-printf 'Wrote /tmp/opscat-evals-latest.md and %s/opscat-evals.json\n' "$VERIFY_TMPDIR"
+golden_evals() {
+  section "Golden eval runner"
+  "${UV_DEV[@]}" python scripts/run_evals.py \
+    --output-json "$VERIFY_TMPDIR/opscat-evals.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-evals.md" >/tmp/opscat-evals-latest.md
+  printf 'Wrote /tmp/opscat-evals-latest.md and %s/opscat-evals.json\n' "$VERIFY_TMPDIR"
+}
 
-section "Connector eval runner"
-"${UV_DEV[@]}" python scripts/run_connector_evals.py --output-json "$VERIFY_TMPDIR/opscat-connector-evals.json" --output-md "$VERIFY_TMPDIR/opscat-connector-evals.md" >/tmp/opscat-connector-evals-latest.md
-printf 'Wrote /tmp/opscat-connector-evals-latest.md and %s/opscat-connector-evals.json\n' "$VERIFY_TMPDIR"
+connector_evals() {
+  section "Connector eval runner"
+  "${UV_DEV[@]}" python scripts/run_connector_evals.py \
+    --output-json "$VERIFY_TMPDIR/opscat-connector-evals.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-connector-evals.md" >/tmp/opscat-connector-evals-latest.md
+  printf 'Wrote /tmp/opscat-connector-evals-latest.md and %s/opscat-connector-evals.json\n' "$VERIFY_TMPDIR"
+}
 
-section "Local demo smoke"
-"${UV_DEV[@]}" python scripts/demo.py
+local_demo_smoke() {
+  section "Local demo smoke"
+  "${UV_DEV[@]}" python scripts/demo.py
+}
 
-section "Workflow CLI smoke"
-"${UV_DEV[@]}" python scripts/workflow_cli.py stats
+workflow_cli_smoke() {
+  section "Workflow CLI smoke"
+  "${UV_DEV[@]}" python scripts/workflow_cli.py stats
+}
 
-section "Docker Compose config"
-docker compose config >/tmp/opscat-compose-config.txt
-printf 'Wrote /tmp/opscat-compose-config.txt\n'
+docker_compose_config() {
+  section "Docker Compose config"
+  docker compose config >/tmp/opscat-compose-config.txt
+  printf 'Wrote /tmp/opscat-compose-config.txt\n'
+}
 
-section "Tracked generated artifact scan"
-tracked_generated="$({
-  git ls-files '*__pycache__*' '*.py[co]' '.pytest_cache/*' '.ruff_cache/*' '.mypy_cache/*' 'opscat.db' 'opscat.egg-info/*' 'uv.lock' 2>/dev/null || true
-} | sed '/^$/d')"
-if [[ -n "$tracked_generated" ]]; then
-  printf 'Tracked generated artifacts found:\n%s\n' "$tracked_generated" >&2
-  exit 1
-fi
-printf 'No tracked generated artifacts found.\n'
+generated_artifact_scan() {
+  section "Tracked generated artifact scan"
+  tracked_generated="$({
+    git ls-files '*__pycache__*' '*.py[co]' '.pytest_cache/*' '.ruff_cache/*' '.mypy_cache/*' 'opscat.db' 'opscat.egg-info/*' 'uv.lock' 2>/dev/null || true
+  } | sed '/^$/d')"
+  if [[ -n "$tracked_generated" ]]; then
+    printf 'Tracked generated artifacts found:\n%s\n' "$tracked_generated" >&2
+    exit 1
+  fi
+  printf 'No tracked generated artifacts found.\n'
+}
 
-section "Whitespace diff check"
-git diff --check
+whitespace_diff_check() {
+  section "Whitespace diff check"
+  git diff --check
+}
 
-section "Verification complete"
+docs_contract_tests() {
+  section "Documentation contract tests"
+  "${UV_DEV[@]}" pytest -q \
+    tests/test_examples.py \
+    tests/test_release_evidence_index.py \
+    tests/test_ci_verification_profile.py \
+    tests/test_oss_contributor_docs.py \
+    tests/test_oss_quickstart_docs.py
+}
+
+run_fast() {
+  compile_check
+  lint_check
+  type_check
+  pytest_suite
+}
+
+run_eval() {
+  golden_evals
+  connector_evals
+}
+
+run_docs() {
+  docs_contract_tests
+  generated_artifact_scan
+  whitespace_diff_check
+}
+
+run_full() {
+  run_fast
+  coverage_gate
+  run_eval
+  local_demo_smoke
+  workflow_cli_smoke
+  docker_compose_config
+  generated_artifact_scan
+  whitespace_diff_check
+}
+
+case "$VERIFY_PROFILE" in
+  fast) run_fast ;;
+  eval) run_eval ;;
+  docs) run_docs ;;
+  full) run_full ;;
+esac
+
+section "Verification complete ($VERIFY_PROFILE)"

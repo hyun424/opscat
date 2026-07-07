@@ -24,6 +24,25 @@ The gate currently runs:
 10. Tracked generated artifact scan.
 11. Whitespace diff check.
 
+
+## Verification profiles
+
+Use named profiles when running locally or in CI:
+
+```bash
+bash scripts/verify.sh --profile fast
+bash scripts/verify.sh --profile full
+bash scripts/verify.sh --profile eval
+bash scripts/verify.sh --profile docs
+```
+
+- `fast`: compile, lint, typecheck, and pytest.
+- `full`: complete release gate; this remains the default when no profile is supplied.
+- `eval`: golden incident evals plus connector evals.
+- `docs`: documentation contract tests plus repository hygiene checks.
+
+GitHub Actions runs the secret-free full profile from `.github/workflows/ci.yml`.
+
 ## P4 evidence artifacts
 
 | Claim | Gate | Artifact |

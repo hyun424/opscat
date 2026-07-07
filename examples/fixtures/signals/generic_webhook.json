@@ -1,0 +1,14 @@
+{
+  "provider": "generic",
+  "idempotency_key": "fixture-generic-external-timeout",
+  "scenario": "external_api_timeout",
+  "service": "payment-api",
+  "environment": "staging",
+  "severity": "high",
+  "message": "Generic fixture: upstream processor timeout spike with synthetic local data only.",
+  "details": {
+    "dependency": "payment-processor",
+    "p95_latency_ms": 9000,
+    "status": "degraded"
+  }
+}

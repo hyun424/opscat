@@ -1,0 +1,15 @@
+{
+  "provider": "datadog",
+  "idempotency_key": "fixture-datadog-worker-backlog",
+  "scenario": "worker_queue_backlog",
+  "service": "worker",
+  "environment": "staging",
+  "severity": "medium",
+  "message": "Datadog fixture: queue latency p95 above threshold; host tag [REDACTED].",
+  "monitor": {
+    "id": "fixture-monitor-queue-latency",
+    "name": "Worker queue latency high",
+    "query": "avg(last_5m):fixture.queue.latency.p95 > 600",
+    "tags": ["env:staging", "service:worker", "host:[REDACTED]"]
+  }
+}

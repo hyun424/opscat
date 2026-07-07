@@ -1,0 +1,17 @@
+{
+  "provider": "sentry",
+  "idempotency_key": "fixture-sentry-payment-timeout",
+  "scenario": "payment_bad_deploy",
+  "service": "payment-api",
+  "environment": "staging",
+  "severity": "high",
+  "message": "Sentry fixture: PaymentTimeoutError spike after deploy; user email [REDACTED] and token [REDACTED].",
+  "source_url": "https://example.invalid/sentry/issues/FIXTURE-123",
+  "event": {
+    "issue_id": "FIXTURE-123",
+    "title": "PaymentTimeoutError after deploy",
+    "culprit": "checkout.submit",
+    "user": {"email": "[REDACTED]"},
+    "request": {"headers": {"Authorization": "[REDACTED]"}}
+  }
+}

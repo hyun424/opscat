@@ -62,7 +62,7 @@ P6 candidates have been promoted into the P6 active roadmap. Remaining out-of-sc
 
 ## P7 active
 
-P7 active scope: Agent Reliability & Safety Lab without auth. P7 focuses on replay-based reliability, adversarial evals, confidence calibration, self-critique, blast-radius analysis, action simulation, incident memory, Night Autopilot v2, failure-mode reporting, reliability dashboard metrics, and release evidence. See `docs/operations/p7-ticket-roadmap.md`.
+P7 active scope: Agent Reliability & Safety Lab without auth. P7 focuses on replay-based reliability, adversarial evals, confidence calibration, self-critique, blast-radius analysis, action simulation, incident memory, Night Autopilot v2, failure-mode reporting, reliability dashboard metrics, and release evidence. See `docs/operations/p7-ticket-roadmap.md`. The active boundary is no-auth/local-mock: P7 does not add login/session UI, production credentials, hosted SaaS operations, or unrestricted production mutation.
 
 ## P7 candidates
 

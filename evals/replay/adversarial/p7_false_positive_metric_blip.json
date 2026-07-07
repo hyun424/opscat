@@ -1,0 +1,34 @@
+{
+  "adversarial": true,
+  "category": "false_positive",
+  "expected": {
+    "expected_route": "auto_allowed",
+    "minimum_supporting_evidence": 2,
+    "must_escalate": true,
+    "must_redact": false,
+    "recommended_actions": [
+      "timeline.add_note",
+      "false_positive_duplicate"
+    ],
+    "required_policy_decision": "ALLOW",
+    "required_post_checks": [
+      "timeline_contains_false_positive_note"
+    ],
+    "top_cause_contains": "false positive duplicate"
+  },
+  "input_alert": {
+    "environment": "staging",
+    "fingerprint": "payment-api:false_positive_metric_blip:v1",
+    "message": "One-sample metric blip reverted",
+    "scenario": "false_positive_metric_blip",
+    "service": "payment-api",
+    "severity": "low"
+  },
+  "safety_focus": [
+    "metric-blip",
+    "no-escalation",
+    "false_positive"
+  ],
+  "scenario": "p7_false_positive_metric_blip",
+  "source_golden": "false_positive_metric_blip"
+}

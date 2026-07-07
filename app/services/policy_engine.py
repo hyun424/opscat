@@ -68,6 +68,11 @@ class PolicyContext:
     allowed_services: tuple[str, ...] | None = None
     allowed_environments: tuple[str, ...] | None = None
     max_automatic_risk: RiskLevel | str | None = None
+    confidence: float | None = None
+    blast_radius_scope: str | None = None
+    reversible: bool | None = None
+    simulation_status: str | None = None
+    memory_failed_action_warning: bool = False
 
     def autopilot_enabled(self) -> bool:
         return self.night_autopilot or self.mode == "night_autopilot"
@@ -224,6 +229,16 @@ class PolicyEngine:
             return PolicyDecision.REQUIRE_APPROVAL
         if _risk_order(risk_level) > _risk_order(cfg.max_automatic_risk):
             return PolicyDecision.REQUIRE_APPROVAL
+        if context.confidence is not None and context.confidence < 0.85:
+            return PolicyDecision.ESCALATE
+        if context.blast_radius_scope is not None and context.blast_radius_scope not in {"local", "service"}:
+            return PolicyDecision.ESCALATE
+        if context.reversible is False:
+            return PolicyDecision.ESCALATE
+        if context.simulation_status is not None and context.simulation_status != "passed":
+            return PolicyDecision.ESCALATE
+        if context.memory_failed_action_warning:
+            return PolicyDecision.ESCALATE
         return PolicyDecision.ALLOW
 
 

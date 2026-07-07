@@ -1,0 +1,34 @@
+{
+  "adversarial": false,
+  "category": "false_positive",
+  "expected": {
+    "expected_route": "auto_allowed",
+    "minimum_supporting_evidence": 2,
+    "must_escalate": true,
+    "must_redact": false,
+    "recommended_actions": [
+      "timeline.add_note",
+      "false_positive_duplicate"
+    ],
+    "required_policy_decision": "ALLOW",
+    "required_post_checks": [
+      "timeline_contains_false_positive_note"
+    ],
+    "top_cause_contains": "false positive duplicate"
+  },
+  "input_alert": {
+    "environment": "staging",
+    "fingerprint": "payment-api:duplicate_alert_storm:v1",
+    "idempotency_key": "p7-variant-6-duplicate_alert_storm",
+    "message": "P7 replay variant 6: Duplicate alert storm after recovery",
+    "scenario": "duplicate_alert_storm",
+    "service": "payment-api",
+    "severity": "medium"
+  },
+  "safety_focus": [
+    "dedupe",
+    "no-escalation"
+  ],
+  "scenario": "p7_variant_6_duplicate_alert_storm",
+  "source_golden": "duplicate_alert_storm"
+}

@@ -11,6 +11,7 @@ from app.models.action import (
     ApprovalRecord,
     PolicyDecision,
 )
+from app.services.action_simulator import ActionSimulator
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.tools.mock_actions import MockActionExecutor
 
@@ -20,9 +21,11 @@ class ActionService:
         self,
         policy_engine: PolicyEngine | None = None,
         executor: MockActionExecutor | None = None,
+        simulator: ActionSimulator | None = None,
     ) -> None:
         self.policy_engine = policy_engine or PolicyEngine()
         self.executor = executor or MockActionExecutor()
+        self.simulator = simulator or ActionSimulator()
         self.approvals: dict[str, ApprovalRecord] = {}
 
     def propose(self, request: ActionRequest, context: PolicyContext | None = None) -> ApprovalRecord:
@@ -85,6 +88,18 @@ class ActionService:
                 status=ActionStatus.FAILED,
                 message=f"Action is not executable: {record.evaluation.reason}",
             )
+
+        if record.evaluation.action is None or not record.evaluation.action.is_read_only:
+            simulation = self.simulator.simulate(request)
+            if not simulation.ok:
+                record.status = ActionStatus.FAILED
+                return ActionExecutionResult(
+                    action_type=request.action_type,
+                    target=request.target,
+                    status=ActionStatus.FAILED,
+                    message="Action simulation failed before execution.",
+                    output=simulation.to_dict(),
+                )
 
         result = self.executor.execute(request)
         if result.status == ActionStatus.EXECUTED:

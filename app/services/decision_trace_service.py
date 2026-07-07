@@ -13,7 +13,7 @@ from app.models import Evidence, Incident
 from app.services.redaction import redact_value
 from app.services.timeline_service import add_timeline_event
 
-DECISION_TRACE_STAGES: tuple[str, ...] = ("observe", "correlate", "diagnose", "plan", "risk", "act", "verify")
+DECISION_TRACE_STAGES: tuple[str, ...] = ("observe", "correlate", "diagnose", "plan", "critique", "simulate", "risk", "act", "verify")
 
 
 @dataclass(frozen=True)
@@ -182,6 +182,34 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
             confidence=confidence,
             status=_safe_text(_get(primary_action, "status", status)) if primary_action is not None else status,
             details=_redacted_details({"preconditions": _get(primary_action, "preconditions", []), "post_checks": _get(primary_action, "post_checks", [])}),
+        ),
+        DecisionTraceEntry(
+            stage="critique",
+            title="Self-critique gate",
+            summary=_critique_summary(primary_action, confidence),
+            tenant_id=tenant_id,
+            workspace_id=workspace_id,
+            incident_id=incident_id,
+            actor="agent",
+            action_id=action_id,
+            evidence_ids=_action_evidence_ids(primary_action, evidence_ids),
+            confidence=confidence,
+            status=_safe_text(_get(primary_action, "status", status)) if primary_action is not None else status,
+            details=_redacted_details(_get(_get(primary_action, "payload", {}), "self_critique", {})),
+        ),
+        DecisionTraceEntry(
+            stage="simulate",
+            title="Action simulation",
+            summary=_simulation_summary(primary_action),
+            tenant_id=tenant_id,
+            workspace_id=workspace_id,
+            incident_id=incident_id,
+            actor="simulator",
+            action_id=action_id,
+            evidence_ids=_action_evidence_ids(primary_action, evidence_ids),
+            confidence=confidence,
+            status=_safe_text(_get(primary_action, "status", status)) if primary_action is not None else status,
+            details=_redacted_details(_get(_get(primary_action, "payload", {}), "simulation", {})),
         ),
         DecisionTraceEntry(
             stage="risk",

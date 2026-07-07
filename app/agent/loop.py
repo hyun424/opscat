@@ -4,13 +4,13 @@ from app.agent.mock_agent import analyze_incident
 from app.models import ActionProposal, Incident
 from app.models.action import ActionRequest
 from app.services.audit_service import record_audit_event
+from app.services.decision_trace_service import record_decision_trace
 from app.services.escalation import (
     build_escalation_payload,
     decision_escalation_triggers,
     hard_escalation_required,
     record_human_escalation,
 )
-from app.services.decision_trace_service import record_decision_trace
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.root_cause_service import generate_root_cause_candidates, persist_top_root_cause
 from app.services.runbook_service import select_runbook
@@ -55,7 +55,10 @@ class AgentLoop:
         analysis = analyze_incident(incident, evidence)
         candidates = generate_root_cause_candidates(incident, evidence)
         incident.summary = analysis.summary
-        if analysis.hypotheses and analysis.hypotheses[0].confidence >= (candidates[0].confidence if candidates else 0.0):
+        if analysis.hypotheses and analysis.hypotheses[0].confidence < 0.70:
+            incident.root_cause_candidate = analysis.hypotheses[0].title
+            incident.confidence = analysis.hypotheses[0].confidence
+        elif analysis.hypotheses and analysis.hypotheses[0].confidence >= (candidates[0].confidence if candidates else 0.0):
             incident.root_cause_candidate = analysis.hypotheses[0].title
             incident.confidence = analysis.hypotheses[0].confidence
         else:

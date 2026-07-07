@@ -171,6 +171,42 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
     ]
 
 
+def record_decision_trace(
+    db: Any,
+    incident: Any,
+    *,
+    stage: str,
+    decision: str,
+    confidence: float | None = None,
+    inputs: Mapping[str, Any] | None = None,
+    reason: str | None = None,
+    policy_result: Mapping[str, Any] | None = None,
+    output_ref: str | None = None,
+) -> Any:
+    from app.services.timeline_service import add_timeline_event
+
+    details = _redacted_details(
+        {
+            "decision": decision,
+            "confidence": confidence,
+            "inputs": dict(inputs or {}),
+            "reason": reason,
+            "policy_result": dict(policy_result or {}),
+            "output_ref": output_ref,
+        }
+    )
+    return add_timeline_event(
+        db,
+        incident.id,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        actor="agent",
+        event_type=f"decision_trace.{stage}",
+        content=f"{stage}: {decision}",
+        metadata=details,
+    )
+
+
 def _timeline_summaries(timeline: list[Any]) -> list[dict[str, Any]]:
     return [
         {

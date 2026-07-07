@@ -747,7 +747,7 @@ def test_missing_credential_escalates_queued_incident_with_failure_context(db_se
             workspace_id="workspace-a",
             actor=principal.email,
             incident_id=incident.id,
-            payload={"project": "checkout-api"},
+            payload={"provider_mode": "real", "project": "checkout-api"},
         ),
     )
 

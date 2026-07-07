@@ -137,7 +137,8 @@ class ConnectorService:
     ) -> ConnectorCallRequest | None:
         if required_secret_name is None:
             return request
-        if bool(request.payload.get("fixture_mode", False) or request.payload.get("mode") == "fixture"):
+        provider_mode = str(request.payload.get("provider_mode") or request.payload.get("mode") or "fixture").strip().lower()
+        if request.connector_id == "sentry.readonly" and provider_mode not in {"real", "live", "provider"}:
             return request
         try:
             secret_value = self.secret_provider.get_secret(db, principal, required_secret_name)

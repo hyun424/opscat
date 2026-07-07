@@ -193,7 +193,11 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
 <h2>Evidence</h2><ul data-testid="evidence-list">{evidence}</ul>
 <h2>Timeline</h2><ul data-testid="timeline-list">{timeline}</ul>
 <h2>Actions</h2>{''.join(action_blocks)}
-<h2>Report</h2><p><a data-testid="report-link" href="/incidents/{escape(incident.id)}/report">Open report JSON</a> · <a data-testid="trace-link" href="/incidents/{escape(incident.id)}/trace">Open trace JSON/Markdown</a></p>
+<h2>Report</h2><p>
+<a data-testid="report-link" href="/incidents/{escape(incident.id)}/report">Open report JSON</a>
+ ·
+<a data-testid="trace-link" href="/incidents/{escape(incident.id)}/trace">Open trace JSON/Markdown</a>
+</p>
 </main>
 """
     return _page(f"OpsCat Incident {incident.id}", body)

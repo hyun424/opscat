@@ -35,8 +35,9 @@ def main() -> None:
         )
         approved.raise_for_status()
         final_incident = approved.json()["incident"]
-        trace = client.get(f"/incidents/{incident['id']}/trace")
+        trace = client.get(f"/incidents/{incident['id']}/decision-trace")
         trace.raise_for_status()
+        trace_entries = trace.json()["decision_trace"]
         print("OpsCat P6 agentic loop demo (local/mock; no external credentials)")
         print("Incident ID:", incident["id"])
         print("observe: fixture alert accepted")
@@ -48,7 +49,7 @@ def main() -> None:
         print("verify:", final_incident["status"])
         print("report:", approved.json()["report"])
         print("operator URL:", f"/operator/incidents/{incident['id']}")
-        print("trace entries:", trace.json()["markdown"].count("**"))
+        print("trace entries:", len(trace_entries))
 
 
 if __name__ == "__main__":

@@ -14,6 +14,7 @@ class ConnectorCapability:
     risk_level: str = "read_only"
     read_only: bool = True
     required_role: str = "viewer"
+    required_secret_name: str | None = None
 
 
 @dataclass(frozen=True)

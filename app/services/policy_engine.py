@@ -69,10 +69,13 @@ class PolicyContext:
     allowed_environments: tuple[str, ...] | None = None
     max_automatic_risk: RiskLevel | str | None = None
     confidence: float | None = None
+    evidence_count: int = 0
+    conflicting_signals: bool = False
+    known_ambiguity: bool = False
     blast_radius_scope: str | None = None
-    reversible: bool | None = None
-    simulation_status: str | None = None
-    memory_failed_action_warning: bool = False
+    rollback_available: bool | None = None
+    simulation_passed: bool | None = None
+    failed_memory_warning: bool = False
 
     def autopilot_enabled(self) -> bool:
         return self.night_autopilot or self.mode == "night_autopilot"
@@ -224,6 +227,18 @@ class PolicyEngine:
         if context.autopilot_attempts >= cfg.max_attempts_per_incident:
             return PolicyDecision.ESCALATE
         if context.service not in cfg.allowed_services or request.environment not in cfg.allowed_environments:
+            return PolicyDecision.ESCALATE
+        if context.confidence is not None and context.confidence < 0.82:
+            return PolicyDecision.ESCALATE
+        if context.conflicting_signals or context.known_ambiguity:
+            return PolicyDecision.ESCALATE
+        if context.failed_memory_warning:
+            return PolicyDecision.ESCALATE
+        if context.simulation_passed is False:
+            return PolicyDecision.ESCALATE
+        if context.rollback_available is False:
+            return PolicyDecision.REQUIRE_APPROVAL
+        if context.blast_radius_scope in {"unknown", "tenant", "global", "prohibited"}:
             return PolicyDecision.ESCALATE
         if request.action_type not in cfg.allowed_actions:
             return PolicyDecision.REQUIRE_APPROVAL

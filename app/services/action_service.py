@@ -89,19 +89,25 @@ class ActionService:
                 message=f"Action is not executable: {record.evaluation.reason}",
             )
 
-        if record.evaluation.action is None or not record.evaluation.action.is_read_only:
-            simulation = self.simulator.simulate(request)
-            if not simulation.ok:
-                record.status = ActionStatus.FAILED
-                return ActionExecutionResult(
-                    action_type=request.action_type,
-                    target=request.target,
-                    status=ActionStatus.FAILED,
-                    message="Action simulation failed before execution.",
-                    output=simulation.to_dict(),
-                )
+        simulation = self.simulator.simulate(request)
+        if not simulation.success:
+            return ActionExecutionResult(
+                action_type=request.action_type,
+                target=request.target,
+                status=ActionStatus.FAILED,
+                message="Action simulation failed: " + "; ".join(simulation.precondition_gaps or simulation.residual_risks),
+                output={"simulation": simulation.to_dict()},
+            )
 
         result = self.executor.execute(request)
+        result = ActionExecutionResult(
+            action_type=result.action_type,
+            target=result.target,
+            status=result.status,
+            message=result.message,
+            output={**dict(result.output), "simulation": simulation.to_dict()},
+            verification=result.verification,
+        )
         if result.status == ActionStatus.EXECUTED:
             record.status = ActionStatus.EXECUTED
         elif result.status == ActionStatus.FAILED:

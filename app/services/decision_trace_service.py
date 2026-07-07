@@ -13,7 +13,7 @@ from app.models import Evidence, Incident
 from app.services.redaction import redact_value
 from app.services.timeline_service import add_timeline_event
 
-DECISION_TRACE_STAGES: tuple[str, ...] = ("observe", "correlate", "diagnose", "plan", "critique", "simulate", "risk", "act", "verify")
+DECISION_TRACE_STAGES: tuple[str, ...] = ("observe", "correlate", "diagnose", "critique", "plan", "risk", "act", "verify")
 
 
 @dataclass(frozen=True)
@@ -168,6 +168,20 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
             confidence=confidence,
             status=status,
             details=_redacted_details({"confidence": confidence, "supporting_evidence_ids": evidence_ids, "evidence": _evidence_summaries(evidence)}),
+        ),
+        DecisionTraceEntry(
+            stage="critique",
+            title="Self-critique gate",
+            summary=_critique_summary(evidence, primary_action, confidence),
+            tenant_id=tenant_id,
+            workspace_id=workspace_id,
+            incident_id=incident_id,
+            actor="agent",
+            action_id=action_id,
+            evidence_ids=evidence_ids,
+            confidence=confidence,
+            status=status,
+            details=_redacted_details({"critique_evidence": _critique_details(evidence), "policy_reasons": _get(primary_action, "policy_reasons", [])}),
         ),
         DecisionTraceEntry(
             stage="plan",
@@ -422,3 +436,23 @@ def _get(obj: Any, name: str, default: Any = None) -> Any:
     if isinstance(obj, Mapping):
         return obj.get(name, default)
     return getattr(obj, name, default)
+
+
+def _critique_summary(evidence: list[Any], primary_action: Any, confidence: float | None) -> str:
+    reasons = _critique_details(evidence)
+    policy_reasons = _as_list(_get(primary_action, "policy_reasons", [])) if primary_action is not None else []
+    if confidence is not None and confidence < 0.7:
+        reasons.append("low confidence")
+    reasons.extend(str(reason) for reason in policy_reasons if "confidence" in str(reason).lower() or "evidence" in str(reason).lower())
+    return "; ".join(reasons[:3]) if reasons else "No self-critique blockers found before action proposal"
+
+
+def _critique_details(evidence: list[Any]) -> list[str]:
+    details: list[str] = []
+    text = "\n".join(_safe_text(_get(item, "content", "")).lower() for item in evidence)
+    for marker in ("conflict", "ambiguous", "unknown", "poison", "injection"):
+        if marker in text:
+            details.append(f"{marker} marker present")
+    if len(evidence) < 2:
+        details.append("missing evidence")
+    return details

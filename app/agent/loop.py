@@ -13,7 +13,10 @@ from app.services.escalation import (
     hard_escalation_required,
     record_human_escalation,
 )
+from app.services.action_simulator import ActionSimulator
+from app.services.blast_radius import BlastRadiusEngine
 from app.services.policy_engine import PolicyContext, PolicyEngine
+from app.services.self_critique_service import critique_diagnosis
 from app.services.root_cause_service import generate_root_cause_candidates, persist_top_root_cause
 from app.services.runbook_service import select_runbook
 from app.services.self_critique_service import SelfCritiqueService
@@ -25,7 +28,6 @@ from app.tools.mock_context import gather_all_context
 class AgentLoop:
     def __init__(self, policy_engine: PolicyEngine | None = None) -> None:
         self.policy_engine = policy_engine or PolicyEngine()
-        self.critique_service = SelfCritiqueService()
         self.blast_radius = BlastRadiusEngine()
         self.simulator = ActionSimulator(self.blast_radius)
 
@@ -79,6 +81,22 @@ class AgentLoop:
             reason="deterministic root-cause candidate ranking",
         )
         runbook = select_runbook(incident, candidates)
+        recommended = analysis.recommended_action
+        critique = critique_diagnosis(
+            incident,
+            evidence,
+            alternate_causes=[candidate.title for candidate in candidates[1:3]],
+            action_type=recommended.action_type,
+        )
+        record_decision_trace(
+            db,
+            incident,
+            stage="critique",
+            decision="human review required" if critique.requires_human else "critique passed",
+            confidence=incident.confidence,
+            inputs=critique.to_dict(),
+            reason="deterministic self-critique gate",
+        )
         record_decision_trace(
             db,
             incident,
@@ -90,52 +108,31 @@ class AgentLoop:
         )
         db.add(transition_incident(incident, "action_proposed", actor="agent", reason="analysis complete"))
 
-        recommended = analysis.recommended_action
-        alternate_causes = [item.title for item in analysis.hypotheses[1:]]
-        contradiction_flags = [item.title for item in analysis.hypotheses if item.status == "refuted"]
-        critique = self.critique_service.critique(
-            confidence=incident.confidence,
-            evidence_count=len(evidence),
-            alternate_causes=alternate_causes,
-            contradictions=contradiction_flags,
-            action_type=recommended.action_type,
-        )
-        record_decision_trace(
-            db,
-            incident,
-            stage="critique",
-            decision=f"ambiguity={critique.ambiguity}; blocks_auto_action={critique.blocks_auto_action}",
-            confidence=incident.confidence,
-            inputs=critique.to_dict(),
-            reason="deterministic self-critique before risk/action proposal",
-        )
-        action_request = ActionRequest(
+        request = ActionRequest(
             action_type=recommended.action_type,
             target=recommended.target,
             environment=incident.environment,
             tenant_id=incident.tenant_id,
             workspace_id=incident.workspace_id,
-            payload=recommended.payload,
+            payload={**dict(recommended.payload), "blast_radius": blast_radius.to_dict(), "simulation": simulation.to_dict(), "self_critique": critique.to_dict()},
             incident_id=incident.id,
         )
-        blast_radius = self.blast_radius.evaluate(action_request)
-        simulation = self.simulator.simulate(action_request)
-        record_decision_trace(
-            db,
-            incident,
-            stage="simulate",
-            decision="passed" if simulation.ok else "failed",
-            confidence=incident.confidence,
-            inputs={**simulation.to_dict(), "blast_radius": blast_radius.__dict__},
-            reason="local/mock pre-execution simulation",
-        )
+        blast_radius = self.blast_radius.classify(request)
+        simulation = self.simulator.simulate(request)
         policy = self.policy_engine.evaluate(
-            action_request,
+            request,
             PolicyContext(
                 environment=incident.environment,
                 service=incident.service,
                 tenant_id=incident.tenant_id,
                 workspace_id=incident.workspace_id,
+                confidence=incident.confidence,
+                evidence_count=len(evidence),
+                conflicting_signals=bool(critique.contradiction_flags),
+                known_ambiguity=critique.requires_human,
+                blast_radius_scope=blast_radius.scope,
+                rollback_available=blast_radius.rollback_available,
+                simulation_passed=simulation.success,
             ),
         )
         record_decision_trace(
@@ -144,7 +141,7 @@ class AgentLoop:
             stage="risk",
             decision=policy.route.value,
             confidence=incident.confidence,
-            inputs={"action_type": recommended.action_type, "risk_level": policy.risk_level.value},
+            inputs={"action_type": recommended.action_type, "risk_level": policy.risk_level.value, "blast_radius": blast_radius.to_dict(), "simulation": simulation.to_dict()},
             policy_result={"decision": policy.decision.value, "route": policy.route.value, "reasons": policy.reasons},
             reason=policy.reason,
         )
@@ -158,12 +155,7 @@ class AgentLoop:
             risk_level=policy.risk_level,
             requires_approval=policy.requires_approval or recommended.requires_approval or critique.blocks_auto_action or not simulation.ok or not blast_radius.allowed,
             rationale=recommended.rationale,
-            payload={
-                **recommended.payload,
-                "self_critique": critique.to_dict(),
-                "blast_radius": blast_radius.__dict__,
-                "simulation": simulation.to_dict(),
-            },
+            payload={**dict(recommended.payload), "blast_radius": blast_radius.to_dict(), "simulation": simulation.to_dict(), "self_critique": critique.to_dict()},
             preconditions=recommended.preconditions,
             post_checks=recommended.post_checks,
             evidence_ids=recommended.evidence_ids,
@@ -189,7 +181,7 @@ class AgentLoop:
             resource_type="action",
             resource_id=action.id,
             action_id=action.id,
-            metadata={"action_type": action.action_type, "risk_level": action.risk_level, "evidence_ids": action.evidence_ids},
+            metadata={"action_type": action.action_type, "risk_level": action.risk_level, "evidence_ids": action.evidence_ids, "blast_radius": blast_radius.to_dict(), "simulation": simulation.to_dict()},
         )
         triggers = decision_escalation_triggers(
             incident,

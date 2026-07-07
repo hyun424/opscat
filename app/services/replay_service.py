@@ -226,8 +226,10 @@ def _adversarial_summary_from_results(results: list[dict[str, Any]]) -> dict[str
 def _p8_scenario_summary_from_results(results: list[dict[str, Any]]) -> dict[str, Any]:
     p8_results = [item for item in results if item.get("phase") == "P8" or item.get("operator_replacement")]
     missing_contract_fields: list[dict[str, Any]] = []
+    contracts: list[Mapping[str, Any]] = []
     for item in p8_results:
-        contract = item.get("operator_replacement") if isinstance(item.get("operator_replacement"), Mapping) else {}
+        contract = _operator_contract_from_result(item)
+        contracts.append(contract)
         missing = [
             field
             for field in P8_OPERATOR_REQUIRED_FIELDS
@@ -235,7 +237,6 @@ def _p8_scenario_summary_from_results(results: list[dict[str, Any]]) -> dict[str
         ]
         if missing:
             missing_contract_fields.append({"scenario": item["scenario"], "missing": missing})
-    contracts = [item.get("operator_replacement") if isinstance(item.get("operator_replacement"), Mapping) else {} for item in p8_results]
     route_counts = Counter(str(contract.get("expected_route", item.get("actual_route"))) for item, contract in zip(p8_results, contracts, strict=True))
     action_counts = Counter(str(contract.get("required_action", "unknown")) for contract in contracts)
     score_band_counts = Counter(str(contract.get("reliability_score_band", "unknown")) for contract in contracts)
@@ -248,6 +249,13 @@ def _p8_scenario_summary_from_results(results: list[dict[str, Any]]) -> dict[str
         "score_band_counts": dict(sorted(score_band_counts.items())),
         "missing_contract_fields": missing_contract_fields,
     }
+
+
+def _operator_contract_from_result(item: Mapping[str, Any]) -> Mapping[str, Any]:
+    contract = item.get("operator_replacement")
+    if isinstance(contract, Mapping):
+        return contract
+    return {}
 
 
 def _normalize_replay_result(result: dict[str, Any]) -> dict[str, Any]:

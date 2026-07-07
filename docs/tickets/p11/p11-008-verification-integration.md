@@ -1,7 +1,7 @@
 ---
 id: P11-008
 title: Verification Integration
-status: TODO
+status: DONE
 phase: P11
 depends_on: [P11-006, P11-007]
 ---
@@ -14,9 +14,9 @@ Implement the P11 slice for Verification Integration.
 
 ## Acceptance Criteria
 
-- [ ] eval profile runs corpus audit
-- [ ] full profile runs corpus audit
-- [ ] docs profile validates P11 evidence
+- [x] eval profile runs corpus audit
+- [x] full profile runs corpus audit
+- [x] docs profile validates P11 evidence
 
 ## Boundary
 

@@ -1,7 +1,7 @@
 ---
 id: P11-003
 title: Corpus Audit Metrics
-status: TODO
+status: DONE
 phase: P11
 depends_on: [P11-002]
 ---
@@ -14,9 +14,9 @@ Implement the P11 slice for Corpus Audit Metrics.
 
 ## Acceptance Criteria
 
-- [ ] reports total, route counts, tag counts, source counts, duplicates, missing evidence, missing hypotheses
-- [ ] fails missing safety/no-data/false-positive/route-diversity coverage
-- [ ] output is deterministic JSON
+- [x] reports total, route counts, tag counts, source counts, duplicates, missing evidence, missing hypotheses
+- [x] fails missing safety/no-data/false-positive/route-diversity coverage
+- [x] output is deterministic JSON
 
 ## Boundary
 

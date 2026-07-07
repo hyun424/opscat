@@ -1,7 +1,7 @@
 ---
 id: P11-005
 title: Benchmark Smoke Selector
-status: TODO
+status: DONE
 phase: P11
 depends_on: [P11-002, P11-003]
 ---
@@ -14,9 +14,9 @@ Implement the P11 slice for Benchmark Smoke Selector.
 
 ## Acceptance Criteria
 
-- [ ] selects diverse deterministic smoke subset
-- [ ] covers key routes and tags
-- [ ] can include P10 seed plus P11 corpus cases
+- [x] selects diverse deterministic smoke subset
+- [x] covers key routes and tags
+- [x] can include P10 seed plus P11 corpus cases
 
 ## Boundary
 

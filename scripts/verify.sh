@@ -114,6 +114,16 @@ judgment_benchmark() {
   printf 'Wrote /tmp/opscat-judgment-benchmark-latest.md and %s/opscat-judgment-benchmark.json\n' "$VERIFY_TMPDIR"
 }
 
+corpus_audit() {
+  section "P11 corpus audit"
+  "${UV_DEV[@]}" python scripts/run_corpus_audit.py \
+    --corpus evals/judgment/corpus/p11-corpus.json \
+    --output-json "$VERIFY_TMPDIR/opscat-corpus-audit.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-corpus-audit.md" >/tmp/opscat-corpus-audit-latest.json
+  cp "$VERIFY_TMPDIR/opscat-corpus-audit.md" /tmp/opscat-corpus-audit-latest.md
+  printf 'Wrote /tmp/opscat-corpus-audit-latest.md and %s/opscat-corpus-audit.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -182,7 +192,8 @@ docs_contract_tests() {
     tests/test_p8_security_docs.py \
     tests/test_p8_release_evidence.py \
     tests/test_p9_release_evidence.py \
-    tests/test_p10_release_evidence.py
+    tests/test_p10_release_evidence.py \
+    tests/test_p11_release_evidence.py
 }
 
 run_fast() {
@@ -199,6 +210,7 @@ run_eval() {
   replay_evals
   commander_tournament
   judgment_benchmark
+  corpus_audit
 }
 
 run_docs() {

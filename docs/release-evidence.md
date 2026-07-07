@@ -231,3 +231,19 @@ P9 remains local/mock and auth-deferred. It adds an Autonomous Incident Commande
 - Full release gate: `bash scripts/verify.sh --profile full`
 
 P10 remains local/mock and auth-deferred. It adds a deterministic benchmark for incident judgment quality using repo-local seed cases; it does not download public datasets during normal verification and does not claim unattended production operation.
+
+## P11 Incident Corpus Expansion Evidence
+
+- Roadmap: `docs/operations/p11-ticket-roadmap.md`
+- Final summary: `docs/operations/p11-final-summary.md`
+- Corpus service tests: `tests/test_judgment_corpus.py`
+- Corpus CLI tests: `tests/test_judgment_corpus_cli.py`
+- Release evidence tests: `tests/test_p11_release_evidence.py`
+- Corpus service: `app/services/judgment_corpus.py`
+- Corpus CLI: `scripts/run_corpus_audit.py`
+- Corpus fixture: `evals/judgment/corpus/p11-corpus.json`
+- Corpus audit command: `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_corpus_audit.py --corpus evals/judgment/corpus/p11-corpus.json --output-json /tmp/opscat-corpus-audit.json --output-md /tmp/opscat-corpus-audit.md`
+- Latest temp corpus audit artifact: `/tmp/opscat-corpus-audit-latest.md`
+- Full release gate: `bash scripts/verify.sh --profile full`
+
+P11 remains local/mock and auth-deferred. It expands incident judgment coverage before LLM attachment; it does not download public datasets during normal verification and does not claim unattended production operation.

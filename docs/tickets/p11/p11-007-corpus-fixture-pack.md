@@ -1,7 +1,7 @@
 ---
 id: P11-007
 title: Corpus Fixture Pack
-status: TODO
+status: DONE
 phase: P11
 depends_on: [P11-002, P11-004]
 ---
@@ -14,9 +14,9 @@ Implement the P11 slice for Corpus Fixture Pack.
 
 ## Acceptance Criteria
 
-- [ ] fixture has at least 50 cases
-- [ ] includes safety/no-data/false-positive/conflicting/cascading cases
-- [ ] fixture is local/mock and redacted
+- [x] fixture has at least 50 cases
+- [x] includes safety/no-data/false-positive/conflicting/cascading cases
+- [x] fixture is local/mock and redacted
 
 ## Boundary
 

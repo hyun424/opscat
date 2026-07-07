@@ -1,7 +1,7 @@
 ---
 id: P11-002
 title: Deterministic Corpus Generator
-status: TODO
+status: DONE
 phase: P11
 depends_on: [P11-001]
 ---
@@ -14,9 +14,9 @@ Implement the P11 slice for Deterministic Corpus Generator.
 
 ## Acceptance Criteria
 
-- [ ] generates at least 50 cases
-- [ ] case IDs are stable and unique
-- [ ] each case has incident, evidence, rubric, tags, local_mock_only
+- [x] generates at least 50 cases
+- [x] case IDs are stable and unique
+- [x] each case has incident, evidence, rubric, tags, local_mock_only
 
 ## Boundary
 

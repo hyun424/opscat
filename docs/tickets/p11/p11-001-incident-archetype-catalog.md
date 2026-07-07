@@ -1,7 +1,7 @@
 ---
 id: P11-001
 title: Incident Archetype Catalog
-status: TODO
+status: DONE
 phase: P11
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P11 slice for Incident Archetype Catalog.
 
 ## Acceptance Criteria
 
-- [ ] catalog covers at least 17 SRE failure modes
-- [ ] each archetype has hypotheses, tags, evidence hints, expected route, forbidden actions
-- [ ] catalog is deterministic and local/mock only
+- [x] catalog covers at least 17 SRE failure modes
+- [x] each archetype has hypotheses, tags, evidence hints, expected route, forbidden actions
+- [x] catalog is deterministic and local/mock only
 
 ## Boundary
 

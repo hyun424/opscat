@@ -23,6 +23,9 @@ def test_release_evidence_index_lists_all_p4_gates_and_artifacts() -> None:
         "/tmp/opscat-connector-evals-latest.md",
         "No real external side effects",
         "P5",
+        "setup_permission",
+        "setup_failure",
+        "import_normalization",
     ]:
         assert required in text
 

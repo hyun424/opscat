@@ -7,6 +7,7 @@ import json
 import sys
 import tempfile
 from collections.abc import Callable, Mapping
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any, cast
 
@@ -32,9 +33,12 @@ from app.models import policy as _policy_model  # noqa: E402,F401
 from app.models import secret as _secret_model  # noqa: E402,F401
 from app.models import timeline as _timeline_model  # noqa: E402,F401
 from app.models import workflow as _workflow_model  # noqa: E402,F401
-from app.services.connector_service import ConnectorService  # noqa: E402
+from app.services.authorization import AuthorizationError  # noqa: E402
+from app.services.connector_service import ConnectorService, default_connector_registry  # noqa: E402
 from app.services.identity_service import Principal, get_or_create_local_principal  # noqa: E402
+from app.services.incident_service import create_and_investigate  # noqa: E402
 from app.services.secret_service import LocalEncryptedSecretProvider  # noqa: E402
+from app.services.signal_normalizer import normalize_signal  # noqa: E402
 
 ScenarioResult = dict[str, Any]
 ScenarioFn = Callable[[Session], ScenarioResult]
@@ -94,6 +98,10 @@ class _ContractViolationConnector:
 
 SCENARIOS: Mapping[str, ScenarioFn] = {
     "fake_read_success": lambda db: _fake_read_success(db),
+    "connector_catalog_permission_metadata": lambda db: _connector_catalog_permission_metadata(db),
+    "permission_mismatch_fails_closed": lambda db: _permission_mismatch_fails_closed(db),
+    "secret_lifecycle_setup_failure": lambda db: _secret_lifecycle_setup_failure(db),
+    "fixture_import_normalization": lambda db: _fixture_import_normalization(db),
     "missing_credential_failed_closed": lambda db: _missing_credential_failed_closed(db),
     "provider_timeout_escalates": lambda db: _provider_timeout_escalates(db),
     "malformed_result_escalates": lambda db: _malformed_result_escalates(db),
@@ -219,6 +227,142 @@ def _fake_read_success(db: Session) -> ScenarioResult:
             "ok": actual["ok"] is True,
             "read_only": actual["read_only"] is True,
             "audited": actual["audit_types"] == ["connector_call_requested", "connector_call_completed"],
+        },
+    )
+
+
+def _connector_catalog_permission_metadata(db: Session) -> ScenarioResult:
+    registry = default_connector_registry()
+    capabilities = [
+        asdict(capability) | {"connector_id": connector_id}
+        for connector_id, connector_capabilities in registry.list_capabilities().items()
+        for capability in connector_capabilities
+    ]
+    required_fields = {"name", "description", "risk_level", "read_only", "required_role", "requires_approval", "required_secret_name"}
+    missing_metadata = [
+        capability
+        for capability in capabilities
+        if not required_fields.issubset(capability) or capability["required_role"] not in {"viewer", "operator", "admin", "owner"}
+    ]
+    broad_secret_requests = [
+        capability["required_secret_name"]
+        for capability in capabilities
+        if capability.get("required_secret_name") in {"admin.token", "root.token", "all.providers.token"}
+    ]
+    actual = {
+        "capabilities_with_metadata": len(capabilities),
+        "missing_metadata_count": len(missing_metadata),
+        "broad_secret_requests": broad_secret_requests,
+        "failure_class": "none",
+    }
+    return _result(
+        category="setup_permission",
+        actual=actual,
+        checks={
+            "has_catalog": len(capabilities) >= 4,
+            "metadata_complete": not missing_metadata,
+            "least_privilege_secrets": not broad_secret_requests,
+        },
+    )
+
+
+def _permission_mismatch_fails_closed(db: Session) -> ScenarioResult:
+    principal = _principal(db, role="viewer")
+    service = ConnectorService()
+    try:
+        service.call(
+            db,
+            principal,
+            ConnectorCallRequest(
+                connector_id="slack.wake_up",
+                capability="messages.write",
+                tenant_id=principal.tenant_id,
+                workspace_id=principal.workspace_id,
+                actor=principal.email,
+                idempotency_key="eval-permission-mismatch",
+                payload={"channel": "#ops", "wake_up_reason": "eval", "summary": "permission mismatch"},
+            ),
+        )
+    except AuthorizationError as exc:
+        actual = {"failure_class": "permission_mismatch", "error": str(exc), "audit_types": _audit_types(db)}
+    else:
+        actual = {"failure_class": "none", "error": "", "audit_types": _audit_types(db)}
+    return _result(
+        category="setup_permission",
+        actual=actual,
+        checks={
+            "failed_closed": actual["failure_class"] == "permission_mismatch",
+            "actionable_error": "role" in str(actual["error"]) or "lacks" in str(actual["error"]),
+            "no_provider_call_audit": actual["audit_types"] == [],
+        },
+    )
+
+
+def _secret_lifecycle_setup_failure(db: Session) -> ScenarioResult:
+    admin = _principal(db, role="admin")
+    provider = LocalEncryptedSecretProvider(master_key="eval-master-key")
+    provider.put_secret(db, admin, "sentry.token", "fixture-token", metadata={"connector": "sentry.readonly"})
+    refs_before_delete = provider.list_refs(db, admin)
+    provider.delete_secret(db, admin, "sentry.token")
+    incident = _incident(db)
+    result = ConnectorService(secret_provider=provider).call(
+        db,
+        admin,
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="issues.read",
+            tenant_id=admin.tenant_id,
+            workspace_id=admin.workspace_id,
+            actor=admin.email,
+            incident_id=incident.id,
+            idempotency_key="eval-secret-setup-failure",
+            payload={"project": "checkout-api"},
+        ),
+    )
+    actual = _failure_actual(db, incident.id) | {
+        "ok": result.ok,
+        "error": result.error,
+        "metadata_only_refs": [asdict(ref) for ref in refs_before_delete],
+        "failure_class": "setup_failure",
+        "connector_failure_class": _latest_failure_class(db),
+    }
+    serialized_refs = json.dumps(actual["metadata_only_refs"], sort_keys=True)
+    return _result(
+        category="setup_failure",
+        actual=actual,
+        checks={
+            "metadata_listed": "sentry.token" in serialized_refs,
+            "no_secret_value_returned": "fixture-token" not in serialized_refs,
+            "failed_closed_after_delete": result.ok is False and result.error == "missing credential: sentry.token",
+            "connector_failure_recorded": actual["connector_failure_class"] == "connector_failure",
+            "escalated": actual["incident_status"] == "escalated",
+        },
+    )
+
+
+def _fixture_import_normalization(db: Session) -> ScenarioResult:
+    fixture = json.loads((ROOT / "examples/fixtures/signals/sentry_issue.json").read_text(encoding="utf-8"))
+    normalized = normalize_signal(fixture, tenant_id="tenant-a", workspace_id="workspace-a")
+    incident = create_and_investigate(db, normalized)
+    actual = {
+        "failure_class": "import_normalization",
+        "incident_status": incident.status,
+        "service": incident.service,
+        "environment": incident.environment,
+        "severity": incident.severity,
+        "fingerprint": incident.alert_fingerprint,
+        "action_count": len(incident.actions),
+        "redacted_summary": incident.summary,
+    }
+    return _result(
+        category="import_normalization",
+        actual=actual,
+        checks={
+            "normalized_scope": normalized.tenant_id == "tenant-a" and normalized.workspace_id == "workspace-a",
+            "normalized_fields": normalized.service == "payment-api" and normalized.environment == "staging",
+            "incident_created": bool(incident.id) and bool(incident.alert_fingerprint),
+            "action_created": len(incident.actions) >= 1,
+            "redacted": "fixture-token" not in (incident.summary or ""),
         },
     )
 

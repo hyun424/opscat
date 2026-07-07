@@ -81,3 +81,24 @@ def test_p12_real_dataset_evaluation_runs_benchmark_and_reports_quality(tmp_path
     assert "no external dataset download" in markdown
     assert output_cases.exists()
     assert len(json.loads(output_cases.read_text(encoding="utf-8"))) == payload["case_count"]
+
+
+def test_p18_real_loghub_structured_csv_columns_are_normalized(tmp_path: Path) -> None:
+    sample = tmp_path / "Apache_2k.log_structured.csv"
+    sample.write_text(
+        "LineId,Time,Level,Content,EventId,EventTemplate\n"
+        "1,Sun Dec 04 04:47:44 2005,notice,workerEnv.init() ok /etc/httpd/conf/workers2.properties,E2,workerEnv.init() ok <*>\n"
+        "2,Sun Dec 04 04:47:44 2005,error,mod_jk child workerEnv in error state 6,E3,mod_jk child workerEnv in error state <*>\n",
+        encoding="utf-8",
+    )
+
+    result = convert_dataset_sample(sample, family="loghub", dataset_name="loghub-apache-2k-real")
+    case = result.cases[0]
+    contents = [str(item.get("content") or "") for item in case.evidence]
+
+    assert result.quality.accepted_records == 2
+    assert result.quality.unsupported_records == 0
+    assert any("workerEnv.init" in content for content in contents)
+    assert any("error state" in content for content in contents)
+    assert any(str(item.get("metadata", {}).get("timestamp")) == "Sun Dec 04 04:47:44 2005" for item in case.evidence)
+    assert case.rubric.expected_route == "human_required"

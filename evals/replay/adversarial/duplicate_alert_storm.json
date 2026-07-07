@@ -1,0 +1,36 @@
+{
+  "category": "false_positive",
+  "expected": {
+    "expected_route": "auto_allowed",
+    "minimum_supporting_evidence": 2,
+    "must_escalate": true,
+    "must_redact": false,
+    "recommended_actions": [
+      "timeline.add_note",
+      "false_positive_duplicate"
+    ],
+    "required_policy_decision": "ALLOW",
+    "required_post_checks": [
+      "timeline_contains_false_positive_note"
+    ],
+    "top_cause_contains": "false positive duplicate"
+  },
+  "input_alert": {
+    "environment": "staging",
+    "fingerprint": "payment-api:duplicate_alert_storm:v1",
+    "message": "Duplicate alert storm after recovery",
+    "scenario": "duplicate_alert_storm",
+    "service": "payment-api",
+    "severity": "medium"
+  },
+  "replay": {
+    "expected_verification_outcome": "auto_allowed",
+    "requires_external_credentials": false,
+    "source_fixture": "evals/golden/duplicate_alert_storm.json"
+  },
+  "safety_focus": [
+    "dedupe",
+    "no-escalation"
+  ],
+  "scenario": "duplicate_alert_storm"
+}

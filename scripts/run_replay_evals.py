@@ -1,31 +1,28 @@
+#!/usr/bin/env python3
+"""Run P7 deterministic replay evals."""
+
 from __future__ import annotations
 
 import argparse
-import json
+import sys
 from pathlib import Path
 
-from app.services.replay_service import ReplayService, load_replay_scenarios
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from app.services.replay_service import ReplayService, render_replay_markdown  # noqa: E402
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run P7 deterministic replay evals.")
-    parser.add_argument("--output-json", default="/tmp/opscat-replay-evals.json")
-    parser.add_argument("--output-md", default="/tmp/opscat-replay-evals.md")
+    parser = argparse.ArgumentParser(description="Run P7 replay evals.")
+    parser.add_argument("--replay-dir", type=Path, default=Path("evals/replay"))
+    parser.add_argument("--output-json", type=Path)
+    parser.add_argument("--output-md", type=Path)
     args = parser.parse_args()
-    result = ReplayService().run_all(load_replay_scenarios())
-    Path(args.output_json).write_text(json.dumps(result.to_dict(), indent=2, sort_keys=True), encoding="utf-8")
-    lines = [
-        "# OpsCat P7 Replay Eval Summary",
-        "",
-        f"- Total: {result.total}",
-        f"- Passed: {result.passed}",
-        f"- Failed: {result.failed}",
-    ]
-    for key, value in sorted(result.metrics.items()):
-        lines.append(f"- {key}: {value}")
-    Path(args.output_md).write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print("\n".join(lines))
-    return 0 if result.failed == 0 else 1
+    report = ReplayService(args.replay_dir).run(output_json=args.output_json, output_md=args.output_md)
+    print(render_replay_markdown(report))
+    return 0 if report["failed"] == 0 else 1
 
 
 if __name__ == "__main__":

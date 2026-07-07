@@ -1,79 +1,64 @@
-"""P7 confidence calibration over replay/eval outputs."""
+"""Deterministic confidence calibration helpers for P7 replay outcomes."""
 
 from __future__ import annotations
 
+from collections import defaultdict
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
 from typing import Any
 
+BUCKETS: tuple[tuple[str, float, float], ...] = (
+    ("0.00-0.49", 0.0, 0.5),
+    ("0.50-0.69", 0.5, 0.7),
+    ("0.70-0.84", 0.7, 0.85),
+    ("0.85-1.00", 0.85, 1.01),
+)
 
-@dataclass(frozen=True)
-class CalibrationBucket:
-    name: str
-    lower: float
-    upper: float
-    count: int
-    accuracy: float
-    average_confidence: float
 
-    def to_dict(self) -> dict[str, object]:
-        return {
-            "name": self.name,
-            "lower": self.lower,
-            "upper": self.upper,
-            "count": self.count,
-            "accuracy": self.accuracy,
-            "average_confidence": self.average_confidence,
+def calibrate_confidence(outcomes: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
+    rows = [dict(item) for item in outcomes]
+    bucket_rows: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    overconfidence = 0
+    underconfidence = 0
+    unsupported_high = 0
+    for row in rows:
+        confidence = float(row.get("confidence", 0.0) or 0.0)
+        correct = bool(row.get("correct", row.get("passed", False)))
+        bucket_rows[_bucket(confidence)].append(row)
+        if confidence >= 0.85 and not correct:
+            overconfidence += 1
+        if confidence < 0.5 and correct:
+            underconfidence += 1
+        if confidence >= 0.85 and (int(row.get("evidence_count", 0) or 0) < 2 or bool(row.get("conflicting_signals", False)) or bool(row.get("known_ambiguity", False))):
+            unsupported_high += 1
+    bucket_accuracy = {}
+    for label, _, _ in BUCKETS:
+        items = bucket_rows.get(label, [])
+        bucket_accuracy[label] = {
+            "total": len(items),
+            "correct": sum(1 for item in items if bool(item.get("correct", item.get("passed", False)))),
+            "accuracy": (sum(1 for item in items if bool(item.get("correct", item.get("passed", False)))) / len(items)) if items else 0.0,
         }
+    threshold = 0.9 if overconfidence or unsupported_high else 0.82
+    return {
+        "total": len(rows),
+        "bucket_accuracy": bucket_accuracy,
+        "overconfidence_count": overconfidence,
+        "underconfidence_count": underconfidence,
+        "unsupported_high_confidence_count": unsupported_high,
+        "recommended_thresholds": {
+            "auto_action_min_confidence": threshold,
+            "min_supporting_evidence": 2,
+            "fail_closed_on_conflicting_signals": True,
+        },
+    }
 
 
-@dataclass(frozen=True)
-class CalibrationReport:
-    buckets: list[CalibrationBucket]
-    overconfidence_count: int
-    underconfidence_count: int
-    recommended_auto_threshold: float
-    min_evidence_for_auto: int = 3
-
-    def fail_closed(self, sample: Mapping[str, Any]) -> bool:
-        confidence = float(sample.get("confidence", 0.0) or 0.0)
-        evidence_count = int(sample.get("evidence_count", 0) or 0)
-        conflicts = int(sample.get("conflicting_signals", 0) or 0)
-        ambiguous = bool(sample.get("ambiguous", False))
-        return confidence < self.recommended_auto_threshold or evidence_count < self.min_evidence_for_auto or conflicts > 0 or ambiguous
-
-    def to_dict(self) -> dict[str, object]:
-        return {
-            "buckets": [bucket.to_dict() for bucket in self.buckets],
-            "overconfidence_count": self.overconfidence_count,
-            "underconfidence_count": self.underconfidence_count,
-            "recommended_auto_threshold": self.recommended_auto_threshold,
-            "min_evidence_for_auto": self.min_evidence_for_auto,
-        }
+def is_auto_action_eligible(*, confidence: float | None, evidence_count: int, conflicting_signals: bool, known_ambiguity: bool, threshold: float = 0.82) -> bool:
+    return bool(confidence is not None and confidence >= threshold and evidence_count >= 2 and not conflicting_signals and not known_ambiguity)
 
 
-class ConfidenceCalibrator:
-    ranges: tuple[tuple[str, float, float], ...] = (
-        ("0.00-0.49", 0.0, 0.49),
-        ("0.50-0.69", 0.5, 0.69),
-        ("0.70-0.84", 0.7, 0.84),
-        ("0.85-1.00", 0.85, 1.0),
-    )
-
-    def calibrate(self, samples: Iterable[Mapping[str, Any]]) -> CalibrationReport:
-        materialized = list(samples)
-        buckets: list[CalibrationBucket] = []
-        over = 0
-        under = 0
-        for name, lower, upper in self.ranges:
-            members = [sample for sample in materialized if lower <= float(sample.get("confidence", 0.0) or 0.0) <= upper]
-            correct = [sample for sample in members if bool(sample.get("correct", False))]
-            count = len(members)
-            avg_conf = round(sum(float(sample.get("confidence", 0.0) or 0.0) for sample in members) / count, 3) if count else 0.0
-            accuracy = round(len(correct) / count, 3) if count else 0.0
-            buckets.append(CalibrationBucket(name, lower, upper, count, accuracy, avg_conf))
-            over += sum(1 for sample in members if float(sample.get("confidence", 0.0) or 0.0) >= 0.85 and not bool(sample.get("correct", False)))
-            under += sum(1 for sample in members if float(sample.get("confidence", 0.0) or 0.0) < 0.7 and bool(sample.get("correct", False)))
-        high_bucket = next((bucket for bucket in buckets if bucket.lower >= 0.85), None)
-        threshold = 0.85 if high_bucket and high_bucket.accuracy >= 0.8 else 0.9
-        return CalibrationReport(buckets=buckets, overconfidence_count=over, underconfidence_count=under, recommended_auto_threshold=threshold)
+def _bucket(confidence: float) -> str:
+    for label, start, end in BUCKETS:
+        if start <= confidence < end:
+            return label
+    return "0.85-1.00" if confidence >= 1 else "0.00-0.49"

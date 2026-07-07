@@ -140,3 +140,8 @@ P14 active scope: LLM Judgment Adapter without auth and without default external
 ## P14 implemented
 
 P14 implemented as local/mock LLM Judgment Adapter evidence. P14 covers the provider interface, deterministic mock provider, response schema validation, evidence citation checking, safety gate, judgment runner, CLI/reporting, prompt-injection regression, verification integration, and release evidence. See `docs/operations/p14-ticket-roadmap.md`, `docs/operations/p14-final-summary.md`, and `docs/release-evidence.md`. The boundary remains no-auth/local-mock: P14 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, external dataset downloads during normal verification, default external model/API calls, action execution, or unattended production-operation claims.
+
+
+## P15 active
+
+P15 active scope: NVIDIA LLM Provider Opt-in. P15-mini adds an explicit NVIDIA/OpenAI-compatible provider for `nvidia/nemotron-3-ultra-550b-a55b`, key-gated execution, prompt contract, response parsing, CLI provider selection, offline testability, and release evidence. The boundary remains no-auth/local-mock by default: P15 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.

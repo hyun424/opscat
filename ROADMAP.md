@@ -160,3 +160,7 @@ P16 active scope: LLM Provider Evaluation Runner. P16 evaluates mock and opt-in 
 ## P16 implemented
 
 P16 implemented as LLM Provider Evaluation Runner evidence. P16 scores mock and explicit opt-in NVIDIA provider judgments across incident cases for schema validity, evidence citation accuracy, route judgment, hypothesis coverage, required evidence citation, forbidden-action handling, safety-gate behavior, latency, and failure reasons. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.
+
+## P17 active
+
+P17 active scope: LLM Policy Calibration. P17 adds a deterministic policy calibration layer after LLM provider judgment and safety gating so OpsCat can downgrade over-aggressive LLM routes, remove risky automatic actions, preserve auditability, and score provider evaluations against calibrated decisions. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.

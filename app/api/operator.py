@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from html import escape
-from typing import Any, cast
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
@@ -224,35 +224,36 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
 
 
 def _war_room_panel(war_room: dict[str, Any]) -> str:
-    impact = _dict_field(war_room, "impact")
-    reliability = _dict_field(war_room, "reliability_score")
-    runbook = _dict_field(war_room, "runbook_critique")
-    questions = _list_field(war_room, "human_questions")
-    gates = _list_field(war_room, "policy_gates")
-    final = _dict_field(war_room, "final_decision")
-    question_items = _war_room_question_items(questions)
-    gate_items = _war_room_gate_items(gates)
+    reliability = _mapping(war_room.get("reliability_score"))
+    runbook = _mapping(war_room.get("runbook_critique"))
+    policy = _mapping(war_room.get("policy_decision"))
+    final = _mapping(war_room.get("final_decision"))
+    questions = _sequence(war_room.get("human_questions"))
+    gates = _sequence(war_room.get("policy_gates"))
+    question_items = _html_items(_question_text(item) for item in questions)
+    gate_items = _html_items(_gate_text(item) for item in gates)
     return f"""
-<section data-testid=\"war-room-panel\">
+<section data-testid="p8-war-room">
 <h2>War Room</h2>
 <p><strong>P8 flow:</strong> alert -> war room -> score -> runbook critique -> action gate -> report.</p>
 <p>This portfolio demo is <strong>local/mock</strong>; it does not claim unattended production operation.</p>
 <section data-testid="p8-reliability-score">
 <h3>Reliability score</h3>
-<p><code>{reliability_score:.2f}</code> from deterministic incident confidence; hard policy gates still decide whether action is allowed.</p>
+<p><code>{escape(str(reliability.get('score', 'unknown')))}</code> band <code>{escape(str(reliability.get('band', 'unknown')))}</code>; hard policy gates still decide whether action is allowed.</p>
 </section>
 <section data-testid="p8-runbook-critique">
 <h3>Runbook critique</h3>
-<p>{escape(str(runbook_evidence))}</p>
-<p>Missing evidence: <code>{escape(_json_block(missing_evidence))}</code></p>
+<p>Fit: <code>{escape(str(runbook.get('fit', 'unknown')))}</code></p>
+<p>Suggestions: <code>{escape(_json_block(runbook.get('suggestions', [])))}</code></p>
 </section>
 <section data-testid="p8-human-questions">
 <h3>Human questions</h3>
-<ul><li>{escape(human_question)}</li></ul>
+<ul>{question_items}</ul>
 </section>
 <section data-testid="p8-action-gate">
 <h3>Action gate</h3>
-<p>Policy <code>{escape(policy_decision)}</code>; status <code>{escape(action_status)}</code>; target <code>{escape(action_target)}</code>.</p>
+<p>Policy <code>{escape(str(policy.get('decision', 'unknown')))}</code>; final route <code>{escape(str(final.get('route', 'unknown')))}</code>.</p>
+<ul>{gate_items}</ul>
 <p>Browser mutation forms remain absent while auth/session work is deferred.</p>
 </section>
 <section data-testid="p8-report-export">
@@ -262,6 +263,34 @@ def _war_room_panel(war_room: dict[str, Any]) -> str:
 </section>
 """
 
+
+def _mapping(value: object) -> dict[str, Any]:
+    return dict(value) if isinstance(value, dict) else {}
+
+
+def _sequence(value: object) -> list[object]:
+    return list(value) if isinstance(value, list) else []
+
+
+def _html_items(values: object) -> str:
+    items = list(values) if not isinstance(values, list) else values
+    if not items:
+        return "<li>None recorded</li>"
+    return "".join(f"<li>{escape(str(item))}</li>" for item in items)
+
+
+def _question_text(value: object) -> str:
+    if isinstance(value, dict):
+        question = value.get("question", "")
+        why = value.get("why_it_matters", "")
+        return f"{question} — {why}"
+    return str(value)
+
+
+def _gate_text(value: object) -> str:
+    if isinstance(value, dict):
+        return f"{value.get('name', 'gate')}: {value.get('status', 'unknown')} — {value.get('reason', '')}"
+    return str(value)
 
 
 def _payload_section(payload: dict[str, object] | None, key: str) -> dict[str, object]:

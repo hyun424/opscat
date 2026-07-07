@@ -121,7 +121,10 @@ def _render_war_room_markdown(war_room: dict[str, object]) -> list[str]:
     lines.extend(["", "## Hypotheses"])
     for item in _as_list(war_room.get("hypotheses")):
         if isinstance(item, dict):
-            lines.append(f"- {redact_text(str(item.get('title', 'Unknown')))} confidence={redact_text(str(item.get('confidence', 'unknown')))} status={redact_text(str(item.get('status', 'unknown')))}")
+            title = redact_text(str(item.get("title", item.get("hypothesis", "Unknown"))) )
+            confidence = redact_text(str(item.get("confidence", "unknown")))
+            status = redact_text(str(item.get("status", "unknown")))
+            lines.append(f"- {title} confidence={confidence} status={status}")
     lines.extend([
         "",
         "## Reliability Score",

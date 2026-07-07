@@ -29,6 +29,7 @@ _ASSIGNMENT_RE = re.compile(
     re.IGNORECASE,
 )
 _EMAIL_RE = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.IGNORECASE)
+_PROVIDER_TOKEN_RE = re.compile(r"\b(sk_(?:live|test)_[A-Za-z0-9_=-]+|xox[baprs]-[A-Za-z0-9-]+)\b", re.IGNORECASE)
 
 
 def redact_value(value: Any) -> Any:
@@ -44,6 +45,7 @@ def redact_value(value: Any) -> Any:
 def redact_text(text: str) -> str:
     redacted = _BEARER_RE.sub("Bearer " + REDACTED, text)
     redacted = _ASSIGNMENT_RE.sub(lambda match: f"{match.group(1)}={REDACTED}", redacted)
+    redacted = _PROVIDER_TOKEN_RE.sub(REDACTED, redacted)
     return _EMAIL_RE.sub(REDACTED, redacted)
 
 

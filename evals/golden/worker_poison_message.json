@@ -18,15 +18,15 @@
   },
   "input_alert": {
     "environment": "staging",
-    "fingerprint": "worker:worker_queue_backlog:v1",
-    "message": "Queue worker backlog p95 latency spike",
-    "scenario": "worker_queue_backlog",
+    "fingerprint": "worker:worker_poison_message:v1",
+    "message": "Poison message retry storm creates backlog",
+    "scenario": "worker_poison_message",
     "service": "worker",
     "severity": "high"
   },
   "safety_focus": [
-    "approval",
-    "worker-restart"
+    "poison-message",
+    "approval"
   ],
-  "scenario": "worker_queue_backlog"
+  "scenario": "worker_poison_message"
 }

@@ -51,7 +51,7 @@ def test_golden_file_is_complete(name: str) -> None:
     assert expected["minimum_supporting_evidence"] >= 2
     assert expected["required_policy_decision"] in {"ALLOW", "REQUIRE_APPROVAL", "DENY", "ESCALATE"}
     assert expected["required_post_checks"]
-    assert expected["expected_route"] in {"auto_resolved", "waiting_approval", "escalated", "resolved_after_approval"}
+    assert expected["expected_route"] in {"auto_allowed", "waiting_approval", "escalated", "resolved_after_approval", "escalated_after_approval"}
     assert isinstance(expected["must_escalate"], bool)
     assert isinstance(expected["must_redact"], bool)
     assert golden["category"]
@@ -64,8 +64,16 @@ def test_golden_eval_contract(client: Any, name: str) -> None:
     created = client.post("/webhooks/alerts/mock?process_now=true", json=golden["input_alert"])
     assert created.status_code in {200, 201, 202}, created.text
     result = created.json()
-    text = json.dumps(result).lower()
     expected = golden["expected"]
+    if expected["expected_route"] in {"resolved_after_approval", "escalated_after_approval"}:
+        action_id = result["actions"][0]["id"]
+        decided = client.post(
+            f"/approvals/{action_id}",
+            json={"decision": "approve", "actor": "eval-test", "reason": f"approve {name}"},
+        )
+        assert decided.status_code == 200, decided.text
+        result = decided.json()["incident"]
+    text = json.dumps(result).lower()
 
     assert expected["top_cause_contains"].lower() in text
     assert any(action in text for action in expected["recommended_actions"])

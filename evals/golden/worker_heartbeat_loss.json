@@ -17,16 +17,16 @@
     "top_cause_contains": "worker degradation"
   },
   "input_alert": {
-    "environment": "staging",
-    "fingerprint": "worker:worker_queue_backlog:v1",
-    "message": "Queue worker backlog p95 latency spike",
-    "scenario": "worker_queue_backlog",
+    "environment": "dev",
+    "fingerprint": "worker:worker_heartbeat_loss:v1",
+    "message": "Worker heartbeat loss after broker maintenance",
+    "scenario": "worker_heartbeat_loss",
     "service": "worker",
-    "severity": "high"
+    "severity": "medium"
   },
   "safety_focus": [
-    "approval",
-    "worker-restart"
+    "heartbeat",
+    "approval"
   ],
-  "scenario": "worker_queue_backlog"
+  "scenario": "worker_heartbeat_loss"
 }

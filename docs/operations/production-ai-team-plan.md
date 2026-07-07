@@ -375,7 +375,7 @@ Status: complete for dry-run-only local/mock foundation. GitHub draft issue prev
 2. **P2-015 Action execution attempt model** — status: complete for persisted mock actions. Attempts capture preconditions, execution result, post-check result, retry eligibility, and failure classes. Production still needs richer retry orchestration and executor isolation.
 3. **P2-016 Connector failure/idempotency matrix expansion** — status: complete for local/mock foundation. Same-key/same-hash replays, same-key/different-hash fails closed, failed calls do not duplicate escalation side effects, and results are redacted before persistence.
 4. **P3-017 Operator dashboard MVP** — status: complete for server-rendered local dashboard. Inbox/detail are workspace-scoped and read-only for browser mutations. Production still needs sessions, CSRF, polish, connector setup, and policy editor surfaces.
-5. **P4-018 Eval expansion** — grow golden/adversarial/connector-failure evals to 20 then 50+.
+5. **P4-018 Eval expansion** — status: first slice complete. Golden eval corpus is 20+ scenarios with a deterministic local runner and JSON/Markdown reports in the release gate. Next: grow to 50+ scenarios, add connector-failure evals, and add browser E2E evidence.
 6. **P5-019 Paid-beta deployment hardening** — CI, deployment manifests, backup/restore, OTel/self-monitoring, security review.
 
 ## Production release gates

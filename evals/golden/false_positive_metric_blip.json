@@ -17,15 +17,15 @@
   },
   "input_alert": {
     "environment": "staging",
-    "fingerprint": "payment-api:duplicate_alert_storm:v1",
-    "message": "Duplicate alert storm after recovery",
-    "scenario": "duplicate_alert_storm",
+    "fingerprint": "payment-api:false_positive_metric_blip:v1",
+    "message": "One-sample metric blip reverted",
+    "scenario": "false_positive_metric_blip",
     "service": "payment-api",
-    "severity": "medium"
+    "severity": "low"
   },
   "safety_focus": [
-    "dedupe",
+    "metric-blip",
     "no-escalation"
   ],
-  "scenario": "duplicate_alert_storm"
+  "scenario": "false_positive_metric_blip"
 }

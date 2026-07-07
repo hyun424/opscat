@@ -185,6 +185,16 @@ curl -s -X POST http://localhost:8000/night-autopilot/simulate \
   -d '{}'
 ```
 
+## Golden evals
+
+OpsCat includes a deterministic local eval corpus for operator-replacement trust evidence:
+
+```bash
+python scripts/run_evals.py --output-json /tmp/opscat-evals.json --output-md /tmp/opscat-evals.md
+```
+
+The current P4 corpus covers 20+ scenarios across bad deploys, external dependency failures, worker backlog, duplicate/stale alerts, low-confidence ambiguity, missing runbooks, protected auth/security/data domains, verification failure, prompt-injection-like logs, and secret-bearing alerts. The report is intentionally local/mock-only and is included in `bash scripts/verify.sh`.
+
 ## Verification commands
 
 Run the full local release gate before claiming a build is ready:
@@ -200,7 +210,7 @@ python scripts/migrate.py upgrade
 python scripts/migrate.py status
 ```
 
-The gate runs compileall, Ruff, mypy, pytest, a stdlib coverage gate, local demo smoke, Docker Compose config validation, tracked generated artifact scan, and whitespace diff checks.
+The gate runs compileall, Ruff, mypy, pytest, a stdlib coverage gate, the golden eval runner, local demo smoke, Docker Compose config validation, tracked generated artifact scan, and whitespace diff checks.
 
 Latest verification evidence is in [`docs/integration-verification.md`](docs/integration-verification.md). The default webhook path returns `202 Accepted` and queues work; use `?process_now=true` for copy-paste synchronous demos.
 

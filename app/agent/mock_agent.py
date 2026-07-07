@@ -6,7 +6,7 @@ def analyze_incident(incident: Incident, evidence: list[Evidence]) -> AgentAnaly
     evidence_ids = [item.id for item in evidence]
     scenario = str(incident.alert_payload.get("scenario", "payment_api_deploy_regression"))
 
-    if scenario == "low_confidence_ambiguous":
+    if scenario in {"low_confidence_ambiguous", "conflicting_evidence_payment", "critical_unknown_multi_service"}:
         return _human_escalation_analysis(
             incident,
             evidence_ids,
@@ -14,7 +14,7 @@ def analyze_incident(incident: Incident, evidence: list[Evidence]) -> AgentAnaly
             confidence=0.42,
             reason="Confidence is below the human-on-exception threshold; wake a human with collected evidence.",
         )
-    if scenario == "missing_runbook_context":
+    if scenario in {"missing_runbook_context", "unknown_service_5xx"}:
         return _human_escalation_analysis(
             incident,
             evidence_ids,
@@ -22,13 +22,13 @@ def analyze_incident(incident: Incident, evidence: list[Evidence]) -> AgentAnaly
             confidence=0.61,
             reason="No matching runbook/context exists for this non-trivial incident; escalate instead of guessing.",
         )
-    if scenario == "protected_auth_incident" or incident.service in {"auth-api", "security", "data-store"}:
+    if scenario in {"protected_auth_incident", "auth_login_spike", "security_signal", "data_store_integrity"} or incident.service in {"auth-api", "security", "data-store"}:
         return _protected_domain_analysis(incident, evidence_ids)
-    if scenario == "worker_queue_backlog" or incident.service == "worker":
+    if scenario in {"worker_queue_backlog", "worker_poison_message", "worker_heartbeat_loss"} or incident.service == "worker":
         return _worker_queue_analysis(incident, evidence_ids)
-    if scenario == "external_api_timeout":
+    if scenario in {"external_api_timeout", "external_provider_rate_limit", "checkout_dependency_degraded"}:
         return _external_api_timeout_analysis(incident, evidence_ids)
-    if scenario == "duplicate_alert_storm":
+    if scenario in {"duplicate_alert_storm", "stale_alert_after_recovery", "false_positive_metric_blip"}:
         return _duplicate_alert_storm_analysis(incident, evidence_ids)
     return _payment_deploy_analysis(incident, evidence_ids, force_verification_failure=scenario == "verification_failure")
 

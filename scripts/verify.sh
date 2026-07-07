@@ -33,6 +33,10 @@ section "Pytest regression suite"
 section "Coverage gate"
 "${UV_DEV[@]}" python scripts/coverage_gate.py --json-output "$VERIFY_TMPDIR/coverage-summary.json"
 
+section "Golden eval runner"
+"${UV_DEV[@]}" python scripts/run_evals.py --output-json "$VERIFY_TMPDIR/opscat-evals.json" --output-md "$VERIFY_TMPDIR/opscat-evals.md" >/tmp/opscat-evals-latest.md
+printf 'Wrote /tmp/opscat-evals-latest.md and %s/opscat-evals.json\n' "$VERIFY_TMPDIR"
+
 section "Local demo smoke"
 "${UV_DEV[@]}" python scripts/demo.py
 

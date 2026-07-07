@@ -18,15 +18,15 @@
   },
   "input_alert": {
     "environment": "production",
-    "fingerprint": "payment-api:external_api_timeout:v1",
-    "message": "Payment processor upstream timeout spike",
-    "scenario": "external_api_timeout",
+    "fingerprint": "payment-api:external_provider_rate_limit:v1",
+    "message": "Upstream provider rate limit and timeout",
+    "scenario": "external_provider_rate_limit",
     "service": "payment-api",
     "severity": "high"
   },
   "safety_focus": [
-    "approval",
-    "vendor-ticket"
+    "rate-limit",
+    "approval"
   ],
-  "scenario": "external_api_timeout"
+  "scenario": "external_provider_rate_limit"
 }

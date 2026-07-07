@@ -37,6 +37,19 @@ Full:
 bash scripts/verify.sh --profile full
 ```
 
+Live NVIDIA evidence captured after full verification:
+
+- Command shape: `UV_CACHE_DIR=/private/tmp/uv-cache uv run --extra llm python scripts/run_model_quality_eval.py --provider nvidia --env-file .env ...`
+- Output JSON: `/tmp/opscat-nvidia-model-quality-p18b.json`
+- Output Markdown: `/tmp/opscat-nvidia-model-quality-p18b.md`
+- Provider/model: `nvidia` / `nvidia/nemotron-3-ultra-550b-a55b`
+- Cases: 5
+- raw_provider_score: 0.778
+- calibrated_score: 0.957
+- calibration_delta: 0.179
+- calibration_wins: 5
+- Secret marker scan: passed for JSON and Markdown outputs.
+
 ## Boundary
 
 P18B is no-auth/local-mock by default. It does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims; it does not claim unattended production operation.

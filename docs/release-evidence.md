@@ -160,23 +160,7 @@ P5 remains local/mock: no production credentials, live provider mutation, hosted
 
 P6 keeps auth deferred and does not claim production readiness or unattended production mutation safety.
 
-## P7 Agent Reliability & Safety Evidence
+## P7 reliability evidence
 
-P7 final evidence remains **local/mock** with **auth deferred**. It adds deterministic replay, adversarial evals, calibration, self-critique, blast-radius, simulation, incident memory, Night Autopilot v2, failure-mode reporting, and reliability dashboard checks.
+P7 adds local/mock reliability evidence for replay harnesses, adversarial evals, confidence calibration, self-critique, blast-radius classification, action simulation, incident memory, Night Autopilot v2 gates, failure-mode reports, and reliability dashboards. Reviewers can run `scripts/run_replay_evals.py` and `bash scripts/verify.sh --profile full`. These claims are explicitly local/mock reliability evidence, not production unattended-ops claims.
 
-P7 reviewer commands:
-
-```bash
-uv run --extra dev python scripts/run_replay_evals.py --output-json /tmp/opscat-replay-evals.json --output-md /tmp/opscat-replay-evals.md
-uv run --extra dev pytest -q tests/test_p7_replay_reliability.py tests/test_p7_action_safety.py tests/test_p7_memory_dashboard_docs.py
-bash scripts/verify.sh --profile full
-```
-
-P7 evidence artifacts:
-
-- Replay JSON/Markdown: `/tmp/opscat-replay-evals.json`, `/tmp/opscat-replay-evals.md`, `/tmp/opscat-replay-evals-latest.md`.
-- Security review: `docs/security-review-p7.md`.
-- Final summary: `docs/operations/p7-final-summary.md`.
-- Reliability dashboard: `GET /operator/reliability` in the local/mock API.
-
-P7 does not claim production unattended operation, real provider mutation safety, or hosted auth/session readiness.

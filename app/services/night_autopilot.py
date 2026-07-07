@@ -8,6 +8,8 @@ from app.services.blast_radius import BlastRadiusEngine
 from app.services.escalation import build_escalation_payload, record_human_escalation
 from app.services.incident_memory import IncidentMemory
 from app.services.incident_service import create_mock_incident, get_incident
+from app.services.action_simulator import ActionSimulator
+from app.services.blast_radius import BlastRadiusEngine
 from app.services.policy_engine import NightAutopilotConfig as PolicyNightAutopilotConfig
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.report_service import render_incident_report
@@ -29,28 +31,18 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         ),
     )
     db.add(transition_incident(incident, "investigating", actor="night-autopilot", reason="quiet-hours simulation"))
-    action_request = ActionRequest(
+    request = ActionRequest(
         action_type=config.action_type,
         target=target,
         environment=incident.environment,
         tenant_id=incident.tenant_id,
         workspace_id=incident.workspace_id,
         incident_id=incident.id,
-        payload={"worker_pool": "default", "mode": "night_autopilot_mock"},
     )
-    blast_radius = BlastRadiusEngine().evaluate(action_request)
-    simulation = ActionSimulator().simulate(action_request)
-    memory_matches = IncidentMemory().search(
-        service=incident.service,
-        environment=incident.environment,
-        fingerprint=str(incident.alert_payload.get("fingerprint") or f"{incident.service}:queue"),
-        root_cause="Queue worker degradation after broker maintenance",
-        runbook="restart_worker",
-        action_type=config.action_type,
-    )
-    memory_failed_warning = any(match.failed_remediation_warning for match in memory_matches)
+    blast_radius = BlastRadiusEngine().classify(request)
+    simulation = ActionSimulator().simulate(request)
     policy = PolicyEngine().evaluate(
-        action_request,
+        request,
         PolicyContext(
             service=incident.service,
             environment=incident.environment,
@@ -63,6 +55,11 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             simulation_status="passed" if simulation.ok else "failed",
             memory_failed_action_warning=memory_failed_warning,
             night_autopilot=True,
+            confidence=0.86,
+            evidence_count=3,
+            blast_radius_scope=blast_radius.scope,
+            rollback_available=blast_radius.rollback_available,
+            simulation_passed=simulation.success,
             autopilot=PolicyNightAutopilotConfig(
                 max_automatic_risk=RiskLevel(config.max_automatic_risk),
                 max_attempts_per_incident=config.max_attempts_per_incident,
@@ -85,6 +82,7 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             risk_level=policy.risk_level,
             requires_approval=False,
             rationale="Night Autopilot allowlisted low-risk non-prod worker restart.",
+            payload={"worker_pool": "default", "mode": "night_autopilot_mock", "blast_radius": blast_radius.to_dict(), "simulation": simulation.to_dict()},
             preconditions=["runbook marks restart reversible", "environment is not production"],
             post_checks=["worker heartbeat is healthy", "queue latency decreases"],
             policy_decision=policy.decision,
@@ -111,7 +109,7 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         )
         db.add(transition_incident(incident, "executing", actor="night-autopilot", reason="automatic action allowed"))
         result = execute_mock_action(db, incident, action)
-        actions_taken.append({"action_id": action.id, "action_type": action.action_type, "result": result})
+        actions_taken.append({"action_id": action.id, "action_type": action.action_type, "result": result, "simulation": simulation.to_dict(), "blast_radius": blast_radius.to_dict()})
         add_timeline_event(
             db,
             incident.id,
@@ -158,6 +156,7 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             triggers=[trigger],
             policy=policy,
             recommended_next_action="Wake the configured on-call contact; Night Autopilot cannot proceed safely.",
+            verification={"simulation": simulation.to_dict(), "blast_radius": blast_radius.to_dict()},
         )
         record_human_escalation(db, incident, payload, transition_to_escalated=True)
         escalations.append(payload)

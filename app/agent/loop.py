@@ -85,7 +85,7 @@ class AgentLoop:
         critique = critique_diagnosis(
             incident,
             evidence,
-            alternate_causes=[candidate.title for candidate in candidates[1:3]],
+            alternate_causes=[candidate.hypothesis for candidate in candidates[1:3]],
             action_type=recommended.action_type,
         )
         record_decision_trace(
@@ -114,7 +114,7 @@ class AgentLoop:
             environment=incident.environment,
             tenant_id=incident.tenant_id,
             workspace_id=incident.workspace_id,
-            payload={**dict(recommended.payload), "blast_radius": blast_radius.to_dict(), "simulation": simulation.to_dict(), "self_critique": critique.to_dict()},
+            payload=recommended.payload,
             incident_id=incident.id,
         )
         blast_radius = self.blast_radius.classify(request)

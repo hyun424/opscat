@@ -16,7 +16,7 @@ from app.services.authorization import AuthorizationError, require_same_scope
 from app.services.decision_trace_service import DecisionTraceEntry, build_decision_trace
 from app.services.identity_service import Principal
 from app.services.incident_service import get_incident
-from app.services.reliability_dashboard import build_reliability_dashboard
+from app.services.replay_service import ReplayService
 
 router = APIRouter(prefix="/operator", tags=["operator"])
 
@@ -84,9 +84,20 @@ def operator_inbox(principal: Principal = Depends(get_current_principal), db: Se
             f"<td>{escape(message)}</td>"
             "</tr>"
         )
+    try:
+        reliability = ReplayService().run()
+        reliability_html = (
+            '<section data-testid="reliability-dashboard"><h2>P7 Reliability dashboard</h2>'
+            f"<p>Accuracy <code>{reliability['dashboard']['accuracy']:.2f}</code> "
+            f"Blocked dangerous actions <code>{reliability['dashboard']['blocked_dangerous_actions']}</code> "
+            f"Escalation rate <code>{reliability['dashboard']['escalation_rate']:.2f}</code></p></section>"
+        )
+    except Exception:
+        reliability_html = '<section data-testid="reliability-dashboard"><h2>P7 Reliability dashboard</h2><p>Replay metrics unavailable.</p></section>'
     body = (
         f"<p>Workspace: <code>{escape(principal.tenant_id)}/{escape(principal.workspace_id)}</code></p>"
-        '<section data-testid="pending-approvals">'
+        + reliability_html
+        + '<section data-testid="pending-approvals">'
         "<h2>Pending approvals</h2>"
         "<p>Review proposed actions here, then approve/reject through the local API instructions on each action page.</p>"
         '<table data-testid="pending-approval-table"><thead><tr>'

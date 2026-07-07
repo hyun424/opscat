@@ -108,9 +108,9 @@ agentic_evals() {
 replay_evals() {
   section "P7 replay eval runner"
   "${UV_DEV[@]}" python scripts/run_replay_evals.py \
-    --output-json "$VERIFY_TMPDIR/opscat-replay-evals.json" \
-    --output-md "$VERIFY_TMPDIR/opscat-replay-evals.md" >/tmp/opscat-replay-evals-latest.md
-  printf 'Wrote /tmp/opscat-replay-evals-latest.md and %s/opscat-replay-evals.json\n' "$VERIFY_TMPDIR"
+    --output-json "$VERIFY_TMPDIR/opscat-p7-replay-evals.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p7-replay-evals.md" >/tmp/opscat-p7-replay-evals-latest.md
+  printf 'Wrote /tmp/opscat-p7-replay-evals-latest.md and %s/opscat-p7-replay-evals.json\n' "$VERIFY_TMPDIR"
 }
 
 local_demo_smoke() {

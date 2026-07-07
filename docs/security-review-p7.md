@@ -1,31 +1,29 @@
-# OpsCat P7 Security Review — Agent Reliability & Safety Lab
+# OpsCat P7 Security Review — Reliability & Safety Lab
 
-P7 remains **local/mock** and keeps **auth deferred**. It does not add OIDC, SSO, session login, browser mutation forms, real customer credentials, real provider writes, or unattended production operation claims.
+P7 remains inside the local/mock OSS boundary: no auth/OIDC/session login, no customer credentials, no real cloud/database/Kubernetes mutation, and no unattended production operations. auth remains deferred explicitly.
 
-## New P7 safety assets
+## P7 assets
 
-- Deterministic replay harness and adversarial fixture corpus in `evals/replay/`.
-- Confidence calibration buckets and fail-closed auto-action threshold guidance.
-- Self-critique gate before action proposal.
-- Blast-radius classification for local, service, workspace, tenant, global, unknown, and prohibited scopes.
-- Local action simulator for mock report, ticket, rollback-PR, worker-restart, and verification actions.
-- In-process incident memory with similar-incident warnings for previously failed remediations.
-- Night Autopilot v2 reliability gates: confidence, bounded blast radius, reversibility, simulation pass, and memory warnings.
-- Failure-mode report section and reliability dashboard metrics.
+- replay harness fixtures and deterministic replay reports;
+- adversarial eval fixtures for poisoned logs, prompt injection, dangerous actions, false positives, ambiguity, and connector outages;
+- confidence calibration reports and fail-closed thresholds;
+- self-critique evidence before policy/action proposal;
+- blast-radius classifications for local, service, workspace, tenant, global, unknown, and prohibited scopes;
+- action simulation records for bounded mock effects and rollback paths;
+- incident memory records for similar incidents and failed remediation warnings;
+- Night Autopilot v2 reliability gates;
+- reliability dashboard metrics and release evidence.
 
 ## Abuse cases and mitigations
 
-| Abuse case | P7 mitigation |
+| Abuse case | Mitigation |
 | --- | --- |
-| Poisoned logs or malicious runbook text | Replay/adversarial fixtures include prompt/log injection; unsafe action proposals must be blocked or escalated. |
-| Memory poisoning | Incident memory is local/in-process, deterministic, and advisory only; failed-memory warnings can only make policy stricter. |
-| Overconfident diagnosis | Calibration flags overconfidence and self-critique requires supporting evidence before auto-action. |
-| Unsafe automation | Blast-radius engine blocks unknown/prohibited scopes; simulator must pass before mutation execution. |
-| Night Autopilot runaway | V2 gate requires high confidence, low blast radius, rollback availability, simulation pass, no failed-memory warning, and max attempts. |
+| Poisoned logs or malicious runbook text | self-critique records contradiction flags and prompt-injection markers; policy escalates ambiguity. |
+| Memory poisoning | memory is deterministic local/mock data; failed prior outcomes become warnings instead of authority. |
+| Overconfident diagnosis | confidence calibration requires bucketed reliability and rejects weak evidence/conflicting signals. |
+| Unsafe automation | blast-radius, rollback availability, simulation success, confidence, and failed-memory gates all fail closed. |
+| Dangerous shell/cloud/database actions | prohibited action aliases remain denied; no real providers are called. |
 
-## Residual gaps
+## Remaining gaps
 
-- Auth remains deferred; local header identity is still the demo boundary.
-- No production tenant isolation, hosted secrets, real connector OAuth, or external vector memory is implemented in P7.
-- Replay evidence is deterministic local/mock evidence, not proof of unattended production safety.
-- Human approval remains required for medium/high-risk or ambiguous paths.
+P7 evidence is local/mock reliability evidence. It does not prove hosted SaaS readiness, real incident commander auth, customer tenant isolation beyond local scope, production rollback safety, or unattended production operations.

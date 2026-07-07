@@ -2,16 +2,24 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict
+from collections.abc import Mapping
+from dataclasses import asdict, replace
+from typing import Any, cast
 
 from sqlalchemy.orm import Session
 
 from app.connectors.base import ConnectorCallRequest, ConnectorCallResult
 from app.connectors.fake import FakeObservabilityConnector
 from app.connectors.registry import ConnectorRegistry
+from app.connectors.sentry import SentryReadOnlyConnector
+from app.models import Evidence, Incident
 from app.services.audit_service import record_audit_event
 from app.services.authorization import AuthorizationError
+from app.services.escalation import build_escalation_payload, record_human_escalation
 from app.services.identity_service import Principal
+from app.services.redaction import redact_text, redact_value
+from app.services.secret_service import LocalEncryptedSecretProvider, SecretNotFoundError, SecretProvider
+from app.services.timeline_service import add_timeline_event
 
 _ROLE_ORDER = {"viewer": 0, "operator": 1, "admin": 2, "owner": 3}
 
@@ -19,12 +27,14 @@ _ROLE_ORDER = {"viewer": 0, "operator": 1, "admin": 2, "owner": 3}
 def default_connector_registry() -> ConnectorRegistry:
     registry = ConnectorRegistry()
     registry.register(FakeObservabilityConnector())
+    registry.register(SentryReadOnlyConnector())
     return registry
 
 
 class ConnectorService:
-    def __init__(self, registry: ConnectorRegistry | None = None) -> None:
+    def __init__(self, registry: ConnectorRegistry | None = None, secret_provider: SecretProvider | None = None) -> None:
         self.registry = registry or default_connector_registry()
+        self.secret_provider = secret_provider or LocalEncryptedSecretProvider()
 
     def call(self, db: Session, principal: Principal, request: ConnectorCallRequest) -> ConnectorCallResult:
         if request.tenant_id != principal.tenant_id or request.workspace_id != principal.workspace_id:
@@ -57,17 +67,169 @@ class ConnectorService:
             action_id=None,
             metadata={"request": asdict(request), "capability": asdict(capability)},
         )
+        connector_request = self._with_resolved_secret(db, principal, request, required_secret_name=capability.required_secret_name)
+        if connector_request is None:
+            result = ConnectorCallResult(
+                connector_id=request.connector_id,
+                capability=request.capability,
+                ok=False,
+                read_only=True,
+                error=f"missing credential: {capability.required_secret_name}",
+                evidence_summary="Connector call failed closed before provider fixture access because the required workspace secret was missing.",
+            )
+            self._record_result(db, principal, request, result, failed=True)
+            return result
+
         connector = self.registry.get(request.connector_id)
-        result = connector.call(request)
+        try:
+            result = connector.call(connector_request)
+        except Exception as exc:
+            result = ConnectorCallResult(
+                connector_id=request.connector_id,
+                capability=request.capability,
+                ok=False,
+                read_only=True,
+                error=f"connector provider failure: {type(exc).__name__}",
+                evidence_summary="Connector call failed closed inside the provider boundary.",
+            )
+            self._record_result(db, principal, request, result, failed=True)
+            return result
+
+        if not result.ok:
+            result = _redacted_failure_result(result)
+        if capability.read_only and not result.read_only:
+            result = ConnectorCallResult(
+                connector_id=request.connector_id,
+                capability=request.capability,
+                ok=False,
+                read_only=True,
+                error="connector read-only contract violation",
+                evidence_summary="Connector result was rejected because it violated the registered read-only capability contract.",
+            )
+        self._record_result(db, principal, request, result, failed=not result.ok)
+        return result
+
+    def _with_resolved_secret(
+        self,
+        db: Session,
+        principal: Principal,
+        request: ConnectorCallRequest,
+        *,
+        required_secret_name: str | None,
+    ) -> ConnectorCallRequest | None:
+        if required_secret_name is None:
+            return request
+        try:
+            secret_value = self.secret_provider.get_secret(db, principal, required_secret_name)
+        except SecretNotFoundError:
+            return None
+        payload: dict[str, Any] = dict(request.payload)
+        payload["auth_token"] = secret_value
+        return replace(request, payload=payload)
+
+    def _record_result(
+        self,
+        db: Session,
+        principal: Principal,
+        request: ConnectorCallRequest,
+        result: ConnectorCallResult,
+        *,
+        failed: bool,
+    ) -> None:
         record_audit_event(
             db,
             tenant_id=principal.tenant_id,
             workspace_id=principal.workspace_id,
             actor=principal.email,
-            event_type="connector_call_completed",
+            event_type="connector_call_failed" if failed else "connector_call_completed",
             resource_type="connector",
             resource_id=request.connector_id,
             action_id=None,
             metadata={"result": asdict(result)},
         )
-        return result
+        if failed:
+            self._record_failure_escalation(db, principal, request, result)
+
+    def _record_failure_escalation(self, db: Session, principal: Principal, request: ConnectorCallRequest, result: ConnectorCallResult) -> None:
+        if request.incident_id is None:
+            return
+        incident = (
+            db.query(Incident)
+            .filter(
+                Incident.id == request.incident_id,
+                Incident.tenant_id == principal.tenant_id,
+                Incident.workspace_id == principal.workspace_id,
+            )
+            .one_or_none()
+        )
+        if incident is None:
+            return
+
+        trigger = _failure_trigger(result)
+        failure_metadata = _failure_metadata(request, result, trigger)
+        summary = redact_text(result.evidence_summary or result.error or "Connector call failed closed.")
+        evidence = Evidence(
+            incident_id=incident.id,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
+            type="connector_failure",
+            source=f"connector:{request.connector_id}",
+            source_url=f"connector://{request.connector_id}/{request.capability}",
+            content=summary,
+            evidence_metadata=failure_metadata,
+        )
+        incident.evidence.append(evidence)
+        add_timeline_event(
+            db,
+            incident.id,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
+            actor="connector",
+            event_type="connector_call_failed",
+            content=f"Connector {request.connector_id}.{request.capability} failed closed: {trigger}",
+            metadata=failure_metadata,
+        )
+        db.flush()
+        payload = build_escalation_payload(
+            incident,
+            trigger=trigger,
+            triggers=[trigger, "connector_failure"] if trigger != "connector_failure" else [trigger],
+            verification={"connector_failure": failure_metadata},
+            recommended_next_action=None,
+        )
+        record_human_escalation(db, incident, payload, transition_to_escalated=True)
+
+
+def _redacted_failure_result(result: ConnectorCallResult) -> ConnectorCallResult:
+    redacted_output = cast(Mapping[str, Any], redact_value(dict(result.output)))
+    return replace(
+        result,
+        output=redacted_output,
+        error=redact_text(result.error) if result.error is not None else None,
+        evidence_summary=redact_text(result.evidence_summary) if result.evidence_summary is not None else None,
+    )
+
+
+def _failure_trigger(result: ConnectorCallResult) -> str:
+    detail = f"{result.error or ''} {result.evidence_summary or ''}".lower()
+    if "timeout" in detail or "timed out" in detail:
+        return "connector_timeout"
+    if "read-only contract violation" in detail:
+        return "connector_contract_violation"
+    return "connector_failure"
+
+
+def _failure_metadata(request: ConnectorCallRequest, result: ConnectorCallResult, trigger: str) -> dict[str, Any]:
+    raw: dict[str, Any] = {
+        "trigger": trigger,
+        "connector_id": request.connector_id,
+        "capability": request.capability,
+        "incident_id": request.incident_id,
+        "idempotency_key": request.idempotency_key,
+        "read_only": result.read_only,
+        "ok": result.ok,
+        "error": result.error,
+        "evidence_summary": result.evidence_summary,
+        "output": dict(result.output),
+    }
+    return cast(dict[str, Any], redact_value(raw))

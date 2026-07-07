@@ -35,6 +35,18 @@ python scripts/run_connector_evals.py --output-json /tmp/opscat-connector-evals.
 - P5 auth is deferred: do not add login, sessions, OIDC, SSO, passwords, or CSRF/session work unless the owner explicitly reopens auth.
 - Preserve local-header demo identity as the current local/mock boundary.
 
+
+## Safety checklist
+
+Before opening a PR that touches actions, connectors, incident import, approvals, policy, reports, workflow jobs, metrics, or docs, verify:
+
+- No production credentials, real provider tokens, private keys, customer data, or raw customer logs are included.
+- New connectors are fixture-backed or dry-run by default.
+- Write-like behavior is approval-gated and cannot silently mutate production.
+- Redaction is applied before evidence, reports, metrics, audit logs, and model/tool summaries.
+- Connector eval or incident eval coverage proves the new behavior and failure mode.
+- Auth remains deferred unless the project owner explicitly reopens auth work.
+
 ## Development workflow
 
 1. Pick a ticket from `ROADMAP.md` or `docs/operations/p5-ticket-roadmap.md`.

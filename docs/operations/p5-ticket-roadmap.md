@@ -318,6 +318,7 @@ Files likely touched:
 - P5-007: completed with connector setup/permission/secret/import-normalization eval scenarios and release evidence.
 - P5-008: completed with scoped `/metrics` counters and self-observability docs.
 - P5-009: completed with named verify profiles and secret-free GitHub Actions full verification.
+- P5-017: completed with OSS security policy, P5 threat-model coverage, and contributor safety checklist.
 - P5-013: completed with `.env.example`, `Makefile`, README quickstart, and `make demo` validation.
 - P5-014: completed with `CONTRIBUTING.md`, `ROADMAP.md`, and safe issue templates.
 - P5-015: completed with `docs/connector-sdk.md` and executable fixture connector template.
@@ -456,7 +457,7 @@ Files likely touched:
 - `examples/`
 - `tests/test_examples.py`
 
-### P5-017 — OSS security policy and safe disclosure docs
+### P5-017 ✅ — OSS security policy and safe disclosure docs
 
 Goal: make public usage safer without implementing auth.
 

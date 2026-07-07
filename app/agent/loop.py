@@ -11,6 +11,7 @@ from app.services.escalation import (
     hard_escalation_required,
     record_human_escalation,
 )
+from app.services.decision_trace_service import record_decision_trace
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.root_cause_service import generate_root_cause_candidates, persist_top_root_cause
 from app.services.runbook_service import select_runbook

@@ -11,6 +11,7 @@ from app.services.authorization import AuthorizationError
 from app.services.decision_trace_service import render_trace_json, render_trace_markdown
 from app.services.identity_service import Principal
 from app.services.incident_service import decide_action, get_incident, run_investigation
+from app.services.decision_trace_service import render_trace_json, render_trace_markdown
 from app.services.report_service import render_incident_report
 
 router = APIRouter(prefix="/incidents", tags=["incidents"])

@@ -1,6 +1,6 @@
 # P17-006 — Report and verification integration
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

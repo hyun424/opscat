@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from app.services.judgment_dataset import load_judgment_cases
+from app.services.judgment_dataset import JudgmentCase, load_judgment_cases
 from app.services.llm_context_builder import build_context_from_judgment_case
 from app.services.llm_judgment import LLMJudgmentProvider, run_llm_judgment_from_packet
 from app.services.llm_provider_evaluation import evaluate_llm_judgment_case
@@ -42,7 +42,7 @@ class AggressiveProvider:
         }
 
 
-def _case(case_id: str):
+def _case(case_id: str) -> JudgmentCase:
     return next(case for case in load_judgment_cases("evals/judgment/seed/cases.json") if case.id == case_id)
 
 

@@ -1,6 +1,6 @@
 # P17-004 — Action filter
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

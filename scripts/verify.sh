@@ -169,6 +169,18 @@ llm_provider_eval_smoke() {
   printf 'Wrote /tmp/opscat-llm-provider-eval-latest.md and %s/opscat-llm-provider-eval.json\n' "$VERIFY_TMPDIR"
 }
 
+
+policy_calibration_smoke() {
+  section "P17 policy calibration smoke"
+  "${UV_DEV[@]}" python scripts/run_llm_provider_eval.py \
+    --cases evals/judgment/seed/cases.json \
+    --provider mock \
+    --output-json "$VERIFY_TMPDIR/opscat-policy-calibration.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-policy-calibration.md" >/tmp/opscat-policy-calibration-latest.json
+  cp "$VERIFY_TMPDIR/opscat-policy-calibration.md" /tmp/opscat-policy-calibration-latest.md
+  printf 'Wrote /tmp/opscat-policy-calibration-latest.md and %s/opscat-policy-calibration.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -265,6 +277,7 @@ run_eval() {
   llm_context_smoke
   llm_judgment_smoke
   llm_provider_eval_smoke
+  policy_calibration_smoke
 }
 
 run_docs() {

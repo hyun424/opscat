@@ -1,6 +1,6 @@
 # P17-003 — Conservative route downgrade policy
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

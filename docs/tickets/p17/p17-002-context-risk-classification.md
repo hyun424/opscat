@@ -1,6 +1,6 @@
 # P17-002 — Context risk classification
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

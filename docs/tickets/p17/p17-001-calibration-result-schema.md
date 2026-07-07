@@ -1,6 +1,6 @@
 # P17-001 — Calibration result schema
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

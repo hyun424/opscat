@@ -379,3 +379,24 @@ UV_CACHE_DIR=/private/tmp/uv-cache uv run --extra llm python scripts/run_llm_pro
 ```
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.
+
+## P17 LLM Policy Calibration Evidence
+
+P17 adds deterministic policy calibration after LLM judgment and safety gating. Provider recommendations remain advisory; OpsCat scores and reports the calibrated route while preserving the raw provider route for audit.
+
+Artifacts:
+
+- `docs/operations/p17-ticket-roadmap.md`
+- `docs/operations/p17-final-summary.md`
+- `app/services/policy_calibrator.py`
+- `app/services/llm_provider_evaluation.py`
+- `tests/test_policy_calibrator.py`
+- `tests/test_p17_release_evidence.py`
+- `/tmp/opscat-policy-calibration-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_policy_calibrator.py tests/test_p17_release_evidence.py`
+- `bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.

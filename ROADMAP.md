@@ -164,3 +164,7 @@ P16 implemented as LLM Provider Evaluation Runner evidence. P16 scores mock and 
 ## P17 active
 
 P17 active scope: LLM Policy Calibration. P17 adds a deterministic policy calibration layer after LLM provider judgment and safety gating so OpsCat can downgrade over-aggressive LLM routes, remove risky automatic actions, preserve auditability, and score provider evaluations against calibrated decisions. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.
+
+## P17 implemented
+
+P17 implemented as LLM Policy Calibration evidence. P17 adds a deterministic approval-governor layer after LLM provider judgment and safety gating, preserving provider route, safety-gate route, calibrated route, retained actions, removed actions, and calibration reasons. Provider evaluation now scores calibrated decisions, so OpsCat can prove it blocks over-aggressive LLM recommendations such as no-data restarts, deploy rollback automation, and prompt-injection auto-approval. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.

@@ -1,6 +1,6 @@
 # P17-007 — Release evidence
 
-Status: TODO
+Status: DONE
 
 ## Goal
 

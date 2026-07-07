@@ -11,7 +11,7 @@ Verification updated on 2026-07-07 KST after the P4 eval/QA evidence implementat
 
 ## Summary
 
-The local/mock MVP is green for the current P2/P3 scope. The previous syntax/import blockers are resolved. The current build includes:
+The local/mock MVP is green for the current P4 eval/QA evidence scope. The previous syntax/import blockers are resolved. The current build includes:
 
 - default asynchronous mock webhook ingestion (`202 Accepted`) with local durable `WorkflowJob` persistence;
 - explicit synchronous demo compatibility via `?process_now=true`;
@@ -31,11 +31,12 @@ OpsCat remains intentionally **not production-grade**: demo identity is header-b
 | --- | --- | --- |
 | `python3 -m compileall -q app tests scripts` | PASS | App, tests, and scripts compile. |
 | `uv run --no-sync --extra dev ruff check app tests scripts` | PASS | Ruff reports all checks passed. |
-| `uv run --no-sync --extra dev mypy app tests scripts` | PASS | Mypy reports success across 95 source files. |
-| `uv run --no-sync --extra dev pytest -q` | PASS | Regression suite passes, including P4 eval runner/schema tests. |
+| `uv run --no-sync --extra dev mypy app tests scripts` | PASS | Mypy reports success across 104 source files. |
+| `uv run --no-sync --extra dev pytest -q` | PASS | Regression suite passes, including P4 eval, connector eval, dashboard E2E, taxonomy, and release-evidence tests. |
+| `uv run --no-sync --extra dev python scripts/coverage_gate.py --json-output <tmp>/coverage-summary.json` | PASS | Total coverage 67.73% against 60.00% minimum. |
 | `uv run --no-sync --extra dev python scripts/run_evals.py --output-json /tmp/opscat-evals.json --output-md /tmp/opscat-evals.md` | PASS | 23 deterministic golden eval scenarios pass and reports are written. |
 | `uv run --no-sync --extra dev python scripts/run_connector_evals.py --output-json /tmp/opscat-connector-evals.json --output-md /tmp/opscat-connector-evals.md` | PASS | Connector eval runner covers 7 fake/local safety scenarios. |
-| Target P2/P3 tests | PASS | `tests/test_workflow_queue.py`, `tests/test_action_execution_attempts.py`, `tests/test_connector_contract.py`, and `tests/test_operator_dashboard.py` passed together: 33 tests. |
+| Target P4 tests | PASS | `tests/test_operator_dashboard_e2e.py`, `tests/test_connector_evals.py`, `tests/test_portfolio_evidence_docs.py`, `tests/test_eval_coverage_taxonomy.py`, and `tests/test_release_evidence_index.py` are included in the full regression/release gate. |
 | `python scripts/demo.py` | PASS via release gate | Deterministic local demo is part of `scripts/verify.sh`. |
 | `docker compose config` | PASS via release gate | Compose config validates without contacting production systems. |
 | Generated artifact hygiene | PASS via release gate | Tracked generated artifact scan is included in `scripts/verify.sh`. |

@@ -19,7 +19,7 @@ Required release gates:
 
 ## Ticket order
 
-### P4-002 — Operator dashboard browser-contract E2E
+### P4-002 ✅ — Operator dashboard browser-contract E2E
 
 Goal: prove the local operator dashboard is not just text-rendered but navigable and safe enough for demo usage.
 
@@ -38,7 +38,7 @@ Risks:
 - Avoid Playwright dependency until a later explicit visual/browser phase.
 - Do not add UI mutation forms; approval remains API/JSON only for safety.
 
-### P4-003 — Connector failure eval expansion
+### P4-003 ✅ — Connector failure eval expansion
 
 Goal: make connector safety/failure behavior part of release evidence, not an invisible unit-test detail.
 
@@ -56,7 +56,7 @@ Acceptance tests:
 Risks:
 - Keep all connector calls fake/local; no real Slack/GitHub/Sentry calls.
 
-### P4-004 — Portfolio eval report artifact
+### P4-004 ✅ — Portfolio eval report artifact
 
 Goal: turn raw eval outputs into a recruiter/interviewer-readable proof artifact.
 
@@ -73,7 +73,7 @@ Acceptance tests:
 Risks:
 - Avoid overclaiming “human replacement”; phrase as local/mock operator replacement evidence.
 
-### P4-005 — Golden corpus expansion and coverage taxonomy
+### P4-005 ✅ — Golden corpus expansion and coverage taxonomy
 
 Goal: broaden eval evidence beyond 23 happy/safety cases and show explicit coverage gaps.
 
@@ -90,7 +90,7 @@ Acceptance tests:
 Risks:
 - Prefer high-signal scenarios over artificial volume.
 
-### P4-006 — Release evidence index and CI-ready gate
+### P4-006 ✅ — Release evidence index and CI-ready gate
 
 Goal: make one command prove the P4 release claim.
 
@@ -106,7 +106,7 @@ Acceptance tests:
 Risks:
 - Avoid committing noisy per-incident generated mock reports unless intentionally curated.
 
-### P4-007 — P4 final hardening and review
+### P4-007 ✅ — P4 final hardening and review
 
 Goal: close P4 with a reviewer-grade evidence pass.
 
@@ -122,3 +122,12 @@ Acceptance tests:
 
 Risks:
 - P4 remains local/mock. Real production launch requires P5: auth hardening, persistence deployment, real connector OAuth/secrets, tenant admin UX, incident import integrations, and SOC2-style audit controls.
+
+## Completion status
+
+- P4-002: completed with browser-contract dashboard E2E and stable `data-testid` hooks.
+- P4-003: completed with connector eval runner and verify gate integration.
+- P4-004: completed with reviewer-facing eval report and README links.
+- P4-005: completed with golden eval coverage taxonomy and gap policy.
+- P4-006: completed with release evidence index and integration-verification links.
+- P4-007: completed with `bash scripts/verify.sh` PASS on 2026-07-07 KST.

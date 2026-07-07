@@ -64,7 +64,22 @@ The MVP is local/mock-only. Auth remains deferred. It must not claim real produc
 
 See `docs/security-review-p5.md` for P5-specific Adversarial checks and Residual gaps across connector setup, secret lifecycle, incident import, worker CLI, approval console, Night Autopilot, and self-observability.
 
-## P7 reliability and safety lab update
+## P7 Reliability & Safety Lab Addendum
 
-P7 adds replay, adversarial evals, confidence calibration, self-critique, blast-radius classification, action simulation, incident memory, Night Autopilot v2, and reliability dashboards. New trust boundaries remain local/mock: fixtures, reports, memory, and simulated actions must not call external providers or mutate production. Threats include poisoned logs, malicious runbook text, memory poisoning, overconfident diagnosis, and unsafe automation. Mitigations are fail-closed confidence thresholds, critique evidence, bounded blast radius, rollback checks, simulation preconditions, failed-memory warnings, and explicit human escalation. Auth/OIDC/session login remains out of scope.
+P7 adds replay, adversarial evals, confidence calibration, self-critique, blast radius, action simulation, incident memory, Night Autopilot v2, failure-mode reporting, and reliability dashboard metrics inside the local/mock boundary.
 
+Additional threats:
+
+- poisoned logs or runbook text influencing diagnosis;
+- memory poisoning or a failed prior remediation being ignored;
+- overconfident diagnosis with weak or conflicting evidence;
+- action simulation gaps allowing unbounded effects;
+- Night Autopilot v2 executing without confidence, rollback, low blast radius, and clean memory evidence.
+
+Mitigations:
+
+- deterministic replay/adversarial fixtures exercise prompt injection, duplicate/noisy alerts, ambiguous roots, stale markers, false positives, connector masking, and dangerous action attempts;
+- confidence calibration and self-critique fail closed on sparse evidence, contradiction flags, and alternate hypotheses;
+- blast radius and action simulation block unknown, prohibited, production, shell, cloud, database, and secret actions;
+- incident memory failed-prior warnings block automation;
+- auth remains deferred and P7 continues to avoid real provider mutation, real customer credentials, and unattended production operation claims.

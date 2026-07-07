@@ -6,6 +6,7 @@ from app.schemas.incidents import MockAlertRequest, NightAutopilotConfig, NightA
 from app.services.action_simulator import ActionSimulator
 from app.services.blast_radius import BlastRadiusEngine
 from app.services.escalation import build_escalation_payload, record_human_escalation
+from app.services.incident_memory import IncidentMemory
 from app.services.incident_service import create_mock_incident, get_incident
 from app.services.policy_engine import NightAutopilotConfig as PolicyNightAutopilotConfig
 from app.services.policy_engine import PolicyContext, PolicyEngine

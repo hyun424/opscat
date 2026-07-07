@@ -21,18 +21,41 @@ class CritiqueResult:
         return asdict(self)
 
 
-def critique_diagnosis(
-    incident: Incident,
-    evidence: list[Evidence],
-    *,
-    alternate_causes: list[str] | None = None,
-    action_type: str | None = None,
-) -> CritiqueResult:
-    confidence = float(incident.confidence or 0.0)
-    missing: list[str] = []
-    contradictions: list[str] = []
-    objections: list[str] = []
-    alternates = list(alternate_causes or [])
+class SelfCritiqueService:
+    def critique(
+        self,
+        *,
+        confidence: float | None,
+        evidence_count: int,
+        action_type: str,
+        hypotheses: Sequence[Mapping[str, Any]] | None = None,
+        memory_warnings: Sequence[str] = (),
+    ) -> SelfCritique:
+        missing: list[str] = []
+        contradictions: list[str] = []
+        objections: list[str] = []
+        alternates: list[str] = []
+        score = float(confidence or 0.0)
+        if evidence_count < 2:
+            missing.append("at least two independent evidence records")
+        if score < 0.7:
+            missing.append("confidence above human-on-exception threshold")
+        for hypothesis in hypotheses or []:
+            status = str(hypothesis.get("status", ""))
+            title = str(hypothesis.get("title", "alternate cause"))
+            h_conf = float(hypothesis.get("confidence", 0.0) or 0.0)
+            if status in {"weak", "unknown"}:
+                alternates.append(title)
+            if status in {"weak", "unknown"} and h_conf >= max(score - 0.1, 0.0) and title:
+                contradictions.append(f"competing hypothesis: {title}")
+        if action_type in {"shell.execute", "database.mutate", "cloud.delete_resource", "production.rollback", "production.restart_service"}:
+            objections.append("action type is prohibited or production/destructive")
+        if memory_warnings:
+            objections.extend(memory_warnings)
+        decision = "proceed"
+        if objections or contradictions or missing:
+            decision = "approval_required" if score >= 0.7 and not any("prohibited" in item for item in objections) else "escalate"
+        return SelfCritique(tuple_decision(decision), tuple(missing), tuple(alternates), tuple(contradictions), tuple(objections))
 
     if len(evidence) < 2:
         missing.append("at least two independent evidence records required")

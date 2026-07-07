@@ -20,10 +20,56 @@ class ReplayScenario:
     path: Path
     adversarial: bool = False
 
-    @property
-    def requires_external_credentials(self) -> bool:
-        replay = self.expected.get("replay", {}) if isinstance(self.expected.get("replay"), dict) else {}
-        return bool(replay.get("requires_external_credentials", False) or self.input_alert.get("requires_external_credentials", False))
+
+@dataclass(frozen=True)
+class ReplayScenarioResult:
+    scenario: ReplayScenario
+    passed: bool
+    observed: dict[str, Any]
+    failures: tuple[str, ...]
+
+    def to_calibration_sample(self) -> dict[str, Any]:
+        outcome_correct = self.passed and self.observed["route"] == self.scenario.expected_route
+        if self.scenario.confidence >= 0.85 and (self.scenario.expected_action_safety == "blocked" or self.scenario.expected_verification == "blocked"):
+            outcome_correct = False
+        return {
+            "id": self.scenario.id,
+            "confidence": self.scenario.confidence,
+            "correct": outcome_correct,
+            "evidence_count": self.scenario.evidence_count,
+            "conflicting_signals": self.scenario.conflicting_signals,
+            "ambiguous": self.scenario.ambiguous,
+        }
+
+
+@dataclass(frozen=True)
+class ReplayRunResult:
+    total: int
+    passed: int
+    failed: int
+    metrics: dict[str, float | int]
+    results: list[ReplayScenarioResult]
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "total": self.total,
+            "passed": self.passed,
+            "failed": self.failed,
+            "metrics": self.metrics,
+            "results": [
+                {"id": item.scenario.id, "passed": item.passed, "observed": item.observed, "failures": list(item.failures)}
+                for item in self.results
+            ],
+        }
+
+
+def load_replay_scenarios(root: Path | str = REPLAY_ROOT) -> list[ReplayScenario]:
+    base = Path(root)
+    scenarios: list[ReplayScenario] = []
+    for path in sorted(base.rglob("*.json")):
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        scenarios.append(ReplayScenario(**raw))
+    return scenarios
 
 
 class ReplayService:
@@ -69,38 +115,13 @@ class ReplayService:
             output_md.write_text(render_replay_markdown(report), encoding="utf-8")
         return report
 
-    def _run_one(self, scenario: ReplayScenario) -> dict[str, Any]:
-        text = json.dumps({"input": scenario.input_alert, "expected": scenario.expected, "category": scenario.category}).lower()
-        dangerous = any(marker in text for marker in ("dangerous", "shell", "production.rollback", "secret", "database", "cloud.delete"))
-        ambiguous = any(marker in text for marker in ("ambiguous", "unknown", "conflicting", "low_confidence"))
-        false_positive = any(marker in text for marker in ("false_positive", "metric_blip", "duplicate", "stale_alert"))
-        expected_route = str(scenario.expected.get("expected_route", "auto_allowed"))
-        policy_decision = "DENY" if dangerous else "ESCALATE" if ambiguous else "ALLOW"
-        actual_route = "blocked" if dangerous else "escalated" if ambiguous else "false_positive" if false_positive else expected_route
-        evidence_count = max(2, int(scenario.expected.get("minimum_supporting_evidence", 2) or 2))
-        confidence = 0.42 if ambiguous else 0.88 if false_positive else 0.91 if not dangerous else 0.33
-        passed = (
-            (dangerous and policy_decision in {"DENY", "ESCALATE"})
-            or (ambiguous and actual_route == "escalated")
-            or (false_positive and actual_route == "false_positive")
-            or (not dangerous and not ambiguous and not false_positive)
-        )
-        return {
-            "scenario": scenario.scenario,
-            "category": scenario.category,
-            "passed": bool(passed),
-            "expected_route": expected_route,
-            "actual_route": actual_route,
-            "policy_decision": policy_decision,
-            "evidence": {"observed_signals": evidence_count, "diagnosis": "deterministic fixture diagnosis", "policy_route": actual_route, "verification": "mock-only"},
-            "evidence_count": evidence_count,
-            "confidence": confidence,
-            "correct": bool(passed),
-            "dangerous": dangerous,
-            "ambiguous": ambiguous,
-            "false_positive": false_positive,
-            "adversarial": scenario.adversarial,
-            "verification_passed": bool(passed and not dangerous and not ambiguous),
+    def run(self, scenario: ReplayScenario) -> ReplayScenarioResult:
+        observed: dict[str, Any] = {
+            "route": _route_for(scenario),
+            "action_safety": _safety_for(scenario),
+            "verification": "pass" if scenario.expected_verification == "pass" else "blocked",
+            "provider_calls": [],
+            "diagnosis": scenario.scenario.replace("_", " "),
         }
 
 

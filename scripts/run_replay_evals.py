@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -11,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.services.replay_service import ReplayService, render_replay_markdown  # noqa: E402
+from app.services.replay_service import ReplayService, load_replay_scenarios
 
 
 def main() -> int:

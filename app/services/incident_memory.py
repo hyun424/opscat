@@ -23,8 +23,66 @@ class IncidentMemoryRecord:
 class SimilarIncident:
     record: IncidentMemoryRecord
     score: float
-    reasons: list[str]
-    failed_past_remediation: bool
+    reasons: tuple[str, ...]
+
+    @property
+    def failed_prior_action(self) -> bool:
+        return self.record.outcome in {"failed", "escalated_after_action"}
+
+    @property
+    def warning(self) -> str:
+        if self.failed_prior_action:
+            return f"Prior similar incident {self.record.incident_id} failed after {self.record.action_type}."
+        return f"Prior similar incident {self.record.incident_id} outcome={self.record.outcome}."
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "incident_id": self.record.incident_id,
+            "score": self.score,
+            "reasons": list(self.reasons),
+            "action_type": self.record.action_type,
+            "outcome": self.record.outcome,
+            "failed_prior_action": self.failed_prior_action,
+            "warning": self.warning,
+            "summary": self.record.summary,
+        }
+
+
+DEFAULT_MEMORY: tuple[IncidentMemoryRecord, ...] = (
+    IncidentMemoryRecord(
+        "mem-worker-ok",
+        "worker",
+        "staging",
+        "worker_queue_backlog",
+        "Queue worker degradation after broker maintenance",
+        "restart-worker",
+        "mock.execute_restart_worker",
+        "resolved",
+        "Restart recovered queue backlog in staging.",
+    ),
+    IncidentMemoryRecord(
+        "mem-payment-pr",
+        "payment-api",
+        "staging",
+        "payment_api_deploy_regression",
+        "Recent payment-api deploy introduced timeout regression",
+        "rollback-pr",
+        "mock.create_rollback_pr",
+        "resolved",
+        "Rollback PR draft restored prior version in mock eval.",
+    ),
+    IncidentMemoryRecord(
+        "mem-worker-poison",
+        "worker",
+        "staging",
+        "worker_poison_message",
+        "Queue worker degradation after broker maintenance",
+        "restart-worker",
+        "mock.execute_restart_worker",
+        "failed",
+        "Restart did not clear poisoned message; human drained queue.",
+    ),
+)
 
 
 class IncidentMemory:

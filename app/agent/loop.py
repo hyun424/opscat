@@ -5,7 +5,7 @@ from app.models import ActionProposal, Incident
 from app.models.action import ActionRequest
 from app.services.action_simulator import ActionSimulator
 from app.services.audit_service import record_audit_event
-from app.services.blast_radius import BlastRadiusEngine
+from app.services.blast_radius import BlastRadiusService
 from app.services.decision_trace_service import record_decision_trace
 from app.services.escalation import (
     build_escalation_payload,
@@ -13,6 +13,7 @@ from app.services.escalation import (
     hard_escalation_required,
     record_human_escalation,
 )
+from app.services.incident_memory import IncidentMemory
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.root_cause_service import generate_root_cause_candidates, persist_top_root_cause
 from app.services.runbook_service import select_runbook

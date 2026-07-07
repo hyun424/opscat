@@ -31,3 +31,8 @@ def build_reliability_dashboard(eval_report: Mapping[str, Any]) -> dict[str, Any
         "verification_failure_rate": {"failed": verification_failures, "total": total, "rate": round(verification_failures / total, 3) if total else 0.0},
         "calibration": calibration.to_dict(),
     }
+
+
+def _rate(value: object, total: int) -> float:
+    numerator = int(value) if isinstance(value, int | float | str) else 0
+    return round(numerator / total, 3) if total else 0.0

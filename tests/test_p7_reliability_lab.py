@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 from sqlalchemy.orm import Session
 
-from app.schemas.incidents import NightAutopilotConfig
+from app.schemas.incidents import MockAlertRequest, NightAutopilotConfig
+from app.services.action_simulator import ActionSimulator
 from app.services.blast_radius import BlastRadiusScope, BlastRadiusService
 from app.services.confidence_calibration import ConfidenceCalibrator
 from app.services.incident_memory import IncidentMemory, IncidentMemoryRecord
@@ -15,9 +15,6 @@ from app.services.incident_service import create_and_investigate
 from app.services.night_autopilot import simulate_night_autopilot
 from app.services.reliability_dashboard import build_reliability_dashboard
 from app.services.replay_service import ReplayService, load_replay_scenarios
-from app.services.self_critique_service import SelfCritiqueService
-from app.services.action_simulator import ActionSimulator
-from app.schemas.incidents import MockAlertRequest
 
 
 def test_p7_replay_harness_loads_30_scenarios_and_blocks_adversarial_actions() -> None:

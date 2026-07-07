@@ -77,3 +77,40 @@ def test_operator_detail_respects_workspace_scope(client: Any) -> None:
     hidden = client.get(f"/operator/incidents/{created.json()['id']}", headers=BETA_HEADERS)
 
     assert hidden.status_code == 404
+
+
+def test_operator_detail_renders_agentic_decision_trace_without_mutation_forms(client: Any) -> None:
+    created = client.post(
+        "/webhooks/alerts/mock?process_now=true",
+        headers=ALPHA_HEADERS,
+        json={
+            "idempotency_key": "dash-trace",
+            "scenario": "payment_bad_deploy",
+            "message": "trace ui api_key=plain-secret ops@example.com",
+        },
+    )
+    assert created.status_code == 201
+    incident = created.json()
+    action = incident["actions"][0]
+    approved = client.post(
+        f"/approvals/{action['id']}",
+        headers=ALPHA_HEADERS,
+        json={"decision": "approve", "reason": "trace ui"},
+    )
+    assert approved.status_code == 200
+
+    page = client.get(f"/operator/incidents/{incident['id']}", headers=ALPHA_HEADERS)
+
+    assert page.status_code == 200
+    html = page.text
+    for stage in ["observe", "correlate", "diagnose", "plan", "risk", "act", "verify"]:
+        assert f'data-stage="{stage}"' in html
+    assert 'data-testid="decision-trace"' in html
+    assert 'data-testid="decision-trace-row"' in html
+    assert "Root cause" in html
+    assert "Risk decision" in html
+    assert "Action status" in html
+    assert "plain-secret" not in html
+    assert "ops@example.com" not in html
+    assert "[REDACTED]" in html
+    assert "<form" not in html.lower()

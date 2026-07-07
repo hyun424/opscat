@@ -248,6 +248,8 @@ Latest verification evidence is in [`docs/integration-verification.md`](docs/int
 
 ## Documentation
 
+- [Contributor Guide](CONTRIBUTING.md)
+- [Roadmap](ROADMAP.md)
 - [AI Development Team](docs/operations/ai-development-team.md)
 - [Production AI Team Plan](docs/operations/production-ai-team-plan.md)
 - [P5 OSS/Productization Ticket Roadmap](docs/operations/p5-ticket-roadmap.md)

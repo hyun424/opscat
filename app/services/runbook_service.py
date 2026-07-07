@@ -35,16 +35,7 @@ RUNBOOKS: tuple[Runbook, ...] = (
         title="Recent deploy regression",
         incident_classes=("deploy", "rollback", "payment_bad_deploy", "payment_api_deploy_regression"),
         steps=(
-            RunbookStep(
-                "collect deploy context",
-                "mock.get_recent_deploys",
-                ("incident_summary_present",),
-                "mock:deploys:read",
-                "read_only",
-                True,
-                "none",
-                "deploy marker is present",
-            ),
+            RunbookStep("collect deploy context", "mock.get_recent_deploys", ("incident_summary_present",), "mock:deploys:read", "read_only", True, "none", "deploy marker is present"),
             RunbookStep(
                 "draft rollback",
                 "mock.create_rollback_pr",
@@ -62,16 +53,7 @@ RUNBOOKS: tuple[Runbook, ...] = (
         title="API 5xx spike diagnostics",
         incident_classes=("5xx", "timeout", "external", "gateway"),
         steps=(
-            RunbookStep(
-                "collect error context",
-                "mock.get_error_context",
-                ("incident_summary_present",),
-                "mock:context:read",
-                "read_only",
-                True,
-                "none",
-                "error sample is redacted",
-            ),
+            RunbookStep("collect error context", "mock.get_error_context", ("incident_summary_present",), "mock:context:read", "read_only", True, "none", "error sample is redacted"),
             RunbookStep(
                 "open tracking ticket",
                 "mock.create_incident_ticket",
@@ -149,15 +131,16 @@ RUNBOOKS: tuple[Runbook, ...] = (
 
 
 def select_runbook(incident: Incident, candidates: list[RootCauseCandidate]) -> Runbook:
-    haystack_parts = [
-        incident.service,
-        incident.environment,
-        incident.summary or "",
-        incident.root_cause_candidate or "",
-        str(incident.alert_payload),
-        *(candidate.hypothesis for candidate in candidates[:2]),
-    ]
-    haystack = " ".join(haystack_parts).lower()
+    haystack = " ".join(
+        [
+            incident.service,
+            incident.environment,
+            incident.summary or "",
+            incident.root_cause_candidate or "",
+            str(incident.alert_payload),
+            *(candidate.hypothesis for candidate in candidates[:2]),
+        ]
+    ).lower()
     top_confidence = candidates[0].confidence if candidates else incident.confidence or 0.0
     if top_confidence < 0.55:
         return get_runbook("diagnostic_only")

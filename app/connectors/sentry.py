@@ -264,10 +264,10 @@ class SentryReadOnlyConnector:
     def _search_fixture_issues(self, request: ConnectorCallRequest) -> ConnectorCallResult:
         project = _optional_text(request.payload.get("project"))
         query = _optional_text(request.payload.get("query")).lower()
-        page = max(_int_payload(request.payload, "page", 1), 1)
-        per_page = min(max(_int_payload(request.payload, "per_page", 50), 1), 100)
-        matched = [_redacted_mapping(issue) for issue in _RECORDED_ISSUES if _matches_issue(issue, project=project, query=query)]
-        page_items, next_cursor = _page(matched, page=page, per_page=per_page)
+        transport = self.transport
+        if transport and not _fixture_mode(request.payload):
+            return self._provider_issues(request, transport=transport, project=project, query=query)
+        issues = [_redacted_mapping(issue) for issue in _RECORDED_ISSUES if _matches_issue(issue, project=project, query=query)]
         return ConnectorCallResult(
             connector_id=self.connector_id,
             capability=request.capability,
@@ -284,7 +284,46 @@ class SentryReadOnlyConnector:
             },
         )
 
-    def _read_fixture_issue_events(self, request: ConnectorCallRequest) -> ConnectorCallResult:
+    def _provider_issues(self, request: ConnectorCallRequest, *, transport: SentryTransport, project: str, query: str) -> ConnectorCallResult:
+        issues: list[dict[str, Any]] = []
+        cursor = _optional_text(request.payload.get("cursor"))
+        for page in range(1, _MAX_PAGES + 1):
+            try:
+                response = transport(
+                    "/api/0/organizations/{org_slug}/issues/",
+                    {"project": project, "query": query, "cursor": cursor, "page": page, "auth_token": request.payload.get(_AUTH_TOKEN_FIELD)},
+                )
+            except SentryRateLimitedError:
+                return _failure(request, "rate-limited", "Sentry provider rate limit reached during bounded pagination.")
+            except SentryProviderError:
+                return _failure(request, "provider-error", "Sentry provider failed during bounded pagination.")
+            if response.status_code == 429:
+                return _failure(request, "rate-limited", "Sentry provider rate limit reached during bounded pagination.")
+            if response.status_code >= 400:
+                return _failure(request, "provider-error", "Sentry provider returned an error during bounded pagination.")
+            payload_issues = response.payload.get("issues") or response.payload.get("data") or []
+            if isinstance(payload_issues, list):
+                issues.extend(_redacted_mapping(item) for item in payload_issues if isinstance(item, Mapping))
+            cursor = str((response.headers or {}).get("next_cursor") or response.payload.get("next_cursor") or "")
+            if not cursor:
+                return ConnectorCallResult(
+                    connector_id=self.connector_id,
+                    capability=request.capability,
+                    ok=True,
+                    read_only=True,
+                    evidence_summary=f"Read {len(issues)} sanitized Sentry issue(s) from provider-shaped transport across {page} page(s).",
+                    output={"provider": "sentry", "recorded": False, "issues": issues, "pagination": {"pages_read": page, "bounded": True}},
+                )
+        return ConnectorCallResult(
+            connector_id=self.connector_id,
+            capability=request.capability,
+            ok=True,
+            read_only=True,
+            evidence_summary=f"Read {len(issues)} sanitized Sentry issue(s); stopped at bounded page limit.",
+            output={"provider": "sentry", "recorded": False, "issues": issues, "pagination": {"pages_read": _MAX_PAGES, "bounded": True, "truncated": True}},
+        )
+
+    def _read_issue_events(self, request: ConnectorCallRequest) -> ConnectorCallResult:
         issue_id = _optional_text(request.payload.get("issue_id"))
         if not issue_id:
             return ConnectorCallResult(connector_id=self.connector_id, capability=request.capability, ok=False, read_only=True, error="missing issue_id")

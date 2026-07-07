@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from typing import Any
 
 import pytest
@@ -858,7 +859,7 @@ def test_sentry_provider_transport_pagination_and_rate_limit_are_bounded() -> No
 
     calls: list[int] = []
 
-    def transport(path: str, params: dict[str, Any]) -> SentryProviderResponse:
+    def transport(path: str, params: Mapping[str, Any]) -> SentryProviderResponse:
         calls.append(int(params["page"]))
         return SentryProviderResponse(
             status_code=200,
@@ -873,7 +874,7 @@ def test_sentry_provider_transport_pagination_and_rate_limit_are_bounded() -> No
     assert calls == [1, 2]
     assert "user@example.com" not in repr(result.output)
 
-    def limited(path: str, params: dict[str, Any]) -> SentryProviderResponse:
+    def limited(path: str, params: Mapping[str, Any]) -> SentryProviderResponse:
         raise SentryRateLimitedError("slow down")
 
     limited_result = SentryReadOnlyConnector(transport=limited).call(

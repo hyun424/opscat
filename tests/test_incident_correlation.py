@@ -28,15 +28,7 @@ def test_provider_signals_for_same_outage_correlate_once_with_evidence() -> None
             occurred_at=ts,
             deploy_marker="v1.42",
         ),
-        CorrelationSignal(
-            provider="loki",
-            idempotency_key="l1",
-            workspace_id="alpha",
-            service="payment-api",
-            environment="staging",
-            fingerprint="pay-timeout",
-            occurred_at=ts,
-        ),
+        CorrelationSignal(provider="loki", idempotency_key="l1", workspace_id="alpha", service="payment-api", environment="staging", fingerprint="pay-timeout", occurred_at=ts),
     ]
 
     [result] = correlate_signals(signals)

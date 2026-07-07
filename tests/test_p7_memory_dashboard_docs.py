@@ -21,7 +21,14 @@ def test_incident_memory_retrieves_failed_prior_remediation_warning() -> None:
         )
     )
 
-    matches = memory.search(service="worker", environment="staging", fingerprint="queue-backlog", root_cause="worker queue degradation", runbook="restart_worker", action_type="mock.execute_restart_worker")
+    matches = memory.search(
+        service="worker",
+        environment="staging",
+        fingerprint="queue-backlog",
+        root_cause="worker queue degradation",
+        runbook="restart_worker",
+        action_type="mock.execute_restart_worker",
+    )
 
     assert matches
     assert matches[0].similarity >= 0.75

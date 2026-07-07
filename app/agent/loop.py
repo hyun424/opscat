@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from app.agent.mock_agent import analyze_incident
 from app.models import ActionProposal, Incident
 from app.models.action import ActionRequest
-from app.services.audit_service import record_audit_event
 from app.services.action_simulator import ActionSimulator
+from app.services.audit_service import record_audit_event
 from app.services.blast_radius import BlastRadiusEngine
 from app.services.decision_trace_service import record_decision_trace
 from app.services.escalation import (

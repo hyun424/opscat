@@ -46,31 +46,62 @@ class ActionSimulator:
             blast_radius=blast.to_dict(),
         )
 
+    def _report(self, request: ActionRequest) -> SimulationResult:
+        return SimulationResult(
+            request.action_type,
+            True,
+            (f"local report for {request.incident_id or request.target}",),
+            "write local Markdown/JSON report",
+            "delete generated local report artifact",
+            (),
+            ("report may omit newly collected evidence",),
+        )
 
-def _resources_for(request: ActionRequest) -> list[str]:
-    target = request.target or "local"
-    return {
-        "report.generate": [f"report:{request.incident_id or target}"],
-        "timeline.add_note": [f"timeline:{request.incident_id or target}"],
-        "mock.create_incident_ticket": [f"mock-ticket:{target}"],
-        "mock.create_rollback_pr": [f"mock-pr:{target}"],
-        "mock.execute_restart_worker": [f"mock-worker:{target}"],
-        "mock.verify_recovery": [f"mock-verification:{target}"],
-        "mock.get_error_context": [f"mock-context:{target}"],
-        "mock.get_recent_deploys": [f"mock-deploys:{target}"],
-        "mock.get_runbook": [f"mock-runbook:{target}"],
-        "mock.search_prior_incidents": [f"mock-memory:{target}"],
-    }.get(request.action_type, [])
+    def _timeline(self, request: ActionRequest) -> SimulationResult:
+        return SimulationResult(
+            request.action_type,
+            True,
+            (f"local incident timeline {request.incident_id or request.target}",),
+            "append local timeline note",
+            "append corrective note",
+            (),
+            ("timeline note is append-only",),
+        )
 
+    def _ticket(self, request: ActionRequest) -> SimulationResult:
+        return SimulationResult(
+            request.action_type,
+            True,
+            ("mock ticket system",),
+            "create mock incident ticket",
+            "close mock ticket",
+            (),
+            ("ticket can distract if diagnosis is wrong",),
+        )
 
-def _precondition_gaps(request: ActionRequest) -> list[str]:
-    gaps: list[str] = []
-    if request.environment == "production" and request.action_type.startswith("mock.execute"):
-        gaps.append("mock execution is not allowed in production")
-    if request.action_type == "mock.create_rollback_pr" and not request.payload.get("to_version"):
-        gaps.append("rollback target not identified")
-    return gaps
+    def _rollback_pr(self, request: ActionRequest) -> SimulationResult:
+        gaps = () if request.payload.get("to_version") or request.payload.get("rollback_to") else ("rollback_target_not_explicit",)
+        return SimulationResult(
+            request.action_type,
+            not gaps,
+            ("mock repository draft",),
+            "draft rollback PR without calling GitHub",
+            "close mock PR without merge",
+            gaps,
+            ("rollback PR must still be reviewed by a human",),
+        )
 
+    def _restart_worker(self, request: ActionRequest) -> SimulationResult:
+        gaps = () if request.environment != "production" else ("production_restart_not_allowed",)
+        return SimulationResult(
+            request.action_type,
+            not gaps,
+            (request.target, "single non-production worker"),
+            "simulate worker restart and verify heartbeat",
+            "restart is reversible by starting previous worker process",
+            gaps,
+            ("queue may refill if root cause is upstream",),
+        )
 
 def _expected_effect(action_type: str) -> str:
     return {

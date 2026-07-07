@@ -17,14 +17,17 @@ def build_reliability_dashboard(eval_report: Mapping[str, Any]) -> dict[str, Any
     verification_failures = [item for item in results if item.get("verification_passed") is False]
     overconfidence = [item for item in results if float(item.get("confidence", 0.0) or 0.0) >= 0.85 and item.get("correct", item.get("passed", True)) is False]
     return {
-        "total": total,
-        "passed": passed,
-        "failed": total - passed,
-        "accuracy": (passed / total) if total else 0.0,
-        "auto_action_success": len(auto_success),
-        "escalation_rate": (len(escalated) / total) if total else 0.0,
-        "blocked_dangerous_actions": sum(1 for item in dangerous if item.get("policy_decision") in {"DENY", "ESCALATE"} or item.get("actual_route") in {"blocked", "escalated"}),
-        "false_positive_suppression": len(false_positive),
-        "overconfidence": len(overconfidence),
-        "verification_failure_rate": (len(verification_failures) / total) if total else 0.0,
+        "local_mock_only": True,
+        "accuracy": {"total": total, "passed": passed, "failed": max(0, total - passed), "rate": round(passed / total, 3) if total else 0.0},
+        "false_positive_suppression": {"count": false_positive_suppressed},
+        "blocked_dangerous_actions": replay_summary.get("blocked_dangerous_actions", {"blocked": 0, "total": 0}),
+        "escalation_rate": {"escalated": escalations, "total": total, "rate": round(escalations / total, 3) if total else 0.0},
+        "auto_remediation_success": {"succeeded": auto_success, "total": len(auto_candidates), "rate": round(auto_success / len(auto_candidates), 3) if auto_candidates else 0.0},
+        "overconfidence": {
+            "count": calibration.overconfidence_count,
+            "fail_closed_rejections": calibration.fail_closed_rejections,
+            "recommended_threshold": calibration.recommended_auto_action_threshold,
+        },
+        "verification_failure_rate": {"failed": verification_failures, "total": total, "rate": round(verification_failures / total, 3) if total else 0.0},
+        "calibration": calibration.to_dict(),
     }

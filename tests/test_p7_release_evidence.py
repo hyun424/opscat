@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+
 SECRET_MARKERS = ("sk_live_", "xoxb-", "ghp_", "sntrys_", "BEGIN PRIVATE KEY", "prod-token", "secrets.")
 
 

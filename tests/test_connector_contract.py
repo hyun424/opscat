@@ -625,3 +625,62 @@ def test_missing_credential_escalates_queued_incident_with_failure_context(db_se
     assert result.error == "missing credential: sentry.token"
     updated = _assert_connector_failure_escalated(db_session, incident.id, connector_id="sentry.readonly", trigger="connector_failure")
     assert all(event.event_type != "escalation_state_transition_blocked" for event in updated.timeline)
+
+
+def test_connector_idempotency_replays_failure_without_duplicate_escalation(db_session: Any) -> None:
+    principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
+    incident = _incident_for_connector_failure(db_session)
+    service = ConnectorService(registry=_register_only(_TimeoutConnector()))
+    request = ConnectorCallRequest(
+        connector_id="test.timeout",
+        capability="events.read",
+        tenant_id="tenant-a",
+        workspace_id="workspace-a",
+        actor=principal.email,
+        incident_id=incident.id,
+        idempotency_key="timeout-replay-1",
+    )
+
+    first = service.call(db_session, principal, request)
+    second = service.call(db_session, principal, request)
+
+    assert first == second
+    db_session.flush()
+    db_session.expire_all()
+    updated = db_session.query(Incident).filter(Incident.id == incident.id).one()
+    assert len([item for item in updated.evidence if item.type == "connector_failure"]) == 1
+    assert len([event for event in updated.timeline if event.event_type == "human_escalation_required"]) == 1
+    audit_types = [event.event_type for event in db_session.query(AuditEvent).all()]
+    assert audit_types.count("connector_call_failed") == 1
+    assert "connector_call_replayed" in audit_types
+
+
+def test_connector_idempotency_conflict_fails_closed_without_provider_call(db_session: Any) -> None:
+    principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
+    service = ConnectorService()
+    base = ConnectorCallRequest(
+        connector_id="fake.observability",
+        capability="events.read",
+        tenant_id="tenant-a",
+        workspace_id="workspace-a",
+        actor=principal.email,
+        idempotency_key="fake-conflict-1",
+        payload={"service": "payment-api", "window": "5m"},
+    )
+    first = service.call(db_session, principal, base)
+    conflicting = ConnectorCallRequest(
+        connector_id="fake.observability",
+        capability="events.read",
+        tenant_id="tenant-a",
+        workspace_id="workspace-a",
+        actor=principal.email,
+        idempotency_key="fake-conflict-1",
+        payload={"service": "checkout-api", "window": "5m"},
+    )
+
+    second = service.call(db_session, principal, conflicting)
+
+    assert first.ok is True
+    assert second.ok is False
+    assert second.error == "conflicting idempotency key"
+    assert "connector_idempotency_conflict" in [event.event_type for event in db_session.query(AuditEvent).all()]

@@ -1,26 +1,31 @@
-"""P7 deterministic self-critique gate for agent diagnoses."""
+"""P7 deterministic self-critique before risk/action proposal."""
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass(frozen=True)
-class CritiqueResult:
+class SelfCritique:
+    decision: str
     missing_evidence: tuple[str, ...]
     alternate_causes: tuple[str, ...]
     contradiction_flags: tuple[str, ...]
     action_risk_objections: tuple[str, ...]
-    ambiguity: str
-    blocks_auto_action: bool
+
+    @property
+    def blocks_auto_action(self) -> bool:
+        return self.decision in {"escalate", "approval_required"} or bool(self.missing_evidence or self.contradiction_flags or self.action_risk_objections)
 
     def to_dict(self) -> dict[str, object]:
         return {
+            "decision": self.decision,
             "missing_evidence": list(self.missing_evidence),
             "alternate_causes": list(self.alternate_causes),
             "contradiction_flags": list(self.contradiction_flags),
             "action_risk_objections": list(self.action_risk_objections),
-            "ambiguity": self.ambiguity,
             "blocks_auto_action": self.blocks_auto_action,
         }
 
@@ -31,30 +36,36 @@ class SelfCritiqueService:
         *,
         confidence: float | None,
         evidence_count: int,
-        alternate_causes: list[str] | tuple[str, ...] = (),
-        contradictions: list[str] | tuple[str, ...] = (),
-        action_type: str = "",
-    ) -> CritiqueResult:
+        action_type: str,
+        hypotheses: Sequence[Mapping[str, Any]] | None = None,
+        memory_warnings: Sequence[str] = (),
+    ) -> SelfCritique:
         missing: list[str] = []
+        contradictions: list[str] = []
         objections: list[str] = []
-        score = confidence or 0.0
+        alternates: list[str] = []
+        score = float(confidence or 0.0)
         if evidence_count < 2:
-            missing.append("at_least_two_independent_evidence_items")
-        if score >= 0.85 and evidence_count < 3:
-            missing.append("high_confidence_requires_three_supporting_items")
-        if score < 0.70:
-            objections.append("confidence_below_auto_action_threshold")
-        if action_type in {"production.rollback", "production.restart_service", "database.mutate", "shell.execute"}:
-            objections.append("requested_action_is_prohibited_or_production_mutation")
-        if action_type == "mock.create_rollback_pr" and alternate_causes:
-            objections.append("rollback_pr_has_plausible_alternate_cause")
-        ambiguity = "high" if missing or contradictions or score < 0.70 else ("medium" if alternate_causes else "low")
-        blocks = ambiguity == "high" or bool(objections)
-        return CritiqueResult(
-            missing_evidence=tuple(missing),
-            alternate_causes=tuple(alternate_causes),
-            contradiction_flags=tuple(contradictions),
-            action_risk_objections=tuple(objections),
-            ambiguity=ambiguity,
-            blocks_auto_action=blocks,
-        )
+            missing.append("at least two independent evidence records")
+        if score < 0.7:
+            missing.append("confidence above human-on-exception threshold")
+        for hypothesis in hypotheses or []:
+            status = str(hypothesis.get("status", ""))
+            title = str(hypothesis.get("title", "alternate cause"))
+            h_conf = float(hypothesis.get("confidence", 0.0) or 0.0)
+            if status in {"weak", "unknown"}:
+                alternates.append(title)
+            if h_conf >= max(score - 0.1, 0.0) and title:
+                contradictions.append(f"competing hypothesis: {title}")
+        if action_type in {"shell.execute", "database.mutate", "cloud.delete_resource", "production.rollback", "production.restart_service"}:
+            objections.append("action type is prohibited or production/destructive")
+        if memory_warnings:
+            objections.extend(memory_warnings)
+        decision = "proceed"
+        if objections or contradictions or missing:
+            decision = "approval_required" if score >= 0.7 and not any("prohibited" in item for item in objections) else "escalate"
+        return SelfCritique(tuple_decision(decision), tuple(missing), tuple(alternates), tuple(contradictions), tuple(objections))
+
+
+def tuple_decision(value: str) -> str:
+    return value

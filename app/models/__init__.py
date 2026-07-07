@@ -20,6 +20,7 @@ _EXPORTS = {
     "PolicyDecision": ("app.models.action", "PolicyDecision"),
     "PolicyEvaluation": ("app.models.action", "PolicyEvaluation"),
     "RiskLevel": ("app.models.action", "RiskLevel"),
+    "SecretRecord": ("app.models.secret", "SecretRecord"),
     "ApprovalDecision": ("app.models.policy", "ApprovalDecision"),
     "Evidence": ("app.models.evidence", "Evidence"),
     "Incident": ("app.models.incident", "Incident"),
@@ -41,6 +42,7 @@ def _load_persistence_models() -> None:
         "app.models.evidence",
         "app.models.incident",
         "app.models.policy",
+        "app.models.secret",
         "app.models.timeline",
         "app.models.identity",
     ):
@@ -50,7 +52,7 @@ def _load_persistence_models() -> None:
 def __getattr__(name: str) -> Any:
     if name not in _EXPORTS:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-    if name in {"ActionProposal", "ApprovalDecision", "AuditEvent", "Evidence", "Incident", "TimelineEvent", "User", "WorkspaceMembership"}:
+    if name in {"ActionProposal", "ApprovalDecision", "AuditEvent", "Evidence", "Incident", "SecretRecord", "TimelineEvent", "User", "WorkspaceMembership"}:
         _load_persistence_models()
     module_name, attr_name = _EXPORTS[name]
     value = getattr(import_module(module_name), attr_name)

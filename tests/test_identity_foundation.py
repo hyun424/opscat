@@ -12,7 +12,7 @@ from app.services.identity_service import get_or_create_local_principal, require
 def test_identity_migration_creates_user_and_membership_tables(tmp_path) -> None:  # type: ignore[no-untyped-def]
     engine = create_engine(f"sqlite:///{tmp_path / 'opscat.db'}", future=True)
 
-    assert run_migrations(engine) == ["0001_initial", "0002_identity_memberships", "0003_audit_events"]
+    assert run_migrations(engine) == ["0001_initial", "0002_identity_memberships", "0003_audit_events", "0004_secret_records"]
 
     tables = set(inspect(engine).get_table_names())
     assert {"users", "workspace_memberships"} <= tables

@@ -17,7 +17,7 @@ As of the latest AI team planning pass:
 - Workspace/tenant fields and redaction exist as paid-beta scaffolding.
 - Current local verification is healthy: compileall, ruff, mypy, pytest, and docker compose config have passed in QA review.
 
-This is **not production-grade yet**. It remains a single local/mock API process with placeholder workspace identity, no real auth, no migrations, no real connectors, no durable workflow queue, no UI, no encrypted secret store, and no load/soak gate.
+This is **not production-grade yet**. It remains a single local/mock API process with local-header demo identity, no real OIDC/SSO auth, no real provider connectors, no durable workflow queue, no UI, no external secret manager, and no load/soak gate. However, the production foundation now includes versioned migrations, local identity and workspace membership models, service-layer tenant authorization, durable audit events, a typed read-only connector boundary, and a local encrypted secret-store abstraction.
 
 ## Non-negotiable product promise
 
@@ -232,6 +232,8 @@ Scope:
 - service-layer tenant authorization;
 - durable audit log.
 
+Status: completed for the local/mock foundation; production OIDC/SSO remains a later paid-beta gate.
+
 Acceptance:
 
 - cross-workspace API and service-layer access fails;
@@ -258,6 +260,8 @@ Acceptance:
 - connector failures create timeline/audit evidence;
 - no connector can execute arbitrary shell;
 - no real mutation occurs without policy + approval.
+
+Status: connector interface, fake read-only connector, connector audit boundary, and local encrypted secret abstraction are complete; Sentry-style read-only adapter is next.
 
 ### M3 — Operator product surface
 
@@ -351,10 +355,20 @@ Add append-only audit events for all policy/action/approval/connector/report tra
 Define connector contracts, capability grants, fake connector, and policy integration.
 
 ### P1-009 — Secret storage abstraction
-Add encrypted local secret provider or secret-manager abstraction with redaction and rotation tests.
+Status: complete for local/mock foundation. Added scoped encrypted secret records, a local envelope provider, audit events, redaction, role checks, and fail-closed tests. Future production work must replace the local provider with external KMS/secret-manager integration before real customer credentials.
 
 ### P1-010 — Sentry-style read-only connector slice
 Implement real-shaped read-only webhook/parser/fetch flow with fake recorded responses and connector failure tests.
+
+## Updated remaining execution order
+
+1. **P1-010 Sentry-style read-only connector slice** — use typed connector + secret abstraction; fake recorded responses only.
+2. **P2-011 Connector failure matrix** — missing credentials, provider timeout, bad payload, stale idempotency, and redaction failures create audit/timeline/escalation evidence.
+3. **P2-012 Durable workflow queue boundary** — split synchronous webhook/investigation into enqueue + worker-step functions while keeping local mode simple.
+4. **P2-013 Action execution attempt model** — persist each attempt, precondition result, execution result, post-check, retry eligibility, and final escalation.
+5. **P3-014 Operator dashboard MVP** — incident inbox/detail, evidence timeline, approval/reject, audit view, connector status.
+6. **P4-015 Eval expansion** — grow golden/adversarial/connector-failure evals to 20 then 50+.
+7. **P5-016 Paid-beta deployment hardening** — CI, deployment manifests, backup/restore, OTel/self-monitoring, security review.
 
 ## Production release gates
 

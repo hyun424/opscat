@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     night_autopilot_quiet_end: str = "07:00"
     night_autopilot_max_automatic_risk: str = "low"
     night_autopilot_max_attempts: int = 1
+    secret_key: str = "local-development-secret-key-change-me"
 
 
 @lru_cache

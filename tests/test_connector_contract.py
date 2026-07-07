@@ -7,6 +7,7 @@ import pytest
 from app.connectors.base import ConnectorCallRequest, ConnectorCallResult, ConnectorCapability
 from app.connectors.fake import FakeObservabilityConnector
 from app.connectors.registry import ConnectorRegistry
+from app.connectors.sentry import SentryProviderResponse, SentryReadOnlyConnector
 from app.connectors.slack import SlackWakeUpConnector
 from app.models import AuditEvent, Incident
 from app.services.authorization import AuthorizationError
@@ -96,13 +97,14 @@ def test_default_connector_registry_exposes_sentry_read_only_capabilities() -> N
     registry = default_connector_registry()
     capabilities = registry.list_capabilities()["sentry.readonly"]
 
-    assert {capability.name for capability in capabilities} == {"issues.read", "issue.events.read"}
+    assert {capability.name for capability in capabilities} == {"issues.read", "issue.events.read", "health.check"}
     assert all(capability.read_only for capability in capabilities)
     assert all(capability.risk_level == "read_only" for capability in capabilities)
-    assert all(capability.required_secret_name == "sentry.token" for capability in capabilities)
+    secret_requirements = {capability.name: capability.required_secret_name for capability in capabilities}
+    assert secret_requirements == {"issues.read": "sentry.token", "issue.events.read": "sentry.token", "health.check": None}
 
 
-def test_sentry_connector_fails_closed_when_credential_missing(db_session: Any) -> None:
+def test_sentry_connector_fixture_mode_is_default_without_credential(db_session: Any) -> None:
     principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
     secret_provider = LocalEncryptedSecretProvider(master_key="unit-test-master-key")
     request = ConnectorCallRequest(
@@ -117,12 +119,141 @@ def test_sentry_connector_fails_closed_when_credential_missing(db_session: Any) 
 
     result = ConnectorService(secret_provider=secret_provider).call(db_session, principal, request)
 
+    assert result.ok is True
+    assert result.read_only is True
+    assert result.output["mode"] == "fixture"
+    assert result.output["recorded"] is True
+    assert result.output["issues"][0]["id"] == "SENTRY-123"
+    assert result.output["pagination"]["has_more"] is False
+    audit_events = db_session.query(AuditEvent).order_by(AuditEvent.created_at).all()
+    assert [event.event_type for event in audit_events] == ["connector_call_requested", "connector_call_completed"]
+
+
+def test_sentry_connector_real_mode_fails_closed_when_credential_missing(db_session: Any) -> None:
+    principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
+    secret_provider = LocalEncryptedSecretProvider(master_key="unit-test-master-key")
+    request = ConnectorCallRequest(
+        connector_id="sentry.readonly",
+        capability="issues.read",
+        tenant_id="tenant-a",
+        workspace_id="workspace-a",
+        actor=principal.email,
+        incident_id="inc-456",
+        payload={"provider_mode": "real", "project": "checkout-api", "query": "timeout"},
+    )
+
+    result = ConnectorService(secret_provider=secret_provider).call(db_session, principal, request)
+
     assert result.ok is False
     assert result.read_only is True
     assert result.error == "missing credential: sentry.token"
     audit_events = db_session.query(AuditEvent).order_by(AuditEvent.created_at).all()
     assert [event.event_type for event in audit_events] == ["connector_call_requested", "secret_missing", "connector_call_failed"]
     assert audit_events[-1].event_metadata["result"]["error"] == "missing credential: sentry.token"
+
+
+def test_sentry_health_reports_fixture_and_real_failure_states_without_leaking_secrets() -> None:
+    connector = SentryReadOnlyConnector()
+    fixture = connector.call(
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="health.check",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor="viewer@example.com",
+        )
+    )
+    missing_secret = connector.call(
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="health.check",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor="viewer@example.com",
+            payload={"provider_mode": "real"},
+        )
+    )
+    invalid_config = connector.call(
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="health.check",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor="viewer@example.com",
+            payload={"provider_mode": "real", "auth_token": "sntrys_secret", "base_url": "http://sentry.example.invalid"},
+        )
+    )
+    rate_limited = connector.call(
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="health.check",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor="viewer@example.com",
+            payload={"provider_mode": "real", "auth_token": "sntrys_secret", "simulate_health": "rate_limited", "retry_after": "30"},
+        )
+    )
+    provider_error = connector.call(
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="health.check",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor="viewer@example.com",
+            payload={"provider_mode": "real", "auth_token": "sntrys_secret", "simulate_health": "provider_error"},
+        )
+    )
+
+    assert fixture.output["health_state"] == "fixture_ok"
+    assert missing_secret.output["health_state"] == "missing_secret"
+    assert invalid_config.output["health_state"] == "invalid_config"
+    assert rate_limited.output["health_state"] == "rate_limited"
+    assert rate_limited.output["retry_after_seconds"] == 30
+    assert provider_error.output["health_state"] == "provider_error"
+    rendered = repr([fixture, missing_secret, invalid_config, rate_limited, provider_error])
+    assert "sntrys_secret" not in rendered
+
+
+def test_sentry_fixture_pagination_is_bounded_without_network() -> None:
+    result = SentryReadOnlyConnector().call(
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="issues.read",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor="viewer@example.com",
+            payload={"per_page": 1},
+        )
+    )
+
+    assert result.ok is True
+    assert len(result.output["issues"]) == 1
+    assert result.output["pagination"] == {"page": 1, "per_page": 1, "next_cursor": "2", "has_more": True}
+    assert result.output["rate_limit"] == {"bounded": True, "retry_after_seconds": 0}
+
+
+def test_sentry_real_provider_rate_limit_is_normalized_and_redacted() -> None:
+    class RateLimitedTransport:
+        def get(self, url: str, *, token: str, params: Any) -> SentryProviderResponse:
+            assert token == "sntrys_secret"
+            assert "Authorization" not in params
+            return SentryProviderResponse(status_code=429, payload={"detail": "token=sntrys_secret"}, headers={"Retry-After": "45"})
+
+    result = SentryReadOnlyConnector(transport=RateLimitedTransport()).call(
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="issues.read",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor="viewer@example.com",
+            payload={"provider_mode": "real", "auth_token": "sntrys_secret", "project": "checkout-api"},
+        )
+    )
+
+    assert result.ok is False
+    assert result.output["normalized_error"] == "rate_limited"
+    assert result.output["retry_after_seconds"] == 45
+    assert "sntrys_secret" not in repr(result)
 
 
 def test_sentry_connector_returns_recorded_sanitized_issue_fixtures_and_redacts_audit(db_session: Any) -> None:

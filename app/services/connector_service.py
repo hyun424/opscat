@@ -137,6 +137,8 @@ class ConnectorService:
     ) -> ConnectorCallRequest | None:
         if required_secret_name is None:
             return request
+        if _secret_is_optional_for_fixture_mode(request):
+            return request
         try:
             secret_value = self.secret_provider.get_secret(db, principal, required_secret_name)
         except SecretNotFoundError:
@@ -342,6 +344,20 @@ def _connector_request_hash(request: ConnectorCallRequest) -> str:
     }
     encoded = json.dumps(canonical, sort_keys=True, separators=(",", ":"), default=str)
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def _secret_is_optional_for_fixture_mode(request: ConnectorCallRequest) -> bool:
+    """Allow Sentry's recorded fixtures to remain the default no-secret path.
+
+    Real-provider reads are still opt-in via ``provider_mode=real`` and keep the
+    existing secret resolution gate. Other connectors continue to use their
+    capability metadata exactly as before.
+    """
+
+    if request.connector_id != "sentry.readonly":
+        return False
+    mode = str(request.payload.get("provider_mode") or request.payload.get("mode") or "fixture").strip().lower()
+    return mode not in {"real", "live", "provider"}
 
 
 def _connector_result_from_record(payload: Mapping[str, Any]) -> ConnectorCallResult:

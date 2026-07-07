@@ -1,6 +1,6 @@
 # Connector Permissions
 
-OpsCat connector setup is local/mock in P5. auth is deferred, so connector permission preview uses the same local-header demo identity as the rest of the OSS quickstart.
+OpsCat connector setup is local/mock in P6. auth is deferred, so connector permission preview uses the same local-header demo identity as the rest of the OSS quickstart.
 
 Use the catalog endpoint before configuring any local secret:
 
@@ -34,11 +34,16 @@ curl -s http://localhost:8000/connectors \
 
 ### sentry.readonly
 
-- Capabilities: `issues.read`, `issue.events.read`
+- Capabilities: `issues.read`, `issue.events.read`, `health.check`
 - Risk: `read_only`
 - Required role: `viewer`
-- Required secret name: `sentry.token`
-- Side effects: none; reads sanitized recorded fixtures only
+- Required secret name: `sentry.token` only for opt-in `provider_mode=real` reads; fixture reads and `health.check` fixture state do not require credentials
+- Default mode: `fixture`; reads sanitized recorded fixtures, performs no network I/O, and returns bounded pagination metadata
+- Health states: `fixture_ok`, `missing_secret`, `invalid_config`, `rate_limited`, and `provider_error`
+- Provider-shaped errors: real-mode rate limits and provider failures normalize to redacted error classes with bounded `retry_after_seconds`
+- Side effects: none; real-provider mode is read-only and opt-in via local secrets
+
+Minimum Sentry permission for future real-mode local experiments is project/organization issue and event read access only. Do not use broad admin tokens, organization owner tokens, or tokens that can mutate projects, releases, alerts, users, or billing. If the token/config is absent, invalid, rate-limited, or the provider fails, OpsCat fails closed and records redacted connector evidence/audit metadata.
 
 ### slack.wake_up
 

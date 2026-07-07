@@ -22,6 +22,7 @@ if str(ROOT) not in sys.path:
 
 from app.connectors.base import ConnectorCallRequest, ConnectorCallResult, ConnectorCapability  # noqa: E402
 from app.connectors.registry import ConnectorRegistry  # noqa: E402
+from app.connectors.sentry import SentryProviderResponse, SentryReadOnlyConnector  # noqa: E402
 from app.db import Base  # noqa: E402
 from app.models import AuditEvent, ConnectorCallRecord, Incident  # noqa: E402
 from app.models import action as _action_model  # noqa: E402,F401
@@ -102,6 +103,8 @@ SCENARIOS: Mapping[str, ScenarioFn] = {
     "permission_mismatch_fails_closed": lambda db: _permission_mismatch_fails_closed(db),
     "secret_lifecycle_setup_failure": lambda db: _secret_lifecycle_setup_failure(db),
     "fixture_import_normalization": lambda db: _fixture_import_normalization(db),
+    "sentry_fixture_health_and_pagination": lambda db: _sentry_fixture_health_and_pagination(db),
+    "sentry_provider_rate_limit_normalization": lambda db: _sentry_provider_rate_limit_normalization(db),
     "missing_credential_failed_closed": lambda db: _missing_credential_failed_closed(db),
     "provider_timeout_escalates": lambda db: _provider_timeout_escalates(db),
     "malformed_result_escalates": lambda db: _malformed_result_escalates(db),
@@ -363,6 +366,80 @@ def _fixture_import_normalization(db: Session) -> ScenarioResult:
             "incident_created": bool(incident.id) and bool(incident.alert_fingerprint),
             "action_created": len(incident.actions) >= 1,
             "redacted": "fixture-token" not in (incident.summary or ""),
+        },
+    )
+
+
+def _sentry_fixture_health_and_pagination(db: Session) -> ScenarioResult:
+    connector = SentryReadOnlyConnector()
+    health = connector.call(
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="health.check",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor="viewer@example.com",
+        )
+    )
+    issues = connector.call(
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="issues.read",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor="viewer@example.com",
+            payload={"per_page": 1},
+        )
+    )
+    actual = {
+        "failure_class": "sentry_fixture",
+        "health_state": health.output.get("health_state"),
+        "network_attempted": health.output.get("network_attempted"),
+        "issue_count": len(cast(list[Any], issues.output.get("issues", []))),
+        "has_more": cast(Mapping[str, Any], issues.output.get("pagination", {})).get("has_more"),
+        "next_cursor": cast(Mapping[str, Any], issues.output.get("pagination", {})).get("next_cursor"),
+    }
+    return _result(
+        category="sentry_setup_health",
+        actual=actual,
+        checks={
+            "fixture_ok_without_secret": health.ok is True and actual["health_state"] == "fixture_ok",
+            "no_network": actual["network_attempted"] is False,
+            "bounded_pagination": issues.ok is True and actual["issue_count"] == 1 and actual["has_more"] is True and actual["next_cursor"] == "2",
+        },
+    )
+
+
+def _sentry_provider_rate_limit_normalization(db: Session) -> ScenarioResult:
+    class _RateLimitedTransport:
+        def get(self, url: str, *, token: str, params: Mapping[str, Any]) -> SentryProviderResponse:
+            return SentryProviderResponse(status_code=429, payload={"detail": "token=sntrys_eval_secret"}, headers={"Retry-After": "45"})
+
+    result = SentryReadOnlyConnector(transport=_RateLimitedTransport()).call(
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="issues.read",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor="viewer@example.com",
+            payload={"provider_mode": "real", "auth_token": "sntrys_eval_secret", "project": "checkout-api"},
+        )
+    )
+    rendered = repr(result)
+    actual = {
+        "failure_class": "sentry_provider_error",
+        "ok": result.ok,
+        "normalized_error": result.output.get("normalized_error"),
+        "retry_after_seconds": result.output.get("retry_after_seconds"),
+        "leaked_token": "sntrys_eval_secret" in rendered,
+    }
+    return _result(
+        category="sentry_fetch_failure",
+        actual=actual,
+        checks={
+            "failed_closed": result.ok is False and result.read_only is True,
+            "rate_limit_normalized": actual["normalized_error"] == "rate_limited" and actual["retry_after_seconds"] == 45,
+            "redacted": actual["leaked_token"] is False,
         },
     )
 

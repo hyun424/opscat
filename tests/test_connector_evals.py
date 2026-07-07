@@ -20,6 +20,8 @@ REQUIRED_SCENARIOS = {
     "permission_mismatch_fails_closed",
     "secret_lifecycle_setup_failure",
     "fixture_import_normalization",
+    "sentry_fixture_health_and_pagination",
+    "sentry_provider_rate_limit_normalization",
 }
 
 
@@ -49,6 +51,10 @@ def test_connector_eval_runner_reports_required_failure_classes(tmp_path: Path) 
     assert results["secret_lifecycle_setup_failure"]["actual"]["failure_class"] == "setup_failure"
     assert results["fixture_import_normalization"]["actual"]["failure_class"] == "import_normalization"
     assert results["fixture_import_normalization"]["actual"]["incident_status"] in {"waiting_approval", "resolved", "action_proposed"}
+    assert results["sentry_fixture_health_and_pagination"]["category"] == "sentry_setup_health"
+    assert results["sentry_fixture_health_and_pagination"]["actual"]["health_state"] == "fixture_ok"
+    assert results["sentry_provider_rate_limit_normalization"]["category"] == "sentry_fetch_failure"
+    assert results["sentry_provider_rate_limit_normalization"]["actual"]["normalized_error"] == "rate_limited"
 
     payload: dict[str, Any] = json.loads(json_path.read_text())
     assert payload["summary"] == {"total": summary["total"], "passed": summary["passed"], "failed": 0}
@@ -61,6 +67,8 @@ def test_connector_eval_runner_reports_required_failure_classes(tmp_path: Path) 
     assert "permission_mismatch" in markdown
     assert "setup_failure" in markdown
     assert "import_normalization" in markdown
+    assert "sentry_setup_health" in markdown
+    assert "sentry_fetch_failure" in markdown
 
 
 def test_verify_script_includes_connector_eval_release_gate() -> None:

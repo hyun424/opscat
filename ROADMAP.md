@@ -83,3 +83,8 @@ Status: implemented as local/mock beta evidence. See `docs/operations/p6-ticket-
 
 P7 focuses on deterministic replay, adversarial evals, calibrated confidence, self-critique, blast-radius/simulation gates, incident memory, Night Autopilot v2, failure-mode reporting, and reliability dashboard evidence while preserving the no-auth/local-mock boundary.
 
+
+
+## P8 active
+
+P8 active scope: AI Incident Responder War Room without auth. P8 focuses on incident war room read models, operator-facing war room API/UI, agent reliability scoring, runbook critique, human question generation, expanded operator-replacement replay scenarios, war room report export, demo polish, security/threat-model refresh, and release evidence. See `docs/operations/p8-ticket-roadmap.md`. The boundary remains no-auth/local-mock: P8 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, or unattended production-operation claims.

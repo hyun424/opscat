@@ -9,7 +9,7 @@ from enum import StrEnum
 from typing import Any
 from uuid import uuid4
 
-from sqlalchemy import JSON, Boolean, DateTime, Float, ForeignKey, String, Text
+from sqlalchemy import JSON, Boolean, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -161,3 +161,29 @@ class ActionProposal(Base):
 
     incident = relationship("Incident", back_populates="actions")
     approvals = relationship("ApprovalDecision", back_populates="action", cascade="all, delete-orphan")
+    execution_attempts = relationship("ActionExecutionAttempt", back_populates="action", cascade="all, delete-orphan", order_by="ActionExecutionAttempt.started_at")
+
+
+class ActionExecutionAttempt(Base):
+    __tablename__ = "action_execution_attempts"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid4()))
+    action_id: Mapped[str] = mapped_column(ForeignKey("action_proposals.id"), index=True)
+    incident_id: Mapped[str] = mapped_column(ForeignKey("incidents.id"), index=True)
+    tenant_id: Mapped[str] = mapped_column(String, default="demo", index=True)
+    workspace_id: Mapped[str] = mapped_column(String, default="demo", index=True)
+    attempt_number: Mapped[int] = mapped_column(Integer, default=1)
+    idempotency_key: Mapped[str] = mapped_column(String, index=True)
+    status: Mapped[str] = mapped_column(String, default="running", index=True)
+    precondition_result: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    execution_result: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    post_check_result: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    retry_eligible: Mapped[bool] = mapped_column(Boolean, default=False)
+    failure_class: Mapped[str | None] = mapped_column(String)
+    error: Mapped[str | None] = mapped_column(Text)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+
+    action = relationship("ActionProposal", back_populates="execution_attempts")
+    incident = relationship("Incident")

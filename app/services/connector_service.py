@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from collections.abc import Mapping
 from dataclasses import asdict, replace
 from typing import Any, cast
@@ -14,7 +16,7 @@ from app.connectors.github import GitHubDraftIssueConnector
 from app.connectors.registry import ConnectorRegistry
 from app.connectors.sentry import SentryReadOnlyConnector
 from app.connectors.slack import SlackWakeUpConnector
-from app.models import Evidence, Incident
+from app.models import ConnectorCallRecord, Evidence, Incident
 from app.services.audit_service import record_audit_event
 from app.services.authorization import AuthorizationError
 from app.services.escalation import build_escalation_payload, record_human_escalation
@@ -66,6 +68,10 @@ class ConnectorService:
                 tenant_id=principal.tenant_id,
                 workspace_id=principal.workspace_id,
             )
+        request_hash = _connector_request_hash(request)
+        replayed = self._replay_idempotent_call(db, principal, request, request_hash=request_hash, read_only=capability.read_only)
+        if replayed is not None:
+            return replayed
         record_audit_event(
             db,
             tenant_id=principal.tenant_id,
@@ -87,7 +93,7 @@ class ConnectorService:
                 error=f"missing credential: {capability.required_secret_name}",
                 evidence_summary="Connector call failed closed before provider fixture access because the required workspace secret was missing.",
             )
-            self._record_result(db, principal, request, result, failed=True)
+            self._record_result(db, principal, request, result, failed=True, request_hash=request_hash)
             return result
 
         connector = self.registry.get(request.connector_id)
@@ -104,7 +110,7 @@ class ConnectorService:
                 error=f"connector provider failure: {type(exc).__name__}",
                 evidence_summary="Connector call failed closed inside the provider boundary.",
             )
-            self._record_result(db, principal, request, result, failed=True)
+            self._record_result(db, principal, request, result, failed=True, request_hash=request_hash)
             return result
 
         if not result.ok:
@@ -118,7 +124,7 @@ class ConnectorService:
                 error="connector read-only contract violation",
                 evidence_summary="Connector result was rejected because it violated the registered read-only capability contract.",
             )
-        self._record_result(db, principal, request, result, failed=not result.ok)
+        self._record_result(db, principal, request, result, failed=not result.ok, request_hash=request_hash)
         return result
 
     def _with_resolved_secret(
@@ -147,6 +153,7 @@ class ConnectorService:
         result: ConnectorCallResult,
         *,
         failed: bool,
+        request_hash: str,
     ) -> None:
         record_audit_event(
             db,
@@ -159,12 +166,121 @@ class ConnectorService:
             action_id=None,
             metadata={"result": asdict(result)},
         )
+        side_effects_emitted = False
         if failed:
-            self._record_failure_escalation(db, principal, request, result)
+            side_effects_emitted = self._record_failure_escalation(db, principal, request, result)
+        self._record_idempotency_result(
+            db,
+            principal,
+            request,
+            result,
+            request_hash=request_hash,
+            failed=failed,
+            side_effects_emitted=side_effects_emitted,
+        )
 
-    def _record_failure_escalation(self, db: Session, principal: Principal, request: ConnectorCallRequest, result: ConnectorCallResult) -> None:
-        if request.incident_id is None:
+    def _replay_idempotent_call(
+        self,
+        db: Session,
+        principal: Principal,
+        request: ConnectorCallRequest,
+        *,
+        request_hash: str,
+        read_only: bool,
+    ) -> ConnectorCallResult | None:
+        if request.idempotency_key is None:
+            return None
+        existing = (
+            db.query(ConnectorCallRecord)
+            .filter(
+                ConnectorCallRecord.tenant_id == principal.tenant_id,
+                ConnectorCallRecord.workspace_id == principal.workspace_id,
+                ConnectorCallRecord.connector_id == request.connector_id,
+                ConnectorCallRecord.capability == request.capability,
+                ConnectorCallRecord.idempotency_key == request.idempotency_key,
+            )
+            .one_or_none()
+        )
+        if existing is None:
+            return None
+        if existing.request_hash != request_hash:
+            result = ConnectorCallResult(
+                connector_id=request.connector_id,
+                capability=request.capability,
+                ok=False,
+                read_only=read_only,
+                error="conflicting idempotency key",
+                evidence_summary="Connector call was rejected because the idempotency key was reused with a different request.",
+            )
+            record_audit_event(
+                db,
+                tenant_id=principal.tenant_id,
+                workspace_id=principal.workspace_id,
+                actor=principal.email,
+                event_type="connector_idempotency_conflict",
+                resource_type="connector",
+                resource_id=request.connector_id,
+                action_id=None,
+                metadata={
+                    "connector_id": request.connector_id,
+                    "capability": request.capability,
+                    "idempotency_key": request.idempotency_key,
+                    "stored_request_hash": existing.request_hash,
+                    "incoming_request_hash": request_hash,
+                },
+            )
+            return result
+        record_audit_event(
+            db,
+            tenant_id=principal.tenant_id,
+            workspace_id=principal.workspace_id,
+            actor=principal.email,
+            event_type="connector_call_replayed",
+            resource_type="connector",
+            resource_id=request.connector_id,
+            action_id=None,
+            metadata={
+                "connector_id": request.connector_id,
+                "capability": request.capability,
+                "idempotency_key": request.idempotency_key,
+                "record_id": existing.id,
+                "status": existing.status,
+            },
+        )
+        return _connector_result_from_record(existing.result)
+
+    def _record_idempotency_result(
+        self,
+        db: Session,
+        principal: Principal,
+        request: ConnectorCallRequest,
+        result: ConnectorCallResult,
+        *,
+        request_hash: str,
+        failed: bool,
+        side_effects_emitted: bool,
+    ) -> None:
+        if request.idempotency_key is None:
             return
+        record = ConnectorCallRecord(
+            tenant_id=principal.tenant_id,
+            workspace_id=principal.workspace_id,
+            connector_id=request.connector_id,
+            capability=request.capability,
+            idempotency_key=request.idempotency_key,
+            request_hash=request_hash,
+            incident_id=request.incident_id,
+            status="failed" if failed else "completed",
+            result=cast(dict[str, Any], redact_value(asdict(result))),
+            failure_class=_failure_trigger(result) if failed else None,
+            side_effects_emitted=side_effects_emitted,
+        )
+        db.add(record)
+        db.flush()
+
+    def _record_failure_escalation(self, db: Session, principal: Principal, request: ConnectorCallRequest, result: ConnectorCallResult) -> bool:
+        if request.incident_id is None:
+            return False
         incident = (
             db.query(Incident)
             .filter(
@@ -175,7 +291,7 @@ class ConnectorService:
             .one_or_none()
         )
         if incident is None:
-            return
+            return False
 
         trigger = _failure_trigger(result)
         failure_metadata = _failure_metadata(request, result, trigger)
@@ -210,6 +326,34 @@ class ConnectorService:
             recommended_next_action=None,
         )
         record_human_escalation(db, incident, payload, transition_to_escalated=True)
+        return True
+
+
+def _connector_request_hash(request: ConnectorCallRequest) -> str:
+    canonical = {
+        "connector_id": request.connector_id,
+        "capability": request.capability,
+        "tenant_id": request.tenant_id,
+        "workspace_id": request.workspace_id,
+        "incident_id": request.incident_id,
+        "payload": request.payload,
+        "dry_run": request.dry_run,
+        "approved": request.approved,
+    }
+    encoded = json.dumps(canonical, sort_keys=True, separators=(",", ":"), default=str)
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def _connector_result_from_record(payload: Mapping[str, Any]) -> ConnectorCallResult:
+    return ConnectorCallResult(
+        connector_id=str(payload["connector_id"]),
+        capability=str(payload["capability"]),
+        ok=bool(payload["ok"]),
+        read_only=bool(payload["read_only"]),
+        output=cast(Mapping[str, Any], payload.get("output") or {}),
+        error=cast(str | None, payload.get("error")),
+        evidence_summary=cast(str | None, payload.get("evidence_summary")),
+    )
 
 
 def _redacted_failure_result(result: ConnectorCallResult) -> ConnectorCallResult:

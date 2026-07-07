@@ -47,6 +47,28 @@ class EvidenceRead(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class ActionExecutionAttemptRead(BaseModel):
+    id: str
+    tenant_id: str = "demo"
+    workspace_id: str = "demo"
+    action_id: str
+    incident_id: str
+    attempt_number: int
+    idempotency_key: str
+    status: str
+    precondition_result: dict[str, Any]
+    execution_result: dict[str, Any]
+    post_check_result: dict[str, Any]
+    retry_eligible: bool
+    failure_class: str | None = None
+    error: str | None = None
+    started_at: datetime
+    finished_at: datetime | None = None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
 class ActionRead(BaseModel):
     id: str
     tenant_id: str = "demo"
@@ -70,6 +92,7 @@ class ActionRead(BaseModel):
     escalation_payload: dict[str, Any] | None = None
     status: str
     execution_result: dict[str, Any] | None
+    execution_attempts: list[ActionExecutionAttemptRead] = Field(default_factory=list)
 
     model_config = {"from_attributes": True}
 

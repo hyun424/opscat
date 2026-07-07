@@ -18,7 +18,7 @@ from app.services.policy_engine import PolicyContext
 
 def test_protected_domain_approval_includes_human_wake_payload(client: Any) -> None:
     response = client.post(
-        "/webhooks/alerts/mock",
+        "/webhooks/alerts/mock?process_now=true",
         json={
             "scenario": "payment_bad_deploy",
             "source": "mock",

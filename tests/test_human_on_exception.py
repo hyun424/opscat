@@ -10,7 +10,7 @@ from app.services.policy_engine import NightAutopilotConfig, PolicyContext, Poli
 
 def _create_incident(client: Any, scenario: str, *, service: str = "payment-api", environment: str = "staging", severity: str = "high") -> dict[str, Any]:
     response = client.post(
-        "/webhooks/alerts/mock",
+        "/webhooks/alerts/mock?process_now=true",
         json={
             "scenario": scenario,
             "service": service,

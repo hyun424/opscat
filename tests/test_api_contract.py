@@ -37,7 +37,7 @@ def test_payment_bad_deploy_happy_path_contract(client: Any) -> None:
         "fingerprint": "payment-api:checkout-timeout:v42",
     }
 
-    created = client.post("/webhooks/alerts/mock", json=alert)
+    created = client.post("/webhooks/alerts/mock?process_now=true", json=alert)
     assert created.status_code in {200, 201, 202}, created.text
     incident = created.json()
     incident_id = incident.get("id") or incident.get("incident_id")

@@ -168,3 +168,11 @@ Acceptance criteria:
 - Architect review approved the SQL-backed local/mock boundary approach and rejected adding Redis/Celery/SPA dependencies at this stage.
 - Applied architect must-fix items: split migrations by boundary (`0005`, `0006`, `0007`), make `process_now=true` explicit compatibility, and include stale docs cleanup before final handoff.
 - Implementation guardrail: build attempts around persisted `ActionProposal`, not the in-memory demo `ActionService` path.
+
+## Critic Revision Resolution
+
+- Webhook compatibility frozen: default `POST /webhooks/alerts/mock` is asynchronous `202 Accepted` and returns a queued incident without running investigation; legacy demos/tests that require immediate analysis use explicit `?process_now=true` and keep the prior `201 Created` synchronous contract.
+- Queue invariants frozen: local SQLite MVP stores one scoped workflow job per tenant/workspace/queue/dedupe key, records enqueue/start/completion audit+timeline evidence, and exposes `process_next_workflow_job()` as the deterministic worker boundary. This is a local durable boundary, not a distributed HA queue.
+- Action execution invariant frozen: approvals execute through persisted `ActionProposal` only; each execution creates an append-only `ActionExecutionAttempt` with precondition, execution, post-check, retry, and failure-class state. Re-approving an already executed action returns current state without duplicating side effects.
+- Connector idempotency invariant frozen: same scoped idempotency key + same request hash replays the stored redacted result with `connector_call_replayed`; same key + different request hash fails closed with `connector_idempotency_conflict`; replay never re-enters providers or emits duplicate escalation/evidence/timeline side effects.
+- Operator dashboard invariant frozen: server-rendered local HTML uses `get_current_principal`, same-scope incident loading, workspace-scoped inbox queries, HTML escaping, and read-only approval affordance text rather than unsafe form posts.

@@ -1,65 +1,70 @@
 # OpsCat Integration Verification Report
 
-Worker-5 re-ran integration verification on 2026-07-06 UTC after the portfolio quality bar was raised.
+Verification updated on 2026-07-07 KST after the P2/P3 workflow/dashboard implementation pass.
 
 ## Latest inspected state
 
-- Commit inspected: `055ac28158b98cd757861041548ed35bfaac3073`
-- Source: current leader worktree `/Users/gimdonghyeon/projects/opscat`
-- Verification checkout: `/tmp/opscat-worker5-portfolio-verify`
+- Source: current worktree `/Users/gimdonghyeon/projects/opscat`
 - External credentials used: none
 - Production systems touched: none
+- Runtime mode: local/mock only
 
 ## Summary
 
-The current integrated head is **not yet green**. The previous app/test API drift blockers were superseded by an earlier syntax blocker: `app/models/action.py` has an unexpected indentation in the SQLAlchemy relationship block. Because the app cannot import, the API, tests, and demo cannot prove the portfolio story yet.
+The local/mock MVP is green for the current P2/P3 scope. The previous syntax/import blockers are resolved. The current build includes:
 
-Docker Compose config still validates. Core code checks, tests, demo, and compileall fail until the syntax blocker is repaired.
+- default asynchronous mock webhook ingestion (`202 Accepted`) with local durable `WorkflowJob` persistence;
+- explicit synchronous demo compatibility via `?process_now=true`;
+- immutable `ActionExecutionAttempt` records for approved action execution and verification;
+- connector call idempotency replay/conflict protection with redacted persisted results;
+- workspace-scoped server-rendered operator dashboard routes;
+- updated migrations through `0007_connector_call_records`.
+
+OpsCat remains intentionally **not production-grade**: demo identity is header-based, workflow queueing is local SQLite/process-bound, connectors are mock/fixture/dry-run only, and no real provider side effects are enabled.
 
 ## Smoke-check evidence
 
 | Check | Result | Evidence |
 | --- | --- | --- |
-| `ruff check app tests scripts` | FAIL | `app/models/__init__.py` has repeated dictionary key `"ActionProposal"`; `app/models/action.py:133` has unexpected indentation and invalid syntax. |
-| `mypy --cache-dir /tmp/opscat-worker5-portfolio-mypy app tests scripts` | FAIL | Stops at `app/models/action.py:133: error: Unexpected indent [syntax]`. |
-| `python -m pytest -q -p no:cacheprovider` | FAIL | Collection errors in `tests/test_policy_actions.py` and `tests/test_state_policy.py`; both hit `IndentationError: unexpected indent` importing `app/models/action.py`. |
-| `python scripts/demo.py` | FAIL | Importing `app.main` fails with `IndentationError: unexpected indent` in `app/models/action.py`. |
-| `python -m compileall -q app tests scripts` | FAIL | Compile error: `IndentationError: unexpected indent (action.py, line 133)`. |
-| `docker compose config` | PASS | Compose config rendered successfully. |
-| Generated artifact hygiene | FAIL in worker-5 branch before cleanup | This worker branch had tracked `__pycache__`, `.pyc`, and `opscat.egg-info` files. Task 12 removes them from the worker-5 branch; leader main already had no tracked generated artifacts at inspection time. |
+| `python3 -m compileall -q app tests scripts` | PASS | App, tests, and scripts compile. |
+| `uv run --no-sync --extra dev ruff check app tests scripts` | PASS | Ruff reports all checks passed. |
+| `uv run --no-sync --extra dev mypy app tests scripts` | PASS | Mypy reports success across 95 source files. |
+| `uv run --no-sync --extra dev pytest -q` | PASS | 132 tests passed. |
+| Target P2/P3 tests | PASS | `tests/test_workflow_queue.py`, `tests/test_action_execution_attempts.py`, `tests/test_connector_contract.py`, and `tests/test_operator_dashboard.py` passed together: 33 tests. |
+| `python scripts/demo.py` | PASS via release gate | Deterministic local demo is part of `scripts/verify.sh`. |
+| `docker compose config` | PASS via release gate | Compose config validates without contacting production systems. |
+| Generated artifact hygiene | PASS via release gate | Tracked generated artifact scan is included in `scripts/verify.sh`. |
 
-## Current primary blockers
+## Verified behavior
 
-1. **Syntax blocker in `app/models/action.py`**
-   - Relationship declarations under `class ActionProposal(Base)` are over-indented.
-   - Impact: app import, pytest collection, demo, mypy, ruff, and compileall all fail.
+### Webhook and workflow
 
-2. **Duplicate export key in `app/models/__init__.py`**
-   - `"ActionProposal"` appears twice in the lazy export map.
-   - Impact: ruff `F601` failure after syntax cleanup.
+- `POST /webhooks/alerts/mock` creates/updates an incident, persists a scoped workflow job, returns queued state, and does not run full investigation on the request path.
+- `process_next_workflow_job()` claims a pending local job, runs deterministic investigation, records start/completion timeline and audit evidence, and leaves the incident in a proposal/escalation state.
+- Duplicate alerts reuse the existing incident/job through scoped fingerprint/dedupe keys.
 
-3. **Full end-to-end demo remains unproven**
-   - `python scripts/demo.py` cannot run until the syntax blocker is fixed.
-   - Current docs therefore describe the intended flow and explicitly mark verification as blocked.
+### Action execution attempts
 
-## Recommended next fix order
+- Approval of a persisted proposed action creates one append-only execution attempt with precondition, execution, post-check, retry eligibility, failure class, and redacted result fields.
+- Failed post-checks escalate humans instead of silently resolving.
+- Re-approving an already executed action returns current state without duplicating execution side effects.
 
-1. Repair `app/models/action.py` indentation without changing model semantics.
-2. Remove duplicate `"ActionProposal"` export key in `app/models/__init__.py`.
-3. Re-run:
-   - `ruff check app tests scripts`
-   - `mypy app tests scripts`
-   - `python -m pytest`
-   - `python scripts/demo.py`
-   - `python -m compileall app tests scripts`
-   - `docker compose config`
-4. If new app/test API drift appears after the syntax blocker is removed, fix those narrowly and update this report.
-5. Only mark the README demo verified when all core checks are green.
+### Connector idempotency
 
-## Superseded earlier blocker snapshot
+- Same tenant/workspace/connector/capability/idempotency key with the same request hash replays the stored redacted result and emits `connector_call_replayed`.
+- Same key with a different request hash fails closed with `connector_idempotency_conflict` and does not invoke the provider.
+- Failed connector calls emit evidence/timeline/escalation once per idempotent call.
 
-Earlier worker-5 verification against worker-4 head `9cee31c2fe67538b4ca9cc928bec604f368dc255` found API drift around `execute_mock_action`, `verify_recovery`, policy object fields, and fixture imports. The current verification cannot confirm whether those are fully resolved because the syntax blocker prevents collection/import. Keep those historical drift areas in mind if failures reappear after syntax repair.
+### Operator dashboard
 
-## Full-demo gap
+- `GET /operator` lists only the principal's tenant/workspace incidents.
+- `GET /operator/incidents/{incident_id}` uses service-layer scope checks and returns 404 for cross-workspace reads.
+- The dashboard escapes incident content and shows evidence, timeline, action policy/status, execution attempts, and report links.
 
-A full alert-to-approval-to-execution-to-report demo could not be completed because the FastAPI app import fails before the demo client starts. No real Sentry, GitHub, Slack, production mutation, or arbitrary shell execution was attempted.
+## Remaining production gaps
+
+1. Replace local header demo identity with real authn/authz (OIDC/SSO/service accounts).
+2. Replace local SQLite/process queue with production workflow infrastructure, leases, dead-letter operations, and metrics.
+3. Deploy real connector agents with customer-controlled credentials and network boundaries.
+4. Add CSRF/session model or separate authenticated frontend before enabling browser mutation forms.
+5. Add load/soak tests, CI, deployment guides, backup/restore, and OpsCat self-observability.

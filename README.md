@@ -4,7 +4,7 @@ OpsCat is a local **agentic AI on-call system** for human-on-exception operation
 
 This repository is intended as a portfolio-grade Agentic AI Engineer artifact and paid-beta design seed: it emphasizes state, tools, tenant boundaries, policy, approvals, verification, wake-up contracts, auditability, privacy, and safety boundaries rather than chatbot-style prompting.
 
-> Current status: the docs and design contract are portfolio-ready, but the latest inspected integrated code is not yet green. Worker-5 verification on current leader head `055ac28158b98cd757861041548ed35bfaac3073` found a syntax blocker in `app/models/action.py`; see [`docs/integration-verification.md`](docs/integration-verification.md). The README demo flow below is the intended copy-paste path once that blocker is fixed.
+> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. It now includes asynchronous webhook queueing by default, immutable execution attempts, connector idempotency replay/conflict protection, and a server-rendered operator dashboard. See [`docs/integration-verification.md`](docs/integration-verification.md).
 
 ## Portfolio story
 
@@ -50,13 +50,13 @@ Safety is enforced by explicit action metadata, risk classification, approval st
 ## Included surfaces
 
 - FastAPI API with `/health`, mock alert ingestion, incident reads, approval API, reports, and Night Autopilot simulation.
-- SQLAlchemy persistence for incidents, evidence, action proposals, approval decisions, and timeline events.
+- SQLAlchemy persistence for incidents, evidence, action proposals, approval decisions, execution attempts, workflow jobs, connector replay records, audit events, and timeline events.
 - Deterministic mock agent; no LLM key is required for the demo path.
 - Action registry with risk metadata, preconditions, approval requirements, allowed environments, and post-checks.
 - Mock action execution for rollback PR draft, incident ticket, non-production worker restart, verification, and report generation.
 - Recovery verification and markdown incident reports under `data/mock_reports/`.
 - Docker Compose for FastAPI + PostgreSQL.
-- Pytest coverage for state machine, policy, full mock alert flow, approval/rejection, and Night Autopilot once integration blockers are repaired.
+- Pytest coverage for state machine, policy, full mock alert flow, approval/rejection, workflow queueing, connector idempotency, operator dashboard scoping, and Night Autopilot.
 
 ## Documentation map
 
@@ -92,7 +92,7 @@ curl http://localhost:8000/health
 
 ## Deterministic in-process demo
 
-Once the current syntax blocker is repaired, run the deterministic demo without external services:
+Run the deterministic demo without external services:
 
 ```bash
 python scripts/demo.py
@@ -109,6 +109,18 @@ Report path: data/mock_reports/incident-<incident-id>.md
 Night Autopilot actions: 1
 ```
 
+## Operator dashboard
+
+After creating incidents, open the local operator inbox:
+
+```bash
+open http://localhost:8000/operator
+# or
+curl -s http://localhost:8000/operator
+```
+
+The server-rendered dashboard is workspace-scoped, escapes incident content, and shows evidence, timeline, actions, execution attempts, and report links. Approval execution remains JSON API-based (`POST /approvals/{action_id}`) rather than unsafe HTML form posts.
+
 ## Manual API walkthrough
 
 Start the API first:
@@ -120,7 +132,7 @@ uvicorn app.main:app --reload
 Create a mock incident:
 
 ```bash
-INCIDENT_JSON=$(curl -s -X POST http://localhost:8000/webhooks/alerts/mock \
+INCIDENT_JSON=$(curl -s -X POST 'http://localhost:8000/webhooks/alerts/mock?process_now=true' \
   -H 'content-type: application/json' \
   -d '{"scenario":"payment_api_deploy_regression","environment":"staging","severity":"high","message":"Payment API timeout spike"}')
 
@@ -190,7 +202,7 @@ python scripts/migrate.py status
 
 The gate runs compileall, Ruff, mypy, pytest, a stdlib coverage gate, local demo smoke, Docker Compose config validation, tracked generated artifact scan, and whitespace diff checks.
 
-Current worker-5 evidence is in [`docs/integration-verification.md`](docs/integration-verification.md). Do not claim the full demo is verified until all core checks are green.
+Latest verification evidence is in [`docs/integration-verification.md`](docs/integration-verification.md). The default webhook path returns `202 Accepted` and queues work; use `?process_now=true` for copy-paste synchronous demos.
 
 ## Documentation
 

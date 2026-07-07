@@ -70,7 +70,7 @@ def main() -> int:
     print(json.dumps(request_json(args.base_url, "GET", "/health"), indent=2))
 
     print("2. Creating mock payment_bad_deploy incident")
-    incident = request_json(args.base_url, "POST", "/webhooks/alerts/mock", DEFAULT_ALERT)
+    incident = request_json(args.base_url, "POST", "/webhooks/alerts/mock?process_now=true", DEFAULT_ALERT)
     print(json.dumps(incident, indent=2))
     incident_id = incident.get("id") or incident.get("incident_id")
     if not incident_id:

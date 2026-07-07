@@ -1,6 +1,6 @@
 # Incident Report: incident-demo-payment-api-001
 
-> Representative sample matching `app/services/report_service.py` output shape. It is not generated from the current leader head because the current app import is blocked by an indentation syntax error; see `integration-verification.md`.
+> Representative sample matching `app/services/report_service.py` output shape. The current local/mock build is verified; see `integration-verification.md` for command evidence.
 
 - Status: resolved
 - Service: payment-api

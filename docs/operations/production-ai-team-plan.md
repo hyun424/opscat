@@ -11,13 +11,13 @@ The human owner provides product direction. The AI team owns planning, implement
 As of the latest AI team planning pass:
 
 - FastAPI local/mock MVP exists.
-- Incident state, evidence, timeline, action proposals, approvals, policy decisions, escalation payloads, and reports exist.
+- Incident state, evidence, timeline, action proposals, approvals, execution attempts, workflow jobs, connector replay records, policy decisions, escalation payloads, audit events, and reports exist.
 - Dangerous production actions, shell execution, DB mutation, cloud deletion, and secret-read actions fail closed.
 - Human-on-exception behavior exists for low confidence, missing context, protected domains, failed verification, and Night Autopilot max attempts.
 - Workspace/tenant fields and redaction exist as paid-beta scaffolding.
-- Current local verification is healthy: compileall, ruff, mypy, pytest, and docker compose config have passed in QA review.
+- Current local verification is healthy: compileall, ruff, mypy, pytest, deterministic demo, coverage gate, and docker compose config pass locally.
 
-This is **not production-grade yet**. It remains a single local/mock API process with local-header demo identity, no real OIDC/SSO auth, no live provider network calls, no durable workflow queue, no UI, no external secret manager, and no load/soak gate. However, the production foundation now includes versioned migrations, local identity and workspace membership models, service-layer tenant authorization, durable audit events, a typed connector/capability boundary, a local encrypted secret-store abstraction, Sentry-style read-only recorded fixtures, dry-run Slack wake-up previews, dry-run GitHub issue drafts, and connector failure escalation evidence.
+This is **not production-grade yet**. It remains a single local/mock API process with local-header demo identity, no real OIDC/SSO auth, no live provider network calls, no external secret manager, no production workflow infrastructure, and no load/soak gate. However, the production foundation now includes versioned migrations, local identity and workspace membership models, service-layer tenant authorization, durable audit events, a local workflow-job boundary, immutable action execution attempts, connector idempotency replay records, a typed connector/capability boundary, a local encrypted secret-store abstraction, Sentry-style read-only recorded fixtures, dry-run Slack wake-up previews, dry-run GitHub issue drafts, connector failure escalation evidence, and a server-rendered operator dashboard MVP.
 
 ## Non-negotiable product promise
 
@@ -371,10 +371,10 @@ Status: complete for dry-run-only local/mock foundation. GitHub draft issue prev
 
 ## Updated remaining execution order
 
-1. **P2-014 Durable workflow queue boundary** — split synchronous webhook/investigation into enqueue + worker-step functions while keeping local mode simple.
-2. **P2-015 Action execution attempt model** — persist each attempt, precondition result, execution result, post-check, retry eligibility, and final escalation.
-3. **P2-016 Connector failure/idempotency matrix expansion** — add stale idempotency, retry/dead-letter, malformed provider payload, rate-limit, and redaction-regression cases.
-4. **P3-017 Operator dashboard MVP** — incident inbox/detail, evidence timeline, approval/reject, audit view, connector status.
+1. **P2-014 Durable workflow queue boundary** — status: complete for local/mock MVP. Webhooks enqueue by default, `process_now=true` preserves the synchronous demo path, and workflow start/completion evidence is audited. Production still needs distributed workers, lease recovery, metrics, and dead-letter operations.
+2. **P2-015 Action execution attempt model** — status: complete for persisted mock actions. Attempts capture preconditions, execution result, post-check result, retry eligibility, and failure classes. Production still needs richer retry orchestration and executor isolation.
+3. **P2-016 Connector failure/idempotency matrix expansion** — status: complete for local/mock foundation. Same-key/same-hash replays, same-key/different-hash fails closed, failed calls do not duplicate escalation side effects, and results are redacted before persistence.
+4. **P3-017 Operator dashboard MVP** — status: complete for server-rendered local dashboard. Inbox/detail are workspace-scoped and read-only for browser mutations. Production still needs sessions, CSRF, polish, connector setup, and policy editor surfaces.
 5. **P4-018 Eval expansion** — grow golden/adversarial/connector-failure evals to 20 then 50+.
 6. **P5-019 Paid-beta deployment hardening** — CI, deployment manifests, backup/restore, OTel/self-monitoring, security review.
 

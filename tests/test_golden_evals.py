@@ -48,7 +48,7 @@ def test_golden_file_is_complete(name: str) -> None:
 @pytest.mark.parametrize("name", _golden_names())
 def test_golden_eval_contract(client: Any, name: str) -> None:
     golden = _load_golden(name)
-    created = client.post("/webhooks/alerts/mock", json=golden["input_alert"])
+    created = client.post("/webhooks/alerts/mock?process_now=true", json=golden["input_alert"])
     assert created.status_code in {200, 201, 202}, created.text
     result = created.json()
     text = json.dumps(result).lower()

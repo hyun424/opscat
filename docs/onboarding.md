@@ -17,7 +17,7 @@ pip install -e '.[dev]'
 python scripts/demo.py
 ```
 
-Current caveat: this command is blocked in the latest inspected head by `app/models/action.py` indentation syntax error. See `integration-verification.md`.
+Current caveat: the demo is local/mock-only. It is verified without external credentials; real customer onboarding still requires production auth, deployment, and connector work. See `integration-verification.md`.
 
 ## Paid-beta setup checklist
 

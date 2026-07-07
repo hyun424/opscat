@@ -10,12 +10,14 @@ from app.schemas.incidents import MockAlertRequest
 from app.services.audit_service import record_audit_event
 from app.services.authorization import require_action_approval_authority, require_same_scope
 from app.services.escalation import build_escalation_payload, record_human_escalation
+from app.services.execution_attempt_service import record_execution_result, record_post_check_result, start_action_attempt
 from app.services.identity_service import Principal
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.redaction import redact_text
 from app.services.report_service import save_incident_report
 from app.services.state_machine import transition_incident
 from app.services.timeline_service import add_timeline_event
+from app.services.workflow_service import enqueue_incident_workflow
 from app.tools.mock_actions import execute_mock_action, verify_recovery
 
 
@@ -92,6 +94,16 @@ def run_investigation(db: Session, incident: Incident) -> ActionProposal:
     return action
 
 
+def create_and_enqueue(db: Session, payload: MockAlertRequest) -> Incident:
+    incident = create_mock_incident(db, payload)
+    if not incident.actions and incident.status in {"new", "queued"}:
+        enqueue_incident_workflow(db, incident, payload=payload.model_dump())
+    incident_id = incident.id
+    db.commit()
+    db.expire_all()
+    return get_incident(db, incident_id)
+
+
 def create_and_investigate(db: Session, payload: MockAlertRequest) -> Incident:
     incident = create_mock_incident(db, payload)
     if not incident.actions and incident.status in {"new", "queued", "investigating"}:
@@ -107,7 +119,7 @@ def get_incident(db: Session, incident_id: str, principal: Principal | None = No
         db.query(Incident)
         .options(
             selectinload(Incident.evidence),
-            selectinload(Incident.actions),
+            selectinload(Incident.actions).selectinload(ActionProposal.execution_attempts),
             selectinload(Incident.timeline),
         )
         .filter(Incident.id == incident_id)
@@ -134,6 +146,8 @@ def decide_action(
         require_same_scope(principal, action, action="decide action")
         require_action_approval_authority(principal)
         actor = principal.email
+    if decision == "approve" and action.status == "executed":
+        return action, get_incident(db, incident.id), None
     approval = ApprovalDecision(
         action_id=action.id,
         tenant_id=incident.tenant_id,
@@ -229,7 +243,9 @@ def decide_action(
         metadata={"reason": reason, "approval_id": approval.id},
     )
     db.add(transition_incident(incident, "executing", actor="executor", reason="approved action"))
+    attempt = start_action_attempt(db, incident, action, idempotency_key=approval.id)
     result = execute_mock_action(db, incident, action)
+    record_execution_result(db, attempt, result)
     add_timeline_event(
         db,
         incident.id,
@@ -265,6 +281,7 @@ def decide_action(
         return action, get_incident(db, incident.id), None
     db.add(transition_incident(incident, "verifying", actor="verifier", reason="post-check started"))
     verification = verify_recovery(incident, action)
+    record_post_check_result(db, attempt, verification)
     add_timeline_event(
         db,
         incident.id,

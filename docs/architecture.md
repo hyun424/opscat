@@ -26,8 +26,8 @@ The current MVP uses mock evidence only and does not call real Sentry, GitHub, S
 
 ## Main data flow
 
-1. `POST /webhooks/alerts/mock` receives a Sentry-like mock alert.
-2. The incident service persists an `Incident` and starts deterministic investigation.
+1. `POST /webhooks/alerts/mock` receives a Sentry-like mock alert, persists an `Incident`, enqueues a durable local `WorkflowJob`, and returns `202 Accepted`.
+2. `process_next_workflow_job()` or the demo-only `?process_now=true` compatibility path starts deterministic investigation.
 3. Mock context tools collect incident-relevant evidence:
    - error context,
    - recent deploys,
@@ -36,9 +36,11 @@ The current MVP uses mock evidence only and does not call real Sentry, GitHub, S
 4. The deterministic mock agent produces hypotheses, confidence, a recommended action, post-checks, and escalation conditions.
 5. The risk/policy layer classifies the proposed action and returns `ALLOW`, `REQUIRE_APPROVAL`, `DENY`, or `ESCALATE`.
 6. If approval is required, `POST /approvals/{action_id}` records an approval or rejection.
-7. Approved mock actions execute against safe local stubs only.
+7. Approved mock actions execute against safe local stubs only and create immutable `ActionExecutionAttempt` records.
 8. Verification and report generation update the incident timeline and write a markdown incident report.
-9. `POST /night-autopilot/simulate` exercises the conservative quiet-hours automation path with low-risk allowlisted actions only.
+9. Connector calls use typed capabilities, redacted persistence, and idempotency replay/conflict records.
+10. `GET /operator` and `GET /operator/incidents/{incident_id}` provide a server-rendered local operator dashboard.
+11. `POST /night-autopilot/simulate` exercises the conservative quiet-hours automation path with low-risk allowlisted actions only.
 
 ## Module map
 
@@ -50,7 +52,8 @@ Expected implementation modules:
 - `app/api/incidents.py` lists, reads, investigates, and reports incidents.
 - `app/api/approvals.py` handles approval/rejection for proposed actions.
 - `app/api/night_autopilot.py` exposes the simulated Night Autopilot endpoint.
-- `app/models/` contains persisted incident, evidence, action, policy, and timeline state.
+- `app/api/operator.py` exposes the server-rendered local operator dashboard.
+- `app/models/` contains persisted incident, evidence, action, execution attempt, workflow job, connector call record, policy, audit, identity, secret, and timeline state.
 - `app/schemas/` contains API request/response contracts.
 - `app/agent/` contains the deterministic mock agent loop.
 - `app/tools/mock_context.py` contains read-only context-gathering stubs.
@@ -58,6 +61,9 @@ Expected implementation modules:
 - `app/services/risk_engine.py` owns action metadata and risk classification.
 - `app/services/policy_engine.py` owns guardrail decisions.
 - `app/services/incident_service.py` coordinates incident state transitions and actions.
+- `app/services/workflow_service.py` owns the local durable incident workflow queue boundary.
+- `app/services/execution_attempt_service.py` records immutable action execution attempts.
+- `app/services/connector_service.py` owns typed connector execution, redaction, failure escalation, and idempotency replay.
 - `app/services/report_service.py` renders markdown reports.
 - `app/services/night_autopilot.py` simulates quiet-hours automation.
 
@@ -88,6 +94,6 @@ These are not fully implemented in the local MVP; they are documented as paid-be
 - Every incident report should include status, service/environment/severity, summary, root-cause candidate, confidence, evidence, actions, execution result, and timeline.
 - No silent failure: unresolved, uncertain, high-risk, or unverified incidents must wake humans with evidence.
 
-## Current integration risk
+## Current integration status
 
-The latest inspected leader head (`055ac28158b98cd757861041548ed35bfaac3073`) fails before app import because `app/models/action.py` contains an indentation syntax error in the SQLAlchemy relationship block. Until that is fixed, the API, demo, and tests cannot prove the intended flow. See `docs/integration-verification.md` for exact command evidence.
+The local/mock MVP now verifies through compileall, Ruff, mypy, pytest, deterministic demo smoke, coverage gate, and Docker Compose config. It remains intentionally local/mock-only: auth is header-based for demo, workflow queueing is SQLite/local rather than HA distributed infrastructure, and real provider side effects are disabled. See `docs/integration-verification.md` for command evidence.

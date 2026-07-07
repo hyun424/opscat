@@ -7,7 +7,7 @@ from app.models import AuditEvent
 
 
 def _event_types(client: Any, incident_payload: dict[str, Any], *, headers: dict[str, str] | None = None) -> tuple[dict[str, Any], list[str]]:
-    created = client.post("/webhooks/alerts/mock", headers=headers or {}, json=incident_payload)
+    created = client.post("/webhooks/alerts/mock?process_now=true", headers=headers or {}, json=incident_payload)
     assert created.status_code == 201, created.text
     incident = created.json()
     listed = client.get("/incidents", headers=headers or {})
@@ -52,7 +52,7 @@ def test_audit_log_records_rejection_and_escalation(client: Any, db_session: Any
 
 def test_audit_metadata_is_redacted(client: Any, db_session: Any) -> None:
     created = client.post(
-        "/webhooks/alerts/mock",
+        "/webhooks/alerts/mock?process_now=true",
         json={
             "scenario": "payment_api_deploy_regression",
             "message": "api_key=plain-secret Bearer raw.jwt.token ops@example.com",

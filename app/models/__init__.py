@@ -10,6 +10,9 @@ from importlib import import_module
 from typing import Any
 
 _EXPORTS = {
+    "ConnectorCallRecord": ("app.models.workflow", "ConnectorCallRecord"),
+    "WorkflowJob": ("app.models.workflow", "WorkflowJob"),
+    "ActionExecutionAttempt": ("app.models.action", "ActionExecutionAttempt"),
     "AuditEvent": ("app.models.audit", "AuditEvent"),
     "ActionProposal": ("app.models.action", "ActionProposal"),
     "ActionExecutionResult": ("app.models.action", "ActionExecutionResult"),
@@ -45,6 +48,7 @@ def _load_persistence_models() -> None:
         "app.models.secret",
         "app.models.timeline",
         "app.models.identity",
+        "app.models.workflow",
     ):
         import_module(module_name)
 
@@ -52,7 +56,20 @@ def _load_persistence_models() -> None:
 def __getattr__(name: str) -> Any:
     if name not in _EXPORTS:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-    if name in {"ActionProposal", "ApprovalDecision", "AuditEvent", "Evidence", "Incident", "SecretRecord", "TimelineEvent", "User", "WorkspaceMembership"}:
+    if name in {
+        "ActionExecutionAttempt",
+        "ActionProposal",
+        "ApprovalDecision",
+        "AuditEvent",
+        "ConnectorCallRecord",
+        "Evidence",
+        "Incident",
+        "SecretRecord",
+        "TimelineEvent",
+        "User",
+        "WorkflowJob",
+        "WorkspaceMembership",
+    }:
         _load_persistence_models()
     module_name, attr_name = _EXPORTS[name]
     value = getattr(import_module(module_name), attr_name)

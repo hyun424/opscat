@@ -15,7 +15,7 @@ def main() -> None:
         health = client.get("/health")
         health.raise_for_status()
         incident_response = client.post(
-            "/webhooks/alerts/mock",
+            "/webhooks/alerts/mock?process_now=true",
             json={
                 "scenario": "payment_api_deploy_regression",
                 "environment": "staging",

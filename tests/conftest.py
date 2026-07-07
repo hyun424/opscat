@@ -25,6 +25,7 @@ REQUIRED_ENDPOINTS = {
     "approval_decision": ("POST", "/approvals/{action_id}"),
     "report": ("GET", "/incidents/{incident_id}/report"),
     "night_autopilot": ("POST", "/night-autopilot/simulate"),
+    "operator_inbox": ("GET", "/operator"),
 }
 
 
@@ -52,7 +53,7 @@ def app(app_module: Any) -> Any:
 
 @pytest.fixture()
 def db_session() -> Generator[Session]:
-    from app.models import action, evidence, incident, policy, timeline  # noqa: F401
+    from app.models import action, evidence, incident, policy, timeline, workflow  # noqa: F401
 
     engine = create_engine(
         "sqlite:///:memory:",

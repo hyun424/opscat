@@ -2,15 +2,14 @@
 
 This walkthrough is the intended portfolio demo path for the local mock MVP. It intentionally avoids real Sentry, GitHub, Slack, production mutation, and arbitrary shell execution.
 
-## Current blocker behavior
+## Current verified behavior
 
-Worker-5 verification against leader head `055ac28158b98cd757861041548ed35bfaac3073` shows the app currently fails to import because `app/models/action.py` has an indentation syntax error. Running `python scripts/demo.py` currently fails with:
+The local/mock MVP is currently green through compile, lint, typecheck, pytest, deterministic demo, coverage gate, and Docker Compose config. No external credentials are needed and no production systems are touched.
 
-```text
-IndentationError: unexpected indent
-```
+Important webhook behavior:
 
-Use this document as the expected walkthrough once that integration blocker is repaired.
+- `POST /webhooks/alerts/mock` persists and queues an incident, returning `202 Accepted`.
+- `POST /webhooks/alerts/mock?process_now=true` keeps the synchronous demo path: investigate immediately and return a proposed action with `201 Created`.
 
 ## 1. Start local API
 
@@ -36,7 +35,7 @@ Expected response:
 ## 2. Trigger mock alert
 
 ```bash
-INCIDENT_JSON=$(curl -s -X POST http://localhost:8000/webhooks/alerts/mock \
+INCIDENT_JSON=$(curl -s -X POST 'http://localhost:8000/webhooks/alerts/mock?process_now=true' \
   -H 'content-type: application/json' \
   -d '{"scenario":"payment_api_deploy_regression","environment":"staging","severity":"high","message":"Payment API timeout spike"}')
 
@@ -74,6 +73,7 @@ Expected behavior:
 - The approval is recorded.
 - The mock action executes locally only.
 - The incident transitions through execution/verification and ends as `resolved` when recovery checks pass.
+- An immutable execution attempt is recorded with precondition, execution, post-check, retry, and failure-class state.
 - A markdown report path is returned.
 
 ## 4. Inspect report
@@ -92,7 +92,20 @@ curl -s "http://localhost:8000/incidents/$INCIDENT_ID/report"
 
 Compare the shape to [`sample-incident-report.md`](sample-incident-report.md).
 
-## 5. Simulate Night Autopilot
+## 5. Operator dashboard
+
+```bash
+curl -s http://localhost:8000/operator
+curl -s "http://localhost:8000/operator/incidents/$INCIDENT_ID"
+```
+
+Expected behavior:
+
+- Inbox only shows the current tenant/workspace incidents.
+- Detail shows Evidence, Timeline, Actions, Execution attempts, and Report link.
+- Content is HTML-escaped and approval is presented as an API affordance, not a direct unsafe browser mutation.
+
+## 6. Simulate Night Autopilot
 
 ```bash
 curl -s -X POST http://localhost:8000/night-autopilot/simulate \
@@ -106,17 +119,12 @@ Expected behavior:
 - Production mutation, shell execution, and high-risk actions remain denied or escalated.
 - The response includes a morning-report style summary.
 
-## 6. Verification gate
+## 7. Verification gate
 
 Before presenting the demo as green, run:
 
 ```bash
-ruff check app tests scripts
-mypy app tests scripts
-python -m pytest
-python scripts/demo.py
-python -m compileall app tests scripts
-docker compose config
+bash scripts/verify.sh
 ```
 
 All core checks should pass without generated artifacts being committed.
@@ -124,7 +132,7 @@ All core checks should pass without generated artifacts being committed.
 
 ## Human-on-exception proof points
 
-The demo should prove these claims once green:
+The demo proves these claims:
 
 - Detect: mock alert creates an incident.
 - Classify: service, environment, severity, and scenario are persisted.

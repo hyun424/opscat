@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 
 def test_mock_alert_to_approval_execution_report_flow(client: TestClient) -> None:
     response = client.post(
-        "/webhooks/alerts/mock",
+        "/webhooks/alerts/mock?process_now=true",
         json={
             "scenario": "payment_api_deploy_regression",
             "environment": "staging",
@@ -39,7 +39,7 @@ def test_mock_alert_to_approval_execution_report_flow(client: TestClient) -> Non
 
 
 def test_reject_approval_escalates(client: TestClient) -> None:
-    incident = client.post("/webhooks/alerts/mock", json={}).json()
+    incident = client.post("/webhooks/alerts/mock?process_now=true", json={}).json()
     action_id = incident["actions"][0]["id"]
     rejected = client.post(
         f"/approvals/{action_id}",

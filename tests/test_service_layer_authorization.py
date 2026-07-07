@@ -31,7 +31,7 @@ VIEWER_HEADERS = {
 
 def _create_alpha_incident(client: Any) -> dict[str, Any]:
     created = client.post(
-        "/webhooks/alerts/mock",
+        "/webhooks/alerts/mock?process_now=true",
         headers=ALPHA_HEADERS,
         json={"scenario": "payment_bad_deploy", "environment": "production", "severity": "high"},
     )
@@ -41,7 +41,7 @@ def _create_alpha_incident(client: Any) -> dict[str, Any]:
 
 def test_alert_payload_scope_must_match_authenticated_principal(client: Any) -> None:
     response = client.post(
-        "/webhooks/alerts/mock",
+        "/webhooks/alerts/mock?process_now=true",
         headers=ALPHA_HEADERS,
         json={"tenant_id": "tenant-a", "workspace_id": "beta", "message": "scope mismatch"},
     )

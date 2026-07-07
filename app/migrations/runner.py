@@ -24,6 +24,9 @@ MIGRATION_MODULES = (
     "app.migrations.versions.0002_identity_memberships",
     "app.migrations.versions.0003_audit_events",
     "app.migrations.versions.0004_secret_records",
+    "app.migrations.versions.0005_workflow_jobs",
+    "app.migrations.versions.0006_action_execution_attempts",
+    "app.migrations.versions.0007_connector_call_records",
 )
 
 metadata = MetaData()

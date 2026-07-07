@@ -138,7 +138,7 @@ class PaidBetaSecurityUnitTests(TestCase):
 
 def test_mock_alert_carries_tenant_boundary_to_incident_artifacts(client: Any) -> None:
     response = client.post(
-        "/webhooks/alerts/mock",
+        "/webhooks/alerts/mock?process_now=true",
         headers={
             "X-OpsCat-Actor": "operator@example.com",
             "X-OpsCat-Tenant": "tenant-paid-beta",

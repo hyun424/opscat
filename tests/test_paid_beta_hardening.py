@@ -13,8 +13,8 @@ def test_mock_alert_idempotency_groups_duplicate_webhook(client: Any) -> None:
         "message": "Payment failed token=secret-token user@example.com",
     }
 
-    first = client.post("/webhooks/alerts/mock", json=payload)
-    second = client.post("/webhooks/alerts/mock", json=payload)
+    first = client.post("/webhooks/alerts/mock?process_now=true", json=payload)
+    second = client.post("/webhooks/alerts/mock?process_now=true", json=payload)
 
     assert first.status_code == 201
     assert second.status_code == 201
@@ -35,7 +35,7 @@ def test_workspace_header_scopes_incident_access_and_status(client: Any) -> None
     beta_headers = {"X-OpsCat-Workspace": "beta"}
 
     created = client.post(
-        "/webhooks/alerts/mock",
+        "/webhooks/alerts/mock?process_now=true",
         headers=alpha_headers,
         json={"idempotency_key": "alpha-alert", "message": "alpha incident"},
     )

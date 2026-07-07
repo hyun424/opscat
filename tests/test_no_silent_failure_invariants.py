@@ -209,7 +209,7 @@ def _exercise_path(client: Any, path_case: dict[str, Any]) -> dict[str, Any]:
         "message": f"P0-002 invariant probe {path_case['name']} {SECRET_MESSAGE}",
         **path_case["alert"],
     }
-    created = client.post("/webhooks/alerts/mock", json=payload)
+    created = client.post("/webhooks/alerts/mock?process_now=true", json=payload)
     assert created.status_code == 201, created.text
     incident = created.json()
     action = _first_action(incident)

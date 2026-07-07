@@ -89,9 +89,30 @@ class IncidentMemory:
         return sorted(matches, key=lambda item: item.score, reverse=True)[:limit]
 
 
-def _similar(left: str, right: str) -> bool:
-    if not left or not right:
-        return False
-    left_l = left.lower()
-    right_l = right.lower()
-    return left_l == right_l or left_l in right_l or right_l in left_l
+def _score(record: IncidentMemoryRecord, service: str, environment: str, fingerprint: str, root_cause: str, runbook: str, action_type: str) -> IncidentMemoryMatch:
+    reasons: list[str] = []
+    score = 0.0
+    comparisons = (
+        (record.service, service, 0.20, "same_service"),
+        (record.environment, environment, 0.10, "same_environment"),
+        (record.fingerprint, fingerprint, 0.20, "same_fingerprint"),
+        (record.root_cause, root_cause, 0.20, "same_root_cause"),
+        (record.runbook, runbook, 0.15, "same_runbook"),
+        (record.action_type, action_type, 0.15, "same_action_type"),
+    )
+    for left, right, weight, reason in comparisons:
+        if left and right and left.lower() == right.lower():
+            score += weight
+            reasons.append(reason)
+        elif left and right and (left.lower() in right.lower() or right.lower() in left.lower()):
+            score += weight / 2
+            reasons.append(f"partial_{reason}")
+    return IncidentMemoryMatch(record=record, similarity=round(min(1.0, score), 2), reasons=tuple(reasons), failed_remediation_warning=record.outcome == "failed" and score >= 0.75)
+
+
+def _default_records() -> list[IncidentMemoryRecord]:
+    return [
+        IncidentMemoryRecord("mem-payment-rollback", "payment-api", "staging", "payment-api:deploy", "Recent payment-api deploy introduced timeout regression", "rollback_pr", "mock.create_rollback_pr", "success"),
+        IncidentMemoryRecord("mem-worker-restart", "worker", "staging", "worker:queue", "Queue worker degradation after broker maintenance", "restart_worker", "mock.execute_restart_worker", "success"),
+        IncidentMemoryRecord("mem-worker-failed", "worker", "staging", "worker:poison", "Queue worker degradation after poison message", "restart_worker", "mock.execute_restart_worker", "failed"),
+    ]

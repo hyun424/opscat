@@ -31,9 +31,36 @@ def render_incident_report(incident: Incident) -> str:
         lines.append(f"- `{action.id}` {action.action_type} status={action.status} risk={action.risk_level} policy={action.policy_decision}")
         lines.append(f"  - Rationale: {redact_text(action.rationale)}")
         lines.append(f"  - Post-checks: {', '.join(action.post_checks)}")
+        critique = (action.payload or {}).get("self_critique", {})
+        if critique:
+            lines.append(f"  - Self-critique: ambiguity={critique.get('ambiguity')} blocks_auto_action={critique.get('blocks_auto_action')}")
+        blast_radius = (action.payload or {}).get("blast_radius", {})
+        if blast_radius:
+            lines.append(f"  - Blast radius: scope={blast_radius.get('scope')} rollback_available={blast_radius.get('rollback_available')}")
+        simulation = (action.payload or {}).get("simulation", {})
+        if simulation:
+            lines.append(f"  - Simulation: ok={simulation.get('ok')} touched={', '.join(str(item) for item in simulation.get('touched_resources', []))}")
         if action.execution_result:
             lines.append(f"  - Execution result: {redact_value(action.execution_result)}")
-    lines.extend(_render_failure_mode_analysis(incident))
+    lines.extend(["", "## Failure modes"])
+    if not incident.actions:
+        lines.append("- No action was proposed; human review is required before remediation.")
+    for action in incident.actions:
+        critique = (action.payload or {}).get("self_critique", {})
+        simulation = (action.payload or {}).get("simulation", {})
+        blast_radius = (action.payload or {}).get("blast_radius", {})
+        reasons = list(action.policy_reasons or [])
+        if critique.get("missing_evidence"):
+            reasons.append("missing evidence: " + ", ".join(str(item) for item in critique["missing_evidence"]))
+        if critique.get("alternate_causes"):
+            reasons.append("alternate hypotheses: " + ", ".join(str(item) for item in critique["alternate_causes"]))
+        if simulation and not simulation.get("ok"):
+            reasons.append("simulation failed before execution")
+        if blast_radius and blast_radius.get("scope") in {"unknown", "prohibited", "global", "tenant"}:
+            reasons.append(f"blast radius {blast_radius.get('scope')} requires human review")
+        if not reasons:
+            reasons.append("No blocking failure mode detected in local/mock evidence.")
+        lines.append(f"- `{action.id}` uncertainty/blocked-action analysis: {redact_text('; '.join(reasons))}")
     lines.extend(["", "## Timeline"])
     for event in incident.timeline:
         lines.append(f"- {event.timestamp.isoformat()} [{event.actor}] {event.event_type}: {redact_text(event.content)}")

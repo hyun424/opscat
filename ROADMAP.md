@@ -78,3 +78,7 @@ P7 should focus on safety/autonomy hardening after the P6 loop exists:
 ## P6 — Beta-grade agentic ops loop
 
 Status: implemented as local/mock beta evidence. See `docs/operations/p6-ticket-roadmap.md`, `docs/agentic-loop.md`, and `docs/release-evidence.md`. P7 candidates: hardened auth, stronger tenant isolation, real provider SDK hardening, and production-grade approval workflows.
+
+## P7 complete
+
+P7 is implemented as a local/mock Agent Reliability & Safety Lab: replay harness, adversarial evals, confidence calibration, self-critique, blast-radius checks, action simulation, incident memory, Night Autopilot v2 gates, failure-mode reporting, reliability dashboard metrics, security review, and release evidence. Auth remains deferred and production unattended-ops claims remain out of scope.

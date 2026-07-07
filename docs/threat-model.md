@@ -63,3 +63,9 @@ The MVP is local/mock-only. Auth remains deferred. It must not claim real produc
 ## P5 Security Review Link
 
 See `docs/security-review-p5.md` for P5-specific Adversarial checks and Residual gaps across connector setup, secret lifecycle, incident import, worker CLI, approval console, Night Autopilot, and self-observability.
+
+## P7 Reliability & Safety Lab Surfaces
+
+P7 adds replay fixtures, adversarial evals, confidence calibration, self-critique, blast-radius analysis, local action simulation, incident memory, Night Autopilot v2 gates, failure-mode reports, and reliability dashboard metrics. These assets are **local/mock** only and keep **auth deferred**.
+
+Additional P7 threats include poisoned logs, malicious runbook text, memory poisoning, overconfident diagnosis, unsafe automation, failed simulation bypass, and false reliability claims. Mitigations are fail-closed replay/eval checks, calibration thresholds, deterministic self-critique, prohibited/unknown blast-radius blocking, simulator preflight, failed-memory warnings, and explicit release docs that reject production unattended-ops claims.

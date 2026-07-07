@@ -99,24 +99,18 @@ class BlastRadiusService:
         )
 
 
-def _scope_from_metadata(value: str) -> BlastRadiusScope:
-    lowered = value.lower()
-    if lowered in {"none", "local incident record"}:
-        return BlastRadiusScope.LOCAL
-    if "worker" in lowered or "service" in lowered or "ticket" in lowered:
-        return BlastRadiusScope.SERVICE
-    if "repository" in lowered or "workspace" in lowered:
-        return BlastRadiusScope.WORKSPACE
-    if "tenant" in lowered:
-        return BlastRadiusScope.TENANT
-    if "global" in lowered or "production" in lowered:
-        return BlastRadiusScope.GLOBAL
-    return BlastRadiusScope.UNKNOWN
-
-
-def _touched_resources(action_type: str, target: str, environment: str) -> tuple[str, ...]:
-    if action_type == "report.generate":
-        return ("local-report",)
-    if action_type == "timeline.add_note":
-        return ("incident-timeline",)
-    return (f"{target}:{environment}",)
+def _normalize_scope(raw: str) -> str:
+    text = raw.lower()
+    if "worker" in text:
+        return "service"
+    if "prohibited" in text or "unbounded" in text:
+        return "prohibited"
+    if "tenant" in text:
+        return "tenant"
+    if "workspace" in text or "repository" in text:
+        return "workspace"
+    if "service" in text or "ticket" in text:
+        return "service"
+    if "local" in text or "incident" in text or "none" in text:
+        return "local"
+    return "unknown"

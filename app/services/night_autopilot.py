@@ -3,7 +3,10 @@ from sqlalchemy.orm import Session
 from app.models import ActionProposal
 from app.models.action import ActionRequest, RiskLevel
 from app.schemas.incidents import MockAlertRequest, NightAutopilotConfig, NightAutopilotResult
+from app.services.action_simulator import ActionSimulator
+from app.services.blast_radius import BlastRadiusEngine
 from app.services.escalation import build_escalation_payload, record_human_escalation
+from app.services.incident_memory import IncidentMemory
 from app.services.incident_service import create_mock_incident, get_incident
 from app.services.policy_engine import NightAutopilotConfig as PolicyNightAutopilotConfig
 from app.services.policy_engine import PolicyContext, PolicyEngine
@@ -26,21 +29,39 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         ),
     )
     db.add(transition_incident(incident, "investigating", actor="night-autopilot", reason="quiet-hours simulation"))
+    action_request = ActionRequest(
+        action_type=config.action_type,
+        target=target,
+        environment=incident.environment,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        incident_id=incident.id,
+        payload={"worker_pool": "default", "mode": "night_autopilot_mock"},
+    )
+    blast_radius = BlastRadiusEngine().evaluate(action_request)
+    simulation = ActionSimulator().simulate(action_request)
+    memory_matches = IncidentMemory().search(
+        service=incident.service,
+        environment=incident.environment,
+        fingerprint=str(incident.alert_payload.get("fingerprint") or f"{incident.service}:queue"),
+        root_cause="Queue worker degradation after broker maintenance",
+        runbook="restart_worker",
+        action_type=config.action_type,
+    )
+    memory_failed_warning = any(match.failed_remediation_warning for match in memory_matches)
     policy = PolicyEngine().evaluate(
-        ActionRequest(
-            action_type=config.action_type,
-            target=target,
-            environment=incident.environment,
-            tenant_id=incident.tenant_id,
-            workspace_id=incident.workspace_id,
-            incident_id=incident.id,
-        ),
+        action_request,
         PolicyContext(
             service=incident.service,
             environment=incident.environment,
             severity=incident.severity,
             tenant_id=incident.tenant_id,
             workspace_id=incident.workspace_id,
+            confidence=0.88,
+            blast_radius_scope=blast_radius.scope,
+            reversible=blast_radius.rollback_available,
+            simulation_status="passed" if simulation.ok else "failed",
+            memory_failed_action_warning=memory_failed_warning,
             night_autopilot=True,
             autopilot=PolicyNightAutopilotConfig(
                 max_automatic_risk=RiskLevel(config.max_automatic_risk),
@@ -64,13 +85,22 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             risk_level=policy.risk_level,
             requires_approval=False,
             rationale="Night Autopilot allowlisted low-risk non-prod worker restart.",
-            payload={"worker_pool": "default", "mode": "night_autopilot_mock"},
             preconditions=["runbook marks restart reversible", "environment is not production"],
             post_checks=["worker heartbeat is healthy", "queue latency decreases"],
             policy_decision=policy.decision,
             policy_reasons=policy.reasons,
             confidence=0.82,
             status="approved",
+            payload={
+                "worker_pool": "default",
+                "mode": "night_autopilot_mock",
+                "blast_radius": blast_radius.__dict__,
+                "simulation": simulation.to_dict(),
+                "memory_matches": [
+                    {"incident_id": match.record.incident_id, "similarity": match.similarity, "failed_remediation_warning": match.failed_remediation_warning}
+                    for match in memory_matches
+                ],
+            },
         )
         db.add(action)
         db.flush()

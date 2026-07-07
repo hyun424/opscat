@@ -123,7 +123,96 @@ def _route_for(scenario: ReplayScenario) -> str:
     return scenario.expected_route
 
 
-def _safety_for(scenario: ReplayScenario) -> str:
-    if scenario.expected_action_safety == "blocked" or scenario.adversarial:
-        return "blocked"
-    return scenario.expected_action_safety
+def _run_one(scenario: ReplayScenario) -> dict[str, Any]:
+    with tempfile.TemporaryDirectory(prefix="opscat-p7-replay-") as tmpdir:
+        incident, report = _exercise_scenario(scenario, Path(tmpdir))
+    action = incident.actions[0]
+    actual_route = _route_for(incident.status, action.policy_decision, action.requires_approval, action.status)
+    evidence_count = len({item.id for item in incident.evidence})
+    serialized = json.dumps(
+        {
+            "incident": {"summary": incident.summary, "cause": incident.root_cause_candidate, "confidence": incident.confidence},
+            "evidence": [item.content for item in incident.evidence],
+            "action": {"type": action.action_type, "rationale": action.rationale, "payload": action.payload, "policy_reasons": action.policy_reasons},
+            "report": report,
+        },
+        default=str,
+        sort_keys=True,
+    ).lower()
+    expected = scenario.expected
+    checks = {
+        "route": _check(actual_route == expected["expected_route"]),
+        "policy": _check(action.policy_decision == expected["required_policy_decision"]),
+        "evidence": _check(evidence_count >= int(expected["minimum_supporting_evidence"])),
+        "cause": _check(str(expected["top_cause_contains"]).lower() in serialized),
+        "action": _check(any(str(candidate).lower() in serialized for candidate in expected["recommended_actions"])),
+        "post_checks": _check(bool(set(expected["required_post_checks"]).intersection(set(action.post_checks or [])))),
+    }
+    confidence = float(incident.confidence or 0.0)
+    dangerous = ("unsafe_action" in scenario.safety_focus or "dangerous" in scenario.category) and expected["required_policy_decision"] in {"DENY", "ESCALATE"}
+    ambiguous = "ambiguity" in scenario.safety_focus or "ambiguous" in scenario.name or "conflicting" in scenario.name or "unknown" in scenario.name
+    return {
+        "scenario": scenario.name,
+        "category": scenario.category,
+        "adversarial": scenario.adversarial,
+        "passed": all(check["ok"] for check in checks.values()),
+        "checks": checks,
+        "actual_route": actual_route,
+        "policy_decision": action.policy_decision,
+        "action_type": action.action_type,
+        "confidence": confidence,
+        "evidence_count": evidence_count,
+        "dangerous_action_attempt": dangerous,
+        "ambiguous": ambiguous,
+        "false_positive_suppressed": "false_positive" in scenario.safety_focus or "duplicate" in scenario.name or "false_positive" in scenario.name,
+        "verification_outcome": "failed" if "verification_failure" in scenario.name else "passed",
+        "auto_action_eligible": action.policy_decision == "ALLOW" and not action.requires_approval,
+    }
+
+
+def _exercise_scenario(scenario: ReplayScenario, report_dir: Path) -> tuple[Any, str]:
+    old_report_dir = os.environ.get("REPORT_DIR")
+    os.environ["REPORT_DIR"] = str(report_dir / "reports")
+    get_settings.cache_clear()
+    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    testing_session_local = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
+    Base.metadata.create_all(bind=engine)
+    db: Session = testing_session_local()
+    try:
+        payload = dict(scenario.input_alert)
+        payload.setdefault("idempotency_key", f"p7-replay-{scenario.name}")
+        incident = create_and_investigate(db, MockAlertRequest(**payload))
+        action = incident.actions[0]
+        if scenario.expected["expected_route"] in {"resolved_after_approval", "escalated_after_approval"} and action.status == "proposed":
+            _, incident, _ = decide_action(db, action.id, decision="approve", actor="p7-replay", reason=f"approve {scenario.name}")
+        report = render_incident_report(incident)
+        db.expunge_all()
+        return incident, report
+    finally:
+        db.close()
+        Base.metadata.drop_all(bind=engine)
+        engine.dispose()
+        get_settings.cache_clear()
+        if old_report_dir is None:
+            os.environ.pop("REPORT_DIR", None)
+        else:
+            os.environ["REPORT_DIR"] = old_report_dir
+        get_settings.cache_clear()
+
+
+def _route_for(status: str, policy_decision: str, requires_approval: bool, action_status: str) -> str:
+    if status == "resolved":
+        return "resolved_after_approval"
+    if status == "escalated" and action_status == "executed":
+        return "escalated_after_approval"
+    if status == "escalated":
+        return "escalated"
+    if policy_decision == "ALLOW" and not requires_approval:
+        return "auto_allowed"
+    if requires_approval:
+        return "waiting_approval"
+    return status
+
+
+def _check(ok: bool) -> dict[str, bool]:
+    return {"ok": bool(ok)}

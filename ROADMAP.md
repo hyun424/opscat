@@ -113,3 +113,7 @@ P11 active scope: Incident Corpus Expansion before LLM judgment. P11 focuses on 
 ## P11 implemented
 
 P11 implemented as local/mock Incident Corpus Expansion evidence. P11 covers the incident archetype catalog, deterministic corpus generation, corpus audit metrics, corpus pack writer, benchmark smoke selector, corpus report CLI, expanded fixture pack, verification integration, and release evidence. See `docs/operations/p11-ticket-roadmap.md`, `docs/operations/p11-final-summary.md`, and `docs/release-evidence.md`. The boundary remains no-auth/local-mock: P11 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, external dataset downloads during normal verification, or unattended production-operation claims.
+
+## P12 active
+
+P12 active scope: Real Dataset Evaluation Harness before LLM judgment. P12 focuses on external dataset source manifests, local-path import contracts, LogHub/NAB/AIOps-shaped adapters, label taxonomy mapping, tiny fixture samples, dataset conversion CLI, real-dataset-shaped evaluation runner, reports/baselines, verification integration, and release evidence. See `docs/operations/p12-ticket-roadmap.md` and `docs/tickets/p12/README.md`. The boundary remains no-auth/local-mock: P12 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, external dataset downloads during normal verification, or unattended production-operation claims.

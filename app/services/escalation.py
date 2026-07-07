@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 from app.models import ActionProposal, Incident
 from app.models.action import PolicyDecision, PolicyEvaluation
 from app.services.audit_service import record_audit_event
+from app.services.human_question_service import generate_human_questions, questions_to_dicts
 from app.services.redaction import redact_value
 from app.services.state_machine import InvalidStateTransition, transition_incident
 from app.services.timeline_service import add_timeline_event
@@ -124,6 +125,14 @@ def build_escalation_payload(
         )
 
     policy_reasons = policy.reasons if policy is not None else (action.policy_reasons if action is not None else [])
+    human_questions = questions_to_dicts(
+        generate_human_questions(
+            incident,
+            missing_evidence=triggers or [trigger],
+            policy_reasons=policy_reasons,
+            simulation=verification,
+        )
+    )
     return {
         "wake_human": True,
         "escalation_decision": "wake_human",
@@ -148,6 +157,7 @@ def build_escalation_payload(
         "evidence_collected": evidence,
         "actions_already_taken": actions_taken,
         "actions_blocked": blocked_actions,
+        "human_questions": human_questions,
         "verification": verification,
         "recommended_next_action": recommended_next_action or _recommended_next_action(trigger, action),
         "links": {

@@ -118,11 +118,15 @@ class PolicyEngine:
         context = context or PolicyContext(environment=request.environment)
         action = self.risk_engine.get_action(request.action_type)
         if action is None:
+            blast_radius = self.blast_radius_service.evaluate(request)
+            simulation = self.action_simulator.simulate(request)
             return PolicyEvaluation(
                 decision=PolicyDecision.ESCALATE,
                 risk_level=RiskLevel.HIGH,
                 requires_approval=True,
                 reason=f"Unknown action {request.action_type!r}; escalate for manual review.",
+                blast_radius=blast_radius,
+                simulation=simulation,
             )
 
         risk_level = self.risk_engine.classify(
@@ -203,6 +207,8 @@ class PolicyEngine:
                     action=action,
                     preconditions=action.required_preconditions,
                     post_checks=action.post_checks,
+                    blast_radius=blast_radius,
+                    simulation=simulation,
                 )
 
         if action.default_requires_approval or request.approved:
@@ -215,6 +221,8 @@ class PolicyEngine:
                     action=action,
                     preconditions=action.required_preconditions,
                     post_checks=action.post_checks,
+                    blast_radius=blast_radius,
+                    simulation=simulation,
                 )
             return PolicyEvaluation(
                 decision=PolicyDecision.REQUIRE_APPROVAL,

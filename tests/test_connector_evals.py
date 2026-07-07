@@ -8,7 +8,6 @@ from typing import Any
 
 from scripts.run_connector_evals import run_connector_evals
 
-
 REQUIRED_SCENARIOS = {
     "fake_read_success",
     "missing_credential_failed_closed",

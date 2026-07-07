@@ -37,6 +37,10 @@ section "Golden eval runner"
 "${UV_DEV[@]}" python scripts/run_evals.py --output-json "$VERIFY_TMPDIR/opscat-evals.json" --output-md "$VERIFY_TMPDIR/opscat-evals.md" >/tmp/opscat-evals-latest.md
 printf 'Wrote /tmp/opscat-evals-latest.md and %s/opscat-evals.json\n' "$VERIFY_TMPDIR"
 
+section "Connector eval runner"
+"${UV_DEV[@]}" python scripts/run_connector_evals.py --output-json "$VERIFY_TMPDIR/opscat-connector-evals.json" --output-md "$VERIFY_TMPDIR/opscat-connector-evals.md" >/tmp/opscat-connector-evals-latest.md
+printf 'Wrote /tmp/opscat-connector-evals-latest.md and %s/opscat-connector-evals.json\n' "$VERIFY_TMPDIR"
+
 section "Local demo smoke"
 "${UV_DEV[@]}" python scripts/demo.py
 

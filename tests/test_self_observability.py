@@ -60,7 +60,7 @@ def test_metrics_endpoint_reports_scoped_agent_operations_without_secrets(client
             actor=principal.email,
             incident_id=investigated.json()["id"],
             idempotency_key="metrics-missing-secret",
-            payload={"project": "checkout-api", "Authorization": "fixture-token"},
+            payload={"provider_mode": "real", "project": "checkout-api", "Authorization": "fixture-token"},
         ),
     )
     db_session.commit()

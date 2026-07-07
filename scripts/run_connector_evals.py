@@ -319,7 +319,7 @@ def _secret_lifecycle_setup_failure(db: Session) -> ScenarioResult:
             actor=admin.email,
             incident_id=incident.id,
             idempotency_key="eval-secret-setup-failure",
-            payload={"project": "checkout-api"},
+            payload={"provider_mode": "real", "project": "checkout-api"},
         ),
     )
     actual = _failure_actual(db, incident.id) | {
@@ -458,7 +458,7 @@ def _missing_credential_failed_closed(db: Session) -> ScenarioResult:
             actor=principal.email,
             incident_id=incident.id,
             idempotency_key="eval-missing-credential",
-            payload={"project": "checkout-api"},
+            payload={"provider_mode": "real", "project": "checkout-api"},
         ),
     )
     actual = _failure_actual(db, incident.id) | {"ok": result.ok, "error": result.error}

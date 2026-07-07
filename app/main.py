@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api import approvals, auth, health, incidents, mock_alerts, night_autopilot, operator
+from app.api import approvals, auth, connectors, health, incidents, mock_alerts, night_autopilot, operator
 from app.db import init_db
 
 
@@ -23,6 +23,7 @@ app = FastAPI(
 for source_router in (
     health.router,
     auth.router,
+    connectors.router,
     mock_alerts.router,
     incidents.router,
     approvals.router,

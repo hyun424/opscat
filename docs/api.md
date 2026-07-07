@@ -119,10 +119,16 @@ curl -s -X POST http://localhost:8000/night-autopilot/simulate \
 
 ## Connector catalog
 
-Connector catalog endpoints are a P5 planned surface. Until implemented, connector capability evidence is available through local code, docs, and:
+### GET /connectors
+
+Preview connector capabilities, minimum roles, required secret names, risk levels, and dry-run-only write surfaces before configuring any secret.
 
 ```bash
-python scripts/run_connector_evals.py --output-json /tmp/opscat-connector-evals.json --output-md /tmp/opscat-connector-evals.md
+curl -s http://localhost:8000/connectors \
+  -H 'X-OpsCat-Actor: demo-user@opscat.local' \
+  -H 'X-OpsCat-Tenant: demo' \
+  -H 'X-OpsCat-Workspace: demo' \
+  -H 'X-OpsCat-Role: admin'
 ```
 
-Future `GET /connectors` docs must keep the same local-header demo identity and no-secret examples.
+See [`docs/connector-permissions.md`](connector-permissions.md).

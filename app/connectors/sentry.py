@@ -174,6 +174,14 @@ class SentryReadOnlyConnector:
             required_role="viewer",
             required_secret_name="sentry.token",
         ),
+        "health.check": ConnectorCapability(
+            name="health.check",
+            description="Check Sentry connector setup without leaking credentials.",
+            risk_level="read_only",
+            read_only=True,
+            required_role="viewer",
+            required_secret_name=None,
+        ),
     }
 
     def __init__(self, transport: SentryTransport | Callable[[str, dict[str, Any]], SentryProviderResponse] | None = None) -> None:

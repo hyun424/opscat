@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from html import escape
 from typing import Any
 
@@ -272,8 +273,8 @@ def _sequence(value: object) -> list[object]:
     return list(value) if isinstance(value, list) else []
 
 
-def _html_items(values: object) -> str:
-    items = list(values) if not isinstance(values, list) else values
+def _html_items(values: Iterable[object]) -> str:
+    items = list(values)
     if not items:
         return "<li>None recorded</li>"
     return "".join(f"<li>{escape(str(item))}</li>" for item in items)

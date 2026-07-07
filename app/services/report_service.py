@@ -1,4 +1,6 @@
+from collections.abc import Mapping
 from pathlib import Path
+from typing import Any
 
 from sqlalchemy.orm import Session
 
@@ -93,9 +95,9 @@ def _payload_section(payload: dict[str, object] | None, key: str) -> dict[str, o
 
 
 def _render_war_room_markdown(war_room: dict[str, object]) -> list[str]:
-    reliability = war_room.get("reliability_score") if isinstance(war_room.get("reliability_score"), dict) else {}
-    final_decision = war_room.get("final_decision") if isinstance(war_room.get("final_decision"), dict) else {}
-    impact = war_room.get("impact") if isinstance(war_room.get("impact"), dict) else {}
+    reliability = _as_dict(war_room.get("reliability_score"))
+    final_decision = _as_dict(war_room.get("final_decision"))
+    impact = _as_dict(war_room.get("impact"))
     lines = [
         f"# War Room Report: {war_room.get('incident_id', 'unknown')}",
         "",
@@ -112,18 +114,27 @@ def _render_war_room_markdown(war_room: dict[str, object]) -> list[str]:
         "## Timeline",
     ]
     for item in _as_list(war_room.get("timeline")):
-        if isinstance(item, dict):
-            lines.append(f"- {redact_text(str(item.get('timestamp', '')))} {redact_text(str(item.get('event_type', 'event')))}: {redact_text(str(item.get('content', '')))}")
+        row = _as_dict(item)
+        if row:
+            timestamp = redact_text(str(row.get("timestamp", "")))
+            event_type = redact_text(str(row.get("event_type", "event")))
+            content = redact_text(str(row.get("content", "")))
+            lines.append(f"- {timestamp} {event_type}: {content}")
     lines.extend(["", "## Evidence"])
     for item in _as_list(war_room.get("evidence")):
-        if isinstance(item, dict):
-            lines.append(f"- `{redact_text(str(item.get('id', '')))}` {redact_text(str(item.get('type', 'evidence')))}: {redact_text(str(item.get('content', '')))}")
+        row = _as_dict(item)
+        if row:
+            evidence_id = redact_text(str(row.get("id", "")))
+            evidence_type = redact_text(str(row.get("type", "evidence")))
+            content = redact_text(str(row.get("content", "")))
+            lines.append(f"- `{evidence_id}` {evidence_type}: {content}")
     lines.extend(["", "## Hypotheses"])
     for item in _as_list(war_room.get("hypotheses")):
-        if isinstance(item, dict):
-            title = redact_text(str(item.get("title", item.get("hypothesis", "Unknown"))) )
-            confidence = redact_text(str(item.get("confidence", "unknown")))
-            status = redact_text(str(item.get("status", "unknown")))
+        row = _as_dict(item)
+        if row:
+            title = redact_text(str(row.get("title", row.get("hypothesis", "Unknown"))))
+            confidence = redact_text(str(row.get("confidence", "unknown")))
+            status = redact_text(str(row.get("status", "unknown")))
             lines.append(f"- {title} confidence={confidence} status={status}")
     lines.extend([
         "",
@@ -134,9 +145,13 @@ def _render_war_room_markdown(war_room: dict[str, object]) -> list[str]:
         "## Policy Gates",
     ])
     for item in _as_list(war_room.get("policy_gates")):
-        if isinstance(item, dict):
-            lines.append(f"- {redact_text(str(item.get('name', 'gate')))}: {redact_text(str(item.get('status', 'unknown')))} — {redact_text(str(item.get('reason', '')))}")
-    critique = war_room.get("runbook_critique") if isinstance(war_room.get("runbook_critique"), dict) else {}
+        row = _as_dict(item)
+        if row:
+            name = redact_text(str(row.get("name", "gate")))
+            status = redact_text(str(row.get("status", "unknown")))
+            reason = redact_text(str(row.get("reason", "")))
+            lines.append(f"- {name}: {status} — {reason}")
+    critique = _as_dict(war_room.get("runbook_critique"))
     lines.extend([
         "",
         "## Runbook Critique",
@@ -146,8 +161,11 @@ def _render_war_room_markdown(war_room: dict[str, object]) -> list[str]:
         "## Human Questions",
     ])
     for item in _as_list(war_room.get("human_questions")):
-        if isinstance(item, dict):
-            lines.append(f"- {redact_text(str(item.get('question', '')))} Why: {redact_text(str(item.get('why_it_matters', '')))}")
+        row = _as_dict(item)
+        if row:
+            question = redact_text(str(row.get("question", "")))
+            why = redact_text(str(row.get("why_it_matters", "")))
+            lines.append(f"- {question} Why: {why}")
     lines.extend([
         "",
         "## Final Decision",
@@ -158,3 +176,7 @@ def _render_war_room_markdown(war_room: dict[str, object]) -> list[str]:
 
 def _as_list(value: object) -> list[object]:
     return list(value) if isinstance(value, list) else []
+
+
+def _as_dict(value: object) -> dict[str, Any]:
+    return dict(value) if isinstance(value, Mapping) else {}

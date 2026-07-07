@@ -79,7 +79,7 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
             actor="integration",
             evidence_ids=evidence_ids,
             status=status,
-            details=_redacted_details({"source": _get(incident, "source", ""), "severity": severity, "service": service, "environment": environment}),
+            details=_redacted_details({"source": _get(incident, "source", ""), "severity": severity, "service": service, "environment": environment, "timeline": _timeline_summaries(timeline)}),
         ),
         DecisionTraceEntry(
             stage="correlate",
@@ -104,7 +104,7 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
             evidence_ids=evidence_ids,
             confidence=confidence,
             status=status,
-            details=_redacted_details({"confidence": confidence, "supporting_evidence_ids": evidence_ids}),
+            details=_redacted_details({"confidence": confidence, "supporting_evidence_ids": evidence_ids, "evidence": _evidence_summaries(evidence)}),
         ),
         DecisionTraceEntry(
             stage="plan",
@@ -168,6 +168,27 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
             status=status,
             details=_redacted_details({"incident_status": status, "post_checks": _latest_post_check(primary_action)}),
         ),
+    ]
+
+
+def _timeline_summaries(timeline: list[Any]) -> list[dict[str, Any]]:
+    return [
+        {
+            "event_type": _get(event, "event_type", ""),
+            "content": _get(event, "content", ""),
+        }
+        for event in timeline[:8]
+    ]
+
+
+def _evidence_summaries(evidence: list[Any]) -> list[dict[str, Any]]:
+    return [
+        {
+            "id": _get(item, "id", ""),
+            "type": _get(item, "type", ""),
+            "content": _get(item, "content", ""),
+        }
+        for item in evidence[:8]
     ]
 
 

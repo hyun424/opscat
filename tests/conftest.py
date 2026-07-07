@@ -40,14 +40,14 @@ def app_module() -> Any:
     try:
         return importlib.import_module("app.main")
     except ModuleNotFoundError as exc:
-        pytest.skip(f"FastAPI app scaffold is not available yet: {exc}")
+        pytest.fail(f"FastAPI app scaffold must be importable: {exc}", pytrace=False)
 
 
 @pytest.fixture(scope="session")
 def app(app_module: Any) -> Any:
     application = getattr(app_module, "app", None)
     if application is None:
-        pytest.skip("app.main does not expose a FastAPI instance named 'app' yet")
+        pytest.fail("app.main must expose a FastAPI instance named 'app'", pytrace=False)
     return application
 
 

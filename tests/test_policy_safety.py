@@ -16,7 +16,7 @@ def policy_module() -> Any:
             return importlib.import_module(name)
         except ModuleNotFoundError:
             continue
-    pytest.skip("policy engine module is not implemented yet")
+    pytest.fail("policy engine module must be implemented", pytrace=False)
 
 
 def _policy_decision(policy_module: Any, action: dict[str, Any]) -> str:
@@ -25,7 +25,7 @@ def _policy_decision(policy_module: Any, action: dict[str, Any]) -> str:
     elif hasattr(policy_module, "PolicyEngine"):
         result = policy_module.PolicyEngine().evaluate(action)
     else:
-        pytest.skip("policy module does not expose evaluate_policy or PolicyEngine.evaluate yet")
+        pytest.fail("policy module must expose evaluate_policy or PolicyEngine.evaluate", pytrace=False)
 
     if isinstance(result, str):
         return result

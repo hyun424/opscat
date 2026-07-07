@@ -161,6 +161,19 @@ class PolicyEngine:
                 simulation=simulation,
             )
 
+        if not blast_radius.allowed or (not action.is_read_only and not simulation.allowed):
+            return PolicyEvaluation(
+                decision=PolicyDecision.DENY,
+                risk_level=RiskLevel.PROHIBITED if blast_radius.level.value == "prohibited" else RiskLevel.HIGH,
+                requires_approval=False,
+                reason=f"Action denied because blast radius/simulation is not bounded: {blast_radius.reason}",
+                action=action,
+                preconditions=action.required_preconditions,
+                post_checks=action.post_checks,
+                blast_radius=blast_radius,
+                simulation=simulation,
+            )
+
         if action.allowed_environments and request.environment not in action.allowed_environments and not action.is_read_only:
             return PolicyEvaluation(
                 decision=PolicyDecision.DENY,

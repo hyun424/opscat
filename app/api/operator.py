@@ -13,6 +13,7 @@ from app.db import get_db
 from app.models import ActionProposal, Incident
 from app.security.dependencies import get_current_principal
 from app.services.authorization import AuthorizationError, require_same_scope
+from app.services.decision_trace_service import DecisionTraceEntry, build_decision_trace
 from app.services.identity_service import Principal
 from app.services.incident_service import get_incident
 
@@ -162,12 +163,7 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
 
     evidence = "".join(f"<li><code>{escape(item.id)}</code> {escape(item.type)} — {escape(item.content)}</li>" for item in incident.evidence)
     timeline = "".join(f"<li>{escape(event.event_type)} — {escape(event.content)}</li>" for event in incident.timeline)
-    trace_items = [item for item in incident.evidence if item.type == "decision_trace"]
-    trace = "".join(
-        f"<li><strong>{escape(str(item.evidence_metadata.get('stage', 'unknown')))}</strong> — {escape(str(item.evidence_metadata.get('decision') or item.content))}</li>"
-        for item in trace_items
-    )
-    root_cause = escape(incident.root_cause_candidate or "No root-cause candidate recorded")
+    decision_trace = _decision_trace_table(build_decision_trace(incident))
     action_blocks = []
     for action in incident.actions:
         attempts = "".join(
@@ -193,12 +189,7 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
 <h2>Incident {escape(incident.id)}</h2>
 <p>Status <span class="pill">{escape(incident.status)}</span> Service <code>{escape(incident.service)}</code> Severity <code>{escape(incident.severity)}</code></p>
 <p>{escape(incident.summary or '')}</p>
-<section data-testid="agentic-summary">
-<h2>Agentic loop</h2>
-<p>Observe → correlate → diagnose → plan → risk → act → verify</p>
-<p>Root cause candidate: <strong>{root_cause}</strong> confidence <code>{escape(str(incident.confidence))}</code></p>
-<ul data-testid="agentic-stage-list">{trace}</ul>
-</section>
+<h2>Decision trace</h2>{decision_trace}
 <h2>Evidence</h2><ul data-testid="evidence-list">{evidence}</ul>
 <h2>Timeline</h2><ul data-testid="timeline-list">{timeline}</ul>
 <h2>Actions</h2>{''.join(action_blocks)}
@@ -206,6 +197,32 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
 </main>
 """
     return _page(f"OpsCat Incident {incident.id}", body)
+
+
+def _decision_trace_table(entries: list[DecisionTraceEntry]) -> str:
+    rows = []
+    for entry in entries:
+        details = _json_block(entry.details)
+        rows.append(
+            '<tr data-testid="decision-trace-row" data-stage="'
+            f"{escape(entry.stage)}\">"
+            f"<td><code>{escape(entry.stage)}</code></td>"
+            f"<td>{escape(entry.title)}</td>"
+            f"<td>{escape(entry.summary)}</td>"
+            f"<td>{escape(entry.actor)}</td>"
+            f"<td>{escape(entry.status or '')}</td>"
+            f"<td>{escape(entry.policy_decision or '')}</td>"
+            f"<td>{escape(entry.risk_level or '')}</td>"
+            f"<td><code>{escape(details)}</code></td>"
+            "</tr>"
+        )
+    return (
+        '<table data-testid="decision-trace"><thead><tr>'
+        "<th>Stage</th><th>Decision</th><th>Summary</th><th>Actor</th><th>Status</th><th>Policy</th><th>Risk</th><th>Details</th>"
+        "</tr></thead><tbody>"
+        + "".join(rows)
+        + "</tbody></table>"
+    )
 
 
 def _list_items(values: list[str]) -> str:

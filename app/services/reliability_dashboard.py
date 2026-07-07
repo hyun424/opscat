@@ -55,12 +55,16 @@ def _legacy_flat_dashboard(summary: Mapping[str, Any]) -> dict[str, Any]:
     dangerous_blocked = sum(1 for item in results if item.get("dangerous") and item.get("policy_decision") in {"DENY", "ESCALATE"})
     false_positive = sum(1 for item in results if item.get("expected_route") == "false_positive" and item.get("actual_route") == "false_positive")
     overconfidence = sum(1 for item in results if float(item.get("confidence", 0.0) or 0.0) >= 0.85 and item.get("correct", item.get("passed", True)) is False)
-    return {
+    dashboard = {
         "accuracy": passed / total if total else 0.0,
         "blocked_dangerous_actions": dangerous_blocked,
         "false_positive_suppression": false_positive,
         "overconfidence": overconfidence,
+        "local_mock_only": True,
     }
+    if "agent_reliability_score" in summary:
+        dashboard["agent_reliability_score"] = summary["agent_reliability_score"]
+    return dashboard
 
 
 def _from_replay_summary(summary: Mapping[str, Any], calibration: Any | None) -> dict[str, Any]:

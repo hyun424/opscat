@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict
+from dataclasses import asdict, is_dataclass
 
 from app.models.action import (
     ActionExecutionResult,
@@ -115,7 +115,7 @@ class ActionService:
         return result
 
     def serialize_record(self, record: ApprovalRecord) -> dict:
-        data = asdict(record)
+        data = _to_plain(record)
         data["status"] = record.status.value
         data["evaluation"]["decision"] = record.evaluation.decision.value
         data["evaluation"]["risk_level"] = record.evaluation.risk_level.value
@@ -130,6 +130,8 @@ class ActionService:
             "policy_route": record.evaluation.route.value,
             "preconditions": list(record.evaluation.preconditions),
             "post_checks": list(record.evaluation.post_checks),
+            "blast_radius": _to_plain(record.evaluation.blast_radius),
+            "simulation": _to_plain(record.evaluation.simulation),
         }
         if record.evaluation.action:
             data["evaluation"]["action"]["base_risk"] = record.evaluation.action.base_risk.value
@@ -140,3 +142,15 @@ class ActionService:
             return self.approvals[approval_id]
         except KeyError as exc:
             raise KeyError(f"Unknown approval id {approval_id!r}.") from exc
+
+
+def _to_plain(value):
+    if is_dataclass(value):
+        return {key: _to_plain(item) for key, item in asdict(value).items()}
+    if isinstance(value, dict):
+        return {key: _to_plain(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_to_plain(item) for item in value]
+    if hasattr(value, "value"):
+        return value.value
+    return value

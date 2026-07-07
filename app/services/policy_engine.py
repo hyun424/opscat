@@ -8,6 +8,8 @@ from datetime import time
 from typing import Any
 
 from app.models.action import ActionRequest, PolicyDecision, PolicyEvaluation, RiskLevel
+from app.services.action_simulator import ActionSimulator
+from app.services.blast_radius import BlastRadiusService
 from app.services.risk_engine import RiskEngine
 
 
@@ -102,6 +104,8 @@ class PolicyContext:
 class PolicyEngine:
     def __init__(self, risk_engine: RiskEngine | None = None) -> None:
         self.risk_engine = risk_engine or RiskEngine()
+        self.blast_radius_service = BlastRadiusService(self.risk_engine)
+        self.action_simulator = ActionSimulator(self.risk_engine, self.blast_radius_service)
 
     def evaluate(self, request: ActionRequest | str, context: PolicyContext | None = None) -> PolicyEvaluation:
         if isinstance(request, str):
@@ -125,6 +129,8 @@ class PolicyEngine:
             request.action_type,
             {**dict(request.payload), "environment": request.environment},
         )
+        blast_radius = self.blast_radius_service.evaluate(request)
+        simulation = self.action_simulator.simulate(request)
         if risk_level == RiskLevel.PROHIBITED or action.prohibited_reason:
             return PolicyEvaluation(
                 decision=PolicyDecision.DENY,
@@ -134,6 +140,21 @@ class PolicyEngine:
                 action=action,
                 preconditions=action.required_preconditions,
                 post_checks=action.post_checks,
+                blast_radius=blast_radius,
+                simulation=simulation,
+            )
+
+        if not blast_radius.allowed or (not action.is_read_only and not simulation.allowed):
+            return PolicyEvaluation(
+                decision=PolicyDecision.DENY,
+                risk_level=RiskLevel.PROHIBITED if blast_radius.level.value == "prohibited" else RiskLevel.HIGH,
+                requires_approval=False,
+                reason=f"Action denied because blast radius/simulation is not bounded: {blast_radius.reason}",
+                action=action,
+                preconditions=action.required_preconditions,
+                post_checks=action.post_checks,
+                blast_radius=blast_radius,
+                simulation=simulation,
             )
 
         if action.allowed_environments and request.environment not in action.allowed_environments and not action.is_read_only:
@@ -145,6 +166,8 @@ class PolicyEngine:
                 action=action,
                 preconditions=action.required_preconditions,
                 post_checks=action.post_checks,
+                blast_radius=blast_radius,
+                simulation=simulation,
             )
 
         effective_capabilities = context.capabilities or default_capabilities(
@@ -165,6 +188,8 @@ class PolicyEngine:
                 missing_capabilities=missing,
                 preconditions=action.required_preconditions,
                 post_checks=action.post_checks,
+                blast_radius=blast_radius,
+                simulation=simulation,
             )
 
         if context.autopilot_enabled():
@@ -199,6 +224,8 @@ class PolicyEngine:
                 action=action,
                 preconditions=action.required_preconditions,
                 post_checks=action.post_checks,
+                blast_radius=blast_radius,
+                simulation=simulation,
             )
 
         return PolicyEvaluation(
@@ -209,6 +236,8 @@ class PolicyEngine:
             action=action,
             preconditions=action.required_preconditions,
             post_checks=action.post_checks,
+            blast_radius=blast_radius,
+            simulation=simulation,
         )
 
     def _evaluate_night_autopilot(

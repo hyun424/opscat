@@ -1,125 +1,138 @@
-"""Deterministic pre-execution simulator for local/mock OpsCat actions."""
+"""Deterministic dry-run simulator for safe local/mock actions."""
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass
+from enum import StrEnum
 from typing import Any
 
 from app.models.action import ActionRequest
-from app.services.blast_radius import BlastRadiusEngine
+from app.services.blast_radius import BlastRadiusResult, BlastRadiusService
+from app.services.risk_engine import RiskEngine
+
+
+class SimulationStatus(StrEnum):
+    PASS = "pass"
+    BLOCKED = "blocked"
+    ESCALATE = "escalate"
 
 
 @dataclass(frozen=True)
 class SimulationResult:
-    success: bool
+    status: SimulationStatus
     action_type: str
-    touched_resources: list[str]
     expected_effect: str
+    touched_resources: tuple[str, ...]
     rollback_path: str | None
-    precondition_gaps: list[str]
-    residual_risks: list[str]
-    blast_radius: dict[str, object]
+    precondition_gaps: tuple[str, ...]
+    residual_risks: tuple[str, ...]
+    blast_radius: BlastRadiusResult
+    allowed: bool
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        data = asdict(self)
+        data["status"] = self.status.value
+        data["touched_resources"] = list(self.touched_resources)
+        data["precondition_gaps"] = list(self.precondition_gaps)
+        data["residual_risks"] = list(self.residual_risks)
+        data["blast_radius"] = self.blast_radius.to_dict()
+        return data
 
 
 class ActionSimulator:
-    def __init__(self, blast_radius: BlastRadiusEngine | None = None) -> None:
-        self.blast_radius = blast_radius or BlastRadiusEngine()
+    def __init__(self, risk_engine: RiskEngine | None = None, blast_radius_service: BlastRadiusService | None = None) -> None:
+        self.risk_engine = risk_engine or RiskEngine()
+        self.blast_radius_service = blast_radius_service or BlastRadiusService(self.risk_engine)
 
     def simulate(self, request: ActionRequest) -> SimulationResult:
-        blast = self.blast_radius.classify(request)
-        if blast.blocked:
-            return SimulationResult(False, request.action_type, [], "blocked before execution", None, ["bounded simulation unavailable"], blast.reasons, blast.to_dict())
-        resources = _resources_for(request)
-        gaps = _precondition_gaps(request)
-        success = bool(resources) and not gaps
+        action = self.risk_engine.get_action(request.action_type)
+        blast_radius = self.blast_radius_service.evaluate(request)
+        if action is None:
+            return SimulationResult(
+                status=SimulationStatus.ESCALATE,
+                action_type=request.action_type,
+                expected_effect="Unknown action cannot be simulated safely.",
+                touched_resources=blast_radius.touched_resources,
+                rollback_path=None,
+                precondition_gaps=("registered_action",),
+                residual_risks=("unknown_action", "manual_review_required"),
+                blast_radius=blast_radius,
+                allowed=False,
+            )
+        explicit_gaps = _explicit_precondition_gaps(request.payload)
+        if not blast_radius.allowed:
+            return SimulationResult(
+                status=SimulationStatus.BLOCKED,
+                action_type=request.action_type,
+                expected_effect="Simulation blocked because blast radius is not bounded.",
+                touched_resources=blast_radius.touched_resources,
+                rollback_path=None,
+                precondition_gaps=tuple(explicit_gaps or ("bounded_blast_radius",)),
+                residual_risks=(blast_radius.reason,),
+                blast_radius=blast_radius,
+                allowed=False,
+            )
+        if explicit_gaps:
+            return SimulationResult(
+                status=SimulationStatus.BLOCKED,
+                action_type=request.action_type,
+                expected_effect="Simulation blocked by missing preconditions.",
+                touched_resources=blast_radius.touched_resources,
+                rollback_path=_rollback_path(request.action_type, blast_radius.rollback_available),
+                precondition_gaps=explicit_gaps,
+                residual_risks=("missing_preconditions",),
+                blast_radius=blast_radius,
+                allowed=False,
+            )
         return SimulationResult(
-            success=success,
+            status=SimulationStatus.PASS,
             action_type=request.action_type,
-            touched_resources=resources,
             expected_effect=_expected_effect(request.action_type),
-            rollback_path=_rollback_path(request.action_type) if blast.rollback_available else None,
-            precondition_gaps=gaps,
-            residual_risks=["mock-only effect; production integrations remain disabled", *([] if blast.scope in {"local", "service"} else [f"scope requires review: {blast.scope}"])],
-            blast_radius=blast.to_dict(),
+            touched_resources=blast_radius.touched_resources,
+            rollback_path=_rollback_path(request.action_type, blast_radius.rollback_available),
+            precondition_gaps=(),
+            residual_risks=_residual_risks(request.action_type),
+            blast_radius=blast_radius,
+            allowed=True,
         )
 
-    def _report(self, request: ActionRequest) -> SimulationResult:
-        return SimulationResult(
-            request.action_type,
-            True,
-            (f"local report for {request.incident_id or request.target}",),
-            "write local Markdown/JSON report",
-            "delete generated local report artifact",
-            (),
-            ("report may omit newly collected evidence",),
-        )
 
-    def _timeline(self, request: ActionRequest) -> SimulationResult:
-        return SimulationResult(
-            request.action_type,
-            True,
-            (f"local incident timeline {request.incident_id or request.target}",),
-            "append local timeline note",
-            "append corrective note",
-            (),
-            ("timeline note is append-only",),
-        )
+def _explicit_precondition_gaps(payload: Mapping[str, Any]) -> tuple[str, ...]:
+    raw = payload.get("missing_preconditions", ())
+    if isinstance(raw, str):
+        return (raw,)
+    if isinstance(raw, (list, tuple, set)):
+        return tuple(str(item) for item in raw)
+    return ()
 
-    def _ticket(self, request: ActionRequest) -> SimulationResult:
-        return SimulationResult(
-            request.action_type,
-            True,
-            ("mock ticket system",),
-            "create mock incident ticket",
-            "close mock ticket",
-            (),
-            ("ticket can distract if diagnosis is wrong",),
-        )
-
-    def _rollback_pr(self, request: ActionRequest) -> SimulationResult:
-        gaps = () if request.payload.get("to_version") or request.payload.get("rollback_to") else ("rollback_target_not_explicit",)
-        return SimulationResult(
-            request.action_type,
-            not gaps,
-            ("mock repository draft",),
-            "draft rollback PR without calling GitHub",
-            "close mock PR without merge",
-            gaps,
-            ("rollback PR must still be reviewed by a human",),
-        )
-
-    def _restart_worker(self, request: ActionRequest) -> SimulationResult:
-        gaps = () if request.environment != "production" else ("production_restart_not_allowed",)
-        return SimulationResult(
-            request.action_type,
-            not gaps,
-            (request.target, "single non-production worker"),
-            "simulate worker restart and verify heartbeat",
-            "restart is reversible by starting previous worker process",
-            gaps,
-            ("queue may refill if root cause is upstream",),
-        )
 
 def _expected_effect(action_type: str) -> str:
     return {
-        "report.generate": "local report artifact generated",
-        "timeline.add_note": "local timeline note appended",
-        "mock.create_incident_ticket": "mock ticket draft created without external API calls",
-        "mock.create_rollback_pr": "mock rollback PR draft created without GitHub calls",
-        "mock.execute_restart_worker": "mock non-production worker restart recorded",
-        "mock.verify_recovery": "mock recovery signal read",
-    }.get(action_type, "read-only mock context gathered")
+        "report.generate": "Generate a local report artifact; no external mutation.",
+        "timeline.add_note": "Append a local incident timeline note; no external mutation.",
+        "mock.create_incident_ticket": "Create a deterministic mock ticket record; no external mutation.",
+        "mock.create_rollback_pr": "Create a deterministic mock rollback PR draft; no external mutation.",
+        "mock.execute_restart_worker": "Simulate a single non-production worker restart; no external mutation.",
+        "mock.verify_recovery": "Read local/mock recovery evidence; no external mutation.",
+    }.get(action_type, "Execute only through the registered local/mock action handler; no external mutation.")
 
 
-def _rollback_path(action_type: str) -> str | None:
-    return {
-        "report.generate": "delete local generated report artifact",
-        "timeline.add_note": "append corrective timeline note",
-        "mock.create_incident_ticket": "close mock ticket record",
-        "mock.create_rollback_pr": "discard mock PR draft",
-        "mock.execute_restart_worker": "restart is reversible by running worker health verification and requeueing jobs",
-        "mock.verify_recovery": "no rollback needed for read-only verification",
-    }.get(action_type)
+def _rollback_path(action_type: str, available: bool) -> str | None:
+    if not available:
+        return None
+    if "rollback" in action_type:
+        return "Discard the mock rollback PR draft; no provider state changed."
+    if "restart" in action_type:
+        return "Run mock.verify_recovery and keep human escalation available; restart is simulated only."
+    if "ticket" in action_type:
+        return "Close or annotate the mock ticket artifact."
+    return "Remove or supersede the local artifact if needed."
+
+
+def _residual_risks(action_type: str) -> tuple[str, ...]:
+    if "rollback" in action_type:
+        return ("human must review before real merge",)
+    if "restart" in action_type:
+        return ("simulation does not restart real workers",)
+    return ("local_mock_evidence_only",)

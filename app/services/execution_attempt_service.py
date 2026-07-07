@@ -8,6 +8,8 @@ from typing import Any, cast
 from sqlalchemy.orm import Session
 
 from app.models import ActionExecutionAttempt, ActionProposal, Incident
+from app.models.action import ActionRequest
+from app.services.action_simulator import ActionSimulator
 from app.services.redaction import redact_text, redact_value
 
 
@@ -26,6 +28,7 @@ def start_action_attempt(db: Session, incident: Incident, action: ActionProposal
             "checks": list(action.preconditions or []),
             "dry_run_payload": dict(action.payload or {}),
             "rollback_metadata": _rollback_metadata(action),
+            "simulation": _simulation_metadata(incident, action),
             "policy_decision_id": f"{action.policy_decision}:{action.id}",
         },
     )
@@ -72,3 +75,17 @@ def _rollback_metadata(action: ActionProposal) -> dict[str, Any]:
     elif "restart" in action.action_type:
         expectation = "restart is simulated for a single non-production worker"
     return {"required": True, "expectation": expectation, "post_checks": list(action.post_checks or [])}
+
+
+def _simulation_metadata(incident: Incident, action: ActionProposal) -> dict[str, Any]:
+    request = ActionRequest(
+        action_type=action.action_type,
+        target=action.target,
+        environment=action.environment or incident.environment,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        payload=action.payload or {},
+        incident_id=incident.id,
+        approved=True,
+    )
+    return ActionSimulator().simulate(request).to_dict()

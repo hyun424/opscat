@@ -88,6 +88,8 @@ class PolicyEvaluation:
     missing_capabilities: tuple[str, ...] = ()
     preconditions: tuple[str, ...] = ()
     post_checks: tuple[str, ...] = ()
+    blast_radius: Any | None = None
+    simulation: Any | None = None
 
     @property
     def route(self) -> PolicyRoute:

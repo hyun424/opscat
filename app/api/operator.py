@@ -16,7 +16,8 @@ from app.services.authorization import AuthorizationError, require_same_scope
 from app.services.decision_trace_service import DecisionTraceEntry, build_decision_trace
 from app.services.identity_service import Principal
 from app.services.incident_service import get_incident
-from app.services.replay_service import ReplayService
+from app.services.reliability_dashboard import build_reliability_dashboard
+from app.services.replay_service import ReplayService, load_replay_scenarios
 
 router = APIRouter(prefix="/operator", tags=["operator"])
 
@@ -115,12 +116,14 @@ def operator_inbox(principal: Principal = Depends(get_current_principal), db: Se
 
 
 @router.get("/reliability")
-def operator_reliability_dashboard(principal: Principal = Depends(get_current_principal)) -> dict[str, object]:
-    dashboard = build_reliability_dashboard()
-    dashboard["tenant_id"] = principal.tenant_id
-    dashboard["workspace_id"] = principal.workspace_id
-    dashboard["auth_deferred"] = True
-    return dashboard
+def operator_reliability_dashboard(principal: Principal = Depends(get_current_principal), db: Session = Depends(get_db)) -> dict[str, object]:
+    replay = ReplayService().run_all(load_replay_scenarios())
+    dashboard = build_reliability_dashboard(db, replay)
+    return {
+        "tenant_id": principal.tenant_id,
+        "workspace_id": principal.workspace_id,
+        "dashboard": dashboard,
+    }
 
 
 @router.get("/actions/{action_id}", response_class=HTMLResponse)

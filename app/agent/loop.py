@@ -14,7 +14,8 @@ from app.services.escalation import (
     record_human_escalation,
 )
 from app.services.action_simulator import ActionSimulator
-from app.services.blast_radius import BlastRadiusEngine
+from app.services.blast_radius import BlastRadiusService
+from app.services.incident_memory import IncidentMemory
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.self_critique_service import critique_diagnosis
 from app.services.root_cause_service import generate_root_cause_candidates, persist_top_root_cause
@@ -108,19 +109,73 @@ class AgentLoop:
         )
         db.add(transition_incident(incident, "action_proposed", actor="agent", reason="analysis complete"))
 
-        request = ActionRequest(
-            action_type=recommended.action_type,
-            target=recommended.target,
+        recommended = analysis.recommended_action
+        memory_matches = IncidentMemory().find_similar(
+            service=incident.service,
             environment=incident.environment,
-            tenant_id=incident.tenant_id,
-            workspace_id=incident.workspace_id,
-            payload=recommended.payload,
-            incident_id=incident.id,
+            fingerprint=str(incident.alert_payload.get("scenario") or incident.alert_fingerprint),
+            root_cause=incident.root_cause_candidate or "",
+            runbook=runbook.key,
+            action_type=recommended.action_type,
         )
-        blast_radius = self.blast_radius.classify(request)
-        simulation = self.simulator.simulate(request)
+        memory_warnings = tuple(match.warning for match in memory_matches if match.failed_prior_action and match.score >= 0.8)
+        critique = SelfCritiqueService().critique(
+            confidence=incident.confidence,
+            evidence_count=len(evidence),
+            action_type=recommended.action_type,
+            hypotheses=[
+                {
+                    "title": hypothesis.title,
+                    "confidence": hypothesis.confidence,
+                    "status": hypothesis.status,
+                }
+                for hypothesis in analysis.hypotheses
+            ],
+            memory_warnings=memory_warnings,
+        )
+        action_context = {
+            "action_type": recommended.action_type,
+            "target": recommended.target,
+            "environment": incident.environment,
+            "payload": recommended.payload,
+        }
+        blast_radius = BlastRadiusService().classify(action_context)
+        simulation = ActionSimulator().simulate(action_context)
+        p7_payload = {
+            **recommended.payload,
+            "self_critique": critique.to_dict(),
+            "blast_radius": blast_radius.to_dict(),
+            "simulation": simulation.to_dict(),
+            "incident_memory": {
+                "similar_incidents": [match.to_dict() for match in memory_matches],
+                "warnings": list(memory_warnings),
+            },
+        }
+        record_decision_trace(
+            db,
+            incident,
+            stage="critique",
+            decision=critique.decision,
+            confidence=incident.confidence,
+            inputs={
+                "missing_evidence": list(critique.missing_evidence),
+                "alternate_causes": list(critique.alternate_causes),
+                "contradiction_flags": list(critique.contradiction_flags),
+                "action_risk_objections": list(critique.action_risk_objections),
+                "memory_warnings": list(memory_warnings),
+            },
+            reason="deterministic self-critique before risk/action proposal",
+        )
         policy = self.policy_engine.evaluate(
-            request,
+            ActionRequest(
+                action_type=recommended.action_type,
+                target=recommended.target,
+                environment=incident.environment,
+                tenant_id=incident.tenant_id,
+                workspace_id=incident.workspace_id,
+                payload=p7_payload,
+                incident_id=incident.id,
+            ),
             PolicyContext(
                 environment=incident.environment,
                 service=incident.service,
@@ -153,9 +208,9 @@ class AgentLoop:
             target=recommended.target,
             environment=incident.environment,
             risk_level=policy.risk_level,
-            requires_approval=policy.requires_approval or recommended.requires_approval or critique.blocks_auto_action or not simulation.ok or not blast_radius.allowed,
+            requires_approval=policy.requires_approval or recommended.requires_approval or critique.blocks_auto_action or not simulation.passed or not blast_radius.allowed_for_auto,
             rationale=recommended.rationale,
-            payload={**dict(recommended.payload), "blast_radius": blast_radius.to_dict(), "simulation": simulation.to_dict(), "self_critique": critique.to_dict()},
+            payload=p7_payload,
             preconditions=recommended.preconditions,
             post_checks=recommended.post_checks,
             evidence_ids=recommended.evidence_ids,

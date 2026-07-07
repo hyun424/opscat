@@ -13,7 +13,7 @@ from app.models import Evidence, Incident
 from app.services.redaction import redact_value
 from app.services.timeline_service import add_timeline_event
 
-DECISION_TRACE_STAGES: tuple[str, ...] = ("observe", "correlate", "diagnose", "critique", "plan", "risk", "act", "verify")
+DECISION_TRACE_STAGES: tuple[str, ...] = ("observe", "correlate", "diagnose", "plan", "critique", "risk", "act", "verify")
 
 
 @dataclass(frozen=True)
@@ -131,6 +131,8 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
     action_id = str(_get(primary_action, "id", "")) if primary_action is not None else None
     evidence_ids = [str(_get(item, "id", "")) for item in evidence if str(_get(item, "id", ""))]
 
+    critique = _latest_decision_trace(evidence, "critique")
+
     return [
         DecisionTraceEntry(
             stage="observe",
@@ -200,7 +202,7 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
         DecisionTraceEntry(
             stage="critique",
             title="Self-critique gate",
-            summary=_critique_summary(primary_action, confidence),
+            summary=_critique_summary(primary_action, critique),
             tenant_id=tenant_id,
             workspace_id=workspace_id,
             incident_id=incident_id,
@@ -209,21 +211,7 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
             evidence_ids=_action_evidence_ids(primary_action, evidence_ids),
             confidence=confidence,
             status=_safe_text(_get(primary_action, "status", status)) if primary_action is not None else status,
-            details=_redacted_details(_get(_get(primary_action, "payload", {}), "self_critique", {})),
-        ),
-        DecisionTraceEntry(
-            stage="simulate",
-            title="Action simulation",
-            summary=_simulation_summary(primary_action),
-            tenant_id=tenant_id,
-            workspace_id=workspace_id,
-            incident_id=incident_id,
-            actor="simulator",
-            action_id=action_id,
-            evidence_ids=_action_evidence_ids(primary_action, evidence_ids),
-            confidence=confidence,
-            status=_safe_text(_get(primary_action, "status", status)) if primary_action is not None else status,
-            details=_redacted_details(_get(_get(primary_action, "payload", {}), "simulation", {})),
+            details=_redacted_details({"critique": _payload_value(primary_action, "self_critique"), "trace": critique}),
         ),
         DecisionTraceEntry(
             stage="risk",
@@ -333,24 +321,16 @@ def _risk_summary(action: Any) -> str:
     return f"Policy {_safe_text(_get(action, 'policy_decision', 'unknown'))} with risk {_safe_text(_get(action, 'risk_level', 'unknown'))}"
 
 
-def _critique_summary(action: Any, confidence: float | None) -> str:
-    if action is None:
-        return "Self-critique not recorded yet"
-    payload = _get(action, "payload", {})
-    critique = _get(payload, "self_critique", {})
-    ambiguity = _get(critique, "ambiguity", "unknown")
-    blocks = _get(critique, "blocks_auto_action", False)
-    return f"Ambiguity={_safe_text(ambiguity)} blocks_auto_action={blocks} confidence={confidence}"
-
-
-def _simulation_summary(action: Any) -> str:
-    if action is None:
-        return "Simulation not recorded yet"
-    payload = _get(action, "payload", {})
-    simulation = _get(payload, "simulation", {})
-    ok = _get(simulation, "ok", "unknown")
-    resources = _get(simulation, "touched_resources", [])
-    return f"Simulation ok={ok}; touched_resources={len(_as_list(resources))}"
+def _critique_summary(action: Any, trace: dict[str, Any]) -> str:
+    critique = _payload_value(action, "self_critique")
+    if critique:
+        decision = _safe_text(critique.get("decision", "unknown"))
+        missing = len(_as_list(critique.get("missing_evidence", [])))
+        objections = len(_as_list(critique.get("action_risk_objections", [])))
+        return f"Self-critique {decision}; missing={missing}; objections={objections}"
+    if trace:
+        return _safe_text(trace.get("decision", "self-critique recorded"))
+    return "Self-critique not recorded yet"
 
 
 def _act_summary(action: Any) -> str:
@@ -388,6 +368,24 @@ def _latest_post_check(action: Any) -> dict[str, Any]:
     latest = attempts[-1]
     value = _get(latest, "post_check_result", {})
     return dict(value) if isinstance(value, Mapping) else {}
+
+
+def _payload_value(action: Any, key: str) -> dict[str, Any]:
+    if action is None:
+        return {}
+    payload = _get(action, "payload", {})
+    if not isinstance(payload, Mapping):
+        return {}
+    value = payload.get(key, {})
+    return dict(value) if isinstance(value, Mapping) else {}
+
+
+def _latest_decision_trace(evidence: list[Any], stage: str) -> dict[str, Any]:
+    for item in reversed(evidence):
+        metadata = _get(item, "evidence_metadata", {})
+        if isinstance(metadata, Mapping) and metadata.get("stage") == stage:
+            return dict(metadata)
+    return {}
 
 
 def _action_evidence_ids(action: Any, fallback: list[str]) -> list[str]:

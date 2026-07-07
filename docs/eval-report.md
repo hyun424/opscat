@@ -37,6 +37,12 @@ What the eval checks:
 - route matches auto-allow, waiting approval, resolved after approval, or escalation;
 - escalation and redaction requirements are enforced.
 
+## Coverage taxonomy
+
+The golden corpus is governed by [`docs/eval-taxonomy.json`](eval-taxonomy.json). The policy is **high-signal scenarios over artificial volume**: add scenarios when they close a category, route, safety-focus, connector, or production-readiness gap; do not inflate the count with duplicate alert variants.
+
+The current taxonomy locks coverage across incident categories, policy routes, and safety-focus tags so future changes cannot silently narrow the operator-replacement evidence.
+
 ## Connector safety evals
 
 Current status: **7/7 connector safety scenarios pass** through `scripts/run_connector_evals.py`.

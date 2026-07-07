@@ -214,6 +214,9 @@ def _render_morning_report(
             "## Reliability gates",
             gate_summary,
             "",
+            "## Reliability gates",
+            gate_summary,
+            "",
             "## Incident evidence",
             "",
         ]

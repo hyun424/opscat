@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.connectors.base import ConnectorCallRequest, ConnectorCallResult
 from app.connectors.fake import FakeObservabilityConnector
+from app.connectors.github import GitHubDraftIssueConnector
 from app.connectors.registry import ConnectorRegistry
 from app.connectors.slack import SlackWakeUpConnector
 from app.services.audit_service import record_audit_event
@@ -27,6 +28,7 @@ def default_connector_registry() -> ConnectorRegistry:
     registry = ConnectorRegistry()
     registry.register(FakeObservabilityConnector())
     registry.register(SlackWakeUpConnector())
+    registry.register(GitHubDraftIssueConnector())
     return registry
 
 
@@ -46,6 +48,12 @@ class ConnectorService:
         if _ROLE_ORDER.get(principal.role, -1) < _ROLE_ORDER[capability.required_role]:
             raise AuthorizationError(
                 "principal lacks connector capability role",
+                tenant_id=principal.tenant_id,
+                workspace_id=principal.workspace_id,
+            )
+        if capability.requires_approval and request.dry_run is False and not request.approved:
+            raise AuthorizationError(
+                "approval is required before this connector mutation can execute",
                 tenant_id=principal.tenant_id,
                 workspace_id=principal.workspace_id,
             )

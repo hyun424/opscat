@@ -14,7 +14,7 @@ class ConnectorCapability:
     risk_level: str = "read_only"
     read_only: bool = True
     required_role: str = "viewer"
-    required_secret_name: str | None = None
+    requires_approval: bool = False
 
 
 @dataclass(frozen=True)
@@ -28,6 +28,7 @@ class ConnectorCallRequest:
     idempotency_key: str | None = None
     payload: Mapping[str, Any] = field(default_factory=dict)
     dry_run: bool = True
+    approved: bool = False
 
 
 @dataclass(frozen=True)

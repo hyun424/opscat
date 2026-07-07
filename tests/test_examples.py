@@ -30,6 +30,8 @@ def test_public_api_docs_cover_core_local_surfaces() -> None:
         "GET /operator/actions/{action_id}",
         "pending approvals",
         "POST /night-autopilot/simulate",
+        "PUT /night-autopilot/policy",
+        "docs/wake-up-report.md",
         "Workflow worker CLI",
         "scripts/workflow_cli.py stats",
         "Connector catalog",
@@ -79,6 +81,24 @@ def test_example_commands_are_localhost_and_credential_free() -> None:
         "examples/fixtures/signals/datadog_monitor.json",
         "examples/fixtures/signals/loki_log_alert.json",
         "curl -s -X POST",
+    ]:
+        assert required in text
+    assert all(marker not in text for marker in SECRET_MARKERS)
+
+
+def test_night_autopilot_docs_explain_safe_overnight_mode() -> None:
+    doc = Path("docs/wake-up-report.md")
+
+    assert doc.exists()
+    text = doc.read_text()
+    for required in [
+        "No production action is executed automatically",
+        "allowlisted services",
+        "max_automatic_risk",
+        "night_autopilot_policy_updated",
+        "blocked actions",
+        "verification outcomes",
+        "Auth remains deferred",
     ]:
         assert required in text
     assert all(marker not in text for marker in SECRET_MARKERS)

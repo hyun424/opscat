@@ -156,7 +156,7 @@ Files likely touched:
 - `tests/test_operator_approval_console.py`
 - `tests/test_operator_dashboard_e2e.py`
 
-### P5-006 — Night Autopilot policy editor and morning report evidence
+### P5-006 ✅ — Night Autopilot policy editor and morning report evidence
 
 Goal: make “it helps while I sleep” concrete without letting it do dangerous things.
 
@@ -314,6 +314,7 @@ Files likely touched:
 - P5-003: completed with fixture signal normalization for Sentry/Datadog/Loki/generic envelopes.
 - P5-004: completed with `scripts/workflow_cli.py` stats/drain/dead-letter local worker operations.
 - P5-005: completed with scoped pending approval list and action preview pages without browser mutation forms.
+- P5-006: completed with scoped policy audit API, safe overnight escalation gates, and morning report evidence.
 - P5-013: completed with `.env.example`, `Makefile`, README quickstart, and `make demo` validation.
 - P5-014: completed with `CONTRIBUTING.md`, `ROADMAP.md`, and safe issue templates.
 - P5-015: completed with `docs/connector-sdk.md` and executable fixture connector template.

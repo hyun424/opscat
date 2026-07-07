@@ -191,6 +191,22 @@ curl -s -X POST http://localhost:8000/night-autopilot/simulate \
   -d '{}'
 ```
 
+### PUT /night-autopilot/policy
+
+Audit a workspace-scoped local quiet-hours policy update without enabling production autonomy:
+
+```bash
+curl -s -X PUT http://localhost:8000/night-autopilot/policy \
+  -H 'content-type: application/json' \
+  -H 'X-OpsCat-Actor: demo-user@opscat.local' \
+  -H 'X-OpsCat-Tenant: demo' \
+  -H 'X-OpsCat-Workspace: demo' \
+  -H 'X-OpsCat-Role: admin' \
+  -d '{"allowed_services":["worker"],"allowed_environments":["staging"],"max_automatic_risk":"low"}'
+```
+
+See [`docs/wake-up-report.md`](wake-up-report.md) for the safe overnight policy and morning report evidence contract.
+
 ## Connector catalog
 
 ### GET /connectors

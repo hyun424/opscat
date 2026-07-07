@@ -14,21 +14,22 @@ from app.tools.mock_actions import execute_mock_action, verify_recovery
 
 
 def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> NightAutopilotResult:
+    target = config.target or f"{config.service}:{config.environment}"
     incident = create_mock_incident(
         db,
         MockAlertRequest(
-            scenario="worker_queue_backlog",
-            service="worker",
-            environment="staging",
-            severity="medium",
-            message="Night Autopilot detected mock worker queue backlog",
+            scenario=config.scenario,
+            service=config.service,
+            environment=config.environment,
+            severity=config.severity,
+            message=f"Night Autopilot detected mock {config.service} incident",
         ),
     )
     db.add(transition_incident(incident, "investigating", actor="night-autopilot", reason="quiet-hours simulation"))
     policy = PolicyEngine().evaluate(
         ActionRequest(
-            action_type="mock.execute_restart_worker",
-            target="worker:staging",
+            action_type=config.action_type,
+            target=target,
             environment=incident.environment,
             tenant_id=incident.tenant_id,
             workspace_id=incident.workspace_id,
@@ -37,6 +38,7 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         PolicyContext(
             service=incident.service,
             environment=incident.environment,
+            severity=incident.severity,
             tenant_id=incident.tenant_id,
             workspace_id=incident.workspace_id,
             night_autopilot=True,
@@ -56,9 +58,9 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             incident_id=incident.id,
             tenant_id=incident.tenant_id,
             workspace_id=incident.workspace_id,
-            action_type="mock.execute_restart_worker",
-            target="worker:staging",
-            environment="staging",
+            action_type=config.action_type,
+            target=target,
+            environment=incident.environment,
             risk_level=policy.risk_level,
             requires_approval=False,
             rationale="Night Autopilot allowlisted low-risk non-prod worker restart.",
@@ -132,7 +134,7 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
 
     db.commit()
     refreshed = get_incident(db, incident.id)
-    morning_report = "# Night Autopilot Morning Report\n\n" + render_incident_report(refreshed)
+    morning_report = _render_morning_report(refreshed.status, actions_taken, escalations, render_incident_report(refreshed))
     return NightAutopilotResult(
         mode="simulated",
         incidents_detected=1,
@@ -140,3 +142,34 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         escalations=escalations,
         morning_report=morning_report,
     )
+
+
+def _render_morning_report(
+    incident_status: str,
+    actions_taken: list[dict[str, object]],
+    escalations: list[dict[str, object]],
+    incident_report: str,
+) -> str:
+    resolved = 1 if incident_status == "resolved" else 0
+    escalated = 1 if incident_status == "escalated" else 0
+    blocked_actions = 0 if actions_taken else len(escalations)
+    verification = "recovered" if resolved else "blocked_or_escalated_before_execution"
+    follow_up = "No human follow-up required." if resolved else "Review escalation payload and choose a safer runbook."
+    summary = "\n".join(
+        [
+            "# Night Autopilot Morning Report",
+            "",
+            "## Overnight summary",
+            "- Detected: 1",
+            f"- Resolved: {resolved}",
+            f"- Escalated: {escalated}",
+            f"- Actions taken: {len(actions_taken)}",
+            f"- Blocked actions: {blocked_actions}",
+            f"- Verification outcomes: {verification}",
+            f"- Follow-ups: {follow_up}",
+            "",
+            "## Incident evidence",
+            "",
+        ]
+    )
+    return summary + incident_report

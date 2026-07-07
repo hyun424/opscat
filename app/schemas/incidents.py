@@ -150,6 +150,12 @@ class NightAutopilotConfig(BaseModel):
     timezone: str = "Asia/Seoul"
     max_automatic_risk: RiskLevel = "low"
     max_attempts_per_incident: int = 1
+    scenario: str = "worker_queue_backlog"
+    service: str = "worker"
+    environment: str = "staging"
+    severity: Literal["low", "medium", "high", "critical"] = "medium"
+    action_type: str = "mock.execute_restart_worker"
+    target: str | None = None
     allowed_services: list[str] = Field(default_factory=lambda: ["payment-api", "worker"])
     allowed_environments: list[str] = Field(default_factory=lambda: ["staging", "dev"])
     escalation_contacts: list[str] = Field(default_factory=lambda: ["primary-oncall"])

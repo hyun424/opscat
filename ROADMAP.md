@@ -97,3 +97,7 @@ P9 active scope: Autonomous Incident Commander without auth. P9 focuses on the i
 ## P9 implemented
 
 P9 implemented as local/mock Autonomous Incident Commander evidence. P9 covers the commander lifecycle, multi-step response planning, autonomy readiness scoring, evidence graph modeling, recovery verification v2, learning from prior outcomes, chaos replay tournaments, commander UI, safety regression hardening, and release evidence. See `docs/operations/p9-ticket-roadmap.md`, `docs/operations/p9-final-summary.md`, `docs/security-review-p9.md`, and `docs/release-evidence.md`. The boundary remains no-auth/local-mock: P9 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, or unattended production-operation claims.
+
+## P10 active
+
+P10 active scope: Incident Judgment Benchmark without auth or external dataset downloads during normal verification. P10 focuses on judgment case schema, LogHub-style and NAB-style adapters, rubric scoring, commander judgment evaluator, dataset conversion CLI, benchmark runner, regression baseline comparison, markdown/JSON reports, seed dataset fixtures, verification integration, and release evidence. See `docs/operations/p10-ticket-roadmap.md` and `docs/tickets/p10/README.md`. The boundary remains no-auth/local-mock: P10 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, or unattended production-operation claims.

@@ -12,14 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.services.replay_service import ReplayService, load_replay_scenarios
-
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run P7 replay evals.")
-    parser.add_argument("--replay-dir", type=Path, default=Path("evals/replay"))
-    parser.add_argument("--output-json", type=Path)
-    parser.add_argument("--output-md", type=Path)
+    from app.services.replay_service import ReplayService, load_replay_scenarios
+
+    parser = argparse.ArgumentParser(description="Run P7 deterministic replay evals.")
+    parser.add_argument("--output-json", default="/tmp/opscat-replay-evals.json")
+    parser.add_argument("--output-md", default="/tmp/opscat-replay-evals.md")
     args = parser.parse_args()
     report = ReplayService(args.replay_dir).run(output_json=args.output_json, output_md=args.output_md)
     print(render_replay_markdown(report))

@@ -28,7 +28,7 @@ td,th{{border:1px solid #ddd;padding:.45rem;text-align:left}}
 .pill{{display:inline-block;padding:.15rem .45rem;border-radius:999px;background:#eef}}
 code{{background:#f6f6f6;padding:.1rem .25rem}}
 </style>
-</head><body><h1>OpsCat Operator</h1>{body}</body></html>"""
+</head><body data-testid="operator-shell"><h1>OpsCat Operator</h1>{body}</body></html>"""
     return HTMLResponse(html)
 
 
@@ -44,7 +44,7 @@ def operator_inbox(principal: Principal = Depends(get_current_principal), db: Se
     for incident in incidents:
         message = str((incident.alert_payload or {}).get("message") or incident.summary or "")
         rows.append(
-            "<tr>"
+            '<tr data-testid="incident-row">'
             f"<td><a href='/operator/incidents/{escape(incident.id)}'>{escape(incident.id)}</a></td>"
             f"<td>{escape(incident.service)}</td>"
             f"<td>{escape(incident.environment)}</td>"
@@ -55,9 +55,11 @@ def operator_inbox(principal: Principal = Depends(get_current_principal), db: Se
         )
     body = (
         f"<p>Workspace: <code>{escape(principal.tenant_id)}/{escape(principal.workspace_id)}</code></p>"
+        '<section data-testid="incident-inbox">'
         "<h2>Incident inbox</h2>"
-        "<table><thead><tr><th>ID</th><th>Service</th><th>Env</th><th>Status</th><th>Severity</th><th>Summary</th></tr></thead>"
+        '<table data-testid="incident-table"><thead><tr><th>ID</th><th>Service</th><th>Env</th><th>Status</th><th>Severity</th><th>Summary</th></tr></thead>'
         f"<tbody>{''.join(rows)}</tbody></table>"
+        "</section>"
     )
     return _page("OpsCat Operator", body)
 
@@ -85,21 +87,23 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
             else "<span>approval_granted</span>"
         )
         action_blocks.append(
-            "<section>"
+            '<section data-testid="action-card">'
             f"<h3>{escape(action.action_type)} → {escape(action.target)}</h3>"
             f"<p>Policy: <code>{escape(action.policy_decision)}</code> Risk: <code>{escape(action.risk_level)}</code> Status: <code>{escape(action.status)}</code></p>"
             f"<p>{escape(action.rationale)}</p>{affordance}"
-            f"<h4>Execution attempts</h4><ul>{attempts}</ul>"
+            f'<h4>Execution attempts</h4><ul data-testid="execution-attempt-list">{attempts}</ul>'
             "</section>"
         )
     body = f"""
 <p><a href="/operator">← Inbox</a></p>
+<main data-testid="incident-detail">
 <h2>Incident {escape(incident.id)}</h2>
 <p>Status <span class="pill">{escape(incident.status)}</span> Service <code>{escape(incident.service)}</code> Severity <code>{escape(incident.severity)}</code></p>
 <p>{escape(incident.summary or '')}</p>
-<h2>Evidence</h2><ul>{evidence}</ul>
-<h2>Timeline</h2><ul>{timeline}</ul>
+<h2>Evidence</h2><ul data-testid="evidence-list">{evidence}</ul>
+<h2>Timeline</h2><ul data-testid="timeline-list">{timeline}</ul>
 <h2>Actions</h2>{''.join(action_blocks)}
-<h2>Report</h2><p><a href="/incidents/{escape(incident.id)}/report">Open report JSON</a></p>
+<h2>Report</h2><p><a data-testid="report-link" href="/incidents/{escape(incident.id)}/report">Open report JSON</a></p>
+</main>
 """
     return _page(f"OpsCat Incident {incident.id}", body)

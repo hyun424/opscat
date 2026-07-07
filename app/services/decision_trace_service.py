@@ -319,6 +319,26 @@ def _risk_summary(action: Any) -> str:
     return f"Policy {_safe_text(_get(action, 'policy_decision', 'unknown'))} with risk {_safe_text(_get(action, 'risk_level', 'unknown'))}"
 
 
+def _critique_summary(action: Any, confidence: float | None) -> str:
+    if action is None:
+        return "Self-critique not recorded yet"
+    payload = _get(action, "payload", {})
+    critique = _get(payload, "self_critique", {})
+    ambiguity = _get(critique, "ambiguity", "unknown")
+    blocks = _get(critique, "blocks_auto_action", False)
+    return f"Ambiguity={_safe_text(ambiguity)} blocks_auto_action={blocks} confidence={confidence}"
+
+
+def _simulation_summary(action: Any) -> str:
+    if action is None:
+        return "Simulation not recorded yet"
+    payload = _get(action, "payload", {})
+    simulation = _get(payload, "simulation", {})
+    ok = _get(simulation, "ok", "unknown")
+    resources = _get(simulation, "touched_resources", [])
+    return f"Simulation ok={ok}; touched_resources={len(_as_list(resources))}"
+
+
 def _act_summary(action: Any) -> str:
     if action is None:
         return "Action not proposed yet"

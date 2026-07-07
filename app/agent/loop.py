@@ -4,6 +4,8 @@ from app.agent.mock_agent import analyze_incident
 from app.models import ActionProposal, Incident
 from app.models.action import ActionRequest
 from app.services.audit_service import record_audit_event
+from app.services.action_simulator import ActionSimulator
+from app.services.blast_radius import BlastRadiusEngine
 from app.services.decision_trace_service import record_decision_trace
 from app.services.escalation import (
     build_escalation_payload,
@@ -14,6 +16,7 @@ from app.services.escalation import (
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.root_cause_service import generate_root_cause_candidates, persist_top_root_cause
 from app.services.runbook_service import select_runbook
+from app.services.self_critique_service import SelfCritiqueService
 from app.services.state_machine import transition_incident
 from app.services.timeline_service import add_timeline_event
 from app.tools.mock_context import gather_all_context
@@ -22,6 +25,9 @@ from app.tools.mock_context import gather_all_context
 class AgentLoop:
     def __init__(self, policy_engine: PolicyEngine | None = None) -> None:
         self.policy_engine = policy_engine or PolicyEngine()
+        self.critique_service = SelfCritiqueService()
+        self.blast_radius = BlastRadiusEngine()
+        self.simulator = ActionSimulator(self.blast_radius)
 
     def investigate(self, db: Session, incident: Incident) -> ActionProposal:
         db.add(transition_incident(incident, "investigating", actor="agent", reason="starting context gather"))
@@ -85,16 +91,46 @@ class AgentLoop:
         db.add(transition_incident(incident, "action_proposed", actor="agent", reason="analysis complete"))
 
         recommended = analysis.recommended_action
+        alternate_causes = [item.title for item in analysis.hypotheses[1:]]
+        contradiction_flags = [item.title for item in analysis.hypotheses if item.status == "refuted"]
+        critique = self.critique_service.critique(
+            confidence=incident.confidence,
+            evidence_count=len(evidence),
+            alternate_causes=alternate_causes,
+            contradictions=contradiction_flags,
+            action_type=recommended.action_type,
+        )
+        record_decision_trace(
+            db,
+            incident,
+            stage="critique",
+            decision=f"ambiguity={critique.ambiguity}; blocks_auto_action={critique.blocks_auto_action}",
+            confidence=incident.confidence,
+            inputs=critique.to_dict(),
+            reason="deterministic self-critique before risk/action proposal",
+        )
+        action_request = ActionRequest(
+            action_type=recommended.action_type,
+            target=recommended.target,
+            environment=incident.environment,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
+            payload=recommended.payload,
+            incident_id=incident.id,
+        )
+        blast_radius = self.blast_radius.evaluate(action_request)
+        simulation = self.simulator.simulate(action_request)
+        record_decision_trace(
+            db,
+            incident,
+            stage="simulate",
+            decision="passed" if simulation.ok else "failed",
+            confidence=incident.confidence,
+            inputs={**simulation.to_dict(), "blast_radius": blast_radius.__dict__},
+            reason="local/mock pre-execution simulation",
+        )
         policy = self.policy_engine.evaluate(
-            ActionRequest(
-                action_type=recommended.action_type,
-                target=recommended.target,
-                environment=incident.environment,
-                tenant_id=incident.tenant_id,
-                workspace_id=incident.workspace_id,
-                payload=recommended.payload,
-                incident_id=incident.id,
-            ),
+            action_request,
             PolicyContext(
                 environment=incident.environment,
                 service=incident.service,
@@ -120,14 +156,24 @@ class AgentLoop:
             target=recommended.target,
             environment=incident.environment,
             risk_level=policy.risk_level,
-            requires_approval=policy.requires_approval or recommended.requires_approval,
+            requires_approval=policy.requires_approval or recommended.requires_approval or critique.blocks_auto_action or not simulation.ok or not blast_radius.allowed,
             rationale=recommended.rationale,
-            payload=recommended.payload,
+            payload={
+                **recommended.payload,
+                "self_critique": critique.to_dict(),
+                "blast_radius": blast_radius.__dict__,
+                "simulation": simulation.to_dict(),
+            },
             preconditions=recommended.preconditions,
             post_checks=recommended.post_checks,
             evidence_ids=recommended.evidence_ids,
             policy_decision=policy.decision,
-            policy_reasons=policy.reasons,
+            policy_reasons=[
+                *policy.reasons,
+                *critique.action_risk_objections,
+                *blast_radius.reasons,
+                *(simulation.precondition_gaps if not simulation.ok else ()),
+            ],
             confidence=incident.confidence,
             status="proposed",
         )

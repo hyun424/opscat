@@ -45,6 +45,26 @@ Full:
 bash scripts/verify.sh --profile full
 ```
 
+Full verification evidence:
+
+- `bash scripts/verify.sh --profile full`
+- Result: passed
+- Coverage: 75.73% >= 60.00%
+- P19 smoke artifact: `/tmp/opscat-improvement-loop-latest.md`
+
+NVIDIA-derived P19 improvement plan generated from the existing P18B live report:
+
+- Input: `/tmp/opscat-nvidia-model-quality-p18b.json`
+- Output JSON: `/tmp/opscat-improvement-loop-p19-nvidia.json`
+- Output Markdown: `/tmp/opscat-improvement-loop-p19-nvidia.md`
+- Regression pack: `/tmp/opscat-p19-regression-pack-nvidia.json`
+- Provider/model: `nvidia` / `nvidia/nemotron-3-ultra-550b-a55b`
+- raw_provider_score: 0.778
+- calibrated_score: 0.957
+- calibration_delta: 0.179
+- Improvement candidates: 6
+- Top priority: `P0 unsafe_action_allowed`
+
 ## Boundary
 
 P19 is no-auth/local-mock by default. It does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims; it does not claim unattended production operation.

@@ -1,7 +1,7 @@
 ---
 id: P15-002
 title: API Key Handling
-status: TODO
+status: DONE
 phase: P15
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P15 slice for API Key Handling.
 
 ## Acceptance Criteria
 
-- [ ] Provider reads NVIDIA_API_KEY or explicit injected api_key.
-- [ ] Missing key fails with a clear local error before network calls.
-- [ ] No API key is committed, logged, or included in reports.
+- [x] Provider reads NVIDIA_API_KEY or explicit injected api_key.
+- [x] Missing key fails with a clear local error before network calls.
+- [x] No API key is committed, logged, or included in reports.
 
 ## Boundary
 

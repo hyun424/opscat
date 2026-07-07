@@ -1,7 +1,7 @@
 ---
 id: P15-005
 title: CLI Provider Selection
-status: TODO
+status: DONE
 phase: P15
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P15 slice for CLI Provider Selection.
 
 ## Acceptance Criteria
 
-- [ ] scripts/run_llm_judgment.py accepts --provider nvidia.
-- [ ] CLI accepts --model override and env default.
-- [ ] Mock remains the default provider.
+- [x] scripts/run_llm_judgment.py accepts --provider nvidia.
+- [x] CLI accepts --model override and env default.
+- [x] Mock remains the default provider.
 
 ## Boundary
 

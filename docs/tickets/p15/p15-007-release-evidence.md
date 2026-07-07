@@ -1,7 +1,7 @@
 ---
 id: P15-007
 title: Release Evidence
-status: TODO
+status: DONE
 phase: P15
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P15 slice for Release Evidence.
 
 ## Acceptance Criteria
 
-- [ ] Final summary maps P15-001 through P15-007 to code/tests/docs.
-- [ ] Release evidence documents exact opt-in command.
-- [ ] ROADMAP records P15 implemented boundary.
+- [x] Final summary maps P15-001 through P15-007 to code/tests/docs.
+- [x] Release evidence documents exact opt-in command.
+- [x] ROADMAP records P15 implemented boundary.
 
 ## Boundary
 

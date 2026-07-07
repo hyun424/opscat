@@ -12,6 +12,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+llm = [
+  "openai>=2.0.0",
+]
 dev = [
   "pytest>=8.4.0",
   "httpx>=0.28.0",

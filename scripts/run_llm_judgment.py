@@ -16,6 +16,7 @@ from app.services.judgment_dataset import load_judgment_cases  # noqa: E402
 from app.services.llm_context_builder import build_context_from_judgment_case  # noqa: E402
 from app.services.llm_judgment import (  # noqa: E402
     MockLLMJudgmentProvider,
+    NvidiaLLMJudgmentProvider,
     run_llm_judgment_from_packet,
     write_llm_judgment_outputs,
 )
@@ -27,7 +28,8 @@ def main() -> int:
     source.add_argument("--context-json", help="Prebuilt P13 context packet JSON.")
     source.add_argument("--cases", help="Judgment cases JSON to convert into a context packet first.")
     parser.add_argument("--case-id", help="Case ID when using --cases. Defaults to first case.")
-    parser.add_argument("--provider", default="mock", choices=("mock",), help="Judgment provider. P14 supports mock only by default.")
+    parser.add_argument("--provider", default="mock", choices=("mock", "nvidia"), help="Judgment provider. mock is default; nvidia is explicit opt-in and requires NVIDIA_API_KEY.")
+    parser.add_argument("--model", help="Provider model override. For NVIDIA defaults to OPSCAT_NVIDIA_MODEL or nvidia/nemotron-3-ultra-550b-a55b.")
     parser.add_argument("--max-evidence", type=int, default=20, help="Maximum evidence items when building context from cases.")
     parser.add_argument("--output-json", help="Path for judgment JSON report.")
     parser.add_argument("--output-md", help="Path for judgment Markdown report.")
@@ -44,7 +46,7 @@ def main() -> int:
             raise SystemExit(f"case not found: {args.case_id}")
         context = build_context_from_judgment_case(selected, max_evidence=args.max_evidence).to_dict()
 
-    provider = MockLLMJudgmentProvider()
+    provider = NvidiaLLMJudgmentProvider(model=args.model) if args.provider == "nvidia" else MockLLMJudgmentProvider()
     result = run_llm_judgment_from_packet(context, provider=provider)
     write_llm_judgment_outputs(result, output_json=args.output_json, output_md=args.output_md)
     print(

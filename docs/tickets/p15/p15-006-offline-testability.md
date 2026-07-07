@@ -1,7 +1,7 @@
 ---
 id: P15-006
 title: Offline Testability
-status: TODO
+status: DONE
 phase: P15
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P15 slice for Offline Testability.
 
 ## Acceptance Criteria
 
-- [ ] Unit tests use fake NVIDIA/OpenAI-compatible clients.
-- [ ] Normal CI/full verify performs no external calls.
-- [ ] Network opt-in is documented separately.
+- [x] Unit tests use fake NVIDIA/OpenAI-compatible clients.
+- [x] Normal CI/full verify performs no external calls.
+- [x] Network opt-in is documented separately.
 
 ## Boundary
 

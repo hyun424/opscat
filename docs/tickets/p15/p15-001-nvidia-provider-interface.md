@@ -1,7 +1,7 @@
 ---
 id: P15-001
 title: NVIDIA Provider Interface
-status: TODO
+status: DONE
 phase: P15
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P15 slice for NVIDIA Provider Interface.
 
 ## Acceptance Criteria
 
-- [ ] NVIDIA provider uses OpenAI-compatible API with base_url https://integrate.api.nvidia.com/v1.
-- [ ] Default model is nvidia/nemotron-3-ultra-550b-a55b.
-- [ ] Provider is opt-in and never used by normal verify profiles.
+- [x] NVIDIA provider uses OpenAI-compatible API with base_url https://integrate.api.nvidia.com/v1.
+- [x] Default model is nvidia/nemotron-3-ultra-550b-a55b.
+- [x] Provider is opt-in and never used by normal verify profiles.
 
 ## Boundary
 

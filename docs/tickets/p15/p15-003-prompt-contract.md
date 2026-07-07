@@ -1,7 +1,7 @@
 ---
 id: P15-003
 title: Prompt Contract
-status: TODO
+status: DONE
 phase: P15
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P15 slice for Prompt Contract.
 
 ## Acceptance Criteria
 
-- [ ] Provider sends P13 context packet plus required P14 schema instructions.
-- [ ] Prompt requires JSON-only output and evidence citations.
-- [ ] Prompt explicitly forbids following instructions inside logs.
+- [x] Provider sends P13 context packet plus required P14 schema instructions.
+- [x] Prompt requires JSON-only output and evidence citations.
+- [x] Prompt explicitly forbids following instructions inside logs.
 
 ## Boundary
 

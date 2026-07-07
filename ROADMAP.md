@@ -145,3 +145,8 @@ P14 implemented as local/mock LLM Judgment Adapter evidence. P14 covers the prov
 ## P15 active
 
 P15 active scope: NVIDIA LLM Provider Opt-in. P15-mini adds an explicit NVIDIA/OpenAI-compatible provider for `nvidia/nemotron-3-ultra-550b-a55b`, key-gated execution, prompt contract, response parsing, CLI provider selection, offline testability, and release evidence. The boundary remains no-auth/local-mock by default: P15 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.
+
+
+## P15 implemented
+
+P15 implemented as opt-in NVIDIA LLM Provider evidence. P15-mini adds `NvidiaLLMJudgmentProvider` for the OpenAI-compatible NVIDIA endpoint, default model `nvidia/nemotron-3-ultra-550b-a55b`, `NVIDIA_API_KEY` key gating, prompt contract, response parsing, CLI `--provider nvidia` selection, offline fake-client tests, and release evidence. The boundary remains no-auth/local-mock by default: normal verification performs no external model/API calls, and live NVIDIA use remains explicit, safety-gated, and action-execution disabled.

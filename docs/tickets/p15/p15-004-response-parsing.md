@@ -1,7 +1,7 @@
 ---
 id: P15-004
 title: Response Parsing
-status: TODO
+status: DONE
 phase: P15
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P15 slice for Response Parsing.
 
 ## Acceptance Criteria
 
-- [ ] Provider extracts JSON from non-stream or stream-like responses.
-- [ ] Invalid JSON fails closed via P14 validation.
-- [ ] Reasoning content is not required or persisted.
+- [x] Provider extracts JSON from non-stream or stream-like responses.
+- [x] Invalid JSON fails closed via P14 validation.
+- [x] Reasoning content is not required or persisted.
 
 ## Boundary
 

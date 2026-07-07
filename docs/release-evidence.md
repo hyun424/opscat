@@ -310,3 +310,38 @@ Verification:
 - `bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock; no default external model/API calls; no production mutation; no Kubernetes/cloud/database mutation; no unrestricted shell; no action execution; no unattended production-operation claim.
+
+
+## P15 NVIDIA LLM Provider Opt-in Evidence
+
+P15-mini adds an explicit live-provider path for NVIDIA Build/OpenAI-compatible chat completions while keeping normal verification mock/offline. The provider uses `nvidia/nemotron-3-ultra-550b-a55b` by default, reads `NVIDIA_API_KEY`, allows `OPSCAT_NVIDIA_MODEL`, and remains behind P14 schema validation, evidence citation checking, and safety gate.
+
+Artifacts:
+
+- `docs/operations/p15-ticket-roadmap.md`
+- `docs/operations/p15-final-summary.md`
+- `app/services/llm_judgment.py`
+- `scripts/run_llm_judgment.py`
+- `tests/test_nvidia_llm_provider.py`
+- `tests/test_p15_release_evidence.py`
+
+Live opt-in example:
+
+```bash
+export NVIDIA_API_KEY="..."
+# install/use the optional live provider dependency with uv run --extra llm
+OPSCAT_NVIDIA_MODEL=nvidia/nemotron-3-ultra-550b-a55b \
+uv run --extra llm python scripts/run_llm_judgment.py \
+  --cases evals/judgment/seed/cases.json \
+  --case-id seed-loghub-injection-block \
+  --provider nvidia \
+  --output-json /tmp/opscat-nvidia-judgment.json \
+  --output-md /tmp/opscat-nvidia-judgment.md
+```
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_nvidia_llm_provider.py tests/test_p15_release_evidence.py`
+- `bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no committed keys; no default external model/API calls during verification; no production mutation; no action execution; no unattended production-operation claim.

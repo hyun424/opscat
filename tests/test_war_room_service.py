@@ -39,30 +39,40 @@ def test_war_room_read_model_has_required_shape_redaction_and_deterministic_orde
         "timeline",
         "current_hypothesis",
         "root_cause_candidates",
+        "hypotheses",
         "evidence",
         "missing_evidence",
         "proposed_action",
         "policy_decision",
+        "policy_gates",
         "blast_radius",
         "simulation",
         "memory_matches",
         "reliability_gates",
         "human_questions",
+        "runbook_critique",
+        "why_not_auto_execute",
+        "final_decision",
         "reliability_score",
         "local_mock_only",
     }
     assert first["local_mock_only"] is True
     assert first["impact"] == {"service": "payment-api", "environment": "staging", "severity": "high"}
     assert [candidate["rank"] for candidate in first["root_cause_candidates"]] == [1, 2, 3]
+    assert first["hypotheses"] == first["root_cause_candidates"]
     assert len(first["root_cause_candidates"]) == 3
     assert first["evidence"]
     assert first["timeline"]
     assert first["proposed_action"]["action_type"].startswith("mock.")
     assert first["policy_decision"]["decision"] in {"ALLOW", "REQUIRE_APPROVAL", "DENY", "ESCALATE"}
+    assert first["policy_gates"]
     assert first["blast_radius"]["scope"] in {"local", "service", "workspace", "tenant", "global", "unknown", "prohibited"}
     assert first["simulation"]["status"] in {"passed", "pass", "blocked", "escalate"}
     assert first["reliability_gates"]["hard_policy_blocked"] is False
     assert first["reliability_score"]["score"] >= 0
+    assert first["runbook_critique"]["fit"]
+    assert first["why_not_auto_execute"]
+    assert first["final_decision"]["route"]
 
     serialized = _serialized(first)
     assert "raw-secret" not in serialized

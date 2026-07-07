@@ -362,14 +362,17 @@ def test_github_draft_issue_dry_run_preview_is_typed_redacted_and_audited(db_ses
     assert preview["repository"] == "opscat/app"
     assert preview["incident_id"] == "inc-gh-1"
     assert preview["labels"] == ["incident", "needs-approval"]
+    assert preview["body"] == "Incident summary with token=[REDACTED] and owner [REDACTED]"
     rendered_output = repr(result.output)
     assert "ghp_real_token" not in rendered_output
+    assert "github-secret" not in rendered_output
     assert "alice@example.com" not in rendered_output
     assert "[REDACTED]" in rendered_output
     events = db_session.query(AuditEvent).order_by(AuditEvent.created_at).all()
     assert [event.event_type for event in events] == ["connector_call_requested", "connector_call_completed"]
     audit_blob = repr([event.event_metadata for event in events])
     assert "ghp_real_token" not in audit_blob
+    assert "github-secret" not in audit_blob
     assert "alice@example.com" not in audit_blob
     assert "[REDACTED]" in audit_blob
 
@@ -454,17 +457,17 @@ def _register_only(connector: Any) -> ConnectorRegistry:
     return registry
 
 
-def _incident_for_connector_failure(db_session: Any) -> Incident:
+def _incident_for_connector_failure(db_session: Any, *, status: str = "investigating") -> Incident:
     incident = Incident(
         tenant_id="tenant-a",
         workspace_id="workspace-a",
         source="connector-test",
-        status="investigating",
+        status=status,
         service="checkout-api",
         environment="staging",
         severity="high",
-        alert_payload={"message": "connector failure regression"},
-        summary="Connector failure regression",
+        alert_payload={"message": "connector failure regression token=alert-secret owner@example.com"},
+        summary="Connector failure regression token=summary-secret owner@example.com",
     )
     db_session.add(incident)
     db_session.flush()
@@ -492,6 +495,9 @@ def _assert_connector_failure_escalated(db_session: Any, incident_id: str, *, co
     assert trigger in escalation_event.event_metadata["triggers"]
     assert escalation_event.event_metadata["evidence_collected"]
     assert escalation_event.event_metadata["verification"]["connector_failure"]["trigger"] == trigger
+    assert "alert-secret" not in repr(escalation_event.event_metadata)
+    assert "summary-secret" not in repr(escalation_event.event_metadata)
+    assert "owner@example.com" not in repr(escalation_event.event_metadata)
 
     audit_types = [event.event_type for event in db_session.query(AuditEvent).all()]
     assert "connector_call_requested" in audit_types
@@ -594,3 +600,28 @@ def test_read_only_contract_violation_fails_closed_and_escalates(db_session: Any
     assert result.ok is False
     assert result.error == "connector read-only contract violation"
     _assert_connector_failure_escalated(db_session, incident.id, connector_id="test.contract", trigger="connector_contract_violation")
+
+
+def test_missing_credential_escalates_queued_incident_with_failure_context(db_session: Any) -> None:
+    principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
+    secret_provider = LocalEncryptedSecretProvider(master_key="unit-test-master-key")
+    incident = _incident_for_connector_failure(db_session, status="queued")
+
+    result = ConnectorService(secret_provider=secret_provider).call(
+        db_session,
+        principal,
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="issues.read",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor=principal.email,
+            incident_id=incident.id,
+            payload={"project": "checkout-api"},
+        ),
+    )
+
+    assert result.ok is False
+    assert result.error == "missing credential: sentry.token"
+    updated = _assert_connector_failure_escalated(db_session, incident.id, connector_id="sentry.readonly", trigger="connector_failure")
+    assert all(event.event_type != "escalation_state_transition_blocked" for event in updated.timeline)

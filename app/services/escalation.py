@@ -9,13 +9,14 @@ silent in the mock/local MVP.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, cast
 
 from sqlalchemy.orm import Session
 
 from app.models import ActionProposal, Incident
 from app.models.action import PolicyDecision, PolicyEvaluation
 from app.services.audit_service import record_audit_event
+from app.services.redaction import redact_value
 from app.services.state_machine import InvalidStateTransition, transition_incident
 from app.services.timeline_service import add_timeline_event
 
@@ -165,6 +166,8 @@ def record_human_escalation(
     transition_to_escalated: bool,
 ) -> None:
     """Persist an auditable wake-up event and optionally move incident state."""
+
+    payload = cast(dict[str, Any], redact_value(payload))
 
     if action is not None:
         action.escalation_required = True

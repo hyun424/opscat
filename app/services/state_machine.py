@@ -4,7 +4,7 @@ from app.models import Incident, TimelineEvent
 
 ALLOWED_TRANSITIONS: dict[str, set[str]] = {
     "new": {"queued", "investigating", "failed"},
-    "queued": {"investigating", "failed"},
+    "queued": {"investigating", "escalated", "failed"},
     "investigating": {"needs_more_context", "action_proposed", "escalated", "failed"},
     "needs_more_context": {"investigating", "escalated", "failed"},
     "action_proposed": {"waiting_approval", "executing", "escalated", "failed"},

@@ -16,6 +16,10 @@ REQUIRED_SCENARIOS = {
     "read_only_contract_violation_escalates",
     "idempotency_replay_no_duplicate_escalation",
     "idempotency_conflict_fails_closed",
+    "connector_catalog_permission_metadata",
+    "permission_mismatch_fails_closed",
+    "secret_lifecycle_setup_failure",
+    "fixture_import_normalization",
 }
 
 
@@ -39,6 +43,12 @@ def test_connector_eval_runner_reports_required_failure_classes(tmp_path: Path) 
         "connector_call_completed",
         "connector_idempotency_conflict",
     ]
+    assert results["connector_catalog_permission_metadata"]["category"] == "setup_permission"
+    assert results["connector_catalog_permission_metadata"]["actual"]["capabilities_with_metadata"] >= 4
+    assert results["permission_mismatch_fails_closed"]["actual"]["failure_class"] == "permission_mismatch"
+    assert results["secret_lifecycle_setup_failure"]["actual"]["failure_class"] == "setup_failure"
+    assert results["fixture_import_normalization"]["actual"]["failure_class"] == "import_normalization"
+    assert results["fixture_import_normalization"]["actual"]["incident_status"] in {"waiting_approval", "resolved", "action_proposed"}
 
     payload: dict[str, Any] = json.loads(json_path.read_text())
     assert payload["summary"] == {"total": summary["total"], "passed": summary["passed"], "failed": 0}
@@ -47,6 +57,10 @@ def test_connector_eval_runner_reports_required_failure_classes(tmp_path: Path) 
     assert "connector_timeout" in markdown
     assert "connector_contract_violation" in markdown
     assert "idempotency" in markdown
+    assert "setup_permission" in markdown
+    assert "permission_mismatch" in markdown
+    assert "setup_failure" in markdown
+    assert "import_normalization" in markdown
 
 
 def test_verify_script_includes_connector_eval_release_gate() -> None:

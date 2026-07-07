@@ -204,6 +204,7 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
 <h2>Incident {escape(incident.id)}</h2>
 <p>Status <span class="pill">{escape(incident.status)}</span> Service <code>{escape(incident.service)}</code> Severity <code>{escape(incident.severity)}</code></p>
 <p>{escape(incident.summary or "")}</p>
+{_p8_war_room_panel(incident)}
 <h2>Decision trace</h2>{decision_trace}
 <h2>Evidence</h2><ul data-testid="evidence-list">{evidence}</ul>
 <h2>Timeline</h2><ul data-testid="timeline-list">{timeline}</ul>
@@ -217,6 +218,50 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
 </main>
 """
     return _page(f"OpsCat Incident {incident.id}", body)
+
+
+def _p8_war_room_panel(incident: Incident) -> str:
+    action = incident.actions[0] if incident.actions else None
+    reliability_score = incident.confidence if incident.confidence is not None else 0.0
+    policy_decision = action.policy_decision if action is not None else "REVIEW"
+    action_status = action.status if action is not None else "none"
+    action_target = action.target if action is not None else "no action proposed"
+    runbook_evidence = next((item.content for item in incident.evidence if item.type == "runbook"), "Runbook critique unavailable; keep diagnostic-only review until trusted runbook evidence exists.")
+    critique = _payload_section(action.payload if action is not None else None, "self_critique")
+    missing_evidence = critique.get("missing_evidence", []) if critique else []
+    human_question = (
+        "Can the operator confirm the proposed local/mock remediation and any missing evidence before approval?"
+        if missing_evidence
+        else "Does the operator agree this local/mock action remains bounded, reversible, and approval-gated?"
+    )
+    return f"""
+<section data-testid="p8-war-room">
+<h2>P8 War Room</h2>
+<p><strong>P8 flow:</strong> alert -> war room -> score -> runbook critique -> action gate -> report.</p>
+<p>This portfolio demo is <strong>local/mock</strong>; it does not claim unattended production operation.</p>
+<section data-testid="p8-reliability-score">
+<h3>Reliability score</h3>
+<p><code>{reliability_score:.2f}</code> from deterministic incident confidence; hard policy gates still decide whether action is allowed.</p>
+</section>
+<section data-testid="p8-runbook-critique">
+<h3>Runbook critique</h3>
+<p>{escape(str(runbook_evidence))}</p>
+<p>Missing evidence: <code>{escape(_json_block(missing_evidence))}</code></p>
+</section>
+<section data-testid="p8-human-questions">
+<h3>Human questions</h3>
+<ul><li>{escape(human_question)}</li></ul>
+</section>
+<section data-testid="p8-action-gate">
+<h3>Action gate</h3>
+<p>Policy <code>{escape(policy_decision)}</code>; status <code>{escape(action_status)}</code>; target <code>{escape(action_target)}</code>. Browser mutation forms remain absent while auth/session work is deferred.</p>
+</section>
+<section data-testid="p8-report-export">
+<h3>Report export</h3>
+<p>Use the report links below to review redacted JSON/Markdown evidence for the war-room decision.</p>
+</section>
+</section>
+"""
 
 
 def _decision_trace_table(entries: list[DecisionTraceEntry]) -> str:

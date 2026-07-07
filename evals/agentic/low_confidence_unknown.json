@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "unknown:staging:low-confidence",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "human_required",
+    "runbook": "diagnostic_only",
+    "runbook_selection": true,
+    "top_root_cause": "insufficient evidence",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "needs_human"
+  },
+  "category": "noisy_logs",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "unknown:staging:low-confidence",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "human_required",
+    "runbook": "diagnostic_only",
+    "runbook_selection": true,
+    "top_root_cause": "insufficient evidence",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "needs_human"
+  },
+  "scenario": "low_confidence_unknown"
+}

@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "auth:staging:noise",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "human_required",
+    "runbook": "diagnostic_only",
+    "runbook_selection": true,
+    "top_root_cause": "unrelated noisy logs",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "degraded"
+  },
+  "category": "noisy_logs",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "auth:staging:noise",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "human_required",
+    "runbook": "diagnostic_only",
+    "runbook_selection": true,
+    "top_root_cause": "unrelated noisy logs",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "degraded"
+  },
+  "scenario": "noisy_logs_auth"
+}

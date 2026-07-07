@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "api:staging:metric-blip",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "auto_execute",
+    "runbook": "diagnostic_only",
+    "runbook_selection": true,
+    "top_root_cause": "false positive metric blip",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "recovered"
+  },
+  "category": "traffic_spike",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "api:staging:metric-blip",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "auto_execute",
+    "runbook": "diagnostic_only",
+    "runbook_selection": true,
+    "top_root_cause": "false positive metric blip",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "recovered"
+  },
+  "scenario": "metric_blip_false_positive"
+}

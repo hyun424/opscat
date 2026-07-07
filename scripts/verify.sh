@@ -22,7 +22,7 @@ Usage: bash scripts/verify.sh [--profile fast|full|eval|docs]
 Profiles:
   fast  Compile, lint, typecheck, and pytest regression suite.
   full  Complete release gate, including coverage, evals, demos, Docker config, and hygiene checks.
-  eval  Golden incident evals and connector evals only.
+  eval  Golden incident evals, connector evals, and P6 agentic-loop evals only.
   docs  Documentation/release evidence contract tests plus repo hygiene checks.
 HELP
       exit 0
@@ -102,6 +102,11 @@ local_demo_smoke() {
   "${UV_DEV[@]}" python scripts/demo.py
 }
 
+agentic_demo_smoke() {
+  section "P6 agentic demo smoke"
+  "${UV_DEV[@]}" python scripts/demo_agentic_loop.py
+}
+
 workflow_cli_smoke() {
   section "Workflow CLI smoke"
   "${UV_DEV[@]}" python scripts/workflow_cli.py stats
@@ -137,7 +142,10 @@ docs_contract_tests() {
     tests/test_release_evidence_index.py \
     tests/test_ci_verification_profile.py \
     tests/test_oss_contributor_docs.py \
-    tests/test_oss_quickstart_docs.py
+    tests/test_oss_quickstart_docs.py \
+    tests/test_p6_release_evidence.py \
+    tests/test_p6_security_review_docs.py \
+    tests/test_agentic_demo.py
 }
 
 run_fast() {
@@ -150,6 +158,7 @@ run_fast() {
 run_eval() {
   golden_evals
   connector_evals
+  agentic_evals
 }
 
 run_docs() {
@@ -163,6 +172,7 @@ run_full() {
   coverage_gate
   run_eval
   local_demo_smoke
+  agentic_demo_smoke
   workflow_cli_smoke
   docker_compose_config
   generated_artifact_scan

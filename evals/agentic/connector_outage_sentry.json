@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "sentry:fixture:health",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "auto_execute",
+    "runbook": "connector_health_check",
+    "runbook_selection": true,
+    "top_root_cause": "connector provider outage",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "recovered"
+  },
+  "category": "connector_outage",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "sentry:fixture:health",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "auto_execute",
+    "runbook": "connector_health_check",
+    "runbook_selection": true,
+    "top_root_cause": "connector provider outage",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "recovered"
+  },
+  "scenario": "connector_outage_sentry"
+}

@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "worker:staging:backlog",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "approval_required",
+    "runbook": "restart_mock_worker",
+    "runbook_selection": true,
+    "top_root_cause": "queue consumer backlog",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "resolved"
+  },
+  "category": "queue_backlog",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "worker:staging:backlog",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "approval_required",
+    "runbook": "restart_mock_worker",
+    "runbook_selection": true,
+    "top_root_cause": "queue consumer backlog",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "resolved"
+  },
+  "scenario": "queue_backlog_worker"
+}

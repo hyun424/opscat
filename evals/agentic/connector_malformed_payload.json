@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "loki:fixture:malformed",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "human_required",
+    "runbook": "connector_contract_check",
+    "runbook_selection": true,
+    "top_root_cause": "malformed connector payload",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "needs_human"
+  },
+  "category": "connector_outage",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "loki:fixture:malformed",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "human_required",
+    "runbook": "connector_contract_check",
+    "runbook_selection": true,
+    "top_root_cause": "malformed connector payload",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "needs_human"
+  },
+  "scenario": "connector_malformed_payload"
+}

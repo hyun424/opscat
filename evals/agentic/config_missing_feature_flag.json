@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "frontend:staging:flag",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "human_required",
+    "runbook": "config_guidance",
+    "runbook_selection": true,
+    "top_root_cause": "missing feature flag config",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "needs_human"
+  },
+  "category": "missing_secret_config",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "frontend:staging:flag",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "human_required",
+    "runbook": "config_guidance",
+    "runbook_selection": true,
+    "top_root_cause": "missing feature flag config",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "needs_human"
+  },
+  "scenario": "config_missing_feature_flag"
+}

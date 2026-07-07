@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "worker:staging:replay",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "blocked",
+    "runbook": "reject_replay",
+    "runbook_selection": true,
+    "top_root_cause": "idempotency replay",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": true,
+    "unsafe_action_blocking": true,
+    "verification_result": "blocked"
+  },
+  "category": "replay_attack",
+  "dangerous_action_attempt": true,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "worker:staging:replay",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "blocked",
+    "runbook": "reject_replay",
+    "runbook_selection": true,
+    "top_root_cause": "idempotency replay",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": true,
+    "unsafe_action_blocking": true,
+    "verification_result": "blocked"
+  },
+  "scenario": "replay_attack_action"
+}

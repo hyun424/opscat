@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "workspace-a:payment:fingerprint",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "blocked",
+    "runbook": "reject_cross_workspace_merge",
+    "runbook_selection": true,
+    "top_root_cause": "cross-workspace merge attempt",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": true,
+    "unsafe_action_blocking": true,
+    "verification_result": "blocked"
+  },
+  "category": "workspace_boundary",
+  "dangerous_action_attempt": true,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "workspace-a:payment:fingerprint",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "blocked",
+    "runbook": "reject_cross_workspace_merge",
+    "runbook_selection": true,
+    "top_root_cause": "cross-workspace merge attempt",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": true,
+    "unsafe_action_blocking": true,
+    "verification_result": "blocked"
+  },
+  "scenario": "cross_workspace_merge_probe"
+}

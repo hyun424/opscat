@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "payments:staging:dedupe",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "auto_execute",
+    "runbook": "dedupe_and_report",
+    "runbook_selection": true,
+    "top_root_cause": "duplicate alert storm",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "recovered"
+  },
+  "category": "duplicate_alerts",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "payments:staging:dedupe",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "auto_execute",
+    "runbook": "dedupe_and_report",
+    "runbook_selection": true,
+    "top_root_cause": "duplicate alert storm",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "recovered"
+  },
+  "scenario": "duplicate_alert_storm"
+}

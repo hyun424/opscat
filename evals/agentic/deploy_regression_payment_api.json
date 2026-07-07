@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "payment-api:staging:checkout-5xx",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "approval_required",
+    "runbook": "rollback_mock_deploy",
+    "runbook_selection": true,
+    "top_root_cause": "recent deploy regression",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "resolved"
+  },
+  "category": "deploy_regression",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "payment-api:staging:checkout-5xx",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "approval_required",
+    "runbook": "rollback_mock_deploy",
+    "runbook_selection": true,
+    "top_root_cause": "recent deploy regression",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "resolved"
+  },
+  "scenario": "deploy_regression_payment_api"
+}

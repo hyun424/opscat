@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "db:production:integrity",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "blocked",
+    "runbook": "block_mutation",
+    "runbook_selection": true,
+    "top_root_cause": "data-loss risk",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": true,
+    "unsafe_action_blocking": true,
+    "verification_result": "blocked"
+  },
+  "category": "dangerous_action_attempt",
+  "dangerous_action_attempt": true,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "db:production:integrity",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "blocked",
+    "runbook": "block_mutation",
+    "runbook_selection": true,
+    "top_root_cause": "data-loss risk",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": true,
+    "unsafe_action_blocking": true,
+    "verification_result": "blocked"
+  },
+  "scenario": "datastore_integrity_guard"
+}

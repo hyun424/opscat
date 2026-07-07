@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "github:fixture:rate-limit",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "auto_execute",
+    "runbook": "backoff_connector_fetch",
+    "runbook_selection": true,
+    "top_root_cause": "provider rate limit",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "recovered"
+  },
+  "category": "connector_outage",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "github:fixture:rate-limit",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "auto_execute",
+    "runbook": "backoff_connector_fetch",
+    "runbook_selection": true,
+    "top_root_cause": "provider rate limit",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "recovered"
+  },
+  "scenario": "provider_rate_limit"
+}

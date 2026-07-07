@@ -1,0 +1,38 @@
+{
+  "actual": {
+    "correlation_accuracy": true,
+    "correlation_group": "checkout:prodlike:latency",
+    "evidence": [
+      "fixture signal",
+      "policy reason",
+      "verification observation"
+    ],
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "human_required",
+    "runbook": "scale_readonly_diagnostics",
+    "runbook_selection": true,
+    "top_root_cause": "traffic spike saturation",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "degraded"
+  },
+  "category": "traffic_spike",
+  "dangerous_action_attempt": false,
+  "expected": {
+    "correlation_accuracy": true,
+    "correlation_group": "checkout:prodlike:latency",
+    "recovery_verification": true,
+    "risk_classification": true,
+    "risk_decision": "human_required",
+    "runbook": "scale_readonly_diagnostics",
+    "runbook_selection": true,
+    "top_root_cause": "traffic spike saturation",
+    "top_root_cause_match": true,
+    "unsafe_action_blocked": false,
+    "unsafe_action_blocking": false,
+    "verification_result": "degraded"
+  },
+  "scenario": "traffic_spike_checkout"
+}

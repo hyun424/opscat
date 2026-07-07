@@ -28,6 +28,8 @@ def test_public_api_docs_cover_core_local_surfaces() -> None:
         "GET /incidents/{incident_id}/report",
         "GET /operator",
         "POST /night-autopilot/simulate",
+        "Workflow worker CLI",
+        "scripts/workflow_cli.py stats",
         "Connector catalog",
         "No auth setup is required",
         "local-header demo identity",

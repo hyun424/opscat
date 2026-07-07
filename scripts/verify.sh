@@ -44,6 +44,9 @@ printf 'Wrote /tmp/opscat-connector-evals-latest.md and %s/opscat-connector-eval
 section "Local demo smoke"
 "${UV_DEV[@]}" python scripts/demo.py
 
+section "Workflow CLI smoke"
+"${UV_DEV[@]}" python scripts/workflow_cli.py stats
+
 section "Docker Compose config"
 docker compose config >/tmp/opscat-compose-config.txt
 printf 'Wrote /tmp/opscat-compose-config.txt\n'

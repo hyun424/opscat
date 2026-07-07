@@ -66,7 +66,7 @@ Files likely touched:
 - `tests/test_connector_catalog.py`
 - `docs/connector-permissions.md`
 
-### P5-002 — Local secret setup lifecycle and redaction audit
+### P5-002 ✅ — Local secret setup lifecycle and redaction audit
 
 Goal: make secret handling look like a real product boundary while staying local/mock.
 
@@ -89,7 +89,7 @@ Files likely touched:
 - `tests/test_secret_lifecycle.py`
 - `docs/connector-permissions.md`
 
-### P5-003 — Incident import adapters for realistic alert/event envelopes
+### P5-003 ✅ — Incident import adapters for realistic alert/event envelopes
 
 Goal: move beyond hand-written mock alerts by accepting realistic Sentry/Datadog/Loki-like fixture envelopes while keeping them local.
 
@@ -112,7 +112,7 @@ Files likely touched:
 - `tests/fixtures/signals/*.json`
 - `tests/test_signal_normalizer.py`
 
-### P5-004 — Durable worker CLI and dead-letter operations
+### P5-004 ✅ — Durable worker CLI and dead-letter operations
 
 Goal: make background workflow behavior operationally credible without deploying a real queue.
 
@@ -310,6 +310,9 @@ Files likely touched:
 
 ## Current P5 progress
 - P5-001: completed with `/connectors` permission preview API and `docs/connector-permissions.md`.
+- P5-002: completed with metadata-only secret lifecycle API and audit-safe redaction tests.
+- P5-003: completed with fixture signal normalization for Sentry/Datadog/Loki/generic envelopes.
+- P5-004: completed with `scripts/workflow_cli.py` stats/drain/dead-letter local worker operations.
 - P5-013: completed with `.env.example`, `Makefile`, README quickstart, and `make demo` validation.
 - P5-014: completed with `CONTRIBUTING.md`, `ROADMAP.md`, and safe issue templates.
 - P5-015: completed with `docs/connector-sdk.md` and executable fixture connector template.

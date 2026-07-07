@@ -153,6 +153,18 @@ curl -s -X DELETE http://localhost:8000/secrets/sentry.token \
   -H 'X-OpsCat-Role: admin'
 ```
 
+## Workflow worker CLI
+
+Use the local workflow CLI to inspect and drain queued incident workflow jobs without a hosted queue service:
+
+```bash
+uv run --no-sync --extra dev python scripts/workflow_cli.py stats
+uv run --no-sync --extra dev python scripts/workflow_cli.py drain --limit 5 --worker-id local-worker
+uv run --no-sync --extra dev python scripts/workflow_cli.py dead-letter-failed --reason "manual local triage"
+```
+
+The CLI is local-only, credential-free, and reports queue counts/actions without returning secrets.
+
 ## Night Autopilot
 
 ### POST /night-autopilot/simulate

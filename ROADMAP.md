@@ -60,6 +60,10 @@ P6 candidates have been promoted into the P6 active roadmap. Remaining out-of-sc
 - deployment, backup/restore, and OpsCat self-monitoring for real beta environments;
 - license decision and public release process.
 
+## P7 active
+
+P7 active scope: Agent Reliability & Safety Lab without auth. P7 focuses on replay-based reliability, adversarial evals, confidence calibration, self-critique, blast-radius analysis, action simulation, incident memory, Night Autopilot v2, failure-mode reporting, reliability dashboard metrics, and release evidence. See `docs/operations/p7-ticket-roadmap.md`.
+
 ## P7 candidates
 
 P7 should focus on safety/autonomy hardening after the P6 loop exists:

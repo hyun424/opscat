@@ -160,7 +160,15 @@ P5 remains local/mock: no production credentials, live provider mutation, hosted
 
 P6 keeps auth deferred and does not claim production readiness or unattended production mutation safety.
 
-## P7 reliability evidence
+## P7 Agent Reliability & Safety Lab Evidence
 
-P7 adds local/mock reliability evidence for replay harnesses, adversarial evals, confidence calibration, self-critique, blast-radius classification, action simulation, incident memory, Night Autopilot v2 gates, failure-mode reports, and reliability dashboards. Reviewers can run `scripts/run_replay_evals.py` and `bash scripts/verify.sh --profile full`. These claims are explicitly local/mock reliability evidence, not production unattended-ops claims.
+- Roadmap: `docs/operations/p7-ticket-roadmap.md`
+- Final summary handoff: `docs/operations/p7-final-summary.md`
+- Code quality review: `docs/operations/p7-code-quality-review.md`
+- Security review: `docs/security-review-p7.md`
+- Replay eval command required for final P7 closure: `uv run --no-sync --extra dev python scripts/run_replay_evals.py --output-json /tmp/opscat-replay-evals-latest.json --output-md /tmp/opscat-replay-evals-latest.md`
+- Latest temp replay artifact expected at final P7 closure: `/tmp/opscat-replay-evals-latest.md`
+- Verification command: `bash scripts/verify.sh --profile full`
+
+P7 preserves the no-auth/local-mock boundary and does not claim unattended production operation. Production auth, hosted multi-tenant operations, real customer credentials, unrestricted shell/cloud/database mutation, live provider writes, and live incident replay remain future work unless explicitly reopened by the owner.
 

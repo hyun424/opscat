@@ -49,8 +49,17 @@ def test_p7_release_evidence_and_roadmap_expose_reviewer_commands() -> None:
     release = Path("docs/release-evidence.md").read_text()
     roadmap = Path("ROADMAP.md").read_text()
 
-    assert "bash scripts/verify.sh --profile full" in final
-    assert "scripts/run_replay_evals.py" in final
-    assert "local/mock reliability evidence" in final
-    assert "P7" in release
-    assert "P7" in roadmap
+    for required in [
+        "P7 Agent Reliability & Safety Lab Evidence",
+        "docs/operations/p7-ticket-roadmap.md",
+        "docs/operations/p7-final-summary.md",
+        "docs/security-review-p7.md",
+        "scripts/run_replay_evals.py",
+        "/tmp/opscat-replay-evals-latest.md",
+        "does not claim unattended production operation",
+    ]:
+        assert required in release
+
+    assert "P7 active scope: Agent Reliability & Safety Lab without auth" in roadmap
+    assert "no-auth/local-mock" in roadmap
+    assert all(marker not in release for marker in SECRET_MARKERS)

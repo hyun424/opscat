@@ -106,6 +106,7 @@ class ActionService:
             "decision": record.evaluation.decision.value,
             "risk_level": record.evaluation.risk_level.value,
             "requires_approval": record.evaluation.requires_approval,
+            "policy_route": record.evaluation.route.value,
             "preconditions": list(record.evaluation.preconditions),
             "post_checks": list(record.evaluation.post_checks),
         }

@@ -21,7 +21,13 @@ def start_action_attempt(db: Session, incident: Incident, action: ActionProposal
         attempt_number=existing_count + 1,
         idempotency_key=idempotency_key or f"{action.id}:{existing_count + 1}",
         status="running",
-        precondition_result={"ok": True, "checks": list(action.preconditions or [])},
+        precondition_result={
+            "ok": True,
+            "checks": list(action.preconditions or []),
+            "dry_run_payload": dict(action.payload or {}),
+            "rollback_metadata": _rollback_metadata(action),
+            "policy_decision_id": f"{action.policy_decision}:{action.id}",
+        },
     )
     db.add(attempt)
     db.flush()
@@ -55,3 +61,14 @@ def record_post_check_result(db: Session, attempt: ActionExecutionAttempt, verif
         attempt.error = redact_text(str(verification.get("message") or "post-check failed"))
     attempt.finished_at = datetime.now(UTC)
     db.add(attempt)
+
+
+def _rollback_metadata(action: ActionProposal) -> dict[str, Any]:
+    if not any(token in action.action_type for token in ("rollback", "restart", "ticket")):
+        return {"required": False}
+    expectation = "mock/local only; no external mutation"
+    if "rollback" in action.action_type:
+        expectation = "rollback artifact is a draft/mock PR until approved and verified"
+    elif "restart" in action.action_type:
+        expectation = "restart is simulated for a single non-production worker"
+    return {"required": True, "expectation": expectation, "post_checks": list(action.post_checks or [])}

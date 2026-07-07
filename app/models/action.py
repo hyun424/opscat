@@ -30,6 +30,13 @@ class PolicyDecision(StrEnum):
     ESCALATE = "ESCALATE"
 
 
+class PolicyRoute(StrEnum):
+    AUTO_EXECUTE = "auto_execute"
+    APPROVAL_REQUIRED = "approval_required"
+    HUMAN_REQUIRED = "human_required"
+    BLOCKED = "blocked"
+
+
 class ActionStatus(StrEnum):
     PROPOSED = "proposed"
     APPROVED = "approved"
@@ -81,6 +88,16 @@ class PolicyEvaluation:
     missing_capabilities: tuple[str, ...] = ()
     preconditions: tuple[str, ...] = ()
     post_checks: tuple[str, ...] = ()
+
+    @property
+    def route(self) -> PolicyRoute:
+        if self.decision == PolicyDecision.ALLOW and not self.requires_approval:
+            return PolicyRoute.AUTO_EXECUTE
+        if self.decision == PolicyDecision.REQUIRE_APPROVAL or self.requires_approval:
+            return PolicyRoute.APPROVAL_REQUIRED
+        if self.decision == PolicyDecision.ESCALATE:
+            return PolicyRoute.HUMAN_REQUIRED
+        return PolicyRoute.BLOCKED
 
     @property
     def executable_now(self) -> bool:

@@ -22,6 +22,7 @@ _EXPORTS = {
     "ApprovalRecord": ("app.models.action", "ApprovalRecord"),
     "PolicyDecision": ("app.models.action", "PolicyDecision"),
     "PolicyEvaluation": ("app.models.action", "PolicyEvaluation"),
+    "PolicyRoute": ("app.models.action", "PolicyRoute"),
     "RiskLevel": ("app.models.action", "RiskLevel"),
     "SecretRecord": ("app.models.secret", "SecretRecord"),
     "ApprovalDecision": ("app.models.policy", "ApprovalDecision"),

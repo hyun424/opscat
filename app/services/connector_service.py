@@ -137,7 +137,7 @@ class ConnectorService:
     ) -> ConnectorCallRequest | None:
         if required_secret_name is None:
             return request
-        if _secret_is_optional_for_fixture_mode(request):
+        if bool(request.payload.get("fixture_mode", False) or request.payload.get("mode") == "fixture"):
             return request
         try:
             secret_value = self.secret_provider.get_secret(db, principal, required_secret_name)

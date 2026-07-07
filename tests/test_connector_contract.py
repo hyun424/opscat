@@ -97,11 +97,10 @@ def test_default_connector_registry_exposes_sentry_read_only_capabilities() -> N
     registry = default_connector_registry()
     capabilities = registry.list_capabilities()["sentry.readonly"]
 
-    assert {capability.name for capability in capabilities} == {"issues.read", "issue.events.read", "health.check"}
+    assert {capability.name for capability in capabilities} == {"health.check", "issues.read", "issue.events.read"}
     assert all(capability.read_only for capability in capabilities)
     assert all(capability.risk_level == "read_only" for capability in capabilities)
-    secret_requirements = {capability.name: capability.required_secret_name for capability in capabilities}
-    assert secret_requirements == {"issues.read": "sentry.token", "issue.events.read": "sentry.token", "health.check": None}
+    assert {capability.required_secret_name for capability in capabilities} == {None, "sentry.token"}
 
 
 def test_sentry_connector_fixture_mode_is_default_without_credential(db_session: Any) -> None:
@@ -815,3 +814,70 @@ def test_connector_idempotency_conflict_fails_closed_without_provider_call(db_se
     assert second.ok is False
     assert second.error == "conflicting idempotency key"
     assert "connector_idempotency_conflict" in [event.event_type for event in db_session.query(AuditEvent).all()]
+
+
+def test_sentry_fixture_mode_is_default_safe_without_credentials(db_session: Any) -> None:
+    principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
+    request = ConnectorCallRequest(
+        connector_id="sentry.readonly",
+        capability="issues.read",
+        tenant_id="tenant-a",
+        workspace_id="workspace-a",
+        actor=principal.email,
+        payload={"fixture_mode": True, "project": "checkout-api"},
+    )
+
+    result = ConnectorService().call(db_session, principal, request)
+
+    assert result.ok is True
+    assert result.output["provider"] == "sentry-fixture"
+    assert result.output["pagination"]["bounded"] is True
+
+
+def test_sentry_health_check_reports_fixture_ok_without_secret(db_session: Any) -> None:
+    principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
+
+    result = ConnectorService().call(
+        db_session,
+        principal,
+        ConnectorCallRequest(
+            connector_id="sentry.readonly",
+            capability="health.check",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor=principal.email,
+        ),
+    )
+
+    assert result.ok is True
+    assert result.output["state"] == "fixture-ok"
+
+
+def test_sentry_provider_transport_pagination_and_rate_limit_are_bounded() -> None:
+    from app.connectors.sentry import SentryProviderResponse, SentryRateLimitedError, SentryReadOnlyConnector
+
+    calls: list[int] = []
+
+    def transport(path: str, params: dict[str, Any]) -> SentryProviderResponse:
+        calls.append(int(params["page"]))
+        return SentryProviderResponse(
+            status_code=200,
+            payload={"issues": [{"id": f"SENTRY-{params['page']}", "assigned_to": "user@example.com"}], "next_cursor": "next" if params["page"] < 2 else ""},
+        )
+
+    result = SentryReadOnlyConnector(transport=transport).call(
+        ConnectorCallRequest(connector_id="sentry.readonly", capability="issues.read", tenant_id="t", workspace_id="w", actor="a", payload={"auth_token": "sntrys_secret"})
+    )
+
+    assert result.ok is True
+    assert calls == [1, 2]
+    assert "user@example.com" not in repr(result.output)
+
+    def limited(path: str, params: dict[str, Any]) -> SentryProviderResponse:
+        raise SentryRateLimitedError("slow down")
+
+    limited_result = SentryReadOnlyConnector(transport=limited).call(
+        ConnectorCallRequest(connector_id="sentry.readonly", capability="issues.read", tenant_id="t", workspace_id="w", actor="a", payload={"auth_token": "sntrys_secret"})
+    )
+    assert limited_result.ok is False
+    assert limited_result.error == "rate-limited"

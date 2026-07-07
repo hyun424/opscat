@@ -93,11 +93,11 @@ class PolicyEvaluation:
     def route(self) -> PolicyRoute:
         if self.decision == PolicyDecision.ALLOW and not self.requires_approval:
             return PolicyRoute.AUTO_EXECUTE
-        if self.decision == PolicyDecision.REQUIRE_APPROVAL or self.requires_approval:
-            return PolicyRoute.APPROVAL_REQUIRED
         if self.decision == PolicyDecision.ESCALATE:
             return PolicyRoute.HUMAN_REQUIRED
-        return PolicyRoute.BLOCKED
+        if self.decision == PolicyDecision.DENY:
+            return PolicyRoute.BLOCKED
+        return PolicyRoute.APPROVAL_REQUIRED
 
     @property
     def executable_now(self) -> bool:

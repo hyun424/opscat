@@ -15,4 +15,4 @@ def test_policy_exposes_p6_route_model_for_auto_approval_human_and_blocked() -> 
     assert auto.route.value == "auto_execute"
     assert approval.route.value == "approval_required"
     assert blocked.route.value == "blocked"
-    assert human.route.value == "approval_required"
+    assert human.route.value == "human_required"

@@ -1,15 +1,25 @@
-"""Local deterministic incident memory with simple similarity scoring."""
+"""Deterministic local incident memory for P7 reliability gates.
+
+The memory store is derived from local/mock database records only. It performs no
+network calls and uses transparent weighted matching instead of vector services.
+"""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from collections.abc import Iterable
+from dataclasses import dataclass, field
 
-from app.models import Incident
+from sqlalchemy.orm import Session, selectinload
+
+from app.models import ActionProposal, Incident
+
+SUCCESS_ACTION_STATUSES = {"executed", "approved"}
+FAILED_ACTION_STATUSES = {"failed", "denied", "escalated", "rejected"}
 
 
 @dataclass(frozen=True)
 class IncidentMemoryRecord:
-    id: str
+    incident_id: str
     service: str
     environment: str
     fingerprint: str
@@ -17,174 +27,160 @@ class IncidentMemoryRecord:
     runbook: str
     action_type: str
     outcome: str
+    action_status: str
+    confidence: float | None
+    summary: str
 
 
 @dataclass(frozen=True)
-class SimilarIncident:
+class IncidentMemoryMatch:
     record: IncidentMemoryRecord
     score: float
     reasons: tuple[str, ...]
-
-    @property
-    def failed_prior_action(self) -> bool:
-        return self.record.outcome in {"failed", "escalated_after_action"}
-
-    @property
-    def warning(self) -> str:
-        if self.failed_prior_action:
-            return f"Prior similar incident {self.record.incident_id} failed after {self.record.action_type}."
-        return f"Prior similar incident {self.record.incident_id} outcome={self.record.outcome}."
-
-    def to_dict(self) -> dict[str, object]:
-        return {
-            "incident_id": self.record.incident_id,
-            "score": self.score,
-            "reasons": list(self.reasons),
-            "action_type": self.record.action_type,
-            "outcome": self.record.outcome,
-            "failed_prior_action": self.failed_prior_action,
-            "warning": self.warning,
-            "summary": self.record.summary,
-        }
+    warnings: tuple[str, ...] = field(default_factory=tuple)
 
 
-DEFAULT_MEMORY: tuple[IncidentMemoryRecord, ...] = (
-    IncidentMemoryRecord(
-        "mem-worker-ok",
-        "worker",
-        "staging",
-        "worker_queue_backlog",
-        "Queue worker degradation after broker maintenance",
-        "restart-worker",
-        "mock.execute_restart_worker",
-        "resolved",
-        "Restart recovered queue backlog in staging.",
-    ),
-    IncidentMemoryRecord(
-        "mem-payment-pr",
-        "payment-api",
-        "staging",
-        "payment_api_deploy_regression",
-        "Recent payment-api deploy introduced timeout regression",
-        "rollback-pr",
-        "mock.create_rollback_pr",
-        "resolved",
-        "Rollback PR draft restored prior version in mock eval.",
-    ),
-    IncidentMemoryRecord(
-        "mem-worker-poison",
-        "worker",
-        "staging",
-        "worker_poison_message",
-        "Queue worker degradation after broker maintenance",
-        "restart-worker",
-        "mock.execute_restart_worker",
-        "failed",
-        "Restart did not clear poisoned message; human drained queue.",
-    ),
-)
-
-
+@dataclass(frozen=True)
 class IncidentMemory:
-    def __init__(self, records: list[IncidentMemoryRecord] | None = None) -> None:
-        self._records = list(records or [])
+    records: tuple[IncidentMemoryRecord, ...]
 
-    def add(self, record: IncidentMemoryRecord) -> None:
-        self._records.append(record)
 
-    def remember_incident(self, incident: Incident, *, runbook: str = "unknown", action_type: str = "unknown", outcome: str | None = None) -> None:
-        self.add(
+def build_incident_memory(
+    db: Session,
+    *,
+    tenant_id: str = "demo",
+    workspace_id: str = "demo",
+    exclude_incident_id: str | None = None,
+) -> IncidentMemory:
+    incidents = (
+        db.query(Incident)
+        .options(selectinload(Incident.actions))
+        .filter(Incident.tenant_id == tenant_id, Incident.workspace_id == workspace_id)
+        .all()
+    )
+    records: list[IncidentMemoryRecord] = []
+    for incident in incidents:
+        if incident.id == exclude_incident_id:
+            continue
+        records.extend(_records_from_incident(incident))
+    return IncidentMemory(records=tuple(records))
+
+
+def search_similar_incidents(
+    memory: IncidentMemory,
+    incident: Incident,
+    *,
+    action_type: str | None = None,
+    limit: int = 5,
+) -> list[IncidentMemoryMatch]:
+    matches = [_score_record(record, incident, action_type=action_type) for record in memory.records]
+    matches = [match for match in matches if match.score > 0.0]
+    return sorted(matches, key=lambda item: item.score, reverse=True)[:limit]
+
+
+def failed_remediation_warning(matches: Iterable[IncidentMemoryMatch]) -> bool:
+    return any("prior_failed_remediation" in match.warnings for match in matches)
+
+
+def summarize_matches(matches: Iterable[IncidentMemoryMatch]) -> list[dict[str, object]]:
+    return [
+        {
+            "incident_id": match.record.incident_id,
+            "score": match.score,
+            "service": match.record.service,
+            "environment": match.record.environment,
+            "root_cause": match.record.root_cause,
+            "action_type": match.record.action_type,
+            "outcome": match.record.outcome,
+            "reasons": list(match.reasons),
+            "warnings": list(match.warnings),
+        }
+        for match in matches
+    ]
+
+
+def _records_from_incident(incident: Incident) -> list[IncidentMemoryRecord]:
+    if not incident.actions:
+        return [
             IncidentMemoryRecord(
-                id=incident.id,
+                incident_id=incident.id,
                 service=incident.service,
                 environment=incident.environment,
                 fingerprint=incident.alert_fingerprint,
-                root_cause=incident.root_cause_candidate or "unknown",
-                runbook=runbook,
-                action_type=action_type,
-                outcome=outcome or incident.status,
+                root_cause=incident.root_cause_candidate or _scenario(incident),
+                runbook=_scenario(incident),
+                action_type="none",
+                outcome=_incident_outcome(incident.status),
+                action_status=incident.status,
+                confidence=incident.confidence,
+                summary=incident.summary or "",
             )
-        )
-
-    def search(
-        self,
-        *,
-        service: str,
-        environment: str,
-        fingerprint: str,
-        root_cause: str,
-        runbook: str,
-        action_type: str,
-        limit: int = 5,
-    ) -> list[SimilarIncident]:
-        matches = [self._score(record, service, environment, fingerprint, root_cause, runbook, action_type) for record in self._records]
-        return sorted((match for match in matches if match.score > 0.0), key=lambda item: item.score, reverse=True)[:limit]
-
-    def _score(self, record: IncidentMemoryRecord, service: str, environment: str, fingerprint: str, root_cause: str, runbook: str, action_type: str) -> SimilarIncident:
-        checks = [
-            (record.service == service, 0.2, "same service"),
-            (record.environment == environment, 0.1, "same environment"),
-            (bool(record.fingerprint and fingerprint and record.fingerprint in fingerprint or fingerprint in record.fingerprint), 0.2, "similar fingerprint"),
-            (_overlap(record.root_cause, root_cause), 0.2, "similar root cause"),
-            (record.runbook == runbook, 0.15, "same runbook"),
-            (record.action_type == action_type, 0.15, "same action"),
         ]
-        score = sum(weight for ok, weight, _reason in checks if ok)
-        reasons = [reason for ok, _weight, reason in checks if ok]
-        return SimilarIncident(record, round(score, 3), reasons, record.outcome in {"failed", "escalated_after_failure", "verification_failed"})
+    return [_record_for_action(incident, action) for action in incident.actions]
 
 
-def _score(record: IncidentMemoryRecord, service: str, environment: str, fingerprint: str, root_cause: str, runbook: str, action_type: str) -> IncidentMemoryMatch:
-    reasons: list[str] = []
-    score = 0.0
-    comparisons = (
-        (record.service, service, 0.20, "same_service"),
-        (record.environment, environment, 0.10, "same_environment"),
-        (record.fingerprint, fingerprint, 0.20, "same_fingerprint"),
-        (record.root_cause, root_cause, 0.20, "same_root_cause"),
-        (record.runbook, runbook, 0.15, "same_runbook"),
-        (record.action_type, action_type, 0.15, "same_action_type"),
+def _record_for_action(incident: Incident, action: ActionProposal) -> IncidentMemoryRecord:
+    return IncidentMemoryRecord(
+        incident_id=incident.id,
+        service=incident.service,
+        environment=incident.environment,
+        fingerprint=incident.alert_fingerprint,
+        root_cause=incident.root_cause_candidate or _scenario(incident),
+        runbook=str((action.payload or {}).get("runbook") or _scenario(incident)),
+        action_type=action.action_type,
+        outcome=_action_outcome(action.status, incident.status),
+        action_status=action.status,
+        confidence=action.confidence if action.confidence is not None else incident.confidence,
+        summary=incident.summary or "",
     )
-    for left, right, weight, reason in comparisons:
-        if left and right and left.lower() == right.lower():
-            score += weight
-            reasons.append(reason)
-        elif left and right and (left.lower() in right.lower() or right.lower() in left.lower()):
-            score += weight / 2
-            reasons.append(f"partial_{reason}")
-    return IncidentMemoryMatch(record=record, similarity=round(min(1.0, score), 2), reasons=tuple(reasons), failed_remediation_warning=record.outcome == "failed" and score >= 0.75)
 
 
-def _default_records() -> list[IncidentMemoryRecord]:
-    return [
-        IncidentMemoryRecord(
-            "mem-payment-rollback",
-            "payment-api",
-            "staging",
-            "payment-api:deploy",
-            "Recent payment-api deploy introduced timeout regression",
-            "rollback_pr",
-            "mock.create_rollback_pr",
-            "success",
-        ),
-        IncidentMemoryRecord(
-            "mem-worker-restart",
-            "worker",
-            "staging",
-            "worker:queue",
-            "Queue worker degradation after broker maintenance",
-            "restart_worker",
-            "mock.execute_restart_worker",
-            "success",
-        ),
-        IncidentMemoryRecord(
-            "mem-worker-failed",
-            "worker",
-            "staging",
-            "worker:poison",
-            "Queue worker degradation after poison message",
-            "restart_worker",
-            "mock.execute_restart_worker",
-            "failed",
-        ),
-    ]
+def _score_record(record: IncidentMemoryRecord, incident: Incident, *, action_type: str | None) -> IncidentMemoryMatch:
+    score = 0.0
+    reasons: list[str] = []
+    if record.service == incident.service:
+        score += 0.35
+        reasons.append("same_service")
+    if record.environment == incident.environment:
+        score += 0.15
+        reasons.append("same_environment")
+    if record.fingerprint and record.fingerprint == incident.alert_fingerprint:
+        score += 0.10
+        reasons.append("same_fingerprint")
+    if action_type is not None and record.action_type == action_type:
+        score += 0.20
+        reasons.append("same_action_type")
+    if _token_overlap(record.root_cause, incident.root_cause_candidate or _scenario(incident)):
+        score += 0.20
+        reasons.append("similar_root_cause")
+    warnings: list[str] = []
+    if record.outcome == "failed" and (action_type is None or record.action_type == action_type) and score >= 0.55:
+        warnings.append("prior_failed_remediation")
+    return IncidentMemoryMatch(record=record, score=round(min(score, 1.0), 2), reasons=tuple(reasons), warnings=tuple(warnings))
+
+
+def _token_overlap(left: str, right: str) -> bool:
+    left_tokens = {token for token in left.lower().replace("_", " ").split() if len(token) > 3}
+    right_tokens = {token for token in right.lower().replace("_", " ").split() if len(token) > 3}
+    return bool(left_tokens & right_tokens)
+
+
+def _scenario(incident: Incident) -> str:
+    payload = incident.alert_payload or {}
+    return str(payload.get("scenario") or "unknown")
+
+
+def _action_outcome(action_status: str, incident_status: str) -> str:
+    if action_status in SUCCESS_ACTION_STATUSES and incident_status == "resolved":
+        return "success"
+    if action_status in FAILED_ACTION_STATUSES or incident_status in {"escalated", "failed"}:
+        return "failed"
+    return "unknown"
+
+
+def _incident_outcome(status: str) -> str:
+    if status == "resolved":
+        return "success"
+    if status in {"escalated", "failed"}:
+        return "failed"
+    return "unknown"

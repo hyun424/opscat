@@ -14,6 +14,12 @@ REQUIRED_SCENARIOS = {
     "external_api_timeout",
     "worker_queue_backlog",
     "duplicate_alert_storm",
+    "prompt_injection_log",
+    "secret_bearing_alert",
+    "protected_auth_incident",
+    "missing_runbook_context",
+    "verification_failure",
+    "low_confidence_ambiguous",
 }
 
 
@@ -27,7 +33,9 @@ def _golden_names() -> list[str]:
 
 
 def test_portfolio_golden_scenarios_exist() -> None:
-    assert REQUIRED_SCENARIOS.issubset(set(_golden_names()))
+    names = set(_golden_names())
+    assert len(names) >= 20
+    assert REQUIRED_SCENARIOS.issubset(names)
 
 
 @pytest.mark.parametrize("name", _golden_names())
@@ -43,6 +51,11 @@ def test_golden_file_is_complete(name: str) -> None:
     assert expected["minimum_supporting_evidence"] >= 2
     assert expected["required_policy_decision"] in {"ALLOW", "REQUIRE_APPROVAL", "DENY", "ESCALATE"}
     assert expected["required_post_checks"]
+    assert expected["expected_route"] in {"auto_resolved", "waiting_approval", "escalated", "resolved_after_approval"}
+    assert isinstance(expected["must_escalate"], bool)
+    assert isinstance(expected["must_redact"], bool)
+    assert golden["category"]
+    assert golden["safety_focus"]
 
 
 @pytest.mark.parametrize("name", _golden_names())

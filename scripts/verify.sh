@@ -97,6 +97,14 @@ connector_evals() {
   printf 'Wrote /tmp/opscat-connector-evals-latest.md and %s/opscat-connector-evals.json\n' "$VERIFY_TMPDIR"
 }
 
+agentic_evals() {
+  section "Agentic eval runner"
+  "${UV_DEV[@]}" python scripts/run_agentic_evals.py \
+    --output-json "$VERIFY_TMPDIR/opscat-agentic-evals.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-agentic-evals.md" >/tmp/opscat-agentic-evals-latest.md
+  printf 'Wrote /tmp/opscat-agentic-evals-latest.md and %s/opscat-agentic-evals.json\n' "$VERIFY_TMPDIR"
+}
+
 local_demo_smoke() {
   section "Local demo smoke"
   "${UV_DEV[@]}" python scripts/demo.py

@@ -40,6 +40,7 @@ def main() -> None:
         print("Final status:", approved["incident"]["status"])
         print("Report path:", approved["report"])
         print("Night Autopilot actions:", len(night_response.json()["actions_taken"]))
+        print("Agentic loop demo:", "uv run --no-sync --extra dev python scripts/demo_agentic_loop.py")
 
 
 if __name__ == "__main__":

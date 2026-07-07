@@ -1,36 +1,54 @@
-"""Run a no-credential local/mock P6 agentic-loop demo transcript."""
+"""One-command local P6 agentic loop demo."""
 
 from __future__ import annotations
 
-import json
+import sys
 from pathlib import Path
-from typing import Any
 
-FIXTURE = Path("evals/agentic/deploy_regression_payment_api.json")
+from fastapi.testclient import TestClient
 
-
-def build_demo_transcript(fixture_path: Path = FIXTURE) -> list[str]:
-    fixture: dict[str, Any] = json.loads(fixture_path.read_text(encoding="utf-8"))
-    actual = fixture["actual"]
-    incident_id = f"demo-{fixture['scenario']}"
-    return [
-        "OpsCat P6 local/mock agentic loop demo",
-        "Credentials: none (fixture-only, no external provider calls)",
-        f"Incident: {incident_id}",
-        f"1. observe: loaded fixture scenario {fixture['scenario']}",
-        f"2. correlate: grouped signals as {actual['correlation_group']}",
-        f"3. diagnose: top root cause is {actual['top_root_cause']}",
-        f"4. plan: selected runbook {actual['runbook']}",
-        f"5. risk: decision {actual['risk_decision']}",
-        "6. act: mock remediation only; production mutations remain unavailable",
-        f"7. verify: recovery state {actual['verification_result']}",
-        "Operator URL: http://127.0.0.1:8000/operator/incidents/demo-deploy-regression",
-        "Report artifact: /tmp/opscat-agentic-demo-report.md",
-    ]
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 
 def main() -> None:
-    print("\n".join(build_demo_transcript()))
+    from app.main import app
+
+    with TestClient(app) as client:
+        created = client.post(
+            "/webhooks/alerts/mock?process_now=true",
+            json={
+                "scenario": "payment_api_deploy_regression",
+                "environment": "staging",
+                "severity": "high",
+                "message": "P6 demo payment-api timeout spike after deploy v1.42.0",
+                "idempotency_key": "p6-demo-agentic-loop",
+            },
+        )
+        created.raise_for_status()
+        incident = created.json()
+        action = incident["actions"][0]
+        approved = client.post(
+            f"/approvals/{action['id']}",
+            json={"decision": "approve", "actor": "demo-user", "reason": "P6 local demo approval"},
+        )
+        approved.raise_for_status()
+        final_incident = approved.json()["incident"]
+        trace = client.get(f"/incidents/{incident['id']}/trace")
+        trace.raise_for_status()
+        print("OpsCat P6 agentic loop demo (local/mock; no external credentials)")
+        print("Incident ID:", incident["id"])
+        print("observe: fixture alert accepted")
+        print("correlate:", incident["alert_fingerprint"])
+        print("diagnose:", final_incident["root_cause_candidate"], "confidence=", final_incident["confidence"])
+        print("plan: local deploy-regression runbook / rollback draft")
+        print("risk:", action["policy_decision"], "risk=", action["risk_level"])
+        print("act:", action["action_type"], "approved locally")
+        print("verify:", final_incident["status"])
+        print("report:", approved.json()["report"])
+        print("operator URL:", f"/operator/incidents/{incident['id']}")
+        print("trace entries:", trace.json()["markdown"].count("**"))
 
 
 if __name__ == "__main__":

@@ -10,7 +10,10 @@ from app.services.escalation import (
     hard_escalation_required,
     record_human_escalation,
 )
+from app.services.decision_trace_service import record_decision_trace
 from app.services.policy_engine import PolicyContext, PolicyEngine
+from app.services.root_cause_service import generate_root_cause_candidates, persist_top_root_cause
+from app.services.runbook_service import select_runbook
 from app.services.state_machine import transition_incident
 from app.services.timeline_service import add_timeline_event
 from app.tools.mock_context import gather_all_context
@@ -22,7 +25,23 @@ class AgentLoop:
 
     def investigate(self, db: Session, incident: Incident) -> ActionProposal:
         db.add(transition_incident(incident, "investigating", actor="agent", reason="starting context gather"))
+        record_decision_trace(
+            db,
+            incident,
+            stage="observe",
+            decision="mock alert accepted for investigation",
+            confidence=incident.confidence,
+            inputs={"scenario": incident.alert_payload.get("scenario"), "service": incident.service, "environment": incident.environment},
+        )
         evidence = gather_all_context(db, incident)
+        record_decision_trace(
+            db,
+            incident,
+            stage="correlate",
+            decision="single incident scope established from idempotent alert fingerprint",
+            confidence=incident.confidence,
+            inputs={"alert_fingerprint": incident.alert_fingerprint, "evidence_count": len(evidence)},
+        )
         add_timeline_event(
             db,
             incident.id,
@@ -34,9 +53,32 @@ class AgentLoop:
             metadata={"evidence_ids": [item.id for item in evidence]},
         )
         analysis = analyze_incident(incident, evidence)
+        candidates = generate_root_cause_candidates(incident, evidence)
         incident.summary = analysis.summary
-        incident.root_cause_candidate = analysis.hypotheses[0].title
-        incident.confidence = analysis.hypotheses[0].confidence
+        if analysis.hypotheses and analysis.hypotheses[0].confidence >= (candidates[0].confidence if candidates else 0.0):
+            incident.root_cause_candidate = analysis.hypotheses[0].title
+            incident.confidence = analysis.hypotheses[0].confidence
+        else:
+            persist_top_root_cause(incident, candidates)
+        record_decision_trace(
+            db,
+            incident,
+            stage="diagnose",
+            decision=incident.root_cause_candidate or "no candidate",
+            confidence=incident.confidence,
+            inputs={"candidate_count": len(candidates), "evidence_ids": [item.id for item in evidence[:4]]},
+            reason="deterministic root-cause candidate ranking",
+        )
+        runbook = select_runbook(incident, candidates)
+        record_decision_trace(
+            db,
+            incident,
+            stage="plan",
+            decision=runbook.key,
+            confidence=incident.confidence,
+            inputs={"steps": [step.action_type for step in runbook.steps]},
+            reason=runbook.title,
+        )
         db.add(transition_incident(incident, "action_proposed", actor="agent", reason="analysis complete"))
 
         recommended = analysis.recommended_action
@@ -56,6 +98,16 @@ class AgentLoop:
                 tenant_id=incident.tenant_id,
                 workspace_id=incident.workspace_id,
             ),
+        )
+        record_decision_trace(
+            db,
+            incident,
+            stage="risk",
+            decision=policy.route.value,
+            confidence=incident.confidence,
+            inputs={"action_type": recommended.action_type, "risk_level": policy.risk_level.value},
+            policy_result={"decision": policy.decision.value, "route": policy.route.value, "reasons": policy.reasons},
+            reason=policy.reason,
         )
         action = ActionProposal(
             incident_id=incident.id,
@@ -135,6 +187,25 @@ class AgentLoop:
             resource_id=action.id,
             action_id=action.id,
             metadata=policy_metadata,
+        )
+        record_decision_trace(
+            db,
+            incident,
+            stage="act",
+            decision=f"proposed {action.action_type}",
+            confidence=incident.confidence,
+            inputs={"action_id": action.id, "requires_approval": action.requires_approval},
+            output_ref=action.id,
+            policy_result={"decision": policy.decision.value, "route": policy.route.value},
+        )
+        record_decision_trace(
+            db,
+            incident,
+            stage="verify",
+            decision="post-check plan recorded before execution",
+            confidence=incident.confidence,
+            inputs={"post_checks": action.post_checks},
+            output_ref=action.id,
         )
         if policy.decision == "DENY":
             action.status = "denied"

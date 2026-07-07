@@ -13,6 +13,8 @@ IncidentState = Literal[
     "executing",
     "verifying",
     "resolved",
+    "degraded",
+    "needs_human",
     "escalated",
     "false_positive",
     "failed",

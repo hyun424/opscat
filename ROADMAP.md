@@ -180,3 +180,7 @@ P18A implemented as Realtime Source Reader evidence. P18A adds local/mock source
 ## P18B active
 
 P18B active scope: Model Judgment Quality Lab. P18B measures raw LLM incident judgment quality separately from P17 policy calibration, including route accuracy, hypothesis quality, citation quality, evidence sufficiency, action proposal quality, safety behavior, failure taxonomy, and calibration delta. P18B uses P18A source-native snapshots plus existing judgment cases. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.
+
+## P18B implemented
+
+P18B implemented as Model Judgment Quality Lab evidence. P18B adds raw-vs-calibrated model scoring, expanded quality dimensions, provider failure taxonomy, P18A snapshot selection, hardened prompt automation preconditions, a mock/offline model quality CLI, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.

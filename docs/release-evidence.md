@@ -421,3 +421,37 @@ Verification:
 - `bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.
+
+## P18B Model Judgment Quality Lab Evidence
+
+P18B measures raw model judgment quality separately from P17 policy-calibrated OpsCat decisions. It reports raw_provider_score, calibrated_score, calibration_delta, quality dimension averages, failure taxonomy, calibration wins, and per-case evidence for seed cases plus optional P18A realtime snapshots.
+
+Artifacts:
+
+- `docs/operations/p18b-ticket-roadmap.md`
+- `docs/operations/p18b-final-summary.md`
+- `app/services/model_quality_lab.py`
+- `scripts/run_model_quality_eval.py`
+- `tests/test_model_quality_lab.py`
+- `tests/test_p18b_release_evidence.py`
+- `/tmp/opscat-model-quality-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_model_quality_lab.py tests/test_p18b_release_evidence.py`
+- `bash scripts/verify.sh --profile full`
+
+Live NVIDIA opt-in:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --extra llm python scripts/run_model_quality_eval.py \
+  --cases evals/judgment/seed/cases.json \
+  --p18a-replay-json /tmp/opscat-realtime-real-cache-p18a.json \
+  --provider nvidia \
+  --env-file .env \
+  --max-cases 6 \
+  --output-json /tmp/opscat-nvidia-model-quality-p18b.json \
+  --output-md /tmp/opscat-nvidia-model-quality-p18b.md
+```
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.

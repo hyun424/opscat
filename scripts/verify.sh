@@ -203,6 +203,18 @@ CSV
   printf 'Wrote /tmp/opscat-realtime-replay-latest.md and %s/opscat-realtime-replay.json\n' "$VERIFY_TMPDIR"
 }
 
+model_quality_lab_smoke() {
+  section "P18B model quality lab smoke"
+  "${UV_DEV[@]}" python scripts/run_model_quality_eval.py \
+    --cases evals/judgment/seed/cases.json \
+    --provider mock \
+    --max-cases 4 \
+    --output-json "$VERIFY_TMPDIR/opscat-model-quality.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-model-quality.md" >/tmp/opscat-model-quality-latest.json
+  cp "$VERIFY_TMPDIR/opscat-model-quality.md" /tmp/opscat-model-quality-latest.md
+  printf 'Wrote /tmp/opscat-model-quality-latest.md and %s/opscat-model-quality.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -279,7 +291,8 @@ docs_contract_tests() {
     tests/test_p15_release_evidence.py \
     tests/test_p16_release_evidence.py \
     tests/test_p17_release_evidence.py \
-    tests/test_p18a_release_evidence.py
+    tests/test_p18a_release_evidence.py \
+    tests/test_p18b_release_evidence.py
 }
 
 run_fast() {
@@ -303,6 +316,7 @@ run_eval() {
   llm_provider_eval_smoke
   policy_calibration_smoke
   realtime_source_replay_smoke
+  model_quality_lab_smoke
 }
 
 run_docs() {

@@ -1,7 +1,7 @@
 ---
 id: P13-006
 title: Runbook Context Selector
-status: TODO
+status: DONE
 phase: P13
 depends_on: [P13-005]
 ---
@@ -14,9 +14,9 @@ Implement the P13 slice for Runbook Context Selector.
 
 ## Acceptance Criteria
 
-- [ ] selects likely runbooks by incident text and hypotheses
-- [ ] includes allowed local/mock actions and forbidden actions
-- [ ] keeps production mutation and unrestricted shell disallowed
+- [x] selects likely runbooks by incident text and hypotheses
+- [x] includes allowed local/mock actions and forbidden actions
+- [x] keeps production mutation and unrestricted shell disallowed
 
 ## Boundary
 

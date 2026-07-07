@@ -1,7 +1,7 @@
 ---
 id: P13-004
 title: Timeline Builder
-status: TODO
+status: DONE
 phase: P13
 depends_on: [P13-002]
 ---
@@ -14,9 +14,9 @@ Implement the P13 slice for Timeline Builder.
 
 ## Acceptance Criteria
 
-- [ ] uses evidence timestamps when present
-- [ ] handles missing timestamps deterministically
-- [ ] timeline entries reference evidence IDs
+- [x] uses evidence timestamps when present
+- [x] handles missing timestamps deterministically
+- [x] timeline entries reference evidence IDs
 
 ## Boundary
 

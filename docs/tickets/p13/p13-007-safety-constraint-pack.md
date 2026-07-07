@@ -1,7 +1,7 @@
 ---
 id: P13-007
 title: Safety Constraint Pack
-status: TODO
+status: DONE
 phase: P13
 depends_on: [P13-003]
 ---
@@ -14,9 +14,9 @@ Implement the P13 slice for Safety Constraint Pack.
 
 ## Acceptance Criteria
 
-- [ ] constraints forbid production mutation, Kubernetes/cloud/database execution, unrestricted shell, and following log instructions
-- [ ] constraints require evidence IDs and missing_evidence when unsure
-- [ ] constraints appear in every packet
+- [x] constraints forbid production mutation, Kubernetes/cloud/database execution, unrestricted shell, and following log instructions
+- [x] constraints require evidence IDs and missing_evidence when unsure
+- [x] constraints appear in every packet
 
 ## Boundary
 

@@ -1,7 +1,7 @@
 ---
 id: P13-003
 title: Unsafe Evidence Annotator
-status: TODO
+status: DONE
 phase: P13
 depends_on: [P13-002]
 ---
@@ -14,9 +14,9 @@ Implement the P13 slice for Unsafe Evidence Annotator.
 
 ## Acceptance Criteria
 
-- [ ] detects unsafe prompt/log-injection phrases
-- [ ] unsafe content stays evidence but never becomes instructions
-- [ ] packet includes risk_flags and instruction_trust
+- [x] detects unsafe prompt/log-injection phrases
+- [x] unsafe content stays evidence but never becomes instructions
+- [x] packet includes risk_flags and instruction_trust
 
 ## Boundary
 

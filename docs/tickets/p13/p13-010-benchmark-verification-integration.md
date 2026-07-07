@@ -1,7 +1,7 @@
 ---
 id: P13-010
 title: Benchmark/Verification Integration
-status: TODO
+status: DONE
 phase: P13
 depends_on: [P13-009]
 ---
@@ -14,9 +14,9 @@ Implement the P13 slice for Benchmark/Verification Integration.
 
 ## Acceptance Criteria
 
-- [ ] eval profile runs context-builder smoke
-- [ ] full profile runs context-builder smoke
-- [ ] docs profile validates P13 release evidence
+- [x] eval profile runs context-builder smoke
+- [x] full profile runs context-builder smoke
+- [x] docs profile validates P13 release evidence
 
 ## Boundary
 

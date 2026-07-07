@@ -1,7 +1,7 @@
 ---
 id: P13-002
 title: Evidence Selector
-status: TODO
+status: DONE
 phase: P13
 depends_on: [P13-001]
 ---
@@ -14,9 +14,9 @@ Implement the P13 slice for Evidence Selector.
 
 ## Acceptance Criteria
 
-- [ ] ranking prioritizes errors, anomalies, deploy markers, metrics, no-data/stale signals, and safety-risk content
-- [ ] selector enforces max evidence limit
-- [ ] selector keeps evidence IDs stable
+- [x] ranking prioritizes errors, anomalies, deploy markers, metrics, no-data/stale signals, and safety-risk content
+- [x] selector enforces max evidence limit
+- [x] selector keeps evidence IDs stable
 
 ## Boundary
 

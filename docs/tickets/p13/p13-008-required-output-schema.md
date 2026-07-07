@@ -1,7 +1,7 @@
 ---
 id: P13-008
 title: Required Output Schema
-status: TODO
+status: DONE
 phase: P13
 depends_on: [P13-001, P13-007]
 ---
@@ -14,9 +14,9 @@ Implement the P13 slice for Required Output Schema.
 
 ## Acceptance Criteria
 
-- [ ] schema requires hypotheses, recommended_route, safe_actions, forbidden_actions_detected, missing_evidence, verification_plan, evidence_citations
-- [ ] allowed routes match OpsCat taxonomy
-- [ ] schema is included in packets and docs
+- [x] schema requires hypotheses, recommended_route, safe_actions, forbidden_actions_detected, missing_evidence, verification_plan, evidence_citations
+- [x] allowed routes match OpsCat taxonomy
+- [x] schema is included in packets and docs
 
 ## Boundary
 

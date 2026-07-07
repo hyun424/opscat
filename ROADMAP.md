@@ -125,3 +125,8 @@ P12 implemented as local/mock Real Dataset Evaluation Harness evidence. P12 cove
 ## P13 active
 
 P13 active scope: LLM Context Builder before LLM judgment. P13 focuses on context packet schema, evidence selection, unsafe evidence annotation, timeline building, candidate hypothesis context, runbook context selection, safety constraints, required output schema, context builder CLI, verification integration, and release evidence. See `docs/operations/p13-ticket-roadmap.md` and `docs/tickets/p13/README.md`. The boundary remains no-auth/local-mock: P13 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, external dataset downloads during normal verification, model calls, or unattended production-operation claims.
+
+
+## P13 implemented
+
+P13 implemented as local/mock LLM Context Builder evidence. P13 covers deterministic context packet schema, redacted evidence selection, unsafe evidence annotation, timeline building, candidate hypothesis context, runbook context selection, safety constraints, required output schema, context builder CLI, verification integration, and release evidence. See `docs/operations/p13-ticket-roadmap.md`, `docs/operations/p13-final-summary.md`, and `docs/release-evidence.md`. The boundary remains no-auth/local-mock: P13 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, external dataset downloads during normal verification, model calls, or unattended production-operation claims.

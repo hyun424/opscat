@@ -1,7 +1,7 @@
 ---
 id: P13-011
 title: P13 Release Evidence
-status: TODO
+status: DONE
 phase: P13
 depends_on: [P13-001, P13-002, P13-003, P13-004, P13-005, P13-006, P13-007, P13-008, P13-009, P13-010]
 ---
@@ -14,9 +14,9 @@ Implement the P13 slice for P13 Release Evidence.
 
 ## Acceptance Criteria
 
-- [ ] final summary maps P13-001 through P13-011
-- [ ] release evidence includes commands and artifacts
-- [ ] full verification passes
+- [x] final summary maps P13-001 through P13-011
+- [x] release evidence includes commands and artifacts
+- [x] full verification passes
 
 ## Boundary
 

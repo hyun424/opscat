@@ -1,7 +1,7 @@
 ---
 id: P13-001
 title: LLM Context Packet Schema
-status: TODO
+status: DONE
 phase: P13
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P13 slice for LLM Context Packet Schema.
 
 ## Acceptance Criteria
 
-- [ ] packet includes incident, evidence, timeline, candidate_hypotheses, candidate_runbooks, constraints, required_output_schema, boundary
-- [ ] packet is deterministic JSON and redacted
-- [ ] packet states local/mock and no-model-call boundaries
+- [x] packet includes incident, evidence, timeline, candidate_hypotheses, candidate_runbooks, constraints, required_output_schema, boundary
+- [x] packet is deterministic JSON and redacted
+- [x] packet states local/mock and no-model-call boundaries
 
 ## Boundary
 

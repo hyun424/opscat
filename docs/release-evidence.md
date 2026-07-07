@@ -264,3 +264,26 @@ P11 remains local/mock and auth-deferred. It expands incident judgment coverage 
 - Full release gate: `bash scripts/verify.sh --profile full`
 
 P12 remains local/mock and auth-deferred. It evaluates tiny real-dataset-shaped fixtures through the existing deterministic benchmark; it does not download public datasets during normal verification and does not claim unattended production operation.
+
+
+## P13 LLM Context Builder Evidence
+
+P13 adds a deterministic pre-LLM context builder so future model judgment receives redacted, evidence-cited, safety-constrained incident context. It remains local/mock and performs no model calls.
+
+Artifacts:
+
+- `docs/operations/p13-ticket-roadmap.md`
+- `docs/operations/p13-final-summary.md`
+- `app/services/llm_context_builder.py`
+- `scripts/build_llm_context.py`
+- `tests/test_llm_context_builder.py`
+- `tests/test_llm_context_cli.py`
+- `tests/test_p13_release_evidence.py`
+- `/tmp/opscat-llm-context-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_llm_context_builder.py tests/test_llm_context_cli.py tests/test_p13_release_evidence.py`
+- `bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock; no external model/API calls; no production mutation; no Kubernetes/cloud/database mutation; no unrestricted shell; no unattended production-operation claim.

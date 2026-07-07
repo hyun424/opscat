@@ -105,3 +105,7 @@ P10 active scope: Incident Judgment Benchmark without auth or external dataset d
 ## P10 implemented
 
 P10 implemented as local/mock Incident Judgment Benchmark evidence. P10 covers judgment case schema, LogHub-style adapter, NAB-style metric adapter, rubric scoring, commander judgment evaluator, dataset conversion CLI, benchmark runner, regression baseline comparison, markdown/JSON reports, seed dataset fixtures, verification integration, and release evidence. See `docs/operations/p10-ticket-roadmap.md`, `docs/operations/p10-final-summary.md`, and `docs/release-evidence.md`. The boundary remains no-auth/local-mock: P10 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, or unattended production-operation claims.
+
+## P11 active
+
+P11 active scope: Incident Corpus Expansion before LLM judgment. P11 focuses on an incident archetype catalog, deterministic local/mock corpus generation, corpus quality audits, a stable smoke selector, corpus report CLI, expanded fixture pack, verification integration, and release evidence. See `docs/operations/p11-ticket-roadmap.md` and `docs/tickets/p11/README.md`. The boundary remains no-auth/local-mock: P11 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, external dataset downloads during normal verification, or unattended production-operation claims.

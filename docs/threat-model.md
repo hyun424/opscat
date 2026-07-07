@@ -59,3 +59,7 @@ P5 adds or documents these public/local surfaces:
 ## MVP Security Boundaries
 
 The MVP is local/mock-only. Auth remains deferred. It must not claim real production safety until production authentication, tenant isolation, external secret management, connector deployment, CI/CD hardening, and operational monitoring are implemented and verified.
+
+## P5 Security Review Link
+
+See `docs/security-review-p5.md` for P5-specific Adversarial checks and Residual gaps across connector setup, secret lifecycle, incident import, worker CLI, approval console, Night Autopilot, and self-observability.

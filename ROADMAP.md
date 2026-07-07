@@ -184,3 +184,7 @@ P18B active scope: Model Judgment Quality Lab. P18B measures raw LLM incident ju
 ## P18B implemented
 
 P18B implemented as Model Judgment Quality Lab evidence. P18B adds raw-vs-calibrated model scoring, expanded quality dimensions, provider failure taxonomy, P18A snapshot selection, hardened prompt automation preconditions, a mock/offline model quality CLI, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.
+
+## P19 active
+
+P19 active scope: Operator Judgment Improvement Loop. P19 converts P18B raw model-quality failures into prioritized non-mutating improvement recommendations, safe missing-evidence plans, regression packs, before/after trend comparison, CLI reports, verification integration, and release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.

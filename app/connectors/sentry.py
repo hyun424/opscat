@@ -22,68 +22,11 @@ from app.connectors.base import ConnectorCallRequest, ConnectorCallResult, Conne
 from app.services.redaction import redact_text, redact_value
 
 _AUTH_TOKEN_FIELD = "auth_token"
-_DEFAULT_BASE_URL = "https://sentry.example.invalid/api/0"
-_DEFAULT_ORG = "opscat"
+_MAX_PAGES = 3
 _FIXTURE_MODE = "fixture"
 _REAL_MODE = "real"
-
-
-@dataclass(frozen=True)
-class SentryProviderResponse:
-    status_code: int
-    payload: Any = field(default_factory=dict)
-    headers: Mapping[str, str] = field(default_factory=dict)
-
-
-class SentryProviderError(RuntimeError):
-    """Base provider-boundary exception for compatibility with older tests."""
-
-
-class SentryRateLimitedError(SentryProviderError):
-    """Provider rate-limit signal normalized into fail-closed connector output."""
-
-
-class SentryTransport(Protocol):
-    def get(self, url: str, *, token: str, params: Mapping[str, Any]) -> SentryProviderResponse:
-        """Perform one Sentry-like GET request."""
-
-
-SentryTransportInput = SentryTransport | Callable[[str, dict[str, Any]], SentryProviderResponse]
-
-
-class _CallableSentryTransport:
-    def __init__(self, fn: Callable[[str, dict[str, Any]], SentryProviderResponse]) -> None:
-        self._fn = fn
-
-    def get(self, url: str, *, token: str, params: Mapping[str, Any]) -> SentryProviderResponse:
-        del token
-        return self._fn(url, dict(params))
-
-
-class UrllibSentryTransport:
-    """Tiny stdlib transport for opt-in local-secret real-provider experiments."""
-
-    def get(self, url: str, *, token: str, params: Mapping[str, Any]) -> SentryProviderResponse:
-        query = urlencode({key: value for key, value in params.items() if value not in (None, "")})
-        full_url = f"{url}?{query}" if query else url
-        request = Request(full_url, headers={"Authorization": f"Bearer {token}", "Accept": "application/json"})
-        try:
-            with urlopen(request, timeout=5) as response:  # noqa: S310 - explicit opt-in provider path.
-                body = response.read().decode("utf-8")
-                return SentryProviderResponse(
-                    status_code=response.status,
-                    payload=json.loads(body or "{}"),
-                    headers=dict(response.headers.items()),
-                )
-        except HTTPError as exc:
-            body = exc.read().decode("utf-8", errors="replace")
-            try:
-                payload: Any = json.loads(body or "{}")
-            except json.JSONDecodeError:
-                payload = {"detail": body}
-            return SentryProviderResponse(status_code=exc.code, payload=payload, headers=dict(exc.headers.items()))
-        except URLError as exc:
-            return SentryProviderResponse(status_code=599, payload={"detail": str(exc.reason)}, headers={})
+_DEFAULT_ORG = "opscat"
+_DEFAULT_BASE_URL = "https://sentry.io/api/0"
 
 
 _RECORDED_ISSUES: tuple[dict[str, Any], ...] = (
@@ -158,9 +101,60 @@ _RECORDED_EVENTS: dict[str, tuple[dict[str, Any], ...]] = {
 }
 
 
+@dataclass(frozen=True)
+class SentryProviderResponse:
+    status_code: int
+    payload: Any = field(default_factory=dict)
+    headers: Mapping[str, str] = field(default_factory=dict)
+
+
+class SentryProviderError(RuntimeError):
+    pass
+
+
+class SentryRateLimitedError(SentryProviderError):
+    pass
+
+
+class SentryTransport(Protocol):
+    def get(self, url: str, *, token: str, params: Mapping[str, Any]) -> SentryProviderResponse:
+        """Perform one Sentry-like GET request."""
+
+
+class UrllibSentryTransport:
+    """Tiny stdlib transport for opt-in local-secret real-provider experiments."""
+
+    def get(self, url: str, *, token: str, params: Mapping[str, Any]) -> SentryProviderResponse:
+        query = urlencode({key: value for key, value in params.items() if value not in (None, "")})
+        full_url = f"{url}?{query}" if query else url
+        request = Request(full_url, headers={"Authorization": f"Bearer {token}", "Accept": "application/json"})
+        try:
+            with urlopen(request, timeout=5) as response:  # noqa: S310 - explicit opt-in local-secret provider path
+                body = response.read().decode("utf-8")
+                return SentryProviderResponse(status_code=response.status, payload=json.loads(body or "{}"), headers=dict(response.headers.items()))
+        except HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
+            payload: Any
+            try:
+                payload = json.loads(body or "{}")
+            except json.JSONDecodeError:
+                payload = {"detail": body}
+            return SentryProviderResponse(status_code=exc.code, payload=payload, headers=dict(exc.headers.items()))
+        except URLError as exc:
+            raise ConnectionError("sentry provider connection failed") from exc
+
+
 class SentryReadOnlyConnector:
     connector_id = "sentry.readonly"
     capabilities: Mapping[str, ConnectorCapability] = {
+        "health.check": ConnectorCapability(
+            name="health.check",
+            description="Report fixture/default or opt-in real-provider Sentry health without leaking configuration.",
+            risk_level="read_only",
+            read_only=True,
+            required_role="viewer",
+            required_secret_name=None,
+        ),
         "issues.read": ConnectorCapability(
             name="issues.read",
             description="Read sanitized Sentry issue fixtures by default; real provider reads require provider_mode=real and sentry.token.",
@@ -177,23 +171,11 @@ class SentryReadOnlyConnector:
             required_role="viewer",
             required_secret_name="sentry.token",
         ),
-        "health.check": ConnectorCapability(
-            name="health.check",
-            description="Check Sentry connector setup without leaking credentials.",
-            risk_level="read_only",
-            read_only=True,
-            required_role="viewer",
-            required_secret_name=None,
-        ),
     }
 
-    def __init__(self, transport: SentryTransportInput | None = None) -> None:
-        if transport is None:
-            self._transport: SentryTransport = UrllibSentryTransport()
-        elif callable(transport) and not hasattr(transport, "get"):
-            self._transport = _CallableSentryTransport(transport)
-        else:
-            self._transport = cast(SentryTransport, transport)
+    def __init__(self, transport: SentryTransport | Callable[[str, dict[str, Any]], SentryProviderResponse] | None = None) -> None:
+        self._legacy_transport = transport if callable(transport) and not hasattr(transport, "get") else None
+        self._transport = transport if hasattr(transport, "get") else UrllibSentryTransport()
 
     def call(self, request: ConnectorCallRequest) -> ConnectorCallResult:
         if request.capability not in self.capabilities:
@@ -206,32 +188,47 @@ class SentryReadOnlyConnector:
             )
         if request.capability == "health.check":
             return self._health_check(request)
-        if _provider_mode(request.payload) != _REAL_MODE:
-            if request.capability == "issues.read":
-                return self._search_fixture_issues(request)
-            return self._read_fixture_issue_events(request)
+        mode = _provider_mode(request.payload)
         token = _optional_text(request.payload.get(_AUTH_TOKEN_FIELD))
-        if not token:
-            return _provider_error_result(
-                request.capability,
-                "missing_secret",
-                "missing credential: sentry.token",
+        if mode == _REAL_MODE and not token:
+            return ConnectorCallResult(
+                connector_id=self.connector_id,
+                capability=request.capability,
+                ok=False,
+                read_only=True,
+                error="missing credential: sentry.token",
+                evidence_summary="Sentry connector failed closed because real/provider mode requires a workspace auth token.",
+                output={"provider": "sentry", "mode": _REAL_MODE, "normalized_error": "missing_secret"},
             )
         if request.capability == "issues.read":
-            return self._search_provider_issues(request, token=token)
-        return self._read_provider_issue_events(request, token=token)
+            if self._legacy_transport is not None and mode == _REAL_MODE:
+                return self._search_legacy_provider_issues(request)
+            if mode == _REAL_MODE:
+                return self._search_provider_issues(request, token=token)
+            return self._search_fixture_issues(request)
+        if mode == _REAL_MODE:
+            return self._read_provider_issue_events(request, token=token)
+        return self._read_fixture_issue_events(request)
 
     def _health_check(self, request: ConnectorCallRequest) -> ConnectorCallResult:
-        if _provider_mode(request.payload) != _REAL_MODE:
+        mode = _provider_mode(request.payload)
+        token = _optional_text(request.payload.get(_AUTH_TOKEN_FIELD))
+        if mode == _FIXTURE_MODE:
             return ConnectorCallResult(
                 connector_id=self.connector_id,
                 capability=request.capability,
                 ok=True,
                 read_only=True,
-                evidence_summary="Sentry fixture health is available; no provider credentials or network calls are required.",
-                output={"provider": "sentry-fixture", "mode": _FIXTURE_MODE, "state": "fixture-ok", "health_state": "fixture_ok", "network_attempted": False},
+                evidence_summary="Sentry connector health=fixture_ok; no provider mutation performed.",
+                output={
+                    "provider": "sentry-fixture",
+                    "mode": _FIXTURE_MODE,
+                    "state": "fixture-ok",
+                    "health_state": "fixture_ok",
+                    "fixture_default": True,
+                    "network_attempted": False,
+                },
             )
-        token = _optional_text(request.payload.get(_AUTH_TOKEN_FIELD))
         if not token:
             return _health_failure("missing_secret", "missing credential: sentry.token")
         config_error = _config_error(request.payload)
@@ -239,15 +236,10 @@ class SentryReadOnlyConnector:
             return _health_failure("invalid_config", config_error)
         simulated = _optional_text(request.payload.get("simulate_health"))
         if simulated == "rate_limited":
-            return _health_failure("rate_limited", "sentry provider rate limited request", retry_after=_optional_text(request.payload.get("retry_after")))
+            return _health_failure("rate_limited", "sentry provider rate limited request", retry_after=_optional_text(request.payload.get("retry_after")) or "60")
         if simulated == "provider_error":
             return _health_failure("provider_error", "sentry provider returned an error")
-        try:
-            response = self._transport.get(_provider_url(request.payload, f"organizations/{_organization(request.payload)}/issues/"), token=token, params={"limit": 1})
-        except SentryRateLimitedError:
-            return _health_failure("rate_limited", "sentry provider rate limited request")
-        except SentryProviderError:
-            return _health_failure("provider_error", "sentry provider returned an error")
+        response = self._transport.get(_provider_url(request.payload, f"organizations/{_organization(request.payload)}/issues/"), token=token, params={"limit": 1})
         failure = _normalized_provider_failure(response)
         if failure is not None:
             state = "rate_limited" if failure[0] == "rate_limited" else failure[0]
@@ -257,41 +249,20 @@ class SentryReadOnlyConnector:
             capability=request.capability,
             ok=True,
             read_only=True,
-            evidence_summary="Sentry provider-shaped health check succeeded through bounded read-only transport.",
-            output={"provider": "sentry", "mode": _REAL_MODE, "health_state": "configured", "network_attempted": True},
+            evidence_summary="Sentry provider-shaped health check succeeded.",
+            output={"provider": "sentry", "mode": _REAL_MODE, "health_state": "configured", "status_code": response.status_code},
         )
 
-    def _search_fixture_issues(self, request: ConnectorCallRequest) -> ConnectorCallResult:
+    def _search_legacy_provider_issues(self, request: ConnectorCallRequest) -> ConnectorCallResult:
+        issues: list[dict[str, Any]] = []
         project = _optional_text(request.payload.get("project"))
         query = _optional_text(request.payload.get("query")).lower()
-        transport = self.transport
-        if transport and not _fixture_mode(request.payload):
-            return self._provider_issues(request, transport=transport, project=project, query=query)
-        issues = [_redacted_mapping(issue) for issue in _RECORDED_ISSUES if _matches_issue(issue, project=project, query=query)]
-        return ConnectorCallResult(
-            connector_id=self.connector_id,
-            capability=request.capability,
-            ok=True,
-            read_only=True,
-            evidence_summary=f"Read {len(page_items)} of {len(matched)} sanitized Sentry-style issue fixture(s); no network call performed.",
-            output={
-                "provider": "sentry-fixture",
-                "mode": _FIXTURE_MODE,
-                "recorded": True,
-                "issues": page_items,
-                "pagination": _fixture_pagination(request.payload, page=page, per_page=per_page, next_cursor=next_cursor),
-                "rate_limit": {"bounded": True, "retry_after_seconds": 0},
-            },
-        )
-
-    def _provider_issues(self, request: ConnectorCallRequest, *, transport: SentryTransport, project: str, query: str) -> ConnectorCallResult:
-        issues: list[dict[str, Any]] = []
-        cursor = _optional_text(request.payload.get("cursor"))
+        assert self._legacy_transport is not None
         for page in range(1, _MAX_PAGES + 1):
             try:
-                response = transport(
+                response = self._legacy_transport(
                     "/api/0/organizations/{org_slug}/issues/",
-                    {"project": project, "query": query, "cursor": cursor, "page": page, "auth_token": request.payload.get(_AUTH_TOKEN_FIELD)},
+                    {"project": project, "query": query, "page": page, "auth_token": request.payload.get(_AUTH_TOKEN_FIELD)},
                 )
             except SentryRateLimitedError:
                 return _failure(request, "rate-limited", "Sentry provider rate limit reached during bounded pagination.")
@@ -304,23 +275,15 @@ class SentryReadOnlyConnector:
             payload_issues = response.payload.get("issues") or response.payload.get("data") or []
             if isinstance(payload_issues, list):
                 issues.extend(_redacted_mapping(item) for item in payload_issues if isinstance(item, Mapping))
-            cursor = str((response.headers or {}).get("next_cursor") or response.payload.get("next_cursor") or "")
-            if not cursor:
-                return ConnectorCallResult(
-                    connector_id=self.connector_id,
-                    capability=request.capability,
-                    ok=True,
-                    read_only=True,
-                    evidence_summary=f"Read {len(issues)} sanitized Sentry issue(s) from provider-shaped transport across {page} page(s).",
-                    output={"provider": "sentry", "recorded": False, "issues": issues, "pagination": {"pages_read": page, "bounded": True}},
-                )
+            if not response.payload.get("next_cursor"):
+                break
         return ConnectorCallResult(
             connector_id=self.connector_id,
             capability=request.capability,
             ok=True,
             read_only=True,
-            evidence_summary=f"Read {len(issues)} sanitized Sentry issue(s); stopped at bounded page limit.",
-            output={"provider": "sentry", "recorded": False, "issues": issues, "pagination": {"pages_read": _MAX_PAGES, "bounded": True, "truncated": True}},
+            evidence_summary=f"Read {len(issues)} sanitized Sentry issue(s) from provider-shaped transport.",
+            output={"provider": "sentry", "mode": _REAL_MODE, "recorded": False, "issues": issues, "pagination": {"pages_read": page, "bounded": True}},
         )
 
     def _read_issue_events(self, request: ConnectorCallRequest) -> ConnectorCallResult:

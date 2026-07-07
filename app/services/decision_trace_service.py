@@ -171,40 +171,28 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
     ]
 
 
-def record_decision_trace(
-    db: Any,
-    incident: Any,
-    *,
-    stage: str,
-    decision: str,
-    confidence: float | None = None,
-    inputs: Mapping[str, Any] | None = None,
-    reason: str | None = None,
-    policy_result: Mapping[str, Any] | None = None,
-    output_ref: str | None = None,
-) -> Any:
-    from app.services.timeline_service import add_timeline_event
+def render_trace_json(incident: Any) -> list[dict[str, Any]]:
+    """Render the incident decision trace as redacted JSON-compatible dicts."""
 
-    details = _redacted_details(
-        {
-            "decision": decision,
-            "confidence": confidence,
-            "inputs": dict(inputs or {}),
-            "reason": reason,
-            "policy_result": dict(policy_result or {}),
-            "output_ref": output_ref,
-        }
-    )
-    return add_timeline_event(
-        db,
-        incident.id,
-        tenant_id=incident.tenant_id,
-        workspace_id=incident.workspace_id,
-        actor="agent",
-        event_type=f"decision_trace.{stage}",
-        content=f"{stage}: {decision}",
-        metadata=details,
-    )
+    return [entry.to_dict() for entry in build_decision_trace(incident)]
+
+
+def render_trace_markdown(incident: Any) -> str:
+    """Render the incident decision trace as compact Markdown for reports."""
+
+    lines = ["# Agent Decision Trace", ""]
+    for entry in build_decision_trace(incident):
+        lines.append(f"## {entry.stage}: {entry.title}")
+        lines.append(f"- Summary: {entry.summary}")
+        lines.append(f"- Status: {entry.status or 'unknown'}")
+        if entry.confidence is not None:
+            lines.append(f"- Confidence: {entry.confidence:.2f}")
+        if entry.policy_decision:
+            lines.append(f"- Policy: {entry.policy_decision}")
+        if entry.risk_level:
+            lines.append(f"- Risk: {entry.risk_level}")
+        lines.append("")
+    return "\n".join(lines).strip() + "\n"
 
 
 def _timeline_summaries(timeline: list[Any]) -> list[dict[str, Any]]:

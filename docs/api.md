@@ -103,6 +103,42 @@ curl -s http://localhost:8000/operator \
   -H 'X-OpsCat-Role: admin'
 ```
 
+## Local secret metadata lifecycle
+
+Secret setup remains local/mock and auth is deferred. Use admin local-header role for metadata-only secret setup. Responses never return plaintext or ciphertext.
+
+### GET /secrets
+
+```bash
+curl -s http://localhost:8000/secrets \
+  -H 'X-OpsCat-Actor: demo-user@opscat.local' \
+  -H 'X-OpsCat-Tenant: demo' \
+  -H 'X-OpsCat-Workspace: demo' \
+  -H 'X-OpsCat-Role: admin'
+```
+
+### PUT /secrets/{name}
+
+```bash
+curl -s -X PUT http://localhost:8000/secrets/sentry.token \
+  -H 'content-type: application/json' \
+  -H 'X-OpsCat-Actor: demo-user@opscat.local' \
+  -H 'X-OpsCat-Tenant: demo' \
+  -H 'X-OpsCat-Workspace: demo' \
+  -H 'X-OpsCat-Role: admin' \
+  -d '{"value":"local-fixture-token","metadata":{"connector":"sentry.readonly"}}'
+```
+
+### DELETE /secrets/{name}
+
+```bash
+curl -s -X DELETE http://localhost:8000/secrets/sentry.token \
+  -H 'X-OpsCat-Actor: demo-user@opscat.local' \
+  -H 'X-OpsCat-Tenant: demo' \
+  -H 'X-OpsCat-Workspace: demo' \
+  -H 'X-OpsCat-Role: admin'
+```
+
 ## Night Autopilot
 
 ### POST /night-autopilot/simulate

@@ -8,6 +8,7 @@ from typing import Any
 from app.models import AuditEvent, SecretRecord
 from tests.test_operator_dashboard import ALPHA_HEADERS
 
+ADMIN_HEADERS = ALPHA_HEADERS | {"X-OpsCat-Actor": "admin@example.com", "X-OpsCat-Role": "admin"}
 VIEWER_HEADERS = ALPHA_HEADERS | {"X-OpsCat-Actor": "viewer@example.com", "X-OpsCat-Role": "viewer"}
 SECRET_MARKERS = ("sntrys_secret_value", "ghp_secret_value", "xoxb-secret", "ops@example.com")
 
@@ -15,7 +16,7 @@ SECRET_MARKERS = ("sntrys_secret_value", "ghp_secret_value", "xoxb-secret", "ops
 def test_secret_lifecycle_api_returns_metadata_only_and_audits(client: Any, db_session: Any) -> None:
     created = client.put(
         "/secrets/sentry.token",
-        headers=ALPHA_HEADERS,
+        headers=ADMIN_HEADERS,
         json={"value": "sntrys_secret_value", "metadata": {"connector": "sentry.readonly", "owner_email": "ops@example.com"}},
     )
 
@@ -31,7 +32,7 @@ def test_secret_lifecycle_api_returns_metadata_only_and_audits(client: Any, db_s
         }
     }
 
-    listed = client.get("/secrets", headers=ALPHA_HEADERS)
+    listed = client.get("/secrets", headers=ADMIN_HEADERS)
     assert listed.status_code == 200
     listed_payload = listed.json()
     assert listed_payload["secrets"] == [payload["secret"]]
@@ -51,16 +52,16 @@ def test_secret_lifecycle_api_update_delete_and_role_scope(client: Any, db_sessi
     viewer_put = client.put("/secrets/github.token", headers=VIEWER_HEADERS, json={"value": "ghp_secret_value"})
     assert viewer_put.status_code == 403
 
-    created = client.put("/secrets/github.token", headers=ALPHA_HEADERS, json={"value": "ghp_secret_value", "metadata": {"connector": "github.issues"}})
+    created = client.put("/secrets/github.token", headers=ADMIN_HEADERS, json={"value": "ghp_secret_value", "metadata": {"connector": "github.issues"}})
     assert created.status_code == 200
-    updated = client.put("/secrets/github.token", headers=ALPHA_HEADERS, json={"value": "ghp_rotated_value", "metadata": {"connector": "github.issues", "rotated": True}})
+    updated = client.put("/secrets/github.token", headers=ADMIN_HEADERS, json={"value": "ghp_rotated_value", "metadata": {"connector": "github.issues", "rotated": True}})
     assert updated.status_code == 200
     assert updated.json()["secret"]["metadata"] == {"connector": "github.issues", "rotated": True}
 
-    deleted = client.delete("/secrets/github.token", headers=ALPHA_HEADERS)
+    deleted = client.delete("/secrets/github.token", headers=ADMIN_HEADERS)
     assert deleted.status_code == 200
     assert deleted.json() == {"deleted": "github.token"}
-    assert client.get("/secrets", headers=ALPHA_HEADERS).json()["secrets"] == []
+    assert client.get("/secrets", headers=ADMIN_HEADERS).json()["secrets"] == []
     assert db_session.query(SecretRecord).count() == 0
     audit_types = [event.event_type for event in db_session.query(AuditEvent).order_by(AuditEvent.created_at).all()]
     assert audit_types.count("secret_stored") == 2
@@ -68,7 +69,7 @@ def test_secret_lifecycle_api_update_delete_and_role_scope(client: Any, db_sessi
 
 
 def test_secret_lifecycle_api_missing_delete_fails_closed(client: Any) -> None:
-    deleted = client.delete("/secrets/missing.token", headers=ALPHA_HEADERS)
+    deleted = client.delete("/secrets/missing.token", headers=ADMIN_HEADERS)
 
     assert deleted.status_code == 404
     assert deleted.json()["detail"]["message"] == "secret not found"

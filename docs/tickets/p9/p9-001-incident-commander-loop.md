@@ -1,7 +1,7 @@
 ---
 id: P9-001
 title: Incident Commander Loop
-status: TODO
+status: DONE
 phase: P9
 depends_on: []
 boundary: no-auth-local-mock

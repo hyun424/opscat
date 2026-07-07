@@ -1,7 +1,7 @@
 ---
 id: P9-008
 title: Commander UI Panel
-status: TODO
+status: DONE
 phase: P9
 depends_on: [P9-001, P9-002, P9-003, P9-004, P9-005]
 boundary: no-auth-local-mock

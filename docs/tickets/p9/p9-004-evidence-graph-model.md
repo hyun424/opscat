@@ -1,7 +1,7 @@
 ---
 id: P9-004
 title: Evidence Graph Model
-status: TODO
+status: DONE
 phase: P9
 depends_on: [P9-001]
 boundary: no-auth-local-mock

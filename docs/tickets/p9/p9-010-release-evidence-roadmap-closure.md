@@ -1,7 +1,7 @@
 ---
 id: P9-010
 title: P9 Release Evidence and Roadmap Closure
-status: TODO
+status: DONE
 phase: P9
 depends_on: [P9-001, P9-002, P9-003, P9-004, P9-005, P9-006, P9-007, P9-008, P9-009]
 boundary: no-auth-local-mock

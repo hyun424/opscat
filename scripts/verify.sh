@@ -105,6 +105,13 @@ agentic_evals() {
   printf 'Wrote /tmp/opscat-agentic-evals-latest.md and %s/opscat-agentic-evals.json\n' "$VERIFY_TMPDIR"
 }
 
+commander_tournament() {
+  section "P9 commander tournament"
+  "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
+    --output-json "$VERIFY_TMPDIR/opscat-p9-commander-tournament.json" >/tmp/opscat-p9-commander-tournament-latest.json
+  printf 'Wrote /tmp/opscat-p9-commander-tournament-latest.json and %s/opscat-p9-commander-tournament.json\n' "$VERIFY_TMPDIR"
+}
+
 replay_evals() {
   section "P7 replay eval runner"
   "${UV_DEV[@]}" python scripts/run_replay_evals.py \
@@ -164,7 +171,8 @@ docs_contract_tests() {
     tests/test_agentic_demo.py \
     tests/test_p8_demo.py \
     tests/test_p8_security_docs.py \
-    tests/test_p8_release_evidence.py
+    tests/test_p8_release_evidence.py \
+    tests/test_p9_release_evidence.py
 }
 
 run_fast() {
@@ -179,6 +187,7 @@ run_eval() {
   connector_evals
   agentic_evals
   replay_evals
+  commander_tournament
 }
 
 run_docs() {

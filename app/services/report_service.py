@@ -97,6 +97,12 @@ def _payload_section(payload: dict[str, object] | None, key: str) -> dict[str, o
 def _render_war_room_markdown(war_room: dict[str, object]) -> list[str]:
     reliability = _as_dict(war_room.get("reliability_score"))
     final_decision = _as_dict(war_room.get("final_decision"))
+    commander = _as_dict(war_room.get("commander"))
+    readiness = _as_dict(commander.get("readiness"))
+    response_plan = _as_dict(commander.get("response_plan"))
+    graph = _as_dict(commander.get("evidence_graph"))
+    verification = _as_dict(commander.get("recovery_verification"))
+    learning = _as_dict(commander.get("learning_signal"))
     impact = _as_dict(war_room.get("impact"))
     lines = [
         f"# War Room Report: {war_room.get('incident_id', 'unknown')}",
@@ -137,6 +143,16 @@ def _render_war_room_markdown(war_room: dict[str, object]) -> list[str]:
             status = redact_text(str(row.get("status", "unknown")))
             lines.append(f"- {title} confidence={confidence} status={status}")
     lines.extend([
+        "",
+        "## P9 Autonomous Incident Commander",
+        f"- Readiness route: {redact_text(str(readiness.get('route', 'unknown')))}",
+        f"- Readiness score: {redact_text(str(readiness.get('score', 'unknown')))}",
+        f"- Response plan: {redact_text(str(response_plan.get('runbook_key', 'unknown')))} / {redact_text(str(response_plan.get('route', 'unknown')))}",
+        f"- Evidence graph: nodes={redact_text(str(_as_dict(graph.get('summary')).get('node_count', 0)))} edges={redact_text(str(_as_dict(graph.get('summary')).get('edge_count', 0)))}",
+        f"- Recovery verification: {redact_text(str(verification.get('status', 'unknown')))}",
+        f"- Learning signal: {redact_text(str(learning.get('route', 'unknown')))}",
+        f"- Next action: {redact_text(str(commander.get('next_action', 'unknown')))}",
+        "- Boundary: local/mock only; no auth/session work; no unattended production operation.",
         "",
         "## Reliability Score",
         f"- Score: {redact_text(str(reliability.get('score', 'unknown')))}",

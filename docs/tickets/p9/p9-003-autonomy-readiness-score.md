@@ -1,7 +1,7 @@
 ---
 id: P9-003
 title: Autonomy Readiness Score
-status: TODO
+status: DONE
 phase: P9
 depends_on: [P9-001, P9-002]
 boundary: no-auth-local-mock

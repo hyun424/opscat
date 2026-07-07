@@ -1,7 +1,7 @@
 ---
 id: P9-005
 title: Recovery Verifier v2
-status: TODO
+status: DONE
 phase: P9
 depends_on: [P9-001, P9-002, P9-003]
 boundary: no-auth-local-mock

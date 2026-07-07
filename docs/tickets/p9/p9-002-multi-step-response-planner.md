@@ -1,7 +1,7 @@
 ---
 id: P9-002
 title: Multi-step Response Planner
-status: TODO
+status: DONE
 phase: P9
 depends_on: [P9-001]
 boundary: no-auth-local-mock

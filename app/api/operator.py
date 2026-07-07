@@ -223,29 +223,63 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
     return _page(f"OpsCat Incident {incident.id}", body)
 
 
-
 def _war_room_panel(war_room: dict[str, Any]) -> str:
     reliability = _mapping(war_room.get("reliability_score"))
     runbook = _mapping(war_room.get("runbook_critique"))
     policy = _mapping(war_room.get("policy_decision"))
     final = _mapping(war_room.get("final_decision"))
+    commander = _mapping(war_room.get("commander"))
+    readiness = _mapping(commander.get("readiness"))
+    response_plan = _mapping(commander.get("response_plan"))
+    graph = _mapping(commander.get("evidence_graph"))
+    graph_summary = _mapping(graph.get("summary"))
+    verification = _mapping(commander.get("recovery_verification"))
+    learning = _mapping(commander.get("learning_signal"))
     questions = _sequence(war_room.get("human_questions"))
     gates = _sequence(war_room.get("policy_gates"))
+    stages = _sequence(commander.get("stages"))
+    plan_steps = _sequence(response_plan.get("steps"))
     question_items = _html_items(_question_text(item) for item in questions)
     gate_items = _html_items(_gate_text(item) for item in gates)
+    stage_items = _html_items(_commander_stage_text(item) for item in stages)
+    plan_items = _html_items(_plan_step_text(item) for item in plan_steps)
+    readiness_route = escape(str(readiness.get("route", "unknown")))
+    readiness_score = escape(str(readiness.get("score", "unknown")))
+    next_action = escape(str(commander.get("next_action", "unknown")))
+    runbook_key = escape(str(response_plan.get("runbook_key", "unknown")))
+    plan_route = escape(str(response_plan.get("route", "unknown")))
+    readiness_blockers = escape(_json_block(readiness.get("blockers", [])))
+    graph_nodes = escape(str(graph_summary.get("node_count", 0)))
+    graph_edges = escape(str(graph_summary.get("edge_count", 0)))
+    verification_status = escape(str(verification.get("status", "unknown")))
+    verification_route = escape(str(verification.get("route", "unknown")))
+    learning_route = escape(str(learning.get("route", "unknown")))
+    learning_warnings = escape(_json_block(learning.get("warnings", [])))
     return f"""
 <section data-testid="p8-war-room">
 <h2>War Room</h2>
 <p><strong>P8 flow:</strong> alert -> war room -> score -> runbook critique -> action gate -> report.</p>
 <p>This portfolio demo is <strong>local/mock</strong>; it does not claim unattended production operation.</p>
+<section data-testid="p9-commander-panel">
+<h3>Autonomous Incident Commander</h3>
+<p><strong>P9 flow:</strong> observe -> diagnose -> plan -> simulate -> gate -> act_or_escalate -> verify -> learn -> report.</p>
+<p>Boundary: local/mock only, no auth/session work, no unattended production operation, no Kubernetes/cloud/database mutation.</p>
+<p>Readiness route <code>{readiness_route}</code> score <code>{readiness_score}</code>; next action: {next_action}</p>
+<section data-testid="p9-commander-stages"><h4>Commander stage</h4><ul>{stage_items}</ul></section>
+<section data-testid="p9-response-plan"><h4>Response plan</h4><p>Runbook <code>{runbook_key}</code> route <code>{plan_route}</code></p><ul>{plan_items}</ul></section>
+<section data-testid="p9-readiness"><h4>Autonomy readiness</h4><p>Blockers <code>{readiness_blockers}</code></p></section>
+<section data-testid="p9-evidence-graph"><h4>Evidence graph summary</h4><p>Nodes <code>{graph_nodes}</code> Edges <code>{graph_edges}</code></p></section>
+<section data-testid="p9-recovery-verification"><h4>Recovery verification</h4><p>Status <code>{verification_status}</code> route <code>{verification_route}</code></p></section>
+<section data-testid="p9-learning-signal"><h4>Learning signal</h4><p>Route <code>{learning_route}</code> warnings <code>{learning_warnings}</code></p></section>
+</section>
 <section data-testid="p8-reliability-score">
 <h3>Reliability score</h3>
-<p><code>{escape(str(reliability.get('score', 'unknown')))}</code> band <code>{escape(str(reliability.get('band', 'unknown')))}</code>; hard policy gates still decide whether action is allowed.</p>
+<p><code>{escape(str(reliability.get("score", "unknown")))}</code> band <code>{escape(str(reliability.get("band", "unknown")))}</code>; hard policy gates still decide whether action is allowed.</p>
 </section>
 <section data-testid="p8-runbook-critique">
 <h3>Runbook critique</h3>
-<p>Fit: <code>{escape(str(runbook.get('fit', 'unknown')))}</code></p>
-<p>Suggestions: <code>{escape(_json_block(runbook.get('suggestions', [])))}</code></p>
+<p>Fit: <code>{escape(str(runbook.get("fit", "unknown")))}</code></p>
+<p>Suggestions: <code>{escape(_json_block(runbook.get("suggestions", [])))}</code></p>
 </section>
 <section data-testid="p8-human-questions">
 <h3>Human questions</h3>
@@ -253,7 +287,7 @@ def _war_room_panel(war_room: dict[str, Any]) -> str:
 </section>
 <section data-testid="p8-action-gate">
 <h3>Action gate</h3>
-<p>Policy <code>{escape(str(policy.get('decision', 'unknown')))}</code>; final route <code>{escape(str(final.get('route', 'unknown')))}</code>.</p>
+<p>Policy <code>{escape(str(policy.get("decision", "unknown")))}</code>; final route <code>{escape(str(final.get("route", "unknown")))}</code>.</p>
 <ul>{gate_items}</ul>
 <p>Browser mutation forms remain absent while auth/session work is deferred.</p>
 </section>
@@ -300,6 +334,7 @@ def _payload_section(payload: dict[str, object] | None, key: str) -> dict[str, o
     value = payload.get(key)
     return dict(value) if isinstance(value, dict) else {}
 
+
 def _decision_trace_table(entries: list[DecisionTraceEntry]) -> str:
     rows = []
     for entry in entries:
@@ -332,3 +367,15 @@ def _list_items(values: list[str]) -> str:
 
 def _json_block(value: object) -> str:
     return json.dumps(value or {}, indent=2, sort_keys=True, default=str)
+
+
+def _commander_stage_text(value: object) -> str:
+    if isinstance(value, dict):
+        return f"{value.get('name', 'stage')}: {value.get('decision', '')} -> {value.get('next_step', '')}"
+    return str(value)
+
+
+def _plan_step_text(value: object) -> str:
+    if isinstance(value, dict):
+        return f"{value.get('id', 'step')} {value.get('type', 'unknown')}: {value.get('goal', '')} risk={value.get('risk', '')}"
+    return str(value)

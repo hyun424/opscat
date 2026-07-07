@@ -93,3 +93,7 @@ P8 implemented as local/mock AI Incident Responder War Room evidence. P8 covers 
 ## P9 active
 
 P9 active scope: Autonomous Incident Commander without auth. P9 focuses on the incident commander loop, multi-step response planning, autonomy readiness scoring, evidence graph modeling, recovery verification v2, learning from prior outcomes, chaos replay tournaments, commander UI, safety regression hardening, and release evidence. See `docs/operations/p9-ticket-roadmap.md` and `docs/tickets/p9/README.md`. The boundary remains no-auth/local-mock: P9 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, or unattended production-operation claims.
+
+## P9 implemented
+
+P9 implemented as local/mock Autonomous Incident Commander evidence. P9 covers the commander lifecycle, multi-step response planning, autonomy readiness scoring, evidence graph modeling, recovery verification v2, learning from prior outcomes, chaos replay tournaments, commander UI, safety regression hardening, and release evidence. See `docs/operations/p9-ticket-roadmap.md`, `docs/operations/p9-final-summary.md`, `docs/security-review-p9.md`, and `docs/release-evidence.md`. The boundary remains no-auth/local-mock: P9 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, or unattended production-operation claims.

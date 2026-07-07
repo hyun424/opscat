@@ -12,6 +12,7 @@ from typing import Any
 from app.models import Incident
 from app.services.agent_reliability_score import score_agent_reliability
 from app.services.decision_trace_service import render_trace_json
+from app.services.incident_commander import build_incident_command
 from app.services.redaction import redact_text, redact_value
 from app.services.root_cause_service import generate_root_cause_candidates
 
@@ -62,6 +63,7 @@ def build_war_room(incident: Incident | Mapping[str, Any]) -> dict[str, Any]:
             "why_not_auto_execute": _why_not_auto_execute(score, policy_decision),
             "final_decision": _final_decision(incident, primary_action, score),
             "reliability_score": score_payload,
+            "commander": build_incident_command(incident).to_dict(),
         }
     )
 

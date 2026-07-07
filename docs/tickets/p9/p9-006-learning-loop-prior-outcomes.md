@@ -1,7 +1,7 @@
 ---
 id: P9-006
 title: Learning Loop from Prior Outcomes
-status: TODO
+status: DONE
 phase: P9
 depends_on: [P9-003, P9-005]
 boundary: no-auth-local-mock

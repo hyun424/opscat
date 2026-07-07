@@ -1,7 +1,7 @@
 ---
 id: P9-007
 title: Chaos Replay Tournament
-status: TODO
+status: DONE
 phase: P9
 depends_on: [P9-001, P9-003, P9-004, P9-005]
 boundary: no-auth-local-mock

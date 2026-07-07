@@ -1,7 +1,7 @@
 ---
 id: P9-009
 title: Commander Safety Regression Pack
-status: TODO
+status: DONE
 phase: P9
 depends_on: [P9-001, P9-003, P9-006, P9-007]
 boundary: no-auth-local-mock

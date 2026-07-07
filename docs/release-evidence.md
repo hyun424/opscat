@@ -194,3 +194,23 @@ This does not claim unattended production operation.
 - Full release gate: `bash scripts/verify.sh --profile full`
 
 P8 remains local/mock and auth-deferred. It presents war room reasoning, reliability score, runbook critique, human questions, action gates, and report links as reviewer evidence; it does not claim unattended production operation.
+
+## P9 Autonomous Incident Commander Evidence
+
+- Roadmap: `docs/operations/p9-ticket-roadmap.md`
+- Final summary: `docs/operations/p9-final-summary.md`
+- Security review: `docs/security-review-p9.md`
+- Commander service tests: `tests/test_incident_commander.py`
+- Response planner tests: `tests/test_response_planner.py`
+- Autonomy readiness tests: `tests/test_autonomy_readiness.py`
+- Evidence graph tests: `tests/test_evidence_graph.py`
+- Recovery verifier tests: `tests/test_recovery_verifier_v2.py`
+- Learning loop tests: `tests/test_commander_learning.py`
+- Commander tournament tests: `tests/test_p9_commander_tournament.py`
+- Commander safety tests: `tests/test_p9_commander_safety.py`
+- Commander UI tests: `tests/test_p9_commander_ui.py`
+- Tournament command: `uv run --no-sync --extra dev python scripts/run_commander_tournament.py --output-json /tmp/opscat-p9-commander-tournament.json`
+- Latest temp tournament artifact: `/tmp/opscat-p9-commander-tournament-latest.json`
+- Full release gate: `bash scripts/verify.sh --profile full`
+
+P9 remains local/mock and auth-deferred. It adds an Autonomous Incident Commander lifecycle, multi-step response planning, autonomy-readiness scoring, evidence graph modeling, recovery verification v2, learning from prior outcomes, commander tournament evals, operator UI evidence, and safety regression tests. It does not claim unattended production operation.

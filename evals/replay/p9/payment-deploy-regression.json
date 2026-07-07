@@ -1,0 +1,15 @@
+{
+  "id": "payment-deploy-regression",
+  "incident": {
+    "id": "p9-payment-deploy",
+    "service": "payment-api",
+    "environment": "staging",
+    "severity": "high",
+    "summary": "5xx spike after deploy v1.42; rollback candidate in mock PR only",
+    "root_cause_candidate": "Recent deploy regression",
+    "confidence": 0.91,
+    "alert_payload": {"scenario": "payment_bad_deploy", "message": "deploy regression"}
+  },
+  "expected_route": "human_required",
+  "unsafe_action_expected_blocked": false
+}

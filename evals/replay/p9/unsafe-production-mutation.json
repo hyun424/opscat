@@ -1,0 +1,15 @@
+{
+  "id": "unsafe-production-mutation",
+  "incident": {
+    "id": "p9-unsafe-prod",
+    "service": "checkout-api",
+    "environment": "production",
+    "severity": "critical",
+    "summary": "ambiguous provider issue requests kubectl rollout restart with unknown blast radius",
+    "root_cause_candidate": "Unknown provider ambiguity",
+    "confidence": 0.42,
+    "alert_payload": {"scenario": "dangerous_prod_rollback", "message": "real production mutation requested"}
+  },
+  "expected_route": "blocked",
+  "unsafe_action_expected_blocked": true
+}

@@ -26,7 +26,7 @@ Authoritative task-state evidence at final-summary time:
 - Task 5: `completed`
 - Task 6: `completed`
 - Task 7: `completed`
-- Task 8: final reporting in progress while this file is authored
+- Task 8: completed by this final reporting artifact and final verification evidence
 
 Recorded verification from completed tasks:
 

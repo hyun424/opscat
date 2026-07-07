@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
+from sqlalchemy.orm import Session
+
+from app.models import Evidence, Incident
 from app.services.redaction import redact_value
+from app.services.timeline_service import add_timeline_event
 
 DECISION_TRACE_STAGES: tuple[str, ...] = ("observe", "correlate", "diagnose", "plan", "risk", "act", "verify")
 
@@ -45,6 +50,64 @@ class DecisionTraceEntry:
             "status": self.status,
             "details": self.details,
         }
+
+
+def record_decision_trace(
+    db: Session,
+    incident: Incident,
+    *,
+    stage: str,
+    decision: str,
+    confidence: float | None = None,
+    inputs: Mapping[str, Any] | None = None,
+    output_ref: str | None = None,
+    policy_result: Mapping[str, Any] | None = None,
+    reason: str | None = None,
+) -> Evidence:
+    """Persist one redacted agentic decision trace entry.
+
+    The read-model helpers below render the current incident state. This write
+    helper keeps the agent loop compatible with that model by storing each
+    observe/correlate/diagnose/plan/risk/act/verify decision as evidence and a
+    timeline event without introducing a separate persistence table.
+    """
+
+    if stage not in DECISION_TRACE_STAGES:
+        raise ValueError(f"unknown agentic trace stage: {stage}")
+
+    metadata = _redacted_details(
+        {
+            "stage": stage,
+            "decision": decision,
+            "confidence": confidence,
+            "inputs": dict(inputs or {}),
+            "output_ref": output_ref,
+            "policy_result": dict(policy_result or {}),
+            "reason": reason,
+        }
+    )
+    evidence = Evidence(
+        incident_id=incident.id,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        type="decision_trace",
+        source="agentic_loop",
+        source_url=None,
+        content=json.dumps(metadata, sort_keys=True),
+        evidence_metadata=metadata,
+    )
+    db.add(evidence)
+    add_timeline_event(
+        db,
+        incident.id,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        actor="agent",
+        event_type=f"decision_trace.{stage}",
+        content=f"{stage}: {decision}",
+        metadata={"evidence_type": "decision_trace", "stage": stage, "output_ref": output_ref},
+    )
+    return evidence
 
 
 def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
@@ -169,6 +232,30 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
             details=_redacted_details({"incident_status": status, "post_checks": _latest_post_check(primary_action)}),
         ),
     ]
+
+
+def render_trace_json(incident: Any) -> list[dict[str, Any]]:
+    """Render the incident decision trace as redacted JSON-compatible dicts."""
+
+    return [entry.to_dict() for entry in build_decision_trace(incident)]
+
+
+def render_trace_markdown(incident: Any) -> str:
+    """Render the incident decision trace as compact Markdown for reports."""
+
+    lines = ["# Agent Decision Trace", ""]
+    for entry in build_decision_trace(incident):
+        lines.append(f"## {entry.stage}: {entry.title}")
+        lines.append(f"- Summary: {entry.summary}")
+        lines.append(f"- Status: {entry.status or 'unknown'}")
+        if entry.confidence is not None:
+            lines.append(f"- Confidence: {entry.confidence:.2f}")
+        if entry.policy_decision:
+            lines.append(f"- Policy: {entry.policy_decision}")
+        if entry.risk_level:
+            lines.append(f"- Risk: {entry.risk_level}")
+        lines.append("")
+    return "\n".join(lines).strip() + "\n"
 
 
 def _timeline_summaries(timeline: list[Any]) -> list[dict[str, Any]]:

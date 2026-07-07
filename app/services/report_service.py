@@ -31,18 +31,16 @@ def render_incident_report(incident: Incident) -> str:
         lines.append(f"- `{action.id}` {action.action_type} status={action.status} risk={action.risk_level} policy={action.policy_decision}")
         lines.append(f"  - Rationale: {redact_text(action.rationale)}")
         lines.append(f"  - Post-checks: {', '.join(action.post_checks)}")
-        critique = _payload_section(action.payload, "self_critique")
-        blast_radius = _payload_section(action.payload, "blast_radius")
-        simulation = _payload_section(action.payload, "simulation")
-        memory = _payload_section(action.payload, "incident_memory")
-        if critique:
-            lines.append(f"  - Self-critique: {redact_value(critique)}")
-        if blast_radius:
-            lines.append(f"  - Blast radius: {redact_value(blast_radius)}")
-        if simulation:
-            lines.append(f"  - Simulation: {redact_value(simulation)}")
-        if memory:
-            lines.append(f"  - Incident memory: {redact_value(memory)}")
+        latest_attempt = action.execution_attempts[-1] if action.execution_attempts else None
+        if latest_attempt and latest_attempt.precondition_result.get("simulation"):
+            simulation = latest_attempt.precondition_result["simulation"]
+            blast_radius = simulation.get("blast_radius", {})
+            lines.append("  - Simulation:")
+            lines.append(f"    - Status: {redact_text(str(simulation.get('status', 'unknown')))}")
+            lines.append(f"    - Blast radius: {redact_text(str(blast_radius.get('level', 'unknown')))}")
+            lines.append(f"    - Expected effect: {redact_text(str(simulation.get('expected_effect', '')))}")
+            if simulation.get("rollback_path"):
+                lines.append(f"    - Rollback path: {redact_text(str(simulation.get('rollback_path')))}")
         if action.execution_result:
             lines.append(f"  - Execution result: {redact_value(action.execution_result)}")
     lines.extend(["", "## Failure modes"])

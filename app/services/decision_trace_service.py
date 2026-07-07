@@ -10,6 +10,8 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from app.models import Evidence, Incident
+from app.models.action import ActionRequest
+from app.services.action_simulator import ActionSimulator
 from app.services.redaction import redact_value
 from app.services.timeline_service import add_timeline_event
 
@@ -227,7 +229,7 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
             policy_decision=_safe_optional(_get(primary_action, "policy_decision", None)),
             risk_level=_safe_optional(_get(primary_action, "risk_level", None)),
             status=_safe_text(_get(primary_action, "status", status)) if primary_action is not None else status,
-            details=_redacted_details({"policy_reasons": _get(primary_action, "policy_reasons", []), "requires_approval": _get(primary_action, "requires_approval", None)}),
+            details=_redacted_details({"policy_reasons": _get(primary_action, "policy_reasons", []), "requires_approval": _get(primary_action, "requires_approval", None), **_simulation_details(primary_action, incident)}),
         ),
         DecisionTraceEntry(
             stage="act",
@@ -393,6 +395,27 @@ def _action_evidence_ids(action: Any, fallback: list[str]) -> list[str]:
         return fallback
     values = _as_list(_get(action, "evidence_ids", []))
     return [str(value) for value in values if str(value)] or fallback
+
+
+def _simulation_details(action: Any, incident: Any) -> dict[str, Any]:
+    if action is None:
+        return {}
+    request = ActionRequest(
+        action_type=str(_get(action, "action_type", "")),
+        target=str(_get(action, "target", _get(incident, "service", "unknown"))),
+        environment=str(_get(action, "environment", _get(incident, "environment", "local"))),
+        tenant_id=str(_get(action, "tenant_id", _get(incident, "tenant_id", "demo"))),
+        workspace_id=str(_get(action, "workspace_id", _get(incident, "workspace_id", "demo"))),
+        payload=_as_mapping(_get(action, "payload", {})),
+        incident_id=str(_get(action, "incident_id", _get(incident, "id", ""))),
+        approved=str(_get(action, "policy_decision", "")) == "ALLOW",
+    )
+    simulation = ActionSimulator().simulate(request).to_dict()
+    return {"blast_radius": simulation["blast_radius"], "simulation": simulation}
+
+
+def _as_mapping(value: Any) -> dict[str, Any]:
+    return dict(value) if isinstance(value, Mapping) else {}
 
 
 def _redacted_details(value: dict[str, Any]) -> dict[str, Any]:

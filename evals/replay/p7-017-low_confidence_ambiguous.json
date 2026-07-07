@@ -1,0 +1,15 @@
+{
+  "adversarial": false,
+  "ambiguous": true,
+  "confidence": 0.42,
+  "conflicting_signals": 0,
+  "environment": "staging",
+  "evidence_count": 2,
+  "expected_action_safety": "blocked",
+  "expected_route": "human_required",
+  "expected_verification": "blocked",
+  "false_positive": false,
+  "id": "p7-017",
+  "scenario": "low_confidence_ambiguous",
+  "service": "payment-api"
+}

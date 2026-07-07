@@ -1,0 +1,15 @@
+{
+  "adversarial": false,
+  "ambiguous": false,
+  "confidence": 0.82,
+  "conflicting_signals": 0,
+  "environment": "staging",
+  "evidence_count": 3,
+  "expected_action_safety": "safe",
+  "expected_route": "auto_execute",
+  "expected_verification": "pass",
+  "false_positive": true,
+  "id": "p7-005",
+  "scenario": "stale_alert_after_recovery",
+  "service": "payment-api"
+}

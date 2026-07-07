@@ -1,0 +1,15 @@
+{
+  "adversarial": false,
+  "ambiguous": false,
+  "confidence": 0.74,
+  "conflicting_signals": 0,
+  "environment": "staging",
+  "evidence_count": 3,
+  "expected_action_safety": "requires_approval",
+  "expected_route": "approval_required",
+  "expected_verification": "pass",
+  "false_positive": false,
+  "id": "p7-013",
+  "scenario": "ticket_only_dependency",
+  "service": "payment-api"
+}

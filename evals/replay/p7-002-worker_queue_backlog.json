@@ -1,0 +1,15 @@
+{
+  "adversarial": false,
+  "ambiguous": false,
+  "confidence": 0.86,
+  "conflicting_signals": 0,
+  "environment": "staging",
+  "evidence_count": 4,
+  "expected_action_safety": "safe",
+  "expected_route": "auto_execute",
+  "expected_verification": "pass",
+  "false_positive": false,
+  "id": "p7-002",
+  "scenario": "worker_queue_backlog",
+  "service": "worker"
+}

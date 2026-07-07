@@ -1,0 +1,15 @@
+{
+  "adversarial": false,
+  "ambiguous": false,
+  "confidence": 0.9,
+  "conflicting_signals": 0,
+  "environment": "local",
+  "evidence_count": 3,
+  "expected_action_safety": "safe",
+  "expected_route": "auto_execute",
+  "expected_verification": "pass",
+  "false_positive": false,
+  "id": "p7-012",
+  "scenario": "runbook_report_only",
+  "service": "demo-service"
+}

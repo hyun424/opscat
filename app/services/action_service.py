@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, is_dataclass
+from typing import Any, cast
 
 from app.models.action import (
     ActionExecutionResult,
@@ -144,9 +145,9 @@ class ActionService:
             raise KeyError(f"Unknown approval id {approval_id!r}.") from exc
 
 
-def _to_plain(value):
-    if is_dataclass(value):
-        return {key: _to_plain(item) for key, item in asdict(value).items()}
+def _to_plain(value: Any) -> Any:
+    if is_dataclass(value) and not isinstance(value, type):
+        return {key: _to_plain(item) for key, item in asdict(cast(Any, value)).items()}
     if isinstance(value, dict):
         return {key: _to_plain(item) for key, item in value.items()}
     if isinstance(value, (list, tuple)):

@@ -62,8 +62,21 @@ class BlastRadiusService:
         return BlastRadiusResult(
             level=level,
             reason=_reason(action, level),
-            rollback_available=bool(action.reversible and level not in {BlastRadiusLevel.UNKNOWN, BlastRadiusLevel.PROHIBITED, BlastRadiusLevel.GLOBAL}),
-            approval_required=bool(action.default_requires_approval or level in {BlastRadiusLevel.WORKSPACE, BlastRadiusLevel.TENANT, BlastRadiusLevel.GLOBAL, BlastRadiusLevel.UNKNOWN, BlastRadiusLevel.PROHIBITED}),
+            rollback_available=bool(
+                action.reversible
+                and level not in {BlastRadiusLevel.UNKNOWN, BlastRadiusLevel.PROHIBITED, BlastRadiusLevel.GLOBAL}
+            ),
+            approval_required=bool(
+                action.default_requires_approval
+                or level
+                in {
+                    BlastRadiusLevel.WORKSPACE,
+                    BlastRadiusLevel.TENANT,
+                    BlastRadiusLevel.GLOBAL,
+                    BlastRadiusLevel.UNKNOWN,
+                    BlastRadiusLevel.PROHIBITED,
+                }
+            ),
             touched_resources=_resources(request),
             allowed=allowed,
             evidence=(f"action_metadata:{action.name}", f"blast_radius:{action.blast_radius}"),

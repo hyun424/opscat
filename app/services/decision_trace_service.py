@@ -229,7 +229,13 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
             policy_decision=_safe_optional(_get(primary_action, "policy_decision", None)),
             risk_level=_safe_optional(_get(primary_action, "risk_level", None)),
             status=_safe_text(_get(primary_action, "status", status)) if primary_action is not None else status,
-            details=_redacted_details({"policy_reasons": _get(primary_action, "policy_reasons", []), "requires_approval": _get(primary_action, "requires_approval", None), **_simulation_details(primary_action, incident)}),
+            details=_redacted_details(
+                {
+                    "policy_reasons": _get(primary_action, "policy_reasons", []),
+                    "requires_approval": _get(primary_action, "requires_approval", None),
+                    **_simulation_details(primary_action, incident),
+                }
+            ),
         ),
         DecisionTraceEntry(
             stage="act",

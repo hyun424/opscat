@@ -188,3 +188,7 @@ P18B implemented as Model Judgment Quality Lab evidence. P18B adds raw-vs-calibr
 ## P19 active
 
 P19 active scope: Operator Judgment Improvement Loop. P19 converts P18B raw model-quality failures into prioritized non-mutating improvement recommendations, safe missing-evidence plans, regression packs, before/after trend comparison, CLI reports, verification integration, and release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.
+
+## P19 implemented
+
+P19 implemented as Operator Judgment Improvement Loop evidence. P19 adds failure intake, safety-first prioritization, non-mutating recommendations, read-only missing-evidence planning, regression pack generation, trend comparison, CLI reporting, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.

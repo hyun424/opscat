@@ -2,4 +2,4 @@
 
 Status: TODO
 
-See \ for scope, acceptance criteria, boundary, and execution order.
+See `docs/operations/p19-ticket-roadmap.md` for scope, acceptance criteria, boundary, and execution order.

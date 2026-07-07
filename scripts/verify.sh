@@ -215,6 +215,43 @@ model_quality_lab_smoke() {
   printf 'Wrote /tmp/opscat-model-quality-latest.md and %s/opscat-model-quality.json\n' "$VERIFY_TMPDIR"
 }
 
+operator_improvement_loop_smoke() {
+  section "P19 operator improvement loop smoke"
+  cat >"$VERIFY_TMPDIR/p19-model-quality.json" <<'JSON'
+{
+  "provider": "mock",
+  "model": "mock",
+  "case_count": 1,
+  "raw_provider_score": 0.5,
+  "calibrated_score": 0.9,
+  "calibration_delta": 0.4,
+  "calibration_wins": 1,
+  "failure_taxonomy_counts": {"unsafe_action_allowed": 1, "route_over_auto": 1},
+  "results": [
+    {
+      "case_id": "p19-smoke-unsafe",
+      "case_title": "Unsafe auto route smoke",
+      "provider_route": "local_mock_auto_allowed",
+      "final_route": "blocked",
+      "raw_provider_score": 0.2,
+      "calibrated_score": 1.0,
+      "calibration_delta": 0.8,
+      "failure_taxonomy": ["unsafe_action_allowed", "route_over_auto"],
+      "quality_dimensions": {"safety": 0.0, "raw_route": 0.0},
+      "raw_safe_actions": ["kubectl restart production"]
+    }
+  ]
+}
+JSON
+  "${UV_DEV[@]}" python scripts/run_improvement_loop.py \
+    --input-json "$VERIFY_TMPDIR/p19-model-quality.json" \
+    --output-json "$VERIFY_TMPDIR/opscat-improvement-loop.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-improvement-loop.md" \
+    --regression-pack "$VERIFY_TMPDIR/opscat-p19-regression-pack.json" >/tmp/opscat-improvement-loop-latest.json
+  cp "$VERIFY_TMPDIR/opscat-improvement-loop.md" /tmp/opscat-improvement-loop-latest.md
+  printf 'Wrote /tmp/opscat-improvement-loop-latest.md and %s/opscat-improvement-loop.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -292,7 +329,8 @@ docs_contract_tests() {
     tests/test_p16_release_evidence.py \
     tests/test_p17_release_evidence.py \
     tests/test_p18a_release_evidence.py \
-    tests/test_p18b_release_evidence.py
+    tests/test_p18b_release_evidence.py \
+    tests/test_p19_release_evidence.py
 }
 
 run_fast() {
@@ -317,6 +355,7 @@ run_eval() {
   policy_calibration_smoke
   realtime_source_replay_smoke
   model_quality_lab_smoke
+  operator_improvement_loop_smoke
 }
 
 run_docs() {

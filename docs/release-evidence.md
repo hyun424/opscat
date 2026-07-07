@@ -455,3 +455,24 @@ UV_CACHE_DIR=/private/tmp/uv-cache uv run --extra llm python scripts/run_model_q
 ```
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.
+
+## P19 Operator Judgment Improvement Loop Evidence
+
+P19 converts P18B model-quality failures into operator-grade improvement plans. It prioritizes failures, emits non-mutating recommendations, plans safe missing-evidence collection, writes regression packs, and compares before/after quality reports without hiding raw model defects behind policy calibration.
+
+Artifacts:
+
+- `docs/operations/p19-ticket-roadmap.md`
+- `docs/operations/p19-final-summary.md`
+- `app/services/operator_improvement_loop.py`
+- `scripts/run_improvement_loop.py`
+- `tests/test_operator_improvement_loop.py`
+- `tests/test_p19_release_evidence.py`
+- `/tmp/opscat-improvement-loop-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_operator_improvement_loop.py tests/test_p19_release_evidence.py`
+- `bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.

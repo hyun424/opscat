@@ -130,3 +130,8 @@ P13 active scope: LLM Context Builder before LLM judgment. P13 focuses on contex
 ## P13 implemented
 
 P13 implemented as local/mock LLM Context Builder evidence. P13 covers deterministic context packet schema, redacted evidence selection, unsafe evidence annotation, timeline building, candidate hypothesis context, runbook context selection, safety constraints, required output schema, context builder CLI, verification integration, and release evidence. See `docs/operations/p13-ticket-roadmap.md`, `docs/operations/p13-final-summary.md`, and `docs/release-evidence.md`. The boundary remains no-auth/local-mock: P13 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, external dataset downloads during normal verification, model calls, or unattended production-operation claims.
+
+
+## P14 active
+
+P14 active scope: LLM Judgment Adapter without auth and without default external model calls. P14 focuses on a provider interface, deterministic mock judgment provider, response schema validation, evidence citation checking, safety gate, judgment runner, CLI/reporting, prompt-injection regression, verification integration, and release evidence. See `docs/operations/p14-ticket-roadmap.md` and `docs/tickets/p14/README.md`. The boundary remains no-auth/local-mock: P14 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, external dataset downloads during normal verification, default external model/API calls, action execution, or unattended production-operation claims.

@@ -168,3 +168,7 @@ P17 active scope: LLM Policy Calibration. P17 adds a deterministic policy calibr
 ## P17 implemented
 
 P17 implemented as LLM Policy Calibration evidence. P17 adds a deterministic approval-governor layer after LLM provider judgment and safety gating, preserving provider route, safety-gate route, calibrated route, retained actions, removed actions, and calibration reasons. Provider evaluation now scores calibrated decisions, so OpsCat can prove it blocks over-aggressive LLM recommendations such as no-data restarts, deploy rollback automation, and prompt-injection auto-approval. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.
+
+## P18A active
+
+P18A active scope: Realtime Source Reader. P18A adds local/mock source-native incremental ingestion for logs and metrics before model judgment quality evaluation. Runtime reads original files/streams incrementally, keeps bounded rolling windows, detects triggers, and emits JSON evidence snapshots only when judgment/replay/audit requires them. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.

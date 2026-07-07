@@ -17,13 +17,6 @@ from app.services.redaction import redact_text
 MIN_AUTO_CONFIDENCE = 0.70
 PROTECTED_SERVICE_MARKERS = ("payment", "billing", "auth", "security", "data")
 _SENSITIVE_TERMS = ("password", "token", "secret", "credential", "api key", "authorization")
-MIN_AUTO_CONFIDENCE = 0.70
-PROTECTED_SERVICE_MARKERS = ("payment", "billing", "auth", "security", "data")
-
-
-def protected_domain(service: str) -> bool:
-    normalized = service.lower()
-    return any(marker in normalized for marker in PROTECTED_SERVICE_MARKERS)
 
 
 @dataclass(frozen=True)

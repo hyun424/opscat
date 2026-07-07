@@ -252,6 +252,18 @@ JSON
   printf 'Wrote /tmp/opscat-improvement-loop-latest.md and %s/opscat-improvement-loop.json\n' "$VERIFY_TMPDIR"
 }
 
+closed_loop_response_smoke() {
+  section "P20 closed-loop response smoke"
+  "${UV_DEV[@]}" python scripts/run_closed_loop_response.py \
+    --cases evals/judgment/seed/cases.json \
+    --case-id seed-nab-no-data \
+    --provider mock \
+    --output-json "$VERIFY_TMPDIR/opscat-closed-loop.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-closed-loop.md" >/tmp/opscat-closed-loop-latest.json
+  cp "$VERIFY_TMPDIR/opscat-closed-loop.md" /tmp/opscat-closed-loop-latest.md
+  printf 'Wrote /tmp/opscat-closed-loop-latest.md and %s/opscat-closed-loop.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -330,7 +342,8 @@ docs_contract_tests() {
     tests/test_p17_release_evidence.py \
     tests/test_p18a_release_evidence.py \
     tests/test_p18b_release_evidence.py \
-    tests/test_p19_release_evidence.py
+    tests/test_p19_release_evidence.py \
+    tests/test_p20_release_evidence.py
 }
 
 run_fast() {
@@ -356,6 +369,7 @@ run_eval() {
   realtime_source_replay_smoke
   model_quality_lab_smoke
   operator_improvement_loop_smoke
+  closed_loop_response_smoke
 }
 
 run_docs() {

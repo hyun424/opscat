@@ -476,3 +476,24 @@ Verification:
 - `bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.
+
+## P20 Closed-loop Agentic Incident Response Evidence
+
+P20 connects observation, initial_judgment, evidence_fetch, revised_judgment, action_proposal, simulation, and final_decision into one local/mock agentic incident response loop. It executes only read-only diagnostic evidence tools and simulates proposed actions without execution.
+
+Artifacts:
+
+- `docs/operations/p20-ticket-roadmap.md`
+- `docs/operations/p20-final-summary.md`
+- `app/services/closed_loop_response.py`
+- `scripts/run_closed_loop_response.py`
+- `tests/test_closed_loop_response.py`
+- `tests/test_p20_release_evidence.py`
+- `/tmp/opscat-closed-loop-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_closed_loop_response.py tests/test_p20_release_evidence.py`
+- `bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.

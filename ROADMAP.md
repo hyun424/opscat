@@ -196,3 +196,7 @@ P19 implemented as Operator Judgment Improvement Loop evidence. P19 adds failure
 ## P20 active
 
 P20 active scope: Closed-loop Agentic Incident Response. P20 connects observation, initial LLM-shaped judgment, missing-evidence detection, safe read-only local/mock diagnostic tool execution, revised judgment, action proposal, dry-run simulation, final approval/escalation routing, CLI reports, verification integration, and release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.
+
+## P20 implemented
+
+P20 implemented as Closed-loop Agentic Incident Response evidence. P20 adds an audited local/mock loop for observe, initial_judgment, evidence_gap, evidence_fetch, revised_judgment, action_proposal, simulation, and final_decision. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.

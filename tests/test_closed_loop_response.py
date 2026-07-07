@@ -28,7 +28,7 @@ class EvidenceSensitiveProvider:
                 "hypotheses": [{"label": "metric anomaly needs human review", "confidence": 0.78, "evidence_citations": [citation, fetched]}],
                 "recommended_route": "human_required",
                 "safe_actions": ["mock.query_metrics"],
-                "forbidden_actions_detected": ["production_restart"],
+                "forbidden_actions_detected": [],
                 "missing_evidence": [],
                 "verification_plan": ["review fetched metric and service health context"],
                 "evidence_citations": [citation, fetched],

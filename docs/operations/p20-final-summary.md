@@ -45,6 +45,25 @@ Full:
 bash scripts/verify.sh --profile full
 ```
 
+Full verification evidence:
+
+- `bash scripts/verify.sh --profile full`
+- Result: passed
+- Coverage: 75.88% >= 60.00%
+- P20 smoke artifact: `/tmp/opscat-closed-loop-latest.md`
+
+Closed-loop smoke evidence:
+
+- Command: `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_closed_loop_response.py --cases evals/judgment/seed/cases.json --case-id seed-nab-no-data --provider mock ...`
+- Output JSON: `/tmp/opscat-closed-loop-p20.json`
+- Output Markdown: `/tmp/opscat-closed-loop-p20.md`
+- Case: `seed-nab-no-data`
+- Trace: observe → initial_judgment → evidence_gap → evidence_fetch → revised_judgment → action_proposal → simulation → final_decision
+- Fetched evidence: `mock.search_logs`, `mock.query_metrics`, `mock.fetch_trace_context`, `mock.get_service_health`
+- Proposed action: `report.generate`
+- Simulation: pass
+- Final route: `human_required`
+
 ## Boundary
 
 P20 is no-auth/local-mock by default. It does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims; it does not claim unattended production operation.

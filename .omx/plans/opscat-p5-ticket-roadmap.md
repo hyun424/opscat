@@ -286,7 +286,7 @@ Files likely touched:
 - `docs/paid-beta-readiness.md`
 - `tests/test_security_boundaries.py`
 
-### P5-012 — P5 final release evidence and hardening
+### P5-012 ✅ — P5 final release evidence and hardening
 
 Goal: close P5 only after full release evidence is green and docs match behavior.
 
@@ -322,6 +322,7 @@ Files likely touched:
 - P5-018: completed with changelog, deployment dry-run, and versioned release evidence docs.
 - P5-010: completed with 10-minute beta walkthrough and README onboarding links.
 - P5-011: completed with P5 security review artifact and threat-model linkage without auth implementation.
+- P5-012: completed with P5 final release evidence, integration verification, and full verify closure.
 - P5-013: completed with `.env.example`, `Makefile`, README quickstart, and `make demo` validation.
 - P5-014: completed with `CONTRIBUTING.md`, `ROADMAP.md`, and safe issue templates.
 - P5-015: completed with `docs/connector-sdk.md` and executable fixture connector template.

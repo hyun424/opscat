@@ -112,3 +112,36 @@ No real external side effects are permitted in P4.
 - No production credentials.
 
 The P4 evidence demonstrates the local/mock architecture and release discipline. P5 must add production authentication, real connector deployment, credential/OAuth operations, CI, hosted workflow workers, real incident replay, load/soak testing, and security review before paid customer production use.
+
+## P5 final release evidence
+
+P5 final release evidence was closed with the local/mock OSS productization scope complete and auth remains deferred. The final gate is:
+
+```bash
+bash scripts/verify.sh --profile full
+```
+
+Expected terminal evidence includes `Verification complete (full)`.
+
+Completed P5 tickets:
+
+- P5-001
+- P5-002
+- P5-003
+- P5-004
+- P5-005
+- P5-006
+- P5-007
+- P5-008
+- P5-009
+- P5-010
+- P5-011
+- P5-012
+- P5-013
+- P5-014
+- P5-015
+- P5-016
+- P5-017
+- P5-018
+
+P5 remains local/mock: no production credentials, live provider mutation, hosted auth, or real customer production deployment is claimed.

@@ -82,3 +82,16 @@ The P4 release evidence index is [`docs/release-evidence.md`](release-evidence.m
 The golden corpus now covers bad deploys, external dependency timeouts/rate limits, worker backlog and heartbeat loss, duplicate/stale/false-positive alerts, low-confidence ambiguity, missing runbooks, protected auth/security/data domains, verification failure, prompt-injection-like log text, and secret-bearing alerts.
 
 These evals prove local/mock decision quality only. They do not replace future live connector evals, real incident replay, load/soak testing, or production auth/security validation.
+
+
+## P5 final verification
+
+P5 final verification command:
+
+```bash
+bash scripts/verify.sh --profile full
+```
+
+Result: PASS — the full local/mock release gate completed with `Verification complete (full)`.
+
+Boundary: auth remains deferred; OpsCat is local/mock and does not claim real customer production readiness, live provider mutation, or production credential handling.

@@ -5,8 +5,9 @@ from __future__ import annotations
 import json
 import os
 import tempfile
+from collections import Counter
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -30,6 +31,14 @@ from app.services.incident_service import create_and_investigate, decide_action
 from app.services.report_service import render_incident_report
 
 DEFAULT_REPLAY_DIR = Path("evals/replay")
+P8_OPERATOR_REQUIRED_FIELDS = (
+    "scenario_class",
+    "expected_route",
+    "required_action",
+    "missing_evidence",
+    "expected_human_question",
+    "reliability_score_band",
+)
 
 
 @dataclass(frozen=True)
@@ -42,9 +51,13 @@ class ReplayScenario:
     adversarial: bool
     safety_focus: tuple[str, ...]
     no_external_dependencies: bool = True
+    phase: str = "P7"
+    operator_replacement: dict[str, Any] = field(default_factory=dict)
 
     @property
     def expected_route(self) -> str:
+        if self.operator_replacement and self.operator_replacement.get("expected_route"):
+            return str(self.operator_replacement["expected_route"])
         return str(self.expected["expected_route"])
 
     @property
@@ -75,6 +88,8 @@ def load_replay_scenarios(replay_dir: Path = DEFAULT_REPLAY_DIR, scenarios: Iter
                 adversarial=bool(raw.get("adversarial", "adversarial" in path.parts)),
                 safety_focus=tuple(str(item) for item in raw.get("safety_focus", _safety_focus_for_simple(raw))),
                 no_external_dependencies=bool(raw.get("no_external_dependencies", True)),
+                phase=str(raw.get("phase") or ("P8" if "p8" in path.parts else "P7")),
+                operator_replacement=_operator_replacement_contract(raw),
             )
         )
     return loaded
@@ -135,6 +150,16 @@ def _safety_focus_for_simple(raw: Mapping[str, Any]) -> tuple[str, ...]:
     return tuple(focus)
 
 
+def _operator_replacement_contract(raw: Mapping[str, Any]) -> dict[str, Any]:
+    contract = raw.get("operator_replacement")
+    if not isinstance(contract, Mapping):
+        return {}
+    normalized = {field: contract.get(field) for field in P8_OPERATOR_REQUIRED_FIELDS}
+    missing_evidence = normalized.get("missing_evidence")
+    normalized["missing_evidence"] = list(missing_evidence) if isinstance(missing_evidence, list) else []
+    return normalized
+
+
 def run_replay_scenarios(*, replay_dir: Path = DEFAULT_REPLAY_DIR, scenarios: Iterable[str] | None = None) -> dict[str, Any]:
     loaded = load_replay_scenarios(replay_dir, scenarios)
     results = [_normalize_replay_result(_run_one(scenario)) for scenario in loaded]
@@ -164,6 +189,7 @@ def run_replay_scenarios(*, replay_dir: Path = DEFAULT_REPLAY_DIR, scenarios: It
             "suppressed": sum(1 for item in false_positive if item["policy_decision"] == "ALLOW" and item["action_type"] == "timeline.add_note"),
         },
         "adversarial": adversarial_summary,
+        "p8_scenario_summary": _p8_scenario_summary_from_results(results),
         "dashboard": {
             "accuracy": round(sum(1 for item in results if item["passed"]) / len(results), 3) if results else 0.0,
             "blocked_dangerous_actions": sum(1 for item in dangerous if item["policy_decision"] in {"DENY", "ESCALATE"}),
@@ -194,6 +220,33 @@ def _adversarial_summary_from_results(results: list[dict[str, Any]]) -> dict[str
             "total": len(false_positive),
             "passed": sum(1 for item in false_positive if item.get("action_type") == "timeline.add_note" or item.get("actual_route") == "false_positive"),
         },
+    }
+
+
+def _p8_scenario_summary_from_results(results: list[dict[str, Any]]) -> dict[str, Any]:
+    p8_results = [item for item in results if item.get("phase") == "P8" or item.get("operator_replacement")]
+    missing_contract_fields: list[dict[str, Any]] = []
+    for item in p8_results:
+        contract = item.get("operator_replacement") if isinstance(item.get("operator_replacement"), Mapping) else {}
+        missing = [
+            field
+            for field in P8_OPERATOR_REQUIRED_FIELDS
+            if contract.get(field) in (None, "") or (field != "missing_evidence" and contract.get(field) == [])
+        ]
+        if missing:
+            missing_contract_fields.append({"scenario": item["scenario"], "missing": missing})
+    contracts = [item.get("operator_replacement") if isinstance(item.get("operator_replacement"), Mapping) else {} for item in p8_results]
+    route_counts = Counter(str(contract.get("expected_route", item.get("actual_route"))) for item, contract in zip(p8_results, contracts, strict=True))
+    action_counts = Counter(str(contract.get("required_action", "unknown")) for contract in contracts)
+    score_band_counts = Counter(str(contract.get("reliability_score_band", "unknown")) for contract in contracts)
+    class_counts = Counter(str(contract.get("scenario_class", item.get("category"))) for item, contract in zip(p8_results, contracts, strict=True))
+    return {
+        "total": len(p8_results),
+        "scenario_class_counts": dict(sorted(class_counts.items())),
+        "route_counts": dict(sorted(route_counts.items())),
+        "action_counts": dict(sorted(action_counts.items())),
+        "score_band_counts": dict(sorted(score_band_counts.items())),
+        "missing_contract_fields": missing_contract_fields,
     }
 
 
@@ -233,9 +286,23 @@ def render_replay_markdown(summary: Mapping[str, Any]) -> str:
         f"- Ambiguous escalations: {summary['ambiguous_escalations']['escalated']}/{summary['ambiguous_escalations']['total']}",
         f"- False-positive suppressions: {summary['false_positive_suppression']['suppressed']}/{summary['false_positive_suppression']['total']}",
         "",
+    ]
+    p8_summary = summary.get("p8_scenario_summary", {})
+    if p8_summary.get("total"):
+        lines.extend(
+            [
+                "## OpsCat P8 Operator-Replacement Scenario Summary",
+                "",
+                f"- P8 scenarios: {p8_summary['total']}",
+                f"- Required contract gaps: {len(p8_summary['missing_contract_fields'])}",
+                f"- Scenario classes: {', '.join(p8_summary['scenario_class_counts'])}",
+                "",
+            ]
+        )
+    lines.extend([
         "| Scenario | Category | Route | Policy | Evidence | Result |",
         "| --- | --- | --- | --- | ---: | --- |",
-    ]
+    ])
     for result in summary["results"]:
         lines.append(
             "| {scenario} | {category} | {route} | {policy} | {evidence_count} | {status} |".format(
@@ -294,6 +361,8 @@ def _run_one(scenario: ReplayScenario) -> dict[str, Any]:
         "category": scenario.category,
         "adversarial": scenario.adversarial,
         "no_external_dependencies": scenario.no_external_dependencies,
+        "phase": scenario.phase,
+        "operator_replacement": scenario.operator_replacement or {},
         "passed": all(check["ok"] for check in checks.values()),
         "checks": checks,
         "actual_route": actual_route,
@@ -329,6 +398,8 @@ def _run_simple_fixture(scenario: ReplayScenario) -> dict[str, Any]:
         "category": scenario.category,
         "adversarial": scenario.adversarial,
         "no_external_dependencies": scenario.no_external_dependencies,
+        "phase": scenario.phase,
+        "operator_replacement": scenario.operator_replacement or {},
         "passed": True,
         "checks": checks,
         "actual_route": route,

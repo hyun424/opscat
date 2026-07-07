@@ -185,8 +185,16 @@ class SentryReadOnlyConnector:
     }
 
     def __init__(self, transport: SentryTransport | Callable[[str, dict[str, Any]], SentryProviderResponse] | None = None) -> None:
-        self._legacy_transport = transport if callable(transport) and not hasattr(transport, "get") else None
-        self._transport = transport if hasattr(transport, "get") else UrllibSentryTransport()
+        self._legacy_transport: Callable[[str, dict[str, Any]], SentryProviderResponse] | None
+        if callable(transport) and not hasattr(transport, "get"):
+            self._legacy_transport = transport
+            self._transport: SentryTransport = UrllibSentryTransport()
+        elif transport is not None:
+            self._legacy_transport = None
+            self._transport = cast(SentryTransport, transport)
+        else:
+            self._legacy_transport = None
+            self._transport = UrllibSentryTransport()
 
     def call(self, request: ConnectorCallRequest) -> ConnectorCallResult:
         if request.capability not in self.capabilities:
@@ -201,6 +209,8 @@ class SentryReadOnlyConnector:
             return self._health_check(request)
         mode = _provider_mode(request.payload)
         token = _optional_text(request.payload.get(_AUTH_TOKEN_FIELD))
+        if self._legacy_transport is not None and token and "provider_mode" not in request.payload and "mode" not in request.payload:
+            mode = _REAL_MODE
         if mode == _REAL_MODE and not token:
             return ConnectorCallResult(
                 connector_id=self.connector_id,
@@ -297,7 +307,33 @@ class SentryReadOnlyConnector:
             output={"provider": "sentry", "mode": _REAL_MODE, "recorded": False, "issues": issues, "pagination": {"pages_read": page, "bounded": True}},
         )
 
-    def _read_issue_events(self, request: ConnectorCallRequest) -> ConnectorCallResult:
+    def _search_fixture_issues(self, request: ConnectorCallRequest) -> ConnectorCallResult:
+        project = _optional_text(request.payload.get("project"))
+        query = _optional_text(request.payload.get("query")).lower()
+        page = max(_int_payload(request.payload, "page", 1), 1)
+        per_page = min(max(_int_payload(request.payload, "per_page", 50), 1), 100)
+        matched = [_redacted_mapping(issue) for issue in _RECORDED_ISSUES if _matches_issue(issue, project=project, query=query)]
+        page_items, next_cursor = _page(matched, page=page, per_page=per_page)
+        pagination: dict[str, Any] = {"page": page, "per_page": per_page, "next_cursor": next_cursor, "has_more": next_cursor is not None}
+        if request.payload.get("fixture_mode") is True:
+            pagination["bounded"] = True
+        return ConnectorCallResult(
+            connector_id=self.connector_id,
+            capability=request.capability,
+            ok=True,
+            read_only=True,
+            evidence_summary=f"Read {len(page_items)} of {len(matched)} sanitized Sentry-style issue fixture(s); no network call performed.",
+            output={
+                "provider": "sentry-fixture",
+                "mode": _FIXTURE_MODE,
+                "recorded": True,
+                "issues": page_items,
+                "pagination": pagination,
+                "rate_limit": {"bounded": True, "retry_after_seconds": 0},
+            },
+        )
+
+    def _read_fixture_issue_events(self, request: ConnectorCallRequest) -> ConnectorCallResult:
         issue_id = _optional_text(request.payload.get("issue_id"))
         if not issue_id:
             return ConnectorCallResult(connector_id=self.connector_id, capability=request.capability, ok=False, read_only=True, error="missing issue_id")

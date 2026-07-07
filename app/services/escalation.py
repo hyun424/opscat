@@ -31,6 +31,9 @@ HARD_ESCALATION_TRIGGERS = {
     "execution_failed",
     "post_check_failed",
     "max_attempts_reached",
+    "connector_timeout",
+    "connector_failure",
+    "connector_contract_violation",
 }
 
 
@@ -134,18 +137,12 @@ def build_escalation_payload(
             {
                 "title": incident.root_cause_candidate or "Unknown root cause",
                 "confidence": incident.confidence,
-                "status": (
-                    "supported"
-                    if incident.confidence and incident.confidence >= MIN_AUTO_CONFIDENCE
-                    else "uncertain"
-                ),
+                "status": ("supported" if incident.confidence and incident.confidence >= MIN_AUTO_CONFIDENCE else "uncertain"),
             }
         ],
         "confidence": incident.confidence,
         "risk_level": action.risk_level if action is not None else (policy.risk_level if policy is not None else None),
-        "policy_decision": (
-            action.policy_decision if action is not None else (policy.decision if policy is not None else None)
-        ),
+        "policy_decision": (action.policy_decision if action is not None else (policy.decision if policy is not None else None)),
         "policy_reasons": policy_reasons,
         "evidence_collected": evidence,
         "actions_already_taken": actions_taken,
@@ -235,6 +232,12 @@ def _impact_summary(incident: Incident) -> str:
 def _recommended_next_action(trigger: str, action: ActionProposal | None) -> str:
     if trigger == "post_check_failed":
         return "Review failed verification evidence, stop automatic retries, and choose the next runbook step."
+    if trigger == "connector_timeout":
+        return "Review connector timeout evidence, verify provider health, and decide whether to retry or switch context source."
+    if trigger == "connector_contract_violation":
+        return "Disable the connector path, review the contract violation evidence, and patch the adapter before retrying."
+    if trigger == "connector_failure":
+        return "Review connector failure evidence and decide whether to retry, reconfigure credentials, or gather context manually."
     if trigger == "policy_denied_action":
         return "Do not execute the denied action; select a safer runbook or approve a future hardened integration."
     if trigger == "low_confidence":

@@ -550,6 +550,21 @@ def _provider_error_result(capability: str, error_type: str, message: str, *, re
     )
 
 
+def _failure(request: ConnectorCallRequest, error_type: str, message: str) -> ConnectorCallResult:
+    """Normalize legacy Sentry transport failures into the current result shape."""
+
+    normalized = error_type.replace("-", "_")
+    return ConnectorCallResult(
+        connector_id=SentryReadOnlyConnector.connector_id,
+        capability=request.capability,
+        ok=False,
+        read_only=True,
+        error="rate-limited" if normalized == "rate_limited" else redact_text(message),
+        evidence_summary=f"Sentry provider read failed closed with normalized error {normalized}.",
+        output={"provider": "sentry", "mode": _REAL_MODE, "normalized_error": normalized},
+    )
+
+
 def _redacted_mapping(value: Mapping[str, Any]) -> dict[str, Any]:
     copied = deepcopy(dict(value))
     return cast(dict[str, Any], redact_value(copied))

@@ -149,6 +149,7 @@ P5 remains local/mock: no production credentials, live provider mutation, hosted
 ## P6 Agentic Loop Evidence
 
 - Roadmap: `docs/operations/p6-ticket-roadmap.md`
+- Final summary: `docs/operations/p6-final-summary.md`
 - Agentic loop docs: `docs/agentic-loop.md`
 - Demo command: `uv run --no-sync --extra dev python scripts/demo_agentic_loop.py`
 - Agentic eval command: `python scripts/run_agentic_evals.py --output-json /tmp/opscat-agentic-evals.json --output-md /tmp/opscat-agentic-evals.md`

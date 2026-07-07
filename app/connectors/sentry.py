@@ -146,6 +146,9 @@ class UrllibSentryTransport:
 
 class SentryReadOnlyConnector:
     connector_id = "sentry.readonly"
+
+    def __init__(self, transport: SentryTransport | None = None) -> None:
+        self.transport = transport
     capabilities: Mapping[str, ConnectorCapability] = {
         "health.check": ConnectorCapability(
             name="health.check",
@@ -170,6 +173,14 @@ class SentryReadOnlyConnector:
             read_only=True,
             required_role="viewer",
             required_secret_name="sentry.token",
+        ),
+        "health.check": ConnectorCapability(
+            name="health.check",
+            description="Check Sentry connector setup without leaking credentials.",
+            risk_level="read_only",
+            read_only=True,
+            required_role="viewer",
+            required_secret_name=None,
         ),
     }
 

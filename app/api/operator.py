@@ -254,7 +254,8 @@ def _p8_war_room_panel(incident: Incident) -> str:
 </section>
 <section data-testid="p8-action-gate">
 <h3>Action gate</h3>
-<p>Policy <code>{escape(policy_decision)}</code>; status <code>{escape(action_status)}</code>; target <code>{escape(action_target)}</code>. Browser mutation forms remain absent while auth/session work is deferred.</p>
+<p>Policy <code>{escape(policy_decision)}</code>; status <code>{escape(action_status)}</code>; target <code>{escape(action_target)}</code>.</p>
+<p>Browser mutation forms remain absent while auth/session work is deferred.</p>
 </section>
 <section data-testid="p8-report-export">
 <h3>Report export</h3>
@@ -263,6 +264,13 @@ def _p8_war_room_panel(incident: Incident) -> str:
 </section>
 """
 
+
+
+def _payload_section(payload: dict[str, object] | None, key: str) -> dict[str, object]:
+    if not isinstance(payload, dict):
+        return {}
+    value = payload.get(key)
+    return dict(value) if isinstance(value, dict) else {}
 
 def _decision_trace_table(entries: list[DecisionTraceEntry]) -> str:
     rows = []

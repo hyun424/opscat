@@ -83,3 +83,23 @@ Mitigations:
 - blast radius and action simulation block unknown, prohibited, production, shell, cloud, database, and secret actions;
 - incident memory failed-prior warnings block automation;
 - auth remains deferred and P7 continues to avoid real provider mutation, real customer credentials, and unattended production operation claims.
+
+## P8 AI Incident Responder War Room Addendum
+
+P8 adds a war room, agent reliability score, runbook critique, human question generation, and report export evidence while keeping auth remains deferred and the local/mock boundary intact.
+
+Additional threats:
+
+- stale or poisoned incident memory influencing the war room narrative;
+- over-trusting an agent reliability score instead of hard policy gates;
+- prompt/log injection in war room text or runbook critique fields;
+- accidental secret exposure in evidence or report export links;
+- unsafe runbook improvement suggestions being mistaken for approved production procedure;
+- UI copy implying production autonomy or unattended production operation.
+
+Mitigations:
+
+- `tests/test_p8_demo.py` checks that the operator-facing demo flow repeats the local/mock boundary and avoids mutation forms;
+- `tests/test_p8_security_docs.py` locks the threat language, auth deferral, and no-secret-marker contract;
+- `tests/test_p8_release_evidence.py` requires release evidence and final summary links before P8 closure;
+- hard policy, typed mock actions, redaction, and approval-gated API instructions remain the enforcement layer.

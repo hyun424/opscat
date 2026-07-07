@@ -109,7 +109,7 @@ No real external side effects are permitted in P4.
 - No production rollback.
 - No Kubernetes/cloud/database/shell mutation product tool.
 - No real customer data.
-- No production credentials.
+- No production credential material.
 
 The P4 evidence demonstrates the local/mock architecture and release discipline. P5 must add production authentication, real connector deployment, credential/OAuth operations, CI, hosted workflow workers, real incident replay, load/soak testing, and security review before paid customer production use.
 
@@ -144,7 +144,7 @@ Completed P5 tickets:
 - P5-017
 - P5-018
 
-P5 remains local/mock: no production credentials, live provider mutation, hosted auth, or real customer production deployment is claimed.
+P5 remains local/mock: no production credential material, live provider mutation, hosted auth, or real customer production deployment is claimed.
 
 ## P6 Agentic Loop Evidence
 
@@ -178,3 +178,19 @@ P7 remains local/mock and auth-deferred. It adds replay, adversarial evals, conf
 - scripts/run_replay_evals.py
 - /tmp/opscat-replay-evals-latest.md
 This does not claim unattended production operation.
+
+
+## P8 AI Incident Responder War Room Evidence
+
+- Roadmap: `docs/operations/p8-ticket-roadmap.md`
+- Final summary: `docs/operations/p8-final-summary.md`
+- Demo script: `docs/operations/p8-demo-script.md`
+- Security review: `docs/security-review-p8.md`
+- Demo tests: `tests/test_p8_demo.py`
+- Security docs tests: `tests/test_p8_security_docs.py`
+- Release evidence tests: `tests/test_p8_release_evidence.py`
+- Replay evidence command: `python scripts/run_replay_evals.py --output-json /tmp/opscat-replay-evals.json --output-md /tmp/opscat-replay-evals.md`
+- Demo command: `uv run --no-sync --extra dev python scripts/demo.py`
+- Full release gate: `bash scripts/verify.sh --profile full`
+
+P8 remains local/mock and auth-deferred. It presents war room reasoning, reliability score, runbook critique, human questions, action gates, and report links as reviewer evidence; it does not claim unattended production operation.

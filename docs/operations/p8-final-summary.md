@@ -27,5 +27,5 @@ bash scripts/verify.sh --profile full
 
 - Auth remains deferred: no OIDC, SSO, login, password auth, session UI, or browser mutation forms.
 - No real Slack/GitHub/Sentry/Kubernetes/cloud/database mutation occurs.
-- No production credentials or customer data are collected.
+- No production credential material or customer data are collected.
 - Reliability scores, runbook critiques, and human questions are local/mock review evidence, not authorization to act in production.

@@ -161,7 +161,10 @@ docs_contract_tests() {
     tests/test_oss_quickstart_docs.py \
     tests/test_p6_release_evidence.py \
     tests/test_p6_security_review_docs.py \
-    tests/test_agentic_demo.py
+    tests/test_agentic_demo.py \
+    tests/test_p8_demo.py \
+    tests/test_p8_security_docs.py \
+    tests/test_p8_release_evidence.py
 }
 
 run_fast() {

@@ -39,6 +39,9 @@ def main() -> None:
         print("Action:", action["action_type"], action["policy_decision"])
         print("Final status:", approved["incident"]["status"])
         print("Report path:", approved["report"])
+        print("P8 flow: alert -> war room -> score -> runbook critique -> action gate -> report")
+        print("P8 War Room URL:", f"/operator/incidents/{incident['id']}")
+        print("P8 boundary: local/mock only; does not claim unattended production operation")
         print("Night Autopilot actions:", len(night_response.json()["actions_taken"]))
         print("Agentic loop demo:", "uv run --no-sync --extra dev python scripts/demo_agentic_loop.py")
 

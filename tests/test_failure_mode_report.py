@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.models import ActionProposal, Incident
+from app.services.report_service import render_incident_report
+
 
 def test_report_contains_failure_mode_analysis_for_blocked_action() -> None:
     incident = Incident(
@@ -27,6 +30,12 @@ def test_report_contains_failure_mode_analysis_for_blocked_action() -> None:
             status="escalated",
         )
     )
+
+    report = render_incident_report(incident)
+
+    assert "## Failure Mode Analysis" in report
+    assert "low confidence" in report
+    assert "missing evidence" in report
 
 
 def test_report_includes_failure_mode_analysis_for_low_confidence_escalation(client: Any) -> None:
@@ -70,3 +79,13 @@ def test_report_explains_policy_denied_action_failure_modes(client: Any) -> None
     assert "policy_denied_action" in report
     assert "production.restart_service" in report
     assert "Do not execute denied/prohibited action" in report
+
+
+def _create_report(client: Any, payload: dict[str, Any]) -> str:
+    created = client.post("/webhooks/alerts/mock?process_now=true", json=payload)
+    assert created.status_code == 201, created.text
+    body = created.json()
+    incident_id = body.get("incident", body)["id"]
+    response = client.get(f"/incidents/{incident_id}/report")
+    assert response.status_code == 200, response.text
+    return str(response.json()["report"])

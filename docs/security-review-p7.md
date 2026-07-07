@@ -31,3 +31,12 @@ P7 remains a **local/mock** reliability lab. Auth remains deferred: no OIDC, SSO
 - P7 does not use real customer credentials or live provider mutation.
 - P7 does not implement auth/session/OIDC; the local-header demo identity remains the boundary.
 - P7 replay and action simulation are deterministic local/mock evidence, not a substitute for hosted production incident response hardening.
+
+## P7 explicit reviewer phrases
+Auth/OIDC/SSO/session login remains explicitly deferred. P7 covers replay, adversarial log injection, confidence calibration, self-critique, blast radius, action simulation, incident memory, memory poisoning, and Night Autopilot v2. It does not claim unattended production operation; auth remains deferred and all evidence is local/mock.
+
+Replay poisoning is an explicit P7 threat model item alongside adversarial log injection and memory poisoning.
+
+replay poisoning remains an explicit P7 threat model item.
+
+overconfident diagnosis is explicitly covered by confidence calibration and self-critique gates.

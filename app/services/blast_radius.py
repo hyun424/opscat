@@ -31,11 +31,30 @@ class BlastRadiusResult:
     allowed: bool = True
     evidence: tuple[str, ...] = ()
 
+    @property
+    def scope(self) -> str:
+        return self.level.value
+
+    @property
+    def requires_human_approval(self) -> bool:
+        return self.approval_required
+
+    @property
+    def allowed_for_auto(self) -> bool:
+        return self.allowed and not self.approval_required and self.rollback_available
+
+    @property
+    def reasons(self) -> tuple[str, ...]:
+        return (self.reason, *self.evidence)
+
     def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
         data["level"] = self.level.value
+        data["scope"] = self.level.value
         data["touched_resources"] = list(self.touched_resources)
         data["evidence"] = list(self.evidence)
+        data["requires_human_approval"] = self.requires_human_approval
+        data["allowed_for_auto"] = self.allowed_for_auto
         return data
 
 
@@ -81,6 +100,20 @@ class BlastRadiusService:
             allowed=allowed,
             evidence=(f"action_metadata:{action.name}", f"blast_radius:{action.blast_radius}"),
         )
+
+    def classify(self, context: Mapping[str, Any]) -> BlastRadiusResult:
+        return self.evaluate(
+            ActionRequest(
+                action_type=str(context.get("action_type", "unknown")),
+                target=str(context.get("target", "unknown")),
+                environment=str(context.get("environment", "local")),
+                payload=context.get("payload", {}) if isinstance(context.get("payload", {}), Mapping) else {},
+            )
+        )
+
+
+BlastRadiusScope = BlastRadiusLevel
+BlastRadiusEngine = BlastRadiusService
 
 
 def _level_for(action: ActionMetadata, request: ActionRequest) -> BlastRadiusLevel:

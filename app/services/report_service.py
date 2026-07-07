@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Any
 
 from sqlalchemy.orm import Session
 
@@ -43,7 +42,7 @@ def render_incident_report(incident: Incident) -> str:
                 lines.append(f"    - Rollback path: {redact_text(str(simulation.get('rollback_path')))}")
         if action.execution_result:
             lines.append(f"  - Execution result: {redact_value(action.execution_result)}")
-    lines.extend(["", "## Failure modes"])
+    lines.extend(["", "## Failure Mode Analysis"])
     if incident.actions:
         for action in incident.actions:
             critique = _payload_section(action.payload, "self_critique")
@@ -53,8 +52,15 @@ def render_incident_report(incident: Incident) -> str:
             alternate = critique.get("alternate_causes", []) if critique else []
             objections = critique.get("action_risk_objections", []) if critique else []
             blocked = action.status in {"denied", "escalated", "failed"} or bool(missing or objections) or (simulation and simulation.get("status") != "passed")
-            lines.append(f"- `{action.id}` uncertainty: missing_evidence={redact_value(missing)} alternate_hypotheses={redact_value(alternate)}")
-            lines.append(f"  - Blocked action: {blocked}; escalation reason: {redact_text(action.escalation_reason or '; '.join(action.policy_reasons) or 'none')}")
+            escalation_reason = redact_text(action.escalation_reason or "; ".join(action.policy_reasons) or "none")
+            lines.append(f"- `{action.id}` Failure Mode Analysis")
+            lines.append(f"  - Uncertainty: confidence={incident.confidence}")
+            lines.append(f"  - Missing evidence: {redact_value(missing)}")
+            lines.append(f"  - Alternate hypotheses: {redact_value(alternate)}")
+            lines.append(f"  - Blocked actions: {blocked}")
+            lines.append(f"  - Escalation reasons: {escalation_reason}")
+            if action.policy_decision in {"DENY", "ESCALATE"} or action.status in {"denied", "escalated"}:
+                lines.append("  - Do not execute denied/prohibited action without a safer human-approved runbook.")
             if memory:
                 lines.append(f"  - Prior-outcome warnings: {redact_value(memory.get('warnings', []))}")
     else:

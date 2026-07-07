@@ -76,8 +76,11 @@ class PolicyContext:
     known_ambiguity: bool = False
     blast_radius_scope: str | None = None
     rollback_available: bool | None = None
+    reversible: bool | None = None
     simulation_passed: bool | None = None
+    simulation_status: str | None = None
     failed_memory_warning: bool = False
+    memory_failed_action_warning: bool = False
 
     def autopilot_enabled(self) -> bool:
         return self.night_autopilot or self.mode == "night_autopilot"
@@ -278,11 +281,12 @@ class PolicyEngine:
             return PolicyDecision.ESCALATE
         if context.conflicting_signals or context.known_ambiguity:
             return PolicyDecision.ESCALATE
-        if context.failed_memory_warning:
+        if context.failed_memory_warning or context.memory_failed_action_warning:
             return PolicyDecision.ESCALATE
         if context.simulation_passed is False:
             return PolicyDecision.ESCALATE
-        if context.rollback_available is False:
+        rollback_available = context.rollback_available if context.rollback_available is not None else context.reversible
+        if rollback_available is False:
             return PolicyDecision.REQUIRE_APPROVAL
         if context.blast_radius_scope in {"unknown", "tenant", "global", "prohibited"}:
             return PolicyDecision.ESCALATE

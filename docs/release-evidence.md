@@ -170,3 +170,11 @@ P6 keeps auth deferred and does not claim production readiness or unattended pro
 - Full release gate: `bash scripts/verify.sh --profile full`
 
 P7 remains local/mock and auth-deferred. It adds replay, adversarial evals, confidence calibration, self-critique, blast-radius classification, action simulation, incident memory, Night Autopilot v2 gates, failure-mode reporting, and reliability dashboard metrics without claiming unattended production operation.
+
+## P7 Agent Reliability & Safety Lab Evidence
+- docs/operations/p7-ticket-roadmap.md
+- docs/operations/p7-final-summary.md
+- docs/security-review-p7.md
+- scripts/run_replay_evals.py
+- /tmp/opscat-replay-evals-latest.md
+This does not claim unattended production operation.

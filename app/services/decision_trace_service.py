@@ -174,20 +174,6 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
             details=_redacted_details({"confidence": confidence, "supporting_evidence_ids": evidence_ids, "evidence": _evidence_summaries(evidence)}),
         ),
         DecisionTraceEntry(
-            stage="critique",
-            title="Self-critique gate",
-            summary=_critique_summary(evidence, primary_action, confidence),
-            tenant_id=tenant_id,
-            workspace_id=workspace_id,
-            incident_id=incident_id,
-            actor="agent",
-            action_id=action_id,
-            evidence_ids=evidence_ids,
-            confidence=confidence,
-            status=status,
-            details=_redacted_details({"critique_evidence": _critique_details(evidence), "policy_reasons": _get(primary_action, "policy_reasons", [])}),
-        ),
-        DecisionTraceEntry(
             stage="plan",
             title="Runbook/action plan",
             summary=_action_summary(primary_action),
@@ -204,7 +190,7 @@ def build_decision_trace(incident: Any) -> list[DecisionTraceEntry]:
         DecisionTraceEntry(
             stage="critique",
             title="Self-critique gate",
-            summary=_critique_summary(primary_action, critique),
+            summary=_critique_payload_summary(primary_action, critique),
             tenant_id=tenant_id,
             workspace_id=workspace_id,
             incident_id=incident_id,
@@ -329,7 +315,7 @@ def _risk_summary(action: Any) -> str:
     return f"Policy {_safe_text(_get(action, 'policy_decision', 'unknown'))} with risk {_safe_text(_get(action, 'risk_level', 'unknown'))}"
 
 
-def _critique_summary(action: Any, trace: dict[str, Any]) -> str:
+def _critique_payload_summary(action: Any, trace: dict[str, Any]) -> str:
     critique = _payload_value(action, "self_critique")
     if critique:
         decision = _safe_text(critique.get("decision", "unknown"))

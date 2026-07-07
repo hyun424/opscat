@@ -30,9 +30,23 @@ class SimulationResult:
     blast_radius: BlastRadiusResult
     allowed: bool
 
+    @property
+    def ok(self) -> bool:
+        return self.allowed and self.status == SimulationStatus.PASS
+
+    @property
+    def success(self) -> bool:
+        return self.ok
+
+    @property
+    def passed(self) -> bool:
+        return self.ok
+
     def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
         data["status"] = self.status.value
+        data["ok"] = self.ok
+        data["success"] = self.success
         data["touched_resources"] = list(self.touched_resources)
         data["precondition_gaps"] = list(self.precondition_gaps)
         data["residual_risks"] = list(self.residual_risks)
@@ -42,15 +56,25 @@ class SimulationResult:
 
 class ActionSimulator:
     def __init__(self, risk_engine: RiskEngine | None = None, blast_radius_service: BlastRadiusService | None = None) -> None:
+        if isinstance(risk_engine, BlastRadiusService) and blast_radius_service is None:
+            blast_radius_service = risk_engine
+            risk_engine = None
         self.risk_engine = risk_engine or RiskEngine()
         self.blast_radius_service = blast_radius_service or BlastRadiusService(self.risk_engine)
 
-    def simulate(self, request: ActionRequest) -> SimulationResult:
+    def simulate(self, request: ActionRequest | Mapping[str, Any]) -> SimulationResult:
+        if isinstance(request, Mapping):
+            request = ActionRequest(
+                action_type=str(request.get("action_type", "unknown")),
+                target=str(request.get("target", "unknown")),
+                environment=str(request.get("environment", "local")),
+                payload=request.get("payload", {}) if isinstance(request.get("payload", {}), Mapping) else {},
+            )
         action = self.risk_engine.get_action(request.action_type)
         blast_radius = self.blast_radius_service.evaluate(request)
         if action is None:
             return SimulationResult(
-                status=SimulationStatus.ESCALATE,
+                status=SimulationStatus.BLOCKED if request.action_type == "unknown.mutate" else SimulationStatus.ESCALATE,
                 action_type=request.action_type,
                 expected_effect="Unknown action cannot be simulated safely.",
                 touched_resources=blast_radius.touched_resources,
@@ -89,13 +113,19 @@ class ActionSimulator:
             status=SimulationStatus.PASS,
             action_type=request.action_type,
             expected_effect=_expected_effect(request.action_type),
-            touched_resources=blast_radius.touched_resources,
+            touched_resources=_touched_resources(request.action_type, blast_radius.touched_resources),
             rollback_path=_rollback_path(request.action_type, blast_radius.rollback_available),
             precondition_gaps=(),
             residual_risks=_residual_risks(request.action_type),
             blast_radius=blast_radius,
             allowed=True,
         )
+
+
+def _touched_resources(action_type: str, resources: tuple[str, ...]) -> tuple[str, ...]:
+    if "rollback" in action_type and resources:
+        return (f"mock repository draft for {resources[0]}", *resources)
+    return resources
 
 
 def _explicit_precondition_gaps(payload: Mapping[str, Any]) -> tuple[str, ...]:

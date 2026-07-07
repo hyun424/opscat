@@ -27,9 +27,9 @@ class IncidentMemoryRecord:
     runbook: str
     action_type: str
     outcome: str
-    action_status: str
-    confidence: float | None
-    summary: str
+    action_status: str = "unknown"
+    confidence: float | None = None
+    summary: str = ""
 
 
 @dataclass(frozen=True)
@@ -39,10 +39,89 @@ class IncidentMemoryMatch:
     reasons: tuple[str, ...]
     warnings: tuple[str, ...] = field(default_factory=tuple)
 
+    @property
+    def similarity(self) -> float:
+        return self.score
+
+    @property
+    def failed_remediation_warning(self) -> bool:
+        return "prior_failed_remediation" in self.warnings
+
+    @property
+    def failed_prior_action(self) -> bool:
+        return self.failed_remediation_warning
+
+    @property
+    def warning(self) -> str:
+        return "; ".join(self.warnings)
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "incident_id": self.record.incident_id,
+            "score": self.score,
+            "reasons": list(self.reasons),
+            "warnings": list(self.warnings),
+            "failed_prior_action": self.failed_prior_action,
+            "action_type": self.record.action_type,
+            "outcome": self.record.outcome,
+        }
+
 
 @dataclass(frozen=True)
 class IncidentMemory:
-    records: tuple[IncidentMemoryRecord, ...]
+    records: tuple[IncidentMemoryRecord, ...] = ()
+
+    def __init__(self, records: Iterable[IncidentMemoryRecord] = ()) -> None:
+        object.__setattr__(self, "records", tuple(records))
+
+    def add(self, record: IncidentMemoryRecord) -> None:
+        object.__setattr__(self, "records", (*self.records, record))
+
+    def search(
+        self,
+        *,
+        service: str,
+        environment: str,
+        fingerprint: str,
+        root_cause: str,
+        runbook: str,
+        action_type: str,
+        limit: int = 5,
+    ) -> list[IncidentMemoryMatch]:
+        return self.find_similar(
+            service=service,
+            environment=environment,
+            fingerprint=fingerprint,
+            root_cause=root_cause,
+            runbook=runbook,
+            action_type=action_type,
+            limit=limit,
+        )
+
+    def find_similar(
+        self,
+        *,
+        service: str,
+        environment: str,
+        fingerprint: str,
+        root_cause: str,
+        runbook: str,
+        action_type: str,
+        limit: int = 5,
+    ) -> list[IncidentMemoryMatch]:
+        probe = Incident(
+            tenant_id="demo",
+            workspace_id="demo",
+            alert_fingerprint=fingerprint,
+            source="memory-probe",
+            status="investigating",
+            service=service,
+            environment=environment,
+            severity="medium",
+            alert_payload={"scenario": runbook},
+            root_cause_candidate=root_cause,
+        )
+        return search_similar_incidents(self, probe, action_type=action_type, limit=limit)
 
 
 def build_incident_memory(

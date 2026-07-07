@@ -116,6 +116,7 @@ def operator_reliability_dashboard(principal: Principal = Depends(get_current_pr
         "tenant_id": principal.tenant_id,
         "workspace_id": principal.workspace_id,
         "dashboard": dashboard,
+        **dashboard,
     }
 
 

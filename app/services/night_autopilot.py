@@ -1,23 +1,33 @@
 from sqlalchemy.orm import Session
 
 from app.models import ActionProposal
-from app.models.action import ActionMetadata, ActionRequest, RiskLevel
+from app.models.action import ActionRequest, RiskLevel
 from app.schemas.incidents import MockAlertRequest, NightAutopilotConfig, NightAutopilotResult
-from app.services.action_simulator import ActionSimulator
-from app.services.blast_radius import BlastRadiusEngine
+from app.services.action_simulator import ActionSimulator, SimulationResult
+from app.services.blast_radius import BlastRadiusResult, BlastRadiusService
 from app.services.escalation import build_escalation_payload, record_human_escalation
-from app.services.incident_memory import build_incident_memory, failed_remediation_warning, search_similar_incidents, summarize_matches
+from app.services.incident_memory import (
+    build_incident_memory,
+    failed_remediation_warning,
+    search_similar_incidents,
+    summarize_matches,
+)
 from app.services.incident_service import create_mock_incident, get_incident
 from app.services.policy_engine import NightAutopilotConfig as PolicyNightAutopilotConfig
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.report_service import render_incident_report
-from app.services.risk_engine import RiskEngine
 from app.services.state_machine import transition_incident
 from app.services.timeline_service import add_timeline_event
 from app.tools.mock_actions import execute_mock_action, verify_recovery
 
 
 def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> NightAutopilotResult:
+    """Run a fully local/mock quiet-hours remediation simulation.
+
+    The v2 gate intentionally fails closed unless confidence, policy,
+    blast-radius, simulation, rollback, and incident-memory checks all agree.
+    """
+
     target = config.target or f"{config.service}:{config.environment}"
     incident = create_mock_incident(
         db,
@@ -30,6 +40,9 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         ),
     )
     db.add(transition_incident(incident, "investigating", actor="night-autopilot", reason="quiet-hours simulation"))
+    incident.root_cause_candidate = incident.root_cause_candidate or _default_root_cause(config.scenario)
+    incident.confidence = _estimated_confidence(config.scenario)
+
     request = ActionRequest(
         action_type=config.action_type,
         target=target,
@@ -37,7 +50,19 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         tenant_id=incident.tenant_id,
         workspace_id=incident.workspace_id,
         incident_id=incident.id,
+        payload={"source": "night_autopilot_v2", "scenario": config.scenario},
     )
+    blast_radius = BlastRadiusService().evaluate(request)
+    simulation = ActionSimulator().simulate(request)
+    memory = build_incident_memory(
+        db,
+        tenant_id=incident.tenant_id,
+        workspace_id=incident.workspace_id,
+        exclude_incident_id=incident.id,
+    )
+    memory_matches = search_similar_incidents(memory, incident, action_type=config.action_type)
+    memory_failed_warning = failed_remediation_warning(memory_matches)
+
     policy = PolicyEngine().evaluate(
         request,
         PolicyContext(
@@ -46,17 +71,16 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             severity=incident.severity,
             tenant_id=incident.tenant_id,
             workspace_id=incident.workspace_id,
-            confidence=0.88,
-            blast_radius_scope=blast_radius.scope,
-            reversible=blast_radius.rollback_available,
-            simulation_status="passed" if simulation.ok else "failed",
-            memory_failed_action_warning=memory_failed_warning,
+            mode="night_autopilot",
             night_autopilot=True,
-            confidence=0.86,
+            confidence=incident.confidence,
             evidence_count=3,
             blast_radius_scope=blast_radius.scope,
             rollback_available=blast_radius.rollback_available,
             simulation_passed=simulation.success,
+            simulation_status="passed" if simulation.success else "failed",
+            failed_memory_warning=memory_failed_warning,
+            memory_failed_action_warning=memory_failed_warning,
             autopilot=PolicyNightAutopilotConfig(
                 max_automatic_risk=RiskLevel(config.max_automatic_risk),
                 max_attempts_per_incident=config.max_attempts_per_incident,
@@ -66,18 +90,12 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             ),
         ),
     )
-    action_metadata = RiskEngine().get_action(config.action_type)
-    incident.root_cause_candidate = incident.root_cause_candidate or _default_root_cause(config.scenario)
-    incident.confidence = _estimated_confidence(config.scenario)
-    memory = build_incident_memory(db, tenant_id=incident.tenant_id, workspace_id=incident.workspace_id, exclude_incident_id=incident.id)
-    memory_matches = search_similar_incidents(memory, incident, action_type=config.action_type)
-    simulation = _simulate_action(request, action_metadata)
     v2_gates = _evaluate_v2_gates(
         confidence=incident.confidence,
         policy_allowed=policy.decision == "ALLOW",
-        action=action_metadata,
+        blast_radius=blast_radius,
         simulation=simulation,
-        failed_memory=failed_remediation_warning(memory_matches),
+        failed_memory=memory_failed_warning,
         memory_matches=summarize_matches(memory_matches),
     )
     add_timeline_event(
@@ -90,6 +108,7 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         content=f"Night Autopilot v2 gates {'passed' if v2_gates['passed'] else 'blocked'}",
         metadata=v2_gates,
     )
+
     actions_taken: list[dict[str, object]] = []
     escalations: list[dict[str, object]] = []
     if v2_gates["passed"] and config.max_attempts_per_incident >= 1:
@@ -102,24 +121,24 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
             environment=incident.environment,
             risk_level=policy.risk_level,
             requires_approval=False,
-            rationale="Night Autopilot v2 allowlisted low-risk non-prod worker restart after confidence, blast-radius, simulation, and memory gates passed.",
-            payload={"worker_pool": "default", "mode": "night_autopilot_mock", "v2_gates": v2_gates},
+            rationale=(
+                "Night Autopilot v2 allowlisted low-risk non-prod worker restart after "
+                "confidence, blast-radius, simulation, and memory gates passed."
+            ),
+            payload={
+                "worker_pool": "default",
+                "mode": "night_autopilot_mock",
+                "v2_gates": v2_gates,
+                "blast_radius": blast_radius.to_dict(),
+                "simulation": simulation.to_dict(),
+                "memory_matches": summarize_matches(memory_matches),
+            },
             preconditions=["runbook marks restart reversible", "environment is not production"],
             post_checks=["worker heartbeat is healthy", "queue latency decreases"],
             policy_decision=policy.decision,
             policy_reasons=policy.reasons,
             confidence=incident.confidence,
             status="approved",
-            payload={
-                "worker_pool": "default",
-                "mode": "night_autopilot_mock",
-                "blast_radius": blast_radius.__dict__,
-                "simulation": simulation.to_dict(),
-                "memory_matches": [
-                    {"incident_id": match.record.incident_id, "similarity": match.similarity, "failed_remediation_warning": match.failed_remediation_warning}
-                    for match in memory_matches
-                ],
-            },
         )
         db.add(action)
         db.flush()
@@ -149,12 +168,17 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
                 action=action,
                 policy=policy,
                 verification=verification,
-                recommended_next_action=("Wake the configured on-call contact; automatic quiet-hours remediation did not verify."),
+                recommended_next_action="Wake the configured on-call contact; automatic quiet-hours remediation did not verify.",
             )
+            payload["v2_gates"] = v2_gates
             record_human_escalation(db, incident, payload, action=action, transition_to_escalated=True)
             escalations.append(payload)
     else:
-        triggers = _v2_block_triggers(v2_gates, policy_decision=str(policy.decision), max_attempts=config.max_attempts_per_incident)
+        triggers = _v2_block_triggers(
+            v2_gates,
+            policy_decision=str(policy.decision),
+            max_attempts=config.max_attempts_per_incident,
+        )
         payload = build_escalation_payload(
             incident,
             trigger=triggers[0],
@@ -168,7 +192,13 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
 
     db.commit()
     refreshed = get_incident(db, incident.id)
-    morning_report = _render_morning_report(refreshed.status, actions_taken, escalations, render_incident_report(refreshed), gate_evidence)
+    morning_report = _render_morning_report(
+        refreshed.status,
+        actions_taken,
+        escalations,
+        render_incident_report(refreshed),
+        v2_gates,
+    )
     return NightAutopilotResult(
         mode="simulated",
         incidents_detected=1,
@@ -190,7 +220,18 @@ def _render_morning_report(
     blocked_actions = 0 if actions_taken else len(escalations)
     verification = "recovered" if resolved else "blocked_or_escalated_before_execution"
     follow_up = "No human follow-up required." if resolved else "Review escalation payload and choose a safer runbook."
-    gate_summary = _render_v2_gate_summary(actions_taken, escalations)
+    reliability = "passed" if gate_evidence.get("passed") else "blocked"
+    raw_simulation = gate_evidence.get("simulation")
+    simulation: dict[str, object] = raw_simulation if isinstance(raw_simulation, dict) else {}
+    raw_blast = gate_evidence.get("blast_radius")
+    blast: dict[str, object] = raw_blast if isinstance(raw_blast, dict) else {}
+    simulation_status = str(simulation.get("status") or ("passed" if simulation.get("ok") else "failed"))
+    if simulation_status == "pass":
+        simulation_status = "passed"
+    blast_scope = str(blast.get("scope") or blast.get("value") or "unknown")
+    blocked_rationale = "Blocked action rationale: none; all reliability gates passed."
+    if not gate_evidence.get("passed"):
+        blocked_rationale = "Blocked action rationale: Night Autopilot v2 failed closed on confidence, policy, blast radius, simulation, or memory."
     summary = "\n".join(
         [
             "# Night Autopilot Morning Report",
@@ -209,13 +250,7 @@ def _render_morning_report(
             f"- {blocked_rationale}",
             "",
             "## Reliability gates",
-            gate_summary,
-            "",
-            "## Reliability gates",
-            gate_summary,
-            "",
-            "## Reliability gates",
-            gate_summary,
+            _render_v2_gate_summary(gate_evidence),
             "",
             "## Incident evidence",
             "",
@@ -224,14 +259,7 @@ def _render_morning_report(
     return summary + incident_report
 
 
-def _render_v2_gate_summary(actions_taken: list[dict[str, object]], escalations: list[dict[str, object]]) -> str:
-    gates: object | None = None
-    if actions_taken:
-        gates = actions_taken[0].get("v2_gates")
-    elif escalations:
-        gates = escalations[0].get("v2_gates")
-    if not isinstance(gates, dict):
-        return "- Night Autopilot v2 gates: unavailable"
+def _render_v2_gate_summary(gates: dict[str, object]) -> str:
     memory = gates.get("memory") if isinstance(gates.get("memory"), dict) else {}
     simulation = gates.get("simulation") if isinstance(gates.get("simulation"), dict) else {}
     similar = memory.get("similar_incidents", []) if isinstance(memory, dict) else []
@@ -250,7 +278,7 @@ def _render_v2_gate_summary(actions_taken: list[dict[str, object]], escalations:
 def _estimated_confidence(scenario: str) -> float:
     if scenario in {"low_confidence_ambiguous", "conflicting_evidence_payment", "critical_unknown_multi_service"}:
         return 0.42
-    return 0.82
+    return 0.88
 
 
 def _default_root_cause(scenario: str) -> str:
@@ -259,54 +287,32 @@ def _default_root_cause(scenario: str) -> str:
     return scenario.replace("_", " ").title()
 
 
-def _simulate_action(request: ActionRequest, action: ActionMetadata | None) -> dict[str, object]:
-    if action is None or action.prohibited_reason:
-        return {"ok": False, "reason": "simulation_failed_unregistered_or_prohibited", "touched_resources": []}
-    if not action.reversible:
-        return {"ok": False, "reason": "simulation_failed_not_reversible", "touched_resources": [request.target]}
-    if not _bounded_blast_radius(action):
-        return {"ok": False, "reason": "simulation_failed_unbounded_blast_radius", "touched_resources": [request.target]}
-    return {
-        "ok": True,
-        "expected_effect": action.description,
-        "rollback_path": action.blast_radius if action.reversible else "none",
-        "touched_resources": [request.target],
-        "residual_risks": [],
-    }
-
-
 def _evaluate_v2_gates(
     *,
     confidence: float | None,
     policy_allowed: bool,
-    action: ActionMetadata | None,
-    simulation: dict[str, object],
+    blast_radius: BlastRadiusResult,
+    simulation: SimulationResult,
     failed_memory: bool,
     memory_matches: list[dict[str, object]],
 ) -> dict[str, object]:
     high_confidence = confidence is not None and confidence >= 0.80
-    blast_radius_ok = _bounded_blast_radius(action)
-    reversible = bool(action and action.reversible)
-    simulation_ok = bool(simulation.get("ok"))
+    blast_radius_ok = blast_radius.scope in {"local", "service"} and blast_radius.allowed
+    reversible = blast_radius.rollback_available
+    simulation_ok = simulation.success
     passed = all([high_confidence, policy_allowed, blast_radius_ok, reversible, simulation_ok, not failed_memory])
     return {
         "passed": passed,
         "confidence": {"value": confidence, "ok": high_confidence, "threshold": 0.80},
         "policy_allowed": policy_allowed,
-        "blast_radius": {"value": action.blast_radius if action else "unknown", "ok": blast_radius_ok},
+        "blast_radius": {"scope": blast_radius.scope, "ok": blast_radius_ok, "rollback_available": reversible},
         "reversible": reversible,
-        "simulation": simulation,
+        "simulation": simulation.to_dict(),
         "memory": {
             "failed_remediation_warning": failed_memory,
             "similar_incidents": memory_matches,
         },
     }
-
-
-def _bounded_blast_radius(action: ActionMetadata | None) -> bool:
-    if action is None:
-        return False
-    return action.blast_radius in {"none", "local incident record", "single non-production worker", "mock ticket system"}
 
 
 def _v2_block_triggers(v2_gates: dict[str, object], *, policy_decision: str, max_attempts: int) -> list[str]:

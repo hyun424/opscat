@@ -1,7 +1,7 @@
 ---
 id: P10-007
 title: Judgment Benchmark Runner
-status: TODO
+status: DONE
 phase: P10
 depends_on: [P10-005, P10-006]
 boundary: no-auth-local-mock

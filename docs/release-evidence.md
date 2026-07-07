@@ -214,3 +214,20 @@ P8 remains local/mock and auth-deferred. It presents war room reasoning, reliabi
 - Full release gate: `bash scripts/verify.sh --profile full`
 
 P9 remains local/mock and auth-deferred. It adds an Autonomous Incident Commander lifecycle, multi-step response planning, autonomy-readiness scoring, evidence graph modeling, recovery verification v2, learning from prior outcomes, commander tournament evals, operator UI evidence, and safety regression tests. It does not claim unattended production operation.
+
+## P10 Incident Judgment Benchmark Evidence
+
+- Roadmap: `docs/operations/p10-ticket-roadmap.md`
+- Final summary: `docs/operations/p10-final-summary.md`
+- Dataset schema tests: `tests/test_judgment_dataset.py`
+- Adapter tests: `tests/test_judgment_adapters.py`
+- Evaluator tests: `tests/test_judgment_evaluator.py`
+- Benchmark tests: `tests/test_judgment_benchmark.py`
+- CLI tests: `tests/test_judgment_cli.py`
+- Release evidence tests: `tests/test_p10_release_evidence.py`
+- Dataset conversion command: `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/import_judgment_dataset.py --source loghub --input <fixture> --output /tmp/opscat-judgment-cases.json`
+- Benchmark command: `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_judgment_benchmark.py --output-json /tmp/opscat-judgment-benchmark.json --output-md /tmp/opscat-judgment-benchmark.md`
+- Latest temp benchmark artifact: `/tmp/opscat-judgment-benchmark-latest.md`
+- Full release gate: `bash scripts/verify.sh --profile full`
+
+P10 remains local/mock and auth-deferred. It adds a deterministic benchmark for incident judgment quality using repo-local seed cases; it does not download public datasets during normal verification and does not claim unattended production operation.

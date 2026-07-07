@@ -1,7 +1,7 @@
 ---
 id: P10-011
 title: Verification Integration
-status: TODO
+status: DONE
 phase: P10
 depends_on: [P10-007, P10-009, P10-010]
 boundary: no-auth-local-mock

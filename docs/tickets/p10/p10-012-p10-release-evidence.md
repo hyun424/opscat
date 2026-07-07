@@ -1,7 +1,7 @@
 ---
 id: P10-012
 title: P10 Release Evidence
-status: TODO
+status: DONE
 phase: P10
 depends_on: [P10-001, P10-002, P10-003, P10-004, P10-005, P10-006, P10-007, P10-008, P10-009, P10-010, P10-011]
 boundary: no-auth-local-mock

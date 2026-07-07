@@ -1,7 +1,7 @@
 ---
 id: P10-003
 title: NAB-style Metric Adapter
-status: TODO
+status: DONE
 phase: P10
 depends_on: [P10-001, P10-004]
 boundary: no-auth-local-mock

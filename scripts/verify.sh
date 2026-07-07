@@ -105,6 +105,15 @@ agentic_evals() {
   printf 'Wrote /tmp/opscat-agentic-evals-latest.md and %s/opscat-agentic-evals.json\n' "$VERIFY_TMPDIR"
 }
 
+judgment_benchmark() {
+  section "P10 judgment benchmark"
+  "${UV_DEV[@]}" python scripts/run_judgment_benchmark.py \
+    --output-json "$VERIFY_TMPDIR/opscat-judgment-benchmark.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-judgment-benchmark.md" >/tmp/opscat-judgment-benchmark-latest.json
+  cp "$VERIFY_TMPDIR/opscat-judgment-benchmark.md" /tmp/opscat-judgment-benchmark-latest.md
+  printf 'Wrote /tmp/opscat-judgment-benchmark-latest.md and %s/opscat-judgment-benchmark.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -172,7 +181,8 @@ docs_contract_tests() {
     tests/test_p8_demo.py \
     tests/test_p8_security_docs.py \
     tests/test_p8_release_evidence.py \
-    tests/test_p9_release_evidence.py
+    tests/test_p9_release_evidence.py \
+    tests/test_p10_release_evidence.py
 }
 
 run_fast() {
@@ -188,6 +198,7 @@ run_eval() {
   agentic_evals
   replay_evals
   commander_tournament
+  judgment_benchmark
 }
 
 run_docs() {

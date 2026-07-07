@@ -1,7 +1,7 @@
 ---
 id: P10-010
 title: Seed Dataset Pack
-status: TODO
+status: DONE
 phase: P10
 depends_on: [P10-002, P10-003, P10-004]
 boundary: no-auth-local-mock

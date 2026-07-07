@@ -1,7 +1,7 @@
 ---
 id: P10-009
 title: Benchmark Report
-status: TODO
+status: DONE
 phase: P10
 depends_on: [P10-007, P10-008]
 boundary: no-auth-local-mock

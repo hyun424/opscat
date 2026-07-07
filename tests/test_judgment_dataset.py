@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
 from app.services.judgment_dataset import JudgmentCase, JudgmentRubric, load_judgment_cases
 
 
-def test_judgment_case_schema_is_deterministic_redacted_and_validated(tmp_path) -> None:
+def test_judgment_case_schema_is_deterministic_redacted_and_validated(tmp_path: Path) -> None:
     case = JudgmentCase(
         id="case-1",
         title="API 5xx deploy regression",

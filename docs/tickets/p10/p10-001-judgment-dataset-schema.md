@@ -1,7 +1,7 @@
 ---
 id: P10-001
 title: Judgment Dataset Schema
-status: TODO
+status: DONE
 phase: P10
 depends_on: []
 boundary: no-auth-local-mock

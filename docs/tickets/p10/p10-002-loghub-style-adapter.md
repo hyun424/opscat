@@ -1,7 +1,7 @@
 ---
 id: P10-002
 title: LogHub-style Adapter
-status: TODO
+status: DONE
 phase: P10
 depends_on: [P10-001, P10-004]
 boundary: no-auth-local-mock

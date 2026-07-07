@@ -1,7 +1,7 @@
 ---
 id: P10-006
 title: Dataset Conversion CLI
-status: TODO
+status: DONE
 phase: P10
 depends_on: [P10-002, P10-003]
 boundary: no-auth-local-mock

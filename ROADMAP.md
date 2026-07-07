@@ -101,3 +101,7 @@ P9 implemented as local/mock Autonomous Incident Commander evidence. P9 covers t
 ## P10 active
 
 P10 active scope: Incident Judgment Benchmark without auth or external dataset downloads during normal verification. P10 focuses on judgment case schema, LogHub-style and NAB-style adapters, rubric scoring, commander judgment evaluator, dataset conversion CLI, benchmark runner, regression baseline comparison, markdown/JSON reports, seed dataset fixtures, verification integration, and release evidence. See `docs/operations/p10-ticket-roadmap.md` and `docs/tickets/p10/README.md`. The boundary remains no-auth/local-mock: P10 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, or unattended production-operation claims.
+
+## P10 implemented
+
+P10 implemented as local/mock Incident Judgment Benchmark evidence. P10 covers judgment case schema, LogHub-style adapter, NAB-style metric adapter, rubric scoring, commander judgment evaluator, dataset conversion CLI, benchmark runner, regression baseline comparison, markdown/JSON reports, seed dataset fixtures, verification integration, and release evidence. See `docs/operations/p10-ticket-roadmap.md`, `docs/operations/p10-final-summary.md`, and `docs/release-evidence.md`. The boundary remains no-auth/local-mock: P10 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, or unattended production-operation claims.

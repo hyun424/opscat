@@ -1,7 +1,7 @@
 ---
 id: P10-008
 title: Regression Baseline
-status: TODO
+status: DONE
 phase: P10
 depends_on: [P10-007]
 boundary: no-auth-local-mock

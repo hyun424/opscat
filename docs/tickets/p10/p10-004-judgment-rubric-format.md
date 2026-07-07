@@ -1,7 +1,7 @@
 ---
 id: P10-004
 title: Judgment Rubric Format
-status: TODO
+status: DONE
 phase: P10
 depends_on: [P10-001]
 boundary: no-auth-local-mock

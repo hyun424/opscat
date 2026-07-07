@@ -16,8 +16,8 @@ from app.services.redaction import redact_text, redact_value
 def build_war_room(incident: Incident) -> dict[str, Any]:
     """Build a redacted, deterministic operator-facing war-room projection."""
     action = _latest_action(incident)
-    evidence = [_evidence_item(item) for item in sorted(incident.evidence, key=lambda item: (item.collected_at, item.id))]
-    timeline = [_timeline_item(event) for event in sorted(incident.timeline, key=lambda event: (event.timestamp, event.id))]
+    evidence = [_evidence_item(item) for item in sorted(incident.evidence, key=lambda item: (_sortable_dt(item.collected_at), item.id))]
+    timeline = [_timeline_item(event) for event in sorted(incident.timeline, key=lambda event: (_sortable_dt(event.timestamp), event.id))]
     hypotheses = _hypotheses(incident, evidence)
     policy_gates = _policy_gates(action, incident)
     reliability_score = _reliability_score(action, incident, evidence, policy_gates)
@@ -60,7 +60,11 @@ def build_war_room(incident: Incident) -> dict[str, Any]:
 def _latest_action(incident: Incident) -> ActionProposal | None:
     if not incident.actions:
         return None
-    return sorted(incident.actions, key=lambda action: (action.created_at, action.id))[-1]
+    return sorted(incident.actions, key=lambda action: (_sortable_dt(action.created_at), action.id))[-1]
+
+
+def _sortable_dt(value: Any) -> str:
+    return value.isoformat() if hasattr(value, "isoformat") else str(value)
 
 
 def _evidence_item(item: Any) -> dict[str, Any]:

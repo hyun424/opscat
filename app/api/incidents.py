@@ -12,6 +12,7 @@ from app.services.decision_trace_service import build_decision_trace, render_tra
 from app.services.identity_service import Principal
 from app.services.incident_service import decide_action, get_incident, run_investigation
 from app.services.report_service import render_incident_report
+from app.services.war_room_service import build_war_room
 
 router = APIRouter(prefix="/incidents", tags=["incidents"])
 
@@ -61,6 +62,21 @@ def investigate_incident(
         run_investigation(db, incident)
         db.commit()
     return _analysis_response(get_incident(db, incident_id))
+
+
+@router.get("/{incident_id}/war-room", response_model=dict[str, Any])
+def incident_war_room(
+    incident_id: str,
+    principal: Principal = Depends(get_current_principal),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    try:
+        incident = get_incident(db, incident_id, principal=principal)
+    except AuthorizationError as exc:
+        raise HTTPException(status_code=404, detail={"message": "incident not found", "workspace_id": exc.workspace_id}) from exc
+    except Exception as exc:  # pragma: no cover - FastAPI boundary
+        raise HTTPException(status_code=404, detail="incident not found") from exc
+    return {"war_room": build_war_room(incident)}
 
 
 @router.get("/{incident_id}/report", response_model=dict[str, str])

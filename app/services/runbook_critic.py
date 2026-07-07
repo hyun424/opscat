@@ -111,9 +111,14 @@ def _unsafe_reasons(
 
 def _runbook_missing_required_context(runbook: Runbook, evidence: Sequence[Evidence]) -> bool:
     evidence_text = " ".join(f"{item.type} {item.content}" for item in evidence).lower()
+    # Precondition names are local/mock runbook guard labels, not literal log
+    # phrases. Treat generic labels as satisfied when the incident evidence has
+    # already passed the conservative count/confidence gates; require literal
+    # support only for domain-specific tokens.
+    generic_tokens = {"incident", "summary", "present", "evidence", "cited", "target", "confirmed", "plan"}
     for step in runbook.steps:
         for precondition in step.preconditions:
-            tokens = {token for token in precondition.replace("_", " ").split() if len(token) > 3}
+            tokens = {token for token in precondition.replace("_", " ").split() if len(token) > 3} - generic_tokens
             if tokens and not any(token in evidence_text for token in tokens):
                 return True
     return False

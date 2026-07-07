@@ -5,10 +5,14 @@ from sqlalchemy.orm import Session
 from app.config import get_settings
 from app.models import Incident
 from app.services.redaction import redact_text, redact_value
+from app.services.war_room_service import build_war_room
 
 
 def render_incident_report(incident: Incident) -> str:
-    lines = [
+    war_room = build_war_room(incident)
+    lines = _render_war_room_markdown(war_room) + [
+        "",
+        f"## Incident Report: {incident.id}",
         f"# Incident Report: {incident.id}",
         "",
         f"- Status: {incident.status}",
@@ -86,3 +90,68 @@ def _payload_section(payload: dict[str, object] | None, key: str) -> dict[str, o
         return {}
     value = payload.get(key)
     return dict(value) if isinstance(value, dict) else {}
+
+
+def _render_war_room_markdown(war_room: dict[str, object]) -> list[str]:
+    reliability = war_room.get("reliability_score") if isinstance(war_room.get("reliability_score"), dict) else {}
+    final_decision = war_room.get("final_decision") if isinstance(war_room.get("final_decision"), dict) else {}
+    impact = war_room.get("impact") if isinstance(war_room.get("impact"), dict) else {}
+    lines = [
+        f"# War Room Report: {war_room.get('incident_id', 'unknown')}",
+        "",
+        "## Incident Summary",
+        f"- Status: {redact_text(str(war_room.get('status', 'unknown')))}",
+        f"- Service: {redact_text(str(war_room.get('service', 'unknown')))}",
+        f"- Environment: {redact_text(str(war_room.get('environment', 'unknown')))}",
+        f"- Summary: {redact_text(str(war_room.get('summary', '')))}",
+        "",
+        "## Impact",
+        f"- Severity: {redact_text(str(war_room.get('severity', 'unknown')))}",
+        f"- Summary: {redact_text(str(impact.get('summary', '')))}",
+        "",
+        "## Timeline",
+    ]
+    for item in _as_list(war_room.get("timeline")):
+        if isinstance(item, dict):
+            lines.append(f"- {redact_text(str(item.get('timestamp', '')))} {redact_text(str(item.get('event_type', 'event')))}: {redact_text(str(item.get('content', '')))}")
+    lines.extend(["", "## Evidence"])
+    for item in _as_list(war_room.get("evidence")):
+        if isinstance(item, dict):
+            lines.append(f"- `{redact_text(str(item.get('id', '')))}` {redact_text(str(item.get('type', 'evidence')))}: {redact_text(str(item.get('content', '')))}")
+    lines.extend(["", "## Hypotheses"])
+    for item in _as_list(war_room.get("hypotheses")):
+        if isinstance(item, dict):
+            lines.append(f"- {redact_text(str(item.get('title', 'Unknown')))} confidence={redact_text(str(item.get('confidence', 'unknown')))} status={redact_text(str(item.get('status', 'unknown')))}")
+    lines.extend([
+        "",
+        "## Reliability Score",
+        f"- Score: {redact_text(str(reliability.get('score', 'unknown')))}",
+        f"- Band: {redact_text(str(reliability.get('band', 'unknown')))}",
+        "",
+        "## Policy Gates",
+    ])
+    for item in _as_list(war_room.get("policy_gates")):
+        if isinstance(item, dict):
+            lines.append(f"- {redact_text(str(item.get('name', 'gate')))}: {redact_text(str(item.get('status', 'unknown')))} — {redact_text(str(item.get('reason', '')))}")
+    critique = war_room.get("runbook_critique") if isinstance(war_room.get("runbook_critique"), dict) else {}
+    lines.extend([
+        "",
+        "## Runbook Critique",
+        f"- Fit: {redact_text(str(critique.get('fit', 'unknown')))}",
+        f"- Suggestions: {redact_value(critique.get('suggestions', []))}",
+        "",
+        "## Human Questions",
+    ])
+    for item in _as_list(war_room.get("human_questions")):
+        if isinstance(item, dict):
+            lines.append(f"- {redact_text(str(item.get('question', '')))} Why: {redact_text(str(item.get('why_it_matters', '')))}")
+    lines.extend([
+        "",
+        "## Final Decision",
+        f"- Route: {redact_text(str(final_decision.get('route', 'unknown')))}",
+        f"- Summary: {redact_text(str(final_decision.get('summary', '')))}",
+    ])
+    return lines
+
+def _as_list(value: object) -> list[object]:
+    return list(value) if isinstance(value, list) else []

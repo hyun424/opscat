@@ -68,6 +68,30 @@ Safety is enforced by explicit action metadata, risk classification, approval st
 - [`docs/integration-verification.md`](docs/integration-verification.md) — exact PASS/FAIL verification evidence.
 - [`.omx/plans/opscat-master-build-prompt.md`](.omx/plans/opscat-master-build-prompt.md) — original autonomous build contract.
 
+## Open-source quickstart
+
+A new contributor can run OpsCat locally without auth setup, cloud accounts, or production credentials. No auth setup is required for the P5 quickstart; OpsCat uses the existing local-header demo identity in local/mock mode.
+
+```bash
+git clone <your-fork-or-repo-url>
+cd opscat
+cp .env.example .env
+make install
+make quickstart
+```
+
+Useful local commands:
+
+```bash
+make demo      # deterministic incident -> approval -> report demo
+make evals     # golden incident evals plus connector safety evals
+make test      # pytest regression suite
+make verify    # full local release gate
+make run       # start FastAPI on http://127.0.0.1:8000
+```
+
+Do not use production credentials, customer logs, or real provider tokens in the open-source quickstart. The demo path is local/mock-only and uses a local-header demo identity instead of production authentication.
+
 ## Local setup
 
 ```bash

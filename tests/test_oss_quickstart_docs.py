@@ -26,8 +26,8 @@ def test_makefile_exposes_oss_quickstart_targets() -> None:
     text = makefile.read_text()
     for target in ["install", "test", "demo", "evals", "verify", "run", "quickstart"]:
         assert f"{target}:" in text
-    assert "uv run --no-sync --extra dev python scripts/demo.py" in text
-    assert "uv run --no-sync --extra dev pytest -q" in text
+    assert "$(UV) run --no-sync --extra dev python scripts/demo.py" in text
+    assert "$(UV) run --no-sync --extra dev pytest -q" in text
     assert "bash scripts/verify.sh" in text
     assert "scripts/run_evals.py" in text
     assert "scripts/run_connector_evals.py" in text

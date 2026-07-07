@@ -17,7 +17,7 @@ As of the latest AI team planning pass:
 - Workspace/tenant fields and redaction exist as paid-beta scaffolding.
 - Current local verification is healthy: compileall, ruff, mypy, pytest, and docker compose config have passed in QA review.
 
-This is **not production-grade yet**. It remains a single local/mock API process with local-header demo identity, no real OIDC/SSO auth, no real provider connectors, no durable workflow queue, no UI, no external secret manager, and no load/soak gate. However, the production foundation now includes versioned migrations, local identity and workspace membership models, service-layer tenant authorization, durable audit events, a typed read-only connector boundary, and a local encrypted secret-store abstraction.
+This is **not production-grade yet**. It remains a single local/mock API process with local-header demo identity, no real OIDC/SSO auth, no live provider network calls, no durable workflow queue, no UI, no external secret manager, and no load/soak gate. However, the production foundation now includes versioned migrations, local identity and workspace membership models, service-layer tenant authorization, durable audit events, a typed connector/capability boundary, a local encrypted secret-store abstraction, Sentry-style read-only recorded fixtures, dry-run Slack wake-up previews, dry-run GitHub issue drafts, and connector failure escalation evidence.
 
 ## Non-negotiable product promise
 
@@ -261,7 +261,7 @@ Acceptance:
 - no connector can execute arbitrary shell;
 - no real mutation occurs without policy + approval.
 
-Status: connector interface, fake read-only connector, connector audit boundary, and local encrypted secret abstraction are complete; Sentry-style read-only adapter is next.
+Status: completed for local/mock connector readiness. The platform now has a typed connector registry, local encrypted secret abstraction, fake observability connector, Sentry-style read-only recorded-fixture connector, Slack dry-run wake-up preview adapter, GitHub dry-run draft issue adapter, fail-closed missing credential handling, and connector timeout/failure escalation into evidence, timeline, audit, and human escalation. Real provider network calls and real external mutations remain explicitly out of scope until paid-beta hardening.
 
 ### M3 — Operator product surface
 
@@ -358,17 +358,25 @@ Define connector contracts, capability grants, fake connector, and policy integr
 Status: complete for local/mock foundation. Added scoped encrypted secret records, a local envelope provider, audit events, redaction, role checks, and fail-closed tests. Future production work must replace the local provider with external KMS/secret-manager integration before real customer credentials.
 
 ### P1-010 — Sentry-style read-only connector slice
-Implement real-shaped read-only webhook/parser/fetch flow with fake recorded responses and connector failure tests.
+Status: complete for local/mock foundation. Implemented a Sentry-shaped read-only connector backed by recorded sanitized fixtures, scoped secret lookup, missing-credential fail-closed behavior, redaction assertions, and registry capability tests.
+
+### P1-011 — Connector timeout/failure escalation
+Status: complete for local/mock foundation. Provider timeout, malformed result, failed result, read-only contract violation, and missing credential paths fail closed and create audit/timeline/evidence/escalation records when incident context is available.
+
+### P1-012 — Slack wake-up adapter
+Status: complete for dry-run-only local/mock foundation. Slack wake-up builds redacted previews and records audit evidence; real sends are blocked by the service boundary and by the connector itself.
+
+### P1-013 — GitHub draft issue adapter
+Status: complete for dry-run-only local/mock foundation. GitHub draft issue previews are approval-gated, redacted, audited, and never create live issues in the MVP even if a caller attempts a real send.
 
 ## Updated remaining execution order
 
-1. **P1-010 Sentry-style read-only connector slice** — use typed connector + secret abstraction; fake recorded responses only.
-2. **P2-011 Connector failure matrix** — missing credentials, provider timeout, bad payload, stale idempotency, and redaction failures create audit/timeline/escalation evidence.
-3. **P2-012 Durable workflow queue boundary** — split synchronous webhook/investigation into enqueue + worker-step functions while keeping local mode simple.
-4. **P2-013 Action execution attempt model** — persist each attempt, precondition result, execution result, post-check, retry eligibility, and final escalation.
-5. **P3-014 Operator dashboard MVP** — incident inbox/detail, evidence timeline, approval/reject, audit view, connector status.
-6. **P4-015 Eval expansion** — grow golden/adversarial/connector-failure evals to 20 then 50+.
-7. **P5-016 Paid-beta deployment hardening** — CI, deployment manifests, backup/restore, OTel/self-monitoring, security review.
+1. **P2-014 Durable workflow queue boundary** — split synchronous webhook/investigation into enqueue + worker-step functions while keeping local mode simple.
+2. **P2-015 Action execution attempt model** — persist each attempt, precondition result, execution result, post-check, retry eligibility, and final escalation.
+3. **P2-016 Connector failure/idempotency matrix expansion** — add stale idempotency, retry/dead-letter, malformed provider payload, rate-limit, and redaction-regression cases.
+4. **P3-017 Operator dashboard MVP** — incident inbox/detail, evidence timeline, approval/reject, audit view, connector status.
+5. **P4-018 Eval expansion** — grow golden/adversarial/connector-failure evals to 20 then 50+.
+6. **P5-019 Paid-beta deployment hardening** — CI, deployment manifests, backup/restore, OTel/self-monitoring, security review.
 
 ## Production release gates
 

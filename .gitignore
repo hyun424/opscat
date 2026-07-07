@@ -9,3 +9,6 @@ opscat.db
 data/mock_reports/*.md
 *$py.class
 *.egg-info/
+
+# Local uv lockfile is environment-generated for this prototype; verification forbids tracking it.
+uv.lock

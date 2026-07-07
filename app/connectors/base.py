@@ -15,6 +15,7 @@ class ConnectorCapability:
     read_only: bool = True
     required_role: str = "viewer"
     requires_approval: bool = False
+    required_secret_name: str | None = None
 
 
 @dataclass(frozen=True)

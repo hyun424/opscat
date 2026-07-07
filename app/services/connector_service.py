@@ -12,7 +12,9 @@ from app.connectors.base import ConnectorCallRequest, ConnectorCallResult
 from app.connectors.fake import FakeObservabilityConnector
 from app.connectors.github import GitHubDraftIssueConnector
 from app.connectors.registry import ConnectorRegistry
+from app.connectors.sentry import SentryReadOnlyConnector
 from app.connectors.slack import SlackWakeUpConnector
+from app.models import Evidence, Incident
 from app.services.audit_service import record_audit_event
 from app.services.authorization import AuthorizationError
 from app.services.escalation import build_escalation_payload, record_human_escalation
@@ -27,6 +29,7 @@ _ROLE_ORDER = {"viewer": 0, "operator": 1, "admin": 2, "owner": 3}
 def default_connector_registry() -> ConnectorRegistry:
     registry = ConnectorRegistry()
     registry.register(FakeObservabilityConnector())
+    registry.register(SentryReadOnlyConnector())
     registry.register(SlackWakeUpConnector())
     registry.register(GitHubDraftIssueConnector())
     return registry

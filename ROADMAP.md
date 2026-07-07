@@ -1,6 +1,6 @@
 # OpsCat Roadmap
 
-OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward an open-source-usable product prototype.
+OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward a beta-grade agentic operations system.
 
 ## P4 complete
 
@@ -14,43 +14,59 @@ P4 is complete. It added reproducible evidence for the local/mock operator-repla
 
 See `docs/release-evidence.md` and `docs/integration-verification.md`.
 
-## P5 active
+## P5 complete
 
-P5 active scope: OSS-usable productization without auth.
+P5 delivered OSS-usable productization without auth: quickstart, contributor docs, issue templates, connector setup/permission preview, secret lifecycle, incident import fixtures, worker CLI, approval console, Night Autopilot evidence, expanded connector evals, self-observability, CI profiles, security policy, and release packaging.
 
-Primary plan: `docs/operations/p5-ticket-roadmap.md`.
+Historical P5 active plan: `docs/operations/p5-ticket-roadmap.md`.
+
+## P6 active
+
+P6 active scope: Beta-grade agentic ops loop without auth.
+
+Primary plan: `docs/operations/p6-ticket-roadmap.md`.
 
 Current priority:
 
-1. Open-source quickstart and example environment.
-2. Contributor guide, roadmap, and issue templates.
-3. Public API docs and local fixture examples.
-4. Connector setup registry and permission preview.
-5. Connector SDK guide and fixture connector template.
-6. Secret lifecycle and redaction audit.
-7. Incident import adapters.
-8. Worker CLI and dead-letter operations.
-9. Approval console without auth/session work.
-10. Night Autopilot policy and morning report evidence.
-11. Expanded connector/product evals.
-12. Self-observability.
-13. CI-ready verification.
-14. OSS security policy and release packaging.
-15. P5 final release evidence.
+1. Real-provider-shaped Sentry connector deepening.
+2. Incident correlation engine.
+3. Root-cause candidate generator.
+4. Runbook registry and planner.
+5. Risk scoring engine v2 and action policy DSL.
+6. Safe action runner with dry-run, rollback metadata, and audit.
+7. Post-action verification and recovery-state machine.
+8. Agent decision trace and audit timeline.
+9. Operator console incident timeline and agentic action view.
+10. Agentic eval suite v1.
+11. One-command beta demo of the full agentic loop.
+12. P6 safety/threat-model refresh.
+13. P6 release evidence and roadmap update.
+14. Portfolio demo polish package.
 
 ## Auth deferred
 
-auth deferred means P5 intentionally does not include OIDC, SSO, login, password auth, session UI, production user provisioning, or CSRF/session-hardening tied to browser mutation forms. The current local-header demo identity remains the local/mock boundary until the owner explicitly reopens auth.
+auth deferred means P5 and P6 intentionally do not include OIDC, SSO, login, password auth, session UI, production user provisioning, or CSRF/session-hardening tied to browser mutation forms. The current local-header demo identity remains the local/mock boundary until the owner explicitly reopens auth.
 
 ## P6 candidates
 
-P6 candidates after P5:
+P6 candidates have been promoted into the P6 active roadmap. Remaining out-of-scope production candidates for later phases:
 
 - production auth and tenant administration;
-- real connector OAuth/secret-manager integration;
+- real connector OAuth/secret-manager integration beyond local opt-in secrets;
 - customer-side connector agent package;
 - hosted workflow workers and queue infrastructure;
 - live incident replay from sanitized exports;
 - load/soak testing;
 - deployment, backup/restore, and OpsCat self-monitoring for real beta environments;
 - license decision and public release process.
+
+## P7 candidates
+
+P7 should focus on safety/autonomy hardening after the P6 loop exists:
+
+- action blast-radius calculator;
+- rollback guarantee checker;
+- adversarial incident/log-injection evals;
+- incident memory and similarity search;
+- confidence calibration and self-critique before execution;
+- production deployment packaging with explicit auth/tenant decision deferred or reopened by the owner.

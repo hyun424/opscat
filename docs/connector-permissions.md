@@ -60,3 +60,7 @@ curl -s http://localhost:8000/connectors \
 ## Adding connectors
 
 New connectors must include explicit capability metadata: `read_only`, `risk_level`, `required_role`, `requires_approval`, and `required_secret_name`. They must add tests and connector eval coverage before being treated as release evidence.
+
+## Connector authoring
+
+See [`docs/connector-sdk.md`](connector-sdk.md) and `examples/connectors/example_connector.py` for a fixture-backed connector template.

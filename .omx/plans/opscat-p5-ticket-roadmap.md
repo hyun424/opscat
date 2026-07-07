@@ -43,7 +43,7 @@ Existing tenant/workspace/role headers may remain as the demo identity mechanism
 
 ## Ticket order
 
-### P5-001 — Connector setup registry and permission preview
+### P5-001 ✅ — Connector setup registry and permission preview
 
 Goal: create a product-facing integration catalog that explains what each connector can do before any token/secret is entered.
 
@@ -308,6 +308,14 @@ Files likely touched:
 - `.omx/plans/opscat-p5-ticket-roadmap.md`
 - `docs/operations/p5-ticket-roadmap.md`
 
+## Current P5 progress
+- P5-001: completed with `/connectors` permission preview API and `docs/connector-permissions.md`.
+- P5-013: completed with `.env.example`, `Makefile`, README quickstart, and `make demo` validation.
+- P5-014: completed with `CONTRIBUTING.md`, `ROADMAP.md`, and safe issue templates.
+- P5-015: completed with `docs/connector-sdk.md` and executable fixture connector template.
+- P5-016: completed with `docs/api.md` and safe local fixture examples.
+- Auth remains explicitly deferred.
+
 ## Recommended execution order
 
 1. P5-001 connector catalog/permission preview.
@@ -356,7 +364,7 @@ OSS-style success means:
 - release evidence is reproducible on a laptop;
 - docs avoid SaaS-only assumptions.
 
-### P5-013 — Open-source quickstart and example environment
+### P5-013 ✅ — Open-source quickstart and example environment
 
 Goal: make first-run experience excellent for an external developer.
 
@@ -379,7 +387,7 @@ Files likely touched:
 - `scripts/demo.py`
 - `tests/test_oss_quickstart_docs.py`
 
-### P5-014 — Contributor guide, roadmap, and issue templates
+### P5-014 ✅ — Contributor guide, roadmap, and issue templates
 
 Goal: make the repo understandable and approachable for external contributors.
 
@@ -400,7 +408,7 @@ Files likely touched:
 - `.github/ISSUE_TEMPLATE/*.md`
 - `tests/test_oss_contributor_docs.py`
 
-### P5-015 — Connector SDK guide and fixture connector template
+### P5-015 ✅ — Connector SDK guide and fixture connector template
 
 Goal: let open-source users add integrations safely.
 
@@ -420,7 +428,7 @@ Files likely touched:
 - `app/connectors/example.py` or `examples/connectors/`
 - `tests/test_connector_template.py`
 
-### P5-016 — Public API and local fixture examples
+### P5-016 ✅ — Public API and local fixture examples
 
 Goal: make OpsCat usable as an API-first local agent product.
 

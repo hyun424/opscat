@@ -4,7 +4,6 @@ from app.models import ActionProposal, Incident
 from app.services.escalation import build_escalation_payload
 from app.services.human_question_service import generate_human_questions
 
-
 FORBIDDEN_QUESTION_TERMS = ("password", "token", "secret", "credential", "api key")
 
 

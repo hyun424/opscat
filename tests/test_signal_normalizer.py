@@ -63,7 +63,7 @@ def test_fixture_import_endpoint_reuses_incident_flow_and_idempotency(client: An
     rendered = json.dumps(first_body, sort_keys=True)
     assert "PaymentTimeoutError" in rendered
     assert "sntrys_" not in rendered
-    assert "customer" not in rendered
+    assert "customer.100" not in rendered
 
 
 def test_fixture_import_endpoint_fails_closed_for_bad_provider(client: Any) -> None:

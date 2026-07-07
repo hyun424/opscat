@@ -43,6 +43,20 @@ curl -s -X POST 'http://localhost:8000/webhooks/alerts/mock' \
 
 For synchronous demo behavior, add `?process_now=true`.
 
+### POST /webhooks/alerts/fixture
+
+Import a provider-shaped local fixture and normalize it into the existing incident flow. Supported providers are `sentry`, `datadog`, `loki`, and `generic`.
+
+```bash
+curl -s -X POST 'http://localhost:8000/webhooks/alerts/fixture?process_now=true' \
+  -H 'content-type: application/json' \
+  -H 'X-OpsCat-Actor: demo-user@opscat.local' \
+  -H 'X-OpsCat-Tenant: demo' \
+  -H 'X-OpsCat-Workspace: demo' \
+  -H 'X-OpsCat-Role: admin' \
+  -d @examples/fixtures/signals/sentry_issue.json
+```
+
 ## Incidents
 
 ### GET /incidents

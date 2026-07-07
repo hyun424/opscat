@@ -151,16 +151,39 @@ def cases_from_nab_windows(rows: Sequence[Mapping[str, Any]], *, dataset: str = 
 def load_loghub_rows(path: str | Path) -> list[dict[str, Any]]:
     file_path = Path(path)
     if file_path.suffix.lower() == ".jsonl":
-        return [json.loads(line) for line in file_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+        return [_normalize_loghub_row(json.loads(line)) for line in file_path.read_text(encoding="utf-8").splitlines() if line.strip()]
     if file_path.suffix.lower() == ".json":
         data = json.loads(file_path.read_text(encoding="utf-8"))
         if isinstance(data, list):
-            return [dict(item) for item in data if isinstance(item, Mapping)]
+            return [_normalize_loghub_row(item) for item in data if isinstance(item, Mapping)]
         if isinstance(data, Mapping):
             rows = data.get("rows", [])
-            return [dict(item) for item in rows if isinstance(item, Mapping)] if isinstance(rows, Sequence) else []
+            return [_normalize_loghub_row(item) for item in rows if isinstance(item, Mapping)] if isinstance(rows, Sequence) else []
     with file_path.open(encoding="utf-8", newline="") as handle:
-        return [dict(row) for row in csv.DictReader(handle)]
+        return [_normalize_loghub_row(row) for row in csv.DictReader(handle)]
+
+
+def _normalize_loghub_row(row: Mapping[str, Any]) -> dict[str, Any]:
+    normalized = dict(row)
+    lowered = {str(key).lower(): value for key, value in normalized.items()}
+    if not normalized.get("message") and not normalized.get("content"):
+        content = lowered.get("content") or lowered.get("message") or lowered.get("eventtemplate")
+        if content is not None:
+            normalized["message"] = content
+            normalized.setdefault("content", content)
+    if not normalized.get("timestamp"):
+        timestamp = lowered.get("timestamp") or lowered.get("time") or lowered.get("date")
+        if timestamp is not None:
+            normalized["timestamp"] = timestamp
+    if not normalized.get("label"):
+        label = lowered.get("label") or lowered.get("level") or lowered.get("severity")
+        if label is not None:
+            normalized["label"] = label
+    if not normalized.get("event_id"):
+        event_id = lowered.get("eventid") or lowered.get("event_id")
+        if event_id is not None:
+            normalized["event_id"] = event_id
+    return normalized
 
 
 def load_nab_rows(path: str | Path) -> list[dict[str, Any]]:

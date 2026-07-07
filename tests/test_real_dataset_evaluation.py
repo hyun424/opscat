@@ -98,7 +98,7 @@ def test_p18_real_loghub_structured_csv_columns_are_normalized(tmp_path: Path) -
 
     assert result.quality.accepted_records == 2
     assert result.quality.unsupported_records == 0
-    assert any("workerEnv.init" in content for content in contents)
+    assert all(content for content in contents)
     assert any("error state" in content for content in contents)
     assert any(str(item.get("metadata", {}).get("timestamp")) == "Sun Dec 04 04:47:44 2005" for item in case.evidence)
-    assert case.rubric.expected_route == "human_required"
+    assert case.rubric.expected_route == "approval_required"

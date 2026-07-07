@@ -1,7 +1,7 @@
 ---
 id: P14-002
 title: Judgment Response Schema
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for Judgment Response Schema.
 
 ## Acceptance Criteria
 
-- [ ] Schema requires hypotheses, recommended_route, safe_actions, forbidden_actions_detected, missing_evidence, verification_plan, evidence_citations, and boundary.
-- [ ] Allowed routes match OpsCat taxonomy.
-- [ ] Invalid or missing fields fail closed.
+- [x] Schema requires hypotheses, recommended_route, safe_actions, forbidden_actions_detected, missing_evidence, verification_plan, evidence_citations, and boundary.
+- [x] Allowed routes match OpsCat taxonomy.
+- [x] Invalid or missing fields fail closed.
 
 ## Boundary
 

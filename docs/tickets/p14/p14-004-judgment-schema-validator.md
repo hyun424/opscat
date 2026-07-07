@@ -1,7 +1,7 @@
 ---
 id: P14-004
 title: Judgment Schema Validator
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for Judgment Schema Validator.
 
 ## Acceptance Criteria
 
-- [ ] Validator rejects malformed JSON-like responses.
-- [ ] Validator rejects invalid routes and malformed hypotheses/actions.
-- [ ] Validator reports validation errors for CLI/reporting.
+- [x] Validator rejects malformed JSON-like responses.
+- [x] Validator rejects invalid routes and malformed hypotheses/actions.
+- [x] Validator reports validation errors for CLI/reporting.
 
 ## Boundary
 

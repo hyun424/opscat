@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from typing import Any
 
 import pytest
 
@@ -16,7 +17,7 @@ from app.services.llm_judgment import (
 )
 
 
-def _packet() -> dict[str, object]:
+def _packet() -> dict[str, Any]:
     case = next(case for case in load_judgment_cases("evals/judgment/seed/cases.json") if case.id == "seed-loghub-injection-block")
     return build_context_from_judgment_case(case, max_evidence=8).to_dict()
 

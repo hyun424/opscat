@@ -1,7 +1,7 @@
 ---
 id: P14-007
 title: Judgment Runner
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for Judgment Runner.
 
 ## Acceptance Criteria
 
-- [ ] Runner composes provider, schema validation, citation check, and safety gate.
-- [ ] Runner returns raw judgment, validated judgment, gate status, and local/mock boundary.
-- [ ] Runner never executes actions.
+- [x] Runner composes provider, schema validation, citation check, and safety gate.
+- [x] Runner returns raw judgment, validated judgment, gate status, and local/mock boundary.
+- [x] Runner never executes actions.
 
 ## Boundary
 

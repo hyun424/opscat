@@ -1,7 +1,7 @@
 ---
 id: P14-001
 title: LLM Judgment Provider Interface
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for LLM Judgment Provider Interface.
 
 ## Acceptance Criteria
 
-- [ ] Provider protocol supports deterministic mock provider and future opt-in provider adapters.
-- [ ] Default provider is local/mock and performs no network calls.
-- [ ] Provider output is plain JSON-compatible data.
+- [x] Provider protocol supports deterministic mock provider and future opt-in provider adapters.
+- [x] Default provider is local/mock and performs no network calls.
+- [x] Provider output is plain JSON-compatible data.
 
 ## Boundary
 

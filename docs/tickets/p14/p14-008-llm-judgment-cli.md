@@ -1,7 +1,7 @@
 ---
 id: P14-008
 title: LLM Judgment CLI
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for LLM Judgment CLI.
 
 ## Acceptance Criteria
 
-- [ ] CLI accepts a P13 context packet or judgment cases/case-id input.
-- [ ] CLI writes deterministic JSON and Markdown reports.
-- [ ] CLI defaults to mock provider and performs no external calls.
+- [x] CLI accepts a P13 context packet or judgment cases/case-id input.
+- [x] CLI writes deterministic JSON and Markdown reports.
+- [x] CLI defaults to mock provider and performs no external calls.
 
 ## Boundary
 

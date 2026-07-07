@@ -1,7 +1,7 @@
 ---
 id: P14-006
 title: Judgment Safety Gate
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for Judgment Safety Gate.
 
 ## Acceptance Criteria
 
-- [ ] Forbidden actions force blocked or human_required routes.
-- [ ] Non-mock or production-like actions are removed from safe_actions.
-- [ ] Safety gate emits deterministic gate reasons.
+- [x] Forbidden actions force blocked or human_required routes.
+- [x] Non-mock or production-like actions are removed from safe_actions.
+- [x] Safety gate emits deterministic gate reasons.
 
 ## Boundary
 

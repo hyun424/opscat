@@ -1,7 +1,7 @@
 ---
 id: P14-011
 title: P14 Release Evidence
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for P14 Release Evidence.
 
 ## Acceptance Criteria
 
-- [ ] Final summary maps P14-001 through P14-011 to code/tests/docs.
-- [ ] Release evidence includes P14 commands and generated artifacts.
-- [ ] ROADMAP records P14 implemented boundary and next phase.
+- [x] Final summary maps P14-001 through P14-011 to code/tests/docs.
+- [x] Release evidence includes P14 commands and generated artifacts.
+- [x] ROADMAP records P14 implemented boundary and next phase.
 
 ## Boundary
 

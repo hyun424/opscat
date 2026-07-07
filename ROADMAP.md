@@ -135,3 +135,8 @@ P13 implemented as local/mock LLM Context Builder evidence. P13 covers determini
 ## P14 active
 
 P14 active scope: LLM Judgment Adapter without auth and without default external model calls. P14 focuses on a provider interface, deterministic mock judgment provider, response schema validation, evidence citation checking, safety gate, judgment runner, CLI/reporting, prompt-injection regression, verification integration, and release evidence. See `docs/operations/p14-ticket-roadmap.md` and `docs/tickets/p14/README.md`. The boundary remains no-auth/local-mock: P14 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, external dataset downloads during normal verification, default external model/API calls, action execution, or unattended production-operation claims.
+
+
+## P14 implemented
+
+P14 implemented as local/mock LLM Judgment Adapter evidence. P14 covers the provider interface, deterministic mock provider, response schema validation, evidence citation checking, safety gate, judgment runner, CLI/reporting, prompt-injection regression, verification integration, and release evidence. See `docs/operations/p14-ticket-roadmap.md`, `docs/operations/p14-final-summary.md`, and `docs/release-evidence.md`. The boundary remains no-auth/local-mock: P14 does not add login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, external dataset downloads during normal verification, default external model/API calls, action execution, or unattended production-operation claims.

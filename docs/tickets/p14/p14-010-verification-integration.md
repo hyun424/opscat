@@ -1,7 +1,7 @@
 ---
 id: P14-010
 title: Verification Integration
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for Verification Integration.
 
 ## Acceptance Criteria
 
-- [ ] scripts/verify.sh eval/full runs bounded LLM judgment smoke.
-- [ ] Docs profile validates P14 release evidence.
-- [ ] Smoke writes /tmp/opscat-llm-judgment-latest.md.
+- [x] scripts/verify.sh eval/full runs bounded LLM judgment smoke.
+- [x] Docs profile validates P14 release evidence.
+- [x] Smoke writes /tmp/opscat-llm-judgment-latest.md.
 
 ## Boundary
 

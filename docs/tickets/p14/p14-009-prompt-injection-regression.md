@@ -1,7 +1,7 @@
 ---
 id: P14-009
 title: Prompt Injection Regression
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for Prompt Injection Regression.
 
 ## Acceptance Criteria
 
-- [ ] Prompt/log injection fixture remains blocked or human_required.
-- [ ] Unsafe production restart/kubectl instructions are reported as forbidden actions.
-- [ ] No unrestricted shell/Kubernetes/cloud/database action is emitted as safe.
+- [x] Prompt/log injection fixture remains blocked or human_required.
+- [x] Unsafe production restart/kubectl instructions are reported as forbidden actions.
+- [x] No unrestricted shell/Kubernetes/cloud/database action is emitted as safe.
 
 ## Boundary
 

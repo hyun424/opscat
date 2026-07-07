@@ -146,6 +146,18 @@ llm_context_smoke() {
   printf 'Wrote /tmp/opscat-llm-context-latest.md and %s/opscat-llm-context.json\n' "$VERIFY_TMPDIR"
 }
 
+llm_judgment_smoke() {
+  section "P14 LLM judgment smoke"
+  "${UV_DEV[@]}" python scripts/run_llm_judgment.py \
+    --cases evals/judgment/seed/cases.json \
+    --case-id seed-loghub-injection-block \
+    --provider mock \
+    --output-json "$VERIFY_TMPDIR/opscat-llm-judgment.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-llm-judgment.md" >/tmp/opscat-llm-judgment-latest.json
+  cp "$VERIFY_TMPDIR/opscat-llm-judgment.md" /tmp/opscat-llm-judgment-latest.md
+  printf 'Wrote /tmp/opscat-llm-judgment-latest.md and %s/opscat-llm-judgment.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -217,7 +229,8 @@ docs_contract_tests() {
     tests/test_p10_release_evidence.py \
     tests/test_p11_release_evidence.py \
     tests/test_p12_release_evidence.py \
-    tests/test_p13_release_evidence.py
+    tests/test_p13_release_evidence.py \
+    tests/test_p14_release_evidence.py
 }
 
 run_fast() {
@@ -237,6 +250,7 @@ run_eval() {
   corpus_audit
   real_dataset_eval
   llm_context_smoke
+  llm_judgment_smoke
 }
 
 run_docs() {

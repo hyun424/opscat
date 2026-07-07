@@ -1,7 +1,7 @@
 ---
 id: P14-005
 title: Evidence Citation Checker
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for Evidence Citation Checker.
 
 ## Acceptance Criteria
 
-- [ ] Every citation must reference an evidence ID present in the context packet.
-- [ ] Unknown citations make the result invalid and blocked.
-- [ ] Missing citations are reported as evidence errors.
+- [x] Every citation must reference an evidence ID present in the context packet.
+- [x] Unknown citations make the result invalid and blocked.
+- [x] Missing citations are reported as evidence errors.
 
 ## Boundary
 

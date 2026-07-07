@@ -1,7 +1,7 @@
 ---
 id: P14-003
 title: Mock LLM Judgment Provider
-status: TODO
+status: DONE
 phase: P14
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P14 slice for Mock LLM Judgment Provider.
 
 ## Acceptance Criteria
 
-- [ ] Mock provider consumes P13 context packets and returns deterministic judgment.
-- [ ] Prompt-injection/unsafe evidence is surfaced as forbidden action evidence, not instructions.
-- [ ] Mock output cites existing evidence IDs.
+- [x] Mock provider consumes P13 context packets and returns deterministic judgment.
+- [x] Prompt-injection/unsafe evidence is surfaced as forbidden action evidence, not instructions.
+- [x] Mock output cites existing evidence IDs.
 
 ## Boundary
 

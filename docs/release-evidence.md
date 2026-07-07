@@ -287,3 +287,26 @@ Verification:
 - `bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock; no external model/API calls; no production mutation; no Kubernetes/cloud/database mutation; no unrestricted shell; no unattended production-operation claim.
+
+
+## P14 LLM Judgment Adapter Evidence
+
+P14 adds a mock-by-default LLM Judgment Adapter so OpsCat can evaluate model-shaped incident judgment without handing authority to model text. Provider output is schema-validated, evidence-citation checked, safety-gated, and never used to execute actions.
+
+Artifacts:
+
+- `docs/operations/p14-ticket-roadmap.md`
+- `docs/operations/p14-final-summary.md`
+- `app/services/llm_judgment.py`
+- `scripts/run_llm_judgment.py`
+- `tests/test_llm_judgment.py`
+- `tests/test_llm_judgment_cli.py`
+- `tests/test_p14_release_evidence.py`
+- `/tmp/opscat-llm-judgment-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_llm_judgment.py tests/test_llm_judgment_cli.py tests/test_p14_release_evidence.py`
+- `bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock; no default external model/API calls; no production mutation; no Kubernetes/cloud/database mutation; no unrestricted shell; no action execution; no unattended production-operation claim.

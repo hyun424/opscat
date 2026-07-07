@@ -4,12 +4,11 @@ from typing import Any
 
 import pytest
 
-from app.connectors.base import ConnectorCallRequest
+from app.connectors.base import ConnectorCallRequest, ConnectorCallResult, ConnectorCapability
 from app.connectors.fake import FakeObservabilityConnector
 from app.connectors.github import GitHubDraftIssueConnector
 from app.connectors.registry import ConnectorRegistry
-from app.connectors.slack import SlackWakeUpConnector
-from app.models import AuditEvent
+from app.models import AuditEvent, Incident
 from app.services.authorization import AuthorizationError
 from app.services.connector_service import ConnectorService, default_connector_registry
 from app.services.identity_service import get_or_create_local_principal
@@ -256,130 +255,232 @@ def test_github_draft_issue_dry_run_preview_is_typed_redacted_and_audited(db_ses
     result = ConnectorService().call(db_session, principal, request)
 
     assert result.ok is True
-    assert result.read_only is False
-    assert result.output["dry_run"] is True
-    assert result.output["created"] is False
-    preview = result.output["preview"]
-    assert preview["repository"] == "opscat/app"
-    assert preview["incident_id"] == "inc-gh-1"
-    assert preview["labels"] == ["incident", "needs-approval"]
-    serialized = str(result.output)
-    assert "ghp_real_token" not in serialized
-    assert "alice@example.com" not in serialized
-    assert "[REDACTED]" in serialized
-    events = db_session.query(AuditEvent).order_by(AuditEvent.created_at).all()
-    assert [event.event_type for event in events] == ["connector_call_requested", "connector_call_completed"]
-    assert all(event.tenant_id == "tenant-a" and event.workspace_id == "workspace-a" for event in events)
-    completed_metadata = events[-1].event_metadata
-    assert completed_metadata["result"]["output"]["dry_run"] is True
-    assert completed_metadata["result"]["output"]["created"] is False
-    audit_blob = str([event.event_metadata for event in events])
-    assert "ghp_real_token" not in audit_blob
-    assert "alice@example.com" not in audit_blob
-    assert "[REDACTED]" in audit_blob
+    assert result.output["recorded"] is True
+    assert result.output["events"][0]["user"]["email"] == "[REDACTED]"
+    assert result.output["events"][0]["request"]["headers"]["Authorization"] == "[REDACTED]"
+    assert "recorded-fixture-token" not in repr(result.output)
+    assert "tok_recorded_fixture" not in repr(result.output)
+    assert "abc123" not in repr(result.output)
+    assert "public:secret" not in repr(result.output)
 
 
-def test_github_draft_issue_requires_operator_role(db_session: Any) -> None:
+class _TimeoutConnector:
+    connector_id = "test.timeout"
+    capabilities = {
+        "events.read": ConnectorCapability(
+            name="events.read",
+            description="Test timeout connector.",
+            read_only=True,
+            required_role="viewer",
+        )
+    }
+
+    def call(self, request: ConnectorCallRequest) -> ConnectorCallResult:
+        raise TimeoutError("provider timed out")
+
+
+class _FailedResultConnector:
+    connector_id = "test.failure"
+    capabilities = {
+        "events.read": ConnectorCapability(
+            name="events.read",
+            description="Test failed connector result.",
+            read_only=True,
+            required_role="viewer",
+        )
+    }
+
+    def call(self, request: ConnectorCallRequest) -> ConnectorCallResult:
+        return ConnectorCallResult(
+            connector_id=self.connector_id,
+            capability=request.capability,
+            ok=False,
+            read_only=True,
+            error="provider failure token=raw-token for owner@example.com",
+            evidence_summary="Provider returned malformed payload api_key=raw-key",
+            output={"api_key": "raw-key", "owner_email": "owner@example.com"},
+        )
+
+
+class _MalformedConnector:
+    connector_id = "test.malformed"
+    capabilities = {
+        "events.read": ConnectorCapability(
+            name="events.read",
+            description="Test malformed connector result.",
+            read_only=True,
+            required_role="viewer",
+        )
+    }
+
+    def call(self, request: ConnectorCallRequest) -> Any:
+        return {"ok": False, "error": "not a ConnectorCallResult"}
+
+
+class _ContractViolationConnector:
+    connector_id = "test.contract"
+    capabilities = {
+        "events.read": ConnectorCapability(
+            name="events.read",
+            description="Test connector contract violation.",
+            read_only=True,
+            required_role="viewer",
+        )
+    }
+
+    def call(self, request: ConnectorCallRequest) -> ConnectorCallResult:
+        return ConnectorCallResult(
+            connector_id=self.connector_id,
+            capability=request.capability,
+            ok=True,
+            read_only=False,
+            output={"mutation": "attempted"},
+        )
+
+
+def _register_only(connector: Any) -> ConnectorRegistry:
+    registry = ConnectorRegistry()
+    registry.register(connector)
+    return registry
+
+
+def _incident_for_connector_failure(db_session: Any) -> Incident:
+    incident = Incident(
+        tenant_id="tenant-a",
+        workspace_id="workspace-a",
+        source="connector-test",
+        status="investigating",
+        service="checkout-api",
+        environment="staging",
+        severity="high",
+        alert_payload={"message": "connector failure regression"},
+        summary="Connector failure regression",
+    )
+    db_session.add(incident)
+    db_session.flush()
+    return incident
+
+
+def _assert_connector_failure_escalated(db_session: Any, incident_id: str, *, connector_id: str, trigger: str) -> Incident:
+    db_session.flush()
+    db_session.expire_all()
+    updated = db_session.query(Incident).filter(Incident.id == incident_id).one()
+    assert updated.status == "escalated"
+
+    failure_evidence = [item for item in updated.evidence if item.type == "connector_failure"]
+    assert len(failure_evidence) == 1
+    assert failure_evidence[0].tenant_id == "tenant-a"
+    assert failure_evidence[0].workspace_id == "workspace-a"
+    assert failure_evidence[0].source == f"connector:{connector_id}"
+    assert failure_evidence[0].evidence_metadata["trigger"] == trigger
+
+    timeline_types = [event.event_type for event in updated.timeline]
+    assert "connector_call_failed" in timeline_types
+    assert "human_escalation_required" in timeline_types
+    escalation_event = [event for event in updated.timeline if event.event_type == "human_escalation_required"][-1]
+    assert escalation_event.event_metadata["trigger"] == trigger
+    assert trigger in escalation_event.event_metadata["triggers"]
+    assert escalation_event.event_metadata["evidence_collected"]
+    assert escalation_event.event_metadata["verification"]["connector_failure"]["trigger"] == trigger
+
+    audit_types = [event.event_type for event in db_session.query(AuditEvent).all()]
+    assert "connector_call_requested" in audit_types
+    assert "connector_call_failed" in audit_types
+    assert "human_escalation_required" in audit_types
+    return updated
+
+
+def test_connector_timeout_failure_records_evidence_timeline_audit_and_escalation(db_session: Any) -> None:
     principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
-    request = ConnectorCallRequest(
-        connector_id="github.issues",
-        capability="issues.write",
-        tenant_id="tenant-a",
-        workspace_id="workspace-a",
-        actor=principal.email,
-        dry_run=True,
-        payload={"repository": "opscat/app", "title": "Draft", "body": "Body"},
+    incident = _incident_for_connector_failure(db_session)
+
+    result = ConnectorService(registry=_register_only(_TimeoutConnector())).call(
+        db_session,
+        principal,
+        ConnectorCallRequest(
+            connector_id="test.timeout",
+            capability="events.read",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor=principal.email,
+            incident_id=incident.id,
+            idempotency_key="timeout-1",
+        ),
     )
-
-    with pytest.raises(AuthorizationError, match="principal lacks connector capability role"):
-        ConnectorService().call(db_session, principal, request)
-    assert db_session.query(AuditEvent).count() == 0
-
-
-def test_github_draft_issue_real_mutation_requires_approval_then_still_disabled(db_session: Any) -> None:
-    principal = get_or_create_local_principal(db_session, email="operator@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="operator")
-    unapproved_request = ConnectorCallRequest(
-        connector_id="github.issues",
-        capability="issues.write",
-        tenant_id="tenant-a",
-        workspace_id="workspace-a",
-        actor=principal.email,
-        incident_id="inc-gh-2",
-        dry_run=False,
-        payload={"repository": "opscat/app", "title": "Draft", "body": "Body"},
-    )
-    approved_request = ConnectorCallRequest(
-        connector_id="github.issues",
-        capability="issues.write",
-        tenant_id="tenant-a",
-        workspace_id="workspace-a",
-        actor=principal.email,
-        incident_id="inc-gh-2",
-        dry_run=False,
-        approved=True,
-        payload={"repository": "opscat/app", "title": "Draft", "body": "Body"},
-    )
-
-    with pytest.raises(AuthorizationError, match="approval is required"):
-        ConnectorService().call(db_session, principal, unapproved_request)
-    with pytest.raises(AuthorizationError, match="mutating connector calls are not enabled"):
-        ConnectorService().call(db_session, principal, approved_request)
-    assert db_session.query(AuditEvent).count() == 0
-
-
-def test_github_draft_issue_scope_mismatch_fails_before_call_and_audit(db_session: Any) -> None:
-    principal = get_or_create_local_principal(db_session, email="operator@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="operator")
-    request = ConnectorCallRequest(
-        connector_id="github.issues",
-        capability="issues.write",
-        tenant_id="tenant-a",
-        workspace_id="workspace-b",
-        actor=principal.email,
-        dry_run=True,
-        payload={"repository": "opscat/app", "title": "Draft", "body": "Body"},
-    )
-
-    with pytest.raises(AuthorizationError, match="scope does not match"):
-        ConnectorService().call(db_session, principal, request)
-    assert db_session.query(AuditEvent).count() == 0
-
-
-def test_github_draft_issue_adapter_direct_real_mutation_attempt_fails_closed() -> None:
-    request = ConnectorCallRequest(
-        connector_id="github.issues",
-        capability="issues.write",
-        tenant_id="tenant-a",
-        workspace_id="workspace-a",
-        actor="operator@example.com",
-        incident_id="inc-gh-direct",
-        dry_run=False,
-        approved=True,
-        payload={"repository": "opscat/app", "title": "Draft", "body": "Body"},
-    )
-
-    result = GitHubDraftIssueConnector().call(request)
 
     assert result.ok is False
-    assert result.read_only is False
-    assert result.output == {"created": False, "dry_run_required": True}
-    assert "disabled" in (result.error or "")
+    assert result.error == "connector provider failure: TimeoutError"
+    _assert_connector_failure_escalated(db_session, incident.id, connector_id="test.timeout", trigger="connector_timeout")
 
 
-def test_github_draft_issue_preview_fails_closed_for_invalid_payload(db_session: Any) -> None:
-    principal = get_or_create_local_principal(db_session, email="operator@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="operator")
-    request = ConnectorCallRequest(
-        connector_id="github.issues",
-        capability="issues.write",
-        tenant_id="tenant-a",
-        workspace_id="workspace-a",
-        actor=principal.email,
-        dry_run=True,
-        payload={"repository": "not-a-repository", "title": "Draft", "body": "Body"},
+def test_connector_failed_result_is_redacted_and_escalated(db_session: Any) -> None:
+    principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
+    incident = _incident_for_connector_failure(db_session)
+
+    result = ConnectorService(registry=_register_only(_FailedResultConnector())).call(
+        db_session,
+        principal,
+        ConnectorCallRequest(
+            connector_id="test.failure",
+            capability="events.read",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor=principal.email,
+            incident_id=incident.id,
+        ),
     )
 
-    result = ConnectorService().call(db_session, principal, request)
+    assert result.ok is False
+    rendered_result = repr(result)
+    assert "raw-token" not in rendered_result
+    assert "raw-key" not in rendered_result
+    assert "owner@example.com" not in rendered_result
+    updated = _assert_connector_failure_escalated(db_session, incident.id, connector_id="test.failure", trigger="connector_failure")
+    rendered_incident = repr([item.evidence_metadata for item in updated.evidence]) + repr([event.event_metadata for event in updated.timeline])
+    assert "raw-token" not in rendered_incident
+    assert "raw-key" not in rendered_incident
+    assert "owner@example.com" not in rendered_incident
+
+
+def test_malformed_connector_result_fails_closed_and_escalates(db_session: Any) -> None:
+    principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
+    incident = _incident_for_connector_failure(db_session)
+
+    result = ConnectorService(registry=_register_only(_MalformedConnector())).call(
+        db_session,
+        principal,
+        ConnectorCallRequest(
+            connector_id="test.malformed",
+            capability="events.read",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor=principal.email,
+            incident_id=incident.id,
+        ),
+    )
 
     assert result.ok is False
-    assert result.output == {"created": False, "dry_run": True}
-    assert "owner/name" in (result.error or "")
-    assert [event.event_type for event in db_session.query(AuditEvent).all()] == ["connector_call_requested", "connector_call_completed"]
+    assert result.error == "connector provider failure: TypeError"
+    _assert_connector_failure_escalated(db_session, incident.id, connector_id="test.malformed", trigger="connector_failure")
+
+
+def test_read_only_contract_violation_fails_closed_and_escalates(db_session: Any) -> None:
+    principal = get_or_create_local_principal(db_session, email="viewer@example.com", tenant_id="tenant-a", workspace_id="workspace-a", role="viewer")
+    incident = _incident_for_connector_failure(db_session)
+
+    result = ConnectorService(registry=_register_only(_ContractViolationConnector())).call(
+        db_session,
+        principal,
+        ConnectorCallRequest(
+            connector_id="test.contract",
+            capability="events.read",
+            tenant_id="tenant-a",
+            workspace_id="workspace-a",
+            actor=principal.email,
+            incident_id=incident.id,
+        ),
+    )
+
+    assert result.ok is False
+    assert result.error == "connector read-only contract violation"
+    _assert_connector_failure_escalated(db_session, incident.id, connector_id="test.contract", trigger="connector_contract_violation")

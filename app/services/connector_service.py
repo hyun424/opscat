@@ -90,6 +90,8 @@ class ConnectorService:
         connector = self.registry.get(request.connector_id)
         try:
             result = connector.call(connector_request)
+            if not isinstance(result, ConnectorCallResult):
+                raise TypeError("connector returned invalid result")
         except Exception as exc:
             result = ConnectorCallResult(
                 connector_id=request.connector_id,

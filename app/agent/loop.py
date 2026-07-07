@@ -55,7 +55,10 @@ class AgentLoop:
         analysis = analyze_incident(incident, evidence)
         candidates = generate_root_cause_candidates(incident, evidence)
         incident.summary = analysis.summary
-        if analysis.hypotheses:
+        if analysis.hypotheses and (
+            analysis.recommended_action.action_type == "human.escalate"
+            or analysis.hypotheses[0].confidence >= (candidates[0].confidence if candidates else 0.0)
+        ):
             incident.root_cause_candidate = analysis.hypotheses[0].title
             incident.confidence = analysis.hypotheses[0].confidence
         else:

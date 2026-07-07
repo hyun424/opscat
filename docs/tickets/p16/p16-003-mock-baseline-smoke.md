@@ -1,7 +1,7 @@
 ---
 id: P16-003
 title: Mock Baseline Smoke
-status: TODO
+status: DONE
 phase: P16
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P16 slice for Mock Baseline Smoke.
 
 ## Acceptance Criteria
 
-- [ ] Mock provider evaluation is fully offline and deterministic.
-- [ ] Mock smoke runs in verify eval/full.
-- [ ] Normal verification performs no NVIDIA calls.
+- [x] Mock provider evaluation is fully offline and deterministic.
+- [x] Mock smoke runs in verify eval/full.
+- [x] Normal verification performs no NVIDIA calls.
 
 ## Boundary
 

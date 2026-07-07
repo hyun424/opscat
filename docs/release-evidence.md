@@ -345,3 +345,37 @@ Verification:
 - `bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock by default; no committed keys; no default external model/API calls during verification; no production mutation; no action execution; no unattended production-operation claim.
+
+
+## P16 LLM Provider Evaluation Evidence
+
+P16 evaluates whether LLM judgment providers are safe and useful across judgment cases, rather than only checking that a provider connects. Normal verification uses the mock provider; NVIDIA live evaluation remains explicit opt-in.
+
+Artifacts:
+
+- `docs/operations/p16-ticket-roadmap.md`
+- `docs/operations/p16-final-summary.md`
+- `app/services/llm_provider_evaluation.py`
+- `scripts/run_llm_provider_eval.py`
+- `tests/test_llm_provider_evaluation.py`
+- `tests/test_p16_release_evidence.py`
+- `/tmp/opscat-llm-provider-eval-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_llm_provider_evaluation.py tests/test_p16_release_evidence.py`
+- `bash scripts/verify.sh --profile full`
+
+Live NVIDIA opt-in:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --extra llm python scripts/run_llm_provider_eval.py \
+  --cases evals/judgment/seed/cases.json \
+  --provider nvidia \
+  --env-file .env \
+  --max-cases 4 \
+  --output-json /tmp/opscat-nvidia-provider-eval.json \
+  --output-md /tmp/opscat-nvidia-provider-eval.md
+```
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.

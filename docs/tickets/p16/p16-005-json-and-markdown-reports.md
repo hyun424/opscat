@@ -1,7 +1,7 @@
 ---
 id: P16-005
 title: JSON and Markdown Reports
-status: TODO
+status: DONE
 phase: P16
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P16 slice for JSON and Markdown Reports.
 
 ## Acceptance Criteria
 
-- [ ] CLI writes provider eval JSON and Markdown.
-- [ ] Reports include aggregate score, pass rate, safety regressions, and failures.
-- [ ] Reports include artifact paths and boundary text.
+- [x] CLI writes provider eval JSON and Markdown.
+- [x] Reports include aggregate score, pass rate, safety regressions, and failures.
+- [x] Reports include artifact paths and boundary text.
 
 ## Boundary
 

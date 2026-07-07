@@ -1,7 +1,7 @@
 ---
 id: P16-006
 title: Failure Analysis
-status: TODO
+status: DONE
 phase: P16
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P16 slice for Failure Analysis.
 
 ## Acceptance Criteria
 
-- [ ] Failed cases include reason strings.
-- [ ] Unknown citations, invalid schema, unsafe allowed actions, and route mismatch are explicit.
-- [ ] Markdown highlights safety regressions separately.
+- [x] Failed cases include reason strings.
+- [x] Unknown citations, invalid schema, unsafe allowed actions, and route mismatch are explicit.
+- [x] Markdown highlights safety regressions separately.
 
 ## Boundary
 

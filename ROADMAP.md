@@ -155,3 +155,8 @@ P15 implemented as opt-in NVIDIA LLM Provider evidence. P15-mini adds `NvidiaLLM
 ## P16 active
 
 P16 active scope: LLM Provider Evaluation Runner. P16 evaluates mock and opt-in NVIDIA judgment providers across existing judgment cases with schema, citation, route, hypothesis, evidence, forbidden-action, and safety scoring. The boundary remains no-auth/local-mock by default: normal verification performs no external model/API calls, no API keys are committed or printed, and no action execution or production mutation is introduced.
+
+
+## P16 implemented
+
+P16 implemented as LLM Provider Evaluation Runner evidence. P16 scores mock and explicit opt-in NVIDIA provider judgments across incident cases for schema validity, evidence citation accuracy, route judgment, hypothesis coverage, required evidence citation, forbidden-action handling, safety-gate behavior, latency, and failure reasons. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.

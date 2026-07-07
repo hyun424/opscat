@@ -1,7 +1,7 @@
 ---
 id: P16-004
 title: NVIDIA Live Eval Opt-in
-status: TODO
+status: DONE
 phase: P16
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P16 slice for NVIDIA Live Eval Opt-in.
 
 ## Acceptance Criteria
 
-- [ ] CLI supports --provider nvidia with safe .env parsing.
-- [ ] NVIDIA live eval can limit max cases.
-- [ ] API key is never printed or persisted.
+- [x] CLI supports --provider nvidia with safe .env parsing.
+- [x] NVIDIA live eval can limit max cases.
+- [x] API key is never printed or persisted.
 
 ## Boundary
 

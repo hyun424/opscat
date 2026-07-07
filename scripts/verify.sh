@@ -158,6 +158,17 @@ llm_judgment_smoke() {
   printf 'Wrote /tmp/opscat-llm-judgment-latest.md and %s/opscat-llm-judgment.json\n' "$VERIFY_TMPDIR"
 }
 
+llm_provider_eval_smoke() {
+  section "P16 LLM provider evaluation smoke"
+  "${UV_DEV[@]}" python scripts/run_llm_provider_eval.py \
+    --cases evals/judgment/seed/cases.json \
+    --provider mock \
+    --output-json "$VERIFY_TMPDIR/opscat-llm-provider-eval.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-llm-provider-eval.md" >/tmp/opscat-llm-provider-eval-latest.json
+  cp "$VERIFY_TMPDIR/opscat-llm-provider-eval.md" /tmp/opscat-llm-provider-eval-latest.md
+  printf 'Wrote /tmp/opscat-llm-provider-eval-latest.md and %s/opscat-llm-provider-eval.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -231,7 +242,8 @@ docs_contract_tests() {
     tests/test_p12_release_evidence.py \
     tests/test_p13_release_evidence.py \
     tests/test_p14_release_evidence.py \
-    tests/test_p15_release_evidence.py
+    tests/test_p15_release_evidence.py \
+    tests/test_p16_release_evidence.py
 }
 
 run_fast() {
@@ -252,6 +264,7 @@ run_eval() {
   real_dataset_eval
   llm_context_smoke
   llm_judgment_smoke
+  llm_provider_eval_smoke
 }
 
 run_docs() {

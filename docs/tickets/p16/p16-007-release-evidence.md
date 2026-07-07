@@ -1,7 +1,7 @@
 ---
 id: P16-007
 title: Release Evidence
-status: TODO
+status: DONE
 phase: P16
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P16 slice for Release Evidence.
 
 ## Acceptance Criteria
 
-- [ ] Final summary maps P16-001 through P16-007 to code/tests/docs.
-- [ ] Release evidence documents mock verify and NVIDIA opt-in commands.
-- [ ] ROADMAP records P16 implemented boundary.
+- [x] Final summary maps P16-001 through P16-007 to code/tests/docs.
+- [x] Release evidence documents mock verify and NVIDIA opt-in commands.
+- [x] ROADMAP records P16 implemented boundary.
 
 ## Boundary
 

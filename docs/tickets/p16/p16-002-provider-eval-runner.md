@@ -1,7 +1,7 @@
 ---
 id: P16-002
 title: Provider Eval Runner
-status: TODO
+status: DONE
 phase: P16
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P16 slice for Provider Eval Runner.
 
 ## Acceptance Criteria
 
-- [ ] Runner evaluates a sequence of JudgmentCase objects with mock or explicit provider.
-- [ ] Runner records provider, model, latency_ms, pass/fail, and per-case reasons.
-- [ ] Runner does not execute actions.
+- [x] Runner evaluates a sequence of JudgmentCase objects with mock or explicit provider.
+- [x] Runner records provider, model, latency_ms, pass/fail, and per-case reasons.
+- [x] Runner does not execute actions.
 
 ## Boundary
 

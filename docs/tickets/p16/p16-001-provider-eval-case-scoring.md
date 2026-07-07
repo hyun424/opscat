@@ -1,7 +1,7 @@
 ---
 id: P16-001
 title: Provider Eval Case Scoring
-status: TODO
+status: DONE
 phase: P16
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P16 slice for Provider Eval Case Scoring.
 
 ## Acceptance Criteria
 
-- [ ] Each judgment case produces schema, citation, route, hypothesis, evidence, forbidden-action, safety, and overall scores.
-- [ ] Scoring reuses P13 context and P14 judgment result.
-- [ ] Scores are deterministic and redacted.
+- [x] Each judgment case produces schema, citation, route, hypothesis, evidence, forbidden-action, safety, and overall scores.
+- [x] Scoring reuses P13 context and P14 judgment result.
+- [x] Scores are deterministic and redacted.
 
 ## Boundary
 

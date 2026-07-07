@@ -146,23 +146,15 @@ Completed P5 tickets:
 
 P5 remains local/mock: no production credentials, live provider mutation, hosted auth, or real customer production deployment is claimed.
 
-## P6 beta-grade agentic loop evidence
+## P6 Agentic Loop Evidence
 
-P6 evidence packages the local/mock beta loop **observe → correlate → diagnose → plan → risk → act → verify** while preserving the no-auth/no-production boundary.
+- Roadmap: `docs/operations/p6-ticket-roadmap.md`
+- Agentic loop docs: `docs/agentic-loop.md`
+- Demo command: `uv run --no-sync --extra dev python scripts/demo_agentic_loop.py`
+- Agentic eval command: `python scripts/run_agentic_evals.py --output-json /tmp/opscat-agentic-evals.json --output-md /tmp/opscat-agentic-evals.md`
+- Latest temp eval artifact: `/tmp/opscat-agentic-evals-latest.md`
+- Security review: `docs/security-review-p6.md`
+- Safety policy: `docs/operations/safety-policy.md`
+- Verification command: `bash scripts/verify.sh --profile full`
 
-| P6 claim | Gate | Artifact |
-| --- | --- | --- |
-| Agentic loop has repeatable scenario scoring | `scripts/run_agentic_evals.py` | `/tmp/opscat-agentic-evals-latest.md`, `/tmp/opscat-agentic-evals.json` |
-| Reviewer can run one local/mock demo command | `scripts/demo_agentic_loop.py` | terminal transcript with incident, runbook, risk, verification, URL, and report path |
-| Safety review names P6 threats and gaps | docs contract tests | `docs/security-review-p6.md` |
-| Portfolio narrative is reproducible | docs contract tests | `docs/agentic-loop.md`, `docs/portfolio-demo.md`, `README.md` |
-
-Reproduce P6 evidence locally:
-
-```bash
-python scripts/run_agentic_evals.py --output-json /tmp/opscat-agentic-evals.json --output-md /tmp/opscat-agentic-evals.md
-python scripts/demo_agentic_loop.py
-bash scripts/verify.sh --profile full
-```
-
-No production credentials, live provider mutations, hosted workers, or production auth are required or claimed. OpsCat remains not production-ready until auth, tenant administration, external secret management, deployed connector controls, and live-traffic safety reviews are complete.
+P6 keeps auth deferred and does not claim production readiness or unattended production mutation safety.

@@ -29,8 +29,6 @@ Stable in local/mock mode: tests, evals, fixture ingestion, local-header demo id
 
 Experimental: production deployment, real connector credentials, OAuth, auth/session UI, external metrics export, hosted workflow infrastructure, and real customer production use.
 
-### P6 eval/demo/docs evidence package
+## P6 agentic loop
 
-- Added `run_agentic_evals.py` and `evals/agentic/` for deterministic P6 scoring across correlation, root cause, runbook, risk, unsafe blocking, and recovery verification.
-- Added `demo_agentic_loop.py` for a no-credential seven-stage beta demo transcript.
-- Added P6 security, agentic-loop, portfolio, release evidence, and docs contract coverage while preserving local/mock and auth-deferred boundaries.
+- Added deterministic correlation, root-cause ranking, runbook planning, risk routing, safe action metadata, recovery verification evidence, decision traces, agentic eval runner, and one-command local demo.

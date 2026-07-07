@@ -261,17 +261,12 @@ Latest verification evidence is in [`docs/integration-verification.md`](docs/int
 - [Production AI Team Plan](docs/operations/production-ai-team-plan.md)
 - [P5 OSS/Productization Ticket Roadmap](docs/operations/p5-ticket-roadmap.md)
 
-## P6 beta-grade agentic loop demo
+## P6 agentic loop demo
 
-OpsCat's P6 portfolio loop is **observe → correlate → diagnose → plan → risk → act → verify**. It is agentic because each stage produces state/evidence, selects bounded tools/runbooks, applies deterministic policy, and verifies the outcome before reporting.
-
-Run the no-credential local/mock demo and eval evidence:
+OpsCat now includes a local/mock seven-stage agentic operations loop: observe → correlate → diagnose → plan → risk → act → verify. Run it without external credentials:
 
 ```bash
-python scripts/demo_agentic_loop.py
-python scripts/run_agentic_evals.py --output-json /tmp/opscat-agentic-evals.json --output-md /tmp/opscat-agentic-evals.md
+uv run --no-sync --extra dev python scripts/demo_agentic_loop.py
 ```
 
-See `docs/agentic-loop.md`, `docs/portfolio-demo.md`, `docs/security-review-p6.md`, and `docs/release-evidence.md`.
-
-Boundary: this is not production-ready. Auth remains deferred, production credentials are unsupported, and live provider or infrastructure mutations are unavailable by default.
+Evidence and docs: `docs/agentic-loop.md`, `docs/portfolio-demo.md`, `docs/security-review-p6.md`, and `docs/release-evidence.md`. This remains a local/beta portfolio demo and does not claim unattended production mutation safety.

@@ -130,12 +130,6 @@ Review local evidence:
 
 This walkthrough is local/mock only and not production-ready. Before real customer use, OpsCat still needs production auth, tenant administration, external secret management, real connector deployment, hosted workers, load/soak tests, and a security review.
 
-## P6 one-command agentic loop demo
+## P6 agentic loop walkthrough
 
-For the P6 beta loop transcript, run:
-
-```bash
-python scripts/demo_agentic_loop.py
-```
-
-Expected output names the seven stages — observe → correlate → diagnose → plan → risk → act → verify — plus an operator URL and report artifact path. The command is local/mock only, uses fixture evidence, requires no credentials, and is not production-ready.
+Run `uv run --no-sync --extra dev python scripts/demo_agentic_loop.py`, then open `/operator/incidents/{INCIDENT_ID}` from the printed output to inspect the seven-stage trace and approval-gated action evidence.

@@ -1,38 +1,13 @@
-# OpsCat Portfolio Demo Package
+# OpsCat Portfolio Demo
 
-## Problem
-
-On-call teams need an assistant that can do more than summarize logs: it must preserve evidence, choose bounded actions, refuse unsafe mutations, verify recovery, and leave an audit trail.
-
-## Agentic loop
-
-OpsCat demonstrates the local/mock loop **observe → correlate → diagnose → plan → risk → act → verify**.
-
-Run it in under five minutes:
+Run the five-minute local demo:
 
 ```bash
-make install
-python scripts/demo_agentic_loop.py
-python scripts/run_agentic_evals.py --output-json /tmp/opscat-agentic-evals.json --output-md /tmp/opscat-agentic-evals.md
+uv run --no-sync --extra dev python scripts/demo_agentic_loop.py
 ```
 
-## Architecture
+The command prints incident ID, correlation result, top cause, selected runbook, risk decision, action result, verify result, report path, and operator URL.
 
-```text
-alerts/connectors -> incident services -> evidence/root cause -> runbook plan -> policy/risk -> mock action -> verification/report
-```
+Why this is agentic AI: OpsCat observes provider-shaped signals, correlates them, diagnoses likely causes, plans from runbooks, applies deterministic risk policy, executes only safe local/approved actions, verifies recovery, and leaves an auditable trace.
 
-## Safety model
-
-- local/mock by default;
-- no production credentials;
-- no live provider mutation;
-- dangerous action attempts must be blocked in evals;
-- auth remains deferred, so this is not production-ready.
-
-## Evidence
-
-- `scripts/run_agentic_evals.py` scores correlation, root cause, runbook, risk, unsafe blocking, and recovery verification.
-- `scripts/demo_agentic_loop.py` prints the seven-stage reviewer transcript.
-- `docs/security-review-p6.md` documents P6 threats and gaps.
-- `docs/release-evidence.md` links the reproducible commands and artifacts.
+Boundary: local/mock beta demo only; no production readiness or unattended production mutation is claimed.

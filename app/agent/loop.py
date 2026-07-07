@@ -55,10 +55,7 @@ class AgentLoop:
         analysis = analyze_incident(incident, evidence)
         candidates = generate_root_cause_candidates(incident, evidence)
         incident.summary = analysis.summary
-        if analysis.hypotheses and analysis.hypotheses[0].confidence < 0.70:
-            incident.root_cause_candidate = analysis.hypotheses[0].title
-            incident.confidence = analysis.hypotheses[0].confidence
-        elif analysis.hypotheses and analysis.hypotheses[0].confidence >= (candidates[0].confidence if candidates else 0.0):
+        if analysis.hypotheses:
             incident.root_cause_candidate = analysis.hypotheses[0].title
             incident.confidence = analysis.hypotheses[0].confidence
         else:
@@ -131,6 +128,7 @@ class AgentLoop:
             confidence=incident.confidence,
             status="proposed",
         )
+        incident.actions.append(action)
         db.add(action)
         db.flush()
         record_audit_event(

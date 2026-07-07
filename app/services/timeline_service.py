@@ -1,8 +1,9 @@
 from typing import Any
 
+from sqlalchemy import inspect
 from sqlalchemy.orm import Session
 
-from app.models import TimelineEvent
+from app.models import Incident, TimelineEvent
 
 
 def add_timeline_event(
@@ -25,5 +26,9 @@ def add_timeline_event(
         content=content,
         event_metadata=metadata or {},
     )
-    db.add(event)
+    incident = db.get(Incident, incident_id)
+    if incident is not None and "timeline" not in inspect(incident).unloaded:
+        incident.timeline.append(event)
+    else:
+        db.add(event)
     return event

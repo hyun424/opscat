@@ -179,7 +179,7 @@ class SentryReadOnlyConnector:
         ),
         "health.check": ConnectorCapability(
             name="health.check",
-            description="Report fixture/default or opt-in real-provider Sentry health without leaking configuration.",
+            description="Check Sentry connector setup without leaking credentials.",
             risk_level="read_only",
             read_only=True,
             required_role="viewer",

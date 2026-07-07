@@ -8,7 +8,7 @@ from app.models import Incident
 from app.schemas.incidents import ActionRead, ApprovalRequest, ApprovalResponse, IncidentRead
 from app.security.dependencies import get_current_principal
 from app.services.authorization import AuthorizationError
-from app.services.decision_trace_service import build_decision_trace
+from app.services.decision_trace_service import render_trace_json, render_trace_markdown
 from app.services.identity_service import Principal
 from app.services.incident_service import decide_action, get_incident, run_investigation
 from app.services.report_service import render_incident_report

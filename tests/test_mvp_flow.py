@@ -35,7 +35,10 @@ def test_mock_alert_to_approval_execution_report_flow(client: TestClient) -> Non
     report = client.get(f"/incidents/{incident['id']}/report")
     assert report.status_code == 200
     assert "Incident Report" in report.json()["report"]
-    assert "mock.create_rollback_pr" in report.json()["report"]
+    report_text = report.json()["report"]
+    assert "mock.create_rollback_pr" in report_text
+    assert "Simulation" in report_text
+    assert "Blast radius: workspace" in report_text
 
 
 def test_reject_approval_escalates(client: TestClient) -> None:

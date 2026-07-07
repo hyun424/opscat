@@ -37,6 +37,9 @@ def test_decision_trace_covers_agentic_stages_and_redacts_sensitive_payloads(cli
     assert all(entry.tenant_id == "tenant-a" and entry.workspace_id == "alpha" for entry in trace)
     assert any(entry.action_id == action["id"] for entry in trace)
     assert any(entry.policy_decision in {"ALLOW", "REQUIRE_APPROVAL"} for entry in trace)
+    risk_entry = next(entry for entry in trace if entry.stage == "risk")
+    assert risk_entry.details["blast_radius"]["level"] == "workspace"
+    assert risk_entry.details["simulation"]["status"] == "pass"
     serialized = json.dumps([entry.to_dict() for entry in trace], sort_keys=True)
     assert "plain-secret" not in serialized
     assert "raw.jwt.token" not in serialized

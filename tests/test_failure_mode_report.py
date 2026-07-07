@@ -5,13 +5,28 @@ from __future__ import annotations
 from typing import Any
 
 
-def _create_report(client: Any, payload: dict[str, Any]) -> str:
-    created = client.post("/webhooks/alerts/mock?process_now=true", json=payload)
-    assert created.status_code == 201, created.text
-    incident_id = created.json()["id"]
-    report = client.get(f"/incidents/{incident_id}/report")
-    assert report.status_code == 200, report.text
-    return report.json()["report"]
+def test_report_contains_failure_mode_analysis_for_blocked_action() -> None:
+    incident = Incident(
+        id="inc-p7", service="payment-api", environment="staging", severity="high", status="escalated", confidence=0.42, summary="ambiguous", root_cause_candidate="unknown", alert_payload={}
+    )
+    incident.actions.append(
+        ActionProposal(
+            action_type="human.escalate",
+            target="payment-api",
+            environment="staging",
+            risk_level="high",
+            requires_approval=True,
+            rationale="weak evidence",
+            payload={},
+            preconditions=[],
+            post_checks=[],
+            evidence_ids=[],
+            policy_decision="ESCALATE",
+            policy_reasons=["low confidence", "missing evidence"],
+            confidence=0.42,
+            status="escalated",
+        )
+    )
 
 
 def test_report_includes_failure_mode_analysis_for_low_confidence_escalation(client: Any) -> None:

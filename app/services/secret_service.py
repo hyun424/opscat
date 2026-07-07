@@ -157,12 +157,7 @@ class LocalEncryptedSecretProvider:
         )
 
     def list_refs(self, db: Session, principal: Principal) -> list[SecretRef]:
-        records = (
-            db.query(SecretRecord)
-            .filter(SecretRecord.tenant_id == principal.tenant_id, SecretRecord.workspace_id == principal.workspace_id)
-            .order_by(SecretRecord.name)
-            .all()
-        )
+        records = db.query(SecretRecord).filter(SecretRecord.tenant_id == principal.tenant_id, SecretRecord.workspace_id == principal.workspace_id).order_by(SecretRecord.name).all()
         return [_ref(record) for record in records]
 
 
@@ -187,11 +182,7 @@ def _normalize_name(name: str) -> str:
 
 
 def _find_record(db: Session, principal: Principal, name: str) -> SecretRecord | None:
-    return (
-        db.query(SecretRecord)
-        .filter(SecretRecord.tenant_id == principal.tenant_id, SecretRecord.workspace_id == principal.workspace_id, SecretRecord.name == name)
-        .one_or_none()
-    )
+    return db.query(SecretRecord).filter(SecretRecord.tenant_id == principal.tenant_id, SecretRecord.workspace_id == principal.workspace_id, SecretRecord.name == name).one_or_none()
 
 
 def _ref(record: SecretRecord) -> SecretRef:

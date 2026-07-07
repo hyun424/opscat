@@ -92,8 +92,6 @@ def test_registry_rejects_duplicate_connector_ids() -> None:
         registry.register(FakeObservabilityConnector())
 
 
-
-
 def test_default_connector_registry_exposes_sentry_read_only_capabilities() -> None:
     registry = default_connector_registry()
     capabilities = registry.list_capabilities()["sentry.readonly"]

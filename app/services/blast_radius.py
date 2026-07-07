@@ -31,7 +31,9 @@ class BlastRadiusEngine:
         if action is None:
             return BlastRadiusResult("unknown", False, False, True, True, ["unknown action has unbounded blast radius"], {"action_type": request.action_type})
         if action.base_risk == RiskLevel.PROHIBITED or action.prohibited_reason:
-            return BlastRadiusResult("prohibited", False, False, True, True, [action.prohibited_reason or "prohibited action"], {"action_type": request.action_type, "environment": request.environment})
+            return BlastRadiusResult(
+                "prohibited", False, False, True, True, [action.prohibited_reason or "prohibited action"], {"action_type": request.action_type, "environment": request.environment}
+            )
         scope = _normalize_scope(action.blast_radius, request.environment)
         reasons = [f"registry blast_radius={action.blast_radius}", f"scope={scope}"]
         blocked = scope in {"unknown", "global", "tenant"} and not action.is_read_only

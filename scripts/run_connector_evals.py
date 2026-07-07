@@ -144,10 +144,7 @@ def render_markdown_report(summary: Mapping[str, Any]) -> str:
     lines = [
         "# OpsCat Connector Eval Report",
         "",
-        (
-            "This deterministic local/mock report proves connector calls fail closed, "
-            "escalate when evidence collection breaks, preserve idempotency, and avoid real external mutations."
-        ),
+        ("This deterministic local/mock report proves connector calls fail closed, escalate when evidence collection breaks, preserve idempotency, and avoid real external mutations."),
         "",
         f"- Total: {summary['total']}",
         f"- Passed: {summary['passed']}",
@@ -236,22 +233,10 @@ def _fake_read_success(db: Session) -> ScenarioResult:
 
 def _connector_catalog_permission_metadata(db: Session) -> ScenarioResult:
     registry = default_connector_registry()
-    capabilities = [
-        asdict(capability) | {"connector_id": connector_id}
-        for connector_id, connector_capabilities in registry.list_capabilities().items()
-        for capability in connector_capabilities
-    ]
+    capabilities = [asdict(capability) | {"connector_id": connector_id} for connector_id, connector_capabilities in registry.list_capabilities().items() for capability in connector_capabilities]
     required_fields = {"name", "description", "risk_level", "read_only", "required_role", "requires_approval", "required_secret_name"}
-    missing_metadata = [
-        capability
-        for capability in capabilities
-        if not required_fields.issubset(capability) or capability["required_role"] not in {"viewer", "operator", "admin", "owner"}
-    ]
-    broad_secret_requests = [
-        capability["required_secret_name"]
-        for capability in capabilities
-        if capability.get("required_secret_name") in {"admin.token", "root.token", "all.providers.token"}
-    ]
+    missing_metadata = [capability for capability in capabilities if not required_fields.issubset(capability) or capability["required_role"] not in {"viewer", "operator", "admin", "owner"}]
+    broad_secret_requests = [capability["required_secret_name"] for capability in capabilities if capability.get("required_secret_name") in {"admin.token", "root.token", "all.providers.token"}]
     actual = {
         "capabilities_with_metadata": len(capabilities),
         "missing_metadata_count": len(missing_metadata),

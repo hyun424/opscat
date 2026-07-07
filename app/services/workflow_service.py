@@ -67,12 +67,7 @@ def enqueue_incident_workflow(db: Session, incident: Incident, *, payload: dict[
 def process_next_workflow_job(db: Session, *, queue_name: str = "incident.workflow", worker_id: str = "local-worker") -> WorkflowJob | None:
     from app.services.incident_service import get_incident, run_investigation
 
-    job = (
-        db.query(WorkflowJob)
-        .filter(WorkflowJob.queue_name == queue_name, WorkflowJob.status == "pending")
-        .order_by(WorkflowJob.created_at.asc())
-        .first()
-    )
+    job = db.query(WorkflowJob).filter(WorkflowJob.queue_name == queue_name, WorkflowJob.status == "pending").order_by(WorkflowJob.created_at.asc()).first()
     if job is None:
         return None
     now = datetime.now(UTC)

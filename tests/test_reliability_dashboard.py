@@ -12,7 +12,16 @@ def test_reliability_dashboard_aggregates_eval_outputs() -> None:
             "results": [
                 {"passed": True, "expected_route": "auto_allowed", "actual_route": "auto_allowed", "dangerous": False, "policy_decision": "ALLOW", "verification_passed": True, "confidence": 0.9},
                 {"passed": True, "expected_route": "escalated", "actual_route": "escalated", "dangerous": True, "policy_decision": "DENY", "verification_passed": False, "confidence": 0.4},
-                {"passed": False, "expected_route": "false_positive", "actual_route": "false_positive", "dangerous": False, "policy_decision": "ALLOW", "verification_passed": False, "confidence": 0.95, "correct": False},
+                {
+                    "passed": False,
+                    "expected_route": "false_positive",
+                    "actual_route": "false_positive",
+                    "dangerous": False,
+                    "policy_decision": "ALLOW",
+                    "verification_passed": False,
+                    "confidence": 0.95,
+                    "correct": False,
+                },
             ],
         }
     )

@@ -38,12 +38,7 @@ code{{background:#f6f6f6;padding:.1rem .25rem}}
 
 @router.get("", response_class=HTMLResponse)
 def operator_inbox(principal: Principal = Depends(get_current_principal), db: Session = Depends(get_db)) -> HTMLResponse:
-    incidents = (
-        db.query(Incident)
-        .filter(Incident.tenant_id == principal.tenant_id, Incident.workspace_id == principal.workspace_id)
-        .order_by(Incident.created_at.desc())
-        .all()
-    )
+    incidents = db.query(Incident).filter(Incident.tenant_id == principal.tenant_id, Incident.workspace_id == principal.workspace_id).order_by(Incident.created_at.desc()).all()
     rows = []
     for incident in incidents:
         message = str((incident.alert_payload or {}).get("message") or incident.summary or "")
@@ -96,9 +91,7 @@ def operator_inbox(principal: Principal = Depends(get_current_principal), db: Se
     except Exception:
         reliability_html = '<section data-testid="reliability-dashboard"><h2>P7 Reliability dashboard</h2><p>Replay metrics unavailable.</p></section>'
     body = (
-        f"<p>Workspace: <code>{escape(principal.tenant_id)}/{escape(principal.workspace_id)}</code></p>"
-        + reliability_html
-        + '<section data-testid="pending-approvals">'
+        f"<p>Workspace: <code>{escape(principal.tenant_id)}/{escape(principal.workspace_id)}</code></p>" + reliability_html + '<section data-testid="pending-approvals">'
         "<h2>Pending approvals</h2>"
         "<p>Review proposed actions here, then approve/reject through the local API instructions on each action page.</p>"
         '<table data-testid="pending-approval-table"><thead><tr>'
@@ -190,10 +183,7 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
     decision_trace = _decision_trace_table(build_decision_trace(incident))
     action_blocks = []
     for action in incident.actions:
-        attempts = "".join(
-            f"<li><code>{escape(attempt.id)}</code> #{attempt.attempt_number} {escape(attempt.status)} retry={attempt.retry_eligible}</li>"
-            for attempt in action.execution_attempts
-        )
+        attempts = "".join(f"<li><code>{escape(attempt.id)}</code> #{attempt.attempt_number} {escape(attempt.status)} retry={attempt.retry_eligible}</li>" for attempt in action.execution_attempts)
         affordance = (
             f"<p><strong>Approve</strong>: POST JSON to <code>/approvals/{escape(action.id)}</code> with decision=approve.</p>"
             if action.status in {"proposed", "approved"}
@@ -212,11 +202,11 @@ def operator_incident_detail(incident_id: str, principal: Principal = Depends(ge
 <main data-testid="incident-detail">
 <h2>Incident {escape(incident.id)}</h2>
 <p>Status <span class="pill">{escape(incident.status)}</span> Service <code>{escape(incident.service)}</code> Severity <code>{escape(incident.severity)}</code></p>
-<p>{escape(incident.summary or '')}</p>
+<p>{escape(incident.summary or "")}</p>
 <h2>Decision trace</h2>{decision_trace}
 <h2>Evidence</h2><ul data-testid="evidence-list">{evidence}</ul>
 <h2>Timeline</h2><ul data-testid="timeline-list">{timeline}</ul>
-<h2>Actions</h2>{''.join(action_blocks)}
+<h2>Actions</h2>{"".join(action_blocks)}
 <h2>Report</h2>
 <p>
   <a data-testid="report-link" href="/incidents/{escape(incident.id)}/report">Open report JSON</a>
@@ -234,7 +224,7 @@ def _decision_trace_table(entries: list[DecisionTraceEntry]) -> str:
         details = _json_block(entry.details)
         rows.append(
             '<tr data-testid="decision-trace-row" data-stage="'
-            f"{escape(entry.stage)}\">"
+            f'{escape(entry.stage)}">'
             f"<td><code>{escape(entry.stage)}</code></td>"
             f"<td>{escape(entry.title)}</td>"
             f"<td>{escape(entry.summary)}</td>"
@@ -248,9 +238,7 @@ def _decision_trace_table(entries: list[DecisionTraceEntry]) -> str:
     return (
         '<table data-testid="decision-trace"><thead><tr>'
         "<th>Stage</th><th>Decision</th><th>Summary</th><th>Actor</th><th>Status</th><th>Policy</th><th>Risk</th><th>Details</th>"
-        "</tr></thead><tbody>"
-        + "".join(rows)
-        + "</tbody></table>"
+        "</tr></thead><tbody>" + "".join(rows) + "</tbody></table>"
     )
 
 

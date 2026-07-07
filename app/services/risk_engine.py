@@ -9,9 +9,7 @@ from app.models.action import ActionMetadata, RiskLevel
 
 PROHIBITED_ACTIONS: dict[str, str] = {
     "production.rollback": "Production rollback is disabled in the MVP.",
-    "production.restart_service": (
-        "Production service restarts require a future hardened integration and explicit approval flow."
-    ),
+    "production.restart_service": ("Production service restarts require a future hardened integration and explicit approval flow."),
     "database.mutate": "Database mutations are prohibited by default.",
     "shell.execute": "Arbitrary shell execution is prohibited.",
     "cloud.delete_resource": "Cloud deletion is prohibited by default.",

@@ -4,11 +4,9 @@ from app.models import ActionProposal
 from app.models.action import ActionRequest, RiskLevel
 from app.schemas.incidents import MockAlertRequest, NightAutopilotConfig, NightAutopilotResult
 from app.services.action_simulator import ActionSimulator
-from app.services.blast_radius import BlastRadiusService
+from app.services.blast_radius import BlastRadiusEngine
 from app.services.escalation import build_escalation_payload, record_human_escalation
-from app.services.incident_memory import IncidentMemory
 from app.services.incident_service import create_mock_incident, get_incident
-from app.services.incident_memory import IncidentMemory
 from app.services.policy_engine import NightAutopilotConfig as PolicyNightAutopilotConfig
 from app.services.policy_engine import PolicyContext, PolicyEngine
 from app.services.report_service import render_incident_report
@@ -152,11 +150,7 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         )
         db.add(action)
         db.flush()
-        db.add(
-            transition_incident(
-                incident, "action_proposed", actor="night-autopilot", reason="allowlisted action selected"
-            )
-        )
+        db.add(transition_incident(incident, "action_proposed", actor="night-autopilot", reason="allowlisted action selected"))
         db.add(transition_incident(incident, "executing", actor="night-autopilot", reason="automatic action allowed"))
         result = execute_mock_action(db, incident, action)
         actions_taken.append({"action_id": action.id, "action_type": action.action_type, "result": result, "simulation": simulation.to_dict(), "blast_radius": blast_radius.to_dict()})
@@ -173,11 +167,7 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         db.add(transition_incident(incident, "verifying", actor="night-autopilot", reason="post-check"))
         verification = verify_recovery(incident, action)
         if verification["recovered"]:
-            db.add(
-                transition_incident(
-                    incident, "resolved", actor="night-autopilot", reason="recovered during quiet hours"
-                )
-            )
+            db.add(transition_incident(incident, "resolved", actor="night-autopilot", reason="recovered during quiet hours"))
         else:
             payload = build_escalation_payload(
                 incident,
@@ -186,22 +176,12 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
                 action=action,
                 policy=policy,
                 verification=verification,
-                recommended_next_action=(
-                    "Wake the configured on-call contact; automatic quiet-hours remediation did not verify."
-                ),
+                recommended_next_action=("Wake the configured on-call contact; automatic quiet-hours remediation did not verify."),
             )
             record_human_escalation(db, incident, payload, action=action, transition_to_escalated=True)
             escalations.append(payload)
     else:
-        trigger = (
-            "max_attempts_reached"
-            if config.max_attempts_per_incident < 1
-            else "reliability_gate_failed"
-            if policy.decision == "ALLOW"
-            else "policy_escalated_action"
-            if policy.decision == "ESCALATE"
-            else "policy_denied_action"
-        )
+        trigger = "max_attempts_reached" if config.max_attempts_per_incident < 1 else "policy_escalated_action" if policy.decision == "ESCALATE" else "policy_denied_action"
         payload = build_escalation_payload(
             incident,
             trigger=trigger,

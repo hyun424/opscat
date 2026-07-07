@@ -40,10 +40,7 @@ def list_connectors(principal: Principal = Depends(get_current_principal)) -> di
                 "connector_id": connector_id,
                 "display_name": _DISPLAY_NAMES.get(connector_id, connector_id),
                 "description": _DESCRIPTIONS.get(connector_id, "Typed local/mock connector capability."),
-                "capabilities": [
-                    _capability_payload(capability)
-                    for capability in sorted(capabilities, key=lambda item: (item.required_secret_name is None, item.name))
-                ],
+                "capabilities": [_capability_payload(capability) for capability in sorted(capabilities, key=lambda item: (item.required_secret_name is None, item.name))],
             }
         )
     return {

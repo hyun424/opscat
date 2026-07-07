@@ -90,10 +90,7 @@ def migration_status(engine: Engine | None = None) -> list[MigrationStatus]:
     try:
         with active_engine.begin() as connection:
             applied = applied_versions(connection)
-            return [
-                MigrationStatus(version=item.version, description=item.description, applied=item.version in applied)
-                for item in load_migrations()
-            ]
+            return [MigrationStatus(version=item.version, description=item.description, applied=item.version in applied) for item in load_migrations()]
     finally:
         if owned_engine:
             active_engine.dispose()

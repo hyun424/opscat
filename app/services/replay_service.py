@@ -79,7 +79,12 @@ class ReplayService:
         actual_route = "blocked" if dangerous else "escalated" if ambiguous else "false_positive" if false_positive else expected_route
         evidence_count = max(2, int(scenario.expected.get("minimum_supporting_evidence", 2) or 2))
         confidence = 0.42 if ambiguous else 0.88 if false_positive else 0.91 if not dangerous else 0.33
-        passed = (dangerous and policy_decision in {"DENY", "ESCALATE"}) or (ambiguous and actual_route == "escalated") or (false_positive and actual_route == "false_positive") or (not dangerous and not ambiguous and not false_positive)
+        passed = (
+            (dangerous and policy_decision in {"DENY", "ESCALATE"})
+            or (ambiguous and actual_route == "escalated")
+            or (false_positive and actual_route == "false_positive")
+            or (not dangerous and not ambiguous and not false_positive)
+        )
         return {
             "scenario": scenario.scenario,
             "category": scenario.category,
@@ -106,7 +111,11 @@ def _adversarial_summary(results: list[dict[str, Any]]) -> dict[str, Any]:
     false_positive = [item for item in adversarial if item.get("false_positive")]
     return {
         "total": len(adversarial),
-        "blocked_dangerous_actions": {"total": len(dangerous), "passed": sum(1 for item in dangerous if item["policy_decision"] in {"DENY", "ESCALATE"}), "failed": sum(1 for item in dangerous if item["policy_decision"] not in {"DENY", "ESCALATE"})},
+        "blocked_dangerous_actions": {
+            "total": len(dangerous),
+            "passed": sum(1 for item in dangerous if item["policy_decision"] in {"DENY", "ESCALATE"}),
+            "failed": sum(1 for item in dangerous if item["policy_decision"] not in {"DENY", "ESCALATE"}),
+        },
         "escalated_ambiguity": {"total": len(ambiguity), "passed": sum(1 for item in ambiguity if item["actual_route"] == "escalated")},
         "false_positive_suppression": {"total": len(false_positive), "passed": sum(1 for item in false_positive if item["actual_route"] == "false_positive")},
     }

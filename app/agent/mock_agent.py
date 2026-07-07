@@ -213,10 +213,7 @@ def _payment_deploy_analysis(
 
 def _analysis(incident: Incident, hypotheses: list[Hypothesis], action: RecommendedAction) -> AgentAnalysis:
     return AgentAnalysis(
-        summary=(
-            f"{incident.severity.upper()} {incident.service} incident in {incident.environment}: deterministic mock analysis found "
-            f"{hypotheses[0].title.lower()}."
-        ),
+        summary=(f"{incident.severity.upper()} {incident.service} incident in {incident.environment}: deterministic mock analysis found {hypotheses[0].title.lower()}."),
         affected_service=incident.service,
         environment=incident.environment,
         severity=incident.severity,

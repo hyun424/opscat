@@ -13,14 +13,10 @@ from app.services.escalation import (
     hard_escalation_required,
     record_human_escalation,
 )
-from app.services.action_simulator import ActionSimulator
-from app.services.blast_radius import BlastRadiusService
-from app.services.incident_memory import IncidentMemory
 from app.services.policy_engine import PolicyContext, PolicyEngine
-from app.services.self_critique_service import critique_diagnosis
 from app.services.root_cause_service import generate_root_cause_candidates, persist_top_root_cause
 from app.services.runbook_service import select_runbook
-from app.services.self_critique_service import SelfCritiqueService
+from app.services.self_critique_service import critique_diagnosis
 from app.services.state_machine import transition_incident
 from app.services.timeline_service import add_timeline_event
 from app.tools.mock_context import gather_all_context
@@ -64,10 +60,7 @@ class AgentLoop:
         analysis = analyze_incident(incident, evidence)
         candidates = generate_root_cause_candidates(incident, evidence)
         incident.summary = analysis.summary
-        if analysis.hypotheses and (
-            analysis.recommended_action.action_type == "human.escalate"
-            or analysis.hypotheses[0].confidence >= (candidates[0].confidence if candidates else 0.0)
-        ):
+        if analysis.hypotheses and (analysis.recommended_action.action_type == "human.escalate" or analysis.hypotheses[0].confidence >= (candidates[0].confidence if candidates else 0.0)):
             incident.root_cause_candidate = analysis.hypotheses[0].title
             incident.confidence = analysis.hypotheses[0].confidence
         else:
@@ -236,7 +229,13 @@ class AgentLoop:
             resource_type="action",
             resource_id=action.id,
             action_id=action.id,
-            metadata={"action_type": action.action_type, "risk_level": action.risk_level, "evidence_ids": action.evidence_ids, "blast_radius": blast_radius.to_dict(), "simulation": simulation.to_dict()},
+            metadata={
+                "action_type": action.action_type,
+                "risk_level": action.risk_level,
+                "evidence_ids": action.evidence_ids,
+                "blast_radius": blast_radius.to_dict(),
+                "simulation": simulation.to_dict(),
+            },
         )
         triggers = decision_escalation_triggers(
             incident,

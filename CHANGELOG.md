@@ -28,3 +28,9 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 Stable in local/mock mode: tests, evals, fixture ingestion, local-header demo identity, mock action policy gates, connector evals, docs, and verification profiles.
 
 Experimental: production deployment, real connector credentials, OAuth, auth/session UI, external metrics export, hosted workflow infrastructure, and real customer production use.
+
+### P6 eval/demo/docs evidence package
+
+- Added `run_agentic_evals.py` and `evals/agentic/` for deterministic P6 scoring across correlation, root cause, runbook, risk, unsafe blocking, and recovery verification.
+- Added `demo_agentic_loop.py` for a no-credential seven-stage beta demo transcript.
+- Added P6 security, agentic-loop, portfolio, release evidence, and docs contract coverage while preserving local/mock and auth-deferred boundaries.

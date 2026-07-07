@@ -1,7 +1,7 @@
 ---
 id: P12-001
 title: Dataset Source Manifest
-status: TODO
+status: DONE
 phase: P12
 depends_on: []
 ---
@@ -14,9 +14,9 @@ Implement the P12 slice for Dataset Source Manifest.
 
 ## Acceptance Criteria
 
-- [ ] manifest records name, family, homepage/citation, license note, local path, supported files, labels, import mode
-- [ ] manifest states normal verification does not download external data
-- [ ] manifest supports LogHub, NAB, and AIOps families
+- [x] manifest records name, family, homepage/citation, license note, local path, supported files, labels, import mode
+- [x] manifest states normal verification does not download external data
+- [x] manifest supports LogHub, NAB, and AIOps families
 
 ## Boundary
 

@@ -6,7 +6,6 @@ from pathlib import Path
 import pytest
 
 from app.services.real_dataset_evaluation import (
-    DatasetSourceManifest,
     convert_dataset_sample,
     load_dataset_source_manifest,
     map_external_label,

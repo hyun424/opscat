@@ -1,7 +1,7 @@
 ---
 id: P12-008
 title: Dataset Conversion CLI
-status: TODO
+status: DONE
 phase: P12
 depends_on: [P12-003, P12-004, P12-005, P12-007]
 ---
@@ -14,9 +14,9 @@ Implement the P12 slice for Dataset Conversion CLI.
 
 ## Acceptance Criteria
 
-- [ ] CLI supports --family loghub, --family nab, and --family aiops
-- [ ] CLI writes judgment cases and import quality report
-- [ ] CLI refuses download URLs and remote paths
+- [x] CLI supports --family loghub, --family nab, and --family aiops
+- [x] CLI writes judgment cases and import quality report
+- [x] CLI refuses download URLs and remote paths
 
 ## Boundary
 

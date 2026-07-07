@@ -1,0 +1,5 @@
+timestamp,value,is_anomaly
+2026-01-01T00:00:00Z,10,false
+2026-01-01T00:01:00Z,11,false
+2026-01-01T00:02:00Z,12,false
+2026-01-01T00:03:00Z,52,true

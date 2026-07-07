@@ -1,7 +1,7 @@
 ---
 id: P12-007
 title: Dataset Fixture Pack
-status: TODO
+status: DONE
 phase: P12
 depends_on: [P12-003, P12-004, P12-005]
 ---
@@ -14,9 +14,9 @@ Implement the P12 slice for Dataset Fixture Pack.
 
 ## Acceptance Criteria
 
-- [ ] includes one LogHub-shaped sample, one NAB-shaped sample, and one AIOps-shaped sample
-- [ ] fixtures are small, redacted, synthetic-or-license-safe excerpts
-- [ ] fixture manifest explains provenance and boundary
+- [x] includes one LogHub-shaped sample, one NAB-shaped sample, and one AIOps-shaped sample
+- [x] fixtures are small, redacted, synthetic-or-license-safe excerpts
+- [x] fixture manifest explains provenance and boundary
 
 ## Boundary
 

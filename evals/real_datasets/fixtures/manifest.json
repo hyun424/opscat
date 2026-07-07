@@ -1,0 +1,40 @@
+{
+  "version": "p12-fixtures-v1",
+  "normal_verification_downloads": false,
+  "boundary": "local path import only; local/mock; no auth/session; no external dataset download during normal verification; no production mutation; does not claim unattended production operation",
+  "sources": [
+    {
+      "name": "loghub-apache-fixture",
+      "family": "loghub",
+      "homepage": "https://github.com/logpai/loghub",
+      "citation": "LogHub-style schema fixture; tiny local synthetic excerpt",
+      "license": "fixture is synthetic and license-safe",
+      "expected_local_path": "evals/real_datasets/fixtures/loghub/apache_sample.jsonl",
+      "supported_files": ["jsonl", "json", "csv"],
+      "labels": ["normal", "deploy_error"],
+      "import_mode": "local_path_only"
+    },
+    {
+      "name": "nab-real-known-cause-fixture",
+      "family": "nab",
+      "homepage": "https://github.com/numenta/NAB",
+      "citation": "NAB-style timestamp/value fixture; tiny local synthetic excerpt",
+      "license": "fixture is synthetic and license-safe",
+      "expected_local_path": "evals/real_datasets/fixtures/nab/real_known_cause_sample.csv",
+      "supported_files": ["csv", "json", "jsonl"],
+      "labels": ["normal", "anomaly"],
+      "import_mode": "local_path_only"
+    },
+    {
+      "name": "aiops-multisignal-fixture",
+      "family": "aiops",
+      "homepage": "local-fixture",
+      "citation": "AIOps-style logs/metrics/events fixture; tiny local synthetic excerpt",
+      "license": "fixture is synthetic and license-safe",
+      "expected_local_path": "evals/real_datasets/fixtures/aiops/multisignal_sample.jsonl",
+      "supported_files": ["jsonl", "json"],
+      "labels": ["deploy_regression", "error_spike"],
+      "import_mode": "local_path_only"
+    }
+  ]
+}

@@ -247,3 +247,20 @@ P10 remains local/mock and auth-deferred. It adds a deterministic benchmark for 
 - Full release gate: `bash scripts/verify.sh --profile full`
 
 P11 remains local/mock and auth-deferred. It expands incident judgment coverage before LLM attachment; it does not download public datasets during normal verification and does not claim unattended production operation.
+
+## P12 Real Dataset Evaluation Harness Evidence
+
+- Roadmap: `docs/operations/p12-ticket-roadmap.md`
+- Final summary: `docs/operations/p12-final-summary.md`
+- Real dataset service tests: `tests/test_real_dataset_evaluation.py`
+- Real dataset CLI tests: `tests/test_real_dataset_cli.py`
+- Release evidence tests: `tests/test_p12_release_evidence.py`
+- Dataset service: `app/services/real_dataset_evaluation.py`
+- Conversion CLI: `scripts/import_real_dataset.py`
+- Evaluation CLI: `scripts/run_real_dataset_eval.py`
+- Fixture manifest: `evals/real_datasets/fixtures/manifest.json`
+- Fixture evaluation command: `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_real_dataset_eval.py --fixture-pack --output-json /tmp/opscat-real-dataset-eval.json --output-md /tmp/opscat-real-dataset-eval.md --output-cases /tmp/opscat-real-dataset-cases.json`
+- Latest temp real dataset eval artifact: `/tmp/opscat-real-dataset-eval-latest.md`
+- Full release gate: `bash scripts/verify.sh --profile full`
+
+P12 remains local/mock and auth-deferred. It evaluates tiny real-dataset-shaped fixtures through the existing deterministic benchmark; it does not download public datasets during normal verification and does not claim unattended production operation.

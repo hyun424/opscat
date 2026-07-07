@@ -1,7 +1,7 @@
 ---
 id: P12-005
 title: AIOps Multi-signal Adapter
-status: TODO
+status: DONE
 phase: P12
 depends_on: [P12-002, P12-006]
 ---
@@ -14,9 +14,9 @@ Implement the P12 slice for AIOps Multi-signal Adapter.
 
 ## Acceptance Criteria
 
-- [ ] supports JSON/JSONL incident records with logs, metrics, events, incident_type, root_cause labels
-- [ ] emits required evidence for every signal family present
-- [ ] maps labels into expected hypotheses, route, and verification criteria
+- [x] supports JSON/JSONL incident records with logs, metrics, events, incident_type, root_cause labels
+- [x] emits required evidence for every signal family present
+- [x] maps labels into expected hypotheses, route, and verification criteria
 
 ## Boundary
 

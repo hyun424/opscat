@@ -1,7 +1,7 @@
 ---
 id: P12-010
 title: Evaluation Report and Baseline
-status: TODO
+status: DONE
 phase: P12
 depends_on: [P12-009]
 ---
@@ -14,9 +14,9 @@ Implement the P12 slice for Evaluation Report and Baseline.
 
 ## Acceptance Criteria
 
-- [ ] report separates anomaly detection, incident classification, and response judgment signals
-- [ ] report states label limitations and unsupported rows
-- [ ] report states local/mock/no-auth/no-download boundary
+- [x] report separates anomaly detection, incident classification, and response judgment signals
+- [x] report states label limitations and unsupported rows
+- [x] report states local/mock/no-auth/no-download boundary
 
 ## Boundary
 

@@ -1,7 +1,7 @@
 ---
 id: P12-006
 title: Label Mapping and Taxonomy Coverage
-status: TODO
+status: DONE
 phase: P12
 depends_on: [P12-001]
 ---
@@ -14,9 +14,9 @@ Implement the P12 slice for Label Mapping and Taxonomy Coverage.
 
 ## Acceptance Criteria
 
-- [ ] maps raw labels to anomaly status, incident class, root-cause hypothesis, severity, expected route, and tags
-- [ ] reports unmapped labels separately
-- [ ] mappings are deterministic and test-backed
+- [x] maps raw labels to anomaly status, incident class, root-cause hypothesis, severity, expected route, and tags
+- [x] reports unmapped labels separately
+- [x] mappings are deterministic and test-backed
 
 ## Boundary
 

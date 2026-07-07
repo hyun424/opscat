@@ -1,7 +1,7 @@
 ---
 id: P12-011
 title: Verification Integration
-status: TODO
+status: DONE
 phase: P12
 depends_on: [P12-009, P12-010]
 ---
@@ -14,9 +14,9 @@ Implement the P12 slice for Verification Integration.
 
 ## Acceptance Criteria
 
-- [ ] eval profile runs fixture dataset evaluation
-- [ ] full profile runs fixture dataset evaluation
-- [ ] docs profile validates P12 release evidence
+- [x] eval profile runs fixture dataset evaluation
+- [x] full profile runs fixture dataset evaluation
+- [x] docs profile validates P12 release evidence
 
 ## Boundary
 

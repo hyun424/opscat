@@ -1,7 +1,7 @@
 ---
 id: P12-003
 title: LogHub Real Sample Adapter
-status: TODO
+status: DONE
 phase: P12
 depends_on: [P12-002, P12-006]
 ---
@@ -14,9 +14,9 @@ Implement the P12 slice for LogHub Real Sample Adapter.
 
 ## Acceptance Criteria
 
-- [ ] supports timestamp, level/label, component, message, anomaly/session labels
-- [ ] produces anomaly, false-positive, and unknown-log-anomaly cases
-- [ ] preserves source metadata without leaking secrets
+- [x] supports timestamp, level/label, component, message, anomaly/session labels
+- [x] produces anomaly, false-positive, and unknown-log-anomaly cases
+- [x] preserves source metadata without leaking secrets
 
 ## Boundary
 

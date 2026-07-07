@@ -124,6 +124,17 @@ corpus_audit() {
   printf 'Wrote /tmp/opscat-corpus-audit-latest.md and %s/opscat-corpus-audit.json\n' "$VERIFY_TMPDIR"
 }
 
+real_dataset_eval() {
+  section "P12 real dataset fixture evaluation"
+  "${UV_DEV[@]}" python scripts/run_real_dataset_eval.py \
+    --fixture-pack \
+    --output-json "$VERIFY_TMPDIR/opscat-real-dataset-eval.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-real-dataset-eval.md" \
+    --output-cases "$VERIFY_TMPDIR/opscat-real-dataset-cases.json" >/tmp/opscat-real-dataset-eval-latest.json
+  cp "$VERIFY_TMPDIR/opscat-real-dataset-eval.md" /tmp/opscat-real-dataset-eval-latest.md
+  printf 'Wrote /tmp/opscat-real-dataset-eval-latest.md and %s/opscat-real-dataset-eval.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -193,7 +204,8 @@ docs_contract_tests() {
     tests/test_p8_release_evidence.py \
     tests/test_p9_release_evidence.py \
     tests/test_p10_release_evidence.py \
-    tests/test_p11_release_evidence.py
+    tests/test_p11_release_evidence.py \
+    tests/test_p12_release_evidence.py
 }
 
 run_fast() {
@@ -211,6 +223,7 @@ run_eval() {
   commander_tournament
   judgment_benchmark
   corpus_audit
+  real_dataset_eval
 }
 
 run_docs() {

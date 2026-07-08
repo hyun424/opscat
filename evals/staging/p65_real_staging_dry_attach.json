@@ -1,0 +1,71 @@
+{
+  "audit_gate_manifest": "evals/staging/p64_audited_credential_transport_gate.json",
+  "allowed_hosts": [
+    "grafana.staging.internal",
+    "sentry.staging.internal",
+    "datadog.staging.internal"
+  ],
+  "secret_provider": {
+    "kind": "mock-vault",
+    "namespace": "opscat/staging/read-only",
+    "refs": [
+      "provider://opscat/staging/read-only/grafana-token",
+      "provider://opscat/staging/read-only/sentry-token",
+      "provider://opscat/staging/read-only/datadog-token"
+    ]
+  },
+  "attachments": [
+    {
+      "id": "p65-grafana-real-staging-dry-attach",
+      "provider": "grafana",
+      "connector_id": "p62-grafana-staging",
+      "audit_request_id": "p64-grafana-approved-get",
+      "environment": "staging",
+      "endpoint": "https://grafana.staging.internal",
+      "credential_ref": "provider://opscat/staging/read-only/grafana-token",
+      "health_probe_path": "/api/health",
+      "method": "GET",
+      "timeout_ms": 2000,
+      "polling_enabled_after_attach": false
+    },
+    {
+      "id": "p65-sentry-real-staging-dry-attach",
+      "provider": "sentry",
+      "connector_id": "p62-sentry-staging",
+      "audit_request_id": "p64-sentry-approved-get",
+      "environment": "staging",
+      "endpoint": "https://sentry.staging.internal",
+      "credential_ref": "provider://opscat/staging/read-only/sentry-token",
+      "health_probe_path": "/api/0/projects/",
+      "method": "GET",
+      "timeout_ms": 2000,
+      "polling_enabled_after_attach": false
+    },
+    {
+      "id": "p65-datadog-real-staging-dry-attach",
+      "provider": "datadog",
+      "connector_id": "p62-datadog-staging",
+      "audit_request_id": "p64-datadog-approved-get",
+      "environment": "staging",
+      "endpoint": "https://datadog.staging.internal",
+      "credential_ref": "provider://opscat/staging/read-only/datadog-token",
+      "health_probe_path": "/api/v1/monitor",
+      "method": "GET",
+      "timeout_ms": 2500,
+      "polling_enabled_after_attach": false
+    },
+    {
+      "id": "p65-prod-raw-token-blocked",
+      "provider": "datadog",
+      "connector_id": "p62-prod-admin-blocked",
+      "audit_request_id": "p64-prod-admin-raw-token-blocked",
+      "environment": "production",
+      "endpoint": "https://api.datadoghq.com",
+      "credential_ref": "actual-secret-value",
+      "health_probe_path": "/api/v1/monitor/123/mute",
+      "method": "POST",
+      "timeout_ms": 9000,
+      "polling_enabled_after_attach": true
+    }
+  ]
+}

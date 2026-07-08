@@ -600,3 +600,11 @@ P69 active scope: Autonomous Worker Runner. P69 consumes dispatch packets, recor
 ## P69 implemented
 
 P69 implemented as Autonomous Worker Runner evidence. P69 claims P68 packets, plans Codex worker commands through a recording transport, writes resumable state, records retry queues for failures, and preserves no process spawning, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P70 active
+
+P70 active scope: Gated Worker Process Runner. P70 validates planned worker commands against strict allowlists and dispatch-directory confinement before real process execution can be enabled.
+
+## P70 implemented
+
+P70 implemented as Gated Worker Process Runner evidence. P70 validates `codex exec` command shape, required safety flags, prompt path confinement, blocked unsafe commands, and preserves no process spawning, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

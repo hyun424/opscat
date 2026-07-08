@@ -810,6 +810,21 @@ autonomous_worker_runner_smoke() {
   cp "$VERIFY_TMPDIR/opscat-autonomous-worker-runner.md" /tmp/opscat-autonomous-worker-runner-latest.md
   printf 'Wrote /tmp/opscat-autonomous-worker-runner-latest.md and %s/opscat-autonomous-worker-runner.json\n' "$VERIFY_TMPDIR"
 }
+
+gated_worker_process_runner_smoke() {
+  section "P70 gated worker process runner smoke"
+  "${UV_DEV[@]}" python scripts/run_gated_worker_process_runner.py \
+    --manifest evals/planning/p66_autonomous_day_loop_backlog.json \
+    --completed P65 \
+    --max-tickets 3 \
+    --max-parallel 2 \
+    --dispatch-dir "$VERIFY_TMPDIR/opscat-gated-worker-process-runner-dispatch" \
+    --state-path "$VERIFY_TMPDIR/opscat-gated-worker-process-runner-state.json" \
+    --output-json "$VERIFY_TMPDIR/opscat-gated-worker-process-runner.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-gated-worker-process-runner.md" >/tmp/opscat-gated-worker-process-runner-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-gated-worker-process-runner.md" /tmp/opscat-gated-worker-process-runner-latest.md
+  printf 'Wrote /tmp/opscat-gated-worker-process-runner-latest.md and %s/opscat-gated-worker-process-runner.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -938,7 +953,8 @@ docs_contract_tests() {
     tests/test_p66_release_evidence.py \
     tests/test_p67_release_evidence.py \
     tests/test_p68_release_evidence.py \
-    tests/test_p69_release_evidence.py
+    tests/test_p69_release_evidence.py \
+    tests/test_p70_release_evidence.py
 }
 
 run_fast() {
@@ -1013,6 +1029,7 @@ run_eval() {
   autonomous_loop_executor_smoke
   autonomous_agent_dispatcher_smoke
   autonomous_worker_runner_smoke
+  gated_worker_process_runner_smoke
 }
 
 run_docs() {

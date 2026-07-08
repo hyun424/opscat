@@ -38,6 +38,14 @@ Boundary: no-auth/local-mock by default; no default external model calls; NVIDIA
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_telemetry_judgment_eval.py --cases evals/judgment/telemetry_grounded/p29_cases.json --provider mock --output-json /tmp/opscat-telemetry-judgment-quality-latest.json --output-md /tmp/opscat-telemetry-judgment-quality-latest.md`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
+## Verified Result
+
+- Targeted P29 tests: 6 passed.
+- P29 CLI smoke: 8 cases, baseline accuracy 0.35, telemetry-grounded accuracy 1.0, accuracy delta 0.65, evidence citation pass rate 1.0, unsafe action count 0.
+- Full verification: `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full` passed.
+- Coverage gate: 77.08% total, above the 60.00% project minimum; `app/services/telemetry_judgment_quality.py` at 91.18%.
+- Latest report artifact: `/tmp/opscat-telemetry-judgment-quality-latest.md`.
+
 ## Known Boundaries
 
 P29 is an evaluation layer. It does not execute remediation, does not call external models by default, does not manage auth, and does not claim unattended production operation. P30 should use these quality results before simulating controlled auto-remediation policy.

@@ -701,4 +701,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_telemetry_judgment_quality.py tests/test_p29_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
+Verified result: full profile passed; coverage gate 77.08%; P29 telemetry judgment quality smoke wrote `/tmp/opscat-telemetry-judgment-quality-latest.md` with 8 cases, baseline accuracy 0.35, grounded accuracy 1.0, accuracy delta 0.65, citation pass rate 1.0, and unsafe action count 0.
+
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; NVIDIA opt-in only; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

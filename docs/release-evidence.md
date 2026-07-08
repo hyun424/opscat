@@ -824,3 +824,27 @@ Verification:
 Verified result: full profile passed; coverage gate 77.91%; P34 read-only polling v2 smoke wrote `/tmp/opscat-read-only-polling-v2-latest.md` with 5 jobs, 2 polled, 2 skipped, 1 blocked, 2 snapshots, 4 trend windows, poll_success_rate 1.0, readiness gate rate 1.0, unsafe poll count 0, and live API call count 0.
 
 Boundary: read-only/local by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+
+## P35 Incident Shadow Mode Evidence
+
+P35 records would-do incident decisions from read-only evidence without executing remediation. It produces diagnosis, route, proposed actions, blocked actions, evidence links, and operator handoff reports.
+
+Artifacts:
+
+- `docs/operations/p35-ticket-roadmap.md`
+- `docs/operations/p35-final-summary.md`
+- `app/services/incident_shadow_mode.py`
+- `scripts/run_incident_shadow_mode.py`
+- `evals/shadow/p35_shadow_cases.json`
+- `tests/test_incident_shadow_mode.py`
+- `tests/test_p35_release_evidence.py`
+- `/tmp/opscat-incident-shadow-mode-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_incident_shadow_mode.py tests/test_p35_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are expected_route_match_rate 1.0, evidence link rate 1.0, shadow coverage 1.0, execution count 0, unsafe shadow action count 0, and case count >= 4.
+
+Boundary: shadow/local by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

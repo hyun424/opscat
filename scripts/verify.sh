@@ -410,6 +410,17 @@ read_only_polling_v2_smoke() {
   printf 'Wrote /tmp/opscat-read-only-polling-v2-latest.md and %s/opscat-read-only-polling-v2.json\n' "$VERIFY_TMPDIR"
 }
 
+incident_shadow_mode_smoke() {
+  section "P35 incident shadow mode smoke"
+  "${UV_DEV[@]}" python scripts/run_incident_shadow_mode.py \
+    --cases evals/shadow/p35_shadow_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-incident-shadow-mode.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-incident-shadow-mode.md" >/tmp/opscat-incident-shadow-mode-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-incident-shadow-mode.json" /tmp/opscat-incident-shadow-mode-latest.json
+  cp "$VERIFY_TMPDIR/opscat-incident-shadow-mode.md" /tmp/opscat-incident-shadow-mode-latest.md
+  printf 'Wrote /tmp/opscat-incident-shadow-mode-latest.md and %s/opscat-incident-shadow-mode.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -503,7 +514,8 @@ docs_contract_tests() {
     tests/test_p31_release_evidence.py \
     tests/test_p32_release_evidence.py \
     tests/test_p33_release_evidence.py \
-    tests/test_p34_release_evidence.py
+    tests/test_p34_release_evidence.py \
+    tests/test_p35_release_evidence.py
 }
 
 run_fast() {
@@ -543,6 +555,7 @@ run_eval() {
   real_telemetry_replay_smoke
   live_connector_dry_run_smoke
   read_only_polling_v2_smoke
+  incident_shadow_mode_smoke
 }
 
 run_docs() {

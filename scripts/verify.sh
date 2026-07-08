@@ -535,6 +535,16 @@ evidence_grounded_judgment_smoke() {
   printf 'Wrote /tmp/opscat-evidence-grounded-judgment-latest.md and %s/opscat-evidence-grounded-judgment.json\n' "$VERIFY_TMPDIR"
 }
 
+evidence_sufficiency_gate_v2_smoke() {
+  section "P76 evidence sufficiency gate v2 smoke"
+  "${UV_DEV[@]}" python scripts/run_evidence_sufficiency_gate_v2.py \
+    --cases evals/investigator/p45_judgment_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-evidence-sufficiency-gate-v2.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-evidence-sufficiency-gate-v2.md" >/tmp/opscat-evidence-sufficiency-gate-v2-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-evidence-sufficiency-gate-v2.md" /tmp/opscat-evidence-sufficiency-gate-v2-latest.md
+  printf 'Wrote /tmp/opscat-evidence-sufficiency-gate-v2-latest.md and %s/opscat-evidence-sufficiency-gate-v2.json\n' "$VERIFY_TMPDIR"
+}
+
 investigator_loop_smoke() {
   section "P46 investigator loop smoke"
   "${UV_DEV[@]}" python scripts/run_investigator_loop.py \
@@ -1059,7 +1069,8 @@ docs_contract_tests() {
     tests/test_p72_release_evidence.py \
     tests/test_p73_release_evidence.py \
     tests/test_p74_release_evidence.py \
-    tests/test_p75_release_evidence.py
+    tests/test_p75_release_evidence.py \
+    tests/test_p76_release_evidence.py
 }
 
 run_fast() {
@@ -1110,6 +1121,7 @@ run_eval() {
   public_dataset_benchmark_smoke
   public_dataset_matrix_smoke
   evidence_grounded_judgment_smoke
+  evidence_sufficiency_gate_v2_smoke
   investigator_loop_smoke
   tool_selection_planner_smoke
   hypothesis_reranker_smoke

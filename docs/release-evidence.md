@@ -1797,3 +1797,27 @@ Verification:
 Verified result: full profile passed; docs profile passed; coverage gate 80.38%; P75 smoke wrote `/tmp/opscat-local-safe-subprocess-runner-latest.md` with dry_run_ready_count=2, started_run_count=2, succeeded_run_count=2, failed_run_count=0, retry_queue_count=0, upstream_blocked_count=1, blocked_by_local_enablement_count=0, simulated_local_process_run_count=2, actual_spawn_count=0, shell_command_execution_count=0, state_write_count=1, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 Boundary: simulated local subprocess transport in repository verification; actual local subprocess transport is opt-in only; no shell command execution in normal verification, no real subprocess spawning in normal verification, no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P76 Evidence Sufficiency Gate v2 Evidence
+
+P76 upgrades P45 evidence-grounded judgments into an explicit sufficiency gate. It scores supporting evidence strength, source diversity, counter-evidence visibility, missing evidence, and unsafe auto-execute requests before a judgment can be treated as read-only sufficient or approval-ready.
+
+Artifacts:
+
+- `docs/operations/p76-ticket-roadmap.md`
+- `docs/operations/p76-final-summary.md`
+- `app/services/evidence_sufficiency_gate_v2.py`
+- `scripts/run_evidence_sufficiency_gate_v2.py`
+- `tests/test_evidence_sufficiency_gate_v2.py`
+- `tests/test_p76_release_evidence.py`
+- `/tmp/opscat-evidence-sufficiency-gate-v2-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_evidence_sufficiency_gate_v2.py tests/test_p76_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: pending final full/docs verification after GREEN implementation.
+
+Boundary: offline fixture scoring only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.

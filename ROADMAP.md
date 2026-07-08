@@ -648,3 +648,11 @@ P75 active scope: Local Safe Subprocess Runner. P75 consumes P74 dry-run-ready c
 ## P75 implemented
 
 P75 implemented as Local Safe Subprocess Runner evidence. P75 consumes P74 dry-run-ready plans, requires explicit local-subprocess enablement, writes stdout/stderr artifacts, persists completed/blocked/failed/retry state, exposes CLI JSON/Markdown reports, keeps normal verification on simulated local transport, and preserves no shell command execution, no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, no actual subprocess spawning in verification, and no unattended production-operation claim.
+
+## P76 active
+
+P76 active scope: Evidence Sufficiency Gate v2. P76 upgrades P45 evidence-grounded judgments into a stricter gate that scores support strength, source diversity, counter-evidence visibility, missing evidence, and unsafe auto-execute before a judgment can proceed.
+
+## P76 implemented
+
+P76 implemented as Evidence Sufficiency Gate v2 evidence. P76 consumes P45 judgments, scores evidence sufficiency, classifies cases as approval-ready or human-required, emits required next evidence and rationale, blocks unsafe auto-execute requests, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.

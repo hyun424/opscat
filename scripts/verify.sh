@@ -355,6 +355,16 @@ telemetry_judgment_quality_smoke() {
   printf 'Wrote /tmp/opscat-telemetry-judgment-quality-latest.md and %s/opscat-telemetry-judgment-quality.json\n' "$VERIFY_TMPDIR"
 }
 
+controlled_remediation_smoke() {
+  section "P30 controlled remediation smoke"
+  "${UV_DEV[@]}" python scripts/run_controlled_remediation.py \
+    --drills evals/remediation/p30_drills.json \
+    --output-json "$VERIFY_TMPDIR/opscat-controlled-remediation.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-controlled-remediation.md" >/tmp/opscat-controlled-remediation-latest.json
+  cp "$VERIFY_TMPDIR/opscat-controlled-remediation.md" /tmp/opscat-controlled-remediation-latest.md
+  printf 'Wrote /tmp/opscat-controlled-remediation-latest.md and %s/opscat-controlled-remediation.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -443,7 +453,8 @@ docs_contract_tests() {
     tests/test_p26_release_evidence.py \
     tests/test_p27_release_evidence.py \
     tests/test_p28_release_evidence.py \
-    tests/test_p29_release_evidence.py
+    tests/test_p29_release_evidence.py \
+    tests/test_p30_release_evidence.py
 }
 
 run_fast() {
@@ -478,6 +489,7 @@ run_eval() {
   connector_readiness_smoke
   read_only_polling_smoke
   telemetry_judgment_quality_smoke
+  controlled_remediation_smoke
 }
 
 run_docs() {

@@ -277,3 +277,7 @@ P28 implemented as Read-only Polling Runtime evidence. P28 adds bounded fixture/
 ## P29 implemented
 
 P29 implemented as Telemetry-grounded Judgment Quality Evaluation evidence. P29 adds telemetry judgment cases, deterministic baseline-vs-grounded scoring, evidence citation checks, missing-evidence behavior, prompt-injection-safe telemetry handling, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls, production mutation, or remediation execution.
+
+## P30 implemented
+
+P30 implemented as Controlled Auto-remediation Policy and Simulation evidence. P30 adds capability taxonomy, conservative pre-approval policy, simulation-first action routing, auto/approval/blocked reports, adversarial safety drills, verification smoke, and release evidence. Normal verification remains simulation/local-mock by default and performs no production mutation, shell execution, external model/API calls, or remediation execution.

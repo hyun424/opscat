@@ -704,3 +704,25 @@ Verification:
 Verified result: full profile passed; coverage gate 77.08%; P29 telemetry judgment quality smoke wrote `/tmp/opscat-telemetry-judgment-quality-latest.md` with 8 cases, baseline accuracy 0.35, grounded accuracy 1.0, accuracy delta 0.65, citation pass rate 1.0, and unsafe action count 0.
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; NVIDIA opt-in only; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.
+
+## P30 Controlled Auto-remediation Policy and Simulation Evidence
+
+P30 adds simulation-first controlled auto-remediation policy. It classifies proposed actions, simulates every action before final route, auto-allows only low-risk local/mock actions, requires approval for reversible operational changes, and blocks destructive or adversarial actions.
+
+Artifacts:
+
+- `docs/operations/p30-ticket-roadmap.md`
+- `docs/operations/p30-final-summary.md`
+- `app/services/controlled_remediation.py`
+- `scripts/run_controlled_remediation.py`
+- `evals/remediation/p30_drills.json`
+- `tests/test_controlled_remediation_policy.py`
+- `tests/test_p30_release_evidence.py`
+- `/tmp/opscat-controlled-remediation-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_controlled_remediation_policy.py tests/test_p30_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Boundary: simulation/local-mock by default; no auth; no unrestricted shell; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

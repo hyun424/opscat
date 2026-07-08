@@ -498,6 +498,19 @@ external_dataset_acquisition_smoke() {
   printf 'Wrote /tmp/opscat-external-dataset-acquisition-latest.md and %s/opscat-external-dataset-acquisition.json\n' "$VERIFY_TMPDIR"
 }
 
+public_dataset_benchmark_smoke() {
+  section "P43 public dataset benchmark smoke"
+  "${UV_DEV[@]}" python scripts/run_public_dataset_benchmark.py \
+    --manifest evals/real_datasets/external/p43_public_benchmark_manifest.json \
+    --artifact-root "$VERIFY_TMPDIR/p43-public-artifacts" \
+    --materialized-root "$VERIFY_TMPDIR/p43-public-materialized" \
+    --output-json "$VERIFY_TMPDIR/opscat-public-dataset-benchmark.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-public-dataset-benchmark.md" >/tmp/opscat-public-dataset-benchmark-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-public-dataset-benchmark.json" /tmp/opscat-public-dataset-benchmark-latest.json
+  cp "$VERIFY_TMPDIR/opscat-public-dataset-benchmark.md" /tmp/opscat-public-dataset-benchmark-latest.md
+  printf 'Wrote /tmp/opscat-public-dataset-benchmark-latest.md and %s/opscat-public-dataset-benchmark.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -599,7 +612,8 @@ docs_contract_tests() {
     tests/test_p39_release_evidence.py \
     tests/test_p40_release_evidence.py \
     tests/test_p41_release_evidence.py \
-    tests/test_p42_release_evidence.py
+    tests/test_p42_release_evidence.py \
+    tests/test_p43_release_evidence.py
 }
 
 run_fast() {
@@ -647,6 +661,7 @@ run_eval() {
   production_readiness_milestone_smoke
   raw_real_dataset_replay_smoke
   external_dataset_acquisition_smoke
+  public_dataset_benchmark_smoke
 }
 
 run_docs() {

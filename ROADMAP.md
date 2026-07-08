@@ -560,3 +560,11 @@ P64 active scope: Audited Staging Credential + Transport Gate. P64 gates any sta
 ## P64 implemented
 
 P64 implemented as Audited Staging Credential + Transport Gate evidence. P64 records audit decisions without transport calls by default, verifies live-path behavior through mock transport only, blocks missing approval, raw credential values, unsafe methods, disallowed hosts, production/admin checks, and unsafe timeouts, while preserving no `.env` reads, no real credentials, no real server connection in normal verification, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P65 active
+
+P65 active scope: Real Staging Read-only Dry Attach. P65 creates a real-staging-shaped dry attach plan that requires explicit secret-provider refs, allowlisted HTTPS staging endpoints, P64 audit handoff, safe detach plans, and zero network calls.
+
+## P65 implemented
+
+P65 implemented as Real Staging Read-only Dry Attach evidence. P65 marks Grafana, Sentry, and Datadog dry attachments attach-ready, blocks unsafe production/raw-token attach, emits safe detach plans, and preserves no `.env` reads, no real credential reads, no real server connection, no network calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

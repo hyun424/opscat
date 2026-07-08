@@ -747,6 +747,16 @@ audited_staging_transport_gate_smoke() {
   cp "$VERIFY_TMPDIR/opscat-audited-staging-transport-gate.md" /tmp/opscat-audited-staging-transport-gate-latest.md
   printf 'Wrote /tmp/opscat-audited-staging-transport-gate-latest.md and %s/opscat-audited-staging-transport-gate.json\n' "$VERIFY_TMPDIR"
 }
+
+real_staging_dry_attach_smoke() {
+  section "P65 real staging dry attach smoke"
+  "${UV_DEV[@]}" python scripts/run_real_staging_dry_attach.py \
+    --manifest evals/staging/p65_real_staging_dry_attach.json \
+    --output-json "$VERIFY_TMPDIR/opscat-real-staging-dry-attach.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-real-staging-dry-attach.md" >/tmp/opscat-real-staging-dry-attach-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-real-staging-dry-attach.md" /tmp/opscat-real-staging-dry-attach-latest.md
+  printf 'Wrote /tmp/opscat-real-staging-dry-attach-latest.md and %s/opscat-real-staging-dry-attach.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -870,7 +880,8 @@ docs_contract_tests() {
     tests/test_p61_release_evidence.py \
     tests/test_p62_release_evidence.py \
     tests/test_p63_release_evidence.py \
-    tests/test_p64_release_evidence.py
+    tests/test_p64_release_evidence.py \
+    tests/test_p65_release_evidence.py
 }
 
 run_fast() {
@@ -940,6 +951,7 @@ run_eval() {
   staging_read_only_connector_contract_smoke
   staging_live_read_only_preflight_smoke
   audited_staging_transport_gate_smoke
+  real_staging_dry_attach_smoke
 }
 
 run_docs() {

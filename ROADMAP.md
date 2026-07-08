@@ -544,3 +544,11 @@ P62 active scope: Staging Read-only Connector Contract. P62 validates provider-s
 ## P62 implemented
 
 P62 implemented as Staging Read-only Connector Contract evidence. P62 validates provider-specific schema, read-only scopes, safe query budgets, staging-only environment boundaries, redacted credential references, and operator handoff while preserving no real server connection, no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P63 active
+
+P63 active scope: Staging Live Read-only Preflight Runner. P63 gates any staging observability API contact behind no-live defaults, explicit live staging flags, manual approval, allowlisted hosts, GET-only checks, P62 readiness, and safe timeout budgets.
+
+## P63 implemented
+
+P63 implemented as Staging Live Read-only Preflight evidence. P63 evaluates staging preflight eligibility without live calls by default, verifies live-path behavior through mock transport only, blocks unsafe production/admin/non-GET/disallowed-host checks, and preserves no real server connection in normal verification, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

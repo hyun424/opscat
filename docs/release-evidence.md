@@ -1484,3 +1484,27 @@ Verification:
 Verified result: full profile passed; coverage gate 79.84%; P62 smoke wrote `/tmp/opscat-staging-read-only-connector-contract-latest.md` with connector_count=4, ready_count=3, degraded_count=0, blocked_count=1, provider_count=3, schema_compatible_count=3, provider_coverage_rate=1.0, read_only_safety_rate=0.75, staging_environment_rate=0.75, schema_compatibility_rate=0.75, ready_connectors=p62-grafana-staging/p62-sentry-staging/p62-datadog-staging, blocked_connectors=p62-prod-admin-blocked, next_step="attach staging read-only credentials behind manual approval", action_execution_count=0, live_api_call_count=0, production_mutation_count=0, and passed=true.
 
 Boundary: offline staging connector contract only; local manifest and sample responses only; no real server connection; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.
+
+## P63 Staging Live Read-only Preflight Evidence
+
+P63 adds the final preflight gate before staging observability APIs can be contacted. Default mode evaluates eligibility and performs zero API calls; live-path behavior is verified with an injected mock transport only.
+
+Artifacts:
+
+- `docs/operations/p63-ticket-roadmap.md`
+- `docs/operations/p63-final-summary.md`
+- `evals/staging/p63_staging_live_preflight.json`
+- `app/services/staging_live_read_only_preflight.py`
+- `scripts/run_staging_live_read_only_preflight.py`
+- `tests/test_staging_live_read_only_preflight.py`
+- `tests/test_p63_release_evidence.py`
+- `/tmp/opscat-staging-live-read-only-preflight-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_staging_live_read_only_preflight.py tests/test_p63_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: default no-live staging preflight only; no real server connection in normal verification; live path requires explicit live staging gates; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

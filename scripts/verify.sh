@@ -727,6 +727,16 @@ staging_read_only_connector_contract_smoke() {
   cp "$VERIFY_TMPDIR/opscat-staging-read-only-connector-contract.md" /tmp/opscat-staging-read-only-connector-contract-latest.md
   printf 'Wrote /tmp/opscat-staging-read-only-connector-contract-latest.md and %s/opscat-staging-read-only-connector-contract.json\n' "$VERIFY_TMPDIR"
 }
+
+staging_live_read_only_preflight_smoke() {
+  section "P63 staging live read-only preflight smoke"
+  "${UV_DEV[@]}" python scripts/run_staging_live_read_only_preflight.py \
+    --manifest evals/staging/p63_staging_live_preflight.json \
+    --output-json "$VERIFY_TMPDIR/opscat-staging-live-read-only-preflight.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-staging-live-read-only-preflight.md" >/tmp/opscat-staging-live-read-only-preflight-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-staging-live-read-only-preflight.md" /tmp/opscat-staging-live-read-only-preflight-latest.md
+  printf 'Wrote /tmp/opscat-staging-live-read-only-preflight-latest.md and %s/opscat-staging-live-read-only-preflight.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -848,7 +858,8 @@ docs_contract_tests() {
     tests/test_p59_release_evidence.py \
     tests/test_p60_release_evidence.py \
     tests/test_p61_release_evidence.py \
-    tests/test_p62_release_evidence.py
+    tests/test_p62_release_evidence.py \
+    tests/test_p63_release_evidence.py
 }
 
 run_fast() {
@@ -916,6 +927,7 @@ run_eval() {
   operator_replacement_readiness_gate_v2_smoke
   local_shadow_connector_validation_smoke
   staging_read_only_connector_contract_smoke
+  staging_live_read_only_preflight_smoke
 }
 
 run_docs() {

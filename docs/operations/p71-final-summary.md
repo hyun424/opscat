@@ -15,7 +15,7 @@ P71 adds a supervised execution harness after the P70 process gate. It can start
 
 ## Verified result
 
-Pending final verification after GREEN implementation.
+Full profile passed; docs profile passed; coverage gate 80.35%; P71 smoke wrote `/tmp/opscat-supervised-worker-execution-harness-latest.md` with eligible_command_count=3, started_run_count=3, succeeded_run_count=3, failed_run_count=0, retry_queue_count=0, blocked_by_enable_flag_count=0, supervised_process_run_count=3, timeout_count=0, state_write_count=1, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 ## Boundary
 

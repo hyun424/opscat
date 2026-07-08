@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "matrix",
+    "result": [
+      {
+        "metric": {
+          "__name__": "db_pool_wait_seconds_p95",
+          "service": "checkout-api",
+          "env": "prod",
+          "cluster": "local-fixture",
+          "unit": "seconds"
+        },
+        "values": [
+          [1783465200, "0.10"],
+          [1783468800, "0.22"],
+          [1783472400, "0.44"],
+          [1783476000, "0.86"],
+          [1783476000, "0.88"]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "http_5xx_rate",
+          "service": "checkout-api",
+          "env": "prod",
+          "cluster": "local-fixture",
+          "unit": "ratio"
+        },
+        "values": [
+          [1783465200, "0.006"],
+          [1783468800, "0.018"],
+          [1783472400, "0.041"],
+          [1783476000, "0.071"]
+        ]
+      }
+    ]
+  }
+}

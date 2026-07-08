@@ -602,3 +602,27 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.
+
+## P26 Real Telemetry Adapter Contract Evidence
+
+P26 adds read-only fixture adapters for Prometheus/Grafana, Datadog, and Sentry shaped payloads. The adapters normalize telemetry series/events/snapshots, create proactive `TrendWindow` inputs, emit CLI reports, and preserve the no-auth/local-mock safety boundary.
+
+Artifacts:
+
+- `docs/operations/p26-ticket-roadmap.md`
+- `docs/operations/p26-final-summary.md`
+- `app/services/telemetry_adapter.py`
+- `scripts/run_telemetry_adapter.py`
+- `evals/telemetry/fixtures/prometheus_query_range.json`
+- `evals/telemetry/fixtures/datadog_timeseries.json`
+- `evals/telemetry/fixtures/sentry_issues.json`
+- `tests/test_telemetry_adapter_contract.py`
+- `tests/test_p26_release_evidence.py`
+- `/tmp/opscat-telemetry-adapter-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_telemetry_adapter_contract.py tests/test_p26_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

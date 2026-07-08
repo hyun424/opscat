@@ -244,3 +244,7 @@ P25 implemented as Proactive Signal Corpus Expansion and Calibration evidence. P
 ## P26 active
 
 P26 active scope: Real Telemetry Adapter Contract. P26 creates fixture/read-only adapters for Prometheus/Grafana, Datadog, and Sentry shaped payloads, normalizes telemetry series/events/snapshots, converts compatible metrics to proactive TrendWindows, adds CLI reports, integrates verification, and preserves release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, live observability API calls, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, remediation execution, or unattended production-operation claims.
+
+## P26 implemented
+
+P26 implemented as Real Telemetry Adapter Contract evidence. P26 adds read-only fixture adapters for Prometheus/Grafana, Datadog, and Sentry shaped payloads, normalizes telemetry snapshots, converts compatible signals to proactive trend windows, exposes a CLI report, integrates verification, and preserves release evidence. Normal verification remains no-auth/local-mock by default and performs no live observability API calls, external model/API calls, or remediation execution.

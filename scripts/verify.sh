@@ -311,6 +311,17 @@ proactive_calibration_smoke() {
   printf 'Wrote /tmp/opscat-proactive-calibration-latest.md and %s/opscat-proactive-calibration.json\n' "$VERIFY_TMPDIR"
 }
 
+telemetry_adapter_smoke() {
+  section "P26 telemetry adapter smoke"
+  "${UV_DEV[@]}" python scripts/run_telemetry_adapter.py \
+    --source all \
+    --fixture-dir evals/telemetry/fixtures \
+    --output-json "$VERIFY_TMPDIR/opscat-telemetry-adapter.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-telemetry-adapter.md" >/tmp/opscat-telemetry-adapter-latest.json
+  cp "$VERIFY_TMPDIR/opscat-telemetry-adapter.md" /tmp/opscat-telemetry-adapter-latest.md
+  printf 'Wrote /tmp/opscat-telemetry-adapter-latest.md and %s/opscat-telemetry-adapter.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -395,7 +406,8 @@ docs_contract_tests() {
     tests/test_p22_release_evidence.py \
     tests/test_p23_release_evidence.py \
     tests/test_p24_release_evidence.py \
-    tests/test_p25_release_evidence.py
+    tests/test_p25_release_evidence.py \
+    tests/test_p26_release_evidence.py
 }
 
 run_fast() {
@@ -426,6 +438,7 @@ run_eval() {
   night_shift_drill_smoke
   proactive_risk_sentinel_smoke
   proactive_calibration_smoke
+  telemetry_adapter_smoke
 }
 
 run_docs() {

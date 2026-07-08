@@ -1,3 +1,3 @@
 # P26-002 prometheus-grafana-fixture-adapter
 
-See \ for acceptance criteria.
+See `docs/operations/p26-ticket-roadmap.md` for acceptance criteria.

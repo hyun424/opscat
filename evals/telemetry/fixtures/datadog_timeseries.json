@@ -1,0 +1,36 @@
+{
+  "series": [
+    {
+      "metric": "system.disk.in_use",
+      "scope": "env:prod,service:search-node,host:search-1",
+      "unit": [{"family": "percentage", "short_name": "percent"}],
+      "pointlist": [
+        [1783465200000, 78.0],
+        [1783468800000, 82.0],
+        [1783472400000, 88.0],
+        [1783476000000, 91.0],
+        [1783476000000, 92.0]
+      ]
+    },
+    {
+      "metric": "queue.lag.seconds",
+      "tags": ["env:prod", "service:worker", "queue:orders"],
+      "unit": "seconds",
+      "pointlist": [
+        [1783465200000, 55.0],
+        [1783468800000, 120.0],
+        [1783472400000, 210.0],
+        [1783476000000, 280.0]
+      ]
+    }
+  ],
+  "events": [
+    {
+      "type": "event",
+      "timestamp": 1783476000000,
+      "title": "Search node disk growth",
+      "text": "Disk utilization is rising faster than the cleanup baseline.",
+      "tags": ["env:prod", "service:search-node", "host:search-1"]
+    }
+  ]
+}

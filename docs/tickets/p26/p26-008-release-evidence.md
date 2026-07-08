@@ -1,3 +1,3 @@
 # P26-008 release-evidence
 
-See \ for acceptance criteria.
+See `docs/operations/p26-ticket-roadmap.md` for acceptance criteria.

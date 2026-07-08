@@ -589,6 +589,16 @@ remediation_verification_loop_smoke() {
   printf 'Wrote /tmp/opscat-remediation-verification-loop-latest.md and %s/opscat-remediation-verification-loop.json\n' "$VERIFY_TMPDIR"
 }
 
+recovery_proof_engine_smoke() {
+  section "P77 recovery proof engine smoke"
+  "${UV_DEV[@]}" python scripts/run_recovery_proof_engine.py \
+    --cases evals/investigator/p49_remediation_verification_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-recovery-proof-engine.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-recovery-proof-engine.md" >/tmp/opscat-recovery-proof-engine-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-recovery-proof-engine.md" /tmp/opscat-recovery-proof-engine-latest.md
+  printf 'Wrote /tmp/opscat-recovery-proof-engine-latest.md and %s/opscat-recovery-proof-engine.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1070,7 +1080,8 @@ docs_contract_tests() {
     tests/test_p73_release_evidence.py \
     tests/test_p74_release_evidence.py \
     tests/test_p75_release_evidence.py \
-    tests/test_p76_release_evidence.py
+    tests/test_p76_release_evidence.py \
+    tests/test_p77_release_evidence.py
 }
 
 run_fast() {
@@ -1126,6 +1137,7 @@ run_eval() {
   tool_selection_planner_smoke
   hypothesis_reranker_smoke
   remediation_verification_loop_smoke
+  recovery_proof_engine_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

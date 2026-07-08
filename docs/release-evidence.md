@@ -1821,3 +1821,27 @@ Verification:
 Verified result: full profile passed; docs profile passed; coverage gate 80.35%; P76 smoke wrote `/tmp/opscat-evidence-sufficiency-gate-v2-latest.md` with case_count=3, sufficient_read_only_count=2, approval_ready_count=2, human_required_count=1, unsafe_auto_execute_count=0, blocked_unsafe_auto_execute_count=0, mean_sufficiency_score=0.73, minimum_sufficiency_score=0.201, maximum_sufficiency_score=1.0, missing_evidence_item_count=5, evidence_source_count=5, and passed=true.
 
 Boundary: offline fixture scoring only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P77 Recovery Proof Engine Evidence
+
+P77 upgrades remediation verification into explicit recovery proof. It converts post-check criteria and observed values into proof bundles, scores pass/fail evidence, blocks unsafe execution boundaries, and emits operator escalation steps when recovery is not proven.
+
+Artifacts:
+
+- `docs/operations/p77-ticket-roadmap.md`
+- `docs/operations/p77-final-summary.md`
+- `app/services/recovery_proof_engine.py`
+- `scripts/run_recovery_proof_engine.py`
+- `tests/test_recovery_proof_engine.py`
+- `tests/test_p77_release_evidence.py`
+- `/tmp/opscat-recovery-proof-engine-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_recovery_proof_engine.py tests/test_p77_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: pending final full/docs verification after GREEN implementation.
+
+Boundary: offline local/mock proof only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.

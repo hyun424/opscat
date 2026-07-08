@@ -656,3 +656,11 @@ P76 active scope: Evidence Sufficiency Gate v2. P76 upgrades P45 evidence-ground
 ## P76 implemented
 
 P76 implemented as Evidence Sufficiency Gate v2 evidence. P76 consumes P45 judgments, scores evidence sufficiency, classifies cases as approval-ready or human-required, emits required next evidence and rationale, blocks unsafe auto-execute requests, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P77 active
+
+P77 active scope: Recovery Proof Engine. P77 upgrades remediation verification into explicit proof bundles that prove or reject recovery claims before an incident can be treated as recovered.
+
+## P77 implemented
+
+P77 implemented as Recovery Proof Engine evidence. P77 consumes P49 verification output, builds pass/fail proof bundles, scores recovery proof, classifies proven/not-proven/unsafe cases, emits operator next steps, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.

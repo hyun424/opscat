@@ -365,6 +365,16 @@ controlled_remediation_smoke() {
   printf 'Wrote /tmp/opscat-controlled-remediation-latest.md and %s/opscat-controlled-remediation.json\n' "$VERIFY_TMPDIR"
 }
 
+operator_replacement_drill_smoke() {
+  section "P31 operator replacement drill smoke"
+  "${UV_DEV[@]}" python scripts/run_operator_replacement_drill.py \
+    --scenarios evals/operator_replacement/p31_scenarios.json \
+    --output-json "$VERIFY_TMPDIR/opscat-operator-replacement.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-operator-replacement.md" >/tmp/opscat-operator-replacement-latest.json
+  cp "$VERIFY_TMPDIR/opscat-operator-replacement.md" /tmp/opscat-operator-replacement-latest.md
+  printf 'Wrote /tmp/opscat-operator-replacement-latest.md and %s/opscat-operator-replacement.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -454,7 +464,8 @@ docs_contract_tests() {
     tests/test_p27_release_evidence.py \
     tests/test_p28_release_evidence.py \
     tests/test_p29_release_evidence.py \
-    tests/test_p30_release_evidence.py
+    tests/test_p30_release_evidence.py \
+    tests/test_p31_release_evidence.py
 }
 
 run_fast() {
@@ -490,6 +501,7 @@ run_eval() {
   read_only_polling_smoke
   telemetry_judgment_quality_smoke
   controlled_remediation_smoke
+  operator_replacement_drill_smoke
 }
 
 run_docs() {

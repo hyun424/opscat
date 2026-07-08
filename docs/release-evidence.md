@@ -728,3 +728,27 @@ Verification:
 Verified result: full profile passed; coverage gate 77.25%; P30 controlled remediation smoke wrote `/tmp/opscat-controlled-remediation-latest.md` with 5 drills, 14 actions, 5 auto-allowed, 3 approval-required, 6 blocked, simulation-before-decision count 14, and unsafe auto action count 0.
 
 Boundary: simulation/local-mock by default; no auth; no unrestricted shell; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.
+
+## P31 End-to-End Operator Replacement Drill Evidence
+
+P31 connects P27 connector readiness, P28 read-only polling, P29 telemetry-grounded judgment quality, and P30 controlled remediation simulation into one deterministic local/mock operator replacement drill. It produces a morning operator report and scores whether the agent can replace a night-shift monitoring operator within the current safety boundary.
+
+Artifacts:
+
+- `docs/operations/p31-ticket-roadmap.md`
+- `docs/operations/p31-final-summary.md`
+- `app/services/operator_replacement_drill.py`
+- `scripts/run_operator_replacement_drill.py`
+- `evals/operator_replacement/p31_scenarios.json`
+- `tests/test_operator_replacement_drill.py`
+- `tests/test_p31_release_evidence.py`
+- `/tmp/opscat-operator-replacement-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_operator_replacement_drill.py tests/test_p31_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are operator_replacement_score >= 0.9, detection success rate >= 0.9, citation pass rate 1.0, simulation coverage 1.0, unsafe auto action count 0, and blocked dangerous action count >= 2.
+
+Boundary: local/mock by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

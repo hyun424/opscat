@@ -306,3 +306,7 @@ P33 active scope: Live Connector Dry-run Harness. P33 validates connector config
 ## P33 implemented
 
 P33 implemented as Live Connector Dry-run Harness evidence. P33 validates connector manifests, read-only permission posture, mock transport health, schema drift, connector readiness score, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no live API calls, production mutation, remediation execution, unrestricted shell execution, external model/API calls, or unattended production-operation claim.
+
+## P34 active
+
+P34 active scope: Live Read-only Polling Runtime v2. P34 uses P33 dry-run readiness to gate local read-only polling jobs, normalize fixture payloads, emit telemetry snapshots/trend windows, and score polling safety. The boundary remains no-auth/local-mock by default: no live API calls, production mutation, remediation execution, unrestricted shell, default external model/API calls, or unattended production-operation claims.

@@ -27,14 +27,17 @@ P38 aggregates recent OpsCat agent evaluation phases into one local JSON/Markdow
 
 No hosted dashboard requirement, no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and does not claim unattended production operation.
 
-## Verification target
+## Verification result
 
-Expected metrics before final full verification:
+Full verification passed with P38 included in `scripts/verify.sh`:
 
-- phase count: at least 5
-- passed phase count: equals phase count
+- phase count: 5
+- passed phase count: 5
+- failed phase count: 0
 - boundary violation count: 0
-- overall score: at least 0.9
+- overall score: 0.962
 - readiness tier: portfolio-ready
+- total coverage gate: 78.38% >= 60.00%
+- `app/services/agent_evaluation_dashboard.py` coverage: 85.55%
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+Generated artifacts: `/tmp/opscat-agent-evaluation-dashboard-latest.md` and `/tmp/opscat-agent-evaluation-dashboard-latest.json`.

@@ -344,3 +344,8 @@ P37 implemented as Open-source Config Hardening evidence. P37 validates committe
 ## P38 active
 
 P38 active scope: Agent Evaluation Dashboard. P38 aggregates P33-P37 local evidence into a JSON/Markdown scorecard with phase cards, readiness tier, boundary gates, and artifact links. It remains local-only with no hosted UI, auth, live calls, production mutation, remediation execution, external model/API calls, or unattended production-operation claims.
+
+
+## P38 implemented
+
+P38 implemented as Agent Evaluation Dashboard evidence. P38 aggregates P33-P37 local scorecards into JSON/Markdown phase cards, computes overall score, readiness tier, and boundary violations, integrates CLI/full verification smoke, and remains local-only with no hosted UI, auth, live calls, production mutation, remediation execution, unrestricted shell, external model/API calls, or unattended production-operation claims.

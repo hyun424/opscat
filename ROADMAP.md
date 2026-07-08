@@ -281,3 +281,8 @@ P29 implemented as Telemetry-grounded Judgment Quality Evaluation evidence. P29 
 ## P30 implemented
 
 P30 implemented as Controlled Auto-remediation Policy and Simulation evidence. P30 adds capability taxonomy, conservative pre-approval policy, simulation-first action routing, auto/approval/blocked reports, adversarial safety drills, verification smoke, and release evidence. Normal verification remains simulation/local-mock by default and performs no production mutation, shell execution, external model/API calls, or remediation execution.
+
+## P31 active
+
+P31 active scope: End-to-End Operator Replacement Drill. P31 connects P27 readiness, P28 read-only polling, P29 telemetry-grounded judgment quality, and P30 controlled remediation simulation into one deterministic local/mock operator replacement drill with scoring, batch reports, verification, and release evidence. The boundary remains no-auth/local-mock by default: no live API calls, production mutation, remediation execution, unrestricted shell, or unattended production-operation claims.
+

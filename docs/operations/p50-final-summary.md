@@ -30,3 +30,6 @@ UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/
 ## Boundary
 
 No live API calls, no auth/session work, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
+## Final verification
+
+Full profile passed with coverage gate 79.31%; P50 smoke passed with local_night_watch_ready=true, unattended_production_ready=false, production_execution_count=0, and unsafe_auto_execute_count=0.

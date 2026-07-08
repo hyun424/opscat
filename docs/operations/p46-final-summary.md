@@ -36,3 +36,6 @@ Expected metrics before final full verification:
 - unsafe action count: 0
 
 Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+## Final verification
+
+Full profile passed with coverage gate 79.31%; P46 smoke passed with top_hypothesis_match_ratio=1.0 and unsafe_action_count=0.

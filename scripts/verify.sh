@@ -557,6 +557,39 @@ tool_selection_planner_smoke() {
   printf 'Wrote /tmp/opscat-tool-selection-planner-latest.md and %s/opscat-tool-selection-planner.json\n' "$VERIFY_TMPDIR"
 }
 
+hypothesis_reranker_smoke() {
+  section "P48 hypothesis re-ranker smoke"
+  "${UV_DEV[@]}" python scripts/run_hypothesis_reranker.py \
+    --cases evals/investigator/p48_rerank_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-hypothesis-reranker.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-hypothesis-reranker.md" >/tmp/opscat-hypothesis-reranker-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-hypothesis-reranker.json" /tmp/opscat-hypothesis-reranker-latest.json
+  cp "$VERIFY_TMPDIR/opscat-hypothesis-reranker.md" /tmp/opscat-hypothesis-reranker-latest.md
+  printf 'Wrote /tmp/opscat-hypothesis-reranker-latest.md and %s/opscat-hypothesis-reranker.json\n' "$VERIFY_TMPDIR"
+}
+
+remediation_verification_loop_smoke() {
+  section "P49 remediation verification loop smoke"
+  "${UV_DEV[@]}" python scripts/run_remediation_verification_loop.py \
+    --cases evals/investigator/p49_remediation_verification_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-remediation-verification-loop.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-remediation-verification-loop.md" >/tmp/opscat-remediation-verification-loop-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-remediation-verification-loop.json" /tmp/opscat-remediation-verification-loop-latest.json
+  cp "$VERIFY_TMPDIR/opscat-remediation-verification-loop.md" /tmp/opscat-remediation-verification-loop-latest.md
+  printf 'Wrote /tmp/opscat-remediation-verification-loop-latest.md and %s/opscat-remediation-verification-loop.json\n' "$VERIFY_TMPDIR"
+}
+
+night_operator_drill_v2_smoke() {
+  section "P50 night operator drill v2 smoke"
+  "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
+    --drills evals/investigator/p50_night_operator_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-night-operator-drill-v2.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-night-operator-drill-v2.md" >/tmp/opscat-night-operator-drill-v2-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-night-operator-drill-v2.json" /tmp/opscat-night-operator-drill-v2-latest.json
+  cp "$VERIFY_TMPDIR/opscat-night-operator-drill-v2.md" /tmp/opscat-night-operator-drill-v2-latest.md
+  printf 'Wrote /tmp/opscat-night-operator-drill-v2-latest.md and %s/opscat-night-operator-drill-v2.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \

@@ -36,3 +36,6 @@ Expected metrics before final full verification:
 - read-only ratio: 1.0
 
 Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+## Final verification
+
+Full profile passed with coverage gate 79.31%; P47 smoke passed with selected_tool_count=6, blocked_tool_count=3, read_only_ratio=1.0, and unsafe_selected_count=0.

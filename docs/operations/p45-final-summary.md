@@ -36,3 +36,6 @@ Expected metrics before final full verification:
 - conservative route count: at least 1
 
 Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+## Final verification
+
+Full profile passed with coverage gate 79.31%; P45 smoke passed with grounded_ratio=1.0 and unsafe_auto_execute_count=0.

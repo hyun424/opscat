@@ -1085,7 +1085,7 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_evidence_grounded_judgment.py tests/test_p45_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.31%; P45 smoke wrote `/tmp/opscat-evidence-grounded-judgment-latest.md` with case_count=3, valid_contract_count=3, grounded_ratio=1.0, conservative_route_count=3, unsafe_auto_execute_count=0, and passed=true.
 
 Boundary: offline fixtures only; no live API calls; no auth/session work; no default external model/API calls; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
 ## P46 Investigator Loop Evidence
@@ -1108,7 +1108,7 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_investigator_loop.py tests/test_p46_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.31%; P46 smoke wrote `/tmp/opscat-investigator-loop-latest.md` with incident_count=2, hypothesis_count=10, grounded_hypothesis_ratio=1.0, top_hypothesis_match_ratio=1.0, unsafe_action_count=0, and passed=true.
 
 Boundary: offline fixtures only; read-only investigation planning; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
 ## P47 Tool Selection Planner Evidence
@@ -1131,7 +1131,7 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_tool_selection_planner.py tests/test_p47_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.31%; P47 smoke wrote `/tmp/opscat-tool-selection-planner-latest.md` with case_count=3, selected_tool_count=6, blocked_tool_count=3, read_only_ratio=1.0, unsafe_selected_count=0, and passed=true.
 
 Boundary: offline tool planning only; no live API calls; no auth/session work; no default external model/API calls; no production mutation; no remediation execution; no unrestricted shell; does not claim unattended production operation.
 ## P48 Hypothesis Re-ranking Evidence
@@ -1154,7 +1154,7 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_hypothesis_reranker.py tests/test_p48_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.31%; P48 smoke wrote `/tmp/opscat-hypothesis-reranker-latest.md` with case_count=2, expected_top_match_count=2, expected_top_match_ratio=1.0, anti_anchoring_demotions=1, unsafe_action_count=0, and passed=true.
 
 Boundary: offline read-only investigation results only; no live API calls; no auth/session work; no default external model/API calls; no production mutation; no remediation execution; does not claim unattended production operation.
 
@@ -1178,7 +1178,7 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_remediation_verification_loop.py tests/test_p49_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.31%; P49 smoke wrote `/tmp/opscat-remediation-verification-loop-latest.md` with case_count=2, precheck_pass_count=2, recovery_verified_count=1, failed_verification_escalation_count=1, production_execution_count=0, unsafe_action_count=0, and passed=true.
 
 Boundary: offline fixtures only; mock/draft remediation boundary only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
 
@@ -1202,6 +1202,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_night_operator_drill_v2.py tests/test_p50_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.31%; P50 smoke wrote `/tmp/opscat-night-operator-drill-v2-latest.md` with drill_count=2, evidence_contract_pass_count=2, investigation_complete_count=2, read_only_tool_plan_count=6, remediation_verification_count=2, production_execution_count=0, unsafe_auto_execute_count=0, local_night_watch_ready=true, unattended_production_ready=false, and passed=true.
 
 Boundary: offline fixtures only; read-only/mocked local drill only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

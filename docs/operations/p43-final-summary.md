@@ -27,15 +27,37 @@ No external downloads during normal verification, no live API calls, no auth/ses
 - `docs/operations/p43-ticket-roadmap.md`
 - `docs/operations/p43-final-summary.md`
 
-## Verification target
+## Verification result
 
-Expected metrics before final evidence commit:
+Full verification passed with P43 offline smoke enabled, then explicit opt-in public download benchmark passed with network access.
 
-- offline source count: at least 2
-- offline download count: 0
-- offline root-cause accuracy: at least 0.9
-- offline route accuracy: at least 0.9
-- opt-in public download count: at least 2 if network is available
+Offline full-verification smoke:
+
+- dataset mode: fixture_fallback
+- source count: 2
+- download count: 0
+- materialized source count: 2
+- parsed record count: 7
+- root-cause accuracy: 1.0
+- route accuracy: 1.0
+- network allowed: false
+- external downloads performed: false
+
+Opt-in public download benchmark:
+
+- dataset mode: downloaded_public_sample
+- source count: 2
+- download count: 3
+- downloaded bytes: 918821
+- materialized source count: 2
+- parsed record count: 4000
+- label coverage: 1.0
+- root-cause accuracy: 1.0
+- route accuracy: 1.0
+- unsafe action count: 0
+- network allowed: true
+- external downloads performed: true
 - generated artifacts committed: false
+- P43 passed: true
 
-Final verified metrics are recorded in `docs/release-evidence.md` after full verification and opt-in public benchmark execution.
+Full profile evidence: `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full` passed; coverage gate 78.90%; `app/services/public_dataset_benchmark.py` coverage 84.99%; offline report written to `/tmp/opscat-public-dataset-benchmark-latest.md`; live opt-in report written to `/tmp/opscat-public-dataset-benchmark-live.md`.

@@ -1626,6 +1626,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
 
-Verified result: pending final full/docs verification after GREEN implementation.
+Verified result: full profile passed; docs profile passed; coverage gate 80.29%; P68 smoke wrote `/tmp/opscat-autonomous-agent-dispatcher-latest.md` with dispatch_packet_count=3, queued_packet_count=3, blocked_dispatch_count=6, next_runnable_ticket=P69, spawned_process_count=0, shell_command_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 Boundary: packet-only dispatcher; no process spawning, no shell command execution, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

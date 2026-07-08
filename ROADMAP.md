@@ -552,3 +552,11 @@ P63 active scope: Staging Live Read-only Preflight Runner. P63 gates any staging
 ## P63 implemented
 
 P63 implemented as Staging Live Read-only Preflight evidence. P63 evaluates staging preflight eligibility without live calls by default, verifies live-path behavior through mock transport only, blocks unsafe production/admin/non-GET/disallowed-host checks, and preserves no real server connection in normal verification, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P64 active
+
+P64 active scope: Audited Staging Credential + Transport Gate. P64 gates any staging transport attempt behind injected credential resolution, manual approval, audit logging, allowlisted HTTPS GET checks, P63 readiness, and safe timeouts.
+
+## P64 implemented
+
+P64 implemented as Audited Staging Credential + Transport Gate evidence. P64 records audit decisions without transport calls by default, verifies live-path behavior through mock transport only, blocks missing approval, raw credential values, unsafe methods, disallowed hosts, production/admin checks, and unsafe timeouts, while preserving no `.env` reads, no real credentials, no real server connection in normal verification, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

@@ -1508,3 +1508,27 @@ Verification:
 Verified result: full profile passed; coverage gate 79.91%; P63 smoke wrote `/tmp/opscat-staging-live-read-only-preflight-latest.md` with check_count=4, eligible_check_count=3, attempted_check_count=0, successful_check_count=0, blocked_check_count=1, non_get_check_count=1, manual_approval_missing_count=0, mock_transport_call_count=0, live_api_call_count=0, action_execution_count=0, production_mutation_count=0, eligible_checks=p63-grafana-health-get/p63-sentry-projects-get/p63-datadog-monitors-get, blocked_checks=p63-prod-admin-post-blocked, next_step="rerun with explicit live staging flag after manual approval and read-only credentials", and passed=true.
 
 Boundary: default no-live staging preflight only; no real server connection in normal verification; live path requires explicit live staging gates; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.
+
+## P64 Audited Staging Credential + Transport Gate Evidence
+
+P64 adds an audited credential and transport gate between P63 preflight eligibility and any network-capable staging transport. Default mode records audit decisions and performs zero transport calls.
+
+Artifacts:
+
+- `docs/operations/p64-ticket-roadmap.md`
+- `docs/operations/p64-final-summary.md`
+- `evals/staging/p64_audited_credential_transport_gate.json`
+- `app/services/audited_staging_transport_gate.py`
+- `scripts/run_audited_staging_transport_gate.py`
+- `tests/test_audited_staging_transport_gate.py`
+- `tests/test_p64_release_evidence.py`
+- `/tmp/opscat-audited-staging-transport-gate-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_audited_staging_transport_gate.py tests/test_p64_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: default dry-run audited staging transport gate only; injected mock secret store only; no `.env` reads; no real credentials; no real server connection in normal verification; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

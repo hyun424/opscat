@@ -38,6 +38,14 @@ Boundary: no-auth/local-mock by default; no live API calls; no production creden
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_telemetry_adapter.py --source all --fixture-dir evals/telemetry/fixtures --output-json /tmp/opscat-telemetry-adapter-latest.json --output-md /tmp/opscat-telemetry-adapter-latest.md`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
+## Verified Result
+
+- Targeted P26 tests: 7 passed.
+- P26 CLI smoke: 3 snapshots, 5 series, 3 events, 6 trend windows; `live_api_calls_enabled=False`; `action_execution_enabled=False`.
+- Full verification: `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full` passed.
+- Coverage gate: 76.68% total, above the 60.00% project minimum; `app/services/telemetry_adapter.py` at 81.39%.
+- Latest report artifact: `/tmp/opscat-telemetry-adapter-latest.md`.
+
 ## Known Boundaries
 
 This is a read-only adapter contract, not live SaaS ingestion. It is intentionally no-auth/local-mock by default and does not claim unattended production operation. The next production-quality step is connector health/permission modeling and replay safety for live-like polling without enabling mutation.

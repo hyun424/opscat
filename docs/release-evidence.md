@@ -625,4 +625,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_telemetry_adapter_contract.py tests/test_p26_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
+Verified result: full profile passed; coverage gate 76.68%; P26 telemetry adapter smoke wrote `/tmp/opscat-telemetry-adapter-latest.md` with 3 snapshots, 5 series, 3 events, and 6 trend windows.
+
 Boundary: no-auth/local-mock by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

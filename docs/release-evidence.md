@@ -895,6 +895,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_open_source_config_hardening.py tests/test_p37_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile. Target metrics are checked surface count >= 4, template pass rate 1.0, secret safety rate 1.0, safe default rate 1.0, real secret count 0, and unsafe default count 0.
+Verified result: full profile passed; coverage gate 78.31%; `app/services/open_source_config_hardening.py` coverage 86.26%; P37 open-source config hardening smoke wrote `/tmp/opscat-open-source-config-hardening-latest.md` with 4 checked surfaces, 4 passed surfaces, blocker count 0, template pass rate 1.0, secret safety rate 1.0, safe default rate 1.0, real secret count 0, and unsafe default count 0.
 
 Boundary: open-source/local config hardening only; no auth/session implementation; no real `.env` value reads; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

@@ -335,3 +335,8 @@ P36 implemented as Approval Control Plane evidence. P36 routes P35 shadow decisi
 ## P37 active
 
 P37 active scope: Open-source Config Hardening. P37 validates OSS/local templates and examples for placeholders, safe defaults, no real-looking secrets, disabled live/prod mutation, disabled remediation execution, and verification evidence. Auth remains out of scope.
+
+
+## P37 implemented
+
+P37 implemented as Open-source Config Hardening evidence. P37 validates committed OSS/local templates and examples, checks placeholders, credential references, secret-marker absence, and safe disabled defaults, integrates CLI/full verification smoke, and never reads real `.env` values or enables auth, live calls, production mutation, remediation execution, unrestricted shell, external model/API calls, or unattended production-operation claims.

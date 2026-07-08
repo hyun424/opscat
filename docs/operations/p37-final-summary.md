@@ -29,15 +29,19 @@ P37 validates open-source/local configuration templates and examples so contribu
 
 No auth/session implementation, no real `.env` value reads, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and does not claim unattended production operation.
 
-## Verification target
+## Verification result
 
-Expected metrics before final full verification:
+Full verification passed with P37 included in `scripts/verify.sh`:
 
-- checked surface count: at least 4
+- checked surface count: 4
+- passed surface count: 4
+- blocker count: 0
 - template pass rate: 1.0
 - secret safety rate: 1.0
 - safe default rate: 1.0
 - real secret count: 0
 - unsafe default count: 0
+- total coverage gate: 78.31% >= 60.00%
+- `app/services/open_source_config_hardening.py` coverage: 86.26%
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+Generated artifacts: `/tmp/opscat-open-source-config-hardening-latest.md` and `/tmp/opscat-open-source-config-hardening-latest.json`.

@@ -383,3 +383,7 @@ P42 active scope: External Dataset Acquisition & Holdout Evaluation. P42 adds an
 ## P42 implemented
 
 P42 implemented as External Dataset Acquisition & Holdout Evaluation evidence. P42 defines public LogHub/NAB source metadata, keeps normal verification in no-network dry-run mode, exposes an explicit `--allow-network` acquisition boundary, builds deterministic train/dev/holdout splits from repo-local raw fixtures, scores holdout sources through the P41 raw replay harness, integrates full verification smoke, and preserves the no-download/no-live/no-auth/no-mutation/no-remediation-execution/no-unattended-production-operation boundary by default.
+
+## P43 active
+
+P43 active scope: Opt-in Public Dataset Download & Benchmark Scorecard. P43 executes the P42 acquisition boundary by downloading small public LogHub/NAB samples only with explicit opt-in, materializing downloaded raw data into P41-compatible replay files, scoring the benchmark, and keeping normal verification offline/fixture-backed.

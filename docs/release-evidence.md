@@ -1017,3 +1017,27 @@ Verification:
 Verified result: full profile passed; coverage gate 78.77%; `app/services/external_dataset_acquisition.py` coverage 85.17%; P42 external dataset acquisition smoke wrote `/tmp/opscat-external-dataset-acquisition-latest.md` with source count 3, dry-run download count 0, holdout source count 2, holdout parsed record count 4, label coverage 1.0, root-cause accuracy 1.0, route accuracy 1.0, unsafe action count 0, boundary violation count 0, network_allowed=false, external_downloads_performed=false, and passed=true.
 
 Boundary: default dry-run only; no external dataset downloads during verification; no live API calls; no auth/session work; no default external model/API calls; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+## P43 Opt-in Public Dataset Download & Benchmark Scorecard Evidence
+
+P43 downloads small public LogHub/NAB samples only when explicitly allowed, materializes them into P41 raw replay format, and scores them. Normal verification remains offline and fixture-backed.
+
+Artifacts:
+
+- `docs/operations/p43-ticket-roadmap.md`
+- `docs/operations/p43-final-summary.md`
+- `evals/real_datasets/external/p43_public_benchmark_manifest.json`
+- `app/services/public_dataset_benchmark.py`
+- `scripts/run_public_dataset_benchmark.py`
+- `tests/test_public_dataset_benchmark.py`
+- `tests/test_p43_release_evidence.py`
+- `/tmp/opscat-public-dataset-benchmark-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_public_dataset_benchmark.py tests/test_p43_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+- `python3 scripts/run_public_dataset_benchmark.py --allow-network --manifest evals/real_datasets/external/p43_public_benchmark_manifest.json --output-json /tmp/opscat-public-dataset-benchmark-live.json --output-md /tmp/opscat-public-dataset-benchmark-live.md`
+
+Verified result: pending final full profile and opt-in public download benchmark.
+
+Boundary: default offline fixture fallback; public downloads require explicit opt-in; generated dataset artifacts are not committed; no live API calls; no auth/session work; no default external model/API calls; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

@@ -1,0 +1,77 @@
+{
+  "connectors": [
+    {
+      "id": "p62-grafana-staging",
+      "provider": "grafana",
+      "environment": "staging",
+      "endpoint_ref": "env:GRAFANA_STAGING_URL",
+      "credential_ref": "env:GRAFANA_STAGING_READ_TOKEN",
+      "declared_scopes": ["metrics:read", "datasources:read"],
+      "operations": ["fetch_metrics", "fetch_dashboards"],
+      "query_plans": [
+        {
+          "id": "grafana-5xx-rate",
+          "kind": "promql",
+          "query_ref": "rate(http_requests_total{status=~\"5..\"}[5m])",
+          "timeout_ms": 2500,
+          "rate_limit_per_minute": 20
+        }
+      ],
+      "sample_response": {
+        "series": [
+          {"metric": "http_5xx_rate", "service": "payment-api", "value": 8.2, "timestamp": "2026-07-08T03:01:00Z"}
+        ]
+      }
+    },
+    {
+      "id": "p62-sentry-staging",
+      "provider": "sentry",
+      "environment": "staging",
+      "endpoint_ref": "env:SENTRY_STAGING_ORG",
+      "credential_ref": "env:SENTRY_STAGING_READ_TOKEN",
+      "declared_scopes": ["event:read", "project:read"],
+      "operations": ["fetch_errors", "fetch_releases"],
+      "query_plans": [
+        {"id": "sentry-timeouts", "kind": "issue-search", "query_ref": "is:unresolved timeout", "timeout_ms": 2000, "rate_limit_per_minute": 15}
+      ],
+      "sample_response": {
+        "events": [
+          {"event_id": "evt-p62-001", "title": "CheckoutTimeoutError", "count": 17, "timestamp": "2026-07-08T03:02:00Z"}
+        ]
+      }
+    },
+    {
+      "id": "p62-datadog-staging",
+      "provider": "datadog",
+      "environment": "staging",
+      "endpoint_ref": "env:DATADOG_STAGING_SITE",
+      "credential_ref": "env:DATADOG_STAGING_READ_TOKEN",
+      "declared_scopes": ["monitors_read", "logs_read", "metrics_read"],
+      "operations": ["fetch_monitors", "fetch_logs", "fetch_metrics"],
+      "query_plans": [
+        {"id": "datadog-error-logs", "kind": "log-query", "query_ref": "service:payment-api status:error", "timeout_ms": 3000, "rate_limit_per_minute": 10}
+      ],
+      "sample_response": {
+        "monitors": [
+          {"monitor_id": "mon-p62-001", "name": "payment-api error budget", "status": "Alert", "timestamp": "2026-07-08T03:03:00Z"}
+        ],
+        "logs": [
+          {"message": "payment-api timeout after v42 deploy", "status": "error", "timestamp": "2026-07-08T03:03:30Z"}
+        ]
+      }
+    },
+    {
+      "id": "p62-prod-admin-blocked",
+      "provider": "datadog",
+      "environment": "production",
+      "endpoint_ref": "https://api.datadoghq.com",
+      "credential_ref": "actual-secret-value",
+      "declared_scopes": ["monitors_write", "admin", "logs_read"],
+      "operations": ["fetch_logs", "mute_monitor", "restart_service"],
+      "query_plans": [
+        {"id": "unsafe-prod-query", "kind": "log-query", "query_ref": "service:payment-api", "timeout_ms": 8000, "rate_limit_per_minute": 120}
+      ],
+      "sample_response": {"logs": []}
+    }
+  ]
+}

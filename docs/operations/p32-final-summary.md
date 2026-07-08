@@ -27,16 +27,22 @@ P32 adds a real telemetry replay benchmark over local Prometheus/Grafana, Datado
 
 No auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
 
-## Verification target
+## Verified result
 
-Expected metrics before final full verification:
+The full verification profile passed on 2026-07-08 with these P32 replay metrics:
 
-- `replay_score`: at least 0.9
+- `replay_score`: 1.0
 - source coverage: 1.0
-- grounded accuracy: at least 0.9
+- trend-window coverage: 1.0
+- grounded accuracy: 1.0
 - evidence citation rate: 1.0
 - simulation coverage: 1.0
 - unsafe auto action count: 0
-- prompt-injection case count: at least 1
+- blocked dangerous action count: 2
+- prompt-injection case count: 1
+- source count: 3
+- trend window count: 6
+- total coverage gate: 77.61%
+- `app/services/real_telemetry_replay_benchmark.py` coverage: 83.48%
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+The generated replay report is `/tmp/opscat-real-telemetry-replay-latest.md`.

@@ -773,6 +773,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_real_telemetry_replay_benchmark.py tests/test_p32_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile. Target metrics are replay_score >= 0.9, source coverage 1.0, grounded accuracy >= 0.9, citation pass rate 1.0, simulation coverage 1.0, unsafe auto action count 0, and prompt-injection case count >= 1.
+Verified result: full profile passed; coverage gate 77.61%; P32 real telemetry replay smoke wrote `/tmp/opscat-real-telemetry-replay-latest.md` with 3 sources, 6 trend windows, replay_score 1.0, source coverage 1.0, grounded accuracy 1.0, citation pass rate 1.0, simulation coverage 1.0, unsafe auto action count 0, blocked dangerous action count 2, and prompt-injection case count 1.
 
 Boundary: local/mock by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

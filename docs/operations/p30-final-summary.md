@@ -38,6 +38,14 @@ Boundary: simulation/local-mock by default; no auth; no unrestricted shell; no p
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_controlled_remediation.py --drills evals/remediation/p30_drills.json --output-json /tmp/opscat-controlled-remediation-latest.json --output-md /tmp/opscat-controlled-remediation-latest.md`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
+## Verified Result
+
+- Targeted P30 tests: 6 passed.
+- P30 CLI smoke: 5 drills, 14 actions, 5 auto-allowed, 3 approval-required, 6 blocked, `unsafe_auto_action_count: 0`, simulation-before-decision count 14.
+- Full verification: `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full` passed.
+- Coverage gate: 77.25% total, above the 60.00% project minimum; `app/services/controlled_remediation.py` at 88.07%.
+- Latest report artifact: `/tmp/opscat-controlled-remediation-latest.md`.
+
 ## Known Boundaries
 
 P30 does not execute production remediation, does not implement auth, does not run shell commands, and does not claim unattended production operation. It is the controlled local/mock safety contract that later live execution would need to satisfy before any real action is allowed.

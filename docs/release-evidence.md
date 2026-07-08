@@ -725,4 +725,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_controlled_remediation_policy.py tests/test_p30_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
+Verified result: full profile passed; coverage gate 77.25%; P30 controlled remediation smoke wrote `/tmp/opscat-controlled-remediation-latest.md` with 5 drills, 14 actions, 5 auto-allowed, 3 approval-required, 6 blocked, simulation-before-decision count 14, and unsafe auto action count 0.
+
 Boundary: simulation/local-mock by default; no auth; no unrestricted shell; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

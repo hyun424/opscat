@@ -248,3 +248,20 @@ P26 active scope: Real Telemetry Adapter Contract. P26 creates fixture/read-only
 ## P26 implemented
 
 P26 implemented as Real Telemetry Adapter Contract evidence. P26 adds read-only fixture adapters for Prometheus/Grafana, Datadog, and Sentry shaped payloads, normalizes telemetry snapshots, converts compatible signals to proactive trend windows, exposes a CLI report, integrates verification, and preserves release evidence. Normal verification remains no-auth/local-mock by default and performs no live observability API calls, external model/API calls, or remediation execution.
+
+## P27 active
+
+P27 active scope: Connector Readiness and Permission Contract. P27 defines safe read-only connector readiness before any live polling: declared capabilities, required permissions, credential references, health states, rate-limit/backoff policy, read-only enforcement, CLI reports, verification, and release evidence. The boundary remains no-auth/local-mock by default: no production credentials, live writes, production mutation, remediation execution, default external model/API calls, or unattended production-operation claims.
+
+## P28 planned
+
+P28 planned scope: Read-only Polling Runtime. P28 will add a bounded local/mock polling runtime that schedules read-only connector polls, applies timeout/backoff/rate-limit behavior, converts responses through P26 adapters, and emits telemetry batches without production mutation.
+
+## P29 planned
+
+P29 planned scope: Telemetry-grounded Judgment Quality Evaluation. P29 will evaluate whether OpsCat judgments improve when grounded in connector telemetry, including route choice, root-cause candidates, evidence citation, missing-evidence requests, and safety behavior.
+
+## P30 planned
+
+P30 planned scope: Controlled Auto-remediation Policy and Simulation. P30 will define conservative auto-remediation policy and simulation: only low-risk, reversible, pre-approved local/mock actions can auto-run; production-changing actions remain approval-required or blocked.
+

@@ -358,3 +358,7 @@ P39 active scope: Runbook Learning Loop. P39 converts local blocked/degraded/app
 ## P39 implemented
 
 P39 implemented as Runbook Learning Loop evidence. P39 converts local blocked/degraded/approval/config/dashboard signals into reviewable runbook recommendations and regression cases, redacts unsafe command text, integrates CLI/full verification smoke, and does not automatically edit production runbooks, add auth, call live APIs, mutate production, execute remediation, use external models, or claim unattended production operation.
+
+## P40 active
+
+P40 active scope: Production-readiness Milestone Bundle. P40 packages P33-P39 verified local evidence into a readiness bundle, declares local portfolio readiness, and explicitly marks production autopilot/unattended operation as not ready until auth, live connector validation, production-safe execution controls, and operational SLOs exist.

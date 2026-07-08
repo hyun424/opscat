@@ -946,3 +946,27 @@ Verification:
 Verified result: full profile passed; coverage gate 78.52%; `app/services/runbook_learning_loop.py` coverage 89.32%; P39 runbook learning loop smoke wrote `/tmp/opscat-runbook-learning-loop-latest.md` with 5 source phases, 5 recommendations, 4 regression cases, source coverage 1.0, unsafe learning count 0, and applied change count 0.
 
 Boundary: local learning recommendations only; no automatic production runbook edits; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+
+## P40 Production-readiness Milestone Bundle Evidence
+
+P40 packages P33-P39 evidence into one readiness bundle. It proves local portfolio readiness and explicitly does not claim unattended production operation or production autopilot readiness.
+
+Artifacts:
+
+- `docs/operations/p40-ticket-roadmap.md`
+- `docs/operations/p40-final-summary.md`
+- `app/services/production_readiness_milestone.py`
+- `scripts/run_production_readiness_milestone.py`
+- `evals/readiness/p40_sources.json`
+- `tests/test_production_readiness_milestone.py`
+- `tests/test_p40_release_evidence.py`
+- `/tmp/opscat-production-readiness-milestone-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_production_readiness_milestone.py tests/test_p40_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are gate count >= 8, passed gate count equals gate count, boundary violation count 0, production blocker count >= 1, readiness decision local-portfolio-ready, and production autopilot ready false.
+
+Boundary: local readiness bundle only; does not claim unattended production operation; does not enable production autopilot; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution.

@@ -294,3 +294,7 @@ P31 implemented as End-to-End Operator Replacement Drill evidence. P31 composes 
 ## P32 active
 
 P32 active scope: Real Telemetry Replay Benchmark. P32 replays local Prometheus/Grafana, Datadog, and Sentry shaped telemetry fixtures through adapter normalization, trend-window detection, telemetry-grounded judgment scoring, and controlled remediation simulation. The boundary remains no-auth/local-mock by default: no live API calls, production mutation, remediation execution, unrestricted shell, default external model/API calls, or unattended production-operation claims.
+
+## P32 implemented
+
+P32 implemented as Real Telemetry Replay Benchmark evidence. P32 replays local Prometheus/Grafana, Datadog, and Sentry shaped fixtures through telemetry adapters, trend-window detection, telemetry-grounded judgment, and controlled remediation simulation. Normal verification remains no-auth/local-mock by default and performs no live API calls, production mutation, remediation execution, unrestricted shell execution, external model/API calls, or unattended production-operation claim.

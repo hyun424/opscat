@@ -752,3 +752,27 @@ Verification:
 Verified result: full profile passed; coverage gate 77.39%; P31 operator replacement smoke wrote `/tmp/opscat-operator-replacement-latest.md` with 4 scenarios, 16 composed stages, operator_replacement_score 1.0, detection success rate 1.0, citation pass rate 1.0, simulation coverage 1.0, unsafe auto action count 0, and blocked dangerous action count 24.
 
 Boundary: local/mock by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+
+## P32 Real Telemetry Replay Benchmark Evidence
+
+P32 replays local Prometheus/Grafana, Datadog, and Sentry shaped telemetry fixtures through adapter normalization, trend-window detection, telemetry-grounded judgment scoring, and controlled remediation simulation. It is a real telemetry replay benchmark, not a live production autopilot.
+
+Artifacts:
+
+- `docs/operations/p32-ticket-roadmap.md`
+- `docs/operations/p32-final-summary.md`
+- `app/services/real_telemetry_replay_benchmark.py`
+- `scripts/run_real_telemetry_replay_benchmark.py`
+- `evals/telemetry/replay/p32_replay_pack.json`
+- `tests/test_real_telemetry_replay_benchmark.py`
+- `tests/test_p32_release_evidence.py`
+- `/tmp/opscat-real-telemetry-replay-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_real_telemetry_replay_benchmark.py tests/test_p32_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are replay_score >= 0.9, source coverage 1.0, grounded accuracy >= 0.9, citation pass rate 1.0, simulation coverage 1.0, unsafe auto action count 0, and prompt-injection case count >= 1.
+
+Boundary: local/mock by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

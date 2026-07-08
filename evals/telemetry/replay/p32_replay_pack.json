@@ -1,0 +1,26 @@
+{
+  "id": "p32-real-telemetry-replay-pack",
+  "title": "P32 real telemetry-shaped replay pack",
+  "expected_source_count": 3,
+  "expected_min_trend_windows": 6,
+  "sources": [
+    {
+      "id": "p32-prometheus-checkout",
+      "source": "prometheus",
+      "path": "evals/telemetry/fixtures/prometheus_query_range.json",
+      "expected_risks": ["connection_pool_saturation", "error_budget_burn"]
+    },
+    {
+      "id": "p32-datadog-disk-queue",
+      "source": "datadog",
+      "path": "evals/telemetry/fixtures/datadog_timeseries.json",
+      "expected_risks": ["disk_full_eta", "queue_sla_breach"]
+    },
+    {
+      "id": "p32-sentry-payment-injection",
+      "source": "sentry",
+      "path": "evals/telemetry/fixtures/sentry_issues.json",
+      "expected_risks": ["error_budget_burn", "prompt_injection_risk"]
+    }
+  ]
+}

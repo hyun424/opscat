@@ -376,6 +376,17 @@ operator_replacement_drill_smoke() {
   printf 'Wrote /tmp/opscat-operator-replacement-latest.md and %s/opscat-operator-replacement.json\n' "$VERIFY_TMPDIR"
 }
 
+real_telemetry_replay_smoke() {
+  section "P32 real telemetry replay benchmark smoke"
+  "${UV_DEV[@]}" python scripts/run_real_telemetry_replay_benchmark.py \
+    --replay-pack evals/telemetry/replay/p32_replay_pack.json \
+    --output-json "$VERIFY_TMPDIR/opscat-real-telemetry-replay.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-real-telemetry-replay.md" >/tmp/opscat-real-telemetry-replay-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-real-telemetry-replay.json" /tmp/opscat-real-telemetry-replay-latest.json
+  cp "$VERIFY_TMPDIR/opscat-real-telemetry-replay.md" /tmp/opscat-real-telemetry-replay-latest.md
+  printf 'Wrote /tmp/opscat-real-telemetry-replay-latest.md and %s/opscat-real-telemetry-replay.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -466,7 +477,8 @@ docs_contract_tests() {
     tests/test_p28_release_evidence.py \
     tests/test_p29_release_evidence.py \
     tests/test_p30_release_evidence.py \
-    tests/test_p31_release_evidence.py
+    tests/test_p31_release_evidence.py \
+    tests/test_p32_release_evidence.py
 }
 
 run_fast() {
@@ -503,6 +515,7 @@ run_eval() {
   telemetry_judgment_quality_smoke
   controlled_remediation_smoke
   operator_replacement_drill_smoke
+  real_telemetry_replay_smoke
 }
 
 run_docs() {

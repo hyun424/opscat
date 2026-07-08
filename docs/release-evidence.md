@@ -848,3 +848,27 @@ Verification:
 Verified result: full profile passed; coverage gate 78.04%; `app/services/incident_shadow_mode.py` coverage 89.12%; P35 incident shadow mode smoke wrote `/tmp/opscat-incident-shadow-mode-latest.md` with 4 cases, 4 shadow decisions, expected_route_match_rate 1.0, evidence link rate 1.0, shadow coverage 1.0, execution count 0, and unsafe shadow action count 0.
 
 Boundary: shadow/local by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+
+## P36 Approval Control Plane Evidence
+
+P36 routes P35 shadow decisions through local approval profiles and records what would be auto-allowed, approval-required, or blocked without executing remediation.
+
+Artifacts:
+
+- `docs/operations/p36-ticket-roadmap.md`
+- `docs/operations/p36-final-summary.md`
+- `app/services/approval_control_plane.py`
+- `scripts/run_approval_control_plane.py`
+- `evals/approval/p36_profiles.json`
+- `tests/test_approval_control_plane.py`
+- `tests/test_p36_release_evidence.py`
+- `/tmp/opscat-approval-control-plane-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_approval_control_plane.py tests/test_p36_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are profile count >= 3, request count >= 4, profile coverage 1.0, unsafe auto action count 0, execution count 0, blocked untrusted action count >= 1, and auto allowed count >= 1.
+
+Boundary: approval-control/local by default; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

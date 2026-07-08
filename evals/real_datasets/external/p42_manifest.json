@@ -1,0 +1,42 @@
+{
+  "version": "p42.1",
+  "default_mode": "dry_run",
+  "destination_root": "data/external_datasets",
+  "split_seed": "opscat-p42",
+  "holdout_fraction": 0.34,
+  "sources": [
+    {
+      "id": "loghub-apache",
+      "family": "loghub",
+      "official_url": "https://github.com/logpai/loghub",
+      "sample_url": "https://raw.githubusercontent.com/logpai/loghub/master/Apache/Apache_2k.log",
+      "license_note": "Refer to the Loghub repository and cite Loghub papers where applicable.",
+      "expected_format": "raw_log",
+      "expected_root_cause": "deploy_regression",
+      "expected_route": "human_required",
+      "local_fixture": "evals/real_datasets/fixtures/loghub/apache_sample.jsonl"
+    },
+    {
+      "id": "nab-real-known-cause",
+      "family": "nab",
+      "official_url": "https://github.com/numenta/NAB",
+      "sample_url": "https://raw.githubusercontent.com/numenta/NAB/master/data/realKnownCause/machine_temperature_system_failure.csv",
+      "license_note": "NAB repository is MIT licensed; cite NAB publications when publishing benchmark results.",
+      "expected_format": "csv_timeseries",
+      "expected_root_cause": "metric_anomaly",
+      "expected_route": "human_required",
+      "local_fixture": "evals/real_datasets/fixtures/nab/real_known_cause_sample.csv"
+    },
+    {
+      "id": "opscat-aiops-local",
+      "family": "aiops",
+      "official_url": "repo-local fixture",
+      "sample_url": "repo-local fixture",
+      "license_note": "Synthetic repo-local multisignal fixture used as an AIOps-shaped placeholder until a vetted public RCA corpus is added.",
+      "expected_format": "jsonl_multisignal",
+      "expected_root_cause": "deploy_regression",
+      "expected_route": "human_required",
+      "local_fixture": "evals/real_datasets/fixtures/aiops/multisignal_sample.jsonl"
+    }
+  ]
+}

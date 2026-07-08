@@ -375,3 +375,7 @@ P41 active scope: Raw Real Dataset Scored Replay. P41 evaluates source-native re
 ## P41 implemented
 
 P41 implemented as Raw Real Dataset Scored Replay evidence. P41 reads repo-local source-native LogHub-style JSONL, NAB-style CSV, and AIOps-style JSONL fixture files directly, scores labels/root-cause/route against expected outcomes, emits per-source cards and CLI reports, integrates full verification smoke, and preserves the no-download/no-live/no-auth/no-mutation/no-remediation-execution/no-unattended-production-operation boundary.
+
+## P42 active
+
+P42 active scope: External Dataset Acquisition & Holdout Evaluation. P42 adds an opt-in public dataset acquisition manifest, no-network default acquisition planner, deterministic holdout split, and holdout scoring over raw dataset replay evidence while preserving the no-download/no-live/no-auth/no-mutation/no-remediation-execution/no-unattended-production-operation boundary during normal verification.

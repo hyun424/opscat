@@ -1460,3 +1460,27 @@ Verification:
 Verified result: full profile passed; coverage gate 79.72%; P61 smoke wrote `/tmp/opscat-local-shadow-connector-validation-latest.md` with source_count=3, metric_signal_count=2, log_signal_count=2, error_signal_count=1, deployment_signal_count=1, empty_source_count=1, malformed_payload_count=1, supporting_evidence_count=4, counter_evidence_count=2, missing_evidence_count=2, top_hypothesis=recent_deploy_regression, confidence=0.91, recommended_action=prepare rollback PR draft, execution=blocked_shadow_mode, local_operator_replacement_ready=true, unattended_production_ready=false, action_execution_count=0, live_api_call_count=0, production_mutation_count=0, validation_gate_count=6, and passed=true.
 
 Boundary: offline local shadow connector only; no real server connection; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.
+
+## P62 Staging Read-only Connector Contract Evidence
+
+P62 validates provider-shaped staging connector contracts for Grafana, Sentry, and Datadog before any real staging API credentials or network calls are used.
+
+Artifacts:
+
+- `docs/operations/p62-ticket-roadmap.md`
+- `docs/operations/p62-final-summary.md`
+- `evals/staging/p62_staging_connector_contract.json`
+- `app/services/staging_read_only_connector_contract.py`
+- `scripts/run_staging_read_only_connector_contract.py`
+- `tests/test_staging_read_only_connector_contract.py`
+- `tests/test_p62_release_evidence.py`
+- `/tmp/opscat-staging-read-only-connector-contract-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_staging_read_only_connector_contract.py tests/test_p62_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline staging connector contract only; local manifest and sample responses only; no real server connection; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

@@ -536,3 +536,11 @@ P61 active scope: Local Shadow Connector Validation. P61 validates a live-shaped
 ## P61 implemented
 
 P61 implemented as Local Shadow Connector Validation evidence. P61 reads a live-shaped local source through fetch-only connector methods, normalizes metrics/logs/errors/deployments into evidence, produces a shadow deploy-regression judgment, links to P60 readiness, and preserves no real server connection, no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P62 active
+
+P62 active scope: Staging Read-only Connector Contract. P62 validates provider-shaped Grafana, Sentry, and Datadog staging connector contracts before real staging credentials or APIs are attached.
+
+## P62 implemented
+
+P62 implemented as Staging Read-only Connector Contract evidence. P62 validates provider-specific schema, read-only scopes, safe query budgets, staging-only environment boundaries, redacted credential references, and operator handoff while preserving no real server connection, no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

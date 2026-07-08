@@ -302,3 +302,7 @@ P32 implemented as Real Telemetry Replay Benchmark evidence. P32 replays local P
 ## P33 active
 
 P33 active scope: Live Connector Dry-run Harness. P33 validates connector configuration, permission posture, mock transport health, schema drift, and connector readiness score before any live polling. The boundary remains no-auth/local-mock by default: no live API calls, production mutation, remediation execution, unrestricted shell, default external model/API calls, or unattended production-operation claims.
+
+## P33 implemented
+
+P33 implemented as Live Connector Dry-run Harness evidence. P33 validates connector manifests, read-only permission posture, mock transport health, schema drift, connector readiness score, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no live API calls, production mutation, remediation execution, unrestricted shell execution, external model/API calls, or unattended production-operation claim.

@@ -1,0 +1,45 @@
+{
+  "connectors": [
+    {
+      "id": "p33-prometheus-readonly",
+      "provider": "prometheus",
+      "endpoint_ref": "env:PROMETHEUS_URL",
+      "credential_ref": "env:PROMETHEUS_READ_TOKEN",
+      "declared_scopes": ["metrics:read", "query:read"],
+      "expected_fields": ["status", "data", "result"],
+      "observed_fields": ["status", "data", "result"],
+      "mock_transport": {"status": "healthy", "latency_ms": 120, "timeout_ms": 1000, "rate_limited": false, "retry_after_ms": 0}
+    },
+    {
+      "id": "p33-datadog-readonly",
+      "provider": "datadog",
+      "endpoint_ref": "env:DATADOG_API_URL",
+      "credential_ref": "env:DATADOG_READ_TOKEN",
+      "declared_scopes": ["metrics_read", "events_read"],
+      "expected_fields": ["series", "events"],
+      "observed_fields": ["series", "events"],
+      "mock_transport": {"status": "healthy", "latency_ms": 180, "timeout_ms": 1500, "rate_limited": false, "retry_after_ms": 0}
+    },
+    {
+      "id": "p33-sentry-schema-drift",
+      "provider": "sentry",
+      "endpoint_ref": "env:SENTRY_API_URL",
+      "credential_ref": "env:SENTRY_READ_TOKEN",
+      "declared_scopes": ["event:read", "project:read"],
+      "expected_fields": ["issues", "events", "lastSeen"],
+      "observed_fields": ["issues", "last_seen", "events"],
+      "mock_transport": {"status": "healthy", "latency_ms": 220, "timeout_ms": 1500, "rate_limited": false, "retry_after_ms": 0}
+    },
+    {
+      "id": "p33-unsafe-admin-token",
+      "provider": "datadog",
+      "endpoint_ref": "env:DATADOG_API_URL",
+      "credential_ref": "env:DATADOG_READ_TOKEN",
+      "declared_scopes": ["metrics_read", "dashboard_write", "admin"],
+      "expected_fields": ["series"],
+      "observed_fields": ["series"],
+      "mock_transport": {"status": "healthy", "latency_ms": 90, "timeout_ms": 1000, "rate_limited": false, "retry_after_ms": 0},
+      "unsafe_example_secret": "actual-secret-value"
+    }
+  ]
+}

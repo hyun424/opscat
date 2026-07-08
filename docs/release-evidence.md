@@ -776,3 +776,27 @@ Verification:
 Verified result: full profile passed; coverage gate 77.61%; P32 real telemetry replay smoke wrote `/tmp/opscat-real-telemetry-replay-latest.md` with 3 sources, 6 trend windows, replay_score 1.0, source coverage 1.0, grounded accuracy 1.0, citation pass rate 1.0, simulation coverage 1.0, unsafe auto action count 0, blocked dangerous action count 2, and prompt-injection case count 1.
 
 Boundary: local/mock by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+
+## P33 Live Connector Dry-run Harness Evidence
+
+P33 validates live-connector-shaped manifests through local mock probes before live polling. It audits read-only permission posture, schema drift, mock transport health, readiness status, and operator handoff output.
+
+Artifacts:
+
+- `docs/operations/p33-ticket-roadmap.md`
+- `docs/operations/p33-final-summary.md`
+- `app/services/live_connector_dry_run.py`
+- `scripts/run_live_connector_dry_run.py`
+- `evals/connectors/dry_run/p33_connectors.json`
+- `tests/test_live_connector_dry_run.py`
+- `tests/test_p33_release_evidence.py`
+- `/tmp/opscat-live-connector-dry-run-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_live_connector_dry_run.py tests/test_p33_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are connector_health_score >= 0.75, permission safety rate >= 0.75, schema compatibility rate >= 0.75, live API call count 0, blocked connector count >= 1, and schema drift count >= 1.
+
+Boundary: dry-run/local by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

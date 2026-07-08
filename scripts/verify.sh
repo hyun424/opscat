@@ -387,6 +387,17 @@ real_telemetry_replay_smoke() {
   printf 'Wrote /tmp/opscat-real-telemetry-replay-latest.md and %s/opscat-real-telemetry-replay.json\n' "$VERIFY_TMPDIR"
 }
 
+live_connector_dry_run_smoke() {
+  section "P33 live connector dry-run smoke"
+  "${UV_DEV[@]}" python scripts/run_live_connector_dry_run.py \
+    --manifest evals/connectors/dry_run/p33_connectors.json \
+    --output-json "$VERIFY_TMPDIR/opscat-live-connector-dry-run.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-live-connector-dry-run.md" >/tmp/opscat-live-connector-dry-run-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-live-connector-dry-run.json" /tmp/opscat-live-connector-dry-run-latest.json
+  cp "$VERIFY_TMPDIR/opscat-live-connector-dry-run.md" /tmp/opscat-live-connector-dry-run-latest.md
+  printf 'Wrote /tmp/opscat-live-connector-dry-run-latest.md and %s/opscat-live-connector-dry-run.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -478,7 +489,8 @@ docs_contract_tests() {
     tests/test_p29_release_evidence.py \
     tests/test_p30_release_evidence.py \
     tests/test_p31_release_evidence.py \
-    tests/test_p32_release_evidence.py
+    tests/test_p32_release_evidence.py \
+    tests/test_p33_release_evidence.py
 }
 
 run_fast() {
@@ -516,6 +528,7 @@ run_eval() {
   controlled_remediation_smoke
   operator_replacement_drill_smoke
   real_telemetry_replay_smoke
+  live_connector_dry_run_smoke
 }
 
 run_docs() {

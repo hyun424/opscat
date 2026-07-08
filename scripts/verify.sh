@@ -862,6 +862,29 @@ stateful_all_day_loop_orchestrator_smoke() {
   cp "$VERIFY_TMPDIR/opscat-stateful-all-day-loop-orchestrator.md" /tmp/opscat-stateful-all-day-loop-orchestrator-latest.md
   printf 'Wrote /tmp/opscat-stateful-all-day-loop-orchestrator-latest.md and %s/opscat-stateful-all-day-loop-orchestrator.json\n' "$VERIFY_TMPDIR"
 }
+
+long_run_loop_controller_smoke() {
+  section "P73 long-run loop controller smoke"
+  "${UV_DEV[@]}" python scripts/run_long_run_loop_controller.py \
+    --manifest evals/planning/p66_autonomous_day_loop_backlog.json \
+    --completed P65 \
+    --max-windows 2 \
+    --p72-cycles-per-window 2 \
+    --max-tickets-per-cycle 3 \
+    --max-parallel 2 \
+    --duration-seconds 10000 \
+    --sleep-seconds 0 \
+    --simulated-window-seconds 60 \
+    --enable-process-execution \
+    --transport simulated \
+    --dispatch-dir "$VERIFY_TMPDIR/opscat-long-run-loop-dispatch" \
+    --state-path "$VERIFY_TMPDIR/opscat-long-run-loop-state.json" \
+    --artifact-dir "$VERIFY_TMPDIR/opscat-long-run-loop-artifacts" \
+    --output-json "$VERIFY_TMPDIR/opscat-long-run-loop-controller.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-long-run-loop-controller.md" >/tmp/opscat-long-run-loop-controller-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-long-run-loop-controller.md" /tmp/opscat-long-run-loop-controller-latest.md
+  printf 'Wrote /tmp/opscat-long-run-loop-controller-latest.md and %s/opscat-long-run-loop-controller.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -993,7 +1016,8 @@ docs_contract_tests() {
     tests/test_p69_release_evidence.py \
     tests/test_p70_release_evidence.py \
     tests/test_p71_release_evidence.py \
-    tests/test_p72_release_evidence.py
+    tests/test_p72_release_evidence.py \
+    tests/test_p73_release_evidence.py
 }
 
 run_fast() {
@@ -1071,6 +1095,7 @@ run_eval() {
   gated_worker_process_runner_smoke
   supervised_worker_execution_harness_smoke
   stateful_all_day_loop_orchestrator_smoke
+  long_run_loop_controller_smoke
 }
 
 run_docs() {

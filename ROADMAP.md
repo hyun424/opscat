@@ -624,3 +624,11 @@ P72 active scope: Stateful All-Day Loop Orchestrator. P72 advances the P71 super
 ## P72 implemented
 
 P72 implemented as Stateful All-Day Loop Orchestrator evidence. P72 runs multiple simulated supervised cycles, persists orchestrator state after each cycle, stops on retry queues or missing process enablement, produces resume-completed handoff, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P73 active
+
+P73 active scope: Long-Run Loop Controller. P73 repeats P72 windows under explicit duration, max-window, retry, and enablement guards so autonomous work can run for hours without becoming an unsafe infinite loop.
+
+## P73 implemented
+
+P73 implemented as Long-Run Loop Controller evidence. P73 repeats P72 windows, accumulates resume state, tracks virtual elapsed time and planned sleeps, stops on duration/max-window/retry/enablement guards, writes controller checkpoints, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no actual sleep in verification, no default external model/API calls, no action execution, no raw infinite loop, and no unattended production-operation claim.

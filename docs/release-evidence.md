@@ -1725,3 +1725,27 @@ Verification:
 Verified result: full profile passed; docs profile passed; coverage gate 80.37%; P72 smoke wrote `/tmp/opscat-stateful-all-day-loop-orchestrator-latest.md` with cycle_count=3, completed_ticket_count=8, failed_ticket_count=0, retry_queue_count=0, blocked_by_enable_flag_count=0, stop_reason=max_cycles_reached, supervised_process_run_count=8, cycle_checkpoint_count=3, state_write_count=3, timeout_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 Boundary: simulated supervised transport in repository verification; real subprocess transport is opt-in only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P73 Long-Run Loop Controller Evidence
+
+P73 turns P72 into a bounded long-run controller for hours-long autonomous windows. It repeats P72 windows, accumulates resume state, enforces duration and max-window stop guards, records planned sleep without sleeping in verification, and stops on retry queues or missing process enablement.
+
+Artifacts:
+
+- `docs/operations/p73-ticket-roadmap.md`
+- `docs/operations/p73-final-summary.md`
+- `app/services/long_run_loop_controller.py`
+- `scripts/run_long_run_loop_controller.py`
+- `tests/test_long_run_loop_controller.py`
+- `tests/test_p73_release_evidence.py`
+- `/tmp/opscat-long-run-loop-controller-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_long_run_loop_controller.py tests/test_p73_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: pending final full/docs verification after GREEN implementation.
+
+Boundary: simulated supervised transport and virtual elapsed time in repository verification; real subprocess transport is opt-in only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, no actual sleep in verification, no raw infinite loop, and no unattended production-operation claim.

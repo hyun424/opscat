@@ -1605,3 +1605,27 @@ Verification:
 Verified result: full profile passed; docs profile passed; coverage gate 80.25%; P67 smoke wrote `/tmp/opscat-autonomous-loop-executor-latest.md` with mode=local-auto, selected_ticket_count=3, completed_ticket_count=3, blocked_ticket_count=6, next_runnable_ticket=P69, executed_safe_local_ticket_count=3, checkpoint_count=3, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, gated_execution_attempt_count=0, and passed=true.
 
 Boundary: safe-local executor/controller only; no shell command execution from the service layer, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P68 Autonomous Agent Dispatcher Evidence
+
+P68 converts P67 safe-local executor output into concrete packet-only dispatch artifacts for external Codex/OMX workers. It writes per-ticket prompt and JSON packet files, records blocked gated work, preserves max-parallel policy, and does not spawn processes or execute commands.
+
+Artifacts:
+
+- `docs/operations/p68-ticket-roadmap.md`
+- `docs/operations/p68-final-summary.md`
+- `app/services/autonomous_agent_dispatcher.py`
+- `scripts/run_autonomous_agent_dispatcher.py`
+- `tests/test_autonomous_agent_dispatcher.py`
+- `tests/test_p68_release_evidence.py`
+- `/tmp/opscat-autonomous-agent-dispatcher-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_autonomous_agent_dispatcher.py tests/test_p68_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: pending final full/docs verification after GREEN implementation.
+
+Boundary: packet-only dispatcher; no process spawning, no shell command execution, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

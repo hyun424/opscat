@@ -584,3 +584,11 @@ P67 active scope: Autonomous Loop Executor. P67 turns the P66 backlog into a res
 ## P67 implemented
 
 P67 implemented as Autonomous Loop Executor evidence. P67 selects currently runnable safe-local tickets, emits delegation prompts, records checkpoints, computes resume state, blocks gated live/action/production work, and preserves no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P68 active
+
+P68 active scope: Autonomous Agent Dispatcher. P68 converts safe-local loop work into packet-only dispatch artifacts for external implementation agents.
+
+## P68 implemented
+
+P68 implemented as Autonomous Agent Dispatcher evidence. P68 emits per-ticket prompt and JSON dispatch packets, records blocked gated work, preserves max-parallel policy, computes next runnable state, and preserves no process spawning, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

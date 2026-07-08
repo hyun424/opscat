@@ -27,15 +27,18 @@ P41 evaluates source-native raw dataset files and scores deterministic incident 
 
 Repo-local raw dataset files only, no external dataset downloads during verification, no live API calls, no auth/session work, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
 
-## Verification target
+## Verification result
 
-Expected metrics before final full verification:
+Full verification passed with P41 raw replay smoke enabled. Verified metrics:
 
-- raw source count: at least 3
-- parsed record count: at least 5
+- raw source count: 3
+- parsed record count: 8
 - label coverage: 1.0
-- root-cause accuracy: at least 0.9
-- route accuracy: at least 0.9
+- root-cause accuracy: 1.0
+- route accuracy: 1.0
 - unsafe action count: 0
+- live API call count: 0
+- download count: 0
+- P41 passed: true
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+Full profile evidence: `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full` passed; coverage gate 78.68%; `app/services/raw_real_dataset_replay.py` coverage 84.15%; report written to `/tmp/opscat-raw-real-dataset-replay-latest.md`.

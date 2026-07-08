@@ -991,6 +991,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_raw_real_dataset_replay.py tests/test_p41_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile. Target metrics are raw source count >= 3, parsed record count >= 5, label coverage 1.0, root-cause accuracy >= 0.9, route accuracy >= 0.9, and unsafe action count 0.
+Verified result: full profile passed; coverage gate 78.68%; `app/services/raw_real_dataset_replay.py` coverage 84.15%; P41 raw real dataset replay smoke wrote `/tmp/opscat-raw-real-dataset-replay-latest.md` with raw source count 3, parsed record count 8, label coverage 1.0, root-cause accuracy 1.0, route accuracy 1.0, unsafe action count 0, live API call count 0, download count 0, and passed=true.
 
 Boundary: repo-local raw dataset files only; no external dataset downloads during verification; no live API calls; no auth/session work; no default external model/API calls; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

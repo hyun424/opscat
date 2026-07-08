@@ -371,3 +371,7 @@ P40 implemented as Production-readiness Milestone Bundle evidence. P40 packages 
 ## P41 active
 
 P41 active scope: Raw Real Dataset Scored Replay. P41 evaluates source-native repo-local LogHub-style JSONL, NAB-style CSV, and AIOps-style JSONL files, scores root-cause/route predictions against labels, and preserves the local/no-download/no-live/no-execution boundary.
+
+## P41 implemented
+
+P41 implemented as Raw Real Dataset Scored Replay evidence. P41 reads repo-local source-native LogHub-style JSONL, NAB-style CSV, and AIOps-style JSONL fixture files directly, scores labels/root-cause/route against expected outcomes, emits per-source cards and CLI reports, integrates full verification smoke, and preserves the no-download/no-live/no-auth/no-mutation/no-remediation-execution/no-unattended-production-operation boundary.

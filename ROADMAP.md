@@ -640,3 +640,11 @@ P74 active scope: Real Subprocess Execution Dry-Run Gate. P74 verifies whether P
 ## P74 implemented
 
 P74 implemented as Real Subprocess Execution Dry-Run Gate evidence. P74 consumes P70 validation, requires explicit real-subprocess enablement, blocks dirty worktrees, enforces max-process budgets, preserves command-gate blocks, writes dry-run artifact placeholders and state handoff, and preserves no real subprocess spawning, no shell command execution, no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P75 active
+
+P75 active scope: Local Safe Subprocess Runner. P75 consumes P74 dry-run-ready commands and runs them through an explicit local-safe subprocess runner while repository verification remains simulated and keeps actual subprocess spawning at zero.
+
+## P75 implemented
+
+P75 implemented as Local Safe Subprocess Runner evidence. P75 consumes P74 dry-run-ready plans, requires explicit local-subprocess enablement, writes stdout/stderr artifacts, persists completed/blocked/failed/retry state, exposes CLI JSON/Markdown reports, keeps normal verification on simulated local transport, and preserves no shell command execution, no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, no actual subprocess spawning in verification, and no unattended production-operation claim.

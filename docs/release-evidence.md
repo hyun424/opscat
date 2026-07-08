@@ -1773,3 +1773,27 @@ Verification:
 Verified result: full profile passed; docs profile passed; coverage gate 80.44%; P74 smoke wrote `/tmp/opscat-real-subprocess-dry-run-gate-latest.md` with validated_command_count=3, dry_run_ready_count=2, budget_blocked_count=1, dirty_git_block_count=0, enablement_blocked_count=0, command_gate_blocked_count=0, would_spawn_count=2, actual_spawn_count=0, shell_command_execution_count=0, state_write_count=1, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 Boundary: dry-run only; no real subprocess spawning, no shell command execution, no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P75 Local Safe Subprocess Runner Evidence
+
+P75 adds a local safe subprocess runner after the P74 dry-run gate. It consumes dry-run-ready commands, requires explicit local subprocess enablement, writes stdout/stderr artifacts, records completed/blocked/failed/retry state, and keeps repository verification on simulated local transport with actual spawns fixed at zero.
+
+Artifacts:
+
+- `docs/operations/p75-ticket-roadmap.md`
+- `docs/operations/p75-final-summary.md`
+- `app/services/local_safe_subprocess_runner.py`
+- `scripts/run_local_safe_subprocess_runner.py`
+- `tests/test_local_safe_subprocess_runner.py`
+- `tests/test_p75_release_evidence.py`
+- `/tmp/opscat-local-safe-subprocess-runner-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_local_safe_subprocess_runner.py tests/test_p75_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: pending final full/docs verification after GREEN implementation.
+
+Boundary: simulated local subprocess transport in repository verification; actual local subprocess transport is opt-in only; no shell command execution in normal verification, no real subprocess spawning in normal verification, no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

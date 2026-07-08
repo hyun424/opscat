@@ -904,6 +904,27 @@ real_subprocess_execution_dry_run_gate_smoke() {
   cp "$VERIFY_TMPDIR/opscat-real-subprocess-dry-run-gate.md" /tmp/opscat-real-subprocess-dry-run-gate-latest.md
   printf 'Wrote /tmp/opscat-real-subprocess-dry-run-gate-latest.md and %s/opscat-real-subprocess-dry-run-gate.json\n' "$VERIFY_TMPDIR"
 }
+
+local_safe_subprocess_runner_smoke() {
+  section "P75 local safe subprocess runner smoke"
+  "${UV_DEV[@]}" python scripts/run_local_safe_subprocess_runner.py \
+    --manifest evals/planning/p66_autonomous_day_loop_backlog.json \
+    --completed P65 \
+    --max-tickets 3 \
+    --max-parallel 2 \
+    --max-processes 2 \
+    --enable-real-subprocess \
+    --enable-local-subprocess \
+    --git-status clean \
+    --transport simulated \
+    --dispatch-dir "$VERIFY_TMPDIR/opscat-local-safe-subprocess-dispatch" \
+    --state-path "$VERIFY_TMPDIR/opscat-local-safe-subprocess-state.json" \
+    --artifact-dir "$VERIFY_TMPDIR/opscat-local-safe-subprocess-artifacts" \
+    --output-json "$VERIFY_TMPDIR/opscat-local-safe-subprocess-runner.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-local-safe-subprocess-runner.md" >/tmp/opscat-local-safe-subprocess-runner-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-local-safe-subprocess-runner.md" /tmp/opscat-local-safe-subprocess-runner-latest.md
+  printf 'Wrote /tmp/opscat-local-safe-subprocess-runner-latest.md and %s/opscat-local-safe-subprocess-runner.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -1037,7 +1058,8 @@ docs_contract_tests() {
     tests/test_p71_release_evidence.py \
     tests/test_p72_release_evidence.py \
     tests/test_p73_release_evidence.py \
-    tests/test_p74_release_evidence.py
+    tests/test_p74_release_evidence.py \
+    tests/test_p75_release_evidence.py
 }
 
 run_fast() {
@@ -1117,6 +1139,7 @@ run_eval() {
   stateful_all_day_loop_orchestrator_smoke
   long_run_loop_controller_smoke
   real_subprocess_execution_dry_run_gate_smoke
+  local_safe_subprocess_runner_smoke
 }
 
 run_docs() {

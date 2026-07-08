@@ -664,7 +664,8 @@ docs_contract_tests() {
     tests/test_p45_release_evidence.py \
     tests/test_p46_release_evidence.py \
     tests/test_p47_release_evidence.py \
-    tests/test_p48_release_evidence.py
+    tests/test_p48_release_evidence.py \
+    tests/test_p49_release_evidence.py
 }
 
 run_fast() {
@@ -718,6 +719,7 @@ run_eval() {
   investigator_loop_smoke
   tool_selection_planner_smoke
   hypothesis_reranker_smoke
+  remediation_verification_loop_smoke
 }
 
 run_docs() {

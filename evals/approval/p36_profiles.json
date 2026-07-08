@@ -1,0 +1,26 @@
+{
+  "shadow_cases": "evals/shadow/p35_shadow_cases.json",
+  "profiles": [
+    {
+      "name": "manual",
+      "auto_capabilities": [],
+      "approval_capabilities": ["report", "notification_draft", "reversible_maintenance"],
+      "blocked_capabilities": ["shell", "data_mutation", "privilege_escalation"],
+      "max_auto_risk": "none"
+    },
+    {
+      "name": "auto_read_only",
+      "auto_capabilities": ["report", "notification_draft", "read_only_diagnostic"],
+      "approval_capabilities": ["reversible_maintenance"],
+      "blocked_capabilities": ["shell", "data_mutation", "privilege_escalation"],
+      "max_auto_risk": "low"
+    },
+    {
+      "name": "night_watch",
+      "auto_capabilities": ["report", "notification_draft"],
+      "approval_capabilities": ["read_only_diagnostic", "reversible_maintenance"],
+      "blocked_capabilities": ["shell", "data_mutation", "privilege_escalation"],
+      "max_auto_risk": "low"
+    }
+  ]
+}

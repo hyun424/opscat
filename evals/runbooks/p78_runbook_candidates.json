@@ -1,0 +1,70 @@
+{
+  "incident": {
+    "id": "p78-checkout-deploy-regression",
+    "service": "checkout-api",
+    "severity": "sev2",
+    "signals": [
+      "5xx rate rose after deploy",
+      "database pool wait p95 is elevated",
+      "rollback request requires approval"
+    ]
+  },
+  "candidates": [
+    {
+      "id": "safe-evidence-first",
+      "title": "Evidence-first read-only recovery drill",
+      "steps": [
+        "Collect deployment marker and error-rate evidence from local fixtures",
+        "Compare database pool wait and provider timeout evidence",
+        "Simulate rollback impact without executing it",
+        "Require human approval before any production rollback"
+      ],
+      "safety_checks": ["read_only", "no_live_api", "no_credentials", "no_action_execution"],
+      "evidence": ["deploy_marker", "5xx_rate", "db_pool_wait", "provider_timeout"],
+      "recovery_proof": ["postcheck_5xx_below_threshold", "postcheck_pool_wait_below_threshold"],
+      "blast_radius": "service",
+      "reversible": true,
+      "approval_required": true,
+      "approval_boundary": "human_required_for_mutation",
+      "simulation_only": true,
+      "executes_actions": false,
+      "production_mutation": false
+    },
+    {
+      "id": "fast-rollback-unsafe",
+      "title": "Fast production rollback",
+      "steps": [
+        "Rollback production immediately",
+        "Check dashboards after action"
+      ],
+      "safety_checks": ["manual_operator_present"],
+      "evidence": ["5xx_rate"],
+      "recovery_proof": ["dashboard_green_after_action"],
+      "blast_radius": "production",
+      "reversible": true,
+      "approval_required": false,
+      "approval_boundary": "auto_execute_mutation",
+      "simulation_only": false,
+      "executes_actions": true,
+      "production_mutation": true
+    },
+    {
+      "id": "diagnose-only-incomplete",
+      "title": "Read-only diagnosis without proof",
+      "steps": [
+        "Collect logs",
+        "Post status update"
+      ],
+      "safety_checks": ["read_only", "no_live_api"],
+      "evidence": ["logs"],
+      "recovery_proof": [],
+      "blast_radius": "none",
+      "reversible": true,
+      "approval_required": false,
+      "approval_boundary": "no_mutation_proposed",
+      "simulation_only": true,
+      "executes_actions": false,
+      "production_mutation": false
+    }
+  ]
+}

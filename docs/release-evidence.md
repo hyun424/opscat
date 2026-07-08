@@ -943,6 +943,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_runbook_learning_loop.py tests/test_p39_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile. Target metrics are recommendation count >= 4, regression case count >= 3, source phase count >= 4, unsafe learning count 0, and applied change count 0.
+Verified result: full profile passed; coverage gate 78.52%; `app/services/runbook_learning_loop.py` coverage 89.32%; P39 runbook learning loop smoke wrote `/tmp/opscat-runbook-learning-loop-latest.md` with 5 source phases, 5 recommendations, 4 regression cases, source coverage 1.0, unsafe learning count 0, and applied change count 0.
 
 Boundary: local learning recommendations only; no automatic production runbook edits; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

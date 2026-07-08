@@ -27,14 +27,17 @@ P39 turns local evaluation signals into runbook improvement recommendations and 
 
 No automatic production runbook edits, no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and does not claim unattended production operation.
 
-## Verification target
+## Verification result
 
-Expected metrics before final full verification:
+Full verification passed with P39 included in `scripts/verify.sh`:
 
-- recommendation count: at least 4
-- regression case count: at least 3
-- source phase count: at least 4
+- source phase count: 5
+- recommendation count: 5
+- regression case count: 4
+- source coverage: 1.0
 - unsafe learning count: 0
 - applied change count: 0
+- total coverage gate: 78.52% >= 60.00%
+- `app/services/runbook_learning_loop.py` coverage: 89.32%
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+Generated artifacts: `/tmp/opscat-runbook-learning-loop-latest.md` and `/tmp/opscat-runbook-learning-loop-latest.json`.

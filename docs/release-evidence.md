@@ -1041,3 +1041,27 @@ Verification:
 Verified result: full profile passed; coverage gate 78.90%; `app/services/public_dataset_benchmark.py` coverage 84.99%; P43 offline smoke wrote `/tmp/opscat-public-dataset-benchmark-latest.md` with dataset_mode=fixture_fallback, source count 2, download count 0, parsed record count 7, root-cause accuracy 1.0, route accuracy 1.0, network_allowed=false, and external_downloads_performed=false. Explicit opt-in public download benchmark wrote `/tmp/opscat-public-dataset-benchmark-live.md` with dataset_mode=downloaded_public_sample, download count 3, downloaded bytes 918821, materialized source count 2, parsed record count 4000, label coverage 1.0, root-cause accuracy 1.0, route accuracy 1.0, unsafe action count 0, network_allowed=true, external_downloads_performed=true, generated_artifacts_committed=false, and passed=true.
 
 Boundary: default offline fixture fallback; public downloads require explicit opt-in; generated dataset artifacts are not committed; no live API calls; no auth/session work; no default external model/API calls; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+## P44 Larger Public Dataset Benchmark Matrix Evidence
+
+P44 expands public benchmark evidence into a multi-source matrix with source-level and family-level scores. Normal verification remains offline and fixture-backed; public downloads require explicit opt-in.
+
+Artifacts:
+
+- `docs/operations/p44-ticket-roadmap.md`
+- `docs/operations/p44-final-summary.md`
+- `evals/real_datasets/external/p44_benchmark_matrix_manifest.json`
+- `app/services/public_dataset_matrix.py`
+- `scripts/run_public_dataset_matrix.py`
+- `tests/test_public_dataset_matrix.py`
+- `tests/test_p44_release_evidence.py`
+- `/tmp/opscat-public-dataset-matrix-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_public_dataset_matrix.py tests/test_p44_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+- `python3 scripts/run_public_dataset_matrix.py --allow-network --manifest evals/real_datasets/external/p44_benchmark_matrix_manifest.json --output-json /tmp/opscat-public-dataset-matrix-live.json --output-md /tmp/opscat-public-dataset-matrix-live.md`
+
+Verified result: pending final full profile and opt-in public matrix benchmark.
+
+Boundary: default offline fixture fallback; public downloads require explicit opt-in; generated dataset artifacts are not committed; no live API calls; no auth/session work; no default external model/API calls; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

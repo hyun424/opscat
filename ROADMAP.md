@@ -391,3 +391,7 @@ P43 active scope: Opt-in Public Dataset Download & Benchmark Scorecard. P43 exec
 ## P43 implemented
 
 P43 implemented as Opt-in Public Dataset Download & Benchmark Scorecard evidence. P43 keeps full verification offline/fixture-backed, adds explicit network-gated downloads for public LogHub/NAB samples, materializes downloaded raw logs and NAB labels into P41-compatible files under `/tmp`, scores 4,000 downloaded public records in the opt-in benchmark, records scorecards, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no committed generated artifacts, no default external model calls, and no unattended production-operation claim.
+
+## P44 active
+
+P44 active scope: Larger Public Dataset Benchmark Matrix. P44 expands P43 into a multi-source public benchmark matrix across LogHub and NAB families, reports source-level/family-level scores, tracks weak spots, and keeps normal verification offline/fixture-backed while public downloads remain explicit opt-in.

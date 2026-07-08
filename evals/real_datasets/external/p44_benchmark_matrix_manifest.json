@@ -1,0 +1,64 @@
+{
+  "version": "p44.1",
+  "artifact_root": "/tmp/opscat-p44-public-artifacts",
+  "materialized_root": "/tmp/opscat-p44-public-materialized",
+  "max_records_per_source": 2000,
+  "sources": [
+    {
+      "id": "loghub-apache-2k",
+      "family": "loghub_raw",
+      "data_url": "https://raw.githubusercontent.com/logpai/loghub/master/Apache/Apache_2k.log",
+      "official_url": "https://github.com/logpai/loghub",
+      "local_fixture": "evals/real_datasets/fixtures/loghub/apache_sample.jsonl",
+      "expected_root_cause": "deploy_regression",
+      "expected_route": "human_required",
+      "expected_labels": ["deploy_error"]
+    },
+    {
+      "id": "loghub-linux-2k",
+      "family": "loghub_raw",
+      "data_url": "https://raw.githubusercontent.com/logpai/loghub/master/Linux/Linux_2k.log",
+      "official_url": "https://github.com/logpai/loghub",
+      "local_fixture": "evals/real_datasets/fixtures/loghub/apache_sample.jsonl",
+      "expected_root_cause": "deploy_regression",
+      "expected_route": "human_required",
+      "expected_labels": ["deploy_error"]
+    },
+    {
+      "id": "nab-machine-temperature",
+      "family": "nab_csv",
+      "data_url": "https://raw.githubusercontent.com/numenta/NAB/master/data/realKnownCause/machine_temperature_system_failure.csv",
+      "labels_url": "https://raw.githubusercontent.com/numenta/NAB/master/labels/combined_windows.json",
+      "nab_label_key": "realKnownCause/machine_temperature_system_failure.csv",
+      "official_url": "https://github.com/numenta/NAB",
+      "local_fixture": "evals/real_datasets/fixtures/nab/real_known_cause_sample.csv",
+      "expected_root_cause": "metric_anomaly",
+      "expected_route": "human_required",
+      "expected_labels": ["normal", "anomaly"]
+    },
+    {
+      "id": "nab-ambient-temperature",
+      "family": "nab_csv",
+      "data_url": "https://raw.githubusercontent.com/numenta/NAB/master/data/realKnownCause/ambient_temperature_system_failure.csv",
+      "labels_url": "https://raw.githubusercontent.com/numenta/NAB/master/labels/combined_windows.json",
+      "nab_label_key": "realKnownCause/ambient_temperature_system_failure.csv",
+      "official_url": "https://github.com/numenta/NAB",
+      "local_fixture": "evals/real_datasets/fixtures/nab/real_known_cause_sample.csv",
+      "expected_root_cause": "metric_anomaly",
+      "expected_route": "human_required",
+      "expected_labels": ["normal", "anomaly"]
+    },
+    {
+      "id": "nab-ec2-cpu",
+      "family": "nab_csv",
+      "data_url": "https://raw.githubusercontent.com/numenta/NAB/master/data/realAWSCloudwatch/ec2_cpu_utilization_24ae8d.csv",
+      "labels_url": "https://raw.githubusercontent.com/numenta/NAB/master/labels/combined_windows.json",
+      "nab_label_key": "realAWSCloudwatch/ec2_cpu_utilization_24ae8d.csv",
+      "official_url": "https://github.com/numenta/NAB",
+      "local_fixture": "evals/real_datasets/fixtures/nab/real_known_cause_sample.csv",
+      "expected_root_cause": "metric_anomaly",
+      "expected_route": "human_required",
+      "expected_labels": ["normal", "anomaly"]
+    }
+  ]
+}

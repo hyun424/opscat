@@ -4,14 +4,14 @@ P36 routes P35 shadow decisions through named local approval profiles. It record
 
 ## Ticket completion
 
-- P36-001 — Approval profile manifest: pending implementation.
-- P36-002 — Shadow decision intake: pending implementation.
-- P36-003 — Route evaluator: pending implementation.
-- P36-004 — Auto-approval boundary: pending implementation.
-- P36-005 — Night-watch escalation: pending implementation.
-- P36-006 — Safety scorecard: pending implementation.
-- P36-007 — CLI report: pending implementation.
-- P36-008 — Verification integration: pending implementation.
+- P36-001 — Approval profile manifest: `evals/approval/p36_profiles.json` defines local control profiles.
+- P36-002 — Shadow decision intake: P36 loads P35 shadow cases and converts proposed/blocked actions into approval requests.
+- P36-003 — Route evaluator: every request is routed as `auto_allowed`, `approval_required`, or `blocked`.
+- P36-004 — Auto-approval boundary: only safe read-only/report/notification capabilities can be auto-allowed.
+- P36-005 — Night-watch escalation: ambiguous or mutation-shaped mitigation remains approval-required or blocked.
+- P36-006 — Safety scorecard: reports profile coverage, approval burden, blocked-untrusted count, unsafe auto count, and execution count.
+- P36-007 — CLI report: `scripts/run_approval_control_plane.py` writes JSON/Markdown.
+- P36-008 — Verification integration: `scripts/verify.sh` includes `approval_control_plane_smoke`.
 
 ## Primary artifacts
 
@@ -25,7 +25,7 @@ P36 routes P35 shadow decisions through named local approval profiles. It record
 
 ## Boundary
 
-No auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
+No auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and does not claim unattended production operation.
 
 ## Verification target
 

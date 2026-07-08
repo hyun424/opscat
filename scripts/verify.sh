@@ -421,6 +421,17 @@ incident_shadow_mode_smoke() {
   printf 'Wrote /tmp/opscat-incident-shadow-mode-latest.md and %s/opscat-incident-shadow-mode.json\n' "$VERIFY_TMPDIR"
 }
 
+approval_control_plane_smoke() {
+  section "P36 approval control plane smoke"
+  "${UV_DEV[@]}" python scripts/run_approval_control_plane.py \
+    --fixture evals/approval/p36_profiles.json \
+    --output-json "$VERIFY_TMPDIR/opscat-approval-control-plane.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-approval-control-plane.md" >/tmp/opscat-approval-control-plane-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-approval-control-plane.json" /tmp/opscat-approval-control-plane-latest.json
+  cp "$VERIFY_TMPDIR/opscat-approval-control-plane.md" /tmp/opscat-approval-control-plane-latest.md
+  printf 'Wrote /tmp/opscat-approval-control-plane-latest.md and %s/opscat-approval-control-plane.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -515,7 +526,8 @@ docs_contract_tests() {
     tests/test_p32_release_evidence.py \
     tests/test_p33_release_evidence.py \
     tests/test_p34_release_evidence.py \
-    tests/test_p35_release_evidence.py
+    tests/test_p35_release_evidence.py \
+    tests/test_p36_release_evidence.py
 }
 
 run_fast() {
@@ -556,6 +568,7 @@ run_eval() {
   live_connector_dry_run_smoke
   read_only_polling_v2_smoke
   incident_shadow_mode_smoke
+  approval_control_plane_smoke
 }
 
 run_docs() {

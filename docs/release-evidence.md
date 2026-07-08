@@ -1226,6 +1226,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_operator_judgment_benchmark_v2.py tests/test_p51_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.36%; P51 smoke wrote `/tmp/opscat-operator-judgment-benchmark-v2-latest.md` with case_count=4, detection_recall=1.0, top1_hypothesis_accuracy=1.0, evidence_quality_score=0.938, route_accuracy=1.0, rerank_success_rate=1.0, recovery_verification_coverage=0.5, unsafe_auto_execute_count=0, production_execution_count=0, live_call_count=0, evidence_gap=1, recovery_verification_gap=2, and passed=true.
 
 Boundary: offline benchmark fixtures only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

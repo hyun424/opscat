@@ -30,3 +30,6 @@ UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/
 ## Boundary
 
 No live API calls, no auth/session work, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
+## Final verification
+
+Full profile passed with coverage gate 79.36%; P51 smoke passed with detection_recall=1.0, top1_hypothesis_accuracy=1.0, evidence_quality_score=0.938, route_accuracy=1.0, rerank_success_rate=1.0, recovery_verification_coverage=0.5, unsafe_auto_execute_count=0, production_execution_count=0, and live_call_count=0. Failure taxonomy recorded evidence_gap=1 and recovery_verification_gap=2 as the next improvement targets.

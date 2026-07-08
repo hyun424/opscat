@@ -1249,6 +1249,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_failure_mining_loop.py tests/test_p52_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.43%; P52 smoke wrote `/tmp/opscat-failure-mining-loop-latest.md` with source_case_count=4, failure_cluster_count=2, improvement_ticket_count=2, regression_case_count=3, highest_priority=P1, unsafe_action_count=0, evidence_gap cluster count=1, recovery_verification_gap cluster count=2, and passed=true.
 
 Boundary: offline P51 benchmark mining only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

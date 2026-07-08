@@ -797,6 +797,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_live_connector_dry_run.py tests/test_p33_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile. Target metrics are connector_health_score >= 0.75, permission safety rate >= 0.75, schema compatibility rate >= 0.75, live API call count 0, blocked connector count >= 1, and schema drift count >= 1.
+Verified result: full profile passed; coverage gate 77.78%; P33 live connector dry-run smoke wrote `/tmp/opscat-live-connector-dry-run-latest.md` with 4 connectors, 2 ready, 1 degraded, 1 blocked, 1 schema drift, connector_health_score 0.812, permission safety rate 0.75, schema compatibility rate 0.75, transport health rate 1.0, readiness rate 0.75, and live API call count 0.
 
 Boundary: dry-run/local by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

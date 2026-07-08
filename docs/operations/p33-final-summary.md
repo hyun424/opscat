@@ -27,15 +27,22 @@ P33 adds a live-connector-shaped dry-run harness for validating provider configu
 
 No auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
 
-## Verification target
+## Verified result
 
-Expected metrics before final full verification:
+The full verification profile passed on 2026-07-08 with these P33 metrics:
 
-- `connector_health_score`: at least 0.75
-- permission safety rate: at least 0.75
-- schema compatibility rate: at least 0.75
+- `connector_health_score`: 0.812
+- permission safety rate: 0.75
+- schema compatibility rate: 0.75
+- transport health rate: 1.0
+- readiness rate: 0.75
 - live API call count: 0
-- blocked connector count: at least 1
-- schema drift count: at least 1
+- connector count: 4
+- ready connector count: 2
+- degraded connector count: 1
+- blocked connector count: 1
+- schema drift count: 1
+- total coverage gate: 77.78%
+- `app/services/live_connector_dry_run.py` coverage: 90.04%
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+The generated dry-run report is `/tmp/opscat-live-connector-dry-run-latest.md`.

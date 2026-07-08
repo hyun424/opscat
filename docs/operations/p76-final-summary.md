@@ -15,7 +15,7 @@ P76 adds an evidence sufficiency gate after P45. It scores each evidence-grounde
 
 ## Verified result
 
-Pending final verification after GREEN implementation.
+Full profile passed; docs profile passed; coverage gate 80.35%; P76 smoke wrote `/tmp/opscat-evidence-sufficiency-gate-v2-latest.md` with case_count=3, sufficient_read_only_count=2, approval_ready_count=2, human_required_count=1, unsafe_auto_execute_count=0, blocked_unsafe_auto_execute_count=0, mean_sufficiency_score=0.73, minimum_sufficiency_score=0.201, maximum_sufficiency_score=1.0, missing_evidence_item_count=5, evidence_source_count=5, and passed=true.
 
 ## Boundary
 

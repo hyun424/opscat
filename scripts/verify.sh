@@ -599,6 +599,16 @@ recovery_proof_engine_smoke() {
   printf 'Wrote /tmp/opscat-recovery-proof-engine-latest.md and %s/opscat-recovery-proof-engine.json\n' "$VERIFY_TMPDIR"
 }
 
+runbook_simulation_tournament_smoke() {
+  section "P78 runbook simulation tournament smoke"
+  "${UV_DEV[@]}" python scripts/run_runbook_simulation_tournament.py \
+    --candidates evals/runbooks/p78_runbook_candidates.json \
+    --output-json "$VERIFY_TMPDIR/opscat-runbook-simulation-tournament.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-runbook-simulation-tournament.md" >/tmp/opscat-runbook-simulation-tournament-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-runbook-simulation-tournament.md" /tmp/opscat-runbook-simulation-tournament-latest.md
+  printf 'Wrote /tmp/opscat-runbook-simulation-tournament-latest.md and %s/opscat-runbook-simulation-tournament.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1081,7 +1091,8 @@ docs_contract_tests() {
     tests/test_p74_release_evidence.py \
     tests/test_p75_release_evidence.py \
     tests/test_p76_release_evidence.py \
-    tests/test_p77_release_evidence.py
+    tests/test_p77_release_evidence.py \
+    tests/test_p78_release_evidence.py
 }
 
 run_fast() {
@@ -1138,6 +1149,7 @@ run_eval() {
   hypothesis_reranker_smoke
   remediation_verification_loop_smoke
   recovery_proof_engine_smoke
+  runbook_simulation_tournament_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

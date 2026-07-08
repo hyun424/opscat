@@ -1845,3 +1845,28 @@ Verification:
 Verified result: full profile passed; docs profile passed; coverage gate 80.34%; P77 smoke wrote `/tmp/opscat-recovery-proof-engine-latest.md` with case_count=2, recovery_proven_count=1, recovery_not_proven_count=1, escalation_required_count=1, blocked_unsafe_execution_count=0, production_execution_count=0, action_execution_count=0, mean_proof_score=0.625, minimum_proof_score=0.25, maximum_proof_score=1.0, criteria_checked_count=4, and passed=true.
 
 Boundary: offline local/mock proof only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P78 Runbook Simulation Tournament Evidence
+
+P78 ranks multiple local/mock runbook candidates before any runbook can be treated as release evidence. It compares safety, evidence sufficiency, recovery proof, blast radius, reversibility, and approval boundary while preserving a strict no-execution boundary.
+
+Artifacts:
+
+- `docs/operations/p78-ticket-roadmap.md`
+- `docs/operations/p78-final-summary.md`
+- `app/services/runbook_simulation_tournament.py`
+- `scripts/run_runbook_simulation_tournament.py`
+- `evals/runbooks/p78_runbook_candidates.json`
+- `tests/test_runbook_simulation_tournament.py`
+- `tests/test_p78_release_evidence.py`
+- `/tmp/opscat-runbook-simulation-tournament-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_runbook_simulation_tournament.py tests/test_p78_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P78 smoke wrote `/tmp/opscat-runbook-simulation-tournament-latest.md` with candidate_count=3, winner_id=safe-evidence-first, unsafe_candidate_count=1, action_execution_count=0, production_mutation_count=0, dimension_count=6, and passed=true.
+
+Boundary: offline local/mock simulation only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, no P78A/autonomous supervisor changes, and no unattended production-operation claim.

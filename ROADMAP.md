@@ -664,3 +664,11 @@ P77 active scope: Recovery Proof Engine. P77 upgrades remediation verification i
 ## P77 implemented
 
 P77 implemented as Recovery Proof Engine evidence. P77 consumes P49 verification output, builds pass/fail proof bundles, scores recovery proof, classifies proven/not-proven/unsafe cases, emits operator next steps, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P78 active
+
+P78 active scope: Runbook Simulation Tournament. P78 ranks multiple local/mock runbook candidates across safety, evidence sufficiency, recovery proof, blast radius, reversibility, and approval boundary before treating a runbook as release evidence.
+
+## P78 implemented
+
+P78 implemented as Runbook Simulation Tournament evidence. P78 parses local fixture candidates, scores six tournament dimensions, ranks the safest evidence-backed candidate, blocks production/action-execution proposals, emits CLI JSON/Markdown reports, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no P78A/autonomous supervisor changes, and no unattended production-operation claim.

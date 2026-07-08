@@ -1,0 +1,45 @@
+{
+  "jobs": [
+    {
+      "id": "poll-prometheus-ready",
+      "connector_id": "p33-prometheus-readonly",
+      "source": "prometheus",
+      "fixture_path": "evals/telemetry/fixtures/prometheus_query_range.json",
+      "read_only": true,
+      "interval_seconds": 60
+    },
+    {
+      "id": "poll-datadog-ready",
+      "connector_id": "p33-datadog-readonly",
+      "source": "datadog",
+      "fixture_path": "evals/telemetry/fixtures/datadog_timeseries.json",
+      "read_only": true,
+      "interval_seconds": 60
+    },
+    {
+      "id": "poll-sentry-degraded",
+      "connector_id": "p33-sentry-schema-drift",
+      "source": "sentry",
+      "fixture_path": "evals/telemetry/fixtures/sentry_issues.json",
+      "read_only": true,
+      "interval_seconds": 60
+    },
+    {
+      "id": "poll-admin-blocked",
+      "connector_id": "p33-unsafe-admin-token",
+      "source": "datadog",
+      "fixture_path": "evals/telemetry/fixtures/datadog_timeseries.json",
+      "read_only": true,
+      "interval_seconds": 60
+    },
+    {
+      "id": "poll-write-mutation",
+      "connector_id": "p33-prometheus-readonly",
+      "source": "prometheus",
+      "fixture_path": "evals/telemetry/fixtures/prometheus_query_range.json",
+      "read_only": false,
+      "operation": "write_annotation",
+      "interval_seconds": 60
+    }
+  ]
+}

@@ -398,6 +398,18 @@ live_connector_dry_run_smoke() {
   printf 'Wrote /tmp/opscat-live-connector-dry-run-latest.md and %s/opscat-live-connector-dry-run.json\n' "$VERIFY_TMPDIR"
 }
 
+read_only_polling_v2_smoke() {
+  section "P34 read-only polling v2 smoke"
+  "${UV_DEV[@]}" python scripts/run_read_only_polling_v2.py \
+    --jobs evals/polling/v2/p34_polling_jobs.json \
+    --dry-run-manifest evals/connectors/dry_run/p33_connectors.json \
+    --output-json "$VERIFY_TMPDIR/opscat-read-only-polling-v2.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-read-only-polling-v2.md" >/tmp/opscat-read-only-polling-v2-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-read-only-polling-v2.json" /tmp/opscat-read-only-polling-v2-latest.json
+  cp "$VERIFY_TMPDIR/opscat-read-only-polling-v2.md" /tmp/opscat-read-only-polling-v2-latest.md
+  printf 'Wrote /tmp/opscat-read-only-polling-v2-latest.md and %s/opscat-read-only-polling-v2.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -490,7 +502,8 @@ docs_contract_tests() {
     tests/test_p30_release_evidence.py \
     tests/test_p31_release_evidence.py \
     tests/test_p32_release_evidence.py \
-    tests/test_p33_release_evidence.py
+    tests/test_p33_release_evidence.py \
+    tests/test_p34_release_evidence.py
 }
 
 run_fast() {
@@ -529,6 +542,7 @@ run_eval() {
   operator_replacement_drill_smoke
   real_telemetry_replay_smoke
   live_connector_dry_run_smoke
+  read_only_polling_v2_smoke
 }
 
 run_docs() {

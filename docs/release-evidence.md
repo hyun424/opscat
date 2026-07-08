@@ -800,3 +800,27 @@ Verification:
 Verified result: full profile passed; coverage gate 77.78%; P33 live connector dry-run smoke wrote `/tmp/opscat-live-connector-dry-run-latest.md` with 4 connectors, 2 ready, 1 degraded, 1 blocked, 1 schema drift, connector_health_score 0.812, permission safety rate 0.75, schema compatibility rate 0.75, transport health rate 1.0, readiness rate 0.75, and live API call count 0.
 
 Boundary: dry-run/local by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+
+## P34 Live Read-only Polling Runtime v2 Evidence
+
+P34 gates read-only polling through P33 dry-run readiness. It polls only ready local fixture jobs, skips degraded/blocked connectors, blocks write/mutation jobs, adapts telemetry payloads, and emits trend windows.
+
+Artifacts:
+
+- `docs/operations/p34-ticket-roadmap.md`
+- `docs/operations/p34-final-summary.md`
+- `app/services/read_only_polling_v2.py`
+- `scripts/run_read_only_polling_v2.py`
+- `evals/polling/v2/p34_polling_jobs.json`
+- `tests/test_read_only_polling_v2.py`
+- `tests/test_p34_release_evidence.py`
+- `/tmp/opscat-read-only-polling-v2-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_read_only_polling_v2.py tests/test_p34_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are poll_success_rate 1.0, readiness gate rate 1.0, unsafe poll count 0, live API call count 0, polled count >= 2, and trend window count >= 4.
+
+Boundary: read-only/local by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

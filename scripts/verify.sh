@@ -546,6 +546,17 @@ investigator_loop_smoke() {
   printf 'Wrote /tmp/opscat-investigator-loop-latest.md and %s/opscat-investigator-loop.json\n' "$VERIFY_TMPDIR"
 }
 
+tool_selection_planner_smoke() {
+  section "P47 tool selection planner smoke"
+  "${UV_DEV[@]}" python scripts/run_tool_selection_planner.py \
+    --cases evals/investigator/p47_tool_selection_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-tool-selection-planner.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-tool-selection-planner.md" >/tmp/opscat-tool-selection-planner-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-tool-selection-planner.json" /tmp/opscat-tool-selection-planner-latest.json
+  cp "$VERIFY_TMPDIR/opscat-tool-selection-planner.md" /tmp/opscat-tool-selection-planner-latest.md
+  printf 'Wrote /tmp/opscat-tool-selection-planner-latest.md and %s/opscat-tool-selection-planner.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -651,7 +662,8 @@ docs_contract_tests() {
     tests/test_p43_release_evidence.py \
     tests/test_p44_release_evidence.py \
     tests/test_p45_release_evidence.py \
-    tests/test_p46_release_evidence.py
+    tests/test_p46_release_evidence.py \
+    tests/test_p47_release_evidence.py
 }
 
 run_fast() {
@@ -703,6 +715,7 @@ run_eval() {
   public_dataset_matrix_smoke
   evidence_grounded_judgment_smoke
   investigator_loop_smoke
+  tool_selection_planner_smoke
 }
 
 run_docs() {

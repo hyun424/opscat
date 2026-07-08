@@ -4,14 +4,14 @@ P40 packages P33-P39 evidence into one readiness bundle. It proves a local portf
 
 ## Ticket completion
 
-- P40-001 — Readiness source manifest: pending implementation.
-- P40-002 — Gate model: pending implementation.
-- P40-003 — Readiness evaluator: pending implementation.
-- P40-004 — Production blocker register: pending implementation.
-- P40-005 — Portfolio summary: pending implementation.
-- P40-006 — Evidence bundle: pending implementation.
-- P40-007 — CLI report: pending implementation.
-- P40-008 — Verification integration: pending implementation.
+- P40-001 — Readiness source manifest: `evals/readiness/p40_sources.json` defines P33-P39 readiness sources and gates.
+- P40-002 — Gate model: P40 evaluates connector, polling, shadow, approval, config, dashboard, learning, and full-verification gates.
+- P40-003 — Readiness evaluator: P40 computes passed gates, boundary violations, production blockers, and readiness decision.
+- P40-004 — Production blocker register: P40 documents auth, live connector validation, and production execution-control blockers.
+- P40-005 — Portfolio summary: P40 emits a local portfolio milestone summary without production claims.
+- P40-006 — Evidence bundle: P40 links `/tmp/opscat-*` artifacts and `docs/release-evidence.md`.
+- P40-007 — CLI report: `scripts/run_production_readiness_milestone.py` writes JSON/Markdown.
+- P40-008 — Verification integration: `scripts/verify.sh` includes `production_readiness_milestone_smoke`.
 
 ## Primary artifacts
 

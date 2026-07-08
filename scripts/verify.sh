@@ -465,6 +465,17 @@ runbook_learning_loop_smoke() {
   printf 'Wrote /tmp/opscat-runbook-learning-loop-latest.md and %s/opscat-runbook-learning-loop.json\n' "$VERIFY_TMPDIR"
 }
 
+production_readiness_milestone_smoke() {
+  section "P40 production-readiness milestone smoke"
+  "${UV_DEV[@]}" python scripts/run_production_readiness_milestone.py \
+    --sources evals/readiness/p40_sources.json \
+    --output-json "$VERIFY_TMPDIR/opscat-production-readiness-milestone.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-production-readiness-milestone.md" >/tmp/opscat-production-readiness-milestone-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-production-readiness-milestone.json" /tmp/opscat-production-readiness-milestone-latest.json
+  cp "$VERIFY_TMPDIR/opscat-production-readiness-milestone.md" /tmp/opscat-production-readiness-milestone-latest.md
+  printf 'Wrote /tmp/opscat-production-readiness-milestone-latest.md and %s/opscat-production-readiness-milestone.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -563,7 +574,8 @@ docs_contract_tests() {
     tests/test_p36_release_evidence.py \
     tests/test_p37_release_evidence.py \
     tests/test_p38_release_evidence.py \
-    tests/test_p39_release_evidence.py
+    tests/test_p39_release_evidence.py \
+    tests/test_p40_release_evidence.py
 }
 
 run_fast() {
@@ -608,6 +620,7 @@ run_eval() {
   open_source_config_hardening_smoke
   agent_evaluation_dashboard_smoke
   runbook_learning_loop_smoke
+  production_readiness_milestone_smoke
 }
 
 run_docs() {

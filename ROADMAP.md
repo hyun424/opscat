@@ -672,3 +672,11 @@ P78 active scope: Runbook Simulation Tournament. P78 ranks multiple local/mock r
 ## P78 implemented
 
 P78 implemented as Runbook Simulation Tournament evidence. P78 parses local fixture candidates, scores six tournament dimensions, ranks the safest evidence-backed candidate, blocks production/action-execution proposals, emits CLI JSON/Markdown reports, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no P78A/autonomous supervisor changes, and no unattended production-operation claim.
+
+## P79 active
+
+P79 active scope: Action Sandbox Hardening. P79 evaluates proposed actions against allowlists, blast radius, reversibility, approval state, dry-run capability, credential/network boundaries, production mutation boundaries, and shell boundaries before any action can leave local/mock evaluation.
+
+## P79 implemented
+
+P79 implemented as Action Sandbox Hardening evidence. P79 parses local proposed-action fixtures, returns allow, approval-required, mock-only, or block decisions, blocks prohibited external boundaries, emits CLI JSON/Markdown reports, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.

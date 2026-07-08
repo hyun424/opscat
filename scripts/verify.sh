@@ -609,6 +609,16 @@ runbook_simulation_tournament_smoke() {
   printf 'Wrote /tmp/opscat-runbook-simulation-tournament-latest.md and %s/opscat-runbook-simulation-tournament.json\n' "$VERIFY_TMPDIR"
 }
 
+action_sandbox_hardening_smoke() {
+  section "P79 action sandbox hardening smoke"
+  "${UV_DEV[@]}" python scripts/run_action_sandbox_hardening.py \
+    --cases evals/actions/p79_action_sandbox_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-action-sandbox-hardening.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-action-sandbox-hardening.md" >/tmp/opscat-action-sandbox-hardening-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-action-sandbox-hardening.md" /tmp/opscat-action-sandbox-hardening-latest.md
+  printf 'Wrote /tmp/opscat-action-sandbox-hardening-latest.md and %s/opscat-action-sandbox-hardening.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1092,7 +1102,8 @@ docs_contract_tests() {
     tests/test_p75_release_evidence.py \
     tests/test_p76_release_evidence.py \
     tests/test_p77_release_evidence.py \
-    tests/test_p78_release_evidence.py
+    tests/test_p78_release_evidence.py \
+    tests/test_p79_release_evidence.py
 }
 
 run_fast() {
@@ -1150,6 +1161,7 @@ run_eval() {
   remediation_verification_loop_smoke
   recovery_proof_engine_smoke
   runbook_simulation_tournament_smoke
+  action_sandbox_hardening_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

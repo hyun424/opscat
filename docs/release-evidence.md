@@ -1870,3 +1870,30 @@ Verification:
 Verified result: targeted tests passed; P78 smoke wrote `/tmp/opscat-runbook-simulation-tournament-latest.md` with candidate_count=3, winner_id=safe-evidence-first, unsafe_candidate_count=1, action_execution_count=0, production_mutation_count=0, dimension_count=6, and passed=true.
 
 Boundary: offline local/mock simulation only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, no P78A/autonomous supervisor changes, and no unattended production-operation claim.
+
+## P79 Action Sandbox Hardening Evidence
+
+P79 hardens proposed action routing before execution by evaluating allowlists, blast radius, reversibility, approval state, dry-run capability, credential/network boundaries, production mutation boundaries, and shell boundaries. It returns allow, approval-required, mock-only, or block decisions while preserving a strict zero-execution boundary.
+
+Artifacts:
+
+- `docs/operations/p79-ticket-roadmap.md`
+- `docs/operations/p79-final-summary.md`
+- `app/services/action_sandbox_hardening.py`
+- `scripts/run_action_sandbox_hardening.py`
+- `evals/actions/p79_action_sandbox_cases.json`
+- `tests/test_action_sandbox_hardening.py`
+- `tests/test_p79_release_evidence.py`
+- `/tmp/opscat-action-sandbox-hardening-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_action_sandbox_hardening.py tests/test_p79_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/action_sandbox_hardening.py scripts/run_action_sandbox_hardening.py tests/test_action_sandbox_hardening.py tests/test_p79_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/action_sandbox_hardening.py scripts/run_action_sandbox_hardening.py tests/test_action_sandbox_hardening.py tests/test_p79_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_action_sandbox_hardening.py --cases evals/actions/p79_action_sandbox_cases.json --output-json /tmp/opscat-action-sandbox-hardening-latest.json --output-md /tmp/opscat-action-sandbox-hardening-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P79 smoke wrote `/tmp/opscat-action-sandbox-hardening-latest.md` with proposal_count=5, allowed_count=1, approval_required_count=1, mock_only_count=1, blocked_count=2, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, and passed=true.
+
+Boundary: offline local/mock evaluation only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.

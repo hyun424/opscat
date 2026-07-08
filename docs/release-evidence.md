@@ -1842,6 +1842,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
 
-Verified result: pending final full/docs verification after GREEN implementation.
+Verified result: full profile passed; docs profile passed; coverage gate 80.34%; P77 smoke wrote `/tmp/opscat-recovery-proof-engine-latest.md` with case_count=2, recovery_proven_count=1, recovery_not_proven_count=1, escalation_required_count=1, blocked_unsafe_execution_count=0, production_execution_count=0, action_execution_count=0, mean_proof_score=0.625, minimum_proof_score=0.25, maximum_proof_score=1.0, criteria_checked_count=4, and passed=true.
 
 Boundary: offline local/mock proof only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.

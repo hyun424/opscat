@@ -592,3 +592,11 @@ P68 active scope: Autonomous Agent Dispatcher. P68 converts safe-local loop work
 ## P68 implemented
 
 P68 implemented as Autonomous Agent Dispatcher evidence. P68 emits per-ticket prompt and JSON dispatch packets, records blocked gated work, preserves max-parallel policy, computes next runnable state, and preserves no process spawning, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P69 active
+
+P69 active scope: Autonomous Worker Runner. P69 consumes dispatch packets, records worker run outcomes, retry queues, and resumable state through a recording transport.
+
+## P69 implemented
+
+P69 implemented as Autonomous Worker Runner evidence. P69 claims P68 packets, plans Codex worker commands through a recording transport, writes resumable state, records retry queues for failures, and preserves no process spawning, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

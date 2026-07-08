@@ -22,7 +22,12 @@ def test_p45_release_evidence_and_verify_are_wired() -> None:
     release = Path("docs/release-evidence.md").read_text(encoding="utf-8")
     roadmap = Path("ROADMAP.md").read_text(encoding="utf-8")
     verify = Path("scripts/verify.sh").read_text(encoding="utf-8")
-    for required in ["P45 Evidence-Grounded Judgment Contract Evidence", "tests/test_evidence_grounded_judgment.py", "tests/test_p45_release_evidence.py", "/tmp/opscat-evidence-grounded-judgment-latest.md"]:
+    for required in [
+        "P45 Evidence-Grounded Judgment Contract Evidence",
+        "tests/test_evidence_grounded_judgment.py",
+        "tests/test_p45_release_evidence.py",
+        "/tmp/opscat-evidence-grounded-judgment-latest.md",
+    ]:
         assert required in release
     assert "P45 active scope: Evidence-Grounded Judgment Contract" in roadmap
     assert "evidence_grounded_judgment_smoke" in verify

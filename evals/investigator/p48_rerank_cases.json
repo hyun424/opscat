@@ -1,0 +1,31 @@
+{
+  "version": "p48.1",
+  "cases": [
+    {
+      "id": "p48-deploy-demoted-db-promoted",
+      "initial_top": "recent_deploy_regression",
+      "expected_final_top": "database_saturation",
+      "hypotheses": [
+        {"name": "recent_deploy_regression", "confidence": 0.82, "support": ["deploy_before_spike"], "counter": [], "missing": ["pod_distribution"]},
+        {"name": "database_saturation", "confidence": 0.54, "support": ["pool_wait_warning"], "counter": [], "missing": ["slow_query_sample"]}
+      ],
+      "observations": [
+        {"target": "recent_deploy_regression", "type": "counter", "evidence": "errors evenly distributed across old and new pods", "strength": "high"},
+        {"target": "database_saturation", "type": "support", "evidence": "pool wait p95 3.2s and slow queries increased", "strength": "high"}
+      ]
+    },
+    {
+      "id": "p48-deploy-confirmed",
+      "initial_top": "recent_deploy_regression",
+      "expected_final_top": "recent_deploy_regression",
+      "hypotheses": [
+        {"name": "recent_deploy_regression", "confidence": 0.70, "support": ["deploy_before_spike"], "counter": [], "missing": ["pod_distribution"]},
+        {"name": "traffic_spike", "confidence": 0.45, "support": ["rps_warning"], "counter": [], "missing": ["user_agent_distribution"]}
+      ],
+      "observations": [
+        {"target": "recent_deploy_regression", "type": "support", "evidence": "5xx isolated to v42 pods", "strength": "high"},
+        {"target": "traffic_spike", "type": "counter", "evidence": "rps unchanged", "strength": "medium"}
+      ]
+    }
+  ]
+}

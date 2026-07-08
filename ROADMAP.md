@@ -411,3 +411,7 @@ P46 active scope: Investigator Loop. P46 observes multi-source signals, generate
 ## P47 active
 
 P47 active scope: Tool Selection Planner. P47 maps each investigation need to safe read-only observability tools, preserves evidence references, and blocks mutation, shell, rollback, restart, and delete actions.
+
+## P48 active
+
+P48 active scope: Hypothesis Re-ranking. P48 incorporates read-only investigation results, demotes hypotheses contradicted by counter-evidence, promotes better-supported hypotheses, and keeps actions gated when evidence conflicts.

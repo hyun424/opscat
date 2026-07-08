@@ -1134,3 +1134,26 @@ Verification:
 Verified result: pending final full profile.
 
 Boundary: offline tool planning only; no live API calls; no auth/session work; no default external model/API calls; no production mutation; no remediation execution; no unrestricted shell; does not claim unattended production operation.
+## P48 Hypothesis Re-ranking Evidence
+
+P48 updates hypothesis rankings after read-only investigation results arrive, records anti-anchoring demotions, and keeps action gates conservative.
+
+Artifacts:
+
+- `docs/operations/p48-ticket-roadmap.md`
+- `docs/operations/p48-final-summary.md`
+- `evals/investigator/p48_rerank_cases.json`
+- `app/services/hypothesis_reranker.py`
+- `scripts/run_hypothesis_reranker.py`
+- `tests/test_hypothesis_reranker.py`
+- `tests/test_p48_release_evidence.py`
+- `/tmp/opscat-hypothesis-reranker-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_hypothesis_reranker.py tests/test_p48_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline read-only investigation results only; no live API calls; no auth/session work; no default external model/API calls; no production mutation; no remediation execution; does not claim unattended production operation.

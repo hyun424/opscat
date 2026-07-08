@@ -1722,6 +1722,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
 
-Verified result: pending final full/docs verification after GREEN implementation.
+Verified result: full profile passed; docs profile passed; coverage gate 80.37%; P72 smoke wrote `/tmp/opscat-stateful-all-day-loop-orchestrator-latest.md` with cycle_count=3, completed_ticket_count=8, failed_ticket_count=0, retry_queue_count=0, blocked_by_enable_flag_count=0, stop_reason=max_cycles_reached, supervised_process_run_count=8, cycle_checkpoint_count=3, state_write_count=3, timeout_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 Boundary: simulated supervised transport in repository verification; real subprocess transport is opt-in only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

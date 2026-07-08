@@ -1897,3 +1897,30 @@ Verification:
 Verified result: targeted tests passed; P79 smoke wrote `/tmp/opscat-action-sandbox-hardening-latest.md` with proposal_count=5, allowed_count=1, approval_required_count=1, mock_only_count=1, blocked_count=2, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, and passed=true.
 
 Boundary: offline local/mock evaluation only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P80 Approval Automation Policy Lab Evidence
+
+P80 evaluates local/mock approval automation policy for common incident actions. It combines P79 sandbox decisions, evidence sufficiency and confidence, recovery proof strength, blast radius, reversibility, action class, historical approval safety, role and policy constraints, maintenance windows, and sleep-mode policy to classify each action as auto-approved, human-required, mock-only, or blocked.
+
+Artifacts:
+
+- `docs/operations/p80-ticket-roadmap.md`
+- `docs/operations/p80-final-summary.md`
+- `app/services/approval_automation_policy_lab.py`
+- `scripts/run_approval_automation_policy_lab.py`
+- `evals/policy/p80_approval_automation_policy_lab.json`
+- `tests/test_approval_automation_policy_lab.py`
+- `tests/test_p80_release_evidence.py`
+- `/tmp/opscat-approval-automation-policy-lab-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_approval_automation_policy_lab.py tests/test_p80_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/approval_automation_policy_lab.py scripts/run_approval_automation_policy_lab.py tests/test_approval_automation_policy_lab.py tests/test_p80_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/approval_automation_policy_lab.py scripts/run_approval_automation_policy_lab.py tests/test_approval_automation_policy_lab.py tests/test_p80_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_approval_automation_policy_lab.py --cases evals/policy/p80_approval_automation_policy_lab.json --output-json /tmp/opscat-approval-automation-policy-lab-latest.json --output-md /tmp/opscat-approval-automation-policy-lab-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P80 smoke wrote `/tmp/opscat-approval-automation-policy-lab-latest.md` with scenario_count=9, auto_approve_count=1, require_human_count=3, mock_only_count=1, blocked_count=4, unsafe_auto_approval_count=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, and passed=true.
+
+Boundary: offline local/mock policy evaluation only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim. Destructive, credential, auth, schema, data-loss, shell, and production-mutation actions cannot auto-approve.

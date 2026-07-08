@@ -680,3 +680,11 @@ P79 active scope: Action Sandbox Hardening. P79 evaluates proposed actions again
 ## P79 implemented
 
 P79 implemented as Action Sandbox Hardening evidence. P79 parses local proposed-action fixtures, returns allow, approval-required, mock-only, or block decisions, blocks prohibited external boundaries, emits CLI JSON/Markdown reports, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P80 active
+
+P80 active scope: Approval Automation Policy Lab. P80 evaluates when local/mock incident actions can be auto-approved, must require a human, should remain mock-only, or must be blocked by combining P79 sandbox decisions, evidence sufficiency, recovery proof, blast radius, reversibility, action class, historical safety, role/policy constraints, maintenance windows, and sleep-mode policy.
+
+## P80 implemented
+
+P80 implemented as Approval Automation Policy Lab evidence. P80 parses local fixture scenarios for restart worker, scale read replica, clear local cache, rotate credential, disable auth, run migration, rollback deploy draft, kill process, and increase rate limit; emits structured reasons, missing evidence, guardrails, audit records, and max execution modes; blocks sensitive/destructive auto-approval; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.

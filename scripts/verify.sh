@@ -619,6 +619,16 @@ action_sandbox_hardening_smoke() {
   printf 'Wrote /tmp/opscat-action-sandbox-hardening-latest.md and %s/opscat-action-sandbox-hardening.json\n' "$VERIFY_TMPDIR"
 }
 
+approval_automation_policy_lab_smoke() {
+  section "P80 approval automation policy lab smoke"
+  "${UV_DEV[@]}" python scripts/run_approval_automation_policy_lab.py \
+    --cases evals/policy/p80_approval_automation_policy_lab.json \
+    --output-json "$VERIFY_TMPDIR/opscat-approval-automation-policy-lab.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-approval-automation-policy-lab.md" >/tmp/opscat-approval-automation-policy-lab-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-approval-automation-policy-lab.md" /tmp/opscat-approval-automation-policy-lab-latest.md
+  printf 'Wrote /tmp/opscat-approval-automation-policy-lab-latest.md and %s/opscat-approval-automation-policy-lab.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1162,6 +1172,7 @@ run_eval() {
   recovery_proof_engine_smoke
   runbook_simulation_tournament_smoke
   action_sandbox_hardening_smoke
+  approval_automation_policy_lab_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

@@ -362,3 +362,8 @@ P39 implemented as Runbook Learning Loop evidence. P39 converts local blocked/de
 ## P40 active
 
 P40 active scope: Production-readiness Milestone Bundle. P40 packages P33-P39 verified local evidence into a readiness bundle, declares local portfolio readiness, and explicitly marks production autopilot/unattended operation as not ready until auth, live connector validation, production-safe execution controls, and operational SLOs exist.
+
+
+## P40 implemented
+
+P40 implemented as Production-readiness Milestone Bundle evidence. P40 packages P33-P39 local evidence into readiness gates, blocker register, portfolio summary, and evidence bundle; declares local-portfolio-ready; keeps production_autopilot_ready=false; documents auth, live connector validation, and production execution-control blockers; integrates CLI/full verification smoke; and does not claim unattended production operation.

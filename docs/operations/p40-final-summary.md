@@ -27,15 +27,18 @@ P40 packages P33-P39 evidence into one readiness bundle. It proves a local portf
 
 Does not claim unattended production operation, does not enable production autopilot, no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, and no default external model/API calls.
 
-## Verification target
+## Verification result
 
-Expected metrics before final full verification:
+Full verification passed with P40 included in `scripts/verify.sh`:
 
-- gate count: at least 8
-- passed gate count: equals gate count
+- gate count: 8
+- passed gate count: 8
+- failed gate count: 0
 - boundary violation count: 0
-- production blocker count: at least 1
+- production blocker count: 3
 - readiness decision: local-portfolio-ready
 - production autopilot ready: false
+- total coverage gate: 78.61% >= 60.00%
+- `app/services/production_readiness_milestone.py` coverage: 88.37%
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+Generated artifacts: `/tmp/opscat-production-readiness-milestone-latest.md` and `/tmp/opscat-production-readiness-milestone-latest.json`.

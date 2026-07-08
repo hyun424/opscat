@@ -967,6 +967,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_production_readiness_milestone.py tests/test_p40_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile. Target metrics are gate count >= 8, passed gate count equals gate count, boundary violation count 0, production blocker count >= 1, readiness decision local-portfolio-ready, and production autopilot ready false.
+Verified result: full profile passed; coverage gate 78.61%; `app/services/production_readiness_milestone.py` coverage 88.37%; P40 production-readiness milestone smoke wrote `/tmp/opscat-production-readiness-milestone-latest.md` with 8 gates, 8 passed gates, 0 failed gates, boundary violation count 0, production blocker count 3, readiness decision local-portfolio-ready, and production autopilot ready false.
 
 Boundary: local readiness bundle only; does not claim unattended production operation; does not enable production autopilot; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution.

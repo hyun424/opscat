@@ -1,0 +1,38 @@
+{
+  "loop": {
+    "duration_hours": 24,
+    "cycle_minutes": 20,
+    "batch_size": 4,
+    "checkpoint_every_cycles": 3,
+    "default_mode": "dry_run_plan_only"
+  },
+  "tickets": [
+    {"id": "P66", "title": "Autonomous day loop backlog", "lane": "planning", "class": "safe-local", "depends_on": ["P65"], "verification": ["docs", "targeted-tests"]},
+    {"id": "P67", "title": "Explicit live staging attach gate", "lane": "connectors", "class": "gated-live", "depends_on": ["P65"], "verification": ["targeted-tests", "audit-evidence"]},
+    {"id": "P68", "title": "Staging read-only ingest adapter", "lane": "telemetry", "class": "safe-local", "depends_on": ["P65"], "verification": ["targeted-tests", "fixture-replay"]},
+    {"id": "P69", "title": "Staging signal to judgment bridge", "lane": "judgment", "class": "safe-local", "depends_on": ["P68"], "verification": ["targeted-tests", "benchmark"]},
+    {"id": "P70", "title": "Long shadow monitoring runtime", "lane": "runtime", "class": "safe-local", "depends_on": ["P69"], "verification": ["soak-sim", "targeted-tests"]},
+    {"id": "P71", "title": "Shadow monitoring quality dashboard", "lane": "dashboard", "class": "safe-local", "depends_on": ["P70"], "verification": ["docs", "targeted-tests"]},
+    {"id": "P72", "title": "Human operator comparison benchmark", "lane": "evaluation", "class": "safe-local", "depends_on": ["P69"], "verification": ["benchmark", "docs"]},
+    {"id": "P73", "title": "False-positive and missed-signal miner", "lane": "evaluation", "class": "safe-local", "depends_on": ["P70"], "verification": ["benchmark", "targeted-tests"]},
+    {"id": "P74", "title": "Incident scenario generator v2", "lane": "evaluation", "class": "safe-local", "depends_on": ["P72"], "verification": ["scenario-tests", "docs"]},
+    {"id": "P75", "title": "Telemetry gap finder", "lane": "telemetry", "class": "safe-local", "depends_on": ["P69"], "verification": ["targeted-tests", "docs"]},
+    {"id": "P76", "title": "Evidence sufficiency gate v2", "lane": "judgment", "class": "safe-local", "depends_on": ["P75"], "verification": ["benchmark", "targeted-tests"]},
+    {"id": "P77", "title": "Recovery proof engine", "lane": "recovery", "class": "safe-local", "depends_on": ["P76"], "verification": ["targeted-tests", "fixture-replay"]},
+    {"id": "P78", "title": "Runbook simulation tournament", "lane": "runbooks", "class": "safe-local", "depends_on": ["P77"], "verification": ["benchmark", "docs"]},
+    {"id": "P79", "title": "Action sandbox hardening", "lane": "actions", "class": "gated-action", "depends_on": ["P77"], "verification": ["safety-tests", "audit-evidence"]},
+    {"id": "P80", "title": "Approval automation policy lab", "lane": "policy", "class": "gated-action", "depends_on": ["P79"], "verification": ["policy-tests", "audit-evidence"]},
+    {"id": "P81", "title": "Rollback PR draft automation", "lane": "actions", "class": "gated-action", "depends_on": ["P80"], "verification": ["mock-action-tests", "audit-evidence"]},
+    {"id": "P82", "title": "Slack and ticket draft automation", "lane": "actions", "class": "gated-action", "depends_on": ["P80"], "verification": ["mock-action-tests", "docs"]},
+    {"id": "P83", "title": "War-room timeline product polish", "lane": "dashboard", "class": "safe-local", "depends_on": ["P71"], "verification": ["ui-tests", "docs"]},
+    {"id": "P84", "title": "Operator trust report", "lane": "reporting", "class": "safe-local", "depends_on": ["P72", "P76"], "verification": ["snapshot-tests", "docs"]},
+    {"id": "P85", "title": "Self-improvement scheduler", "lane": "learning", "class": "safe-local", "depends_on": ["P73", "P74"], "verification": ["targeted-tests", "benchmark"]},
+    {"id": "P86", "title": "Provider connector plugin skeletons", "lane": "connectors", "class": "safe-local", "depends_on": ["P68"], "verification": ["contract-tests", "docs"]},
+    {"id": "P87", "title": "Incident memory retrieval hardening", "lane": "memory", "class": "safe-local", "depends_on": ["P69"], "verification": ["retrieval-tests", "benchmark"]},
+    {"id": "P88", "title": "Security and secret lifecycle review", "lane": "security", "class": "safe-local", "depends_on": ["P65"], "verification": ["security-tests", "docs"]},
+    {"id": "P89", "title": "Open-source deployment packaging", "lane": "release", "class": "safe-local", "depends_on": ["P83", "P88"], "verification": ["build", "docs"]},
+    {"id": "P90", "title": "Portfolio-grade demo scenario pack", "lane": "release", "class": "safe-local", "depends_on": ["P84", "P89"], "verification": ["demo-smoke", "docs"]},
+    {"id": "P91", "title": "Night-long shadow soak report", "lane": "runtime", "class": "safe-local", "depends_on": ["P70", "P84"], "verification": ["soak-sim", "docs"]},
+    {"id": "P92", "title": "Production autonomy readiness v3", "lane": "readiness", "class": "blocked-production", "depends_on": ["P91", "P81", "P88"], "verification": ["readiness-gate", "audit-evidence"]}
+  ]
+}

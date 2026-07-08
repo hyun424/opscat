@@ -1674,6 +1674,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
 
-Verified result: pending final full/docs verification after GREEN implementation.
+Verified result: full profile passed; docs profile passed; coverage gate 80.38%; P70 smoke wrote `/tmp/opscat-gated-worker-process-runner-latest.md` with validated_command_count=3, process_capable_count=3, blocked_command_count=0, spawned_process_count=0, shell_command_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 Boundary: no-spawn process gate; no process spawning, no shell command execution, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

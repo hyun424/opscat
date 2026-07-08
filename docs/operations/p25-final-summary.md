@@ -36,6 +36,27 @@ Targeted GREEN:
 
 ```bash
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_p25_proactive_corpus_calibration.py tests/test_p25_release_evidence.py
+# 6 passed
+```
+
+Static and related regression:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/proactive_risk_sentinel.py scripts/run_proactive_risk_sentinel.py scripts/run_proactive_calibration.py tests/test_proactive_risk_sentinel.py tests/test_p24_release_evidence.py tests/test_p25_proactive_corpus_calibration.py tests/test_p25_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/proactive_risk_sentinel.py scripts/run_proactive_risk_sentinel.py scripts/run_proactive_calibration.py tests/test_proactive_risk_sentinel.py tests/test_p24_release_evidence.py tests/test_p25_proactive_corpus_calibration.py tests/test_p25_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_proactive_risk_sentinel.py tests/test_p24_release_evidence.py tests/test_p25_proactive_corpus_calibration.py tests/test_p25_release_evidence.py
+# ruff passed; mypy passed; 13 passed
+```
+
+Calibration smoke:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_proactive_calibration.py \
+  --fixtures evals/proactive/seed/risk_windows.json \
+  --output-json /tmp/opscat-proactive-calibration-p25.json \
+  --output-md /tmp/opscat-proactive-calibration-p25.md
+# windows=120 risk_types=42 passed=True route_mismatch=0 eta_out=0 unsafe_auto=0 action_execution_enabled=False
+# routes: preventive_review=96, monitor=12, blocked=12
 ```
 
 Calibration expected results:
@@ -46,12 +67,16 @@ eta_out_of_range_count=0
 confidence_below_floor_count=0
 unsafe_auto_action_count=0
 missing_expected_count=0
+auto_capability_mismatch_count=0
+approval_capability_mismatch_count=0
+blocked_capability_mismatch_count=0
 ```
 
-Full:
+Full verification:
 
 ```bash
 UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full
+# Verification complete (full); coverage gate passed: 76.54% >= 60.00%; P25 proactive calibration smoke executed
 ```
 
 ## Boundary

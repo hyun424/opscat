@@ -843,6 +843,25 @@ supervised_worker_execution_harness_smoke() {
   cp "$VERIFY_TMPDIR/opscat-supervised-worker-execution-harness.md" /tmp/opscat-supervised-worker-execution-harness-latest.md
   printf 'Wrote /tmp/opscat-supervised-worker-execution-harness-latest.md and %s/opscat-supervised-worker-execution-harness.json\n' "$VERIFY_TMPDIR"
 }
+
+stateful_all_day_loop_orchestrator_smoke() {
+  section "P72 stateful all-day loop orchestrator smoke"
+  "${UV_DEV[@]}" python scripts/run_stateful_all_day_loop_orchestrator.py \
+    --manifest evals/planning/p66_autonomous_day_loop_backlog.json \
+    --completed P65 \
+    --max-cycles 3 \
+    --max-tickets-per-cycle 3 \
+    --max-parallel 2 \
+    --enable-process-execution \
+    --transport simulated \
+    --dispatch-dir "$VERIFY_TMPDIR/opscat-stateful-all-day-loop-dispatch" \
+    --state-path "$VERIFY_TMPDIR/opscat-stateful-all-day-loop-state.json" \
+    --artifact-dir "$VERIFY_TMPDIR/opscat-stateful-all-day-loop-artifacts" \
+    --output-json "$VERIFY_TMPDIR/opscat-stateful-all-day-loop-orchestrator.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-stateful-all-day-loop-orchestrator.md" >/tmp/opscat-stateful-all-day-loop-orchestrator-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-stateful-all-day-loop-orchestrator.md" /tmp/opscat-stateful-all-day-loop-orchestrator-latest.md
+  printf 'Wrote /tmp/opscat-stateful-all-day-loop-orchestrator-latest.md and %s/opscat-stateful-all-day-loop-orchestrator.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -973,7 +992,8 @@ docs_contract_tests() {
     tests/test_p68_release_evidence.py \
     tests/test_p69_release_evidence.py \
     tests/test_p70_release_evidence.py \
-    tests/test_p71_release_evidence.py
+    tests/test_p71_release_evidence.py \
+    tests/test_p72_release_evidence.py
 }
 
 run_fast() {
@@ -1050,6 +1070,7 @@ run_eval() {
   autonomous_worker_runner_smoke
   gated_worker_process_runner_smoke
   supervised_worker_execution_harness_smoke
+  stateful_all_day_loop_orchestrator_smoke
 }
 
 run_docs() {

@@ -616,3 +616,11 @@ P71 active scope: Supervised Worker Execution Harness. P71 executes P70 process-
 ## P71 implemented
 
 P71 implemented as Supervised Worker Execution Harness evidence. P71 runs process-capable commands through simulated supervised transport in repository verification, supports opt-in real subprocess transport behind explicit enablement, writes per-ticket artifacts and resumable state, records retry queue entries, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P72 active
+
+P72 active scope: Stateful All-Day Loop Orchestrator. P72 advances the P71 supervised harness across repeated cycles while accumulating completed state, retry queues, cycle checkpoints, and resume handoff.
+
+## P72 implemented
+
+P72 implemented as Stateful All-Day Loop Orchestrator evidence. P72 runs multiple simulated supervised cycles, persists orchestrator state after each cycle, stops on retry queues or missing process enablement, produces resume-completed handoff, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

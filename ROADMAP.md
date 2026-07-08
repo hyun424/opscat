@@ -290,3 +290,7 @@ P31 active scope: End-to-End Operator Replacement Drill. P31 connects P27 readin
 ## P31 implemented
 
 P31 implemented as End-to-End Operator Replacement Drill evidence. P31 composes connector readiness, read-only polling, telemetry-grounded judgment quality, and controlled remediation simulation into one local/mock operator-replacement score and morning operator report. Normal verification remains no-auth/local-mock by default and performs no live API calls, production mutation, remediation execution, unrestricted shell execution, or unattended production-operation claim.
+
+## P32 active
+
+P32 active scope: Real Telemetry Replay Benchmark. P32 replays local Prometheus/Grafana, Datadog, and Sentry shaped telemetry fixtures through adapter normalization, trend-window detection, telemetry-grounded judgment scoring, and controlled remediation simulation. The boundary remains no-auth/local-mock by default: no live API calls, production mutation, remediation execution, unrestricted shell, default external model/API calls, or unattended production-operation claims.

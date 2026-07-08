@@ -35,12 +35,37 @@ Targeted GREEN:
 
 ```bash
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_night_shift_drill.py tests/test_p22_release_evidence.py
+# 6 passed
 ```
 
-Full:
+Static and related regression:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/night_shift_drill.py scripts/run_night_shift_drill.py tests/test_night_shift_drill.py tests/test_p22_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/night_shift_drill.py scripts/run_night_shift_drill.py tests/test_night_shift_drill.py tests/test_p22_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_runtime_loop_control_plane.py tests/test_night_shift_drill.py tests/test_p21_release_evidence.py tests/test_p22_release_evidence.py
+# ruff passed; mypy passed; 14 passed
+```
+
+Full verification:
 
 ```bash
 UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full
+# Verification complete (full); coverage gate passed: 76.12% >= 60.00%; P22 night-shift runtime drill smoke executed
+```
+
+P22 runtime drill output:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_night_shift_drill.py \
+  --cases evals/judgment/seed/cases.json \
+  --max-cases 4 \
+  --max-ticks 4 \
+  --approval-mode auto_readonly \
+  --output-json /tmp/opscat-night-drill-p22.json \
+  --output-md /tmp/opscat-night-drill-p22.md
+# scenarios=4 processed=4 queue_depth=0 safety_violations=0 sla_pass_rate=1.0 action_execution_enabled=False
+# score: processed_ratio=1.0 queue_drain_ratio=1.0 approval_waiting_ratio=0.75 blocked_unsafe_ratio=0.25 unexpected_completion_count=0
 ```
 
 ## Boundary

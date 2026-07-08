@@ -1505,6 +1505,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_staging_live_read_only_preflight.py tests/test_p63_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.91%; P63 smoke wrote `/tmp/opscat-staging-live-read-only-preflight-latest.md` with check_count=4, eligible_check_count=3, attempted_check_count=0, successful_check_count=0, blocked_check_count=1, non_get_check_count=1, manual_approval_missing_count=0, mock_transport_call_count=0, live_api_call_count=0, action_execution_count=0, production_mutation_count=0, eligible_checks=p63-grafana-health-get/p63-sentry-projects-get/p63-datadog-monitors-get, blocked_checks=p63-prod-admin-post-blocked, next_step="rerun with explicit live staging flag after manual approval and read-only credentials", and passed=true.
 
 Boundary: default no-live staging preflight only; no real server connection in normal verification; live path requires explicit live staging gates; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

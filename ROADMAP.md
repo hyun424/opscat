@@ -240,3 +240,7 @@ P25 active scope: Proactive Signal Corpus Expansion and Calibration. P25 expands
 ## P25 implemented
 
 P25 implemented as Proactive Signal Corpus Expansion and Calibration evidence. P25 expands proactive pre-incident fixtures to 120 local/mock windows across 42 risk types, adds expected outcome metadata, ETA/route/confidence/action-safety calibration, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or remediation execution.
+
+## P26 active
+
+P26 active scope: Real Telemetry Adapter Contract. P26 creates fixture/read-only adapters for Prometheus/Grafana, Datadog, and Sentry shaped payloads, normalizes telemetry series/events/snapshots, converts compatible metrics to proactive TrendWindows, adds CLI reports, integrates verification, and preserves release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, live observability API calls, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, remediation execution, or unattended production-operation claims.

@@ -1,0 +1,74 @@
+{
+  "version": "p61.1",
+  "sources": [
+    {
+      "source_id": "local-shadow-payment-api",
+      "connector_kind": "local_shadow",
+      "read_only": true,
+      "service": "payment-api",
+      "metrics": [
+        {
+          "timestamp": "2026-07-08T13:00:00Z",
+          "metric": "http_5xx_rate",
+          "value": 8.2,
+          "baseline": 0.4,
+          "unit": "percent"
+        },
+        {
+          "timestamp": "2026-07-08T13:00:00Z",
+          "metric": "db_pool_wait_seconds_p95",
+          "value": 0.08,
+          "baseline": 0.07,
+          "unit": "seconds"
+        }
+      ],
+      "logs": [
+        {
+          "timestamp": "2026-07-08T13:01:00Z",
+          "level": "error",
+          "message": "upstream timeout after deploy v42"
+        },
+        {
+          "timestamp": "2026-07-08T13:02:00Z",
+          "level": "warn",
+          "message": "database pool saturation not observed"
+        }
+      ],
+      "errors": [
+        {
+          "timestamp": "2026-07-08T13:01:30Z",
+          "title": "Payment API timeout spike",
+          "count": 42
+        }
+      ],
+      "deployments": [
+        {
+          "service": "payment-api",
+          "version": "v42",
+          "deployed_at": "2026-07-08T12:55:00Z",
+          "author": "deploy-bot"
+        }
+      ]
+    },
+    {
+      "source_id": "local-shadow-empty",
+      "connector_kind": "local_shadow",
+      "read_only": true,
+      "service": "empty-api",
+      "metrics": [],
+      "logs": [],
+      "errors": [],
+      "deployments": []
+    },
+    {
+      "source_id": "local-shadow-malformed",
+      "connector_kind": "local_shadow",
+      "read_only": true,
+      "service": "malformed-api",
+      "metrics": "not-a-list",
+      "logs": [],
+      "errors": [],
+      "deployments": []
+    }
+  ]
+}

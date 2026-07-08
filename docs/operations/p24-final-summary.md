@@ -38,12 +38,35 @@ Targeted GREEN:
 
 ```bash
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_proactive_risk_sentinel.py tests/test_p24_release_evidence.py
+# 7 passed
 ```
 
-Full:
+Static and related regression:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/proactive_risk_sentinel.py scripts/run_proactive_risk_sentinel.py tests/test_proactive_risk_sentinel.py tests/test_p24_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/proactive_risk_sentinel.py scripts/run_proactive_risk_sentinel.py tests/test_proactive_risk_sentinel.py tests/test_p24_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_proactive_risk_sentinel.py tests/test_p24_release_evidence.py tests/test_night_shift_drill.py tests/test_p23_scenario_corpus.py
+# ruff passed; mypy passed; 16 passed
+```
+
+P24 proactive smoke:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_proactive_risk_sentinel.py \
+  --fixtures evals/proactive/seed/risk_windows.json \
+  --max-windows 12 \
+  --output-json /tmp/opscat-proactive-risk-p24.json \
+  --output-md /tmp/opscat-proactive-risk-p24.md
+# windows=12 forecasts=12 unsafe_auto=0 lead_time_min=1 action_execution_enabled=False
+# routes: preventive_review=11, monitor=1; median lead time=3 minutes
+```
+
+Full verification:
 
 ```bash
 UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full
+# Verification complete (full); coverage gate passed: 76.42% >= 60.00%; P24 proactive risk sentinel smoke executed
 ```
 
 ## Boundary

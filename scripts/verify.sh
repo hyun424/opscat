@@ -629,6 +629,16 @@ approval_automation_policy_lab_smoke() {
   printf 'Wrote /tmp/opscat-approval-automation-policy-lab-latest.md and %s/opscat-approval-automation-policy-lab.json\n' "$VERIFY_TMPDIR"
 }
 
+rollback_pr_draft_automation_smoke() {
+  section "P81 rollback PR draft automation smoke"
+  "${UV_DEV[@]}" python scripts/run_rollback_pr_draft_automation.py \
+    --cases evals/policy/p81_rollback_pr_draft_automation.json \
+    --output-json "$VERIFY_TMPDIR/opscat-rollback-pr-draft-automation.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-rollback-pr-draft-automation.md" >/tmp/opscat-rollback-pr-draft-automation-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-rollback-pr-draft-automation.md" /tmp/opscat-rollback-pr-draft-automation-latest.md
+  printf 'Wrote /tmp/opscat-rollback-pr-draft-automation-latest.md and %s/opscat-rollback-pr-draft-automation.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1113,7 +1123,8 @@ docs_contract_tests() {
     tests/test_p76_release_evidence.py \
     tests/test_p77_release_evidence.py \
     tests/test_p78_release_evidence.py \
-    tests/test_p79_release_evidence.py
+    tests/test_p79_release_evidence.py \
+    tests/test_p81_release_evidence.py
 }
 
 run_fast() {
@@ -1173,6 +1184,7 @@ run_eval() {
   runbook_simulation_tournament_smoke
   action_sandbox_hardening_smoke
   approval_automation_policy_lab_smoke
+  rollback_pr_draft_automation_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

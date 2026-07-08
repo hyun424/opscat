@@ -1924,3 +1924,30 @@ Verification:
 Verified result: targeted tests passed; P80 smoke wrote `/tmp/opscat-approval-automation-policy-lab-latest.md` with scenario_count=9, auto_approve_count=1, require_human_count=3, mock_only_count=1, blocked_count=4, unsafe_auto_approval_count=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, and passed=true.
 
 Boundary: offline local/mock policy evaluation only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim. Destructive, credential, auth, schema, data-loss, shell, and production-mutation actions cannot auto-approve.
+
+## P81 Rollback PR Draft Automation Evidence
+
+P81 drafts safe rollback PR artifacts after P80 approval policy lab determines real execution is not allowed or needs human review. It emits structured title, summary, proposed file changes or command-plan text, risk, evidence references, required human approval, verification checklist, rollback/abort plan, and audit metadata while remaining local/mock and draft-only.
+
+Artifacts:
+
+- `docs/operations/p81-ticket-roadmap.md`
+- `docs/operations/p81-final-summary.md`
+- `app/services/rollback_pr_draft_automation.py`
+- `scripts/run_rollback_pr_draft_automation.py`
+- `evals/policy/p81_rollback_pr_draft_automation.json`
+- `tests/test_rollback_pr_draft_automation.py`
+- `tests/test_p81_release_evidence.py`
+- `/tmp/opscat-rollback-pr-draft-automation-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_rollback_pr_draft_automation.py tests/test_p81_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/rollback_pr_draft_automation.py scripts/run_rollback_pr_draft_automation.py tests/test_rollback_pr_draft_automation.py tests/test_p81_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/rollback_pr_draft_automation.py scripts/run_rollback_pr_draft_automation.py tests/test_rollback_pr_draft_automation.py tests/test_p81_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_rollback_pr_draft_automation.py --cases evals/policy/p81_rollback_pr_draft_automation.json --output-json /tmp/opscat-rollback-pr-draft-automation-latest.json --output-md /tmp/opscat-rollback-pr-draft-automation-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P81 smoke wrote `/tmp/opscat-rollback-pr-draft-automation-latest.md` with scenario_count=5, draft_ready_count=2, human_review_required_count=1, blocked_count=1, rejected_count=1, required_human_approval_count=5, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, branch_creation_count=0, git_push_count=0, and passed=true.
+
+Boundary: offline local/mock draft artifact generation only; no live GitHub API calls, no credential reads, no network calls, no branch creation, no git push, no production mutation, no remediation execution, no shell command execution, no rollback command execution, no action execution, no default external model/API calls, and no unattended production-operation claim. P80 auto-approval is downgraded to draft-only unless external execution is explicitly configured; normal verification keeps it disabled.

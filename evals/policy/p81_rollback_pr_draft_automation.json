@@ -1,0 +1,137 @@
+{
+  "incident": {
+    "id": "p81-rollback-pr-draft-automation",
+    "service": "checkout-api",
+    "environment": "local-mock"
+  },
+  "scenarios": [
+    {
+      "id": "safe-config-rollback",
+      "title": "Draft rollback PR: restore checkout-api feature flag defaults",
+      "rollback_type": "config",
+      "action_class": "config",
+      "service": "checkout-api",
+      "p80_decision": "auto_approve",
+      "p80_max_allowed_execution_mode": "local_mock",
+      "evidence_sufficiency": 0.94,
+      "recovery_proof_strength": 0.9,
+      "blast_radius": "local",
+      "reversible": true,
+      "explicit_external_execution_configured": false,
+      "evidence_references": ["p80:auto_approve:clear-local-cache", "p77:recovery-proof:checkout-feature-flag"],
+      "proposed_file_changes": [
+        {
+          "path": "config/checkout-api/local-mock.yaml",
+          "change": "Set enable_new_checkout=false and restore timeout_ms=2500 in the proposed PR text."
+        }
+      ],
+      "command_plan": [],
+      "verification_checklist": ["feature flag diff reviewed", "recovery proof still passes", "blast radius remains local"],
+      "rollback_abort_plan": ["close draft if recovery proof regresses", "leave production state unchanged"],
+      "approval_type": "incident_commander_review",
+      "risk": "Low local/mock config rollback risk, but external PR creation still needs human approval."
+    },
+    {
+      "id": "deploy-revert-draft",
+      "title": "Draft rollback PR: revert checkout-api deploy marker",
+      "rollback_type": "deploy_revert",
+      "action_class": "deploy_rollback",
+      "service": "checkout-api",
+      "p80_decision": "mock_only",
+      "p80_max_allowed_execution_mode": "dry_run_only",
+      "evidence_sufficiency": 0.9,
+      "recovery_proof_strength": 0.84,
+      "blast_radius": "service",
+      "reversible": true,
+      "explicit_external_execution_configured": false,
+      "evidence_references": ["p80:mock_only:rollback-deploy-draft", "p78:winner:safe-evidence-first"],
+      "proposed_file_changes": [],
+      "command_plan": [
+        "Draft-only text: propose reverting deploy checkout-api@2026.07.08.3 to checkout-api@2026.07.08.2.",
+        "Draft-only text: request reviewer to run provider-specific deployment checks after approval."
+      ],
+      "verification_checklist": ["deploy diff reviewed", "error-rate evidence attached", "post-revert health checks listed"],
+      "rollback_abort_plan": ["do not open external PR if deploy diff is ambiguous", "continue read-only monitoring"],
+      "approval_type": "release_manager_review",
+      "risk": "Service-level deploy rollback can affect live traffic and remains draft-only."
+    },
+    {
+      "id": "migration-rollback-human",
+      "title": "Draft rollback PR: database migration rollback review",
+      "rollback_type": "migration",
+      "action_class": "migration",
+      "service": "orders-db",
+      "p80_decision": "require_human",
+      "p80_max_allowed_execution_mode": "dry_run_only",
+      "evidence_sufficiency": 0.87,
+      "recovery_proof_strength": 0.8,
+      "blast_radius": "workspace",
+      "reversible": false,
+      "explicit_external_execution_configured": false,
+      "evidence_references": ["p80:human:run-migration", "p77:recovery-proof:orders-db"],
+      "proposed_file_changes": [
+        {
+          "path": "migrations/README-draft.md",
+          "change": "Document the proposed down-migration review checklist without adding executable migration code."
+        }
+      ],
+      "command_plan": ["Draft-only text: request DBA review for down-migration feasibility before any code change."],
+      "verification_checklist": ["migration backup verified", "data loss risk reviewed", "database owner approval captured"],
+      "rollback_abort_plan": ["abort if backup is missing", "abort if down-migration loses data"],
+      "approval_type": "database_owner_review",
+      "risk": "Schema rollback is not automatically reversible and requires database owner review."
+    },
+    {
+      "id": "credential-auth-rollback-blocked",
+      "title": "Blocked rollback PR: credential and auth rollback",
+      "rollback_type": "credential_auth",
+      "action_class": "credential",
+      "service": "auth-api",
+      "p80_decision": "block",
+      "p80_max_allowed_execution_mode": "none",
+      "evidence_sufficiency": 0.92,
+      "recovery_proof_strength": 0.82,
+      "blast_radius": "workspace",
+      "reversible": false,
+      "explicit_external_execution_configured": false,
+      "evidence_references": ["p80:block:rotate-credential", "p80:block:disable-auth"],
+      "proposed_file_changes": [
+        {
+          "path": "auth/rollback-not-allowed.md",
+          "change": "This must be suppressed because credential/auth rollback is blocked."
+        }
+      ],
+      "command_plan": ["Draft-only text: this unsafe credential rollback command must be suppressed."],
+      "verification_checklist": ["security owner review required"],
+      "rollback_abort_plan": ["escalate to security incident commander", "do not draft credential changes"],
+      "approval_type": "security_owner_review",
+      "risk": "Credential and auth rollback is blocked from PR draft automation."
+    },
+    {
+      "id": "insufficient-evidence-rejected",
+      "title": "Rejected rollback PR: missing deploy evidence",
+      "rollback_type": "deploy_revert",
+      "action_class": "deploy_rollback",
+      "service": "payments-api",
+      "p80_decision": "require_human",
+      "p80_max_allowed_execution_mode": "dry_run_only",
+      "evidence_sufficiency": 0.52,
+      "recovery_proof_strength": 0.4,
+      "blast_radius": "service",
+      "reversible": true,
+      "explicit_external_execution_configured": false,
+      "evidence_references": [],
+      "proposed_file_changes": [
+        {
+          "path": "deploy/payments-api.txt",
+          "change": "Insufficient evidence means this proposed change must not be emitted."
+        }
+      ],
+      "command_plan": ["Draft-only text: rollback payments-api deploy after evidence is collected."],
+      "verification_checklist": ["collect deploy diff", "collect recovery proof", "collect blast radius evidence"],
+      "rollback_abort_plan": ["do not prepare draft until evidence sufficiency passes"],
+      "approval_type": "evidence_owner_review",
+      "risk": "Evidence is too weak to prepare a safe rollback PR draft."
+    }
+  ]
+}

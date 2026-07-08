@@ -688,3 +688,11 @@ P80 active scope: Approval Automation Policy Lab. P80 evaluates when local/mock 
 ## P80 implemented
 
 P80 implemented as Approval Automation Policy Lab evidence. P80 parses local fixture scenarios for restart worker, scale read replica, clear local cache, rotate credential, disable auth, run migration, rollback deploy draft, kill process, and increase rate limit; emits structured reasons, missing evidence, guardrails, audit records, and max execution modes; blocks sensitive/destructive auto-approval; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P81 active
+
+P81 active scope: Rollback PR Draft Automation. P81 drafts safe rollback PR artifacts after P80 determines real execution is not allowed or needs human review, while keeping all outputs local/mock, draft-only, and approval-gated.
+
+## P81 implemented
+
+P81 implemented as Rollback PR Draft Automation evidence. P81 parses local fixture scenarios for safe config rollback, deploy revert draft, migration rollback review, credential/auth rollback block, and insufficient evidence rejection; emits structured draft artifacts with proposed file-change or command-plan text, risk, evidence references, human approval, verification checklist, rollback/abort plan, and audit metadata; downgrades P80 auto-approval to draft-only; and preserves no live GitHub API calls, no credential reads, no network calls, no branch creation, no git push, no production mutation, no remediation execution, no shell command execution, no rollback command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.

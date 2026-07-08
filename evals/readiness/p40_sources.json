@@ -1,0 +1,13 @@
+{
+  "sources": ["P33", "P34", "P35", "P36", "P37", "P38", "P39"],
+  "required_gates": [
+    "connector_dry_run_ready",
+    "read_only_polling_safe",
+    "shadow_mode_no_execution",
+    "approval_control_safe",
+    "oss_config_safe",
+    "dashboard_portfolio_ready",
+    "learning_loop_safe",
+    "full_verification_passed"
+  ]
+}

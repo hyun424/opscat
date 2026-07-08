@@ -1181,3 +1181,27 @@ Verification:
 Verified result: pending final full profile.
 
 Boundary: offline fixtures only; mock/draft remediation boundary only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
+
+## P50 Night Operator Drill v2 Evidence
+
+P50 chains P45-P49 local evidence into a night-operator drill that can watch locally but does not claim unattended production readiness.
+
+Artifacts:
+
+- `docs/operations/p50-ticket-roadmap.md`
+- `docs/operations/p50-final-summary.md`
+- `evals/investigator/p50_night_operator_cases.json`
+- `app/services/night_operator_drill_v2.py`
+- `scripts/run_night_operator_drill_v2.py`
+- `tests/test_night_operator_drill_v2.py`
+- `tests/test_p50_release_evidence.py`
+- `/tmp/opscat-night-operator-drill-v2-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_night_operator_drill_v2.py tests/test_p50_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline fixtures only; read-only/mocked local drill only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

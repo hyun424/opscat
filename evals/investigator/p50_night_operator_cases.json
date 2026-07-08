@@ -1,0 +1,25 @@
+{
+  "version": "p50.1",
+  "drills": [
+    {
+      "id": "p50-night-db-saturation",
+      "incident_ref": "p46-db-saturation",
+      "judgment_ref": "p45-db-saturation",
+      "tool_plan_ref": "p47-db-tools",
+      "rerank_ref": "p48-deploy-demoted-db-promoted",
+      "remediation_ref": "p49-db-pool-recovered",
+      "expected_local_ready": true,
+      "expected_production_ready": false
+    },
+    {
+      "id": "p50-night-provider-escalation",
+      "incident_ref": "p46-provider-degraded",
+      "judgment_ref": "p45-provider-degraded",
+      "tool_plan_ref": "p47-provider-tools",
+      "rerank_ref": "p48-deploy-confirmed",
+      "remediation_ref": "p49-provider-retry-not-recovered",
+      "expected_local_ready": true,
+      "expected_production_ready": false
+    }
+  ]
+}

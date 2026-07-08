@@ -430,3 +430,8 @@ P49 active scope: Remediation Verification Loop. P49 turns proposed remediations
 ## P49 implemented
 
 P49 implemented as Remediation Verification Loop evidence. P49 verifies proposed remediations through pre-checks, mock/draft execution boundaries, post-check recovery criteria, and escalation on failed verification while keeping production execution disabled and preserving no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
+
+
+## P50 active
+
+P50 active scope: Night Operator Drill v2. P50 chains P45-P49 local evidence into an operator-like night drill, marks local night watch ready, and keeps unattended production readiness false until auth, live connector validation, and production execution controls exist.

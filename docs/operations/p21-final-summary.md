@@ -33,16 +33,41 @@ P21 wraps the P20 closed-loop incident response agent in a bounded local/mock ru
 
 ## Verification
 
-Targeted:
+Targeted GREEN:
 
 ```bash
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_runtime_loop_control_plane.py tests/test_p21_release_evidence.py
+# 8 passed
 ```
 
-Full:
+Static and related regression:
 
 ```bash
-bash scripts/verify.sh --profile full
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/runtime_loop_control.py scripts/run_runtime_loop.py tests/test_runtime_loop_control_plane.py tests/test_p21_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/runtime_loop_control.py scripts/run_runtime_loop.py tests/test_runtime_loop_control_plane.py tests/test_p21_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_closed_loop_response.py tests/test_runtime_loop_control_plane.py tests/test_p20_release_evidence.py tests/test_p21_release_evidence.py
+# ruff passed; mypy passed; 14 passed
+```
+
+Full verification:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full
+# Verification complete (full); coverage gate passed: 75.94% >= 60.00%; P21 runtime loop smoke executed
+```
+
+P21 runtime output:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_runtime_loop.py \
+  --cases evals/judgment/seed/cases.json \
+  --max-cases 2 \
+  --max-ticks 2 \
+  --approval-mode auto_readonly \
+  --output-json /tmp/opscat-runtime-loop-p21.json \
+  --output-md /tmp/opscat-runtime-loop-p21.md
+# status=running queue_depth=0 processed=2 approval_mode=auto_readonly action_execution_enabled=False
+# items: seed-loghub-deploy-regression=approval_waiting/human_required; seed-loghub-injection-block=blocked/blocked
 ```
 
 ## Boundary

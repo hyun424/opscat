@@ -370,7 +370,8 @@ operator_replacement_drill_smoke() {
   "${UV_DEV[@]}" python scripts/run_operator_replacement_drill.py \
     --scenarios evals/operator_replacement/p31_scenarios.json \
     --output-json "$VERIFY_TMPDIR/opscat-operator-replacement.json" \
-    --output-md "$VERIFY_TMPDIR/opscat-operator-replacement.md" >/tmp/opscat-operator-replacement-latest.json
+    --output-md "$VERIFY_TMPDIR/opscat-operator-replacement.md" >/tmp/opscat-operator-replacement-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-operator-replacement.json" /tmp/opscat-operator-replacement-latest.json
   cp "$VERIFY_TMPDIR/opscat-operator-replacement.md" /tmp/opscat-operator-replacement-latest.md
   printf 'Wrote /tmp/opscat-operator-replacement-latest.md and %s/opscat-operator-replacement.json\n' "$VERIFY_TMPDIR"
 }

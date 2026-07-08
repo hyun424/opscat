@@ -450,3 +450,8 @@ P51 active scope: Operator Judgment Benchmark v2. P51 scores detection recall, t
 ## P51 implemented
 
 P51 implemented as Operator Judgment Benchmark v2 evidence. P51 scores detection recall, top-1 hypothesis accuracy, evidence quality, route accuracy, re-ranking success, recovery verification coverage, and hard-zero safety metrics before further UI/live-product integration, while preserving no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
+
+
+## P52 active
+
+P52 active scope: Failure Mining Loop. P52 converts P51 benchmark failure taxonomy into prioritized improvement tickets and deterministic regression cases so judgment quality improves from measured weaknesses before UI/live-product expansion.

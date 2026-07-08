@@ -601,6 +601,17 @@ operator_judgment_benchmark_v2_smoke() {
   printf 'Wrote /tmp/opscat-operator-judgment-benchmark-v2-latest.md and %s/opscat-operator-judgment-benchmark-v2.json\n' "$VERIFY_TMPDIR"
 }
 
+failure_mining_loop_smoke() {
+  section "P52 failure mining loop smoke"
+  "${UV_DEV[@]}" python scripts/run_failure_mining_loop.py \
+    --cases evals/investigator/p51_operator_judgment_benchmark_v2_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-failure-mining-loop.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-failure-mining-loop.md" >/tmp/opscat-failure-mining-loop-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-failure-mining-loop.json" /tmp/opscat-failure-mining-loop-latest.json
+  cp "$VERIFY_TMPDIR/opscat-failure-mining-loop.md" /tmp/opscat-failure-mining-loop-latest.md
+  printf 'Wrote /tmp/opscat-failure-mining-loop-latest.md and %s/opscat-failure-mining-loop.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -711,7 +722,8 @@ docs_contract_tests() {
     tests/test_p48_release_evidence.py \
     tests/test_p49_release_evidence.py \
     tests/test_p50_release_evidence.py \
-    tests/test_p51_release_evidence.py
+    tests/test_p51_release_evidence.py \
+    tests/test_p52_release_evidence.py
 }
 
 run_fast() {
@@ -768,6 +780,7 @@ run_eval() {
   remediation_verification_loop_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
+  failure_mining_loop_smoke
 }
 
 run_docs() {

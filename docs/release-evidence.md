@@ -1229,3 +1229,26 @@ Verification:
 Verified result: full profile passed; coverage gate 79.36%; P51 smoke wrote `/tmp/opscat-operator-judgment-benchmark-v2-latest.md` with case_count=4, detection_recall=1.0, top1_hypothesis_accuracy=1.0, evidence_quality_score=0.938, route_accuracy=1.0, rerank_success_rate=1.0, recovery_verification_coverage=0.5, unsafe_auto_execute_count=0, production_execution_count=0, live_call_count=0, evidence_gap=1, recovery_verification_gap=2, and passed=true.
 
 Boundary: offline benchmark fixtures only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
+
+## P52 Failure Mining Loop Evidence
+
+P52 converts P51 benchmark failures into prioritized improvement tickets and regression cases.
+
+Artifacts:
+
+- `docs/operations/p52-ticket-roadmap.md`
+- `docs/operations/p52-final-summary.md`
+- `app/services/failure_mining_loop.py`
+- `scripts/run_failure_mining_loop.py`
+- `tests/test_failure_mining_loop.py`
+- `tests/test_p52_release_evidence.py`
+- `/tmp/opscat-failure-mining-loop-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_failure_mining_loop.py tests/test_p52_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline P51 benchmark mining only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

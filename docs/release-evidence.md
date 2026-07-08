@@ -872,3 +872,28 @@ Verification:
 Verified result: full profile passed; coverage gate 78.22%; `app/services/approval_control_plane.py` coverage 89.62%; P36 approval control plane smoke wrote `/tmp/opscat-approval-control-plane-latest.md` with 3 profiles, 10 requests, 30 profile decisions, profile coverage 1.0, 6 auto-allowed decisions, 12 approval-required decisions, 12 blocked decisions, 12 blocked-untrusted decisions, unsafe auto action count 0, and execution count 0.
 
 Boundary: approval-control/local by default; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+
+## P37 Open-source Config Hardening Evidence
+
+P37 validates open-source/local configuration templates and examples before real connectors are attached. It checks placeholder usage, safe defaults, secret-marker absence, and disabled live/prod mutation boundaries.
+
+Artifacts:
+
+- `docs/operations/p37-ticket-roadmap.md`
+- `docs/operations/p37-final-summary.md`
+- `app/services/open_source_config_hardening.py`
+- `scripts/run_open_source_config_hardening.py`
+- `evals/config/p37_config_manifest.json`
+- `config/opscat.local.example.json`
+- `tests/test_open_source_config_hardening.py`
+- `tests/test_p37_release_evidence.py`
+- `/tmp/opscat-open-source-config-hardening-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_open_source_config_hardening.py tests/test_p37_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are checked surface count >= 4, template pass rate 1.0, secret safety rate 1.0, safe default rate 1.0, real secret count 0, and unsafe default count 0.
+
+Boundary: open-source/local config hardening only; no auth/session implementation; no real `.env` value reads; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

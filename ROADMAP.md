@@ -331,3 +331,7 @@ P36 active scope: Approval Control Plane. P36 routes P35 shadow decisions throug
 ## P36 implemented
 
 P36 implemented as Approval Control Plane evidence. P36 routes P35 shadow decisions through local profiles, records auto-allowed, approval-required, and blocked routes, blocks untrusted/shell-like actions, preserves execution_count=0, integrates CLI/full verification smoke, and does not add auth/session work, live API calls, production mutation, remediation execution, unrestricted shell, external model/API calls, or unattended production-operation claims.
+
+## P37 active
+
+P37 active scope: Open-source Config Hardening. P37 validates OSS/local templates and examples for placeholders, safe defaults, no real-looking secrets, disabled live/prod mutation, disabled remediation execution, and verification evidence. Auth remains out of scope.

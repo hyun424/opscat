@@ -34,4 +34,4 @@ Offline staging contract only, local manifest and sample responses only, no real
 
 ## Final verification
 
-Pending final full profile.
+Full profile passed with coverage gate 79.84%; P62 smoke passed with connector_count=4, ready_count=3, degraded_count=0, blocked_count=1, provider_count=3, schema_compatible_count=3, provider_coverage_rate=1.0, read_only_safety_rate=0.75, staging_environment_rate=0.75, schema_compatibility_rate=0.75, ready_connectors=p62-grafana-staging/p62-sentry-staging/p62-datadog-staging, blocked_connectors=p62-prod-admin-blocked, next_step="attach staging read-only credentials behind manual approval", action_execution_count=0, live_api_call_count=0, production_mutation_count=0, and passed=true.

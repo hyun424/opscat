@@ -1481,6 +1481,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_staging_read_only_connector_contract.py tests/test_p62_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.84%; P62 smoke wrote `/tmp/opscat-staging-read-only-connector-contract-latest.md` with connector_count=4, ready_count=3, degraded_count=0, blocked_count=1, provider_count=3, schema_compatible_count=3, provider_coverage_rate=1.0, read_only_safety_rate=0.75, staging_environment_rate=0.75, schema_compatibility_rate=0.75, ready_connectors=p62-grafana-staging/p62-sentry-staging/p62-datadog-staging, blocked_connectors=p62-prod-admin-blocked, next_step="attach staging read-only credentials behind manual approval", action_execution_count=0, live_api_call_count=0, production_mutation_count=0, and passed=true.
 
 Boundary: offline staging connector contract only; local manifest and sample responses only; no real server connection; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

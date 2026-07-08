@@ -628,3 +628,27 @@ Verification:
 Verified result: full profile passed; coverage gate 76.68%; P26 telemetry adapter smoke wrote `/tmp/opscat-telemetry-adapter-latest.md` with 3 snapshots, 5 series, 3 events, and 6 trend windows.
 
 Boundary: no-auth/local-mock by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.
+
+## P27 Connector Readiness and Permission Contract Evidence
+
+P27 adds read-only connector readiness checks before live-like polling. It evaluates capability manifests, credential references, health state, retry/backoff posture, mutation capability risk, CLI reports, verification smoke, and release evidence.
+
+Artifacts:
+
+- `docs/operations/p27-ticket-roadmap.md`
+- `docs/operations/p27-final-summary.md`
+- `app/services/connector_readiness.py`
+- `scripts/run_connector_readiness.py`
+- `evals/connectors/readiness/read_only_sources.json`
+- `evals/connectors/readiness/unsafe_sources.json`
+- `evals/connectors/readiness/degraded_sources.json`
+- `tests/test_connector_readiness_contract.py`
+- `tests/test_p27_release_evidence.py`
+- `/tmp/opscat-connector-readiness-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_connector_readiness_contract.py tests/test_p27_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no live writes; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

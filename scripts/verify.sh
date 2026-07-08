@@ -322,6 +322,16 @@ telemetry_adapter_smoke() {
   printf 'Wrote /tmp/opscat-telemetry-adapter-latest.md and %s/opscat-telemetry-adapter.json\n' "$VERIFY_TMPDIR"
 }
 
+connector_readiness_smoke() {
+  section "P27 connector readiness smoke"
+  "${UV_DEV[@]}" python scripts/run_connector_readiness.py \
+    --manifests evals/connectors/readiness/read_only_sources.json \
+    --output-json "$VERIFY_TMPDIR/opscat-connector-readiness.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-connector-readiness.md" >/tmp/opscat-connector-readiness-latest.json
+  cp "$VERIFY_TMPDIR/opscat-connector-readiness.md" /tmp/opscat-connector-readiness-latest.md
+  printf 'Wrote /tmp/opscat-connector-readiness-latest.md and %s/opscat-connector-readiness.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -407,7 +417,8 @@ docs_contract_tests() {
     tests/test_p23_release_evidence.py \
     tests/test_p24_release_evidence.py \
     tests/test_p25_release_evidence.py \
-    tests/test_p26_release_evidence.py
+    tests/test_p26_release_evidence.py \
+    tests/test_p27_release_evidence.py
 }
 
 run_fast() {
@@ -439,6 +450,7 @@ run_eval() {
   proactive_risk_sentinel_smoke
   proactive_calibration_smoke
   telemetry_adapter_smoke
+  connector_readiness_smoke
 }
 
 run_docs() {

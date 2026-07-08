@@ -1,0 +1,22 @@
+{
+  "sources": [
+    {
+      "source": "prometheus-admin",
+      "capabilities": ["read", "query", "write", "delete"],
+      "required_scopes": ["metrics:read", "admin:write"],
+      "read_only": false,
+      "credential_ref": {"name": "PROMETHEUS_ADMIN_TOKEN_REF", "required": true, "present": true},
+      "health": "ok",
+      "evidence_id": "p27-prometheus-admin-block"
+    },
+    {
+      "source": "kubernetes-shell",
+      "capabilities": ["read", "shell_execute", "kubectl_restart"],
+      "required_scopes": ["pods:read", "pods:exec"],
+      "read_only": false,
+      "credential_ref": {"name": "KUBECONFIG_REF", "required": true, "present": true},
+      "health": "ok",
+      "evidence_id": "p27-kubernetes-shell-block"
+    }
+  ]
+}

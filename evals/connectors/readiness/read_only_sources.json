@@ -1,0 +1,33 @@
+{
+  "sources": [
+    {
+      "source": "prometheus",
+      "capabilities": ["read", "query", "health"],
+      "required_scopes": ["metrics:read"],
+      "read_only": true,
+      "credential_ref": {"name": "PROMETHEUS_TOKEN_REF", "required": true, "present": true},
+      "health": "ok",
+      "evidence_id": "p27-prometheus-ready",
+      "metadata": {"secret_preview": "Bearer secret-token"}
+    },
+    {
+      "source": "datadog",
+      "capabilities": ["read", "query", "list", "health"],
+      "required_scopes": ["timeseries:read", "events:read"],
+      "read_only": true,
+      "credential_ref": {"name": "DATADOG_API_KEY_REF", "required": true, "present": false},
+      "health": "ok",
+      "evidence_id": "p27-datadog-missing-credential",
+      "metadata": {"api_key": "nvapi-should-not-appear"}
+    },
+    {
+      "source": "sentry",
+      "capabilities": ["read", "query", "health"],
+      "required_scopes": ["event:read", "project:read"],
+      "read_only": true,
+      "credential_ref": {"name": "SENTRY_TOKEN_REF", "required": true, "present": true},
+      "health": "ok",
+      "evidence_id": "p27-sentry-ready"
+    }
+  ]
+}

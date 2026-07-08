@@ -265,3 +265,7 @@ P29 planned scope: Telemetry-grounded Judgment Quality Evaluation. P29 will eval
 
 P30 planned scope: Controlled Auto-remediation Policy and Simulation. P30 will define conservative auto-remediation policy and simulation: only low-risk, reversible, pre-approved local/mock actions can auto-run; production-changing actions remain approval-required or blocked.
 
+
+## P27 implemented
+
+P27 implemented as Connector Readiness and Permission Contract evidence. P27 adds read-only connector manifest evaluation, credential-reference safety, connector health states, bounded retry/backoff, mutation-capability blocking, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no live writes, external model/API calls, production mutation, or remediation execution.

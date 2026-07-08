@@ -1,0 +1,31 @@
+{
+  "sources": [
+    {
+      "source": "prometheus",
+      "capabilities": ["read", "query", "health"],
+      "required_scopes": ["metrics:read"],
+      "read_only": true,
+      "credential_ref": {"name": "PROMETHEUS_TOKEN_REF", "required": true, "present": true},
+      "health": "ok",
+      "evidence_id": "p27-prometheus-ready"
+    },
+    {
+      "source": "datadog",
+      "capabilities": ["read", "query", "list", "health"],
+      "required_scopes": ["timeseries:read", "events:read"],
+      "read_only": true,
+      "credential_ref": {"name": "DATADOG_API_KEY_REF", "required": true, "present": true},
+      "health": "rate_limit",
+      "evidence_id": "p27-datadog-rate-limit"
+    },
+    {
+      "source": "sentry",
+      "capabilities": ["read", "query", "health"],
+      "required_scopes": ["event:read", "project:read"],
+      "read_only": true,
+      "credential_ref": {"name": "SENTRY_TOKEN_REF", "required": true, "present": true},
+      "health": "auth_failure",
+      "evidence_id": "p27-sentry-auth-failure"
+    }
+  ]
+}

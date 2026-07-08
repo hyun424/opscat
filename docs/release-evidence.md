@@ -1275,3 +1275,26 @@ Verification:
 Verified result: full profile passed; coverage gate 79.43%; P53 smoke wrote `/tmp/opscat-failure-driven-improvement-pack-latest.md` with source_failure_cluster_count=2, improvement_plan_count=2, evidence_probe_count=5, recovery_check_count=5, regression_case_count=3, unsafe_action_count=0, projected evidence_gap 1→0, projected recovery_verification_gap 2→0, and passed=true.
 
 Boundary: offline P52 improvement planning only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
+
+## P54 Failure-Driven Benchmark Improvement Evidence
+
+P54 applies the P53 improvement pack to a derived P51 benchmark view and proves the mined evidence/recovery gaps close without mutating the baseline fixture.
+
+Artifacts:
+
+- `docs/operations/p54-ticket-roadmap.md`
+- `docs/operations/p54-final-summary.md`
+- `app/services/failure_driven_benchmark_improvement.py`
+- `scripts/run_failure_driven_benchmark_improvement.py`
+- `tests/test_failure_driven_benchmark_improvement.py`
+- `tests/test_p54_release_evidence.py`
+- `/tmp/opscat-failure-driven-benchmark-improvement-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_failure_driven_benchmark_improvement.py tests/test_p54_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline derived benchmark view only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

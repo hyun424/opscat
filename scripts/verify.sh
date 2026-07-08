@@ -623,6 +623,17 @@ failure_driven_improvement_pack_smoke() {
   printf 'Wrote /tmp/opscat-failure-driven-improvement-pack-latest.md and %s/opscat-failure-driven-improvement-pack.json\n' "$VERIFY_TMPDIR"
 }
 
+failure_driven_benchmark_improvement_smoke() {
+  section "P54 failure-driven benchmark improvement smoke"
+  "${UV_DEV[@]}" python scripts/run_failure_driven_benchmark_improvement.py \
+    --cases evals/investigator/p51_operator_judgment_benchmark_v2_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-failure-driven-benchmark-improvement.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-failure-driven-benchmark-improvement.md" >/tmp/opscat-failure-driven-benchmark-improvement-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-failure-driven-benchmark-improvement.json" /tmp/opscat-failure-driven-benchmark-improvement-latest.json
+  cp "$VERIFY_TMPDIR/opscat-failure-driven-benchmark-improvement.md" /tmp/opscat-failure-driven-benchmark-improvement-latest.md
+  printf 'Wrote /tmp/opscat-failure-driven-benchmark-improvement-latest.md and %s/opscat-failure-driven-benchmark-improvement.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -735,7 +746,8 @@ docs_contract_tests() {
     tests/test_p50_release_evidence.py \
     tests/test_p51_release_evidence.py \
     tests/test_p52_release_evidence.py \
-    tests/test_p53_release_evidence.py
+    tests/test_p53_release_evidence.py \
+    tests/test_p54_release_evidence.py
 }
 
 run_fast() {
@@ -794,6 +806,7 @@ run_eval() {
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke
   failure_driven_improvement_pack_smoke
+  failure_driven_benchmark_improvement_smoke
 }
 
 run_docs() {

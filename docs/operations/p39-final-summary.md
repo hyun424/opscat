@@ -4,14 +4,14 @@ P39 turns local evaluation signals into runbook improvement recommendations and 
 
 ## Ticket completion
 
-- P39-001 — Learning source manifest: pending implementation.
-- P39-002 — Signal extraction: pending implementation.
-- P39-003 — Recommendation generator: pending implementation.
-- P39-004 — Regression case generator: pending implementation.
-- P39-005 — Safety gates: pending implementation.
-- P39-006 — Scorecard: pending implementation.
-- P39-007 — CLI report: pending implementation.
-- P39-008 — Verification integration: pending implementation.
+- P39-001 — Learning source manifest: `evals/learning/p39_sources.json` defines local learning inputs.
+- P39-002 — Signal extraction: P39 collects connector, shadow, approval, config, and dashboard signals.
+- P39-003 — Recommendation generator: P39 creates reviewable runbook recommendations with source evidence.
+- P39-004 — Regression case generator: P39 creates deterministic regression cases for blocked/untrusted/approval/config/dashboard guards.
+- P39-005 — Safety gates: unsafe command text is not propagated and automatic runbook edits stay disabled.
+- P39-006 — Scorecard: reports source coverage, recommendation count, regression case count, unsafe learning count, and applied change count.
+- P39-007 — CLI report: `scripts/run_runbook_learning_loop.py` writes JSON/Markdown.
+- P39-008 — Verification integration: `scripts/verify.sh` includes `runbook_learning_loop_smoke`.
 
 ## Primary artifacts
 

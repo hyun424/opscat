@@ -454,6 +454,17 @@ agent_evaluation_dashboard_smoke() {
   printf 'Wrote /tmp/opscat-agent-evaluation-dashboard-latest.md and %s/opscat-agent-evaluation-dashboard.json\n' "$VERIFY_TMPDIR"
 }
 
+runbook_learning_loop_smoke() {
+  section "P39 runbook learning loop smoke"
+  "${UV_DEV[@]}" python scripts/run_runbook_learning_loop.py \
+    --sources evals/learning/p39_sources.json \
+    --output-json "$VERIFY_TMPDIR/opscat-runbook-learning-loop.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-runbook-learning-loop.md" >/tmp/opscat-runbook-learning-loop-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-runbook-learning-loop.json" /tmp/opscat-runbook-learning-loop-latest.json
+  cp "$VERIFY_TMPDIR/opscat-runbook-learning-loop.md" /tmp/opscat-runbook-learning-loop-latest.md
+  printf 'Wrote /tmp/opscat-runbook-learning-loop-latest.md and %s/opscat-runbook-learning-loop.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -551,7 +562,8 @@ docs_contract_tests() {
     tests/test_p35_release_evidence.py \
     tests/test_p36_release_evidence.py \
     tests/test_p37_release_evidence.py \
-    tests/test_p38_release_evidence.py
+    tests/test_p38_release_evidence.py \
+    tests/test_p39_release_evidence.py
 }
 
 run_fast() {
@@ -595,6 +607,7 @@ run_eval() {
   approval_control_plane_smoke
   open_source_config_hardening_smoke
   agent_evaluation_dashboard_smoke
+  runbook_learning_loop_smoke
 }
 
 run_docs() {

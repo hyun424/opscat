@@ -1367,3 +1367,26 @@ Verification:
 Verified result: pending final full profile.
 
 Boundary: offline real-dataset bridge only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
+
+## P58 LLM Judgment Candidate Harness Evidence
+
+P58 evaluates the local/mock LLM judgment lane behind P57 bridge gates so model quality is measured against candidate and real-dataset evidence before external providers are used.
+
+Artifacts:
+
+- `docs/operations/p58-ticket-roadmap.md`
+- `docs/operations/p58-final-summary.md`
+- `app/services/llm_judgment_candidate_harness.py`
+- `scripts/run_llm_judgment_candidate_harness.py`
+- `tests/test_llm_judgment_candidate_harness.py`
+- `tests/test_p58_release_evidence.py`
+- `/tmp/opscat-llm-judgment-candidate-harness-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_llm_judgment_candidate_harness.py tests/test_p58_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline mock LLM harness only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

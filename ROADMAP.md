@@ -504,3 +504,11 @@ P57 active scope: Real Dataset Candidate Regression Bridge. P57 links P56 candid
 ## P57 implemented
 
 P57 implemented as Real Dataset Candidate Regression Bridge evidence. P57 links P56 repeat-run candidate stability with P44 public dataset matrix fixture coverage, requires dataset coverage and accuracy gates, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
+
+## P58 active
+
+P58 active scope: LLM Judgment Candidate Harness. P58 evaluates the local/mock LLM judgment lane behind P57 bridge gates.
+
+## P58 implemented
+
+P58 implemented as LLM Judgment Candidate Harness evidence. P58 evaluates the local/mock LLM lane behind P57 candidate and real-dataset gates, requires schema/citation validity, pass-rate, score, and safety gates, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

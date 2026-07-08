@@ -667,6 +667,20 @@ real_dataset_candidate_regression_bridge_smoke() {
   cp "$VERIFY_TMPDIR/opscat-real-dataset-candidate-regression-bridge.md" /tmp/opscat-real-dataset-candidate-regression-bridge-latest.md
   printf 'Wrote /tmp/opscat-real-dataset-candidate-regression-bridge-latest.md and %s/opscat-real-dataset-candidate-regression-bridge.json\n' "$VERIFY_TMPDIR"
 }
+
+llm_judgment_candidate_harness_smoke() {
+  section "P58 LLM judgment candidate harness smoke"
+  "${UV_DEV[@]}" python scripts/run_llm_judgment_candidate_harness.py \
+    --cases evals/investigator/p51_operator_judgment_benchmark_v2_cases.json \
+    --manifest evals/real_datasets/external/p44_benchmark_matrix_manifest.json \
+    --judgment-cases evals/judgment/seed/cases.json \
+    --provider mock \
+    --max-cases 4 \
+    --output-json "$VERIFY_TMPDIR/opscat-llm-judgment-candidate-harness.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-llm-judgment-candidate-harness.md" >/tmp/opscat-llm-judgment-candidate-harness-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-llm-judgment-candidate-harness.md" /tmp/opscat-llm-judgment-candidate-harness-latest.md
+  printf 'Wrote /tmp/opscat-llm-judgment-candidate-harness-latest.md and %s/opscat-llm-judgment-candidate-harness.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -843,6 +857,7 @@ run_eval() {
   candidate_benchmark_promotion_gate_smoke
   candidate_benchmark_regression_runner_smoke
   real_dataset_candidate_regression_bridge_smoke
+  llm_judgment_candidate_harness_smoke
 }
 
 run_docs() {

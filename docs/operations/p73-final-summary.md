@@ -15,7 +15,7 @@ P73 adds a bounded long-run autonomous loop controller over P72. It repeats P72 
 
 ## Verified result
 
-Pending final verification after GREEN implementation.
+Full profile passed; docs profile passed; coverage gate 80.40%; P73 smoke wrote `/tmp/opscat-long-run-loop-controller-latest.md` with window_count=2, p72_cycle_count=4, completed_ticket_count=11, failed_ticket_count=0, retry_queue_count=0, blocked_by_enable_flag_count=0, elapsed_seconds=120, planned_sleep_count=0, stop_reason=max_windows_reached, supervised_process_run_count=11, window_checkpoint_count=2, state_write_count=2, planned_sleep_seconds_total=0, actual_sleep_seconds_total=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 ## Boundary
 

@@ -1746,6 +1746,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
 
-Verified result: pending final full/docs verification after GREEN implementation.
+Verified result: full profile passed; docs profile passed; coverage gate 80.40%; P73 smoke wrote `/tmp/opscat-long-run-loop-controller-latest.md` with window_count=2, p72_cycle_count=4, completed_ticket_count=11, failed_ticket_count=0, retry_queue_count=0, blocked_by_enable_flag_count=0, elapsed_seconds=120, planned_sleep_count=0, stop_reason=max_windows_reached, supervised_process_run_count=11, window_checkpoint_count=2, state_write_count=2, planned_sleep_seconds_total=0, actual_sleep_seconds_total=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 Boundary: simulated supervised transport and virtual elapsed time in repository verification; real subprocess transport is opt-in only; no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, no actual sleep in verification, no raw infinite loop, and no unattended production-operation claim.

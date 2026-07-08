@@ -27,15 +27,17 @@ P35 records what OpsCat would diagnose, route, propose, block, and report from r
 
 No auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
 
-## Verification target
+## Verification result
 
-Expected metrics before final full verification:
+Full verification passed with P35 included in `scripts/verify.sh`:
 
 - `expected_route_match_rate`: 1.0
 - evidence link rate: 1.0
 - shadow coverage: 1.0
 - execution count: 0
 - unsafe shadow action count: 0
-- case count: at least 4
+- case count: 4
+- total coverage gate: 78.04% >= 60.00%
+- `app/services/incident_shadow_mode.py` coverage: 89.12%
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+Generated artifacts: `/tmp/opscat-incident-shadow-mode-latest.md` and `/tmp/opscat-incident-shadow-mode-latest.json`.

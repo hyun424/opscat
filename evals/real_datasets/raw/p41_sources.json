@@ -1,0 +1,30 @@
+{
+  "version": "p41-raw-sources-v1",
+  "normal_verification_downloads": false,
+  "sources": [
+    {
+      "id": "p41-loghub-apache-raw",
+      "family": "loghub",
+      "path": "evals/real_datasets/fixtures/loghub/apache_sample.jsonl",
+      "expected_root_cause": "deploy_regression",
+      "expected_route": "human_required",
+      "expected_labels": ["normal", "deploy_error"]
+    },
+    {
+      "id": "p41-nab-known-cause-raw",
+      "family": "nab",
+      "path": "evals/real_datasets/fixtures/nab/real_known_cause_sample.csv",
+      "expected_root_cause": "metric_anomaly",
+      "expected_route": "human_required",
+      "expected_labels": ["normal", "anomaly"]
+    },
+    {
+      "id": "p41-aiops-multisignal-raw",
+      "family": "aiops",
+      "path": "evals/real_datasets/fixtures/aiops/multisignal_sample.jsonl",
+      "expected_root_cause": "deploy_regression",
+      "expected_route": "human_required",
+      "expected_labels": ["deploy_regression"]
+    }
+  ]
+}

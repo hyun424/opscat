@@ -820,7 +820,13 @@ docs_contract_tests() {
     tests/test_p51_release_evidence.py \
     tests/test_p52_release_evidence.py \
     tests/test_p53_release_evidence.py \
-    tests/test_p54_release_evidence.py
+    tests/test_p54_release_evidence.py \
+    tests/test_p55_release_evidence.py \
+    tests/test_p56_release_evidence.py \
+    tests/test_p57_release_evidence.py \
+    tests/test_p58_release_evidence.py \
+    tests/test_p59_release_evidence.py \
+    tests/test_p60_release_evidence.py
 }
 
 run_fast() {

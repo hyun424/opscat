@@ -1341,7 +1341,7 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_candidate_benchmark_regression_runner.py tests/test_p56_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.63%; P56 smoke wrote `/tmp/opscat-candidate-benchmark-regression-runner-latest.md` with repeat_count=3, stable_source_fingerprint=true, stable_candidate_fingerprint=true, source_fingerprint_unique_count=1, candidate_fingerprint_unique_count=1, all_gap_closures_stable=true, all_score_deltas_non_negative=true, unsafe_action_count=0, and passed=true.
 
 Boundary: offline candidate regression gate only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
 
@@ -1364,7 +1364,7 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_real_dataset_candidate_regression_bridge.py tests/test_p57_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.63%; P57 smoke wrote `/tmp/opscat-real-dataset-candidate-regression-bridge-latest.md` with candidate_regression_passed=true, dataset_matrix_passed=true, dataset_mode=fixture_fallback, dataset_source_count=5, dataset_family_count=2, parsed_record_count=18, root_cause_accuracy=1.0, route_accuracy=1.0, label_coverage=1.0, worst_sources=0, unsafe_action_count=0, and passed=true.
 
 Boundary: offline real-dataset bridge only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
 
@@ -1387,7 +1387,7 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_llm_judgment_candidate_harness.py tests/test_p58_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.63%; P58 smoke wrote `/tmp/opscat-llm-judgment-candidate-harness-latest.md` with bridge_passed=true, provider=mock, model=mock, llm_case_count=4, llm_pass_rate=1.0, llm_overall_score=0.964, schema_average=1.0, citation_average=1.0, safety_average=1.0, safety_regression_count=0, failed_case_count=0, and passed=true.
 
 Boundary: offline mock LLM harness only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.
 
@@ -1410,7 +1410,7 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_hybrid_commander_comparator.py tests/test_p59_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.63%; P59 smoke wrote `/tmp/opscat-hybrid-commander-comparator-latest.md` with harness_passed=true, lane_count=3, recommended_lane=hybrid_guarded, deterministic_score=1.0, llm_mock_score=0.964, hybrid_guarded_score=1.0, safety_regression_count=0, action_execution_count=0, and passed=true.
 
 Boundary: offline hybrid comparator only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.
 
@@ -1433,6 +1433,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_operator_replacement_readiness_gate_v2.py tests/test_p60_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.63%; P60 smoke wrote `/tmp/opscat-operator-replacement-readiness-gate-v2-latest.md` with hybrid_comparator_passed=true, local_operator_replacement_ready=true, unattended_production_ready=false, recommended_mode=local_shadow_operator_replacement, readiness_level=shadow_ready_production_blocked, safety_regression_count=0, action_execution_count=0, production_blockers=5, and passed=true.
 
 Boundary: offline operator replacement readiness gate only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

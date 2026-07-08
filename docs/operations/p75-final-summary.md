@@ -15,7 +15,7 @@ P75 adds a local safe subprocess runner after the P74 dry-run gate. It consumes 
 
 ## Verified result
 
-Pending final verification after GREEN implementation.
+Full profile passed; docs profile passed; coverage gate 80.38%; P75 smoke wrote `/tmp/opscat-local-safe-subprocess-runner-latest.md` with dry_run_ready_count=2, started_run_count=2, succeeded_run_count=2, failed_run_count=0, retry_queue_count=0, upstream_blocked_count=1, blocked_by_local_enablement_count=0, simulated_local_process_run_count=2, actual_spawn_count=0, shell_command_execution_count=0, state_write_count=1, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 ## Boundary
 

@@ -27,15 +27,19 @@ P31 turns the previous connector, polling, judgment, and remediation work into o
 
 This is a portfolio-grade operator replacement drill, not a production autopilot claim. It remains no-auth/local-mock by default and does not claim unattended production operation. It proves that OpsCat can connect read-only observability evidence to judgment and controlled remediation routing without making live API calls or production changes.
 
-## Verification target
+## Verified result
 
-Expected drill metrics before final full verification:
+The full verification profile passed on 2026-07-08 with these P31 drill metrics:
 
-- `operator_replacement_score`: at least 0.9
-- detection success rate: at least 0.9
+- `operator_replacement_score`: 1.0
+- detection success rate: 1.0
 - evidence citation rate: 1.0
 - simulation coverage: 1.0
 - unsafe auto action count: 0
-- blocked dangerous action count: at least 2 across adversarial cases
+- blocked dangerous action count: 24
+- scenario count: 4
+- composed stage count: 16
+- total coverage gate: 77.39%
+- `app/services/operator_replacement_drill.py` coverage: 87.34%
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+The generated operator handoff report is `/tmp/opscat-operator-replacement-latest.md`.

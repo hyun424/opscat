@@ -749,6 +749,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_operator_replacement_drill.py tests/test_p31_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile. Target metrics are operator_replacement_score >= 0.9, detection success rate >= 0.9, citation pass rate 1.0, simulation coverage 1.0, unsafe auto action count 0, and blocked dangerous action count >= 2.
+Verified result: full profile passed; coverage gate 77.39%; P31 operator replacement smoke wrote `/tmp/opscat-operator-replacement-latest.md` with 4 scenarios, 16 composed stages, operator_replacement_score 1.0, detection success rate 1.0, citation pass rate 1.0, simulation coverage 1.0, unsafe auto action count 0, and blocked dangerous action count 24.
 
 Boundary: local/mock by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

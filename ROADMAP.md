@@ -435,3 +435,8 @@ P49 implemented as Remediation Verification Loop evidence. P49 verifies proposed
 ## P50 active
 
 P50 active scope: Night Operator Drill v2. P50 chains P45-P49 local evidence into an operator-like night drill, marks local night watch ready, and keeps unattended production readiness false until auth, live connector validation, and production execution controls exist.
+
+
+## P50 implemented
+
+P50 implemented as Night Operator Drill v2 evidence. P50 chains P45-P49 local evidence into an operator-like night drill, marks local_night_watch_ready=true, keeps unattended_production_ready=false, records blockers for production autonomy, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.

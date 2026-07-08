@@ -1,17 +1,17 @@
 # OpsCat P50 Final Summary — Night Operator Drill v2
 
-P50 is planned. It will chain P45-P49 evidence into a local night-operator drill while explicitly keeping unattended production readiness false.
+P50 is implemented. It chains P45-P49 evidence into a local night-operator drill while explicitly keeping unattended production readiness false.
 
 ## Ticket completion
 
-- P50-001 — Drill fixture: pending implementation.
-- P50-002 — Evidence contract gate: pending implementation.
-- P50-003 — Investigation gate: pending implementation.
-- P50-004 — Tool plan gate: pending implementation.
-- P50-005 — Re-ranking gate: pending implementation.
-- P50-006 — Remediation verification gate: pending implementation.
-- P50-007 — Readiness verdict: pending implementation.
-- P50-008 — CLI/report/verification/release evidence wiring: pending implementation.
+- P50-001 — Drill fixture: completed with `evals/investigator/p50_night_operator_cases.json`.
+- P50-002 — Evidence contract gate: completed with P45 evidence summary gating.
+- P50-003 — Investigation gate: completed with P46 investigation summary gating.
+- P50-004 — Tool plan gate: completed with P47 read-only tool planning summary gating.
+- P50-005 — Re-ranking gate: completed with P48 anti-anchoring/re-ranking evidence.
+- P50-006 — Remediation verification gate: completed with P49 recovery/escalation evidence.
+- P50-007 — Readiness verdict: completed with local night-watch ready and unattended production ready false.
+- P50-008 — CLI/report/verification/release evidence wiring: completed in script, docs, and tests.
 
 ## Primary artifacts
 
@@ -20,6 +20,12 @@ P50 is planned. It will chain P45-P49 evidence into a local night-operator drill
 - `tests/test_night_operator_drill_v2.py`
 - `tests/test_p50_release_evidence.py`
 - `/tmp/opscat-night-operator-drill-v2-latest.md`
+
+## Verification target
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_night_operator_drill_v2.py tests/test_p50_release_evidence.py
+```
 
 ## Boundary
 

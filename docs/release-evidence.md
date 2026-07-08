@@ -539,3 +539,22 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.
+
+## P23 Incident Scenario Corpus Expansion Evidence
+
+P23 expands the local/mock judgment and night-shift drill corpus to 70 scenarios, exceeding the 60 scenarios target with broad incident taxonomy coverage, at least 10 DB connection-pool scenarios, safety/adversarial cases, evidence integrity contracts, and verification integration.
+
+Artifacts:
+
+- `docs/operations/p23-ticket-roadmap.md`
+- `docs/operations/p23-final-summary.md`
+- `evals/judgment/seed/cases.json`
+- `tests/test_p23_scenario_corpus.py`
+- `tests/test_p23_release_evidence.py`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_p23_scenario_corpus.py tests/test_p23_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

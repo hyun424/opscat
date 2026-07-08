@@ -371,7 +371,8 @@ docs_contract_tests() {
     tests/test_p19_release_evidence.py \
     tests/test_p20_release_evidence.py \
     tests/test_p21_release_evidence.py \
-    tests/test_p22_release_evidence.py
+    tests/test_p22_release_evidence.py \
+    tests/test_p23_release_evidence.py
 }
 
 run_fast() {

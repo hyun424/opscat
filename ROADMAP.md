@@ -220,3 +220,7 @@ P22 implemented as Night-shift Runtime Drill and SLA Scoring evidence. P22 adds 
 ## P23 active
 
 P23 active scope: Incident Scenario Corpus Expansion. P23 expands the local/mock incident judgment and drill corpus to at least 60 scenarios with broad taxonomy coverage, focused DB connection-pool cases, safety/adversarial cases, evidence integrity contracts, drill compatibility, verification integration, and release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, remediation execution, or unattended production-operation claims.
+
+## P23 implemented
+
+P23 implemented as Incident Scenario Corpus Expansion evidence. P23 expands the local/mock judgment and night-shift drill corpus to 60 scenarios with broad taxonomy coverage, focused DB connection-pool cases, safety/adversarial cases, evidence integrity tests, drill compatibility, verification integration, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or remediation execution.

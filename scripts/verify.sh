@@ -768,6 +768,19 @@ autonomous_day_loop_backlog_smoke() {
   cp "$VERIFY_TMPDIR/opscat-autonomous-day-loop-backlog.md" /tmp/opscat-autonomous-day-loop-backlog-latest.md
   printf 'Wrote /tmp/opscat-autonomous-day-loop-backlog-latest.md and %s/opscat-autonomous-day-loop-backlog.json\n' "$VERIFY_TMPDIR"
 }
+
+autonomous_loop_executor_smoke() {
+  section "P67 autonomous loop executor smoke"
+  "${UV_DEV[@]}" python scripts/run_autonomous_loop_executor.py \
+    --manifest evals/planning/p66_autonomous_day_loop_backlog.json \
+    --completed P65 \
+    --mode local-auto \
+    --max-tickets 3 \
+    --output-json "$VERIFY_TMPDIR/opscat-autonomous-loop-executor.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-autonomous-loop-executor.md" >/tmp/opscat-autonomous-loop-executor-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-autonomous-loop-executor.md" /tmp/opscat-autonomous-loop-executor-latest.md
+  printf 'Wrote /tmp/opscat-autonomous-loop-executor-latest.md and %s/opscat-autonomous-loop-executor.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -893,7 +906,8 @@ docs_contract_tests() {
     tests/test_p63_release_evidence.py \
     tests/test_p64_release_evidence.py \
     tests/test_p65_release_evidence.py \
-    tests/test_p66_release_evidence.py
+    tests/test_p66_release_evidence.py \
+    tests/test_p67_release_evidence.py
 }
 
 run_fast() {
@@ -965,6 +979,7 @@ run_eval() {
   audited_staging_transport_gate_smoke
   real_staging_dry_attach_smoke
   autonomous_day_loop_backlog_smoke
+  autonomous_loop_executor_smoke
 }
 
 run_docs() {

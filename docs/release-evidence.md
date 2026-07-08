@@ -1581,3 +1581,27 @@ Verification:
 Verified result: full profile passed; docs profile passed; coverage gate 80.18%; P66 smoke wrote `/tmp/opscat-autonomous-day-loop-backlog-latest.md` with ticket_count=27, safe_local_count=21, gated_live_count=1, gated_action_count=4, blocked_production_count=1, runnable_now_count=3, day_loop_cycle_count=72, planned_batch_count=6, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 Boundary: dry-run planning only; no command execution, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P67 Autonomous Loop Executor Evidence
+
+P67 turns the P66 backlog into a resumable safe-local executor/controller. It selects currently runnable safe-local work, emits delegation prompts, records checkpoint commands, computes resume state, and keeps live/action/production work blocked by default.
+
+Artifacts:
+
+- `docs/operations/p67-ticket-roadmap.md`
+- `docs/operations/p67-final-summary.md`
+- `app/services/autonomous_loop_executor.py`
+- `scripts/run_autonomous_loop_executor.py`
+- `tests/test_autonomous_loop_executor.py`
+- `tests/test_p67_release_evidence.py`
+- `/tmp/opscat-autonomous-loop-executor-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_autonomous_loop_executor.py tests/test_p67_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: pending final full/docs verification after GREEN implementation.
+
+Boundary: safe-local executor/controller only; no shell command execution from the service layer, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

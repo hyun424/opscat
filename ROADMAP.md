@@ -576,3 +576,11 @@ P66 active scope: Autonomous Day Loop Backlog. P66 gathers the next large operat
 ## P66 implemented
 
 P66 implemented as Autonomous Day Loop Backlog evidence. P66 schedules P66-P92 into safe-local execution batches with hard-zero side-effect counters, checkpoint commands, gated live/action work retention, and blocked production autonomy while preserving no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P67 active
+
+P67 active scope: Autonomous Loop Executor. P67 turns the P66 backlog into a resumable safe-local execution controller for one-shot or all-day autonomous development loops.
+
+## P67 implemented
+
+P67 implemented as Autonomous Loop Executor evidence. P67 selects currently runnable safe-local tickets, emits delegation prompts, records checkpoints, computes resume state, blocks gated live/action/production work, and preserves no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

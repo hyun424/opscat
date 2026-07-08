@@ -821,6 +821,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_read_only_polling_v2.py tests/test_p34_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile. Target metrics are poll_success_rate 1.0, readiness gate rate 1.0, unsafe poll count 0, live API call count 0, polled count >= 2, and trend window count >= 4.
+Verified result: full profile passed; coverage gate 77.91%; P34 read-only polling v2 smoke wrote `/tmp/opscat-read-only-polling-v2-latest.md` with 5 jobs, 2 polled, 2 skipped, 1 blocked, 2 snapshots, 4 trend windows, poll_success_rate 1.0, readiness gate rate 1.0, unsafe poll count 0, and live API call count 0.
 
 Boundary: read-only/local by default; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

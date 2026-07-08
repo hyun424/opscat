@@ -27,15 +27,21 @@ P34 connects P33 dry-run readiness to read-only polling. It polls only ready con
 
 No auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
 
-## Verification target
+## Verified result
 
-Expected metrics before final full verification:
+The full verification profile passed on 2026-07-08 with these P34 metrics:
 
 - `poll_success_rate`: 1.0
 - readiness gate rate: 1.0
 - unsafe poll count: 0
 - live API call count: 0
-- polled count: at least 2
-- trend window count: at least 4
+- job count: 5
+- polled count: 2
+- skipped count: 2
+- blocked count: 1
+- snapshot count: 2
+- trend window count: 4
+- total coverage gate: 77.91%
+- `app/services/read_only_polling_v2.py` coverage: 90.22%
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+The generated polling v2 report is `/tmp/opscat-read-only-polling-v2-latest.md`.

@@ -885,6 +885,25 @@ long_run_loop_controller_smoke() {
   cp "$VERIFY_TMPDIR/opscat-long-run-loop-controller.md" /tmp/opscat-long-run-loop-controller-latest.md
   printf 'Wrote /tmp/opscat-long-run-loop-controller-latest.md and %s/opscat-long-run-loop-controller.json\n' "$VERIFY_TMPDIR"
 }
+
+real_subprocess_execution_dry_run_gate_smoke() {
+  section "P74 real subprocess execution dry-run gate smoke"
+  "${UV_DEV[@]}" python scripts/run_real_subprocess_execution_dry_run_gate.py \
+    --manifest evals/planning/p66_autonomous_day_loop_backlog.json \
+    --completed P65 \
+    --max-tickets 3 \
+    --max-parallel 2 \
+    --max-processes 2 \
+    --enable-real-subprocess \
+    --git-status clean \
+    --dispatch-dir "$VERIFY_TMPDIR/opscat-real-subprocess-dry-run-dispatch" \
+    --state-path "$VERIFY_TMPDIR/opscat-real-subprocess-dry-run-state.json" \
+    --artifact-dir "$VERIFY_TMPDIR/opscat-real-subprocess-dry-run-artifacts" \
+    --output-json "$VERIFY_TMPDIR/opscat-real-subprocess-dry-run-gate.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-real-subprocess-dry-run-gate.md" >/tmp/opscat-real-subprocess-dry-run-gate-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-real-subprocess-dry-run-gate.md" /tmp/opscat-real-subprocess-dry-run-gate-latest.md
+  printf 'Wrote /tmp/opscat-real-subprocess-dry-run-gate-latest.md and %s/opscat-real-subprocess-dry-run-gate.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -1017,7 +1036,8 @@ docs_contract_tests() {
     tests/test_p70_release_evidence.py \
     tests/test_p71_release_evidence.py \
     tests/test_p72_release_evidence.py \
-    tests/test_p73_release_evidence.py
+    tests/test_p73_release_evidence.py \
+    tests/test_p74_release_evidence.py
 }
 
 run_fast() {
@@ -1096,6 +1116,7 @@ run_eval() {
   supervised_worker_execution_harness_smoke
   stateful_all_day_loop_orchestrator_smoke
   long_run_loop_controller_smoke
+  real_subprocess_execution_dry_run_gate_smoke
 }
 
 run_docs() {

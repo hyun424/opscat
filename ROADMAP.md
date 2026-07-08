@@ -632,3 +632,11 @@ P73 active scope: Long-Run Loop Controller. P73 repeats P72 windows under explic
 ## P73 implemented
 
 P73 implemented as Long-Run Loop Controller evidence. P73 repeats P72 windows, accumulates resume state, tracks virtual elapsed time and planned sleeps, stops on duration/max-window/retry/enablement guards, writes controller checkpoints, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no actual sleep in verification, no default external model/API calls, no action execution, no raw infinite loop, and no unattended production-operation claim.
+
+## P74 active
+
+P74 active scope: Real Subprocess Execution Dry-Run Gate. P74 verifies whether P70 process-capable commands are safe to hand to a future real subprocess transport without spawning anything.
+
+## P74 implemented
+
+P74 implemented as Real Subprocess Execution Dry-Run Gate evidence. P74 consumes P70 validation, requires explicit real-subprocess enablement, blocks dirty worktrees, enforces max-process budgets, preserves command-gate blocks, writes dry-run artifact placeholders and state handoff, and preserves no real subprocess spawning, no shell command execution, no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

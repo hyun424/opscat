@@ -5,8 +5,8 @@ import subprocess
 from pathlib import Path
 
 from app.services.real_subprocess_execution_dry_run_gate import (
-    StaticGitWorktreeStatusProvider,
     RealSubprocessExecutionDryRunGateReport,
+    StaticGitWorktreeStatusProvider,
     render_real_subprocess_execution_dry_run_gate_markdown,
     run_real_subprocess_execution_dry_run_gate_fixture,
 )

@@ -420,3 +420,8 @@ P48 active scope: Hypothesis Re-ranking. P48 incorporates read-only investigatio
 ## P48 implemented
 
 P48 implemented as Hypothesis Re-ranking evidence. P48 incorporates read-only investigation observations, updates confidence with support/counter deltas, records anti-anchoring demotions when the initial top hypothesis is contradicted, keeps auto-execution disabled, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
+
+
+## P49 active
+
+P49 active scope: Remediation Verification Loop. P49 turns proposed remediations into pre-check, mock/draft execution boundary, post-check, and recovery-or-escalation evidence while keeping production execution disabled.

@@ -1,0 +1,41 @@
+{
+  "version": "p49.1",
+  "cases": [
+    {
+      "id": "p49-db-pool-recovered",
+      "hypothesis": "database_saturation",
+      "confidence": 0.82,
+      "proposed_action": "increase connection pool limit by 20 percent in staging draft",
+      "precheck": {
+        "blast_radius": "single service pool configuration",
+        "rollback_plan": "restore previous pool limit",
+        "approval": "required",
+        "safe_mode": "mock_only",
+        "passed": true
+      },
+      "postcheck": {
+        "criteria": ["pool_wait_p95_below_500ms", "5xx_rate_below_1_percent"],
+        "observed": {"pool_wait_p95_ms": 220, "five_xx_rate": 0.003},
+        "expected_status": "recovered"
+      }
+    },
+    {
+      "id": "p49-provider-retry-not-recovered",
+      "hypothesis": "external_dependency_degraded",
+      "confidence": 0.74,
+      "proposed_action": "draft circuit breaker threshold adjustment",
+      "precheck": {
+        "blast_radius": "payment provider calls",
+        "rollback_plan": "restore threshold draft",
+        "approval": "required",
+        "safe_mode": "mock_only",
+        "passed": true
+      },
+      "postcheck": {
+        "criteria": ["provider_timeout_rate_below_2_percent", "checkout_error_rate_below_1_percent"],
+        "observed": {"provider_timeout_rate": 0.08, "checkout_error_rate": 0.04},
+        "expected_status": "not_recovered"
+      }
+    }
+  ]
+}

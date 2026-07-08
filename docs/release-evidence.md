@@ -677,4 +677,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_read_only_polling_runtime.py tests/test_p28_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
+Verified result: full profile passed; coverage gate 76.85%; P28 read-only polling smoke wrote `/tmp/opscat-read-only-polling-latest.md` with 3 jobs, 2 polled, 1 skipped, 0 blocked, and 4 trend windows.
+
 Boundary: no-auth/local-mock by default; fixture/local transport only; no live API calls; no live writes; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

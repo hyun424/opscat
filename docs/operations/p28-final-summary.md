@@ -40,6 +40,14 @@ Boundary: no-auth/local-mock by default; fixture/local transport only; no live A
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_read_only_polling.py --jobs evals/polling/jobs/p28_polling_jobs.json --readiness evals/connectors/readiness/read_only_sources.json --ticks 1 --output-json /tmp/opscat-read-only-polling-latest.json --output-md /tmp/opscat-read-only-polling-latest.md`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
+## Verified Result
+
+- Targeted P28 tests: 6 passed.
+- P28 CLI smoke: 3 jobs, 2 polled, 1 skipped, 0 blocked, 4 trend windows; `live_api_calls_enabled=False`; `remediation_execution_enabled=False`.
+- Full verification: `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full` passed.
+- Coverage gate: 76.85% total, above the 60.00% project minimum; `app/services/read_only_polling_runtime.py` at 88.46%.
+- Latest report artifact: `/tmp/opscat-read-only-polling-latest.md`.
+
 ## Known Boundaries
 
 P28 is a local/mock read-only polling runtime. It does not call live APIs, does not manage auth, does not mutate production systems, and does not execute remediation. P29 should use polling output to evaluate telemetry-grounded judgment quality.

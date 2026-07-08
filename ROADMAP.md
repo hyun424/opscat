@@ -232,3 +232,7 @@ P24 active scope: Proactive Risk Sentinel. P24 detects incident precursors befor
 ## P24 implemented
 
 P24 implemented as Proactive Risk Sentinel evidence. P24 adds local/mock pre-incident trend windows, risk signals, ETA/confidence forecasts, preventive action planning, proactive fixtures, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or remediation execution.
+
+## P25 active
+
+P25 active scope: Proactive Signal Corpus Expansion and Calibration. P25 expands proactive pre-incident fixtures to at least 100 local/mock windows, adds expected outcome metadata, evaluates ETA/route/confidence/action-safety calibration, reports risk-type coverage, integrates verification, and preserves release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, remediation execution, or unattended production-operation claims.

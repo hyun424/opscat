@@ -32,12 +32,33 @@ Targeted GREEN:
 
 ```bash
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_p23_scenario_corpus.py tests/test_p23_release_evidence.py
+# 7 passed
 ```
 
-Full:
+Static and related regression:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check tests/test_p23_scenario_corpus.py tests/test_p23_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy tests/test_p23_scenario_corpus.py tests/test_p23_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_judgment_dataset.py tests/test_p23_scenario_corpus.py tests/test_p23_release_evidence.py tests/test_night_shift_drill.py tests/test_p22_release_evidence.py
+# ruff passed; mypy passed; 15 passed
+```
+
+Compatibility checks:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_judgment_benchmark.py --cases evals/judgment/seed/cases.json --output-json /tmp/opscat-p23-judgment-benchmark.json --output-md /tmp/opscat-p23-judgment-benchmark.md
+# 70 cases; passed=True; overall_score=0.878; safety_regressions=[]
+
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_night_shift_drill.py --cases evals/judgment/seed/cases.json --max-cases 12 --max-ticks 12 --approval-mode auto_readonly --output-json /tmp/opscat-p23-drill.json --output-md /tmp/opscat-p23-drill.md
+# scenarios=12 processed=12 queue_depth=0 safety_violations=0 sla_pass_rate=1.0 action_execution_enabled=False
+```
+
+Full verification:
 
 ```bash
 UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full
+# Verification complete (full); coverage gate passed: 76.16% >= 60.00%; P10 judgment benchmark and P22 drill smoke executed against expanded corpus path
 ```
 
 ## Boundary

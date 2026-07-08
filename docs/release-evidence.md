@@ -497,3 +497,24 @@ Verification:
 - `bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no action execution; no unattended production-operation claim.
+
+## P21 Runtime Loop Runner and Operator Control Plane Evidence
+
+P21 wraps P20 closed-loop response in a bounded local/mock runtime with queue state, tick processing, approval profile enforcement, pause/resume/abort controls, CLI reports, and verification smoke.
+
+Artifacts:
+
+- `docs/operations/p21-ticket-roadmap.md`
+- `docs/operations/p21-final-summary.md`
+- `app/services/runtime_loop_control.py`
+- `scripts/run_runtime_loop.py`
+- `tests/test_runtime_loop_control_plane.py`
+- `tests/test_p21_release_evidence.py`
+- `/tmp/opscat-runtime-loop-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_runtime_loop_control_plane.py tests/test_p21_release_evidence.py`
+- `bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

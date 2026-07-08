@@ -680,3 +680,25 @@ Verification:
 Verified result: full profile passed; coverage gate 76.85%; P28 read-only polling smoke wrote `/tmp/opscat-read-only-polling-latest.md` with 3 jobs, 2 polled, 1 skipped, 0 blocked, and 4 trend windows.
 
 Boundary: no-auth/local-mock by default; fixture/local transport only; no live API calls; no live writes; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.
+
+## P29 Telemetry-grounded Judgment Quality Evaluation Evidence
+
+P29 measures whether connector telemetry improves incident judgment quality over a non-telemetry baseline. It covers risk identification, route choice, evidence citation, missing-evidence behavior, unsafe-action behavior, and prompt-injection-safe telemetry handling.
+
+Artifacts:
+
+- `docs/operations/p29-ticket-roadmap.md`
+- `docs/operations/p29-final-summary.md`
+- `app/services/telemetry_judgment_quality.py`
+- `scripts/run_telemetry_judgment_eval.py`
+- `evals/judgment/telemetry_grounded/p29_cases.json`
+- `tests/test_telemetry_judgment_quality.py`
+- `tests/test_p29_release_evidence.py`
+- `/tmp/opscat-telemetry-judgment-quality-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_telemetry_judgment_quality.py tests/test_p29_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; NVIDIA opt-in only; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

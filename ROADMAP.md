@@ -273,3 +273,7 @@ P27 implemented as Connector Readiness and Permission Contract evidence. P27 add
 ## P28 implemented
 
 P28 implemented as Read-only Polling Runtime evidence. P28 adds bounded fixture/local polling jobs, P27 readiness gating, timeout/backoff/failure handling, P26 adapter integration, proactive trend-window output, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no live API calls, live writes, production mutation, or remediation execution.
+
+## P29 implemented
+
+P29 implemented as Telemetry-grounded Judgment Quality Evaluation evidence. P29 adds telemetry judgment cases, deterministic baseline-vs-grounded scoring, evidence citation checks, missing-evidence behavior, prompt-injection-safe telemetry handling, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls, production mutation, or remediation execution.

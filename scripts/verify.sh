@@ -344,6 +344,17 @@ read_only_polling_smoke() {
   printf 'Wrote /tmp/opscat-read-only-polling-latest.md and %s/opscat-read-only-polling.json\n' "$VERIFY_TMPDIR"
 }
 
+telemetry_judgment_quality_smoke() {
+  section "P29 telemetry judgment quality smoke"
+  "${UV_DEV[@]}" python scripts/run_telemetry_judgment_eval.py \
+    --cases evals/judgment/telemetry_grounded/p29_cases.json \
+    --provider mock \
+    --output-json "$VERIFY_TMPDIR/opscat-telemetry-judgment-quality.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-telemetry-judgment-quality.md" >/tmp/opscat-telemetry-judgment-quality-latest.json
+  cp "$VERIFY_TMPDIR/opscat-telemetry-judgment-quality.md" /tmp/opscat-telemetry-judgment-quality-latest.md
+  printf 'Wrote /tmp/opscat-telemetry-judgment-quality-latest.md and %s/opscat-telemetry-judgment-quality.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -431,7 +442,8 @@ docs_contract_tests() {
     tests/test_p25_release_evidence.py \
     tests/test_p26_release_evidence.py \
     tests/test_p27_release_evidence.py \
-    tests/test_p28_release_evidence.py
+    tests/test_p28_release_evidence.py \
+    tests/test_p29_release_evidence.py
 }
 
 run_fast() {
@@ -465,6 +477,7 @@ run_eval() {
   telemetry_adapter_smoke
   connector_readiness_smoke
   read_only_polling_smoke
+  telemetry_judgment_quality_smoke
 }
 
 run_docs() {

@@ -208,3 +208,7 @@ P21 active scope: Runtime Loop Runner and Operator Control Plane. P21 wraps the 
 ## P21 implemented
 
 P21 implemented as Runtime Loop Runner and Operator Control Plane evidence. P21 adds queue state, deterministic tick processing, approval profile enforcement, pause/resume/abort controls, runtime CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or remediation execution.
+
+## P22 active
+
+P22 active scope: Night-shift Runtime Drill and SLA Scoring. P22 evaluates the P21 runtime loop as a local/mock night-shift operator by running batches of incidents, scoring SLA/safety/escalation behavior, emitting reports, integrating verification, and preserving release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, remediation execution, or unattended production-operation claims.

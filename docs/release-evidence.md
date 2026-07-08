@@ -1650,6 +1650,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
 
-Verified result: pending final full/docs verification after GREEN implementation.
+Verified result: full profile passed; docs profile passed; coverage gate 80.35%; P69 smoke wrote `/tmp/opscat-autonomous-worker-runner-latest.md` with claimed_packet_count=3, succeeded_run_count=3, failed_run_count=0, retry_queue_count=0, next_runnable_ticket=P69, state_write_count=1, spawned_process_count=0, shell_command_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, and passed=true.
 
 Boundary: recording transport only; no process spawning, no shell command execution, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

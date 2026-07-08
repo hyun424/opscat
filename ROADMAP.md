@@ -269,3 +269,7 @@ P30 planned scope: Controlled Auto-remediation Policy and Simulation. P30 will d
 ## P27 implemented
 
 P27 implemented as Connector Readiness and Permission Contract evidence. P27 adds read-only connector manifest evaluation, credential-reference safety, connector health states, bounded retry/backoff, mutation-capability blocking, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no live writes, external model/API calls, production mutation, or remediation execution.
+
+## P28 implemented
+
+P28 implemented as Read-only Polling Runtime evidence. P28 adds bounded fixture/local polling jobs, P27 readiness gating, timeout/backoff/failure handling, P26 adapter integration, proactive trend-window output, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no live API calls, live writes, production mutation, or remediation execution.

@@ -654,3 +654,27 @@ Verification:
 Verified result: full profile passed; coverage gate 76.71%; P27 connector readiness smoke wrote `/tmp/opscat-connector-readiness-latest.md` with 3 sources, 2 ready, 1 degraded, and 0 blocked.
 
 Boundary: no-auth/local-mock by default; no live writes; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.
+
+## P28 Read-only Polling Runtime Evidence
+
+P28 adds a bounded fixture/local polling runtime that consumes P27 readiness, executes only read-only jobs, feeds successful payloads through P26 adapters, emits telemetry snapshots and proactive TrendWindows, and keeps unsafe or degraded sources from polling.
+
+Artifacts:
+
+- `docs/operations/p28-ticket-roadmap.md`
+- `docs/operations/p28-final-summary.md`
+- `app/services/read_only_polling_runtime.py`
+- `scripts/run_read_only_polling.py`
+- `evals/polling/jobs/p28_polling_jobs.json`
+- `evals/polling/jobs/p28_unsafe_jobs.json`
+- `evals/polling/jobs/p28_failure_jobs.json`
+- `tests/test_read_only_polling_runtime.py`
+- `tests/test_p28_release_evidence.py`
+- `/tmp/opscat-read-only-polling-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_read_only_polling_runtime.py tests/test_p28_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; fixture/local transport only; no live API calls; no live writes; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

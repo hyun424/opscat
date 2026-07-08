@@ -1,0 +1,34 @@
+{
+  "jobs": [
+    {
+      "id": "poll-prometheus-fixture",
+      "source": "prometheus",
+      "fixture_path": "evals/telemetry/fixtures/prometheus_query_range.json",
+      "interval_seconds": 60,
+      "timeout_seconds": 5,
+      "enabled": true,
+      "requested_capabilities": ["read", "query", "health"],
+      "max_batch_size": 1
+    },
+    {
+      "id": "poll-datadog-fixture",
+      "source": "datadog",
+      "fixture_path": "evals/telemetry/fixtures/datadog_timeseries.json",
+      "interval_seconds": 60,
+      "timeout_seconds": 5,
+      "enabled": true,
+      "requested_capabilities": ["read", "query", "list"],
+      "max_batch_size": 1
+    },
+    {
+      "id": "poll-sentry-fixture",
+      "source": "sentry",
+      "fixture_path": "evals/telemetry/fixtures/sentry_issues.json",
+      "interval_seconds": 60,
+      "timeout_seconds": 5,
+      "enabled": true,
+      "requested_capabilities": ["read", "query"],
+      "max_batch_size": 1
+    }
+  ]
+}

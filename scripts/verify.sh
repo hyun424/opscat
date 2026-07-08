@@ -332,6 +332,18 @@ connector_readiness_smoke() {
   printf 'Wrote /tmp/opscat-connector-readiness-latest.md and %s/opscat-connector-readiness.json\n' "$VERIFY_TMPDIR"
 }
 
+read_only_polling_smoke() {
+  section "P28 read-only polling smoke"
+  "${UV_DEV[@]}" python scripts/run_read_only_polling.py \
+    --jobs evals/polling/jobs/p28_polling_jobs.json \
+    --readiness evals/connectors/readiness/read_only_sources.json \
+    --ticks 1 \
+    --output-json "$VERIFY_TMPDIR/opscat-read-only-polling.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-read-only-polling.md" >/tmp/opscat-read-only-polling-latest.json
+  cp "$VERIFY_TMPDIR/opscat-read-only-polling.md" /tmp/opscat-read-only-polling-latest.md
+  printf 'Wrote /tmp/opscat-read-only-polling-latest.md and %s/opscat-read-only-polling.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -418,7 +430,8 @@ docs_contract_tests() {
     tests/test_p24_release_evidence.py \
     tests/test_p25_release_evidence.py \
     tests/test_p26_release_evidence.py \
-    tests/test_p27_release_evidence.py
+    tests/test_p27_release_evidence.py \
+    tests/test_p28_release_evidence.py
 }
 
 run_fast() {
@@ -451,6 +464,7 @@ run_eval() {
   proactive_calibration_smoke
   telemetry_adapter_smoke
   connector_readiness_smoke
+  read_only_polling_smoke
 }
 
 run_docs() {

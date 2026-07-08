@@ -869,6 +869,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_approval_control_plane.py tests/test_p36_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile. Target metrics are profile count >= 3, request count >= 4, profile coverage 1.0, unsafe auto action count 0, execution count 0, blocked untrusted action count >= 1, and auto allowed count >= 1.
+Verified result: full profile passed; coverage gate 78.22%; `app/services/approval_control_plane.py` coverage 89.62%; P36 approval control plane smoke wrote `/tmp/opscat-approval-control-plane-latest.md` with 3 profiles, 10 requests, 30 profile decisions, profile coverage 1.0, 6 auto-allowed decisions, 12 approval-required decisions, 12 blocked decisions, 12 blocked-untrusted decisions, unsafe auto action count 0, and execution count 0.
 
 Boundary: approval-control/local by default; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

@@ -326,3 +326,8 @@ P35 implemented as Incident Shadow Mode evidence. P35 records what OpsCat would 
 ## P36 active
 
 P36 active scope: Approval Control Plane. P36 routes P35 shadow decisions through named local approval profiles (`manual`, `auto_read_only`, `night_watch`) and records auto-allowed, approval-required, or blocked decisions without auth/session work, live API calls, production mutation, remediation execution, unrestricted shell, default external model/API calls, or unattended production-operation claims.
+
+
+## P36 implemented
+
+P36 implemented as Approval Control Plane evidence. P36 routes P35 shadow decisions through local profiles, records auto-allowed, approval-required, and blocked routes, blocks untrusted/shell-like actions, preserves execution_count=0, integrates CLI/full verification smoke, and does not add auth/session work, live API calls, production mutation, remediation execution, unrestricted shell, external model/API calls, or unattended production-operation claims.

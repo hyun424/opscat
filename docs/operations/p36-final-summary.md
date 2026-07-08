@@ -27,16 +27,21 @@ P36 routes P35 shadow decisions through named local approval profiles. It record
 
 No auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and does not claim unattended production operation.
 
-## Verification target
+## Verification result
 
-Expected metrics before final full verification:
+Full verification passed with P36 included in `scripts/verify.sh`:
 
-- profile count: at least 3
-- request count: at least 4
+- profile count: 3
+- request count: 10
+- profile decision count: 30
 - profile coverage: 1.0
+- auto allowed count: 6
+- approval required count: 12
+- blocked count: 12
+- blocked untrusted action count: 12
 - unsafe auto action count: 0
 - execution count: 0
-- blocked untrusted action count: at least 1
-- auto allowed count: at least 1
+- total coverage gate: 78.22% >= 60.00%
+- `app/services/approval_control_plane.py` coverage: 89.62%
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+Generated artifacts: `/tmp/opscat-approval-control-plane-latest.md` and `/tmp/opscat-approval-control-plane-latest.json`.

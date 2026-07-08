@@ -407,3 +407,7 @@ P45 active scope: Evidence-Grounded Judgment Contract. P45 requires every incide
 ## P46 active
 
 P46 active scope: Investigator Loop. P46 observes multi-source signals, generates ranked hypotheses, binds support/counter/missing evidence, proposes read-only next investigations, and gates unsafe actions conservatively.
+
+## P47 active
+
+P47 active scope: Tool Selection Planner. P47 maps each investigation need to safe read-only observability tools, preserves evidence references, and blocks mutation, shell, rollback, restart, and delete actions.

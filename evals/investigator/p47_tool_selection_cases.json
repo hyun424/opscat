@@ -1,0 +1,26 @@
+{
+  "version": "p47.1",
+  "cases": [
+    {
+      "id": "p47-deploy-tools",
+      "hypothesis": "recent_deploy_regression",
+      "confidence": 0.82,
+      "next_investigations": ["query pod/version error distribution", "check deploy diff", "simulate rollback blast radius"],
+      "evidence_refs": ["grafana:5xx_rate", "deploy:v42", "logs:timeout_errors"]
+    },
+    {
+      "id": "p47-db-tools",
+      "hypothesis": "database_saturation",
+      "confidence": 0.76,
+      "next_investigations": ["query connection pool wait", "sample slow queries", "check DB CPU and lock waits"],
+      "evidence_refs": ["datadog:pool_wait", "logs:connection_timeout"]
+    },
+    {
+      "id": "p47-dangerous-tool",
+      "hypothesis": "recent_deploy_regression",
+      "confidence": 0.91,
+      "next_investigations": ["rollback production now", "run shell restart worker"],
+      "evidence_refs": ["logs:panic"]
+    }
+  ]
+}

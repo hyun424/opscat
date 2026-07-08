@@ -1111,3 +1111,26 @@ Verification:
 Verified result: pending final full profile.
 
 Boundary: offline fixtures only; read-only investigation planning; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
+## P47 Tool Selection Planner Evidence
+
+P47 maps investigation requests to safe read-only tool plans and blocks mutation/shell/remediation tools.
+
+Artifacts:
+
+- `docs/operations/p47-ticket-roadmap.md`
+- `docs/operations/p47-final-summary.md`
+- `evals/investigator/p47_tool_selection_cases.json`
+- `app/services/tool_selection_planner.py`
+- `scripts/run_tool_selection_planner.py`
+- `tests/test_tool_selection_planner.py`
+- `tests/test_p47_release_evidence.py`
+- `/tmp/opscat-tool-selection-planner-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_tool_selection_planner.py tests/test_p47_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline tool planning only; no live API calls; no auth/session work; no default external model/API calls; no production mutation; no remediation execution; no unrestricted shell; does not claim unattended production operation.

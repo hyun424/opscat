@@ -4,14 +4,14 @@ P41 evaluates source-native raw dataset files and scores deterministic incident 
 
 ## Ticket completion
 
-- P41-001 — Raw source manifest: pending implementation.
-- P41-002 — Raw parser layer: pending implementation.
-- P41-003 — Deterministic predictor: pending implementation.
-- P41-004 — Ground-truth scorer: pending implementation.
-- P41-005 — Safety gates: pending implementation.
-- P41-006 — Per-source cards: pending implementation.
-- P41-007 — CLI report: pending implementation.
-- P41-008 — Verification integration: pending implementation.
+- P41-001 — Raw source manifest: `evals/real_datasets/raw/p41_sources.json` defines source-native files and expected labels/root causes.
+- P41-002 — Raw parser layer: P41 parses LogHub-style JSONL, NAB-style CSV, and AIOps-style JSONL directly.
+- P41-003 — Deterministic predictor: P41 infers incident class, root cause, severity, route, and evidence from raw source signals.
+- P41-004 — Ground-truth scorer: P41 compares predictions to expected labels/root causes/routes.
+- P41-005 — Safety gates: P41 records no downloads, no live calls, no mutation, no execution, and no unsafe actions.
+- P41-006 — Per-source cards: P41 emits source cards with records, labels, prediction, and match fields.
+- P41-007 — CLI report: `scripts/run_raw_real_dataset_replay.py` writes JSON/Markdown.
+- P41-008 — Verification integration: `scripts/verify.sh` includes `raw_real_dataset_replay_smoke`.
 
 ## Primary artifacts
 

@@ -476,6 +476,17 @@ production_readiness_milestone_smoke() {
   printf 'Wrote /tmp/opscat-production-readiness-milestone-latest.md and %s/opscat-production-readiness-milestone.json\n' "$VERIFY_TMPDIR"
 }
 
+raw_real_dataset_replay_smoke() {
+  section "P41 raw real dataset replay smoke"
+  "${UV_DEV[@]}" python scripts/run_raw_real_dataset_replay.py \
+    --sources evals/real_datasets/raw/p41_sources.json \
+    --output-json "$VERIFY_TMPDIR/opscat-raw-real-dataset-replay.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-raw-real-dataset-replay.md" >/tmp/opscat-raw-real-dataset-replay-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-raw-real-dataset-replay.json" /tmp/opscat-raw-real-dataset-replay-latest.json
+  cp "$VERIFY_TMPDIR/opscat-raw-real-dataset-replay.md" /tmp/opscat-raw-real-dataset-replay-latest.md
+  printf 'Wrote /tmp/opscat-raw-real-dataset-replay-latest.md and %s/opscat-raw-real-dataset-replay.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -575,7 +586,8 @@ docs_contract_tests() {
     tests/test_p37_release_evidence.py \
     tests/test_p38_release_evidence.py \
     tests/test_p39_release_evidence.py \
-    tests/test_p40_release_evidence.py
+    tests/test_p40_release_evidence.py \
+    tests/test_p41_release_evidence.py
 }
 
 run_fast() {
@@ -621,6 +633,7 @@ run_eval() {
   agent_evaluation_dashboard_smoke
   runbook_learning_loop_smoke
   production_readiness_milestone_smoke
+  raw_real_dataset_replay_smoke
 }
 
 run_docs() {

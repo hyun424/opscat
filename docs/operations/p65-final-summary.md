@@ -34,4 +34,4 @@ Dry attach only, real-staging-shaped fixture only, explicit secret provider cont
 
 ## Final verification
 
-Pending final full profile.
+Full profile passed with coverage gate 80.10%; P65 smoke passed with attachment_count=4, attach_ready_count=3, blocked_count=1, detach_plan_count=3, audit_handoff_count=3, raw_secret_block_count=1, env_read_count=0, real_credential_read_count=0, network_call_count=0, action_execution_count=0, production_mutation_count=0, attach_ready=p65-grafana-real-staging-dry-attach/p65-sentry-real-staging-dry-attach/p65-datadog-real-staging-dry-attach, blocked=p65-prod-raw-token-blocked, next_step="collect explicit live attach approval before resolving real staging credentials", and passed=true.

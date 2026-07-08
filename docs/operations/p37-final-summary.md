@@ -4,14 +4,14 @@ P37 validates open-source/local configuration templates and examples so contribu
 
 ## Ticket completion
 
-- P37-001 — Config manifest: pending implementation.
-- P37-002 — Template linter: pending implementation.
-- P37-003 — Connector sample checks: pending implementation.
-- P37-004 — Approval profile checks: pending implementation.
-- P37-005 — Remediation boundary checks: pending implementation.
-- P37-006 — Scorecard: pending implementation.
-- P37-007 — CLI report: pending implementation.
-- P37-008 — Verification integration: pending implementation.
+- P37-001 — Config manifest: `evals/config/p37_config_manifest.json` defines checked OSS surfaces.
+- P37-002 — Template linter: P37 detects missing files, missing placeholders, real-looking secrets, and unsafe defaults.
+- P37-003 — Connector sample checks: connector examples are scanned for credential-reference safety and secret-marker absence.
+- P37-004 — Approval profile checks: P36 approval profiles are scanned as committed local config examples.
+- P37-005 — Remediation boundary checks: `config/opscat.local.example.json` keeps live/prod mutation and remediation disabled.
+- P37-006 — Scorecard: reports template pass rate, secret safety rate, safe default rate, blocker count, real secret count, and unsafe default count.
+- P37-007 — CLI report: `scripts/run_open_source_config_hardening.py` writes JSON/Markdown.
+- P37-008 — Verification integration: `scripts/verify.sh` includes `open_source_config_hardening_smoke`.
 
 ## Primary artifacts
 
@@ -19,6 +19,7 @@ P37 validates open-source/local configuration templates and examples so contribu
 - `scripts/run_open_source_config_hardening.py`
 - `evals/config/p37_config_manifest.json`
 - `config/opscat.local.example.json`
+- `config/connectors.local.example.json`
 - `tests/test_open_source_config_hardening.py`
 - `tests/test_p37_release_evidence.py`
 - `docs/operations/p37-ticket-roadmap.md`

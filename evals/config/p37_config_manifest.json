@@ -15,8 +15,8 @@
       "required_placeholders": ["${PROMETHEUS_API_KEY}", "${DATADOG_API_KEY}", "${DATADOG_APP_KEY}", "${SENTRY_DSN}"]
     },
     {
-      "id": "p33-dry-run-connectors",
-      "path": "evals/connectors/dry_run/p33_connectors.json",
+      "id": "connector-local-example",
+      "path": "config/connectors.local.example.json",
       "kind": "connector_manifest"
     },
     {

@@ -1,0 +1,26 @@
+{
+  "connectors": [
+    {
+      "name": "prometheus-local",
+      "type": "prometheus",
+      "credential_ref": "env:PROMETHEUS_API_KEY",
+      "read_only": true,
+      "live_api_calls_enabled": false
+    },
+    {
+      "name": "datadog-local",
+      "type": "datadog",
+      "credential_ref": "env:DATADOG_API_KEY",
+      "app_key_ref": "env:DATADOG_APP_KEY",
+      "read_only": true,
+      "live_api_calls_enabled": false
+    },
+    {
+      "name": "sentry-local",
+      "type": "sentry",
+      "credential_ref": "env:SENTRY_DSN",
+      "read_only": true,
+      "live_api_calls_enabled": false
+    }
+  ]
+}

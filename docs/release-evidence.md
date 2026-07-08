@@ -885,6 +885,7 @@ Artifacts:
 - `scripts/run_open_source_config_hardening.py`
 - `evals/config/p37_config_manifest.json`
 - `config/opscat.local.example.json`
+- `config/connectors.local.example.json`
 - `tests/test_open_source_config_hardening.py`
 - `tests/test_p37_release_evidence.py`
 - `/tmp/opscat-open-source-config-hardening-latest.md`

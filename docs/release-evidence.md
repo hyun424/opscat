@@ -1014,6 +1014,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_external_dataset_acquisition.py tests/test_p42_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile. Target metrics are source count >= 3, dry-run download count 0, holdout source count >= 1, root-cause accuracy >= 0.9, route accuracy >= 0.9, and boundary violation count 0.
+Verified result: full profile passed; coverage gate 78.77%; `app/services/external_dataset_acquisition.py` coverage 85.17%; P42 external dataset acquisition smoke wrote `/tmp/opscat-external-dataset-acquisition-latest.md` with source count 3, dry-run download count 0, holdout source count 2, holdout parsed record count 4, label coverage 1.0, root-cause accuracy 1.0, route accuracy 1.0, unsafe action count 0, boundary violation count 0, network_allowed=false, external_downloads_performed=false, and passed=true.
 
 Boundary: default dry-run only; no external dataset downloads during verification; no live API calls; no auth/session work; no default external model/API calls; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

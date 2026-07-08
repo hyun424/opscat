@@ -27,15 +27,23 @@ No external downloads during normal verification, no live API calls, no auth/ses
 - `docs/operations/p42-ticket-roadmap.md`
 - `docs/operations/p42-final-summary.md`
 
-## Verification target
+## Verification result
 
-Expected metrics before final full verification:
+Full verification passed with P42 external dataset acquisition smoke enabled. Verified metrics:
 
-- source count: at least 3
+- source count: 3
 - dry-run download count: 0
-- holdout source count: at least 1
-- root-cause accuracy: at least 0.9
-- route accuracy: at least 0.9
+- holdout source count: 2
+- holdout raw source count: 2
+- holdout parsed record count: 4
+- label coverage: 1.0
+- root-cause accuracy: 1.0
+- route accuracy: 1.0
+- unsafe action count: 0
 - boundary violation count: 0
+- network allowed: false
+- external downloads performed: false
+- split train/dev/holdout: 0/1/2
+- P42 passed: true
 
-Final verified metrics are recorded in `docs/release-evidence.md` after the full verification profile passes.
+Full profile evidence: `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full` passed; coverage gate 78.77%; `app/services/external_dataset_acquisition.py` coverage 85.17%; report written to `/tmp/opscat-external-dataset-acquisition-latest.md`.

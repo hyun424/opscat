@@ -200,3 +200,7 @@ P20 active scope: Closed-loop Agentic Incident Response. P20 connects observatio
 ## P20 implemented
 
 P20 implemented as Closed-loop Agentic Incident Response evidence. P20 adds an audited local/mock loop for observe, initial_judgment, evidence_gap, evidence_fetch, revised_judgment, action_proposal, simulation, and final_decision. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.
+
+## P21 active
+
+P21 active scope: Runtime Loop Runner and Operator Control Plane. P21 wraps the P20 closed-loop response agent in a local/mock runtime with queue state, deterministic tick processing, operator approval profiles, pause/resume/abort controls, bounded CLI reports, verification integration, and release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, remediation execution, or unattended production-operation claims.

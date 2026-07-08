@@ -277,6 +277,19 @@ runtime_loop_smoke() {
   printf 'Wrote /tmp/opscat-runtime-loop-latest.md and %s/opscat-runtime-loop.json\n' "$VERIFY_TMPDIR"
 }
 
+night_shift_drill_smoke() {
+  section "P22 night-shift runtime drill smoke"
+  "${UV_DEV[@]}" python scripts/run_night_shift_drill.py \
+    --cases evals/judgment/seed/cases.json \
+    --max-cases 4 \
+    --max-ticks 4 \
+    --approval-mode auto_readonly \
+    --output-json "$VERIFY_TMPDIR/opscat-night-drill.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-night-drill.md" >/tmp/opscat-night-drill-latest.json
+  cp "$VERIFY_TMPDIR/opscat-night-drill.md" /tmp/opscat-night-drill-latest.md
+  printf 'Wrote /tmp/opscat-night-drill-latest.md and %s/opscat-night-drill.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -357,7 +370,8 @@ docs_contract_tests() {
     tests/test_p18b_release_evidence.py \
     tests/test_p19_release_evidence.py \
     tests/test_p20_release_evidence.py \
-    tests/test_p21_release_evidence.py
+    tests/test_p21_release_evidence.py \
+    tests/test_p22_release_evidence.py
 }
 
 run_fast() {
@@ -385,6 +399,7 @@ run_eval() {
   operator_improvement_loop_smoke
   closed_loop_response_smoke
   runtime_loop_smoke
+  night_shift_drill_smoke
 }
 
 run_docs() {

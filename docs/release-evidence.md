@@ -518,3 +518,24 @@ Verification:
 - `bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.
+
+## P22 Night-shift Runtime Drill and SLA Scoring Evidence
+
+P22 evaluates the P21 runtime loop as a local/mock night-shift operator with batch incident drills, SLA scoring, safety scoring, CLI reports, and verification smoke.
+
+Artifacts:
+
+- `docs/operations/p22-ticket-roadmap.md`
+- `docs/operations/p22-final-summary.md`
+- `app/services/night_shift_drill.py`
+- `scripts/run_night_shift_drill.py`
+- `tests/test_night_shift_drill.py`
+- `tests/test_p22_release_evidence.py`
+- `/tmp/opscat-night-drill-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_night_shift_drill.py tests/test_p22_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

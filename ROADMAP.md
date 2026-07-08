@@ -212,3 +212,7 @@ P21 implemented as Runtime Loop Runner and Operator Control Plane evidence. P21 
 ## P22 active
 
 P22 active scope: Night-shift Runtime Drill and SLA Scoring. P22 evaluates the P21 runtime loop as a local/mock night-shift operator by running batches of incidents, scoring SLA/safety/escalation behavior, emitting reports, integrating verification, and preserving release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, remediation execution, or unattended production-operation claims.
+
+## P22 implemented
+
+P22 implemented as Night-shift Runtime Drill and SLA Scoring evidence. P22 adds drill scenario wrapping, deterministic runtime batch evaluation, SLA and safety scoring, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or remediation execution.

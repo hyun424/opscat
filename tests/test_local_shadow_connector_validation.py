@@ -5,8 +5,8 @@ import subprocess
 from pathlib import Path
 
 from app.services.local_shadow_connector_validation import (
-    LocalShadowObservabilityConnector,
     LocalShadowConnectorValidationReport,
+    LocalShadowObservabilityConnector,
     build_local_shadow_connector_validation_report,
     render_local_shadow_connector_validation_markdown,
 )

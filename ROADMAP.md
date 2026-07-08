@@ -528,3 +528,11 @@ P60 active scope: Operator Replacement Readiness Gate v2. P60 aggregates P56-P59
 ## P60 implemented
 
 P60 implemented as Operator Replacement Readiness Gate v2 evidence. P60 marks local/shadow operator replacement ready from P56-P59 gates, keeps unattended production readiness false with explicit blockers, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P61 active
+
+P61 active scope: Local Shadow Connector Validation. P61 validates a live-shaped local observability source through a read-only connector before any real server or staging connector is used.
+
+## P61 implemented
+
+P61 implemented as Local Shadow Connector Validation evidence. P61 reads a live-shaped local source through fetch-only connector methods, normalizes metrics/logs/errors/deployments into evidence, produces a shadow deploy-regression judgment, links to P60 readiness, and preserves no real server connection, no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

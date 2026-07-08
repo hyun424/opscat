@@ -707,6 +707,16 @@ operator_replacement_readiness_gate_v2_smoke() {
   cp "$VERIFY_TMPDIR/opscat-operator-replacement-readiness-gate-v2.md" /tmp/opscat-operator-replacement-readiness-gate-v2-latest.md
   printf 'Wrote /tmp/opscat-operator-replacement-readiness-gate-v2-latest.md and %s/opscat-operator-replacement-readiness-gate-v2.json\n' "$VERIFY_TMPDIR"
 }
+
+local_shadow_connector_validation_smoke() {
+  section "P61 local shadow connector validation smoke"
+  "${UV_DEV[@]}" python scripts/run_local_shadow_connector_validation.py \
+    --source evals/shadow/p61_local_shadow_source.json \
+    --output-json "$VERIFY_TMPDIR/opscat-local-shadow-connector-validation.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-local-shadow-connector-validation.md" >/tmp/opscat-local-shadow-connector-validation-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-local-shadow-connector-validation.md" /tmp/opscat-local-shadow-connector-validation-latest.md
+  printf 'Wrote /tmp/opscat-local-shadow-connector-validation-latest.md and %s/opscat-local-shadow-connector-validation.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -826,7 +836,8 @@ docs_contract_tests() {
     tests/test_p57_release_evidence.py \
     tests/test_p58_release_evidence.py \
     tests/test_p59_release_evidence.py \
-    tests/test_p60_release_evidence.py
+    tests/test_p60_release_evidence.py \
+    tests/test_p61_release_evidence.py
 }
 
 run_fast() {
@@ -892,6 +903,7 @@ run_eval() {
   llm_judgment_candidate_harness_smoke
   hybrid_commander_comparator_smoke
   operator_replacement_readiness_gate_v2_smoke
+  local_shadow_connector_validation_smoke
 }
 
 run_docs() {

@@ -1436,3 +1436,27 @@ Verification:
 Verified result: full profile passed; coverage gate 79.63%; P60 smoke wrote `/tmp/opscat-operator-replacement-readiness-gate-v2-latest.md` with hybrid_comparator_passed=true, local_operator_replacement_ready=true, unattended_production_ready=false, recommended_mode=local_shadow_operator_replacement, readiness_level=shadow_ready_production_blocked, safety_regression_count=0, action_execution_count=0, production_blockers=5, and passed=true.
 
 Boundary: offline operator replacement readiness gate only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.
+
+## P61 Local Shadow Connector Validation Evidence
+
+P61 validates a live-shaped local observability source through a read-only connector contract before any real server or staging connector is used.
+
+Artifacts:
+
+- `docs/operations/p61-ticket-roadmap.md`
+- `docs/operations/p61-final-summary.md`
+- `evals/shadow/p61_local_shadow_source.json`
+- `app/services/local_shadow_connector_validation.py`
+- `scripts/run_local_shadow_connector_validation.py`
+- `tests/test_local_shadow_connector_validation.py`
+- `tests/test_p61_release_evidence.py`
+- `/tmp/opscat-local-shadow-connector-validation-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_local_shadow_connector_validation.py tests/test_p61_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline local shadow connector only; no real server connection; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

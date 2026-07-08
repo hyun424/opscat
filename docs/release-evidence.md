@@ -1602,6 +1602,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
 
-Verified result: pending final full/docs verification after GREEN implementation.
+Verified result: full profile passed; docs profile passed; coverage gate 80.25%; P67 smoke wrote `/tmp/opscat-autonomous-loop-executor-latest.md` with mode=local-auto, selected_ticket_count=3, completed_ticket_count=3, blocked_ticket_count=6, next_runnable_ticket=P69, executed_safe_local_ticket_count=3, checkpoint_count=3, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, action_execution_count=0, gated_execution_attempt_count=0, and passed=true.
 
 Boundary: safe-local executor/controller only; no shell command execution from the service layer, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

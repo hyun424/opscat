@@ -922,3 +922,27 @@ Verification:
 Verified result: full profile passed; coverage gate 78.38%; `app/services/agent_evaluation_dashboard.py` coverage 85.55%; P38 agent evaluation dashboard smoke wrote `/tmp/opscat-agent-evaluation-dashboard-latest.md` with 5 phase cards, 5 passed phases, 0 failed phases, boundary violation count 0, overall score 0.962, and readiness tier portfolio-ready.
 
 Boundary: local dashboard artifact only; no hosted dashboard requirement; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+
+## P39 Runbook Learning Loop Evidence
+
+P39 converts local evaluation signals into runbook improvement recommendations and regression cases without automatically editing production runbooks or executing remediation.
+
+Artifacts:
+
+- `docs/operations/p39-ticket-roadmap.md`
+- `docs/operations/p39-final-summary.md`
+- `app/services/runbook_learning_loop.py`
+- `scripts/run_runbook_learning_loop.py`
+- `evals/learning/p39_sources.json`
+- `tests/test_runbook_learning_loop.py`
+- `tests/test_p39_release_evidence.py`
+- `/tmp/opscat-runbook-learning-loop-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_runbook_learning_loop.py tests/test_p39_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are recommendation count >= 4, regression case count >= 3, source phase count >= 4, unsafe learning count 0, and applied change count 0.
+
+Boundary: local learning recommendations only; no automatic production runbook edits; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

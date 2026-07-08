@@ -349,3 +349,7 @@ P38 active scope: Agent Evaluation Dashboard. P38 aggregates P33-P37 local evide
 ## P38 implemented
 
 P38 implemented as Agent Evaluation Dashboard evidence. P38 aggregates P33-P37 local scorecards into JSON/Markdown phase cards, computes overall score, readiness tier, and boundary violations, integrates CLI/full verification smoke, and remains local-only with no hosted UI, auth, live calls, production mutation, remediation execution, unrestricted shell, external model/API calls, or unattended production-operation claims.
+
+## P39 active
+
+P39 active scope: Runbook Learning Loop. P39 converts local blocked/degraded/approval-heavy evaluation signals into runbook improvement recommendations and regression cases without automatically editing production runbooks, adding auth, calling live APIs, mutating production, executing remediation, using external models, or claiming unattended production operation.

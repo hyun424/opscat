@@ -1,0 +1,47 @@
+{
+  "version": "p45.1",
+  "cases": [
+    {
+      "id": "p45-deploy-regression",
+      "claim": "payment-api deploy regression",
+      "signals": [
+        {"source": "grafana", "signal": "5xx_rate", "value": "12% above 1% baseline", "strength": "high"},
+        {"source": "deploy", "signal": "version", "value": "v42 deployed 2m before spike", "strength": "high"},
+        {"source": "logs", "signal": "timeout_errors", "value": "errors concentrated on v42 pods", "strength": "high"}
+      ],
+      "counter_signals": [
+        {"source": "db", "signal": "latency", "value": "normal", "strength": "medium"}
+      ],
+      "missing": ["rollback simulation result"],
+      "expected_route": "approval_required",
+      "expected_auto_execute": false
+    },
+    {
+      "id": "p45-db-saturation",
+      "claim": "database connection pool saturation",
+      "signals": [
+        {"source": "datadog", "signal": "pool_wait", "value": "p95 wait 3.2s", "strength": "high"},
+        {"source": "logs", "signal": "connection_timeout", "value": "pool timeout repeated", "strength": "high"}
+      ],
+      "counter_signals": [
+        {"source": "deploy", "signal": "recent_deploy", "value": "none", "strength": "medium"}
+      ],
+      "missing": ["slow query sample"],
+      "expected_route": "approval_required",
+      "expected_auto_execute": false
+    },
+    {
+      "id": "p45-ambiguous",
+      "claim": "unknown partial outage",
+      "signals": [
+        {"source": "logs", "signal": "sporadic_error", "value": "low volume mixed errors", "strength": "low"}
+      ],
+      "counter_signals": [
+        {"source": "grafana", "signal": "slo_burn", "value": "normal", "strength": "medium"}
+      ],
+      "missing": ["dependency status", "deploy metadata", "customer impact"],
+      "expected_route": "human_required",
+      "expected_auto_execute": false
+    }
+  ]
+}

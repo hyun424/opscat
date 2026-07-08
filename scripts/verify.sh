@@ -590,6 +590,17 @@ night_operator_drill_v2_smoke() {
   printf 'Wrote /tmp/opscat-night-operator-drill-v2-latest.md and %s/opscat-night-operator-drill-v2.json\n' "$VERIFY_TMPDIR"
 }
 
+operator_judgment_benchmark_v2_smoke() {
+  section "P51 operator judgment benchmark v2 smoke"
+  "${UV_DEV[@]}" python scripts/run_operator_judgment_benchmark_v2.py \
+    --cases evals/investigator/p51_operator_judgment_benchmark_v2_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-operator-judgment-benchmark-v2.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-operator-judgment-benchmark-v2.md" >/tmp/opscat-operator-judgment-benchmark-v2-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-operator-judgment-benchmark-v2.json" /tmp/opscat-operator-judgment-benchmark-v2-latest.json
+  cp "$VERIFY_TMPDIR/opscat-operator-judgment-benchmark-v2.md" /tmp/opscat-operator-judgment-benchmark-v2-latest.md
+  printf 'Wrote /tmp/opscat-operator-judgment-benchmark-v2-latest.md and %s/opscat-operator-judgment-benchmark-v2.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -699,7 +710,8 @@ docs_contract_tests() {
     tests/test_p47_release_evidence.py \
     tests/test_p48_release_evidence.py \
     tests/test_p49_release_evidence.py \
-    tests/test_p50_release_evidence.py
+    tests/test_p50_release_evidence.py \
+    tests/test_p51_release_evidence.py
 }
 
 run_fast() {
@@ -755,6 +767,7 @@ run_eval() {
   hypothesis_reranker_smoke
   remediation_verification_loop_smoke
   night_operator_drill_v2_smoke
+  operator_judgment_benchmark_v2_smoke
 }
 
 run_docs() {

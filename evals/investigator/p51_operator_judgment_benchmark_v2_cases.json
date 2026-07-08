@@ -1,0 +1,86 @@
+{
+  "version": "p51.1",
+  "cases": [
+    {
+      "id": "p51-db-saturation-clean",
+      "title": "Checkout latency with DB pool wait",
+      "severity": "page",
+      "expected_detected": true,
+      "expected_top_hypothesis": "database_saturation",
+      "expected_route": "approval_required",
+      "expected_re_ranked": false,
+      "expected_recovery_verification": true,
+      "signals": [
+        {"source": "datadog", "signal": "db_pool_wait_p95", "value": "3.2s", "strength": "high"},
+        {"source": "logs", "signal": "checkout_5xx", "value": "2.4%", "strength": "medium"}
+      ],
+      "counter_signals": [
+        {"source": "deploy", "signal": "recent_deploy", "value": "none", "strength": "medium"}
+      ],
+      "missing": ["slow query sample"]
+    },
+    {
+      "id": "p51-deploy-anchoring-corrected",
+      "title": "Payment 5xx initially looks like deploy but DB evidence dominates",
+      "severity": "page",
+      "expected_detected": true,
+      "expected_top_hypothesis": "database_saturation",
+      "expected_route": "approval_required",
+      "expected_re_ranked": true,
+      "expected_recovery_verification": false,
+      "signals": [
+        {"source": "deploy", "signal": "deploy_before_spike", "value": "v42", "strength": "high"},
+        {"source": "datadog", "signal": "db_pool_wait_warning", "value": "2.8s", "strength": "medium"}
+      ],
+      "observations": [
+        {"target": "recent_deploy_regression", "type": "counter", "evidence": "errors evenly distributed across old and new pods", "strength": "high"},
+        {"target": "database_saturation", "type": "support", "evidence": "pool wait and lock waits increased", "strength": "high"}
+      ],
+      "counter_signals": [
+        {"source": "grafana", "signal": "old_new_pod_error_split", "value": "even", "strength": "high"}
+      ],
+      "missing": ["query lock sample"]
+    },
+    {
+      "id": "p51-provider-degraded-escalate",
+      "title": "Provider timeout spike without safe recovery",
+      "severity": "page",
+      "expected_detected": true,
+      "expected_top_hypothesis": "external_dependency_degraded",
+      "expected_route": "human_required",
+      "expected_re_ranked": false,
+      "expected_recovery_verification": true,
+      "signals": [
+        {"source": "sentry", "signal": "provider_timeout_rate", "value": "8%", "strength": "high"},
+        {"source": "logs", "signal": "upstream_rate_limit", "value": "payment-provider", "strength": "medium"}
+      ],
+      "counter_signals": [
+        {"source": "datadog", "signal": "rps", "value": "unchanged", "strength": "medium"}
+      ],
+      "missing": ["provider status page"]
+    },
+    {
+      "id": "p51-traffic-spike-weak-evidence",
+      "title": "Traffic spike with incomplete bot evidence",
+      "severity": "ticket",
+      "expected_detected": true,
+      "expected_top_hypothesis": "traffic_spike",
+      "expected_route": "human_required",
+      "expected_re_ranked": false,
+      "expected_recovery_verification": false,
+      "signals": [
+        {"source": "grafana", "signal": "rps_warning", "value": "2.4x baseline", "strength": "medium"}
+      ],
+      "counter_signals": [],
+      "missing": ["bot distribution", "autoscaling event"]
+    }
+  ],
+  "thresholds": {
+    "detection_recall": 0.75,
+    "top1_hypothesis_accuracy": 0.75,
+    "evidence_quality_score": 0.8,
+    "route_accuracy": 0.75,
+    "rerank_success_rate": 0.5,
+    "recovery_verification_coverage": 0.5
+  }
+}

@@ -1205,3 +1205,27 @@ Verification:
 Verified result: full profile passed; coverage gate 79.31%; P50 smoke wrote `/tmp/opscat-night-operator-drill-v2-latest.md` with drill_count=2, evidence_contract_pass_count=2, investigation_complete_count=2, read_only_tool_plan_count=6, remediation_verification_count=2, production_execution_count=0, unsafe_auto_execute_count=0, local_night_watch_ready=true, unattended_production_ready=false, and passed=true.
 
 Boundary: offline fixtures only; read-only/mocked local drill only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
+
+## P51 Operator Judgment Benchmark v2 Evidence
+
+P51 scores operator judgment quality before additional UI or live-product integration work.
+
+Artifacts:
+
+- `docs/operations/p51-ticket-roadmap.md`
+- `docs/operations/p51-final-summary.md`
+- `evals/investigator/p51_operator_judgment_benchmark_v2_cases.json`
+- `app/services/operator_judgment_benchmark_v2.py`
+- `scripts/run_operator_judgment_benchmark_v2.py`
+- `tests/test_operator_judgment_benchmark_v2.py`
+- `tests/test_p51_release_evidence.py`
+- `/tmp/opscat-operator-judgment-benchmark-v2-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_operator_judgment_benchmark_v2.py tests/test_p51_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline benchmark fixtures only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

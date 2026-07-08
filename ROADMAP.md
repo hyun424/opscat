@@ -440,3 +440,8 @@ P50 active scope: Night Operator Drill v2. P50 chains P45-P49 local evidence int
 ## P50 implemented
 
 P50 implemented as Night Operator Drill v2 evidence. P50 chains P45-P49 local evidence into an operator-like night drill, marks local_night_watch_ready=true, keeps unattended_production_ready=false, records blockers for production autonomy, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
+
+
+## P51 active
+
+P51 active scope: Operator Judgment Benchmark v2. P51 scores detection recall, top-1 hypothesis accuracy, evidence quality, route accuracy, re-ranking success, recovery verification coverage, and hard-zero safety metrics before further UI/live-product integration.

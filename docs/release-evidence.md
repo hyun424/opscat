@@ -651,4 +651,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_connector_readiness_contract.py tests/test_p27_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
+Verified result: full profile passed; coverage gate 76.71%; P27 connector readiness smoke wrote `/tmp/opscat-connector-readiness-latest.md` with 3 sources, 2 ready, 1 degraded, and 0 blocked.
+
 Boundary: no-auth/local-mock by default; no live writes; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

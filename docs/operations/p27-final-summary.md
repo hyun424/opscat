@@ -40,6 +40,14 @@ Boundary: no-auth/local-mock by default; no live writes; no production credentia
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_connector_readiness.py --manifests evals/connectors/readiness/read_only_sources.json --output-json /tmp/opscat-connector-readiness-latest.json --output-md /tmp/opscat-connector-readiness-latest.md`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
+## Verified Result
+
+- Targeted P27 tests: 6 passed.
+- P27 CLI smoke: 3 sources, 2 ready, 1 degraded, 0 blocked; `live_writes_enabled=False`; `remediation_execution_enabled=False`.
+- Full verification: `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full` passed.
+- Coverage gate: 76.71% total, above the 60.00% project minimum; `app/services/connector_readiness.py` at 79.01%.
+- Latest report artifact: `/tmp/opscat-connector-readiness-latest.md`.
+
 ## Known Boundaries
 
 P27 is readiness and permission evaluation only. It does not perform live observability API calls, does not implement auth, does not store production credentials, and does not claim unattended production operation. P28 should use this contract before scheduling read-only polling.

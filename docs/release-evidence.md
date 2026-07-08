@@ -898,3 +898,27 @@ Verification:
 Verified result: full profile passed; coverage gate 78.31%; `app/services/open_source_config_hardening.py` coverage 86.26%; P37 open-source config hardening smoke wrote `/tmp/opscat-open-source-config-hardening-latest.md` with 4 checked surfaces, 4 passed surfaces, blocker count 0, template pass rate 1.0, secret safety rate 1.0, safe default rate 1.0, real secret count 0, and unsafe default count 0.
 
 Boundary: open-source/local config hardening only; no auth/session implementation; no real `.env` value reads; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+
+## P38 Agent Evaluation Dashboard Evidence
+
+P38 aggregates recent local agent evaluation phases into one JSON/Markdown scorecard with phase cards, safety gates, evidence links, and readiness tier.
+
+Artifacts:
+
+- `docs/operations/p38-ticket-roadmap.md`
+- `docs/operations/p38-final-summary.md`
+- `app/services/agent_evaluation_dashboard.py`
+- `scripts/run_agent_evaluation_dashboard.py`
+- `evals/dashboard/p38_sources.json`
+- `tests/test_agent_evaluation_dashboard.py`
+- `tests/test_p38_release_evidence.py`
+- `/tmp/opscat-agent-evaluation-dashboard-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_agent_evaluation_dashboard.py tests/test_p38_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are phase count >= 5, passed phase count equals phase count, boundary violation count 0, overall score >= 0.9, and readiness tier portfolio-ready.
+
+Boundary: local dashboard artifact only; no hosted dashboard requirement; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

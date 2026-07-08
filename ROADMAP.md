@@ -340,3 +340,7 @@ P37 active scope: Open-source Config Hardening. P37 validates OSS/local template
 ## P37 implemented
 
 P37 implemented as Open-source Config Hardening evidence. P37 validates committed OSS/local templates and examples, checks placeholders, credential references, secret-marker absence, and safe disabled defaults, integrates CLI/full verification smoke, and never reads real `.env` values or enables auth, live calls, production mutation, remediation execution, unrestricted shell, external model/API calls, or unattended production-operation claims.
+
+## P38 active
+
+P38 active scope: Agent Evaluation Dashboard. P38 aggregates P33-P37 local evidence into a JSON/Markdown scorecard with phase cards, readiness tier, boundary gates, and artifact links. It remains local-only with no hosted UI, auth, live calls, production mutation, remediation execution, external model/API calls, or unattended production-operation claims.

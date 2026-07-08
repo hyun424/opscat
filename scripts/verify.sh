@@ -443,6 +443,17 @@ open_source_config_hardening_smoke() {
   printf 'Wrote /tmp/opscat-open-source-config-hardening-latest.md and %s/opscat-open-source-config-hardening.json\n' "$VERIFY_TMPDIR"
 }
 
+agent_evaluation_dashboard_smoke() {
+  section "P38 agent evaluation dashboard smoke"
+  "${UV_DEV[@]}" python scripts/run_agent_evaluation_dashboard.py \
+    --sources evals/dashboard/p38_sources.json \
+    --output-json "$VERIFY_TMPDIR/opscat-agent-evaluation-dashboard.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-agent-evaluation-dashboard.md" >/tmp/opscat-agent-evaluation-dashboard-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-agent-evaluation-dashboard.json" /tmp/opscat-agent-evaluation-dashboard-latest.json
+  cp "$VERIFY_TMPDIR/opscat-agent-evaluation-dashboard.md" /tmp/opscat-agent-evaluation-dashboard-latest.md
+  printf 'Wrote /tmp/opscat-agent-evaluation-dashboard-latest.md and %s/opscat-agent-evaluation-dashboard.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -539,7 +550,8 @@ docs_contract_tests() {
     tests/test_p34_release_evidence.py \
     tests/test_p35_release_evidence.py \
     tests/test_p36_release_evidence.py \
-    tests/test_p37_release_evidence.py
+    tests/test_p37_release_evidence.py \
+    tests/test_p38_release_evidence.py
 }
 
 run_fast() {
@@ -582,6 +594,7 @@ run_eval() {
   incident_shadow_mode_smoke
   approval_control_plane_smoke
   open_source_config_hardening_smoke
+  agent_evaluation_dashboard_smoke
 }
 
 run_docs() {

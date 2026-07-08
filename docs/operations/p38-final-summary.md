@@ -4,14 +4,14 @@ P38 aggregates recent OpsCat agent evaluation phases into one local JSON/Markdow
 
 ## Ticket completion
 
-- P38-001 — Dashboard source manifest: pending implementation.
-- P38-002 — Metric adapters: pending implementation.
-- P38-003 — Portfolio scorecard: pending implementation.
-- P38-004 — Safety gates: pending implementation.
-- P38-005 — Operator summary: pending implementation.
-- P38-006 — Evidence links: pending implementation.
-- P38-007 — CLI report: pending implementation.
-- P38-008 — Verification integration: pending implementation.
+- P38-001 — Dashboard source manifest: `evals/dashboard/p38_sources.json` defines P33-P37 local phase cards.
+- P38-002 — Metric adapters: P38 normalizes connector, polling, shadow, approval, and config-hardening metrics.
+- P38-003 — Portfolio scorecard: computes passed phase count, overall score, boundary violations, and readiness tier.
+- P38-004 — Safety gates: boundary flags reject live calls, production mutation, remediation execution, unrestricted shell, external model calls, and unattended production claims.
+- P38-005 — Operator summary: Markdown renders phase cards and dashboard summary.
+- P38-006 — Evidence links: phase cards include `/tmp/opscat-*` artifact paths.
+- P38-007 — CLI report: `scripts/run_agent_evaluation_dashboard.py` writes JSON/Markdown.
+- P38-008 — Verification integration: `scripts/verify.sh` includes `agent_evaluation_dashboard_smoke`.
 
 ## Primary artifacts
 

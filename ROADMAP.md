@@ -488,3 +488,11 @@ P55 active scope: Candidate Benchmark Promotion Gate. P55 promotes the P54 impro
 ## P55 implemented
 
 P55 implemented as Candidate Benchmark Promotion Gate evidence. P55 emits a versioned candidate benchmark pack, locks the source baseline with stable SHA-256 fingerprinting, gates promotion on gap closure, score deltas, baseline preservation, and hard-zero safety counters, while preserving no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
+
+## P56 active
+
+P56 active scope: Candidate Benchmark Regression Runner. P56 repeats the P55 promotion gate to prove the candidate benchmark is stable, non-regressing, and safe across repeated local runs.
+
+## P56 implemented
+
+P56 implemented as Candidate Benchmark Regression Runner evidence. P56 repeats the P55 promotion gate, verifies stable source and candidate fingerprints, proves mined gaps remain closed, keeps score deltas non-negative, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.

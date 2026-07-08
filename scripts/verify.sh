@@ -644,6 +644,17 @@ candidate_benchmark_promotion_gate_smoke() {
   printf 'Wrote /tmp/opscat-candidate-benchmark-promotion-gate-latest.md and %s/opscat-candidate-benchmark-promotion-gate.json\n' "$VERIFY_TMPDIR"
 }
 
+
+candidate_benchmark_regression_runner_smoke() {
+  section "P56 candidate benchmark regression runner smoke"
+  "${UV_DEV[@]}" python scripts/run_candidate_benchmark_regression_runner.py \
+    --cases evals/investigator/p51_operator_judgment_benchmark_v2_cases.json \
+    --repeat-count 3 \
+    --output-json "$VERIFY_TMPDIR/opscat-candidate-benchmark-regression-runner.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-candidate-benchmark-regression-runner.md" >/tmp/opscat-candidate-benchmark-regression-runner-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-candidate-benchmark-regression-runner.md" /tmp/opscat-candidate-benchmark-regression-runner-latest.md
+  printf 'Wrote /tmp/opscat-candidate-benchmark-regression-runner-latest.md and %s/opscat-candidate-benchmark-regression-runner.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -818,6 +829,7 @@ run_eval() {
   failure_driven_improvement_pack_smoke
   failure_driven_benchmark_improvement_smoke
   candidate_benchmark_promotion_gate_smoke
+  candidate_benchmark_regression_runner_smoke
 }
 
 run_docs() {

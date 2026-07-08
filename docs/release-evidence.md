@@ -1321,3 +1321,26 @@ Verification:
 Verified result: full profile passed; coverage gate 79.50%; P55 smoke wrote `/tmp/opscat-candidate-benchmark-promotion-gate-latest.md` with source_case_count=4, candidate_case_count=4, improved_case_count=2, promotion_status=candidate_ready, baseline_release_status=preserved_reference_only, promotion_gate_count=5, evidence_gap=1→0, recovery_verification_gap=2→0, evidence_quality_score_delta=0.062, recovery_verification_coverage_delta=0.5, unsafe_action_count=0, source_fingerprint_sha256=de893219300f73aa879403aa5e0c456ddfcc0cca9694a6e40db929bf98e253ee, candidate_fingerprint_sha256=3ebf8f5ce76ce5467eb17bb5ac3fb5403783defbaea969c00f82ba743b4b8bf7, and passed=true.
 
 Boundary: offline candidate benchmark only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
+
+## P56 Candidate Benchmark Regression Runner Evidence
+
+P56 repeats the P55 promotion gate to prove the candidate benchmark is stable, non-regressing, and safe across repeated local runs.
+
+Artifacts:
+
+- `docs/operations/p56-ticket-roadmap.md`
+- `docs/operations/p56-final-summary.md`
+- `app/services/candidate_benchmark_regression_runner.py`
+- `scripts/run_candidate_benchmark_regression_runner.py`
+- `tests/test_candidate_benchmark_regression_runner.py`
+- `tests/test_p56_release_evidence.py`
+- `/tmp/opscat-candidate-benchmark-regression-runner-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_candidate_benchmark_regression_runner.py tests/test_p56_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline candidate regression gate only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

@@ -290,6 +290,17 @@ night_shift_drill_smoke() {
   printf 'Wrote /tmp/opscat-night-drill-latest.md and %s/opscat-night-drill.json\n' "$VERIFY_TMPDIR"
 }
 
+proactive_risk_sentinel_smoke() {
+  section "P24 proactive risk sentinel smoke"
+  "${UV_DEV[@]}" python scripts/run_proactive_risk_sentinel.py \
+    --fixtures evals/proactive/seed/risk_windows.json \
+    --max-windows 12 \
+    --output-json "$VERIFY_TMPDIR/opscat-proactive-risk.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-proactive-risk.md" >/tmp/opscat-proactive-risk-latest.json
+  cp "$VERIFY_TMPDIR/opscat-proactive-risk.md" /tmp/opscat-proactive-risk-latest.md
+  printf 'Wrote /tmp/opscat-proactive-risk-latest.md and %s/opscat-proactive-risk.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -372,7 +383,8 @@ docs_contract_tests() {
     tests/test_p20_release_evidence.py \
     tests/test_p21_release_evidence.py \
     tests/test_p22_release_evidence.py \
-    tests/test_p23_release_evidence.py
+    tests/test_p23_release_evidence.py \
+    tests/test_p24_release_evidence.py
 }
 
 run_fast() {
@@ -401,6 +413,7 @@ run_eval() {
   closed_loop_response_smoke
   runtime_loop_smoke
   night_shift_drill_smoke
+  proactive_risk_sentinel_smoke
 }
 
 run_docs() {

@@ -558,3 +558,25 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.
+
+## P24 Proactive Risk Sentinel Evidence
+
+P24 adds proactive pre-incident risk forecasting with deterministic local/mock trend windows, ETA/confidence signals, preventive action plans, CLI reports, verification smoke, and release evidence.
+
+Artifacts:
+
+- `docs/operations/p24-ticket-roadmap.md`
+- `docs/operations/p24-final-summary.md`
+- `app/services/proactive_risk_sentinel.py`
+- `scripts/run_proactive_risk_sentinel.py`
+- `evals/proactive/seed/risk_windows.json`
+- `tests/test_proactive_risk_sentinel.py`
+- `tests/test_p24_release_evidence.py`
+- `/tmp/opscat-proactive-risk-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_proactive_risk_sentinel.py tests/test_p24_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

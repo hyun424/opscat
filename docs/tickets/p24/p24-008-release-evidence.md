@@ -1,3 +1,3 @@
 # P24-008 release-evidence
 
-See \ for acceptance criteria.
+See `docs/operations/p24-ticket-roadmap.md` for acceptance criteria.

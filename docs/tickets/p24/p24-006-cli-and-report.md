@@ -1,3 +1,3 @@
 # P24-006 cli-and-report
 
-See \ for acceptance criteria.
+See `docs/operations/p24-ticket-roadmap.md` for acceptance criteria.

@@ -228,3 +228,7 @@ P23 implemented as Incident Scenario Corpus Expansion evidence. P23 expands the 
 ## P24 active
 
 P24 active scope: Proactive Risk Sentinel. P24 detects incident precursors before full outages, forecasts likely risk with ETA/confidence/evidence, plans safe preventive actions, adds proactive fixtures, exposes CLI reports, integrates verification, and preserves release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, remediation execution, or unattended production-operation claims.
+
+## P24 implemented
+
+P24 implemented as Proactive Risk Sentinel evidence. P24 adds local/mock pre-incident trend windows, risk signals, ETA/confidence forecasts, preventive action planning, proactive fixtures, CLI reports, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or remediation execution.

@@ -1,3 +1,3 @@
 # P24-005 proactive-scenario-fixtures
 
-See \ for acceptance criteria.
+See `docs/operations/p24-ticket-roadmap.md` for acceptance criteria.

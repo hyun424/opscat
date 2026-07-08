@@ -8,7 +8,6 @@ from app.services.proactive_risk_sentinel import (
     PreventiveActionPlanner,
     ProactiveRiskSentinel,
     RiskSignal,
-    TrendWindow,
     load_proactive_fixtures,
     render_proactive_markdown,
 )

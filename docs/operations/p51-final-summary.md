@@ -1,17 +1,17 @@
 # OpsCat P51 Final Summary — Operator Judgment Benchmark v2
 
-P51 is planned. It will score whether the operator agent is actually good at detection, root-cause judgment, evidence quality, safe routing, re-ranking, and recovery verification before further UI/live-product investment.
+P51 is implemented. It scores whether the operator agent is actually good at detection, root-cause judgment, evidence quality, safe routing, re-ranking, and recovery verification before further UI/live-product investment.
 
 ## Ticket completion
 
-- P51-001 — Benchmark fixture: pending implementation.
-- P51-002 — Scoring model: pending implementation.
-- P51-003 — Failure taxonomy: pending implementation.
-- P51-004 — Safety metrics: pending implementation.
-- P51-005 — Benchmark report: pending implementation.
-- P51-006 — CLI runner: pending implementation.
-- P51-007 — Verification integration: pending implementation.
-- P51-008 — Release evidence: pending implementation.
+- P51-001 — Benchmark fixture: completed with `evals/investigator/p51_operator_judgment_benchmark_v2_cases.json`.
+- P51-002 — Scoring model: completed with detection, top-1 hypothesis, evidence quality, route, re-ranking, and recovery coverage metrics.
+- P51-003 — Failure taxonomy: completed with detection, root-cause, evidence, route, re-ranking, and recovery-verification buckets.
+- P51-004 — Safety metrics: completed with hard-zero unsafe auto-execute, production execution, and live-call counters.
+- P51-005 — Benchmark report: completed with scorecard, thresholds, case cards, and improvement-target buckets.
+- P51-006 — CLI runner: completed in `scripts/run_operator_judgment_benchmark_v2.py`.
+- P51-007 — Verification integration: completed with `operator_judgment_benchmark_v2_smoke` in `scripts/verify.sh`.
+- P51-008 — Release evidence: completed in `docs/release-evidence.md` and `tests/test_p51_release_evidence.py`.
 
 ## Primary artifacts
 
@@ -20,6 +20,12 @@ P51 is planned. It will score whether the operator agent is actually good at det
 - `tests/test_operator_judgment_benchmark_v2.py`
 - `tests/test_p51_release_evidence.py`
 - `/tmp/opscat-operator-judgment-benchmark-v2-latest.md`
+
+## Verification target
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_operator_judgment_benchmark_v2.py tests/test_p51_release_evidence.py
+```
 
 ## Boundary
 

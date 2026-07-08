@@ -520,3 +520,11 @@ P59 active scope: Hybrid Commander Comparator. P59 compares deterministic candid
 ## P59 implemented
 
 P59 implemented as Hybrid Commander Comparator evidence. P59 compares deterministic candidate gates, mock LLM judgment, and a guarded hybrid commander lane, recommends hybrid_guarded only under deterministic safety boundaries, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P60 active
+
+P60 active scope: Operator Replacement Readiness Gate v2. P60 aggregates P56-P59 evidence into local/shadow operator replacement readiness while explicitly blocking unattended production autonomy.
+
+## P60 implemented
+
+P60 implemented as Operator Replacement Readiness Gate v2 evidence. P60 marks local/shadow operator replacement ready from P56-P59 gates, keeps unattended production readiness false with explicit blockers, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

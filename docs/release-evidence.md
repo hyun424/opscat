@@ -1413,3 +1413,26 @@ Verification:
 Verified result: pending final full profile.
 
 Boundary: offline hybrid comparator only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.
+
+## P60 Operator Replacement Readiness Gate v2 Evidence
+
+P60 aggregates P56-P59 evidence into local/shadow operator replacement readiness while explicitly blocking unattended production autonomy.
+
+Artifacts:
+
+- `docs/operations/p60-ticket-roadmap.md`
+- `docs/operations/p60-final-summary.md`
+- `app/services/operator_replacement_readiness_gate_v2.py`
+- `scripts/run_operator_replacement_readiness_gate_v2.py`
+- `tests/test_operator_replacement_readiness_gate_v2.py`
+- `tests/test_p60_release_evidence.py`
+- `/tmp/opscat-operator-replacement-readiness-gate-v2-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_operator_replacement_readiness_gate_v2.py tests/test_p60_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline operator replacement readiness gate only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

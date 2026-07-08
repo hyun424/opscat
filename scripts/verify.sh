@@ -694,6 +694,19 @@ hybrid_commander_comparator_smoke() {
   cp "$VERIFY_TMPDIR/opscat-hybrid-commander-comparator.md" /tmp/opscat-hybrid-commander-comparator-latest.md
   printf 'Wrote /tmp/opscat-hybrid-commander-comparator-latest.md and %s/opscat-hybrid-commander-comparator.json\n' "$VERIFY_TMPDIR"
 }
+
+operator_replacement_readiness_gate_v2_smoke() {
+  section "P60 operator replacement readiness gate v2 smoke"
+  "${UV_DEV[@]}" python scripts/run_operator_replacement_readiness_gate_v2.py \
+    --cases evals/investigator/p51_operator_judgment_benchmark_v2_cases.json \
+    --manifest evals/real_datasets/external/p44_benchmark_matrix_manifest.json \
+    --judgment-cases evals/judgment/seed/cases.json \
+    --max-cases 4 \
+    --output-json "$VERIFY_TMPDIR/opscat-operator-replacement-readiness-gate-v2.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-operator-replacement-readiness-gate-v2.md" >/tmp/opscat-operator-replacement-readiness-gate-v2-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-operator-replacement-readiness-gate-v2.md" /tmp/opscat-operator-replacement-readiness-gate-v2-latest.md
+  printf 'Wrote /tmp/opscat-operator-replacement-readiness-gate-v2-latest.md and %s/opscat-operator-replacement-readiness-gate-v2.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -872,6 +885,7 @@ run_eval() {
   real_dataset_candidate_regression_bridge_smoke
   llm_judgment_candidate_harness_smoke
   hybrid_commander_comparator_smoke
+  operator_replacement_readiness_gate_v2_smoke
 }
 
 run_docs() {

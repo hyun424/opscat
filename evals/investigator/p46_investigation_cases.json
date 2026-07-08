@@ -1,0 +1,27 @@
+{
+  "version": "p46.1",
+  "incidents": [
+    {
+      "id": "p46-payment-5xx",
+      "title": "payment-api 5xx spike after deploy",
+      "signals": [
+        {"source": "grafana", "signal": "5xx_rate", "value": "12%", "strength": "high"},
+        {"source": "deploy", "signal": "recent_deploy", "value": "payment-api v42 at 10:03", "strength": "high"},
+        {"source": "logs", "signal": "timeout_errors", "value": "v42 pods only", "strength": "high"},
+        {"source": "db", "signal": "latency", "value": "normal", "strength": "medium"},
+        {"source": "traffic", "signal": "rps", "value": "unchanged", "strength": "medium"}
+      ],
+      "expected_top_hypothesis": "recent_deploy_regression"
+    },
+    {
+      "id": "p46-checkout-db",
+      "title": "checkout latency and connection pool waits",
+      "signals": [
+        {"source": "datadog", "signal": "db_pool_wait", "value": "p95 3s", "strength": "high"},
+        {"source": "logs", "signal": "connection_timeout", "value": "pool timeout", "strength": "high"},
+        {"source": "deploy", "signal": "recent_deploy", "value": "none", "strength": "medium"}
+      ],
+      "expected_top_hypothesis": "database_saturation"
+    }
+  ]
+}

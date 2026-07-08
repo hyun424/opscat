@@ -403,3 +403,7 @@ P44 implemented as Larger Public Dataset Benchmark Matrix evidence. P44 keeps fu
 ## P45 active
 
 P45 active scope: Evidence-Grounded Judgment Contract. P45 requires every incident judgment to include supporting evidence, counter-evidence, missing evidence, confidence, uncertainty, and action boundaries before any route or remediation recommendation is trusted.
+
+## P46 active
+
+P46 active scope: Investigator Loop. P46 observes multi-source signals, generates ranked hypotheses, binds support/counter/missing evidence, proposes read-only next investigations, and gates unsafe actions conservatively.

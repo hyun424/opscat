@@ -1088,3 +1088,26 @@ Verification:
 Verified result: pending final full profile.
 
 Boundary: offline fixtures only; no live API calls; no auth/session work; no default external model/API calls; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.
+## P46 Investigator Loop Evidence
+
+P46 adds an operator-like loop that turns observed signals into ranked hypotheses, evidence bindings, missing evidence, next investigations, and conservative action gates.
+
+Artifacts:
+
+- `docs/operations/p46-ticket-roadmap.md`
+- `docs/operations/p46-final-summary.md`
+- `evals/investigator/p46_investigation_cases.json`
+- `app/services/investigator_loop.py`
+- `scripts/run_investigator_loop.py`
+- `tests/test_investigator_loop.py`
+- `tests/test_p46_release_evidence.py`
+- `/tmp/opscat-investigator-loop-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_investigator_loop.py tests/test_p46_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline fixtures only; read-only investigation planning; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

@@ -12,6 +12,41 @@ from app.services.redaction import redact_text, redact_value
 
 _DECREASING_RISKS = {"certificate_expiry_risk", "observability_gap"}
 _BLOCK_MARKERS = ("kill", "restart", "shell", "kubectl", "rm_rf", "database_mutation", "disable_tls", "purge_queue")
+_BLOCKED_RISK_TYPES = {"prompt_injection_risk", "secret_leak_risk", "privilege_escalation_risk", "sql_injection_risk", "unsafe_automation_request_risk"}
+
+
+@dataclass(frozen=True)
+class ExpectedProactiveOutcome:
+    route: str
+    eta_min_minutes: int
+    eta_max_minutes: int
+    confidence_min: float
+    auto_capabilities: tuple[str, ...]
+    approval_required_capabilities: tuple[str, ...]
+    blocked_capabilities: tuple[str, ...]
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> ExpectedProactiveOutcome:
+        return cls(
+            route=str(data.get("route", "")),
+            eta_min_minutes=int(data.get("eta_min_minutes", 0) or 0),
+            eta_max_minutes=int(data.get("eta_max_minutes", 0) or 0),
+            confidence_min=float(data.get("confidence_min", 0.0) or 0.0),
+            auto_capabilities=tuple(str(item) for item in _sequence(data.get("auto_capabilities", ()))),
+            approval_required_capabilities=tuple(str(item) for item in _sequence(data.get("approval_required_capabilities", ()))),
+            blocked_capabilities=tuple(str(item) for item in _sequence(data.get("blocked_capabilities", ()))),
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "route": self.route,
+            "eta_min_minutes": self.eta_min_minutes,
+            "eta_max_minutes": self.eta_max_minutes,
+            "confidence_min": self.confidence_min,
+            "auto_capabilities": list(self.auto_capabilities),
+            "approval_required_capabilities": list(self.approval_required_capabilities),
+            "blocked_capabilities": list(self.blocked_capabilities),
+        }
 
 
 @dataclass(frozen=True)
@@ -27,12 +62,14 @@ class TrendWindow:
     evidence: tuple[Mapping[str, Any], ...]
     suggested_approval_actions: tuple[str, ...] = ()
     blocked_actions: tuple[str, ...] = ()
+    expected: ExpectedProactiveOutcome | None = None
     local_mock_only: bool = True
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> TrendWindow:
         values = tuple(float(item) for item in _sequence(data.get("values", ())))
         evidence = tuple(dict(item) for item in _sequence(data.get("evidence", ())) if isinstance(item, Mapping))
+        expected_raw = data.get("expected", None)
         return cls(
             id=str(data.get("id", "")),
             service=str(data.get("service", "")),
@@ -45,6 +82,7 @@ class TrendWindow:
             evidence=evidence,
             suggested_approval_actions=tuple(str(item) for item in _sequence(data.get("suggested_approval_actions", ()))),
             blocked_actions=tuple(str(item) for item in _sequence(data.get("blocked_actions", ()))),
+            expected=ExpectedProactiveOutcome.from_dict(expected_raw) if isinstance(expected_raw, Mapping) else None,
             local_mock_only=bool(data.get("local_mock_only", True)),
         )
 
@@ -61,6 +99,7 @@ class TrendWindow:
             "evidence": [dict(redact_value(item)) for item in self.evidence],
             "suggested_approval_actions": list(self.suggested_approval_actions),
             "blocked_actions": list(self.blocked_actions),
+            "expected": self.expected.to_dict() if self.expected is not None else None,
             "local_mock_only": self.local_mock_only,
         }
 
@@ -238,6 +277,101 @@ class ProactiveRiskResult:
         return dict(redacted) if isinstance(redacted, Mapping) else payload
 
 
+@dataclass(frozen=True)
+class ProactiveCalibrationItem:
+    window_id: str
+    risk_type: str
+    expected_route: str
+    actual_route: str
+    eta_minutes: int | None
+    confidence: float
+    route_match: bool
+    eta_in_range: bool
+    confidence_passed: bool
+    auto_capabilities_passed: bool
+    approval_capabilities_passed: bool
+    blocked_capabilities_passed: bool
+    unsafe_auto_action_count: int
+
+    @property
+    def passed(self) -> bool:
+        return all(
+            (
+                self.route_match,
+                self.eta_in_range,
+                self.confidence_passed,
+                self.auto_capabilities_passed,
+                self.approval_capabilities_passed,
+                self.blocked_capabilities_passed,
+                self.unsafe_auto_action_count == 0,
+            )
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "window_id": self.window_id,
+            "risk_type": self.risk_type,
+            "expected_route": self.expected_route,
+            "actual_route": self.actual_route,
+            "eta_minutes": self.eta_minutes,
+            "confidence": self.confidence,
+            "route_match": self.route_match,
+            "eta_in_range": self.eta_in_range,
+            "confidence_passed": self.confidence_passed,
+            "auto_capabilities_passed": self.auto_capabilities_passed,
+            "approval_capabilities_passed": self.approval_capabilities_passed,
+            "blocked_capabilities_passed": self.blocked_capabilities_passed,
+            "unsafe_auto_action_count": self.unsafe_auto_action_count,
+            "passed": self.passed,
+        }
+
+
+@dataclass(frozen=True)
+class ProactiveCalibrationReport:
+    result: ProactiveRiskResult
+    items: tuple[ProactiveCalibrationItem, ...]
+    missing_expected_count: int
+
+    @property
+    def passed(self) -> bool:
+        return self.missing_expected_count == 0 and all(item.passed for item in self.items)
+
+    def to_dict(self) -> dict[str, Any]:
+        risk_types = sorted({window.risk_type for window in self.result.windows})
+        route_mismatch = sum(1 for item in self.items if not item.route_match)
+        eta_out = sum(1 for item in self.items if not item.eta_in_range)
+        confidence_fail = sum(1 for item in self.items if not item.confidence_passed)
+        unsafe_auto = sum(item.unsafe_auto_action_count for item in self.items)
+        payload = {
+            "passed": self.passed,
+            "summary": {
+                "window_count": len(self.result.windows),
+                "forecast_count": len(self.result.forecasts),
+                "risk_type_count": len(risk_types),
+            },
+            "score": {
+                "route_mismatch_count": route_mismatch,
+                "eta_out_of_range_count": eta_out,
+                "confidence_below_floor_count": confidence_fail,
+                "unsafe_auto_action_count": unsafe_auto,
+                "missing_expected_count": self.missing_expected_count,
+                "auto_capability_mismatch_count": sum(1 for item in self.items if not item.auto_capabilities_passed),
+                "approval_capability_mismatch_count": sum(1 for item in self.items if not item.approval_capabilities_passed),
+                "blocked_capability_mismatch_count": sum(1 for item in self.items if not item.blocked_capabilities_passed),
+            },
+            "coverage": {risk_type: sum(1 for window in self.result.windows if window.risk_type == risk_type) for risk_type in risk_types},
+            "boundary": {
+                "local_mock_only": True,
+                "action_execution_enabled": False,
+                "production_mutation_enabled": False,
+                "default_external_model_calls": False,
+            },
+            "items": [item.to_dict() for item in self.items],
+        }
+        redacted = redact_value(payload)
+        return dict(redacted) if isinstance(redacted, Mapping) else payload
+
+
 class PreventiveActionPlanner:
     def plan(self, signal: RiskSignal) -> PreventionPlan:
         auto_allowed = (
@@ -327,6 +461,94 @@ def write_proactive_outputs(payload: Mapping[str, Any], *, output_json: str | Pa
         Path(output_md).write_text(render_proactive_markdown(payload), encoding="utf-8")
 
 
+def evaluate_proactive_calibration(result: ProactiveRiskResult) -> ProactiveCalibrationReport:
+    forecasts_by_window = {forecast.signal.window.id: forecast for forecast in result.forecasts}
+    items: list[ProactiveCalibrationItem] = []
+    missing_expected = 0
+    for window in result.windows:
+        expected = window.expected
+        forecast = forecasts_by_window.get(window.id)
+        if expected is None or forecast is None:
+            missing_expected += 1
+            continue
+        plan = forecast.prevention_plan.to_dict()
+        auto_capabilities = {str(action.get("capability")) for action in plan["auto_allowed_actions"] if isinstance(action, Mapping)}
+        approval_capabilities = {str(action.get("capability")) for action in plan["approval_required_actions"] if isinstance(action, Mapping)}
+        blocked_capabilities = {str(action.get("capability")) for action in plan["blocked_actions"] if isinstance(action, Mapping)}
+        unsafe_auto = sum(
+            1
+            for action in plan["auto_allowed_actions"]
+            if isinstance(action, Mapping)
+            and (action.get("action_execution_enabled") is True or str(action.get("capability")) not in {"read_only_diagnostic", "report", "notification_draft"})
+        )
+        eta = forecast.eta_minutes if forecast.eta_minutes is not None else 0
+        items.append(
+            ProactiveCalibrationItem(
+                window_id=window.id,
+                risk_type=window.risk_type,
+                expected_route=expected.route,
+                actual_route=forecast.route,
+                eta_minutes=forecast.eta_minutes,
+                confidence=forecast.confidence,
+                route_match=forecast.route == expected.route,
+                eta_in_range=expected.eta_min_minutes <= eta <= expected.eta_max_minutes,
+                confidence_passed=forecast.confidence >= expected.confidence_min,
+                auto_capabilities_passed=set(expected.auto_capabilities).issubset(auto_capabilities),
+                approval_capabilities_passed=set(expected.approval_required_capabilities).issubset(approval_capabilities),
+                blocked_capabilities_passed=set(expected.blocked_capabilities).issubset(blocked_capabilities),
+                unsafe_auto_action_count=unsafe_auto,
+            )
+        )
+    return ProactiveCalibrationReport(result=result, items=tuple(items), missing_expected_count=missing_expected)
+
+
+def render_proactive_calibration_markdown(payload: Mapping[str, Any]) -> str:
+    summary = payload.get("summary", {}) if isinstance(payload.get("summary"), Mapping) else {}
+    score = payload.get("score", {}) if isinstance(payload.get("score"), Mapping) else {}
+    lines = [
+        "# OpsCat Proactive Calibration Report",
+        "",
+        "Boundary: no-auth/local-mock by default; no default external model/API calls; no remediation execution; no production mutation; does not claim unattended production operation.",
+        "",
+        f"- Passed: {payload.get('passed')}",
+        f"- window_count: {summary.get('window_count')}",
+        f"- forecast_count: {summary.get('forecast_count')}",
+        f"- risk_type_count: {summary.get('risk_type_count')}",
+        "",
+        "## Score",
+        f"- route_mismatch_count: {score.get('route_mismatch_count')}",
+        f"- eta_out_of_range_count: {score.get('eta_out_of_range_count')}",
+        f"- confidence_below_floor_count: {score.get('confidence_below_floor_count')}",
+        f"- unsafe_auto_action_count: {score.get('unsafe_auto_action_count')}",
+        f"- missing_expected_count: {score.get('missing_expected_count')}",
+        "",
+        "## Coverage",
+    ]
+    coverage = payload.get("coverage", {})
+    if isinstance(coverage, Mapping):
+        for risk_type, count in sorted(coverage.items()):
+            lines.append(f"- {risk_type}: {count}")
+    lines.extend(["", "## Calibration Items"])
+    items = payload.get("items", [])
+    if isinstance(items, Sequence) and not isinstance(items, (str, bytes, bytearray)):
+        for item in list(items)[:30]:
+            if isinstance(item, Mapping):
+                lines.append(
+                    f"- `{item.get('window_id')}` risk={item.get('risk_type')} route={item.get('actual_route')} "
+                    f"expected={item.get('expected_route')} eta={item.get('eta_minutes')} passed={item.get('passed')}"
+                )
+    return "\n".join(lines) + "\n"
+
+
+def write_proactive_calibration_outputs(payload: Mapping[str, Any], *, output_json: str | Path | None = None, output_md: str | Path | None = None) -> None:
+    if output_json:
+        Path(output_json).parent.mkdir(parents=True, exist_ok=True)
+        Path(output_json).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    if output_md:
+        Path(output_md).parent.mkdir(parents=True, exist_ok=True)
+        Path(output_md).write_text(render_proactive_calibration_markdown(payload), encoding="utf-8")
+
+
 def _trend(window: TrendWindow, total_delta: float, current: float) -> str:
     if window.risk_type == "false_positive_transient" and window.values and current <= max(window.baseline * 1.5, window.baseline + 0.01):
         return "recovered"
@@ -351,6 +573,8 @@ def _confidence(window: TrendWindow, trend: str, baseline_ratio: float, threshol
 
 
 def _route(signal: RiskSignal) -> str:
+    if signal.risk_type in _BLOCKED_RISK_TYPES:
+        return "blocked"
     if signal.trend == "recovered" or signal.risk_type == "false_positive_transient":
         return "monitor"
     if any(_blocked_marker(action) for action in signal.window.blocked_actions):

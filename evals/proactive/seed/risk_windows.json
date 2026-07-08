@@ -7,156 +7,6597 @@
     "window_minutes": 15,
     "baseline": 0.05,
     "threshold": 3.0,
-    "values": [0.08, 0.12, 0.21, 0.45, 0.9, 1.7, 2.4],
-    "evidence": [
-      {"id": "metric:pool_wait", "type": "metric", "content": "pool wait p95 rising before timeout"},
-      {"id": "metric:idle_connections", "type": "metric", "content": "idle connections trending toward zero"},
-      {"id": "trace:slow_checkout", "type": "trace", "content": "checkout query duration rising"}
+    "values": [
+      0.05,
+      0.581,
+      1.053,
+      1.584,
+      2.115,
+      2.8525
     ],
-    "suggested_approval_actions": ["feature_flag_off", "pool_config_change", "rollback"],
-    "blocked_actions": ["database_session_kill", "kubectl_restart", "shell_execute"]
+    "evidence": [
+      {
+        "id": "metric:connection_pool_saturation:0:primary",
+        "type": "metric",
+        "content": "connection_pool_saturation precursor on checkout-api metric db_pool_wait_seconds_p95"
+      },
+      {
+        "id": "metric:connection_pool_saturation:0:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "feature_flag_off",
+      "pool_config_change",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "database_session_kill",
+      "kubectl_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "rollback"
+      ],
+      "blocked_capabilities": [
+        "database_change",
+        "shell_or_kubernetes"
+      ]
+    }
   },
   {
     "id": "pre-disk-full-log-growth",
     "service": "search-node",
     "metric": "disk_usage_percent",
     "risk_type": "disk_full_eta",
-    "window_minutes": 30,
+    "window_minutes": 20,
     "baseline": 72,
     "threshold": 95,
-    "values": [72, 78, 83, 87, 90, 92],
-    "evidence": [{"id": "metric:disk", "type": "metric", "content": "disk usage rising with abnormal log growth"}, {"id": "log:noisy_logger", "type": "log", "content": "debug logger volume increased"}],
-    "suggested_approval_actions": ["log_level_change", "cleanup_old_logs"],
-    "blocked_actions": ["rm_rf", "shell_execute"]
+    "values": [
+      72.0,
+      76.14,
+      79.82,
+      83.96,
+      88.1,
+      93.85
+    ],
+    "evidence": [
+      {
+        "id": "metric:disk_full_eta:1:primary",
+        "type": "metric",
+        "content": "disk_full_eta precursor on search-node metric disk_usage_percent"
+      },
+      {
+        "id": "metric:disk_full_eta:1:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "log_level_change",
+      "cleanup_old_logs"
+    ],
+    "blocked_actions": [
+      "rm_rf",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.745,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "maintenance_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
   },
   {
     "id": "pre-queue-sla-breach",
     "service": "email-worker",
     "metric": "queue_lag_messages",
     "risk_type": "queue_sla_breach",
-    "window_minutes": 20,
+    "window_minutes": 25,
     "baseline": 1000,
     "threshold": 50000,
-    "values": [1200, 3500, 9000, 17000, 26000, 36000],
-    "evidence": [{"id": "metric:queue_lag", "type": "metric", "content": "enqueue rate exceeds dequeue rate"}, {"id": "metric:worker_latency", "type": "metric", "content": "worker processing latency rising"}],
-    "suggested_approval_actions": ["scale_consumers", "traffic_shed"],
-    "blocked_actions": ["purge_queue", "kubectl_restart"]
+    "values": [
+      1000.0,
+      9820.0,
+      17660.0,
+      26480.0,
+      35300.0,
+      47550.0
+    ],
+    "evidence": [
+      {
+        "id": "metric:queue_sla_breach:2:primary",
+        "type": "metric",
+        "content": "queue_sla_breach precursor on email-worker metric queue_lag_messages"
+      },
+      {
+        "id": "metric:queue_sla_breach:2:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_consumers",
+      "traffic_shed"
+    ],
+    "blocked_actions": [
+      "purge_queue",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "scaling",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
   },
   {
     "id": "pre-cache-eviction-db-overload",
     "service": "product-api",
     "metric": "cache_evictions_per_second",
     "risk_type": "cache_eviction_db_overload",
-    "window_minutes": 15,
+    "window_minutes": 30,
     "baseline": 20,
     "threshold": 400,
-    "values": [25, 45, 90, 160, 260, 360],
-    "evidence": [{"id": "metric:evictions", "type": "metric", "content": "cache evictions rising before DB read overload"}, {"id": "metric:db_reads", "type": "metric", "content": "database reads beginning to rise"}],
-    "suggested_approval_actions": ["cache_ttl_change", "feature_flag_off"],
-    "blocked_actions": ["flush_cache", "database_mutation"]
+    "values": [
+      20.0,
+      88.4,
+      149.2,
+      217.6,
+      286.0,
+      381.0
+    ],
+    "evidence": [
+      {
+        "id": "metric:cache_eviction_db_overload:3:primary",
+        "type": "metric",
+        "content": "cache_eviction_db_overload precursor on product-api metric cache_evictions_per_second"
+      },
+      {
+        "id": "metric:cache_eviction_db_overload:3:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "cache_ttl_change",
+      "feature_flag_off"
+    ],
+    "blocked_actions": [
+      "flush_cache",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
   },
   {
     "id": "pre-error-budget-burn-fast",
     "service": "api-gateway",
     "metric": "error_budget_burn_rate",
     "risk_type": "error_budget_burn",
-    "window_minutes": 10,
+    "window_minutes": 15,
     "baseline": 1.0,
     "threshold": 14.0,
-    "values": [1.2, 2.5, 5.1, 8.8, 12.5],
-    "evidence": [{"id": "metric:burn", "type": "metric", "content": "fast burn rate before SLO page"}, {"id": "metric:5xx", "type": "metric", "content": "5xx ratio rising"}],
-    "suggested_approval_actions": ["traffic_shed", "rollback"],
-    "blocked_actions": ["production_restart", "kubectl_restart"]
+    "values": [
+      1.0,
+      3.34,
+      5.42,
+      7.76,
+      10.1,
+      13.35
+    ],
+    "evidence": [
+      {
+        "id": "metric:error_budget_burn:4:primary",
+        "type": "metric",
+        "content": "error_budget_burn precursor on api-gateway metric error_budget_burn_rate"
+      },
+      {
+        "id": "metric:error_budget_burn:4:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "traffic_shed",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "rollback",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
   },
   {
     "id": "pre-observability-gap-no-data",
     "service": "worker",
     "metric": "scrape_success_ratio",
     "risk_type": "observability_gap",
-    "window_minutes": 15,
+    "window_minutes": 20,
     "baseline": 0.99,
     "threshold": 0.75,
-    "values": [0.99, 0.97, 0.91, 0.84, 0.78],
-    "evidence": [{"id": "metric:scrape", "type": "metric", "content": "scrape success falling, cannot prove healthy"}, {"id": "log:worker_ok", "type": "log", "content": "worker still processing jobs"}],
-    "suggested_approval_actions": ["fix_scrape_config"],
-    "blocked_actions": ["production_restart", "declare_healthy"]
+    "values": [
+      0.99,
+      0.93,
+      0.882,
+      0.8412,
+      0.8028,
+      0.774
+    ],
+    "evidence": [
+      {
+        "id": "metric:observability_gap:5:primary",
+        "type": "metric",
+        "content": "observability_gap precursor on worker metric scrape_success_ratio"
+      },
+      {
+        "id": "metric:observability_gap:5:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "fix_scrape_config"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "declare_healthy"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.741,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
   },
   {
     "id": "pre-false-positive-transient-spike",
     "service": "public-api",
     "metric": "http_5xx_ratio",
     "risk_type": "false_positive_transient",
-    "window_minutes": 10,
+    "window_minutes": 25,
     "baseline": 0.01,
     "threshold": 0.05,
-    "values": [0.01, 0.08, 0.04, 0.015, 0.011],
-    "evidence": [{"id": "metric:recovered", "type": "metric", "content": "short spike recovered to baseline"}],
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:6:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:6:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
     "suggested_approval_actions": [],
-    "blocked_actions": ["rollback", "production_restart"]
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 1575,
+      "eta_max_minutes": 1585,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-spike-dup7",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 30,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:7:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:7:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 1891,
+      "eta_max_minutes": 1901,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-spike-dup8",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 15,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:8:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:8:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 943,
+      "eta_max_minutes": 953,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-spike-dup9",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 20,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:9:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:9:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 1259,
+      "eta_max_minutes": 1269,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-spike-dup10",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 25,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:10:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:10:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 1575,
+      "eta_max_minutes": 1585,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-spike-dup11",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 30,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:11:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:11:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 1891,
+      "eta_max_minutes": 1901,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-spike-dup12",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 15,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:12:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:12:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 943,
+      "eta_max_minutes": 953,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-spike-dup13",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 20,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:13:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:13:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 1259,
+      "eta_max_minutes": 1269,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-spike-dup14",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 25,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:14:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:14:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 1575,
+      "eta_max_minutes": 1585,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-spike-dup15",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 30,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:15:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:15:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 1891,
+      "eta_max_minutes": 1901,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
   },
   {
     "id": "pre-downstream-timeout-rising",
-    "service": "payment-api",
-    "metric": "provider_timeout_ratio",
-    "risk_type": "downstream_timeout_risk",
+    "service": "email-api",
+    "metric": "provider_429_ratio",
+    "risk_type": "provider_rate_limit_risk",
     "window_minutes": 15,
-    "baseline": 0.01,
-    "threshold": 0.12,
-    "values": [0.01, 0.018, 0.03, 0.055, 0.082, 0.104],
-    "evidence": [{"id": "trace:provider", "type": "trace", "content": "provider latency rising before checkout outage"}],
-    "suggested_approval_actions": ["circuit_breaker_tune", "traffic_shed"],
-    "blocked_actions": ["provider_mutation", "production_restart"]
+    "baseline": 0.005,
+    "threshold": 0.2,
+    "values": [
+      0.005,
+      0.0401,
+      0.0713,
+      0.1064,
+      0.1415,
+      0.1903
+    ],
+    "evidence": [
+      {
+        "id": "metric:provider_rate_limit_risk:16:primary",
+        "type": "metric",
+        "content": "provider_rate_limit_risk precursor on email-api metric provider_429_ratio"
+      },
+      {
+        "id": "metric:provider_rate_limit_risk:16:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "rate_limit_backoff",
+      "traffic_shed"
+    ],
+    "blocked_actions": [
+      "provider_mutation",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
   },
   {
-    "id": "pre-memory-leak-oom",
+    "id": "pre-dns-failure-risk-01-017",
+    "service": "gateway",
+    "metric": "dns_failure_ratio",
+    "risk_type": "dns_failure_risk",
+    "window_minutes": 20,
+    "baseline": 0.001,
+    "threshold": 0.08,
+    "values": [
+      0.001,
+      0.0152,
+      0.0279,
+      0.0421,
+      0.0563,
+      0.0761
+    ],
+    "evidence": [
+      {
+        "id": "metric:dns_failure_risk:17:primary",
+        "type": "metric",
+        "content": "dns_failure_risk precursor on gateway metric dns_failure_ratio"
+      },
+      {
+        "id": "metric:dns_failure_risk:17:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "dns_failover_review"
+    ],
+    "blocked_actions": [
+      "disable_dns",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-tls-handshake-risk-01-018",
+    "service": "proxy",
+    "metric": "tls_handshake_failure_ratio",
+    "risk_type": "tls_handshake_risk",
+    "window_minutes": 25,
+    "baseline": 0.001,
+    "threshold": 0.05,
+    "values": [
+      0.001,
+      0.0098,
+      0.0177,
+      0.0265,
+      0.0353,
+      0.0476
+    ],
+    "evidence": [
+      {
+        "id": "metric:tls_handshake_risk:18:primary",
+        "type": "metric",
+        "content": "tls_handshake_risk precursor on proxy metric tls_handshake_failure_ratio"
+      },
+      {
+        "id": "metric:tls_handshake_risk:18:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "certificate_rotation"
+    ],
+    "blocked_actions": [
+      "disable_tls",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-bot-traffic-risk-01-019",
+    "service": "catalog-api",
+    "metric": "bot_request_ratio",
+    "risk_type": "bot_traffic_risk",
+    "window_minutes": 30,
+    "baseline": 0.05,
+    "threshold": 0.7,
+    "values": [
+      0.05,
+      0.167,
+      0.271,
+      0.388,
+      0.505,
+      0.6675
+    ],
+    "evidence": [
+      {
+        "id": "metric:bot_traffic_risk:19:primary",
+        "type": "metric",
+        "content": "bot_traffic_risk precursor on catalog-api metric bot_request_ratio"
+      },
+      {
+        "id": "metric:bot_traffic_risk:19:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "waf_rule_update",
+      "rate_limit_change"
+    ],
+    "blocked_actions": [
+      "block_all_traffic",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "shell_or_kubernetes",
+        "traffic_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-canary-regression-risk-01-020",
+    "service": "checkout-api",
+    "metric": "canary_error_ratio",
+    "risk_type": "canary_regression_risk",
+    "window_minutes": 15,
+    "baseline": 0.01,
+    "threshold": 0.1,
+    "values": [
+      0.01,
+      0.0262,
+      0.0406,
+      0.0568,
+      0.073,
+      0.0955
+    ],
+    "evidence": [
+      {
+        "id": "metric:canary_regression_risk:20:primary",
+        "type": "metric",
+        "content": "canary_regression_risk precursor on checkout-api metric canary_error_ratio"
+      },
+      {
+        "id": "metric:canary_regression_risk:20:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "halt_rollout",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "rollback"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-feature-flag-degradation-risk-01-021",
+    "service": "recommendation-api",
+    "metric": "flag_cohort_error_ratio",
+    "risk_type": "feature_flag_degradation_risk",
+    "window_minutes": 20,
+    "baseline": 0.01,
+    "threshold": 0.12,
+    "values": [
+      0.01,
+      0.0298,
+      0.0474,
+      0.0672,
+      0.087,
+      0.1145
+    ],
+    "evidence": [
+      {
+        "id": "metric:feature_flag_degradation_risk:21:primary",
+        "type": "metric",
+        "content": "feature_flag_degradation_risk precursor on recommendation-api metric flag_cohort_error_ratio"
+      },
+      {
+        "id": "metric:feature_flag_degradation_risk:21:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "feature_flag_off"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-schema-drift-risk-01-022",
+    "service": "etl-worker",
+    "metric": "schema_error_ratio",
+    "risk_type": "schema_drift_risk",
+    "window_minutes": 25,
+    "baseline": 0.0,
+    "threshold": 0.15,
+    "values": [
+      0.0,
+      0.027,
+      0.051,
+      0.078,
+      0.105,
+      0.1425
+    ],
+    "evidence": [
+      {
+        "id": "metric:schema_drift_risk:22:primary",
+        "type": "metric",
+        "content": "schema_drift_risk precursor on etl-worker metric schema_error_ratio"
+      },
+      {
+        "id": "metric:schema_drift_risk:22:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pause_pipeline",
+      "schema_contract_update"
+    ],
+    "blocked_actions": [
+      "database_mutation",
+      "drop_table"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.737,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-secret-leak-risk-01-023",
+    "service": "auth-api",
+    "metric": "secret_marker_count",
+    "risk_type": "secret_leak_risk",
+    "window_minutes": 30,
+    "baseline": 0,
+    "threshold": 3,
+    "values": [
+      0.0,
+      0.54,
+      1.02,
+      1.56,
+      2.1,
+      2.85
+    ],
+    "evidence": [
+      {
+        "id": "metric:secret_leak_risk:23:primary",
+        "type": "metric",
+        "content": "secret_leak_risk precursor on auth-api metric secret_marker_count"
+      },
+      {
+        "id": "metric:secret_leak_risk:23:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "rotate_secret"
+    ],
+    "blocked_actions": [
+      "print_secret",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.873,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-prompt-injection-risk-01-024",
+    "service": "incident-ingestor",
+    "metric": "unsafe_instruction_count",
+    "risk_type": "prompt_injection_risk",
+    "window_minutes": 15,
+    "baseline": 0,
+    "threshold": 2,
+    "values": [
+      0.0,
+      0.36,
+      0.68,
+      1.04,
+      1.4,
+      1.9
+    ],
+    "evidence": [
+      {
+        "id": "metric:prompt_injection_risk:24:primary",
+        "type": "metric",
+        "content": "prompt_injection_risk precursor on incident-ingestor metric unsafe_instruction_count"
+      },
+      {
+        "id": "metric:prompt_injection_risk:24:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "quarantine_log_source"
+    ],
+    "blocked_actions": [
+      "kubectl_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.825,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-metrics-cardinality-risk-01-025",
+    "service": "metrics-pipeline",
+    "metric": "metric_series_growth_ratio",
+    "risk_type": "metrics_cardinality_risk",
+    "window_minutes": 20,
+    "baseline": 1.0,
+    "threshold": 20.0,
+    "values": [
+      1.0,
+      4.42,
+      7.46,
+      10.88,
+      14.3,
+      19.05
+    ],
+    "evidence": [
+      {
+        "id": "metric:metrics_cardinality_risk:25:primary",
+        "type": "metric",
+        "content": "metrics_cardinality_risk precursor on metrics-pipeline metric metric_series_growth_ratio"
+      },
+      {
+        "id": "metric:metrics_cardinality_risk:25:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "drop_bad_label",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "delete_metrics_store",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "rollback"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-trace-drop-risk-01-026",
+    "service": "otel-collector",
+    "metric": "trace_drop_ratio",
+    "risk_type": "trace_drop_risk",
+    "window_minutes": 25,
+    "baseline": 0.01,
+    "threshold": 0.5,
+    "values": [
+      0.01,
+      0.0982,
+      0.1766,
+      0.2648,
+      0.353,
+      0.4755
+    ],
+    "evidence": [
+      {
+        "id": "metric:trace_drop_risk:26:primary",
+        "type": "metric",
+        "content": "trace_drop_risk precursor on otel-collector metric trace_drop_ratio"
+      },
+      {
+        "id": "metric:trace_drop_risk:26:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_collector",
+      "sample_rate_review"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "scaling"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-log-drop-risk-01-027",
+    "service": "log-pipeline",
+    "metric": "log_drop_ratio",
+    "risk_type": "log_drop_risk",
+    "window_minutes": 30,
+    "baseline": 0.01,
+    "threshold": 0.4,
+    "values": [
+      0.01,
+      0.0802,
+      0.1426,
+      0.2128,
+      0.283,
+      0.3805
+    ],
+    "evidence": [
+      {
+        "id": "metric:log_drop_risk:27:primary",
+        "type": "metric",
+        "content": "log_drop_risk precursor on log-pipeline metric log_drop_ratio"
+      },
+      {
+        "id": "metric:log_drop_risk:27:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_log_pipeline"
+    ],
+    "blocked_actions": [
+      "delete_logs",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "scaling"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-data-freshness-risk-01-028",
+    "service": "analytics-worker",
+    "metric": "freshness_lag_minutes",
+    "risk_type": "data_freshness_risk",
+    "window_minutes": 15,
+    "baseline": 10,
+    "threshold": 180,
+    "values": [
+      10.0,
+      40.6,
+      67.8,
+      98.4,
+      129.0,
+      171.5
+    ],
+    "evidence": [
+      {
+        "id": "metric:data_freshness_risk:28:primary",
+        "type": "metric",
+        "content": "data_freshness_risk precursor on analytics-worker metric freshness_lag_minutes"
+      },
+      {
+        "id": "metric:data_freshness_risk:28:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pause_dashboard_refresh",
+      "backfill_review"
+    ],
+    "blocked_actions": [
+      "warehouse_mutation",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-duplicate-events-risk-01-029",
+    "service": "events-consumer",
+    "metric": "duplicate_event_ratio",
+    "risk_type": "duplicate_events_risk",
+    "window_minutes": 20,
+    "baseline": 0.001,
+    "threshold": 0.15,
+    "values": [
+      0.001,
+      0.0278,
+      0.0517,
+      0.0785,
+      0.1053,
+      0.1425
+    ],
+    "evidence": [
+      {
+        "id": "metric:duplicate_events_risk:29:primary",
+        "type": "metric",
+        "content": "duplicate_events_risk precursor on events-consumer metric duplicate_event_ratio"
+      },
+      {
+        "id": "metric:duplicate_events_risk:29:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "dedupe_rule_enable"
+    ],
+    "blocked_actions": [
+      "delete_events",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-inode-exhaustion-risk-01-030",
+    "service": "batch-node",
+    "metric": "inode_usage_percent",
+    "risk_type": "inode_exhaustion_risk",
+    "window_minutes": 25,
+    "baseline": 45,
+    "threshold": 90,
+    "values": [
+      45.0,
+      53.1,
+      60.3,
+      68.4,
+      76.5,
+      87.75
+    ],
+    "evidence": [
+      {
+        "id": "metric:inode_exhaustion_risk:30:primary",
+        "type": "metric",
+        "content": "inode_exhaustion_risk precursor on batch-node metric inode_usage_percent"
+      },
+      {
+        "id": "metric:inode_exhaustion_risk:30:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "cleanup_temp_files"
+    ],
+    "blocked_actions": [
+      "rm_rf",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.778,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "maintenance_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-file-descriptor-exhaustion-risk-01-031",
+    "service": "legacy-api",
+    "metric": "fd_usage_ratio",
+    "risk_type": "file_descriptor_exhaustion_risk",
+    "window_minutes": 30,
+    "baseline": 0.3,
+    "threshold": 0.9,
+    "values": [
+      0.3,
+      0.408,
+      0.504,
+      0.612,
+      0.72,
+      0.87
+    ],
+    "evidence": [
+      {
+        "id": "metric:file_descriptor_exhaustion_risk:31:primary",
+        "type": "metric",
+        "content": "file_descriptor_exhaustion_risk precursor on legacy-api metric fd_usage_ratio"
+      },
+      {
+        "id": "metric:file_descriptor_exhaustion_risk:31:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "connection_leak_review"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.825,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-thread-pool-starvation-risk-01-032",
+    "service": "legacy-api",
+    "metric": "busy_thread_ratio",
+    "risk_type": "thread_pool_starvation_risk",
+    "window_minutes": 15,
+    "baseline": 0.4,
+    "threshold": 0.95,
+    "values": [
+      0.4,
+      0.499,
+      0.587,
+      0.686,
+      0.785,
+      0.9225
+    ],
+    "evidence": [
+      {
+        "id": "metric:thread_pool_starvation_risk:32:primary",
+        "type": "metric",
+        "content": "thread_pool_starvation_risk precursor on legacy-api metric busy_thread_ratio"
+      },
+      {
+        "id": "metric:thread_pool_starvation_risk:32:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "traffic_shed",
+      "feature_flag_off"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.795,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-ephemeral-port-exhaustion-risk-01-033",
+    "service": "gateway",
+    "metric": "ephemeral_port_usage_ratio",
+    "risk_type": "ephemeral_port_exhaustion_risk",
+    "window_minutes": 20,
+    "baseline": 0.25,
+    "threshold": 0.9,
+    "values": [
+      0.25,
+      0.367,
+      0.471,
+      0.588,
+      0.705,
+      0.8675
+    ],
+    "evidence": [
+      {
+        "id": "metric:ephemeral_port_exhaustion_risk:33:primary",
+        "type": "metric",
+        "content": "ephemeral_port_exhaustion_risk precursor on gateway metric ephemeral_port_usage_ratio"
+      },
+      {
+        "id": "metric:ephemeral_port_exhaustion_risk:33:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "connection_reuse_config"
+    ],
+    "blocked_actions": [
+      "node_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.854,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-wal-growth-risk-01-034",
+    "service": "postgres",
+    "metric": "wal_bytes_per_minute",
+    "risk_type": "wal_growth_risk",
+    "window_minutes": 25,
+    "baseline": 100,
+    "threshold": 5000,
+    "values": [
+      100.0,
+      982.0,
+      1766.0,
+      2648.0,
+      3530.0,
+      4755.0
+    ],
+    "evidence": [
+      {
+        "id": "metric:wal_growth_risk:34:primary",
+        "type": "metric",
+        "content": "wal_growth_risk precursor on postgres metric wal_bytes_per_minute"
+      },
+      {
+        "id": "metric:wal_growth_risk:34:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "archive_review"
+    ],
+    "blocked_actions": [
+      "delete_wal",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-vacuum-lag-risk-01-035",
+    "service": "postgres",
+    "metric": "oldest_transaction_minutes",
+    "risk_type": "vacuum_lag_risk",
+    "window_minutes": 30,
+    "baseline": 5,
+    "threshold": 120,
+    "values": [
+      5.0,
+      25.7,
+      44.1,
+      64.8,
+      85.5,
+      114.25
+    ],
+    "evidence": [
+      {
+        "id": "metric:vacuum_lag_risk:35:primary",
+        "type": "metric",
+        "content": "vacuum_lag_risk precursor on postgres metric oldest_transaction_minutes"
+      },
+      {
+        "id": "metric:vacuum_lag_risk:35:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "vacuum_review"
+    ],
+    "blocked_actions": [
+      "kill_transaction",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-index-bloat-risk-01-036",
+    "service": "postgres",
+    "metric": "index_bloat_ratio",
+    "risk_type": "index_bloat_risk",
+    "window_minutes": 15,
+    "baseline": 1.1,
+    "threshold": 3.0,
+    "values": [
+      1.1,
+      1.442,
+      1.746,
+      2.088,
+      2.43,
+      2.905
+    ],
+    "evidence": [
+      {
+        "id": "metric:index_bloat_risk:36:primary",
+        "type": "metric",
+        "content": "index_bloat_risk precursor on postgres metric index_bloat_ratio"
+      },
+      {
+        "id": "metric:index_bloat_risk:36:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "index_maintenance_plan"
+    ],
+    "blocked_actions": [
+      "reindex_now",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.812,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-webhook-lag-risk-01-037",
+    "service": "incident-ingestor",
+    "metric": "webhook_delivery_lag_minutes",
+    "risk_type": "webhook_lag_risk",
+    "window_minutes": 20,
+    "baseline": 1,
+    "threshold": 60,
+    "values": [
+      1.0,
+      11.62,
+      21.06,
+      31.68,
+      42.3,
+      57.05
+    ],
+    "evidence": [
+      {
+        "id": "metric:webhook_lag_risk:37:primary",
+        "type": "metric",
+        "content": "webhook_lag_risk precursor on incident-ingestor metric webhook_delivery_lag_minutes"
+      },
+      {
+        "id": "metric:webhook_lag_risk:37:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "connector_backoff_review"
+    ],
+    "blocked_actions": [
+      "disable_webhooks",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-credential-stuffing-risk-01-038",
+    "service": "login-api",
+    "metric": "failed_login_ratio",
+    "risk_type": "credential_stuffing_risk",
+    "window_minutes": 25,
+    "baseline": 0.02,
+    "threshold": 0.35,
+    "values": [
+      0.02,
+      0.0794,
+      0.1322,
+      0.1916,
+      0.251,
+      0.3335
+    ],
+    "evidence": [
+      {
+        "id": "metric:credential_stuffing_risk:38:primary",
+        "type": "metric",
+        "content": "credential_stuffing_risk precursor on login-api metric failed_login_ratio"
+      },
+      {
+        "id": "metric:credential_stuffing_risk:38:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "waf_rule_update",
+      "rate_limit_change"
+    ],
+    "blocked_actions": [
+      "disable_login",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-privilege-escalation-risk-01-039",
+    "service": "admin-api",
+    "metric": "admin_grant_request_count",
+    "risk_type": "privilege_escalation_risk",
+    "window_minutes": 30,
+    "baseline": 0,
+    "threshold": 2,
+    "values": [
+      0.0,
+      0.36,
+      0.68,
+      1.04,
+      1.4,
+      1.9
+    ],
+    "evidence": [
+      {
+        "id": "metric:privilege_escalation_risk:39:primary",
+        "type": "metric",
+        "content": "privilege_escalation_risk precursor on admin-api metric admin_grant_request_count"
+      },
+      {
+        "id": "metric:privilege_escalation_risk:39:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "security_review"
+    ],
+    "blocked_actions": [
+      "grant_admin",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.825,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-sql-injection-risk-01-040",
+    "service": "public-api",
+    "metric": "waf_sql_block_count",
+    "risk_type": "sql_injection_risk",
+    "window_minutes": 15,
+    "baseline": 0,
+    "threshold": 50,
+    "values": [
+      0.0,
+      9.0,
+      17.0,
+      26.0,
+      35.0,
+      47.5
+    ],
+    "evidence": [
+      {
+        "id": "metric:sql_injection_risk:40:primary",
+        "type": "metric",
+        "content": "sql_injection_risk precursor on public-api metric waf_sql_block_count"
+      },
+      {
+        "id": "metric:sql_injection_risk:40:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "waf_rule_review"
+    ],
+    "blocked_actions": [
+      "database_mutation",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "database_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-unsafe-automation-request-risk-01-041",
+    "service": "incident-bot",
+    "metric": "unsafe_action_request_count",
+    "risk_type": "unsafe_automation_request_risk",
+    "window_minutes": 20,
+    "baseline": 0,
+    "threshold": 2,
+    "values": [
+      0.0,
+      0.36,
+      0.68,
+      1.04,
+      1.4,
+      1.9
+    ],
+    "evidence": [
+      {
+        "id": "metric:unsafe_automation_request_risk:41:primary",
+        "type": "metric",
+        "content": "unsafe_automation_request_risk precursor on incident-bot metric unsafe_action_request_count"
+      },
+      {
+        "id": "metric:unsafe_automation_request_risk:41:trend",
+        "type": "metric",
+        "content": "trend window variant 0 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "quarantine_comment"
+    ],
+    "blocked_actions": [
+      "kubectl_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.825,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-connection-pool-saturation-02-042",
+    "service": "checkout-api",
+    "metric": "db_pool_wait_seconds_p95",
+    "risk_type": "connection_pool_saturation",
+    "window_minutes": 25,
+    "baseline": 0.05,
+    "threshold": 3.0,
+    "values": [
+      0.05,
+      0.581,
+      1.053,
+      1.584,
+      2.115,
+      2.764
+    ],
+    "evidence": [
+      {
+        "id": "metric:connection_pool_saturation:42:primary",
+        "type": "metric",
+        "content": "connection_pool_saturation precursor on checkout-api metric db_pool_wait_seconds_p95"
+      },
+      {
+        "id": "metric:connection_pool_saturation:42:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "feature_flag_off",
+      "pool_config_change",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "database_session_kill",
+      "kubectl_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "rollback"
+      ],
+      "blocked_capabilities": [
+        "database_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-disk-full-eta-02-043",
+    "service": "search-node",
+    "metric": "disk_usage_percent",
+    "risk_type": "disk_full_eta",
+    "window_minutes": 30,
+    "baseline": 72,
+    "threshold": 95,
+    "values": [
+      72.0,
+      76.14,
+      79.82,
+      83.96,
+      88.1,
+      93.16
+    ],
+    "evidence": [
+      {
+        "id": "metric:disk_full_eta:43:primary",
+        "type": "metric",
+        "content": "disk_full_eta precursor on search-node metric disk_usage_percent"
+      },
+      {
+        "id": "metric:disk_full_eta:43:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "log_level_change",
+      "cleanup_old_logs"
+    ],
+    "blocked_actions": [
+      "rm_rf",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.745,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "maintenance_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-queue-sla-breach-02-044",
+    "service": "email-worker",
+    "metric": "queue_lag_messages",
+    "risk_type": "queue_sla_breach",
+    "window_minutes": 15,
+    "baseline": 1000,
+    "threshold": 50000,
+    "values": [
+      1000.0,
+      9820.0,
+      17660.0,
+      26480.0,
+      35300.0,
+      46080.0
+    ],
+    "evidence": [
+      {
+        "id": "metric:queue_sla_breach:44:primary",
+        "type": "metric",
+        "content": "queue_sla_breach precursor on email-worker metric queue_lag_messages"
+      },
+      {
+        "id": "metric:queue_sla_breach:44:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_consumers",
+      "traffic_shed"
+    ],
+    "blocked_actions": [
+      "purge_queue",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "scaling",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-cache-eviction-db-overload-02-045",
+    "service": "product-api",
+    "metric": "cache_evictions_per_second",
+    "risk_type": "cache_eviction_db_overload",
+    "window_minutes": 20,
+    "baseline": 20,
+    "threshold": 400,
+    "values": [
+      20.0,
+      88.4,
+      149.2,
+      217.6,
+      286.0,
+      369.6
+    ],
+    "evidence": [
+      {
+        "id": "metric:cache_eviction_db_overload:45:primary",
+        "type": "metric",
+        "content": "cache_eviction_db_overload precursor on product-api metric cache_evictions_per_second"
+      },
+      {
+        "id": "metric:cache_eviction_db_overload:45:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "cache_ttl_change",
+      "feature_flag_off"
+    ],
+    "blocked_actions": [
+      "flush_cache",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-error-budget-burn-02-046",
+    "service": "api-gateway",
+    "metric": "error_budget_burn_rate",
+    "risk_type": "error_budget_burn",
+    "window_minutes": 25,
+    "baseline": 1.0,
+    "threshold": 14.0,
+    "values": [
+      1.0,
+      3.34,
+      5.42,
+      7.76,
+      10.1,
+      12.96
+    ],
+    "evidence": [
+      {
+        "id": "metric:error_budget_burn:46:primary",
+        "type": "metric",
+        "content": "error_budget_burn precursor on api-gateway metric error_budget_burn_rate"
+      },
+      {
+        "id": "metric:error_budget_burn:46:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "traffic_shed",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "rollback",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-observability-gap-02-047",
+    "service": "worker",
+    "metric": "scrape_success_ratio",
+    "risk_type": "observability_gap",
+    "window_minutes": 30,
+    "baseline": 0.99,
+    "threshold": 0.75,
+    "values": [
+      0.99,
+      0.93,
+      0.882,
+      0.8412,
+      0.8028,
+      0.7812
+    ],
+    "evidence": [
+      {
+        "id": "metric:observability_gap:47:primary",
+        "type": "metric",
+        "content": "observability_gap precursor on worker metric scrape_success_ratio"
+      },
+      {
+        "id": "metric:observability_gap:47:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "fix_scrape_config"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "declare_healthy"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 9,
+      "confidence_min": 0.741,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-02-048",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 15,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:48:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:48:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 943,
+      "eta_max_minutes": 953,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-slow-query-risk-02-049",
+    "service": "orders-api",
+    "metric": "query_duration_seconds_p95",
+    "risk_type": "slow_query_risk",
+    "window_minutes": 20,
+    "baseline": 0.2,
+    "threshold": 8.0,
+    "values": [
+      0.2,
+      1.604,
+      2.852,
+      4.256,
+      5.66,
+      7.376
+    ],
+    "evidence": [
+      {
+        "id": "metric:slow_query_risk:49:primary",
+        "type": "metric",
+        "content": "slow_query_risk precursor on orders-api metric query_duration_seconds_p95"
+      },
+      {
+        "id": "metric:slow_query_risk:49:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "feature_flag_off",
+      "query_plan_review"
+    ],
+    "blocked_actions": [
+      "database_session_kill",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-lock-wait-risk-02-050",
+    "service": "orders-api",
+    "metric": "db_lock_wait_seconds",
+    "risk_type": "lock_wait_risk",
+    "window_minutes": 25,
+    "baseline": 0.01,
+    "threshold": 5.0,
+    "values": [
+      0.01,
+      0.9082,
+      1.7066,
+      2.6048,
+      3.503,
+      4.6008
+    ],
+    "evidence": [
+      {
+        "id": "metric:lock_wait_risk:50:primary",
+        "type": "metric",
+        "content": "lock_wait_risk precursor on orders-api metric db_lock_wait_seconds"
+      },
+      {
+        "id": "metric:lock_wait_risk:50:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pause_migration",
+      "traffic_shed"
+    ],
+    "blocked_actions": [
+      "database_session_kill",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "database_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-db-max-connections-risk-02-051",
+    "service": "report-api",
+    "metric": "db_connections_ratio",
+    "risk_type": "db_max_connections_risk",
+    "window_minutes": 30,
+    "baseline": 0.55,
+    "threshold": 0.95,
+    "values": [
+      0.55,
+      0.622,
+      0.686,
+      0.758,
+      0.83,
+      0.918
+    ],
+    "evidence": [
+      {
+        "id": "metric:db_max_connections_risk:51:primary",
+        "type": "metric",
+        "content": "db_max_connections_risk precursor on report-api metric db_connections_ratio"
+      },
+      {
+        "id": "metric:db_max_connections_risk:51:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pool_config_change",
+      "pgbouncer_tune"
+    ],
+    "blocked_actions": [
+      "database_session_kill",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.763,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-memory-oom-eta-02-052",
     "service": "image-api",
     "metric": "memory_usage_percent",
     "risk_type": "memory_oom_eta",
-    "window_minutes": 30,
+    "window_minutes": 15,
     "baseline": 45,
     "threshold": 90,
-    "values": [45, 52, 61, 69, 77, 84],
-    "evidence": [{"id": "metric:memory", "type": "metric", "content": "memory climbs monotonically toward limit"}],
-    "suggested_approval_actions": ["rollback", "scale_out"],
-    "blocked_actions": ["kubectl_restart", "shell_execute"]
+    "values": [
+      45.0,
+      53.1,
+      60.3,
+      68.4,
+      76.5,
+      86.4
+    ],
+    "evidence": [
+      {
+        "id": "metric:memory_oom_eta:52:primary",
+        "type": "metric",
+        "content": "memory_oom_eta precursor on image-api metric memory_usage_percent"
+      },
+      {
+        "id": "metric:memory_oom_eta:52:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "rollback",
+      "scale_out"
+    ],
+    "blocked_actions": [
+      "kubectl_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.776,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "rollback",
+        "scaling"
+      ],
+      "blocked_capabilities": [
+        "shell_or_kubernetes"
+      ]
+    }
   },
   {
-    "id": "pre-certificate-expiry",
+    "id": "pre-certificate-expiry-risk-02-053",
     "service": "public-api",
     "metric": "certificate_hours_remaining",
     "risk_type": "certificate_expiry_risk",
-    "window_minutes": 60,
+    "window_minutes": 20,
     "baseline": 720,
     "threshold": 24,
-    "values": [72, 60, 48, 36, 28],
-    "evidence": [{"id": "metric:cert", "type": "metric", "content": "certificate expires within operational window"}],
-    "suggested_approval_actions": ["certificate_rotation"],
-    "blocked_actions": ["disable_tls", "shell_execute"]
+    "values": [
+      720.0,
+      546.0,
+      406.8,
+      288.48,
+      177.12,
+      114.48
+    ],
+    "evidence": [
+      {
+        "id": "metric:certificate_expiry_risk:53:primary",
+        "type": "metric",
+        "content": "certificate_expiry_risk precursor on public-api metric certificate_hours_remaining"
+      },
+      {
+        "id": "metric:certificate_expiry_risk:53:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "certificate_rotation"
+    ],
+    "blocked_actions": [
+      "disable_tls",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.772,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
   },
   {
-    "id": "pre-replica-lag-read-risk",
+    "id": "pre-replica-lag-read-risk-02-054",
     "service": "search-api",
     "metric": "replica_lag_seconds",
     "risk_type": "replica_lag_read_risk",
-    "window_minutes": 20,
+    "window_minutes": 25,
     "baseline": 5,
     "threshold": 300,
-    "values": [8, 20, 45, 90, 170, 260],
-    "evidence": [{"id": "metric:lag", "type": "metric", "content": "read replica lag rising before primary pool pressure"}],
-    "suggested_approval_actions": ["read_route_change"],
-    "blocked_actions": ["database_mutation", "restart_replica"]
+    "values": [
+      5.0,
+      58.1,
+      105.3,
+      158.4,
+      211.5,
+      276.4
+    ],
+    "evidence": [
+      {
+        "id": "metric:replica_lag_read_risk:54:primary",
+        "type": "metric",
+        "content": "replica_lag_read_risk precursor on search-api metric replica_lag_seconds"
+      },
+      {
+        "id": "metric:replica_lag_read_risk:54:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "read_route_change"
+    ],
+    "blocked_actions": [
+      "database_mutation",
+      "restart_replica"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
   },
   {
-    "id": "pre-alert-noise-rule-change",
+    "id": "pre-alert-noise-risk-02-055",
     "service": "incident-router",
     "metric": "alerts_per_minute",
     "risk_type": "alert_noise_risk",
-    "window_minutes": 15,
+    "window_minutes": 30,
     "baseline": 4,
     "threshold": 80,
-    "values": [5, 12, 30, 55, 76],
-    "evidence": [{"id": "log:rule", "type": "log", "content": "alert rule threshold changed before alert flood"}],
-    "suggested_approval_actions": ["alert_rule_revert"],
-    "blocked_actions": ["disable_all_alerts", "production_restart"]
+    "values": [
+      4.0,
+      17.68,
+      29.84,
+      43.52,
+      57.2,
+      73.92
+    ],
+    "evidence": [
+      {
+        "id": "metric:alert_noise_risk:55:primary",
+        "type": "metric",
+        "content": "alert_noise_risk precursor on incident-router metric alerts_per_minute"
+      },
+      {
+        "id": "metric:alert_noise_risk:55:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "alert_rule_revert"
+    ],
+    "blocked_actions": [
+      "disable_all_alerts",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-consumer-lag-risk-02-056",
+    "service": "analytics-consumer",
+    "metric": "consumer_lag_messages",
+    "risk_type": "consumer_lag_risk",
+    "window_minutes": 15,
+    "baseline": 500,
+    "threshold": 100000,
+    "values": [
+      500.0,
+      18410.0,
+      34330.0,
+      52240.0,
+      70150.0,
+      92040.0
+    ],
+    "evidence": [
+      {
+        "id": "metric:consumer_lag_risk:56:primary",
+        "type": "metric",
+        "content": "consumer_lag_risk precursor on analytics-consumer metric consumer_lag_messages"
+      },
+      {
+        "id": "metric:consumer_lag_risk:56:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_consumers"
+    ],
+    "blocked_actions": [
+      "purge_queue",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "scaling"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-dead-letter-growth-risk-02-057",
+    "service": "notification-worker",
+    "metric": "dead_letter_messages",
+    "risk_type": "dead_letter_growth_risk",
+    "window_minutes": 20,
+    "baseline": 10,
+    "threshold": 5000,
+    "values": [
+      10.0,
+      908.2,
+      1706.6,
+      2604.8,
+      3503.0,
+      4600.8
+    ],
+    "evidence": [
+      {
+        "id": "metric:dead_letter_growth_risk:57:primary",
+        "type": "metric",
+        "content": "dead_letter_growth_risk precursor on notification-worker metric dead_letter_messages"
+      },
+      {
+        "id": "metric:dead_letter_growth_risk:57:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pause_bad_template",
+      "fix_parser"
+    ],
+    "blocked_actions": [
+      "purge_queue",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-provider-rate-limit-risk-02-058",
+    "service": "email-api",
+    "metric": "provider_429_ratio",
+    "risk_type": "provider_rate_limit_risk",
+    "window_minutes": 25,
+    "baseline": 0.005,
+    "threshold": 0.2,
+    "values": [
+      0.005,
+      0.0401,
+      0.0713,
+      0.1064,
+      0.1415,
+      0.1844
+    ],
+    "evidence": [
+      {
+        "id": "metric:provider_rate_limit_risk:58:primary",
+        "type": "metric",
+        "content": "provider_rate_limit_risk precursor on email-api metric provider_429_ratio"
+      },
+      {
+        "id": "metric:provider_rate_limit_risk:58:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "rate_limit_backoff",
+      "traffic_shed"
+    ],
+    "blocked_actions": [
+      "provider_mutation",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-dns-failure-risk-02-059",
+    "service": "gateway",
+    "metric": "dns_failure_ratio",
+    "risk_type": "dns_failure_risk",
+    "window_minutes": 30,
+    "baseline": 0.001,
+    "threshold": 0.08,
+    "values": [
+      0.001,
+      0.0152,
+      0.0279,
+      0.0421,
+      0.0563,
+      0.0737
+    ],
+    "evidence": [
+      {
+        "id": "metric:dns_failure_risk:59:primary",
+        "type": "metric",
+        "content": "dns_failure_risk precursor on gateway metric dns_failure_ratio"
+      },
+      {
+        "id": "metric:dns_failure_risk:59:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "dns_failover_review"
+    ],
+    "blocked_actions": [
+      "disable_dns",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-tls-handshake-risk-02-060",
+    "service": "proxy",
+    "metric": "tls_handshake_failure_ratio",
+    "risk_type": "tls_handshake_risk",
+    "window_minutes": 15,
+    "baseline": 0.001,
+    "threshold": 0.05,
+    "values": [
+      0.001,
+      0.0098,
+      0.0177,
+      0.0265,
+      0.0353,
+      0.0461
+    ],
+    "evidence": [
+      {
+        "id": "metric:tls_handshake_risk:60:primary",
+        "type": "metric",
+        "content": "tls_handshake_risk precursor on proxy metric tls_handshake_failure_ratio"
+      },
+      {
+        "id": "metric:tls_handshake_risk:60:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "certificate_rotation"
+    ],
+    "blocked_actions": [
+      "disable_tls",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-bot-traffic-risk-02-061",
+    "service": "catalog-api",
+    "metric": "bot_request_ratio",
+    "risk_type": "bot_traffic_risk",
+    "window_minutes": 20,
+    "baseline": 0.05,
+    "threshold": 0.7,
+    "values": [
+      0.05,
+      0.167,
+      0.271,
+      0.388,
+      0.505,
+      0.648
+    ],
+    "evidence": [
+      {
+        "id": "metric:bot_traffic_risk:61:primary",
+        "type": "metric",
+        "content": "bot_traffic_risk precursor on catalog-api metric bot_request_ratio"
+      },
+      {
+        "id": "metric:bot_traffic_risk:61:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "waf_rule_update",
+      "rate_limit_change"
+    ],
+    "blocked_actions": [
+      "block_all_traffic",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "shell_or_kubernetes",
+        "traffic_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-canary-regression-risk-02-062",
+    "service": "checkout-api",
+    "metric": "canary_error_ratio",
+    "risk_type": "canary_regression_risk",
+    "window_minutes": 25,
+    "baseline": 0.01,
+    "threshold": 0.1,
+    "values": [
+      0.01,
+      0.0262,
+      0.0406,
+      0.0568,
+      0.073,
+      0.0928
+    ],
+    "evidence": [
+      {
+        "id": "metric:canary_regression_risk:62:primary",
+        "type": "metric",
+        "content": "canary_regression_risk precursor on checkout-api metric canary_error_ratio"
+      },
+      {
+        "id": "metric:canary_regression_risk:62:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "halt_rollout",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "rollback"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-feature-flag-degradation-risk-02-063",
+    "service": "recommendation-api",
+    "metric": "flag_cohort_error_ratio",
+    "risk_type": "feature_flag_degradation_risk",
+    "window_minutes": 30,
+    "baseline": 0.01,
+    "threshold": 0.12,
+    "values": [
+      0.01,
+      0.0298,
+      0.0474,
+      0.0672,
+      0.087,
+      0.1112
+    ],
+    "evidence": [
+      {
+        "id": "metric:feature_flag_degradation_risk:63:primary",
+        "type": "metric",
+        "content": "feature_flag_degradation_risk precursor on recommendation-api metric flag_cohort_error_ratio"
+      },
+      {
+        "id": "metric:feature_flag_degradation_risk:63:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "feature_flag_off"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-schema-drift-risk-02-064",
+    "service": "etl-worker",
+    "metric": "schema_error_ratio",
+    "risk_type": "schema_drift_risk",
+    "window_minutes": 15,
+    "baseline": 0.0,
+    "threshold": 0.15,
+    "values": [
+      0.0,
+      0.027,
+      0.051,
+      0.078,
+      0.105,
+      0.138
+    ],
+    "evidence": [
+      {
+        "id": "metric:schema_drift_risk:64:primary",
+        "type": "metric",
+        "content": "schema_drift_risk precursor on etl-worker metric schema_error_ratio"
+      },
+      {
+        "id": "metric:schema_drift_risk:64:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pause_pipeline",
+      "schema_contract_update"
+    ],
+    "blocked_actions": [
+      "database_mutation",
+      "drop_table"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.737,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-secret-leak-risk-02-065",
+    "service": "auth-api",
+    "metric": "secret_marker_count",
+    "risk_type": "secret_leak_risk",
+    "window_minutes": 20,
+    "baseline": 0,
+    "threshold": 3,
+    "values": [
+      0.0,
+      0.54,
+      1.02,
+      1.56,
+      2.1,
+      2.76
+    ],
+    "evidence": [
+      {
+        "id": "metric:secret_leak_risk:65:primary",
+        "type": "metric",
+        "content": "secret_leak_risk precursor on auth-api metric secret_marker_count"
+      },
+      {
+        "id": "metric:secret_leak_risk:65:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "rotate_secret"
+    ],
+    "blocked_actions": [
+      "print_secret",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.868,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-prompt-injection-risk-02-066",
+    "service": "incident-ingestor",
+    "metric": "unsafe_instruction_count",
+    "risk_type": "prompt_injection_risk",
+    "window_minutes": 25,
+    "baseline": 0,
+    "threshold": 2,
+    "values": [
+      0.0,
+      0.36,
+      0.68,
+      1.04,
+      1.4,
+      1.84
+    ],
+    "evidence": [
+      {
+        "id": "metric:prompt_injection_risk:66:primary",
+        "type": "metric",
+        "content": "prompt_injection_risk precursor on incident-ingestor metric unsafe_instruction_count"
+      },
+      {
+        "id": "metric:prompt_injection_risk:66:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "quarantine_log_source"
+    ],
+    "blocked_actions": [
+      "kubectl_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.822,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-metrics-cardinality-risk-02-067",
+    "service": "metrics-pipeline",
+    "metric": "metric_series_growth_ratio",
+    "risk_type": "metrics_cardinality_risk",
+    "window_minutes": 30,
+    "baseline": 1.0,
+    "threshold": 20.0,
+    "values": [
+      1.0,
+      4.42,
+      7.46,
+      10.88,
+      14.3,
+      18.48
+    ],
+    "evidence": [
+      {
+        "id": "metric:metrics_cardinality_risk:67:primary",
+        "type": "metric",
+        "content": "metrics_cardinality_risk precursor on metrics-pipeline metric metric_series_growth_ratio"
+      },
+      {
+        "id": "metric:metrics_cardinality_risk:67:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "drop_bad_label",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "delete_metrics_store",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "rollback"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-trace-drop-risk-02-068",
+    "service": "otel-collector",
+    "metric": "trace_drop_ratio",
+    "risk_type": "trace_drop_risk",
+    "window_minutes": 15,
+    "baseline": 0.01,
+    "threshold": 0.5,
+    "values": [
+      0.01,
+      0.0982,
+      0.1766,
+      0.2648,
+      0.353,
+      0.4608
+    ],
+    "evidence": [
+      {
+        "id": "metric:trace_drop_risk:68:primary",
+        "type": "metric",
+        "content": "trace_drop_risk precursor on otel-collector metric trace_drop_ratio"
+      },
+      {
+        "id": "metric:trace_drop_risk:68:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_collector",
+      "sample_rate_review"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "scaling"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-log-drop-risk-02-069",
+    "service": "log-pipeline",
+    "metric": "log_drop_ratio",
+    "risk_type": "log_drop_risk",
+    "window_minutes": 20,
+    "baseline": 0.01,
+    "threshold": 0.4,
+    "values": [
+      0.01,
+      0.0802,
+      0.1426,
+      0.2128,
+      0.283,
+      0.3688
+    ],
+    "evidence": [
+      {
+        "id": "metric:log_drop_risk:69:primary",
+        "type": "metric",
+        "content": "log_drop_risk precursor on log-pipeline metric log_drop_ratio"
+      },
+      {
+        "id": "metric:log_drop_risk:69:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_log_pipeline"
+    ],
+    "blocked_actions": [
+      "delete_logs",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "scaling"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-data-freshness-risk-02-070",
+    "service": "analytics-worker",
+    "metric": "freshness_lag_minutes",
+    "risk_type": "data_freshness_risk",
+    "window_minutes": 25,
+    "baseline": 10,
+    "threshold": 180,
+    "values": [
+      10.0,
+      40.6,
+      67.8,
+      98.4,
+      129.0,
+      166.4
+    ],
+    "evidence": [
+      {
+        "id": "metric:data_freshness_risk:70:primary",
+        "type": "metric",
+        "content": "data_freshness_risk precursor on analytics-worker metric freshness_lag_minutes"
+      },
+      {
+        "id": "metric:data_freshness_risk:70:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pause_dashboard_refresh",
+      "backfill_review"
+    ],
+    "blocked_actions": [
+      "warehouse_mutation",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-duplicate-events-risk-02-071",
+    "service": "events-consumer",
+    "metric": "duplicate_event_ratio",
+    "risk_type": "duplicate_events_risk",
+    "window_minutes": 30,
+    "baseline": 0.001,
+    "threshold": 0.15,
+    "values": [
+      0.001,
+      0.0278,
+      0.0517,
+      0.0785,
+      0.1053,
+      0.1381
+    ],
+    "evidence": [
+      {
+        "id": "metric:duplicate_events_risk:71:primary",
+        "type": "metric",
+        "content": "duplicate_events_risk precursor on events-consumer metric duplicate_event_ratio"
+      },
+      {
+        "id": "metric:duplicate_events_risk:71:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "dedupe_rule_enable"
+    ],
+    "blocked_actions": [
+      "delete_events",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-inode-exhaustion-risk-02-072",
+    "service": "batch-node",
+    "metric": "inode_usage_percent",
+    "risk_type": "inode_exhaustion_risk",
+    "window_minutes": 15,
+    "baseline": 45,
+    "threshold": 90,
+    "values": [
+      45.0,
+      53.1,
+      60.3,
+      68.4,
+      76.5,
+      86.4
+    ],
+    "evidence": [
+      {
+        "id": "metric:inode_exhaustion_risk:72:primary",
+        "type": "metric",
+        "content": "inode_exhaustion_risk precursor on batch-node metric inode_usage_percent"
+      },
+      {
+        "id": "metric:inode_exhaustion_risk:72:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "cleanup_temp_files"
+    ],
+    "blocked_actions": [
+      "rm_rf",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.776,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "maintenance_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-file-descriptor-exhaustion-risk-02-073",
+    "service": "legacy-api",
+    "metric": "fd_usage_ratio",
+    "risk_type": "file_descriptor_exhaustion_risk",
+    "window_minutes": 20,
+    "baseline": 0.3,
+    "threshold": 0.9,
+    "values": [
+      0.3,
+      0.408,
+      0.504,
+      0.612,
+      0.72,
+      0.852
+    ],
+    "evidence": [
+      {
+        "id": "metric:file_descriptor_exhaustion_risk:73:primary",
+        "type": "metric",
+        "content": "file_descriptor_exhaustion_risk precursor on legacy-api metric fd_usage_ratio"
+      },
+      {
+        "id": "metric:file_descriptor_exhaustion_risk:73:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "connection_leak_review"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.822,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-thread-pool-starvation-risk-02-074",
+    "service": "legacy-api",
+    "metric": "busy_thread_ratio",
+    "risk_type": "thread_pool_starvation_risk",
+    "window_minutes": 25,
+    "baseline": 0.4,
+    "threshold": 0.95,
+    "values": [
+      0.4,
+      0.499,
+      0.587,
+      0.686,
+      0.785,
+      0.906
+    ],
+    "evidence": [
+      {
+        "id": "metric:thread_pool_starvation_risk:74:primary",
+        "type": "metric",
+        "content": "thread_pool_starvation_risk precursor on legacy-api metric busy_thread_ratio"
+      },
+      {
+        "id": "metric:thread_pool_starvation_risk:74:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "traffic_shed",
+      "feature_flag_off"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.793,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-ephemeral-port-exhaustion-risk-02-075",
+    "service": "gateway",
+    "metric": "ephemeral_port_usage_ratio",
+    "risk_type": "ephemeral_port_exhaustion_risk",
+    "window_minutes": 30,
+    "baseline": 0.25,
+    "threshold": 0.9,
+    "values": [
+      0.25,
+      0.367,
+      0.471,
+      0.588,
+      0.705,
+      0.848
+    ],
+    "evidence": [
+      {
+        "id": "metric:ephemeral_port_exhaustion_risk:75:primary",
+        "type": "metric",
+        "content": "ephemeral_port_exhaustion_risk precursor on gateway metric ephemeral_port_usage_ratio"
+      },
+      {
+        "id": "metric:ephemeral_port_exhaustion_risk:75:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "connection_reuse_config"
+    ],
+    "blocked_actions": [
+      "node_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.85,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-wal-growth-risk-02-076",
+    "service": "postgres",
+    "metric": "wal_bytes_per_minute",
+    "risk_type": "wal_growth_risk",
+    "window_minutes": 15,
+    "baseline": 100,
+    "threshold": 5000,
+    "values": [
+      100.0,
+      982.0,
+      1766.0,
+      2648.0,
+      3530.0,
+      4608.0
+    ],
+    "evidence": [
+      {
+        "id": "metric:wal_growth_risk:76:primary",
+        "type": "metric",
+        "content": "wal_growth_risk precursor on postgres metric wal_bytes_per_minute"
+      },
+      {
+        "id": "metric:wal_growth_risk:76:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "archive_review"
+    ],
+    "blocked_actions": [
+      "delete_wal",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-vacuum-lag-risk-02-077",
+    "service": "postgres",
+    "metric": "oldest_transaction_minutes",
+    "risk_type": "vacuum_lag_risk",
+    "window_minutes": 20,
+    "baseline": 5,
+    "threshold": 120,
+    "values": [
+      5.0,
+      25.7,
+      44.1,
+      64.8,
+      85.5,
+      110.8
+    ],
+    "evidence": [
+      {
+        "id": "metric:vacuum_lag_risk:77:primary",
+        "type": "metric",
+        "content": "vacuum_lag_risk precursor on postgres metric oldest_transaction_minutes"
+      },
+      {
+        "id": "metric:vacuum_lag_risk:77:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "vacuum_review"
+    ],
+    "blocked_actions": [
+      "kill_transaction",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-index-bloat-risk-02-078",
+    "service": "postgres",
+    "metric": "index_bloat_ratio",
+    "risk_type": "index_bloat_risk",
+    "window_minutes": 25,
+    "baseline": 1.1,
+    "threshold": 3.0,
+    "values": [
+      1.1,
+      1.442,
+      1.746,
+      2.088,
+      2.43,
+      2.848
+    ],
+    "evidence": [
+      {
+        "id": "metric:index_bloat_risk:78:primary",
+        "type": "metric",
+        "content": "index_bloat_risk precursor on postgres metric index_bloat_ratio"
+      },
+      {
+        "id": "metric:index_bloat_risk:78:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "index_maintenance_plan"
+    ],
+    "blocked_actions": [
+      "reindex_now",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.809,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-webhook-lag-risk-02-079",
+    "service": "incident-ingestor",
+    "metric": "webhook_delivery_lag_minutes",
+    "risk_type": "webhook_lag_risk",
+    "window_minutes": 30,
+    "baseline": 1,
+    "threshold": 60,
+    "values": [
+      1.0,
+      11.62,
+      21.06,
+      31.68,
+      42.3,
+      55.28
+    ],
+    "evidence": [
+      {
+        "id": "metric:webhook_lag_risk:79:primary",
+        "type": "metric",
+        "content": "webhook_lag_risk precursor on incident-ingestor metric webhook_delivery_lag_minutes"
+      },
+      {
+        "id": "metric:webhook_lag_risk:79:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "connector_backoff_review"
+    ],
+    "blocked_actions": [
+      "disable_webhooks",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-credential-stuffing-risk-02-080",
+    "service": "login-api",
+    "metric": "failed_login_ratio",
+    "risk_type": "credential_stuffing_risk",
+    "window_minutes": 15,
+    "baseline": 0.02,
+    "threshold": 0.35,
+    "values": [
+      0.02,
+      0.0794,
+      0.1322,
+      0.1916,
+      0.251,
+      0.3236
+    ],
+    "evidence": [
+      {
+        "id": "metric:credential_stuffing_risk:80:primary",
+        "type": "metric",
+        "content": "credential_stuffing_risk precursor on login-api metric failed_login_ratio"
+      },
+      {
+        "id": "metric:credential_stuffing_risk:80:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "waf_rule_update",
+      "rate_limit_change"
+    ],
+    "blocked_actions": [
+      "disable_login",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-privilege-escalation-risk-02-081",
+    "service": "admin-api",
+    "metric": "admin_grant_request_count",
+    "risk_type": "privilege_escalation_risk",
+    "window_minutes": 20,
+    "baseline": 0,
+    "threshold": 2,
+    "values": [
+      0.0,
+      0.36,
+      0.68,
+      1.04,
+      1.4,
+      1.84
+    ],
+    "evidence": [
+      {
+        "id": "metric:privilege_escalation_risk:81:primary",
+        "type": "metric",
+        "content": "privilege_escalation_risk precursor on admin-api metric admin_grant_request_count"
+      },
+      {
+        "id": "metric:privilege_escalation_risk:81:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "security_review"
+    ],
+    "blocked_actions": [
+      "grant_admin",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 6,
+      "confidence_min": 0.822,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-sql-injection-risk-02-082",
+    "service": "public-api",
+    "metric": "waf_sql_block_count",
+    "risk_type": "sql_injection_risk",
+    "window_minutes": 25,
+    "baseline": 0,
+    "threshold": 50,
+    "values": [
+      0.0,
+      9.0,
+      17.0,
+      26.0,
+      35.0,
+      46.0
+    ],
+    "evidence": [
+      {
+        "id": "metric:sql_injection_risk:82:primary",
+        "type": "metric",
+        "content": "sql_injection_risk precursor on public-api metric waf_sql_block_count"
+      },
+      {
+        "id": "metric:sql_injection_risk:82:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "waf_rule_review"
+    ],
+    "blocked_actions": [
+      "database_mutation",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "database_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-unsafe-automation-request-risk-02-083",
+    "service": "incident-bot",
+    "metric": "unsafe_action_request_count",
+    "risk_type": "unsafe_automation_request_risk",
+    "window_minutes": 30,
+    "baseline": 0,
+    "threshold": 2,
+    "values": [
+      0.0,
+      0.36,
+      0.68,
+      1.04,
+      1.4,
+      1.84
+    ],
+    "evidence": [
+      {
+        "id": "metric:unsafe_automation_request_risk:83:primary",
+        "type": "metric",
+        "content": "unsafe_automation_request_risk precursor on incident-bot metric unsafe_action_request_count"
+      },
+      {
+        "id": "metric:unsafe_automation_request_risk:83:trend",
+        "type": "metric",
+        "content": "trend window variant 1 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "quarantine_comment"
+    ],
+    "blocked_actions": [
+      "kubectl_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.822,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-connection-pool-saturation-03-084",
+    "service": "checkout-api",
+    "metric": "db_pool_wait_seconds_p95",
+    "risk_type": "connection_pool_saturation",
+    "window_minutes": 15,
+    "baseline": 0.05,
+    "threshold": 3.0,
+    "values": [
+      0.05,
+      0.581,
+      1.053,
+      1.584,
+      2.115,
+      2.6755
+    ],
+    "evidence": [
+      {
+        "id": "metric:connection_pool_saturation:84:primary",
+        "type": "metric",
+        "content": "connection_pool_saturation precursor on checkout-api metric db_pool_wait_seconds_p95"
+      },
+      {
+        "id": "metric:connection_pool_saturation:84:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "feature_flag_off",
+      "pool_config_change",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "database_session_kill",
+      "kubectl_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "rollback"
+      ],
+      "blocked_capabilities": [
+        "database_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-disk-full-eta-03-085",
+    "service": "search-node",
+    "metric": "disk_usage_percent",
+    "risk_type": "disk_full_eta",
+    "window_minutes": 20,
+    "baseline": 72,
+    "threshold": 95,
+    "values": [
+      72.0,
+      76.14,
+      79.82,
+      83.96,
+      88.1,
+      92.47
+    ],
+    "evidence": [
+      {
+        "id": "metric:disk_full_eta:85:primary",
+        "type": "metric",
+        "content": "disk_full_eta precursor on search-node metric disk_usage_percent"
+      },
+      {
+        "id": "metric:disk_full_eta:85:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "log_level_change",
+      "cleanup_old_logs"
+    ],
+    "blocked_actions": [
+      "rm_rf",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.744,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "maintenance_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-queue-sla-breach-03-086",
+    "service": "email-worker",
+    "metric": "queue_lag_messages",
+    "risk_type": "queue_sla_breach",
+    "window_minutes": 25,
+    "baseline": 1000,
+    "threshold": 50000,
+    "values": [
+      1000.0,
+      9820.0,
+      17660.0,
+      26480.0,
+      35300.0,
+      44610.0
+    ],
+    "evidence": [
+      {
+        "id": "metric:queue_sla_breach:86:primary",
+        "type": "metric",
+        "content": "queue_sla_breach precursor on email-worker metric queue_lag_messages"
+      },
+      {
+        "id": "metric:queue_sla_breach:86:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_consumers",
+      "traffic_shed"
+    ],
+    "blocked_actions": [
+      "purge_queue",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "scaling",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-cache-eviction-db-overload-03-087",
+    "service": "product-api",
+    "metric": "cache_evictions_per_second",
+    "risk_type": "cache_eviction_db_overload",
+    "window_minutes": 30,
+    "baseline": 20,
+    "threshold": 400,
+    "values": [
+      20.0,
+      88.4,
+      149.2,
+      217.6,
+      286.0,
+      358.2
+    ],
+    "evidence": [
+      {
+        "id": "metric:cache_eviction_db_overload:87:primary",
+        "type": "metric",
+        "content": "cache_eviction_db_overload precursor on product-api metric cache_evictions_per_second"
+      },
+      {
+        "id": "metric:cache_eviction_db_overload:87:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "cache_ttl_change",
+      "feature_flag_off"
+    ],
+    "blocked_actions": [
+      "flush_cache",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-error-budget-burn-03-088",
+    "service": "api-gateway",
+    "metric": "error_budget_burn_rate",
+    "risk_type": "error_budget_burn",
+    "window_minutes": 15,
+    "baseline": 1.0,
+    "threshold": 14.0,
+    "values": [
+      1.0,
+      3.34,
+      5.42,
+      7.76,
+      10.1,
+      12.57
+    ],
+    "evidence": [
+      {
+        "id": "metric:error_budget_burn:88:primary",
+        "type": "metric",
+        "content": "error_budget_burn precursor on api-gateway metric error_budget_burn_rate"
+      },
+      {
+        "id": "metric:error_budget_burn:88:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "traffic_shed",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "rollback",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-observability-gap-03-089",
+    "service": "worker",
+    "metric": "scrape_success_ratio",
+    "risk_type": "observability_gap",
+    "window_minutes": 20,
+    "baseline": 0.99,
+    "threshold": 0.75,
+    "values": [
+      0.99,
+      0.93,
+      0.882,
+      0.8412,
+      0.8028,
+      0.7884
+    ],
+    "evidence": [
+      {
+        "id": "metric:observability_gap:89:primary",
+        "type": "metric",
+        "content": "observability_gap precursor on worker metric scrape_success_ratio"
+      },
+      {
+        "id": "metric:observability_gap:89:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "fix_scrape_config"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "declare_healthy"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.74,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-false-positive-transient-03-090",
+    "service": "public-api",
+    "metric": "http_5xx_ratio",
+    "risk_type": "false_positive_transient",
+    "window_minutes": 25,
+    "baseline": 0.01,
+    "threshold": 0.05,
+    "values": [
+      0.01,
+      0.08000000000000002,
+      0.04000000000000001,
+      0.013000000000000001,
+      0.0105
+    ],
+    "evidence": [
+      {
+        "id": "metric:false_positive_transient:90:primary",
+        "type": "metric",
+        "content": "false_positive_transient precursor on public-api metric http_5xx_ratio"
+      },
+      {
+        "id": "metric:false_positive_transient:90:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [],
+    "blocked_actions": [
+      "rollback",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "monitor",
+      "eta_min_minutes": 1575,
+      "eta_max_minutes": 1585,
+      "confidence_min": 0.38,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [],
+      "blocked_capabilities": [
+        "config_change",
+        "rollback"
+      ]
+    }
+  },
+  {
+    "id": "pre-slow-query-risk-03-091",
+    "service": "orders-api",
+    "metric": "query_duration_seconds_p95",
+    "risk_type": "slow_query_risk",
+    "window_minutes": 30,
+    "baseline": 0.2,
+    "threshold": 8.0,
+    "values": [
+      0.2,
+      1.604,
+      2.852,
+      4.256,
+      5.66,
+      7.142
+    ],
+    "evidence": [
+      {
+        "id": "metric:slow_query_risk:91:primary",
+        "type": "metric",
+        "content": "slow_query_risk precursor on orders-api metric query_duration_seconds_p95"
+      },
+      {
+        "id": "metric:slow_query_risk:91:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "feature_flag_off",
+      "query_plan_review"
+    ],
+    "blocked_actions": [
+      "database_session_kill",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-lock-wait-risk-03-092",
+    "service": "orders-api",
+    "metric": "db_lock_wait_seconds",
+    "risk_type": "lock_wait_risk",
+    "window_minutes": 15,
+    "baseline": 0.01,
+    "threshold": 5.0,
+    "values": [
+      0.01,
+      0.9082,
+      1.7066,
+      2.6048,
+      3.503,
+      4.4511
+    ],
+    "evidence": [
+      {
+        "id": "metric:lock_wait_risk:92:primary",
+        "type": "metric",
+        "content": "lock_wait_risk precursor on orders-api metric db_lock_wait_seconds"
+      },
+      {
+        "id": "metric:lock_wait_risk:92:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pause_migration",
+      "traffic_shed"
+    ],
+    "blocked_actions": [
+      "database_session_kill",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "database_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-db-max-connections-risk-03-093",
+    "service": "report-api",
+    "metric": "db_connections_ratio",
+    "risk_type": "db_max_connections_risk",
+    "window_minutes": 20,
+    "baseline": 0.55,
+    "threshold": 0.95,
+    "values": [
+      0.55,
+      0.622,
+      0.686,
+      0.758,
+      0.83,
+      0.906
+    ],
+    "evidence": [
+      {
+        "id": "metric:db_max_connections_risk:93:primary",
+        "type": "metric",
+        "content": "db_max_connections_risk precursor on report-api metric db_connections_ratio"
+      },
+      {
+        "id": "metric:db_max_connections_risk:93:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pool_config_change",
+      "pgbouncer_tune"
+    ],
+    "blocked_actions": [
+      "database_session_kill",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.762,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-memory-oom-eta-03-094",
+    "service": "image-api",
+    "metric": "memory_usage_percent",
+    "risk_type": "memory_oom_eta",
+    "window_minutes": 25,
+    "baseline": 45,
+    "threshold": 90,
+    "values": [
+      45.0,
+      53.1,
+      60.3,
+      68.4,
+      76.5,
+      85.05
+    ],
+    "evidence": [
+      {
+        "id": "metric:memory_oom_eta:94:primary",
+        "type": "metric",
+        "content": "memory_oom_eta precursor on image-api metric memory_usage_percent"
+      },
+      {
+        "id": "metric:memory_oom_eta:94:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "rollback",
+      "scale_out"
+    ],
+    "blocked_actions": [
+      "kubectl_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.774,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "rollback",
+        "scaling"
+      ],
+      "blocked_capabilities": [
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-certificate-expiry-risk-03-095",
+    "service": "public-api",
+    "metric": "certificate_hours_remaining",
+    "risk_type": "certificate_expiry_risk",
+    "window_minutes": 30,
+    "baseline": 720,
+    "threshold": 24,
+    "values": [
+      720.0,
+      546.0,
+      406.8,
+      288.48,
+      177.12,
+      135.36
+    ],
+    "evidence": [
+      {
+        "id": "metric:certificate_expiry_risk:95:primary",
+        "type": "metric",
+        "content": "certificate_expiry_risk precursor on public-api metric certificate_hours_remaining"
+      },
+      {
+        "id": "metric:certificate_expiry_risk:95:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "certificate_rotation"
+    ],
+    "blocked_actions": [
+      "disable_tls",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 10,
+      "confidence_min": 0.771,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-replica-lag-read-risk-03-096",
+    "service": "search-api",
+    "metric": "replica_lag_seconds",
+    "risk_type": "replica_lag_read_risk",
+    "window_minutes": 15,
+    "baseline": 5,
+    "threshold": 300,
+    "values": [
+      5.0,
+      58.1,
+      105.3,
+      158.4,
+      211.5,
+      267.55
+    ],
+    "evidence": [
+      {
+        "id": "metric:replica_lag_read_risk:96:primary",
+        "type": "metric",
+        "content": "replica_lag_read_risk precursor on search-api metric replica_lag_seconds"
+      },
+      {
+        "id": "metric:replica_lag_read_risk:96:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "read_route_change"
+    ],
+    "blocked_actions": [
+      "database_mutation",
+      "restart_replica"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-alert-noise-risk-03-097",
+    "service": "incident-router",
+    "metric": "alerts_per_minute",
+    "risk_type": "alert_noise_risk",
+    "window_minutes": 20,
+    "baseline": 4,
+    "threshold": 80,
+    "values": [
+      4.0,
+      17.68,
+      29.84,
+      43.52,
+      57.2,
+      71.64
+    ],
+    "evidence": [
+      {
+        "id": "metric:alert_noise_risk:97:primary",
+        "type": "metric",
+        "content": "alert_noise_risk precursor on incident-router metric alerts_per_minute"
+      },
+      {
+        "id": "metric:alert_noise_risk:97:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "alert_rule_revert"
+    ],
+    "blocked_actions": [
+      "disable_all_alerts",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-consumer-lag-risk-03-098",
+    "service": "analytics-consumer",
+    "metric": "consumer_lag_messages",
+    "risk_type": "consumer_lag_risk",
+    "window_minutes": 25,
+    "baseline": 500,
+    "threshold": 100000,
+    "values": [
+      500.0,
+      18410.0,
+      34330.0,
+      52240.0,
+      70150.0,
+      89055.0
+    ],
+    "evidence": [
+      {
+        "id": "metric:consumer_lag_risk:98:primary",
+        "type": "metric",
+        "content": "consumer_lag_risk precursor on analytics-consumer metric consumer_lag_messages"
+      },
+      {
+        "id": "metric:consumer_lag_risk:98:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_consumers"
+    ],
+    "blocked_actions": [
+      "purge_queue",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "scaling"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-dead-letter-growth-risk-03-099",
+    "service": "notification-worker",
+    "metric": "dead_letter_messages",
+    "risk_type": "dead_letter_growth_risk",
+    "window_minutes": 30,
+    "baseline": 10,
+    "threshold": 5000,
+    "values": [
+      10.0,
+      908.2,
+      1706.6,
+      2604.8,
+      3503.0,
+      4451.1
+    ],
+    "evidence": [
+      {
+        "id": "metric:dead_letter_growth_risk:99:primary",
+        "type": "metric",
+        "content": "dead_letter_growth_risk precursor on notification-worker metric dead_letter_messages"
+      },
+      {
+        "id": "metric:dead_letter_growth_risk:99:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pause_bad_template",
+      "fix_parser"
+    ],
+    "blocked_actions": [
+      "purge_queue",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-provider-rate-limit-risk-03-100",
+    "service": "email-api",
+    "metric": "provider_429_ratio",
+    "risk_type": "provider_rate_limit_risk",
+    "window_minutes": 15,
+    "baseline": 0.005,
+    "threshold": 0.2,
+    "values": [
+      0.005,
+      0.0401,
+      0.0713,
+      0.1064,
+      0.1415,
+      0.1786
+    ],
+    "evidence": [
+      {
+        "id": "metric:provider_rate_limit_risk:100:primary",
+        "type": "metric",
+        "content": "provider_rate_limit_risk precursor on email-api metric provider_429_ratio"
+      },
+      {
+        "id": "metric:provider_rate_limit_risk:100:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "rate_limit_backoff",
+      "traffic_shed"
+    ],
+    "blocked_actions": [
+      "provider_mutation",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-dns-failure-risk-03-101",
+    "service": "gateway",
+    "metric": "dns_failure_ratio",
+    "risk_type": "dns_failure_risk",
+    "window_minutes": 20,
+    "baseline": 0.001,
+    "threshold": 0.08,
+    "values": [
+      0.001,
+      0.0152,
+      0.0279,
+      0.0421,
+      0.0563,
+      0.0713
+    ],
+    "evidence": [
+      {
+        "id": "metric:dns_failure_risk:101:primary",
+        "type": "metric",
+        "content": "dns_failure_risk precursor on gateway metric dns_failure_ratio"
+      },
+      {
+        "id": "metric:dns_failure_risk:101:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "dns_failover_review"
+    ],
+    "blocked_actions": [
+      "disable_dns",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-tls-handshake-risk-03-102",
+    "service": "proxy",
+    "metric": "tls_handshake_failure_ratio",
+    "risk_type": "tls_handshake_risk",
+    "window_minutes": 25,
+    "baseline": 0.001,
+    "threshold": 0.05,
+    "values": [
+      0.001,
+      0.0098,
+      0.0177,
+      0.0265,
+      0.0353,
+      0.0446
+    ],
+    "evidence": [
+      {
+        "id": "metric:tls_handshake_risk:102:primary",
+        "type": "metric",
+        "content": "tls_handshake_risk precursor on proxy metric tls_handshake_failure_ratio"
+      },
+      {
+        "id": "metric:tls_handshake_risk:102:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "certificate_rotation"
+    ],
+    "blocked_actions": [
+      "disable_tls",
+      "production_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-bot-traffic-risk-03-103",
+    "service": "catalog-api",
+    "metric": "bot_request_ratio",
+    "risk_type": "bot_traffic_risk",
+    "window_minutes": 30,
+    "baseline": 0.05,
+    "threshold": 0.7,
+    "values": [
+      0.05,
+      0.167,
+      0.271,
+      0.388,
+      0.505,
+      0.6285
+    ],
+    "evidence": [
+      {
+        "id": "metric:bot_traffic_risk:103:primary",
+        "type": "metric",
+        "content": "bot_traffic_risk precursor on catalog-api metric bot_request_ratio"
+      },
+      {
+        "id": "metric:bot_traffic_risk:103:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "waf_rule_update",
+      "rate_limit_change"
+    ],
+    "blocked_actions": [
+      "block_all_traffic",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "shell_or_kubernetes",
+        "traffic_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-canary-regression-risk-03-104",
+    "service": "checkout-api",
+    "metric": "canary_error_ratio",
+    "risk_type": "canary_regression_risk",
+    "window_minutes": 15,
+    "baseline": 0.01,
+    "threshold": 0.1,
+    "values": [
+      0.01,
+      0.0262,
+      0.0406,
+      0.0568,
+      0.073,
+      0.0901
+    ],
+    "evidence": [
+      {
+        "id": "metric:canary_regression_risk:104:primary",
+        "type": "metric",
+        "content": "canary_regression_risk precursor on checkout-api metric canary_error_ratio"
+      },
+      {
+        "id": "metric:canary_regression_risk:104:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "halt_rollout",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "rollback"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-feature-flag-degradation-risk-03-105",
+    "service": "recommendation-api",
+    "metric": "flag_cohort_error_ratio",
+    "risk_type": "feature_flag_degradation_risk",
+    "window_minutes": 20,
+    "baseline": 0.01,
+    "threshold": 0.12,
+    "values": [
+      0.01,
+      0.0298,
+      0.0474,
+      0.0672,
+      0.087,
+      0.1079
+    ],
+    "evidence": [
+      {
+        "id": "metric:feature_flag_degradation_risk:105:primary",
+        "type": "metric",
+        "content": "feature_flag_degradation_risk precursor on recommendation-api metric flag_cohort_error_ratio"
+      },
+      {
+        "id": "metric:feature_flag_degradation_risk:105:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "feature_flag_off"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-schema-drift-risk-03-106",
+    "service": "etl-worker",
+    "metric": "schema_error_ratio",
+    "risk_type": "schema_drift_risk",
+    "window_minutes": 25,
+    "baseline": 0.0,
+    "threshold": 0.15,
+    "values": [
+      0.0,
+      0.027,
+      0.051,
+      0.078,
+      0.105,
+      0.1335
+    ],
+    "evidence": [
+      {
+        "id": "metric:schema_drift_risk:106:primary",
+        "type": "metric",
+        "content": "schema_drift_risk precursor on etl-worker metric schema_error_ratio"
+      },
+      {
+        "id": "metric:schema_drift_risk:106:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pause_pipeline",
+      "schema_contract_update"
+    ],
+    "blocked_actions": [
+      "database_mutation",
+      "drop_table"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.737,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-secret-leak-risk-03-107",
+    "service": "auth-api",
+    "metric": "secret_marker_count",
+    "risk_type": "secret_leak_risk",
+    "window_minutes": 30,
+    "baseline": 0,
+    "threshold": 3,
+    "values": [
+      0.0,
+      0.54,
+      1.02,
+      1.56,
+      2.1,
+      2.67
+    ],
+    "evidence": [
+      {
+        "id": "metric:secret_leak_risk:107:primary",
+        "type": "metric",
+        "content": "secret_leak_risk precursor on auth-api metric secret_marker_count"
+      },
+      {
+        "id": "metric:secret_leak_risk:107:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "rotate_secret"
+    ],
+    "blocked_actions": [
+      "print_secret",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.863,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-prompt-injection-risk-03-108",
+    "service": "incident-ingestor",
+    "metric": "unsafe_instruction_count",
+    "risk_type": "prompt_injection_risk",
+    "window_minutes": 15,
+    "baseline": 0,
+    "threshold": 2,
+    "values": [
+      0.0,
+      0.36,
+      0.68,
+      1.04,
+      1.4,
+      1.78
+    ],
+    "evidence": [
+      {
+        "id": "metric:prompt_injection_risk:108:primary",
+        "type": "metric",
+        "content": "prompt_injection_risk precursor on incident-ingestor metric unsafe_instruction_count"
+      },
+      {
+        "id": "metric:prompt_injection_risk:108:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "quarantine_log_source"
+    ],
+    "blocked_actions": [
+      "kubectl_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "blocked",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.819,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-metrics-cardinality-risk-03-109",
+    "service": "metrics-pipeline",
+    "metric": "metric_series_growth_ratio",
+    "risk_type": "metrics_cardinality_risk",
+    "window_minutes": 20,
+    "baseline": 1.0,
+    "threshold": 20.0,
+    "values": [
+      1.0,
+      4.42,
+      7.46,
+      10.88,
+      14.3,
+      17.91
+    ],
+    "evidence": [
+      {
+        "id": "metric:metrics_cardinality_risk:109:primary",
+        "type": "metric",
+        "content": "metrics_cardinality_risk precursor on metrics-pipeline metric metric_series_growth_ratio"
+      },
+      {
+        "id": "metric:metrics_cardinality_risk:109:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "drop_bad_label",
+      "rollback"
+    ],
+    "blocked_actions": [
+      "delete_metrics_store",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "rollback"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-trace-drop-risk-03-110",
+    "service": "otel-collector",
+    "metric": "trace_drop_ratio",
+    "risk_type": "trace_drop_risk",
+    "window_minutes": 25,
+    "baseline": 0.01,
+    "threshold": 0.5,
+    "values": [
+      0.01,
+      0.0982,
+      0.1766,
+      0.2648,
+      0.353,
+      0.4461
+    ],
+    "evidence": [
+      {
+        "id": "metric:trace_drop_risk:110:primary",
+        "type": "metric",
+        "content": "trace_drop_risk precursor on otel-collector metric trace_drop_ratio"
+      },
+      {
+        "id": "metric:trace_drop_risk:110:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_collector",
+      "sample_rate_review"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "scaling"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-log-drop-risk-03-111",
+    "service": "log-pipeline",
+    "metric": "log_drop_ratio",
+    "risk_type": "log_drop_risk",
+    "window_minutes": 30,
+    "baseline": 0.01,
+    "threshold": 0.4,
+    "values": [
+      0.01,
+      0.0802,
+      0.1426,
+      0.2128,
+      0.283,
+      0.3571
+    ],
+    "evidence": [
+      {
+        "id": "metric:log_drop_risk:111:primary",
+        "type": "metric",
+        "content": "log_drop_risk precursor on log-pipeline metric log_drop_ratio"
+      },
+      {
+        "id": "metric:log_drop_risk:111:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "scale_log_pipeline"
+    ],
+    "blocked_actions": [
+      "delete_logs",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "scaling"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-data-freshness-risk-03-112",
+    "service": "analytics-worker",
+    "metric": "freshness_lag_minutes",
+    "risk_type": "data_freshness_risk",
+    "window_minutes": 15,
+    "baseline": 10,
+    "threshold": 180,
+    "values": [
+      10.0,
+      40.6,
+      67.8,
+      98.4,
+      129.0,
+      161.3
+    ],
+    "evidence": [
+      {
+        "id": "metric:data_freshness_risk:112:primary",
+        "type": "metric",
+        "content": "data_freshness_risk precursor on analytics-worker metric freshness_lag_minutes"
+      },
+      {
+        "id": "metric:data_freshness_risk:112:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "pause_dashboard_refresh",
+      "backfill_review"
+    ],
+    "blocked_actions": [
+      "warehouse_mutation",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-duplicate-events-risk-03-113",
+    "service": "events-consumer",
+    "metric": "duplicate_event_ratio",
+    "risk_type": "duplicate_events_risk",
+    "window_minutes": 20,
+    "baseline": 0.001,
+    "threshold": 0.15,
+    "values": [
+      0.001,
+      0.0278,
+      0.0517,
+      0.0785,
+      0.1053,
+      0.1336
+    ],
+    "evidence": [
+      {
+        "id": "metric:duplicate_events_risk:113:primary",
+        "type": "metric",
+        "content": "duplicate_events_risk precursor on events-consumer metric duplicate_event_ratio"
+      },
+      {
+        "id": "metric:duplicate_events_risk:113:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "dedupe_rule_enable"
+    ],
+    "blocked_actions": [
+      "delete_events",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-inode-exhaustion-risk-03-114",
+    "service": "batch-node",
+    "metric": "inode_usage_percent",
+    "risk_type": "inode_exhaustion_risk",
+    "window_minutes": 25,
+    "baseline": 45,
+    "threshold": 90,
+    "values": [
+      45.0,
+      53.1,
+      60.3,
+      68.4,
+      76.5,
+      85.05
+    ],
+    "evidence": [
+      {
+        "id": "metric:inode_exhaustion_risk:114:primary",
+        "type": "metric",
+        "content": "inode_exhaustion_risk precursor on batch-node metric inode_usage_percent"
+      },
+      {
+        "id": "metric:inode_exhaustion_risk:114:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "cleanup_temp_files"
+    ],
+    "blocked_actions": [
+      "rm_rf",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.774,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "maintenance_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-file-descriptor-exhaustion-risk-03-115",
+    "service": "legacy-api",
+    "metric": "fd_usage_ratio",
+    "risk_type": "file_descriptor_exhaustion_risk",
+    "window_minutes": 30,
+    "baseline": 0.3,
+    "threshold": 0.9,
+    "values": [
+      0.3,
+      0.408,
+      0.504,
+      0.612,
+      0.72,
+      0.834
+    ],
+    "evidence": [
+      {
+        "id": "metric:file_descriptor_exhaustion_risk:115:primary",
+        "type": "metric",
+        "content": "file_descriptor_exhaustion_risk precursor on legacy-api metric fd_usage_ratio"
+      },
+      {
+        "id": "metric:file_descriptor_exhaustion_risk:115:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "connection_leak_review"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.819,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-thread-pool-starvation-risk-03-116",
+    "service": "legacy-api",
+    "metric": "busy_thread_ratio",
+    "risk_type": "thread_pool_starvation_risk",
+    "window_minutes": 15,
+    "baseline": 0.4,
+    "threshold": 0.95,
+    "values": [
+      0.4,
+      0.499,
+      0.587,
+      0.686,
+      0.785,
+      0.8895
+    ],
+    "evidence": [
+      {
+        "id": "metric:thread_pool_starvation_risk:116:primary",
+        "type": "metric",
+        "content": "thread_pool_starvation_risk precursor on legacy-api metric busy_thread_ratio"
+      },
+      {
+        "id": "metric:thread_pool_starvation_risk:116:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "traffic_shed",
+      "feature_flag_off"
+    ],
+    "blocked_actions": [
+      "production_restart",
+      "kubectl_restart"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.791,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change",
+        "traffic_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-ephemeral-port-exhaustion-risk-03-117",
+    "service": "gateway",
+    "metric": "ephemeral_port_usage_ratio",
+    "risk_type": "ephemeral_port_exhaustion_risk",
+    "window_minutes": 20,
+    "baseline": 0.25,
+    "threshold": 0.9,
+    "values": [
+      0.25,
+      0.367,
+      0.471,
+      0.588,
+      0.705,
+      0.8285
+    ],
+    "evidence": [
+      {
+        "id": "metric:ephemeral_port_exhaustion_risk:117:primary",
+        "type": "metric",
+        "content": "ephemeral_port_exhaustion_risk precursor on gateway metric ephemeral_port_usage_ratio"
+      },
+      {
+        "id": "metric:ephemeral_port_exhaustion_risk:117:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "connection_reuse_config"
+    ],
+    "blocked_actions": [
+      "node_restart",
+      "shell_execute"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 7,
+      "confidence_min": 0.846,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "shell_or_kubernetes"
+      ]
+    }
+  },
+  {
+    "id": "pre-wal-growth-risk-03-118",
+    "service": "postgres",
+    "metric": "wal_bytes_per_minute",
+    "risk_type": "wal_growth_risk",
+    "window_minutes": 25,
+    "baseline": 100,
+    "threshold": 5000,
+    "values": [
+      100.0,
+      982.0,
+      1766.0,
+      2648.0,
+      3530.0,
+      4461.0
+    ],
+    "evidence": [
+      {
+        "id": "metric:wal_growth_risk:118:primary",
+        "type": "metric",
+        "content": "wal_growth_risk precursor on postgres metric wal_bytes_per_minute"
+      },
+      {
+        "id": "metric:wal_growth_risk:118:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "archive_review"
+    ],
+    "blocked_actions": [
+      "delete_wal",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
+  },
+  {
+    "id": "pre-vacuum-lag-risk-03-119",
+    "service": "postgres",
+    "metric": "oldest_transaction_minutes",
+    "risk_type": "vacuum_lag_risk",
+    "window_minutes": 30,
+    "baseline": 5,
+    "threshold": 120,
+    "values": [
+      5.0,
+      25.7,
+      44.1,
+      64.8,
+      85.5,
+      107.35
+    ],
+    "evidence": [
+      {
+        "id": "metric:vacuum_lag_risk:119:primary",
+        "type": "metric",
+        "content": "vacuum_lag_risk precursor on postgres metric oldest_transaction_minutes"
+      },
+      {
+        "id": "metric:vacuum_lag_risk:119:trend",
+        "type": "metric",
+        "content": "trend window variant 2 remains local mock"
+      }
+    ],
+    "suggested_approval_actions": [
+      "vacuum_review"
+    ],
+    "blocked_actions": [
+      "kill_transaction",
+      "database_mutation"
+    ],
+    "local_mock_only": true,
+    "expected": {
+      "route": "preventive_review",
+      "eta_min_minutes": 0,
+      "eta_max_minutes": 8,
+      "confidence_min": 0.93,
+      "auto_capabilities": [
+        "notification_draft",
+        "read_only_diagnostic",
+        "report"
+      ],
+      "approval_required_capabilities": [
+        "config_change"
+      ],
+      "blocked_capabilities": [
+        "config_change",
+        "database_change"
+      ]
+    }
   }
 ]

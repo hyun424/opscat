@@ -580,3 +580,25 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
 Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.
+
+## P25 Proactive Signal Corpus Expansion and Calibration Evidence
+
+P25 expands proactive pre-incident fixtures to 120 local/mock windows across 42 risk types, adds expected outcome metadata, calibration evaluation, CLI reports, verification smoke, and release evidence.
+
+Artifacts:
+
+- `docs/operations/p25-ticket-roadmap.md`
+- `docs/operations/p25-final-summary.md`
+- `app/services/proactive_risk_sentinel.py`
+- `scripts/run_proactive_calibration.py`
+- `evals/proactive/seed/risk_windows.json`
+- `tests/test_p25_proactive_corpus_calibration.py`
+- `tests/test_p25_release_evidence.py`
+- `/tmp/opscat-proactive-calibration-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_p25_proactive_corpus_calibration.py tests/test_p25_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Boundary: no-auth/local-mock by default; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution; no unattended production-operation claim.

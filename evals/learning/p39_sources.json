@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {"id": "P33", "kind": "live_connector_dry_run"},
+    {"id": "P35", "kind": "incident_shadow_mode"},
+    {"id": "P36", "kind": "approval_control_plane"},
+    {"id": "P37", "kind": "open_source_config_hardening"},
+    {"id": "P38", "kind": "agent_evaluation_dashboard"}
+  ]
+}

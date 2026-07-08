@@ -663,7 +663,8 @@ docs_contract_tests() {
     tests/test_p44_release_evidence.py \
     tests/test_p45_release_evidence.py \
     tests/test_p46_release_evidence.py \
-    tests/test_p47_release_evidence.py
+    tests/test_p47_release_evidence.py \
+    tests/test_p48_release_evidence.py
 }
 
 run_fast() {
@@ -716,6 +717,7 @@ run_eval() {
   evidence_grounded_judgment_smoke
   investigator_loop_smoke
   tool_selection_planner_smoke
+  hypothesis_reranker_smoke
 }
 
 run_docs() {

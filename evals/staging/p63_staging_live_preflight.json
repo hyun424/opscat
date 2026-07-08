@@ -1,0 +1,50 @@
+{
+  "contract_manifest": "evals/staging/p62_staging_connector_contract.json",
+  "allowed_hosts": [
+    "grafana.staging.internal",
+    "sentry.staging.internal",
+    "datadog.staging.internal"
+  ],
+  "checks": [
+    {
+      "id": "p63-grafana-health-get",
+      "connector_id": "p62-grafana-staging",
+      "method": "GET",
+      "url": "https://grafana.staging.internal/api/health",
+      "timeout_ms": 2000,
+      "expected_status": 200,
+      "mock_status": 200,
+      "response_shape": {"database": "ok"}
+    },
+    {
+      "id": "p63-sentry-projects-get",
+      "connector_id": "p62-sentry-staging",
+      "method": "GET",
+      "url": "https://sentry.staging.internal/api/0/projects/",
+      "timeout_ms": 2000,
+      "expected_status": 200,
+      "mock_status": 200,
+      "response_shape": {"projects": []}
+    },
+    {
+      "id": "p63-datadog-monitors-get",
+      "connector_id": "p62-datadog-staging",
+      "method": "GET",
+      "url": "https://datadog.staging.internal/api/v1/monitor",
+      "timeout_ms": 2500,
+      "expected_status": 200,
+      "mock_status": 200,
+      "response_shape": {"monitors": []}
+    },
+    {
+      "id": "p63-prod-admin-post-blocked",
+      "connector_id": "p62-prod-admin-blocked",
+      "method": "POST",
+      "url": "https://api.datadoghq.com/api/v1/monitor/123/mute",
+      "timeout_ms": 8000,
+      "expected_status": 200,
+      "mock_status": 200,
+      "response_shape": {"muted": true}
+    }
+  ]
+}

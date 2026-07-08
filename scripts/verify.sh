@@ -634,6 +634,16 @@ failure_driven_benchmark_improvement_smoke() {
   printf 'Wrote /tmp/opscat-failure-driven-benchmark-improvement-latest.md and %s/opscat-failure-driven-benchmark-improvement.json\n' "$VERIFY_TMPDIR"
 }
 
+candidate_benchmark_promotion_gate_smoke() {
+  section "P55 candidate benchmark promotion gate smoke"
+  "${UV_DEV[@]}" python scripts/run_candidate_benchmark_promotion_gate.py \
+    --cases evals/investigator/p51_operator_judgment_benchmark_v2_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-candidate-benchmark-promotion-gate.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-candidate-benchmark-promotion-gate.md" >/tmp/opscat-candidate-benchmark-promotion-gate-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-candidate-benchmark-promotion-gate.md" /tmp/opscat-candidate-benchmark-promotion-gate-latest.md
+  printf 'Wrote /tmp/opscat-candidate-benchmark-promotion-gate-latest.md and %s/opscat-candidate-benchmark-promotion-gate.json\n' "$VERIFY_TMPDIR"
+}
+
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -807,6 +817,7 @@ run_eval() {
   failure_mining_loop_smoke
   failure_driven_improvement_pack_smoke
   failure_driven_benchmark_improvement_smoke
+  candidate_benchmark_promotion_gate_smoke
 }
 
 run_docs() {

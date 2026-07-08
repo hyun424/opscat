@@ -1298,3 +1298,26 @@ Verification:
 Verified result: full profile passed; coverage gate 79.49%; P54 smoke wrote `/tmp/opscat-failure-driven-benchmark-improvement-latest.md` with case_count=4, applied_improvement_count=3, improved_case_count=2, baseline_preserved=true, baseline evidence_gap=1, improved evidence_gap=0, baseline recovery_verification_gap=2, improved recovery_verification_gap=0, evidence_quality_score_delta=0.062, recovery_verification_coverage_delta=0.5, unsafe_action_count=0, and passed=true.
 
 Boundary: offline derived benchmark view only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
+
+## P55 Candidate Benchmark Promotion Gate Evidence
+
+P55 promotes the P54 improved derived benchmark view into a versioned candidate benchmark pack while preserving the P51 fixture as the immutable regression baseline.
+
+Artifacts:
+
+- `docs/operations/p55-ticket-roadmap.md`
+- `docs/operations/p55-final-summary.md`
+- `app/services/candidate_benchmark_promotion_gate.py`
+- `scripts/run_candidate_benchmark_promotion_gate.py`
+- `tests/test_candidate_benchmark_promotion_gate.py`
+- `tests/test_p55_release_evidence.py`
+- `/tmp/opscat-candidate-benchmark-promotion-gate-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_candidate_benchmark_promotion_gate.py tests/test_p55_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline candidate benchmark only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

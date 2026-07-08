@@ -1390,3 +1390,26 @@ Verification:
 Verified result: pending final full profile.
 
 Boundary: offline mock LLM harness only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.
+
+## P59 Hybrid Commander Comparator Evidence
+
+P59 compares deterministic candidate gates, local/mock LLM judgment, and a guarded hybrid commander lane under one safety-preserving scorecard.
+
+Artifacts:
+
+- `docs/operations/p59-ticket-roadmap.md`
+- `docs/operations/p59-final-summary.md`
+- `app/services/hybrid_commander_comparator.py`
+- `scripts/run_hybrid_commander_comparator.py`
+- `tests/test_hybrid_commander_comparator.py`
+- `tests/test_p59_release_evidence.py`
+- `/tmp/opscat-hybrid-commander-comparator-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_hybrid_commander_comparator.py tests/test_p59_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline hybrid comparator only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

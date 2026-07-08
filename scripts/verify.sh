@@ -681,6 +681,19 @@ llm_judgment_candidate_harness_smoke() {
   cp "$VERIFY_TMPDIR/opscat-llm-judgment-candidate-harness.md" /tmp/opscat-llm-judgment-candidate-harness-latest.md
   printf 'Wrote /tmp/opscat-llm-judgment-candidate-harness-latest.md and %s/opscat-llm-judgment-candidate-harness.json\n' "$VERIFY_TMPDIR"
 }
+
+hybrid_commander_comparator_smoke() {
+  section "P59 hybrid commander comparator smoke"
+  "${UV_DEV[@]}" python scripts/run_hybrid_commander_comparator.py \
+    --cases evals/investigator/p51_operator_judgment_benchmark_v2_cases.json \
+    --manifest evals/real_datasets/external/p44_benchmark_matrix_manifest.json \
+    --judgment-cases evals/judgment/seed/cases.json \
+    --max-cases 4 \
+    --output-json "$VERIFY_TMPDIR/opscat-hybrid-commander-comparator.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-hybrid-commander-comparator.md" >/tmp/opscat-hybrid-commander-comparator-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-hybrid-commander-comparator.md" /tmp/opscat-hybrid-commander-comparator-latest.md
+  printf 'Wrote /tmp/opscat-hybrid-commander-comparator-latest.md and %s/opscat-hybrid-commander-comparator.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -858,6 +871,7 @@ run_eval() {
   candidate_benchmark_regression_runner_smoke
   real_dataset_candidate_regression_bridge_smoke
   llm_judgment_candidate_harness_smoke
+  hybrid_commander_comparator_smoke
 }
 
 run_docs() {

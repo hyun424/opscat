@@ -512,3 +512,11 @@ P58 active scope: LLM Judgment Candidate Harness. P58 evaluates the local/mock L
 ## P58 implemented
 
 P58 implemented as LLM Judgment Candidate Harness evidence. P58 evaluates the local/mock LLM lane behind P57 candidate and real-dataset gates, requires schema/citation validity, pass-rate, score, and safety gates, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P59 active
+
+P59 active scope: Hybrid Commander Comparator. P59 compares deterministic candidate gates, local/mock LLM judgment, and a guarded hybrid commander lane.
+
+## P59 implemented
+
+P59 implemented as Hybrid Commander Comparator evidence. P59 compares deterministic candidate gates, mock LLM judgment, and a guarded hybrid commander lane, recommends hybrid_guarded only under deterministic safety boundaries, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.

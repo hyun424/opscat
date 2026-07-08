@@ -395,3 +395,7 @@ P43 implemented as Opt-in Public Dataset Download & Benchmark Scorecard evidence
 ## P44 active
 
 P44 active scope: Larger Public Dataset Benchmark Matrix. P44 expands P43 into a multi-source public benchmark matrix across LogHub and NAB families, reports source-level/family-level scores, tracks weak spots, and keeps normal verification offline/fixture-backed while public downloads remain explicit opt-in.
+
+## P44 implemented
+
+P44 implemented as Larger Public Dataset Benchmark Matrix evidence. P44 keeps full verification offline/fixture-backed, adds a five-source LogHub/NAB public matrix manifest, produces source-level and family-level score rows, records weak-spot proxy counts, executes an explicit network-gated public matrix with 10,000 parsed records across two families, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no committed generated artifacts, no default external model calls, and no unattended production-operation claim.

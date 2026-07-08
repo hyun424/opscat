@@ -27,17 +27,43 @@ No external downloads during normal verification, no live API calls, no auth/ses
 - `docs/operations/p44-ticket-roadmap.md`
 - `docs/operations/p44-final-summary.md`
 
-## Verification target
+## Verification result
 
-Expected metrics before final evidence commit:
+Full verification passed with P44 offline matrix smoke enabled, then explicit opt-in public download matrix passed with network access.
 
-- offline source count: at least 5
-- offline download count: 0
-- family count: at least 2
-- source-level matrix rows: at least 5
-- family-level matrix rows: at least 2
-- offline root-cause accuracy: at least 0.9
-- opt-in public parsed record count: greater than offline fixture count if network is available
+Offline full-verification matrix:
+
+- dataset mode: fixture_fallback
+- source count: 5
+- download count: 0
+- matrix row count: 5
+- family count: 2
+- parsed record count: 18
+- root-cause accuracy: 1.0
+- route accuracy: 1.0
+- false-positive proxy count: 0
+- false-negative proxy count: 0
+- network allowed: false
+- external downloads performed: false
+
+Opt-in public download matrix:
+
+- dataset mode: downloaded_public_sample
+- source count: 5
+- download count: 8
+- matrix row count: 5
+- family count: 2
+- parsed record count: 10000
+- label coverage: 1.0
+- root-cause accuracy: 1.0
+- route accuracy: 1.0
+- unsafe action count: 0
+- false-positive proxy count: 0
+- false-negative proxy count: 0
+- worst sources: none
+- network allowed: true
+- external downloads performed: true
 - generated artifacts committed: false
+- P44 passed: true
 
-Final verified metrics are recorded in `docs/release-evidence.md` after full verification and opt-in public matrix execution.
+Full profile evidence: `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full` passed; coverage gate 78.99%; `app/services/public_dataset_matrix.py` coverage 87.62%; offline report written to `/tmp/opscat-public-dataset-matrix-latest.md`; live opt-in report written to `/tmp/opscat-public-dataset-matrix-live.md`.

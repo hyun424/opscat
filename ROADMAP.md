@@ -696,3 +696,11 @@ P81 active scope: Rollback PR Draft Automation. P81 drafts safe rollback PR arti
 ## P81 implemented
 
 P81 implemented as Rollback PR Draft Automation evidence. P81 parses local fixture scenarios for safe config rollback, deploy revert draft, migration rollback review, credential/auth rollback block, and insufficient evidence rejection; emits structured draft artifacts with proposed file-change or command-plan text, risk, evidence references, human approval, verification checklist, rollback/abort plan, and audit metadata; downgrades P80 auto-approval to draft-only; and preserves no live GitHub API calls, no credential reads, no network calls, no branch creation, no git push, no production mutation, no remediation execution, no shell command execution, no rollback command execution, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P82 active
+
+P82 active scope: Slack and Ticket Draft Automation. P82 generates safe, evidence-grounded Slack/status-update drafts and ticket drafts after incident triage or rollback planning while keeping all outputs local/mock, draft-only, and approval-gated.
+
+## P82 implemented
+
+P82 implemented as Slack and Ticket Draft Automation evidence. P82 parses local fixture scenarios for confirmed deploy regression, suspected DB saturation requiring human confirmation, rollback draft ready, blocked credential/auth issue, and insufficient-evidence noisy alert; emits structured Slack incident update, escalation DM, status update, ticket title/body/labels/priority, evidence links, uncertainty, next actions, approval requirement, and audit metadata; preserves P76 evidence sufficiency, P80 approval, and P81 rollback draft status; and preserves no live Slack/Jira/GitHub/Linear API calls, no credential reads, no network calls, no message sending, no ticket creation, no production mutation, no remediation execution, no action execution, no default external model/API calls, and no unattended production-operation claim.

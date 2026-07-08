@@ -1951,3 +1951,30 @@ Verification:
 Verified result: targeted tests passed; P81 smoke wrote `/tmp/opscat-rollback-pr-draft-automation-latest.md` with scenario_count=5, draft_ready_count=2, human_review_required_count=1, blocked_count=1, rejected_count=1, required_human_approval_count=5, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, branch_creation_count=0, git_push_count=0, and passed=true.
 
 Boundary: offline local/mock draft artifact generation only; no live GitHub API calls, no credential reads, no network calls, no branch creation, no git push, no production mutation, no remediation execution, no shell command execution, no rollback command execution, no action execution, no default external model/API calls, and no unattended production-operation claim. P80 auto-approval is downgraded to draft-only unless external execution is explicitly configured; normal verification keeps it disabled.
+
+## P82 Slack and Ticket Draft Automation Evidence
+
+P82 drafts evidence-grounded Slack/status updates and ticket artifacts after incident triage or rollback planning. It emits structured Slack incident update draft, escalation DM draft, customer/internal status draft, ticket title/body/labels/priority, evidence links, uncertainty, next actions, approval requirement, and audit metadata while remaining local/mock and draft-only.
+
+Artifacts:
+
+- `docs/operations/p82-ticket-roadmap.md`
+- `docs/operations/p82-final-summary.md`
+- `app/services/slack_ticket_draft_automation.py`
+- `scripts/run_slack_ticket_draft_automation.py`
+- `evals/policy/p82_slack_ticket_draft_automation.json`
+- `tests/test_slack_ticket_draft_automation.py`
+- `tests/test_p82_release_evidence.py`
+- `/tmp/opscat-slack-ticket-draft-automation-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_slack_ticket_draft_automation.py tests/test_p82_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/slack_ticket_draft_automation.py scripts/run_slack_ticket_draft_automation.py tests/test_slack_ticket_draft_automation.py tests/test_p82_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/slack_ticket_draft_automation.py scripts/run_slack_ticket_draft_automation.py tests/test_slack_ticket_draft_automation.py tests/test_p82_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_slack_ticket_draft_automation.py --cases evals/policy/p82_slack_ticket_draft_automation.json --output-json /tmp/opscat-slack-ticket-draft-automation-latest.json --output-md /tmp/opscat-slack-ticket-draft-automation-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P82 smoke wrote `/tmp/opscat-slack-ticket-draft-automation-latest.md` with scenario_count=5, draft_ready_count=2, investigation_only_count=1, blocked_count=1, rejected_count=1, required_human_approval_count=5, message_send_count=0, ticket_creation_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, and passed=true.
+
+Boundary: offline local/mock draft artifact generation only; no live Slack, Jira, GitHub, Linear, or ticketing API calls; no credential reads; no network calls; no message sending; no ticket creation; no production mutation; no remediation execution; no action execution; no default external model/API calls; and no unattended production-operation claim. Every draft requires human approval before external communication or ticket action.

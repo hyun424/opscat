@@ -639,6 +639,16 @@ rollback_pr_draft_automation_smoke() {
   printf 'Wrote /tmp/opscat-rollback-pr-draft-automation-latest.md and %s/opscat-rollback-pr-draft-automation.json\n' "$VERIFY_TMPDIR"
 }
 
+slack_ticket_draft_automation_smoke() {
+  section "P82 slack and ticket draft automation smoke"
+  "${UV_DEV[@]}" python scripts/run_slack_ticket_draft_automation.py \
+    --cases evals/policy/p82_slack_ticket_draft_automation.json \
+    --output-json "$VERIFY_TMPDIR/opscat-slack-ticket-draft-automation.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-slack-ticket-draft-automation.md" >/tmp/opscat-slack-ticket-draft-automation-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-slack-ticket-draft-automation.md" /tmp/opscat-slack-ticket-draft-automation-latest.md
+  printf 'Wrote /tmp/opscat-slack-ticket-draft-automation-latest.md and %s/opscat-slack-ticket-draft-automation.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1124,7 +1134,8 @@ docs_contract_tests() {
     tests/test_p77_release_evidence.py \
     tests/test_p78_release_evidence.py \
     tests/test_p79_release_evidence.py \
-    tests/test_p81_release_evidence.py
+    tests/test_p81_release_evidence.py \
+    tests/test_p82_release_evidence.py
 }
 
 run_fast() {
@@ -1185,6 +1196,7 @@ run_eval() {
   action_sandbox_hardening_smoke
   approval_automation_policy_lab_smoke
   rollback_pr_draft_automation_smoke
+  slack_ticket_draft_automation_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

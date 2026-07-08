@@ -1,0 +1,80 @@
+{
+  "incident": {
+    "id": "p79-action-sandbox",
+    "service": "checkout-api",
+    "environment": "staging"
+  },
+  "proposals": [
+    {
+      "id": "safe-read-only-context",
+      "action_type": "mock.get_error_context",
+      "target": "checkout-api",
+      "environment": "production",
+      "blast_radius": "none",
+      "reversible": true,
+      "approval_state": "not_required",
+      "dry_run_capable": true,
+      "uses_credentials": false,
+      "uses_network": false,
+      "mutates_production": false,
+      "executes_shell": false
+    },
+    {
+      "id": "bounded-ticket-mutation",
+      "action_type": "mock.create_incident_ticket",
+      "target": "checkout-api",
+      "environment": "staging",
+      "blast_radius": "workspace",
+      "reversible": true,
+      "approval_state": "pending",
+      "dry_run_capable": true,
+      "uses_credentials": false,
+      "uses_network": false,
+      "mutates_production": false,
+      "executes_shell": false
+    },
+    {
+      "id": "rollback-dry-run-only",
+      "action_type": "mock.create_rollback_pr",
+      "target": "checkout-api",
+      "environment": "staging",
+      "blast_radius": "workspace",
+      "reversible": true,
+      "approval_state": "not_requested",
+      "dry_run_capable": true,
+      "dry_run_only": true,
+      "uses_credentials": false,
+      "uses_network": false,
+      "mutates_production": false,
+      "executes_shell": false
+    },
+    {
+      "id": "prod-shell-restart",
+      "action_type": "shell.execute",
+      "target": "checkout-api",
+      "environment": "production",
+      "blast_radius": "service",
+      "reversible": false,
+      "approval_state": "approved",
+      "dry_run_capable": false,
+      "uses_credentials": false,
+      "uses_network": false,
+      "mutates_production": true,
+      "executes_shell": true
+    },
+    {
+      "id": "credential-network-read",
+      "action_type": "secret.read",
+      "target": "payment-provider",
+      "environment": "production",
+      "blast_radius": "external-provider",
+      "reversible": false,
+      "approval_state": "approved",
+      "dry_run_capable": false,
+      "uses_credentials": true,
+      "uses_network": true,
+      "mutates_production": false,
+      "executes_shell": false
+    }
+  ]
+}

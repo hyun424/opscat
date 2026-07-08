@@ -825,6 +825,24 @@ gated_worker_process_runner_smoke() {
   cp "$VERIFY_TMPDIR/opscat-gated-worker-process-runner.md" /tmp/opscat-gated-worker-process-runner-latest.md
   printf 'Wrote /tmp/opscat-gated-worker-process-runner-latest.md and %s/opscat-gated-worker-process-runner.json\n' "$VERIFY_TMPDIR"
 }
+
+supervised_worker_execution_harness_smoke() {
+  section "P71 supervised worker execution harness smoke"
+  "${UV_DEV[@]}" python scripts/run_supervised_worker_execution_harness.py \
+    --manifest evals/planning/p66_autonomous_day_loop_backlog.json \
+    --completed P65 \
+    --max-tickets 3 \
+    --max-parallel 2 \
+    --enable-process-execution \
+    --transport simulated \
+    --dispatch-dir "$VERIFY_TMPDIR/opscat-supervised-worker-execution-dispatch" \
+    --state-path "$VERIFY_TMPDIR/opscat-supervised-worker-execution-state.json" \
+    --artifact-dir "$VERIFY_TMPDIR/opscat-supervised-worker-execution-artifacts" \
+    --output-json "$VERIFY_TMPDIR/opscat-supervised-worker-execution-harness.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-supervised-worker-execution-harness.md" >/tmp/opscat-supervised-worker-execution-harness-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-supervised-worker-execution-harness.md" /tmp/opscat-supervised-worker-execution-harness-latest.md
+  printf 'Wrote /tmp/opscat-supervised-worker-execution-harness-latest.md and %s/opscat-supervised-worker-execution-harness.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -954,7 +972,8 @@ docs_contract_tests() {
     tests/test_p67_release_evidence.py \
     tests/test_p68_release_evidence.py \
     tests/test_p69_release_evidence.py \
-    tests/test_p70_release_evidence.py
+    tests/test_p70_release_evidence.py \
+    tests/test_p71_release_evidence.py
 }
 
 run_fast() {
@@ -1030,6 +1049,7 @@ run_eval() {
   autonomous_agent_dispatcher_smoke
   autonomous_worker_runner_smoke
   gated_worker_process_runner_smoke
+  supervised_worker_execution_harness_smoke
 }
 
 run_docs() {

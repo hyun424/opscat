@@ -608,3 +608,11 @@ P70 active scope: Gated Worker Process Runner. P70 validates planned worker comm
 ## P70 implemented
 
 P70 implemented as Gated Worker Process Runner evidence. P70 validates `codex exec` command shape, required safety flags, prompt path confinement, blocked unsafe commands, and preserves no process spawning, no credential reads, no network calls, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, no action execution, and no unattended production-operation claim.
+
+## P71 active
+
+P71 active scope: Supervised Worker Execution Harness. P71 executes P70 process-capable commands through an explicitly enabled supervised transport, captures stdout/stderr artifacts, persists state, and records retry outcomes.
+
+## P71 implemented
+
+P71 implemented as Supervised Worker Execution Harness evidence. P71 runs process-capable commands through simulated supervised transport in repository verification, supports opt-in real subprocess transport behind explicit enablement, writes per-ticket artifacts and resumable state, records retry queue entries, and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no default external model/API calls, no action execution, and no unattended production-operation claim.

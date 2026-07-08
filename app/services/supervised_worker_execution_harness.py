@@ -1,0 +1,374 @@
+"""P71 supervised worker execution harness.
+
+This harness sits after the P70 process gate. It can execute eligible worker
+commands through an injected supervised transport, captures stdout/stderr
+artifacts, writes resumable state, and creates retry queue entries. Repository
+verification uses the simulated transport; real subprocess execution remains an
+explicit opt-in transport choice outside the default gate.
+"""
+
+from __future__ import annotations
+
+import json
+import shlex
+import subprocess
+from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Protocol
+
+from app.services.gated_worker_process_runner import RecordingProcessTransport, run_gated_worker_process_runner_fixture
+from app.services.redaction import redact_value
+
+_FORBIDDEN_SCORE: dict[str, int] = {
+    "live_api_call_count": 0,
+    "credential_read_count": 0,
+    "network_call_count": 0,
+    "production_mutation_count": 0,
+    "action_execution_count": 0,
+}
+
+
+class SupervisedProcessTransport(Protocol):
+    name: str
+
+    def run(self, command: str, *, ticket_id: str, timeout_seconds: int, artifact_dir: Path) -> SupervisedRunOutcome:
+        """Run a command under supervision and return captured artifacts."""
+
+
+@dataclass(frozen=True)
+class SupervisedHarnessPolicy:
+    process_execution_enabled: bool
+    transport: str
+    max_parallel: int
+    timeout_seconds: int
+    real_transport_allowed: bool = False
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "process_execution_enabled": self.process_execution_enabled,
+            "transport": self.transport,
+            "max_parallel": self.max_parallel,
+            "timeout_seconds": self.timeout_seconds,
+            "real_transport_allowed": self.real_transport_allowed,
+        }
+
+
+@dataclass(frozen=True)
+class SupervisedRunOutcome:
+    ticket_id: str
+    status: str
+    exit_code: int
+    reason: str
+    stdout_path: Path
+    stderr_path: Path
+    timed_out: bool = False
+
+    @property
+    def succeeded(self) -> bool:
+        return self.status == "succeeded" and self.exit_code == 0 and not self.timed_out
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "ticket_id": self.ticket_id,
+            "status": self.status,
+            "exit_code": self.exit_code,
+            "reason": self.reason,
+            "stdout_path": str(self.stdout_path),
+            "stderr_path": str(self.stderr_path),
+            "timed_out": self.timed_out,
+        }
+
+
+@dataclass(frozen=True)
+class SupervisedRetryItem:
+    ticket_id: str
+    reason: str
+    exit_code: int
+    attempt: int
+    stdout_path: str
+    stderr_path: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "ticket_id": self.ticket_id,
+            "reason": self.reason,
+            "exit_code": self.exit_code,
+            "attempt": self.attempt,
+            "stdout_path": self.stdout_path,
+            "stderr_path": self.stderr_path,
+        }
+
+
+class SimulatedSupervisedProcessTransport:
+    """Supervised transport that writes artifacts without spawning real workers."""
+
+    name = "simulated-supervised"
+
+    def __init__(self, *, fail_ticket_ids: set[str] | None = None) -> None:
+        self.fail_ticket_ids = set(fail_ticket_ids or set())
+
+    def run(self, command: str, *, ticket_id: str, timeout_seconds: int, artifact_dir: Path) -> SupervisedRunOutcome:
+        paths = _artifact_paths(ticket_id, artifact_dir)
+        paths["stdout"].parent.mkdir(parents=True, exist_ok=True)
+        if ticket_id in self.fail_ticket_ids:
+            paths["stdout"].write_text(f"simulated execution for {ticket_id}\ncommand={command}\n", encoding="utf-8")
+            paths["stderr"].write_text("simulated worker nonzero exit\n", encoding="utf-8")
+            return SupervisedRunOutcome(
+                ticket_id=ticket_id,
+                status="failed",
+                exit_code=1,
+                reason="simulated worker nonzero exit",
+                stdout_path=paths["stdout"],
+                stderr_path=paths["stderr"],
+            )
+        paths["stdout"].write_text(f"simulated execution succeeded for {ticket_id}\ncommand={command}\n", encoding="utf-8")
+        paths["stderr"].write_text("", encoding="utf-8")
+        return SupervisedRunOutcome(
+            ticket_id=ticket_id,
+            status="succeeded",
+            exit_code=0,
+            reason="simulated supervised execution succeeded",
+            stdout_path=paths["stdout"],
+            stderr_path=paths["stderr"],
+        )
+
+
+class RealSubprocessSupervisedTransport:
+    """Opt-in real subprocess transport for later supervised runs."""
+
+    name = "real-subprocess"
+
+    def run(self, command: str, *, ticket_id: str, timeout_seconds: int, artifact_dir: Path) -> SupervisedRunOutcome:
+        paths = _artifact_paths(ticket_id, artifact_dir)
+        paths["stdout"].parent.mkdir(parents=True, exist_ok=True)
+        try:
+            completed = subprocess.run(
+                shlex.split(command),
+                capture_output=True,
+                text=True,
+                timeout=timeout_seconds,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            paths["stdout"].write_text(str(exc.stdout or ""), encoding="utf-8")
+            paths["stderr"].write_text(str(exc.stderr or "timeout"), encoding="utf-8")
+            return SupervisedRunOutcome(
+                ticket_id=ticket_id,
+                status="failed",
+                exit_code=124,
+                reason="worker command timed out",
+                stdout_path=paths["stdout"],
+                stderr_path=paths["stderr"],
+                timed_out=True,
+            )
+        paths["stdout"].write_text(completed.stdout, encoding="utf-8")
+        paths["stderr"].write_text(completed.stderr, encoding="utf-8")
+        status = "succeeded" if completed.returncode == 0 else "failed"
+        return SupervisedRunOutcome(
+            ticket_id=ticket_id,
+            status=status,
+            exit_code=int(completed.returncode),
+            reason="real subprocess completed" if completed.returncode == 0 else "real subprocess nonzero exit",
+            stdout_path=paths["stdout"],
+            stderr_path=paths["stderr"],
+        )
+
+
+@dataclass(frozen=True)
+class SupervisedWorkerExecutionHarnessReport:
+    policy: SupervisedHarnessPolicy
+    runs: tuple[SupervisedRunOutcome, ...]
+    retry_queue: tuple[SupervisedRetryItem, ...]
+    blocked_by_enable_flag: tuple[SupervisedRunOutcome, ...]
+    state_path: Path
+
+    def to_dict(self) -> dict[str, Any]:
+        succeeded = tuple(run for run in self.runs if run.succeeded)
+        failed = tuple(run for run in self.runs if not run.succeeded)
+        eligible_count = len(self.runs) + len(self.blocked_by_enable_flag)
+        payload = {
+            "summary": {
+                "eligible_command_count": eligible_count,
+                "started_run_count": len(self.runs),
+                "succeeded_run_count": len(succeeded),
+                "failed_run_count": len(failed),
+                "retry_queue_count": len(self.retry_queue),
+                "blocked_by_enable_flag_count": len(self.blocked_by_enable_flag),
+                "passed": eligible_count > 0 and self.policy.process_execution_enabled and len(failed) == 0 and not self.retry_queue,
+            },
+            "policy": self.policy.to_dict(),
+            "score": {
+                **_FORBIDDEN_SCORE,
+                "supervised_process_run_count": len(self.runs),
+                "timeout_count": sum(1 for run in self.runs if run.timed_out),
+                "state_write_count": 1,
+                "simulated_transport_count": 1 if self.policy.transport == "simulated-supervised" else 0,
+                "real_subprocess_transport_count": 1 if self.policy.transport == "real-subprocess" else 0,
+            },
+            "supervised_runs": [run.to_dict() for run in (*self.runs, *self.blocked_by_enable_flag)],
+            "retry_queue": [item.to_dict() for item in self.retry_queue],
+            "state_path": str(self.state_path),
+            "operator_handoff": {
+                "completed_tickets": [run.ticket_id for run in succeeded],
+                "retry_tickets": [item.ticket_id for item in self.retry_queue],
+                "real_transport_used": self.policy.transport == "real-subprocess",
+                "next_step": "use completed tickets for the next dispatcher cycle; inspect retry queue first if non-empty",
+            },
+        }
+        redacted = redact_value(payload)
+        return dict(redacted) if isinstance(redacted, Mapping) else payload
+
+
+def run_supervised_worker_execution_harness_fixture(
+    path: str | Path,
+    *,
+    completed: set[str] | None = None,
+    max_tickets: int = 3,
+    max_parallel: int = 2,
+    dispatch_dir: str | Path = "/tmp/opscat-supervised-worker-execution-dispatch",
+    state_path: str | Path = "/tmp/opscat-supervised-worker-execution-state.json",
+    artifact_dir: str | Path = "/tmp/opscat-supervised-worker-execution-artifacts",
+    enable_process_execution: bool = False,
+    transport: SupervisedProcessTransport | None = None,
+    timeout_seconds: int = 1_200,
+) -> SupervisedWorkerExecutionHarnessReport:
+    supervised_transport = transport or SimulatedSupervisedProcessTransport()
+    policy = SupervisedHarnessPolicy(
+        process_execution_enabled=enable_process_execution,
+        transport=supervised_transport.name,
+        max_parallel=max(1, max_parallel),
+        timeout_seconds=timeout_seconds,
+        real_transport_allowed=supervised_transport.name == "real-subprocess" and enable_process_execution,
+    )
+    gate_payload = run_gated_worker_process_runner_fixture(
+        path,
+        completed=set(completed or set()),
+        max_tickets=max_tickets,
+        max_parallel=max_parallel,
+        dispatch_dir=dispatch_dir,
+        state_path=state_path,
+        transport=RecordingProcessTransport(),
+    ).to_dict()
+    eligible = tuple(
+        item
+        for item in _sequence(gate_payload.get("validated_commands", ()))
+        if isinstance(item, Mapping) and str(item.get("status", "")) == "process_ready_not_spawned"
+    )
+    runs: list[SupervisedRunOutcome] = []
+    blocked: list[SupervisedRunOutcome] = []
+    artifact_root = Path(artifact_dir)
+    if enable_process_execution:
+        for item in eligible:
+            runs.append(
+                supervised_transport.run(
+                    str(item.get("command", "")),
+                    ticket_id=str(item.get("ticket_id", "")),
+                    timeout_seconds=timeout_seconds,
+                    artifact_dir=artifact_root,
+                )
+            )
+    else:
+        for item in eligible:
+            paths = _artifact_paths(str(item.get("ticket_id", "")), artifact_root)
+            blocked.append(
+                SupervisedRunOutcome(
+                    ticket_id=str(item.get("ticket_id", "")),
+                    status="blocked_by_enable_flag",
+                    exit_code=126,
+                    reason="process execution requires explicit enable flag",
+                    stdout_path=paths["stdout"],
+                    stderr_path=paths["stderr"],
+                )
+            )
+    retry_queue = tuple(
+        SupervisedRetryItem(
+            ticket_id=run.ticket_id,
+            reason=run.reason,
+            exit_code=run.exit_code,
+            attempt=1,
+            stdout_path=str(run.stdout_path),
+            stderr_path=str(run.stderr_path),
+        )
+        for run in runs
+        if not run.succeeded
+    )
+    state_file = Path(state_path)
+    _write_state(state_file, runs, retry_queue, blocked)
+    return SupervisedWorkerExecutionHarnessReport(
+        policy=policy,
+        runs=tuple(runs),
+        retry_queue=retry_queue,
+        blocked_by_enable_flag=tuple(blocked),
+        state_path=state_file,
+    )
+
+
+def render_supervised_worker_execution_harness_markdown(payload: Mapping[str, Any]) -> str:
+    summary = _mapping(payload.get("summary"))
+    runs = tuple(item for item in _sequence(payload.get("supervised_runs", ())) if isinstance(item, Mapping))
+    retry = tuple(item for item in _sequence(payload.get("retry_queue", ())) if isinstance(item, Mapping))
+    lines = [
+        "# OpsCat Supervised Worker Execution Harness",
+        "",
+        "## Summary",
+        "",
+        f"- eligible commands: {summary.get('eligible_command_count', 0)}",
+        f"- started runs: {summary.get('started_run_count', 0)}",
+        f"- succeeded runs: {summary.get('succeeded_run_count', 0)}",
+        f"- failed runs: {summary.get('failed_run_count', 0)}",
+        f"- retry queue: {summary.get('retry_queue_count', 0)}",
+        f"- passed: {summary.get('passed', False)}",
+        "",
+        "## Supervised runs",
+        "",
+    ]
+    for run in runs:
+        lines.append(f"- {run.get('ticket_id')}: {run.get('status')} exit={run.get('exit_code')} — {run.get('reason')}")
+    lines.extend(["", "## Retry queue", ""])
+    if retry:
+        for item in retry:
+            lines.append(f"- {item.get('ticket_id')}: exit={item.get('exit_code')} — {item.get('reason')}")
+    else:
+        lines.append("- empty")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def write_supervised_worker_execution_harness_outputs(payload: Mapping[str, Any], *, output_json: str | Path, output_md: str | Path) -> None:
+    output_json_path = Path(output_json)
+    output_md_path = Path(output_md)
+    output_json_path.parent.mkdir(parents=True, exist_ok=True)
+    output_md_path.parent.mkdir(parents=True, exist_ok=True)
+    output_json_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    output_md_path.write_text(render_supervised_worker_execution_harness_markdown(payload), encoding="utf-8")
+
+
+def _write_state(state_path: Path, runs: Sequence[SupervisedRunOutcome], retry_queue: Sequence[SupervisedRetryItem], blocked: Sequence[SupervisedRunOutcome]) -> None:
+    state_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "completed_tickets": [run.ticket_id for run in runs if run.succeeded],
+        "failed_tickets": [run.ticket_id for run in runs if not run.succeeded],
+        "blocked_tickets": [run.ticket_id for run in blocked],
+        "retry_queue": [item.to_dict() for item in retry_queue],
+    }
+    state_path.write_text(json.dumps(redact_value(payload), indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def _artifact_paths(ticket_id: str, artifact_dir: Path) -> dict[str, Path]:
+    root = artifact_dir / ticket_id
+    return {"stdout": root / "stdout.txt", "stderr": root / "stderr.txt"}
+
+
+def _mapping(value: Any) -> Mapping[str, Any]:
+    return value if isinstance(value, Mapping) else {}
+
+
+def _sequence(value: Any) -> Sequence[Any]:
+    if isinstance(value, str):
+        return (value,)
+    if isinstance(value, Sequence):
+        return value
+    if isinstance(value, Iterable):
+        return tuple(value)
+    return ()

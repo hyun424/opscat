@@ -1,0 +1,178 @@
+{
+  "incident": {
+    "id": "p82-slack-ticket-draft-automation",
+    "service": "checkout-api",
+    "environment": "local-mock"
+  },
+  "scenarios": [
+    {
+      "id": "confirmed-deploy-regression-update",
+      "title": "Confirmed deploy regression update draft",
+      "service": "checkout-api",
+      "incident_type": "deploy_regression",
+      "severity": "sev1",
+      "audience": "internal",
+      "p76_gate": {
+        "decision": "approval_ready",
+        "score": 0.94,
+        "evidence_ids": ["p76:approval_ready:deploy-regression", "p80:require_human:restart-worker"],
+        "sources": ["sentry", "deploy-marker", "synthetic-check"]
+      },
+      "p80_approval": {
+        "decision": "require_human",
+        "approval_type": "incident_commander_review"
+      },
+      "p81_rollback_draft": {
+        "decision": "not_applicable",
+        "audit_id": ""
+      },
+      "evidence_links": [
+        {"id": "p76:approval_ready:deploy-regression", "source": "P76", "summary": "Error spike aligns with deploy marker."},
+        {"id": "p80:require_human:restart-worker", "source": "P80", "summary": "Real restart remains human-approved."}
+      ],
+      "claim": "confirmed deploy regression affecting checkout-api error rate",
+      "uncertainty": [],
+      "next_actions": ["keep mitigation approval-gated", "attach recovery proof before resolved update"],
+      "ticket": {
+        "title": "[SEV1] checkout-api confirmed deploy regression",
+        "priority": "P1",
+        "labels": ["incident", "deploy-regression", "approval-required"]
+      }
+    },
+    {
+      "id": "suspected-db-saturation-human-confirmation",
+      "title": "Suspected DB saturation human confirmation draft",
+      "service": "orders-db",
+      "incident_type": "db_saturation",
+      "severity": "sev2",
+      "audience": "internal",
+      "p76_gate": {
+        "decision": "approval_ready",
+        "score": 0.82,
+        "evidence_ids": ["p76:approval_ready:db-saturation", "metric:pool-wait"],
+        "sources": ["database-metrics", "application-logs"]
+      },
+      "p80_approval": {
+        "decision": "require_human",
+        "approval_type": "database_owner_review"
+      },
+      "p81_rollback_draft": {
+        "decision": "not_applicable",
+        "audit_id": ""
+      },
+      "evidence_links": [
+        {"id": "p76:approval_ready:db-saturation", "source": "P76", "summary": "Connection wait and queue depth are elevated."},
+        {"id": "metric:pool-wait", "source": "local-mock metric", "summary": "Pool wait p95 breached local threshold."}
+      ],
+      "claim": "suspected database saturation on orders-db",
+      "uncertainty": ["human_confirmation_required"],
+      "next_actions": ["confirm DB saturation with owner", "collect lock-wait and slow-query evidence"],
+      "ticket": {
+        "title": "[SEV2] orders-db suspected saturation needs confirmation",
+        "priority": "P2",
+        "labels": ["incident", "database", "human-confirmation"]
+      }
+    },
+    {
+      "id": "rollback-draft-ready-update",
+      "title": "Rollback draft ready update",
+      "service": "checkout-api",
+      "incident_type": "rollback_ready",
+      "severity": "sev1",
+      "audience": "internal",
+      "p76_gate": {
+        "decision": "approval_ready",
+        "score": 0.91,
+        "evidence_ids": ["p76:approval_ready:deploy-regression", "p81:rollback-draft:checkout-api"],
+        "sources": ["P76", "P81"]
+      },
+      "p80_approval": {
+        "decision": "mock_only",
+        "approval_type": "release_manager_review"
+      },
+      "p81_rollback_draft": {
+        "decision": "draft_ready",
+        "audit_id": "p81:deploy-revert-draft"
+      },
+      "evidence_links": [
+        {"id": "p76:approval_ready:deploy-regression", "source": "P76", "summary": "Deploy regression evidence is approval-ready."},
+        {"id": "p81:rollback-draft:checkout-api", "source": "P81", "summary": "Rollback PR draft artifact is ready for review."}
+      ],
+      "claim": "rollback PR draft is ready for human review",
+      "uncertainty": [],
+      "next_actions": ["release manager reviews rollback draft", "operator attaches post-rollback health checks"],
+      "ticket": {
+        "title": "[SEV1] review checkout-api rollback draft",
+        "priority": "P1",
+        "labels": ["incident", "rollback-draft", "approval-required"]
+      }
+    },
+    {
+      "id": "blocked-credential-auth-issue",
+      "title": "Blocked credential and auth issue draft",
+      "service": "auth-api",
+      "incident_type": "credential_auth",
+      "severity": "sev2",
+      "audience": "internal",
+      "p76_gate": {
+        "decision": "human_required",
+        "score": 0.86,
+        "evidence_ids": ["p76:human_required:auth-errors", "p80:block:disable-auth"],
+        "sources": ["auth-logs", "P80"]
+      },
+      "p80_approval": {
+        "decision": "block",
+        "approval_type": "security_owner_review"
+      },
+      "p81_rollback_draft": {
+        "decision": "blocked",
+        "audit_id": "p81:credential-auth-rollback-blocked"
+      },
+      "evidence_links": [
+        {"id": "p76:human_required:auth-errors", "source": "P76", "summary": "Auth errors require human review."},
+        {"id": "p80:block:disable-auth", "source": "P80", "summary": "Credential/auth actions are blocked."}
+      ],
+      "claim": "credential/auth remediation is blocked from draft automation",
+      "uncertainty": ["security_owner_required"],
+      "next_actions": ["escalate to security owner", "do not draft credential or auth changes"],
+      "ticket": {
+        "title": "[SEV2] auth-api credential/auth issue blocked for security review",
+        "priority": "P2",
+        "labels": ["incident", "security-review", "blocked"]
+      }
+    },
+    {
+      "id": "insufficient-evidence-noisy-alert",
+      "title": "Insufficient evidence noisy alert",
+      "service": "payments-api",
+      "incident_type": "noisy_alert",
+      "severity": "sev3",
+      "audience": "internal",
+      "p76_gate": {
+        "decision": "human_required",
+        "score": 0.31,
+        "evidence_ids": ["alert:single-noisy-signal"],
+        "sources": ["single-alert"]
+      },
+      "p80_approval": {
+        "decision": "require_human",
+        "approval_type": "evidence_owner_review"
+      },
+      "p81_rollback_draft": {
+        "decision": "rejected",
+        "audit_id": ""
+      },
+      "evidence_links": [
+        {"id": "alert:single-noisy-signal", "source": "local-mock alert", "summary": "Single noisy alert without corroborating evidence."}
+      ],
+      "claim": "single noisy alert only; no customer-impact claim is safe",
+      "uncertainty": ["insufficient_evidence", "no_customer_impact_claim"],
+      "next_actions": ["collect a second independent signal", "review recent deploy and dependency health"],
+      "ticket": {
+        "title": "[SEV3] payments-api noisy alert investigation",
+        "priority": "P3",
+        "labels": ["investigation-only", "insufficient-evidence"]
+      }
+    }
+  ]
+}

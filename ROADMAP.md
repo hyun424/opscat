@@ -314,3 +314,7 @@ P34 active scope: Live Read-only Polling Runtime v2. P34 uses P33 dry-run readin
 ## P34 implemented
 
 P34 implemented as Live Read-only Polling Runtime v2 evidence. P34 gates local read-only polling through P33 dry-run readiness, blocks write/mutation jobs, skips degraded/blocked connectors, adapts fixture telemetry, emits trend windows, and records CLI/release evidence. Normal verification remains no-auth/local-mock by default and performs no live API calls, production mutation, remediation execution, unrestricted shell execution, external model/API calls, or unattended production-operation claim.
+
+## P35 active
+
+P35 active scope: Incident Shadow Mode. P35 records diagnoses, routes, proposed actions, evidence links, and operator handoff output from read-only polling evidence without executing remediation. The boundary remains no-auth/local-mock by default: no live API calls, production mutation, remediation execution, unrestricted shell, default external model/API calls, or unattended production-operation claims.

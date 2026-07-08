@@ -1,0 +1,9 @@
+{
+  "phases": [
+    {"id": "P33", "name": "Live Connector Dry-run Harness", "kind": "live_connector_dry_run", "artifact": "/tmp/opscat-live-connector-dry-run-latest.md"},
+    {"id": "P34", "name": "Live Read-only Polling Runtime v2", "kind": "read_only_polling_v2", "artifact": "/tmp/opscat-read-only-polling-v2-latest.md"},
+    {"id": "P35", "name": "Incident Shadow Mode", "kind": "incident_shadow_mode", "artifact": "/tmp/opscat-incident-shadow-mode-latest.md"},
+    {"id": "P36", "name": "Approval Control Plane", "kind": "approval_control_plane", "artifact": "/tmp/opscat-approval-control-plane-latest.md"},
+    {"id": "P37", "name": "Open-source Config Hardening", "kind": "open_source_config_hardening", "artifact": "/tmp/opscat-open-source-config-hardening-latest.md"}
+  ]
+}

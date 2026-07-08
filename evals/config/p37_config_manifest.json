@@ -1,0 +1,34 @@
+{
+  "surfaces": [
+    {
+      "id": "local-example",
+      "path": "config/opscat.local.example.json",
+      "kind": "json_template",
+      "required_flags": {
+        "live_api_calls_enabled": false,
+        "production_mutation_enabled": false,
+        "remediation_execution_enabled": false,
+        "unrestricted_shell_enabled": false,
+        "default_external_model_calls": false,
+        "auth_session_work_enabled": false
+      },
+      "required_placeholders": ["${PROMETHEUS_API_KEY}", "${DATADOG_API_KEY}", "${DATADOG_APP_KEY}", "${SENTRY_DSN}"]
+    },
+    {
+      "id": "p33-dry-run-connectors",
+      "path": "evals/connectors/dry_run/p33_connectors.json",
+      "kind": "connector_manifest"
+    },
+    {
+      "id": "p36-approval-profiles",
+      "path": "evals/approval/p36_profiles.json",
+      "kind": "approval_profiles"
+    },
+    {
+      "id": "env-example",
+      "path": ".env.example",
+      "kind": "env_template",
+      "optional": true
+    }
+  ]
+}

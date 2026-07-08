@@ -655,6 +655,18 @@ candidate_benchmark_regression_runner_smoke() {
   cp "$VERIFY_TMPDIR/opscat-candidate-benchmark-regression-runner.md" /tmp/opscat-candidate-benchmark-regression-runner-latest.md
   printf 'Wrote /tmp/opscat-candidate-benchmark-regression-runner-latest.md and %s/opscat-candidate-benchmark-regression-runner.json\n' "$VERIFY_TMPDIR"
 }
+
+real_dataset_candidate_regression_bridge_smoke() {
+  section "P57 real dataset candidate regression bridge smoke"
+  "${UV_DEV[@]}" python scripts/run_real_dataset_candidate_regression_bridge.py \
+    --cases evals/investigator/p51_operator_judgment_benchmark_v2_cases.json \
+    --manifest evals/real_datasets/external/p44_benchmark_matrix_manifest.json \
+    --repeat-count 3 \
+    --output-json "$VERIFY_TMPDIR/opscat-real-dataset-candidate-regression-bridge.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-real-dataset-candidate-regression-bridge.md" >/tmp/opscat-real-dataset-candidate-regression-bridge-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-real-dataset-candidate-regression-bridge.md" /tmp/opscat-real-dataset-candidate-regression-bridge-latest.md
+  printf 'Wrote /tmp/opscat-real-dataset-candidate-regression-bridge-latest.md and %s/opscat-real-dataset-candidate-regression-bridge.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -830,6 +842,7 @@ run_eval() {
   failure_driven_benchmark_improvement_smoke
   candidate_benchmark_promotion_gate_smoke
   candidate_benchmark_regression_runner_smoke
+  real_dataset_candidate_regression_bridge_smoke
 }
 
 run_docs() {

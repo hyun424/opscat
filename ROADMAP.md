@@ -496,3 +496,11 @@ P56 active scope: Candidate Benchmark Regression Runner. P56 repeats the P55 pro
 ## P56 implemented
 
 P56 implemented as Candidate Benchmark Regression Runner evidence. P56 repeats the P55 promotion gate, verifies stable source and candidate fingerprints, proves mined gaps remain closed, keeps score deltas non-negative, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.
+
+## P57 active
+
+P57 active scope: Real Dataset Candidate Regression Bridge. P57 links P56 candidate benchmark regression stability with the P44 offline public real-dataset matrix.
+
+## P57 implemented
+
+P57 implemented as Real Dataset Candidate Regression Bridge evidence. P57 links P56 repeat-run candidate stability with P44 public dataset matrix fixture coverage, requires dataset coverage and accuracy gates, and preserves no auth/session work, no live API calls, no production mutation, no remediation execution, no unrestricted shell, no default external model/API calls, and no unattended production-operation claim.

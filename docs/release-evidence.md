@@ -1344,3 +1344,26 @@ Verification:
 Verified result: pending final full profile.
 
 Boundary: offline candidate regression gate only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.
+
+## P57 Real Dataset Candidate Regression Bridge Evidence
+
+P57 links P56 candidate benchmark regression with the P44 public real-dataset matrix in offline fixture fallback mode.
+
+Artifacts:
+
+- `docs/operations/p57-ticket-roadmap.md`
+- `docs/operations/p57-final-summary.md`
+- `app/services/real_dataset_candidate_regression_bridge.py`
+- `scripts/run_real_dataset_candidate_regression_bridge.py`
+- `tests/test_real_dataset_candidate_regression_bridge.py`
+- `tests/test_p57_release_evidence.py`
+- `/tmp/opscat-real-dataset-candidate-regression-bridge-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_real_dataset_candidate_regression_bridge.py tests/test_p57_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile.
+
+Boundary: offline real-dataset bridge only; no live API calls; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; does not claim unattended production operation.

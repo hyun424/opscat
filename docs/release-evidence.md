@@ -970,3 +970,27 @@ Verification:
 Verified result: full profile passed; coverage gate 78.61%; `app/services/production_readiness_milestone.py` coverage 88.37%; P40 production-readiness milestone smoke wrote `/tmp/opscat-production-readiness-milestone-latest.md` with 8 gates, 8 passed gates, 0 failed gates, boundary violation count 0, production blocker count 3, readiness decision local-portfolio-ready, and production autopilot ready false.
 
 Boundary: local readiness bundle only; does not claim unattended production operation; does not enable production autopilot; no auth/session work; no live API calls; no default external model/API calls during verification; no committed or printed keys; no production mutation; no remediation execution.
+
+## P41 Raw Real Dataset Scored Replay Evidence
+
+P41 evaluates source-native repo-local raw dataset files and scores deterministic incident predictions against labels/root causes without downloading external datasets during verification.
+
+Artifacts:
+
+- `docs/operations/p41-ticket-roadmap.md`
+- `docs/operations/p41-final-summary.md`
+- `app/services/raw_real_dataset_replay.py`
+- `scripts/run_raw_real_dataset_replay.py`
+- `evals/real_datasets/raw/p41_sources.json`
+- `tests/test_raw_real_dataset_replay.py`
+- `tests/test_p41_release_evidence.py`
+- `/tmp/opscat-raw-real-dataset-replay-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_raw_real_dataset_replay.py tests/test_p41_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
+
+Verified result: pending final full profile. Target metrics are raw source count >= 3, parsed record count >= 5, label coverage 1.0, root-cause accuracy >= 0.9, route accuracy >= 0.9, and unsafe action count 0.
+
+Boundary: repo-local raw dataset files only; no external dataset downloads during verification; no live API calls; no auth/session work; no default external model/API calls; no committed or printed keys; no production mutation; no remediation execution; does not claim unattended production operation.

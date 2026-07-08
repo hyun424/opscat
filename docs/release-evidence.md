@@ -1529,6 +1529,6 @@ Verification:
 - `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_audited_staging_transport_gate.py tests/test_p64_release_evidence.py`
 - `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full`
 
-Verified result: pending final full profile.
+Verified result: full profile passed; coverage gate 79.99%; P64 smoke wrote `/tmp/opscat-audited-staging-transport-gate-latest.md` with request_count=4, approved_request_count=3, attempted_request_count=0, successful_request_count=0, blocked_request_count=1, audit_entry_count=4, raw_secret_block_count=1, missing_approval_count=0, transport_call_count=0, live_api_call_count=0, action_execution_count=0, production_mutation_count=0, approved_requests=p64-grafana-approved-get/p64-sentry-approved-get/p64-datadog-approved-get, blocked_requests=p64-prod-admin-raw-token-blocked, next_step="rerun with explicit live staging flag, manual approval, and audited transport", and passed=true.
 
 Boundary: default dry-run audited staging transport gate only; injected mock secret store only; no `.env` reads; no real credentials; no real server connection in normal verification; no auth/session work; no production mutation; no remediation execution; no default external model/API calls; no action execution; does not claim unattended production operation.

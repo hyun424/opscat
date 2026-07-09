@@ -30,9 +30,9 @@ The command writes:
 - Tool use: provider-shaped readers, correlation, runbook, policy, verification, reporting, and evidence-pack tools.
 - Evidence-grounded reasoning: hypotheses, decisions, stages, reports, and proof points cite local evidence.
 - Policy/safety gates: risk, approval, readiness, and forbidden-claim gates are explicit.
-- Autonomous loop: observe, correlate, investigate, decide, draft, act safely, verify, report, and improve.
+- Autonomous loop: observe, correlate, investigate, diagnose, plan, evaluate risk, decide, draft, act safely, verify, report, and improve.
 - Evaluation/benchmarking: deterministic drills, docs tests, release evidence, and verify profiles.
 - Human approval handoff: protected or high-risk paths remain human-gated.
 - Local/mock dry-run boundary: executions, live calls, credentials, network, production mutation, and external model calls stay at zero.
 
-Boundary: P93 is local/mock portfolio evidence only and not production autonomy.
+Boundary: P93 is local/mock portfolio evidence only and not production autonomy. It remains a local/mock beta demo only.

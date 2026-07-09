@@ -1,0 +1,253 @@
+{
+  "incident": {
+    "id": "inc-p83-local-mock",
+    "title": "P83 local post-action outcome monitoring scenarios",
+    "service": "worker-api",
+    "environment": "local-mock"
+  },
+  "scenarios": [
+    {
+      "id": "restart-worker-improves-error-rate-and-queue-lag",
+      "incident_id": "inc-worker-queue-lag",
+      "action_draft_id": "p80:restart-worker:draft",
+      "action_type": "mock.restart_worker",
+      "pre_action_signals": {
+        "metrics": {
+          "error_rate": 0.12,
+          "queue_lag": 840
+        },
+        "logs": {
+          "worker_timeout": 44
+        }
+      },
+      "post_action_signals": {
+        "metrics": {
+          "error_rate": 0.04,
+          "queue_lag": 260
+        },
+        "logs": {
+          "worker_timeout": 11
+        }
+      },
+      "expected_recovery_proof": {
+        "metrics": {
+          "error_rate": 0.05,
+          "queue_lag": 300
+        },
+        "required_evidence": ["metric:error_rate", "metric:queue_lag", "log:worker_timeout"]
+      },
+      "evidence_sufficiency": 0.84,
+      "rollback_pr_draft_status": "not_applicable",
+      "slack_ticket_draft_status": "draft_ready",
+      "elapsed_minutes": 12,
+      "window_minutes": 30,
+      "guardrails": {
+        "unsafe_to_continue": false,
+        "local_mock_only": true
+      },
+      "evidence_references": ["metric:error_rate", "metric:queue_lag", "log:worker_timeout"]
+    },
+    {
+      "id": "rollback-draft-applied-in-mock-evidence",
+      "incident_id": "inc-checkout-regression",
+      "action_draft_id": "p81:rollback-draft:checkout-api",
+      "action_type": "mock.create_rollback_pr",
+      "pre_action_signals": {
+        "metrics": {
+          "error_rate": 0.18,
+          "latency_p95_ms": 1550
+        },
+        "logs": {
+          "deploy_regression": 19
+        }
+      },
+      "post_action_signals": {
+        "metrics": {
+          "error_rate": 0.01,
+          "latency_p95_ms": 340
+        },
+        "logs": {
+          "deploy_regression": 0
+        }
+      },
+      "expected_recovery_proof": {
+        "metrics": {
+          "error_rate": 0.02,
+          "latency_p95_ms": 450
+        },
+        "required_evidence": ["metric:error_rate", "metric:latency_p95_ms", "log:deploy_regression"]
+      },
+      "evidence_sufficiency": 0.93,
+      "rollback_pr_draft_status": "mock_applied",
+      "slack_ticket_draft_status": "draft_ready",
+      "elapsed_minutes": 20,
+      "window_minutes": 30,
+      "guardrails": {
+        "unsafe_to_continue": false,
+        "local_mock_only": true
+      },
+      "evidence_references": ["metric:error_rate", "metric:latency_p95_ms", "log:deploy_regression"],
+      "verification_checklist": [
+        "error rate below rollback recovery threshold",
+        "latency below rollback recovery threshold",
+        "deploy regression log marker absent in post window"
+      ]
+    },
+    {
+      "id": "db-saturation-unchanged",
+      "incident_id": "inc-db-saturation",
+      "action_draft_id": "p80:increase-read-replica-pool:draft",
+      "action_type": "mock.scale_read_replicas",
+      "pre_action_signals": {
+        "metrics": {
+          "db_cpu": 0.91,
+          "latency_p95_ms": 1220
+        },
+        "logs": {
+          "db_pool_exhausted": 31
+        }
+      },
+      "post_action_signals": {
+        "metrics": {
+          "db_cpu": 0.9,
+          "latency_p95_ms": 1205
+        },
+        "logs": {
+          "db_pool_exhausted": 29
+        }
+      },
+      "expected_recovery_proof": {
+        "metrics": {
+          "db_cpu": 0.7,
+          "latency_p95_ms": 700
+        },
+        "required_evidence": ["metric:db_cpu", "metric:latency_p95_ms", "log:db_pool_exhausted"]
+      },
+      "evidence_sufficiency": 0.81,
+      "rollback_pr_draft_status": "not_applicable",
+      "slack_ticket_draft_status": "draft_ready",
+      "elapsed_minutes": 28,
+      "window_minutes": 30,
+      "guardrails": {
+        "unsafe_to_continue": false,
+        "local_mock_only": true
+      },
+      "evidence_references": ["metric:db_cpu", "metric:latency_p95_ms", "log:db_pool_exhausted"]
+    },
+    {
+      "id": "mitigation-worsens-latency-and-error-rate",
+      "incident_id": "inc-api-latency",
+      "action_draft_id": "p80:traffic-shift:draft",
+      "action_type": "mock.shift_traffic",
+      "pre_action_signals": {
+        "metrics": {
+          "latency_p95_ms": 880,
+          "error_rate": 0.06
+        },
+        "logs": {
+          "upstream_timeout": 13
+        }
+      },
+      "post_action_signals": {
+        "metrics": {
+          "latency_p95_ms": 1420,
+          "error_rate": 0.16
+        },
+        "logs": {
+          "upstream_timeout": 47
+        }
+      },
+      "expected_recovery_proof": {
+        "metrics": {
+          "latency_p95_ms": 700,
+          "error_rate": 0.04
+        },
+        "required_evidence": ["metric:latency_p95_ms", "metric:error_rate", "log:upstream_timeout"]
+      },
+      "evidence_sufficiency": 0.87,
+      "rollback_pr_draft_status": "draft_ready",
+      "slack_ticket_draft_status": "draft_ready",
+      "elapsed_minutes": 10,
+      "window_minutes": 20,
+      "guardrails": {
+        "unsafe_to_continue": false,
+        "local_mock_only": true
+      },
+      "evidence_references": ["metric:latency_p95_ms", "metric:error_rate", "log:upstream_timeout"]
+    },
+    {
+      "id": "noisy-incomplete-telemetry",
+      "incident_id": "inc-noisy-telemetry",
+      "action_draft_id": "p80:cache-tune:draft",
+      "action_type": "mock.update_cache_config",
+      "pre_action_signals": {
+        "metrics": {
+          "latency_p95_ms": 910
+        },
+        "logs": {}
+      },
+      "post_action_signals": {
+        "metrics": {
+          "latency_p95_ms": 760
+        },
+        "logs": {}
+      },
+      "expected_recovery_proof": {
+        "metrics": {
+          "latency_p95_ms": 700,
+          "error_rate": 0.03
+        },
+        "required_evidence": ["metric:latency_p95_ms", "metric:error_rate", "log:cache_errors"]
+      },
+      "evidence_sufficiency": 0.42,
+      "rollback_pr_draft_status": "draft_ready",
+      "slack_ticket_draft_status": "investigation_only",
+      "elapsed_minutes": 6,
+      "window_minutes": 30,
+      "guardrails": {
+        "unsafe_to_continue": false,
+        "local_mock_only": true
+      },
+      "evidence_references": ["metric:latency_p95_ms"]
+    },
+    {
+      "id": "blocked-unsafe-action",
+      "incident_id": "inc-credential-boundary",
+      "action_draft_id": "p80:unsafe-prod-mutation:block",
+      "action_type": "mock.rotate_prod_secret",
+      "pre_action_signals": {
+        "metrics": {
+          "auth_failures": 300
+        },
+        "logs": {
+          "secret_access_denied": 9
+        }
+      },
+      "post_action_signals": {
+        "metrics": {
+          "auth_failures": 300
+        },
+        "logs": {
+          "secret_access_denied": 9
+        }
+      },
+      "expected_recovery_proof": {
+        "metrics": {
+          "auth_failures": 50
+        },
+        "required_evidence": ["metric:auth_failures", "log:secret_access_denied"]
+      },
+      "evidence_sufficiency": 0.78,
+      "rollback_pr_draft_status": "draft_ready",
+      "slack_ticket_draft_status": "blocked",
+      "elapsed_minutes": 1,
+      "window_minutes": 30,
+      "guardrails": {
+        "unsafe_to_continue": true,
+        "blocked_reasons": ["credential_boundary", "production_mutation_boundary"],
+        "local_mock_only": true
+      },
+      "evidence_references": ["metric:auth_failures", "log:secret_access_denied"]
+    }
+  ]
+}

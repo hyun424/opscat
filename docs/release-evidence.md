@@ -2194,3 +2194,30 @@ Verification:
 Verified result: targeted tests passed; P90 smoke wrote `/tmp/opscat-safe-auto-run-readiness-gate-latest.md` with scenario_count=6, local_ready_count=1, shadow_ready_count=1, human_gated_count=1, not_ready_count=1, blocked_count=2, executions=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, sleep_call_count=0, and passed=true.
 
 Boundary: offline local/mock readiness gate only; P90 consumes modeled P89 entrypoint output and prior safety evidence. Readiness levels, gates, blockers, required next capabilities, allowed modes, and forbidden claims are metadata only. P90 performs no live API calls, credential reads, network calls, shell execution, sleeping, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, production unattended approval, or operator replacement approval.
+
+## P91 Readiness Gap Remediation Planner Evidence
+
+P91 converts P90 readiness blockers into a prioritized remediation backlog. It produces remediation items with severity, expected readiness lift, required evidence/tests, owner lane, dependencies, risk, stop condition, next safe operating mode, blocked/human-gated item lists, and forbidden claims while preserving a strict zero-side-effect boundary. P91 is a roadmap/planning artifact, not production autonomy and not unattended production approval.
+
+Artifacts:
+
+- `docs/operations/p91-ticket-roadmap.md`
+- `docs/operations/p91-final-summary.md`
+- `app/services/readiness_gap_remediation_planner.py`
+- `scripts/run_readiness_gap_remediation_planner.py`
+- `evals/actions/p91_readiness_gap_remediation_planner.json`
+- `tests/test_readiness_gap_remediation_planner.py`
+- `tests/test_p91_release_evidence.py`
+- `/tmp/opscat-readiness-gap-remediation-planner-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_readiness_gap_remediation_planner.py tests/test_p91_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/readiness_gap_remediation_planner.py scripts/run_readiness_gap_remediation_planner.py tests/test_readiness_gap_remediation_planner.py tests/test_p91_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/readiness_gap_remediation_planner.py scripts/run_readiness_gap_remediation_planner.py tests/test_readiness_gap_remediation_planner.py tests/test_p91_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_readiness_gap_remediation_planner.py --cases evals/actions/p91_readiness_gap_remediation_planner.json --output-json /tmp/opscat-readiness-gap-remediation-planner-latest.json --output-md /tmp/opscat-readiness-gap-remediation-planner-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P91 smoke wrote `/tmp/opscat-readiness-gap-remediation-planner-latest.md` with scenario_count=6, blocking_plans=4, emergency_items=1, human_gated_items=1, maturity_items=2, executions=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, sleep_call_count=0, and passed=true.
+
+Boundary: offline local/mock roadmap/planning artifact only; P91 consumes modeled P90 readiness results. Remediation plans, required tests, risks, stop conditions, next safe modes, blocked/human-gated items, and forbidden claims are metadata only. P91 performs no live API calls, credential reads, network calls, shell execution, sleeping, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, production autonomy, or unattended production approval.

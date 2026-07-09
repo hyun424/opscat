@@ -768,3 +768,11 @@ P90 active scope: Safe Auto-Run Readiness Gate. P90 evaluates whether P89-style 
 ## P90 implemented
 
 P90 implemented as Safe Auto-Run Readiness Gate evidence. P90 parses local fixture scenarios for clean local dry-run, resumable incomplete work, needs-human handoff, failed guardrail, missing report/evidence, and nonzero side-effect counters; emits readiness levels, numeric scores, component scores, pass/fail gates, blockers, warnings, required next capabilities, allowed operating modes, forbidden claims, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no sleeping, no process spawning, no agent spawning, no action execution, no default external model/API calls, no production unattended approval, and no operator replacement approval.
+
+## P91 active
+
+P91 active scope: Readiness Gap Remediation Planner. P91 turns P90 readiness blockers into a prioritized, evidence-grounded remediation backlog with required tests, owner lanes, stop conditions, forbidden claims, and next safe operating modes.
+
+## P91 implemented
+
+P91 implemented as Readiness Gap Remediation Planner evidence. P91 parses local fixture scenarios for local-ready minor warnings, missing evidence/reportability, side-effect counter detection, failed guardrail, high-severity human handoff, and clean ready state; emits plan IDs, source readiness IDs, prioritized remediation items with severity, expected readiness lift, required evidence/tests, owner lane, dependencies, risk, stop condition, next safe operating mode, claims that remain forbidden, blocked/human-gated items, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no sleeping, no process spawning, no agent spawning, no action execution, no default external model/API calls, no production autonomy, and no unattended production approval.

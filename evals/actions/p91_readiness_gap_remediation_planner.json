@@ -1,0 +1,231 @@
+{
+  "suite": {
+    "id": "p91-readiness-gap-remediation-planner",
+    "description": "Deterministic local/mock P90 readiness results converted into remediation backlog plans."
+  },
+  "readiness_results": [
+    {
+      "scenario_id": "local-ready-minor-warnings",
+      "readiness_id": "p90:local-ready-minor-warnings",
+      "readiness_level": "local_dry_run_ready",
+      "score": 92,
+      "component_scores": {
+        "evidence": 16,
+        "approval_safety": 12,
+        "sandbox_safety": 12,
+        "resume_safety": 10,
+        "reportability": 12,
+        "bounded_scheduling": 10,
+        "zero_side_effects": 16,
+        "human_handoff": 6,
+        "failure_handling": 6
+      },
+      "blockers": [],
+      "warnings": ["incomplete_run_requires_supervised_resume"],
+      "allowed_operating_mode": "local_dry_run_only",
+      "forbidden_claims": [
+        "unattended_production_ready",
+        "operator_replacement_approved",
+        "production_mutation_safe",
+        "live_api_operation_approved"
+      ],
+      "zero_side_effect_counters": {
+        "action_execution_count": 0,
+        "live_api_call_count": 0,
+        "credential_read_count": 0,
+        "network_call_count": 0,
+        "production_mutation_count": 0,
+        "shell_execution_count": 0,
+        "process_spawn_count": 0,
+        "agent_spawn_count": 0,
+        "sleep_call_count": 0
+      }
+    },
+    {
+      "scenario_id": "missing-evidence-report",
+      "readiness_id": "p90:missing-evidence-report",
+      "readiness_level": "not_ready",
+      "score": 72,
+      "component_scores": {
+        "evidence": 0,
+        "approval_safety": 12,
+        "sandbox_safety": 12,
+        "resume_safety": 10,
+        "reportability": 0,
+        "bounded_scheduling": 10,
+        "zero_side_effects": 16,
+        "human_handoff": 6,
+        "failure_handling": 6
+      },
+      "blockers": ["p76_evidence_sufficiency_missing", "p87_report_missing"],
+      "warnings": [],
+      "allowed_operating_mode": "no_auto_run",
+      "forbidden_claims": [
+        "unattended_production_ready",
+        "operator_replacement_approved",
+        "production_mutation_safe",
+        "live_api_operation_approved"
+      ],
+      "zero_side_effect_counters": {
+        "action_execution_count": 0,
+        "live_api_call_count": 0,
+        "credential_read_count": 0,
+        "network_call_count": 0,
+        "production_mutation_count": 0,
+        "shell_execution_count": 0,
+        "process_spawn_count": 0,
+        "agent_spawn_count": 0,
+        "sleep_call_count": 0
+      }
+    },
+    {
+      "scenario_id": "side-effect-counter-detected",
+      "readiness_id": "p90:side-effect-counter-detected",
+      "readiness_level": "blocked",
+      "score": 60,
+      "component_scores": {
+        "evidence": 16,
+        "approval_safety": 12,
+        "sandbox_safety": 12,
+        "resume_safety": 10,
+        "reportability": 12,
+        "bounded_scheduling": 10,
+        "zero_side_effects": 0,
+        "human_handoff": 6,
+        "failure_handling": 6
+      },
+      "blockers": ["side_effect_counter_non_zero"],
+      "warnings": [],
+      "allowed_operating_mode": "no_auto_run",
+      "forbidden_claims": [
+        "unattended_production_ready",
+        "operator_replacement_approved",
+        "production_mutation_safe",
+        "live_api_operation_approved"
+      ],
+      "zero_side_effect_counters": {
+        "action_execution_count": 0,
+        "live_api_call_count": 0,
+        "credential_read_count": 0,
+        "network_call_count": 1,
+        "production_mutation_count": 0,
+        "shell_execution_count": 0,
+        "process_spawn_count": 0,
+        "agent_spawn_count": 0,
+        "sleep_call_count": 0
+      }
+    },
+    {
+      "scenario_id": "failed-guardrail",
+      "readiness_id": "p90:failed-guardrail",
+      "readiness_level": "blocked",
+      "score": 58,
+      "component_scores": {
+        "evidence": 16,
+        "approval_safety": 12,
+        "sandbox_safety": 12,
+        "resume_safety": 0,
+        "reportability": 12,
+        "bounded_scheduling": 10,
+        "zero_side_effects": 16,
+        "human_handoff": 6,
+        "failure_handling": 0
+      },
+      "blockers": ["guardrail_failure_requires_fix_before_auto_run"],
+      "warnings": [],
+      "allowed_operating_mode": "no_auto_run",
+      "forbidden_claims": [
+        "unattended_production_ready",
+        "operator_replacement_approved",
+        "production_mutation_safe",
+        "live_api_operation_approved"
+      ],
+      "zero_side_effect_counters": {
+        "action_execution_count": 0,
+        "live_api_call_count": 0,
+        "credential_read_count": 0,
+        "network_call_count": 0,
+        "production_mutation_count": 0,
+        "shell_execution_count": 0,
+        "process_spawn_count": 0,
+        "agent_spawn_count": 0,
+        "sleep_call_count": 0
+      }
+    },
+    {
+      "scenario_id": "needs-human-high-severity",
+      "readiness_id": "p90:needs-human-high-severity",
+      "readiness_level": "human_gated_staging_ready",
+      "score": 94,
+      "component_scores": {
+        "evidence": 16,
+        "approval_safety": 12,
+        "sandbox_safety": 12,
+        "resume_safety": 10,
+        "reportability": 12,
+        "bounded_scheduling": 10,
+        "zero_side_effects": 16,
+        "human_handoff": 6,
+        "failure_handling": 0
+      },
+      "blockers": ["human_high_severity_approval_policy_missing"],
+      "warnings": ["human_review_required_before_continue"],
+      "allowed_operating_mode": "human_gated_staging_dry_run",
+      "human_severity": "high",
+      "forbidden_claims": [
+        "unattended_production_ready",
+        "operator_replacement_approved",
+        "production_mutation_safe",
+        "live_api_operation_approved"
+      ],
+      "zero_side_effect_counters": {
+        "action_execution_count": 0,
+        "live_api_call_count": 0,
+        "credential_read_count": 0,
+        "network_call_count": 0,
+        "production_mutation_count": 0,
+        "shell_execution_count": 0,
+        "process_spawn_count": 0,
+        "agent_spawn_count": 0,
+        "sleep_call_count": 0
+      }
+    },
+    {
+      "scenario_id": "clean-ready-state",
+      "readiness_id": "p90:clean-ready-state",
+      "readiness_level": "local_dry_run_ready",
+      "score": 100,
+      "component_scores": {
+        "evidence": 16,
+        "approval_safety": 12,
+        "sandbox_safety": 12,
+        "resume_safety": 10,
+        "reportability": 12,
+        "bounded_scheduling": 10,
+        "zero_side_effects": 16,
+        "human_handoff": 6,
+        "failure_handling": 6
+      },
+      "blockers": [],
+      "warnings": [],
+      "allowed_operating_mode": "local_dry_run_only",
+      "forbidden_claims": [
+        "unattended_production_ready",
+        "operator_replacement_approved",
+        "production_mutation_safe",
+        "live_api_operation_approved"
+      ],
+      "zero_side_effect_counters": {
+        "action_execution_count": 0,
+        "live_api_call_count": 0,
+        "credential_read_count": 0,
+        "network_call_count": 0,
+        "production_mutation_count": 0,
+        "shell_execution_count": 0,
+        "process_spawn_count": 0,
+        "agent_spawn_count": 0,
+        "sleep_call_count": 0
+      }
+    }
+  ]
+}

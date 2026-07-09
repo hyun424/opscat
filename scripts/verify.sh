@@ -729,6 +729,16 @@ safe_auto_run_readiness_gate_smoke() {
   printf 'Wrote /tmp/opscat-safe-auto-run-readiness-gate-latest.md and %s/opscat-safe-auto-run-readiness-gate.json\n' "$VERIFY_TMPDIR"
 }
 
+readiness_gap_remediation_planner_smoke() {
+  section "P91 readiness gap remediation planner smoke"
+  "${UV_DEV[@]}" python scripts/run_readiness_gap_remediation_planner.py \
+    --cases evals/actions/p91_readiness_gap_remediation_planner.json \
+    --output-json "$VERIFY_TMPDIR/opscat-readiness-gap-remediation-planner.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-readiness-gap-remediation-planner.md" >/tmp/opscat-readiness-gap-remediation-planner-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-readiness-gap-remediation-planner.md" /tmp/opscat-readiness-gap-remediation-planner-latest.md
+  printf 'Wrote /tmp/opscat-readiness-gap-remediation-planner-latest.md and %s/opscat-readiness-gap-remediation-planner.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1222,7 +1232,8 @@ docs_contract_tests() {
     tests/test_p87_release_evidence.py \
     tests/test_p88_release_evidence.py \
     tests/test_p89_release_evidence.py \
-    tests/test_p90_release_evidence.py
+    tests/test_p90_release_evidence.py \
+    tests/test_p91_release_evidence.py
 }
 
 run_fast() {
@@ -1292,6 +1303,7 @@ run_eval() {
   bounded_local_supervisor_scheduler_smoke
   safe_local_auto_run_entrypoint_smoke
   safe_auto_run_readiness_gate_smoke
+  readiness_gap_remediation_planner_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

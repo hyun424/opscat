@@ -1,0 +1,213 @@
+{
+  "suite": {
+    "id": "p90-safe-auto-run-readiness-gate",
+    "description": "Deterministic local/mock scenarios for evaluating whether P89-style safe auto-run can be trusted for longer unattended local operation."
+  },
+  "scenarios": [
+    {
+      "id": "clean-local-dry-run",
+      "p89_entrypoint": {
+        "terminal_status": "completed",
+        "stop_reason": "completed",
+        "dry_run": true,
+        "resumed": false,
+        "report_present": true,
+        "resume_safe": true,
+        "bounded_scheduler": true,
+        "human_handoff_required": false,
+        "failure_report_required": false,
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 0,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "prior_evidence": {
+        "p76_evidence_sufficiency": true,
+        "p79_sandbox_safety": true,
+        "p80_approval_policy": true,
+        "p83_closed_loop_outcome": true,
+        "p84_next_action_plan": true,
+        "p87_report": true,
+        "p88_scheduler_stop_reason": true
+      }
+    },
+    {
+      "id": "resumable-incomplete",
+      "p89_entrypoint": {
+        "terminal_status": "resumable",
+        "stop_reason": "max_cycles",
+        "dry_run": true,
+        "resumed": true,
+        "report_present": true,
+        "resume_safe": true,
+        "bounded_scheduler": true,
+        "human_handoff_required": false,
+        "failure_report_required": false,
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 0,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "prior_evidence": {
+        "p76_evidence_sufficiency": true,
+        "p79_sandbox_safety": true,
+        "p80_approval_policy": true,
+        "p83_closed_loop_outcome": true,
+        "p84_next_action_plan": true,
+        "p87_report": true,
+        "p88_scheduler_stop_reason": true
+      }
+    },
+    {
+      "id": "needs-human-severe",
+      "human_severity": "medium",
+      "p89_entrypoint": {
+        "terminal_status": "needs_human",
+        "stop_reason": "needs_human",
+        "dry_run": true,
+        "resumed": false,
+        "report_present": true,
+        "resume_safe": true,
+        "bounded_scheduler": true,
+        "human_handoff_required": true,
+        "failure_report_required": false,
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 0,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "prior_evidence": {
+        "p76_evidence_sufficiency": true,
+        "p79_sandbox_safety": true,
+        "p80_approval_policy": true,
+        "p83_closed_loop_outcome": true,
+        "p84_next_action_plan": true,
+        "p87_report": true,
+        "p88_scheduler_stop_reason": true
+      }
+    },
+    {
+      "id": "failed-guardrail",
+      "p89_entrypoint": {
+        "terminal_status": "failed_guardrail",
+        "stop_reason": "failed_guardrail",
+        "dry_run": true,
+        "resumed": false,
+        "report_present": true,
+        "resume_safe": false,
+        "bounded_scheduler": true,
+        "human_handoff_required": true,
+        "failure_report_required": true,
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 0,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "prior_evidence": {
+        "p76_evidence_sufficiency": true,
+        "p79_sandbox_safety": true,
+        "p80_approval_policy": true,
+        "p83_closed_loop_outcome": false,
+        "p84_next_action_plan": false,
+        "p87_report": true,
+        "p88_scheduler_stop_reason": true
+      }
+    },
+    {
+      "id": "missing-report-evidence",
+      "p89_entrypoint": {
+        "terminal_status": "completed",
+        "stop_reason": "completed",
+        "dry_run": true,
+        "resumed": false,
+        "report_present": false,
+        "resume_safe": true,
+        "bounded_scheduler": true,
+        "human_handoff_required": false,
+        "failure_report_required": false,
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 0,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "prior_evidence": {
+        "p76_evidence_sufficiency": false,
+        "p79_sandbox_safety": true,
+        "p80_approval_policy": true,
+        "p83_closed_loop_outcome": true,
+        "p84_next_action_plan": true,
+        "p87_report": false,
+        "p88_scheduler_stop_reason": true
+      }
+    },
+    {
+      "id": "side-effect-counter-blocked",
+      "p89_entrypoint": {
+        "terminal_status": "completed",
+        "stop_reason": "completed",
+        "dry_run": true,
+        "resumed": false,
+        "report_present": true,
+        "resume_safe": true,
+        "bounded_scheduler": true,
+        "human_handoff_required": false,
+        "failure_report_required": false,
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 1,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "prior_evidence": {
+        "p76_evidence_sufficiency": true,
+        "p79_sandbox_safety": true,
+        "p80_approval_policy": true,
+        "p83_closed_loop_outcome": true,
+        "p84_next_action_plan": true,
+        "p87_report": true,
+        "p88_scheduler_stop_reason": true
+      }
+    }
+  ]
+}

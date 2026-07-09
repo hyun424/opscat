@@ -719,6 +719,16 @@ safe_local_auto_run_entrypoint_smoke() {
   printf 'Wrote /tmp/opscat-safe-local-auto-run-entrypoint-latest.md and %s/opscat-safe-local-auto-run-entrypoint.json\n' "$VERIFY_TMPDIR"
 }
 
+safe_auto_run_readiness_gate_smoke() {
+  section "P90 safe auto-run readiness gate smoke"
+  "${UV_DEV[@]}" python scripts/run_safe_auto_run_readiness_gate.py \
+    --cases evals/actions/p90_safe_auto_run_readiness_gate.json \
+    --output-json "$VERIFY_TMPDIR/opscat-safe-auto-run-readiness-gate.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-safe-auto-run-readiness-gate.md" >/tmp/opscat-safe-auto-run-readiness-gate-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-safe-auto-run-readiness-gate.md" /tmp/opscat-safe-auto-run-readiness-gate-latest.md
+  printf 'Wrote /tmp/opscat-safe-auto-run-readiness-gate-latest.md and %s/opscat-safe-auto-run-readiness-gate.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1211,7 +1221,8 @@ docs_contract_tests() {
     tests/test_p86_release_evidence.py \
     tests/test_p87_release_evidence.py \
     tests/test_p88_release_evidence.py \
-    tests/test_p89_release_evidence.py
+    tests/test_p89_release_evidence.py \
+    tests/test_p90_release_evidence.py
 }
 
 run_fast() {
@@ -1280,6 +1291,7 @@ run_eval() {
   supervisor_run_report_artifact_smoke
   bounded_local_supervisor_scheduler_smoke
   safe_local_auto_run_entrypoint_smoke
+  safe_auto_run_readiness_gate_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

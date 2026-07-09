@@ -744,3 +744,11 @@ P87 active scope: Supervisor Run Report Artifact. P87 turns P86-style local/mock
 ## P87 implemented
 
 P87 implemented as Supervisor Run Report Artifact evidence. P87 parses local fixture scenarios for completed_all, max_iteration, needs_human, failed_guardrail, no_safe_work, and resumed-run reports; emits completed, skipped, blocked, and resumable item summaries, checkpoint timelines, safety gates, next recommended actions, human decision sections, audit metadata, claim boundary, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no process spawning, no agent spawning, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P88 active
+
+P88 active scope: Bounded Local Supervisor Scheduler Contract. P88 models bounded local scheduler cycles over P86 runner state and P87 report status, with safe wakeup windows, modeled wall-clock budgets, backoff, checkpoint write-plan metadata, and deterministic stop conditions.
+
+## P88 implemented
+
+P88 implemented as Bounded Local Supervisor Scheduler Contract evidence. P88 parses local fixture scenarios for completed work before max cycles, resumable work until max_cycles, immediate human handoff, guardrail failure backoff, no-safe-work budget exhaustion, and resumed scheduler duplicate protection; emits scheduler IDs, current cycle indexes, max cycles, modeled wall-clock budgets, selected run state IDs, terminal/resumable classification, stop reasons, next wakeup metadata, backoff policy, checkpoint write-plan metadata, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no sleeping, no process spawning, no agent spawning, no action execution, no default external model/API calls, and no unattended production-operation claim.

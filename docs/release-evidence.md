@@ -2113,3 +2113,30 @@ Verification:
 Verified result: targeted tests passed; P87 smoke wrote `/tmp/opscat-supervisor-run-report-artifact-latest.md` with scenario_count=6, terminal_count=5, resumable_count=1, needs_human_count=1, failed_guardrail_count=1, no_safe_work_count=1, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, and passed=true.
 
 Boundary: offline local/mock report artifact only; P87 consumes modeled P86-style run state and deterministic fixture data. P87 performs no live API calls, credential reads, network calls, shell execution, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, or unattended production-operation claim.
+
+## P88 Bounded Local Supervisor Scheduler Contract Evidence
+
+P88 models a bounded local scheduler contract over P86 runner state and P87 report status. It repeatedly plans safe local supervisor resume cycles within modeled cycle and wall-clock budgets, records wakeup, backoff, and checkpoint write-plan metadata, and stops on deterministic safe reasons while preserving a strict zero-side-effect boundary.
+
+Artifacts:
+
+- `docs/operations/p88-ticket-roadmap.md`
+- `docs/operations/p88-final-summary.md`
+- `app/services/bounded_local_supervisor_scheduler.py`
+- `scripts/run_bounded_local_supervisor_scheduler.py`
+- `evals/actions/p88_bounded_local_supervisor_scheduler.json`
+- `tests/test_bounded_local_supervisor_scheduler.py`
+- `tests/test_p88_release_evidence.py`
+- `/tmp/opscat-bounded-local-supervisor-scheduler-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_bounded_local_supervisor_scheduler.py tests/test_p88_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/bounded_local_supervisor_scheduler.py scripts/run_bounded_local_supervisor_scheduler.py tests/test_bounded_local_supervisor_scheduler.py tests/test_p88_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/bounded_local_supervisor_scheduler.py scripts/run_bounded_local_supervisor_scheduler.py tests/test_bounded_local_supervisor_scheduler.py tests/test_p88_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_bounded_local_supervisor_scheduler.py --cases evals/actions/p88_bounded_local_supervisor_scheduler.json --output-json /tmp/opscat-bounded-local-supervisor-scheduler-latest.json --output-md /tmp/opscat-bounded-local-supervisor-scheduler-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P88 smoke wrote `/tmp/opscat-bounded-local-supervisor-scheduler-latest.md` with scenario_count=6, completed_all_count=2, max_cycles_count=1, needs_human_count=1, failed_guardrail_count=1, budget_exhausted_count=1, executions=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, sleep_call_count=0, and passed=true.
+
+Boundary: offline local/mock scheduler contract only; P88 consumes modeled P86 runner state and P87 report status. Wakeups, backoff, and checkpoint writes are metadata only. P88 performs no live API calls, credential reads, network calls, shell execution, sleeping, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, or unattended production-operation claim.

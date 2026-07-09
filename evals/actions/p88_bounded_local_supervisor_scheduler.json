@@ -1,0 +1,157 @@
+{
+  "suite": {
+    "id": "p88-bounded-local-supervisor-scheduler",
+    "name": "P88 Bounded Local Supervisor Scheduler Contract"
+  },
+  "scenarios": [
+    {
+      "id": "completes-all-before-max-cycles",
+      "scheduler_id": "p88-completes-all-001",
+      "checkpoint_final_path": "/tmp/opscat-p88-completes-all-state.json",
+      "limits": {"max_cycles": 4, "modeled_wall_clock_budget_minutes": 120},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 30, "max_delay_minutes": 120, "failure_streak_limit": 2},
+      "run_states": [
+        {
+          "run_state_id": "p88-complete-cycle-1",
+          "run_id": "p88-complete-run-1",
+          "p86_stop_reason": "max_iterations",
+          "p87_report": {"status": "max_iterations", "terminal_classification": "resumable", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": {"reason": "resume_after_iteration_limit", "recheck_after_minutes": 15}
+        },
+        {
+          "run_state_id": "p88-complete-cycle-2",
+          "run_id": "p88-complete-run-2",
+          "p86_stop_reason": "completed_all",
+          "p87_report": {"status": "completed_all", "terminal_classification": "terminal", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": null
+        }
+      ]
+    },
+    {
+      "id": "resumable-until-max-cycles",
+      "scheduler_id": "p88-max-cycles-001",
+      "checkpoint_final_path": "/tmp/opscat-p88-max-cycles-state.json",
+      "limits": {"max_cycles": 2, "modeled_wall_clock_budget_minutes": 120},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 30, "max_delay_minutes": 120, "failure_streak_limit": 2},
+      "run_states": [
+        {
+          "run_state_id": "p88-max-cycle-1",
+          "run_id": "p88-max-run-1",
+          "p86_stop_reason": "max_iterations",
+          "p87_report": {"status": "max_iterations", "terminal_classification": "resumable", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": {"reason": "resume_after_iteration_limit", "recheck_after_minutes": 15}
+        },
+        {
+          "run_state_id": "p88-max-cycle-2",
+          "run_id": "p88-max-run-2",
+          "p86_stop_reason": "max_iterations",
+          "p87_report": {"status": "max_iterations", "terminal_classification": "resumable", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": {"reason": "resume_after_iteration_limit", "recheck_after_minutes": 15}
+        },
+        {
+          "run_state_id": "p88-max-cycle-3",
+          "run_id": "p88-max-run-3",
+          "p86_stop_reason": "max_iterations",
+          "p87_report": {"status": "max_iterations", "terminal_classification": "resumable", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": {"reason": "resume_after_iteration_limit", "recheck_after_minutes": 15}
+        }
+      ]
+    },
+    {
+      "id": "needs-human-stops-immediately",
+      "scheduler_id": "p88-needs-human-001",
+      "checkpoint_final_path": "/tmp/opscat-p88-needs-human-state.json",
+      "limits": {"max_cycles": 3, "modeled_wall_clock_budget_minutes": 120},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 30, "max_delay_minutes": 120, "failure_streak_limit": 2},
+      "run_states": [
+        {
+          "run_state_id": "p88-human-cycle-1",
+          "run_id": "p88-human-run-1",
+          "p86_stop_reason": "needs_human",
+          "p87_report": {
+            "status": "needs_human",
+            "terminal_classification": "terminal",
+            "human_decision_required": {"required": true, "reason": "approval_required"}
+          },
+          "next_recommended_wakeup": {"reason": "human_review_required", "recheck_after_minutes": 0}
+        }
+      ]
+    },
+    {
+      "id": "failure-streak-backoff-then-guardrail",
+      "scheduler_id": "p88-failed-guardrail-001",
+      "checkpoint_final_path": "/tmp/opscat-p88-failed-guardrail-state.json",
+      "limits": {"max_cycles": 4, "modeled_wall_clock_budget_minutes": 120},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 30, "max_delay_minutes": 120, "failure_streak_limit": 2},
+      "run_states": [
+        {
+          "run_state_id": "p88-failure-cycle-1",
+          "run_id": "p88-failure-run-1",
+          "p86_stop_reason": "failed_guardrail",
+          "p87_report": {"status": "failed_guardrail", "terminal_classification": "resumable", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": {"reason": "guardrail_review_required", "recheck_after_minutes": 0}
+        },
+        {
+          "run_state_id": "p88-failure-cycle-2",
+          "run_id": "p88-failure-run-2",
+          "p86_stop_reason": "failed_guardrail",
+          "p87_report": {"status": "failed_guardrail", "terminal_classification": "terminal", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": {"reason": "guardrail_review_required", "recheck_after_minutes": 0}
+        }
+      ]
+    },
+    {
+      "id": "no-safe-work-recheck-then-budget-stop",
+      "scheduler_id": "p88-budget-001",
+      "checkpoint_final_path": "/tmp/opscat-p88-budget-state.json",
+      "limits": {"max_cycles": 4, "modeled_wall_clock_budget_minutes": 90},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 30, "max_delay_minutes": 120, "failure_streak_limit": 2},
+      "run_states": [
+        {
+          "run_state_id": "p88-no-safe-cycle-1",
+          "run_id": "p88-no-safe-run-1",
+          "p86_stop_reason": "no_safe_work",
+          "p87_report": {"status": "no_safe_work", "terminal_classification": "resumable", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": {"reason": "backlog_recheck", "recheck_after_minutes": 120}
+        },
+        {
+          "run_state_id": "p88-no-safe-cycle-2",
+          "run_id": "p88-no-safe-run-2",
+          "p86_stop_reason": "no_safe_work",
+          "p87_report": {"status": "no_safe_work", "terminal_classification": "resumable", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": {"reason": "backlog_recheck", "recheck_after_minutes": 120}
+        }
+      ]
+    },
+    {
+      "id": "resumed-scheduler-continues-without-duplicates",
+      "scheduler_id": "p88-resumed-001",
+      "checkpoint_final_path": "/tmp/opscat-p88-resumed-state.json",
+      "limits": {"max_cycles": 3, "modeled_wall_clock_budget_minutes": 120},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 30, "max_delay_minutes": 120, "failure_streak_limit": 2},
+      "initial_state": {
+        "cycle_index": 1,
+        "selected_run_state_ids": ["p88-resume-cycle-1"],
+        "modeled_elapsed_minutes": 0,
+        "failure_streak": 0,
+        "no_safe_work_streak": 0
+      },
+      "run_states": [
+        {
+          "run_state_id": "p88-resume-cycle-1",
+          "run_id": "p88-resume-run-1",
+          "p86_stop_reason": "max_iterations",
+          "p87_report": {"status": "max_iterations", "terminal_classification": "resumable", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": {"reason": "resume_after_iteration_limit", "recheck_after_minutes": 15}
+        },
+        {
+          "run_state_id": "p88-resume-cycle-2",
+          "run_id": "p88-resume-run-2",
+          "p86_stop_reason": "completed_all",
+          "p87_report": {"status": "completed_all", "terminal_classification": "terminal", "human_decision_required": {"required": false}},
+          "next_recommended_wakeup": null
+        }
+      ]
+    }
+  ]
+}

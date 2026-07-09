@@ -699,6 +699,16 @@ supervisor_run_report_artifact_smoke() {
   printf 'Wrote /tmp/opscat-supervisor-run-report-artifact-latest.md and %s/opscat-supervisor-run-report-artifact.json\n' "$VERIFY_TMPDIR"
 }
 
+bounded_local_supervisor_scheduler_smoke() {
+  section "P88 bounded local supervisor scheduler smoke"
+  "${UV_DEV[@]}" python scripts/run_bounded_local_supervisor_scheduler.py \
+    --cases evals/actions/p88_bounded_local_supervisor_scheduler.json \
+    --output-json "$VERIFY_TMPDIR/opscat-bounded-local-supervisor-scheduler.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-bounded-local-supervisor-scheduler.md" >/tmp/opscat-bounded-local-supervisor-scheduler-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-bounded-local-supervisor-scheduler.md" /tmp/opscat-bounded-local-supervisor-scheduler-latest.md
+  printf 'Wrote /tmp/opscat-bounded-local-supervisor-scheduler-latest.md and %s/opscat-bounded-local-supervisor-scheduler.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1255,6 +1265,7 @@ run_eval() {
   local_autonomous_supervisor_loop_smoke
   resumable_local_supervisor_runner_smoke
   supervisor_run_report_artifact_smoke
+  bounded_local_supervisor_scheduler_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

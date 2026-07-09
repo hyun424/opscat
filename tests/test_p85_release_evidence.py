@@ -1,0 +1,41 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+SECRET_MARKERS = (
+    "sk_live_",
+    "xoxb-",
+    "ghp_",
+    "sntrys_",
+    "BEGIN PRIVATE KEY",
+    "prod-token",
+    "nvapi-",
+    "actual-secret-value",
+    "Authorization",
+    "Bearer",
+)
+
+
+def test_p85_docs_and_verify_are_wired() -> None:
+    release = Path("docs/release-evidence.md").read_text(encoding="utf-8")
+    verify = Path("scripts/verify.sh").read_text(encoding="utf-8")
+    roadmap = Path("docs/operations/p85-ticket-roadmap.md").read_text(encoding="utf-8")
+    summary = Path("docs/operations/p85-final-summary.md").read_text(encoding="utf-8")
+    roadmap_index = Path("ROADMAP.md").read_text(encoding="utf-8")
+
+    for required in ["P85-001", "P85-002", "P85-003", "P85-004", "P85-005", "P85-006", "P85-007", "P85-008"]:
+        assert required in roadmap
+        assert required in summary
+    for required in [
+        "P85 Local Autonomous Supervisor Loop Evidence",
+        "app/services/local_autonomous_supervisor_loop.py",
+        "scripts/run_local_autonomous_supervisor_loop.py",
+        "tests/test_local_autonomous_supervisor_loop.py",
+        "evals/actions/p85_local_autonomous_supervisor_loop.json",
+        "/tmp/opscat-local-autonomous-supervisor-loop-latest.md",
+    ]:
+        assert required in release
+    assert "local_autonomous_supervisor_loop_smoke" in verify
+    assert "P85 active scope: Local Autonomous Supervisor Loop" in roadmap_index
+    assert "P85 implemented as Local Autonomous Supervisor Loop evidence" in roadmap_index
+    assert all(marker not in release + roadmap + summary for marker in SECRET_MARKERS)

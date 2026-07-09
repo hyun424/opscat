@@ -720,3 +720,11 @@ P84 active scope: Outcome-Driven Next Action Planner. P84 converts P83 post-acti
 ## P84 implemented
 
 P84 implemented as Outcome-Driven Next Action Planner evidence. P84 parses local fixture scenarios for resolved, improving, unchanged DB saturation, worsened mitigation, noisy incomplete telemetry, and unsafe blocked action; emits structured next-action plans with selected next action, rationale, required evidence, human approval requirement, communication update requirement, rollback promotion flag, wait/recheck window, guardrails, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no rollback execution, no message sending, no ticket creation, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P85 active
+
+P85 active scope: Local Autonomous Supervisor Loop. P85 models a resumable local/mock supervisor over candidate work that selects only safe modeled local checks, persists checkpoints, and stops on budget, human-review, no-safe-work, or failed-guardrail conditions.
+
+## P85 implemented
+
+P85 implemented as Local Autonomous Supervisor Loop evidence. P85 parses local fixture scenarios for safe two-item batches, approval-blocked work, failure streaks, budget exhaustion, worsened outcome rollback/escalation review, and checkpoint resume; emits run IDs, selected and skipped item IDs, completed mock steps, wakeup recommendations, checkpoint records, audit metadata, resumable cursors, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no process spawning, no agent spawning, no action execution, no default external model/API calls, and no unattended production-operation claim.

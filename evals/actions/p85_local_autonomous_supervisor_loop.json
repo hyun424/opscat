@@ -1,0 +1,175 @@
+{
+  "suite": {
+    "id": "p85-local-autonomous-supervisor-loop",
+    "name": "P85 Local Autonomous Supervisor Loop"
+  },
+  "scenarios": [
+    {
+      "id": "safe-batch-two-local-items",
+      "run_id": "p85-safe-batch-001",
+      "limits": {"max_iterations": 4, "max_budget_units": 4, "failure_streak_limit": 2},
+      "backlog": [
+        {
+          "id": "p85-local-evidence-refresh",
+          "title": "Refresh local release evidence smoke",
+          "budget_units": 1,
+          "p76_gate": {"decision": "approval_ready", "score": 0.84},
+          "p79_sandbox": {"decision": "mock_only"},
+          "p80_approval": {"decision": "mock_only"},
+          "p83_outcome": {"decision": "improving_keep_watching"},
+          "p84_next_action": {"selected_next_action": "gather_more_evidence", "human_approval_required": false},
+          "dry_run_command_name": "pytest-p85-local-evidence",
+          "mock_step_result": "passed"
+        },
+        {
+          "id": "p85-local-docs-smoke",
+          "title": "Run local docs contract smoke",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only", "score": 0.91},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p83_outcome": {"decision": "resolved"},
+          "p84_next_action": {"selected_next_action": "stop_resolved", "human_approval_required": false},
+          "dry_run_command_name": "docs-profile-smoke",
+          "mock_step_result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "approval-blocked-no-safe-work",
+      "run_id": "p85-approval-blocked-001",
+      "limits": {"max_iterations": 2, "max_budget_units": 2, "failure_streak_limit": 2},
+      "backlog": [
+        {
+          "id": "p85-restart-worker-approval",
+          "title": "Restart worker proposal remains approval gated",
+          "budget_units": 1,
+          "p76_gate": {"decision": "approval_ready", "score": 0.88},
+          "p79_sandbox": {"decision": "require_approval"},
+          "p80_approval": {"decision": "require_human"},
+          "p83_outcome": {"decision": "unchanged_investigate"},
+          "p84_next_action": {"selected_next_action": "escalate_to_human", "human_approval_required": true},
+          "dry_run_command_name": "restart-worker-dry-run",
+          "mock_step_result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "failure-streak-exceeded",
+      "run_id": "p85-failure-streak-001",
+      "limits": {"max_iterations": 4, "max_budget_units": 4, "failure_streak_limit": 2},
+      "backlog": [
+        {
+          "id": "p85-flaky-local-check-one",
+          "title": "First failing local check",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only", "score": 0.8},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p83_outcome": {"decision": "improving_keep_watching"},
+          "p84_next_action": {"selected_next_action": "keep_watching", "human_approval_required": false},
+          "dry_run_command_name": "local-check-one",
+          "mock_step_result": "failed"
+        },
+        {
+          "id": "p85-flaky-local-check-two",
+          "title": "Second failing local check",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only", "score": 0.82},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p83_outcome": {"decision": "improving_keep_watching"},
+          "p84_next_action": {"selected_next_action": "keep_watching", "human_approval_required": false},
+          "dry_run_command_name": "local-check-two",
+          "mock_step_result": "failed"
+        }
+      ]
+    },
+    {
+      "id": "budget-exhausted-mid-queue",
+      "run_id": "p85-budget-001",
+      "limits": {"max_iterations": 3, "max_budget_units": 1, "failure_streak_limit": 2},
+      "backlog": [
+        {
+          "id": "p85-budget-first",
+          "title": "First budgeted local check",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only", "score": 0.86},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p83_outcome": {"decision": "improving_keep_watching"},
+          "p84_next_action": {"selected_next_action": "keep_watching", "human_approval_required": false},
+          "dry_run_command_name": "budget-first",
+          "mock_step_result": "passed"
+        },
+        {
+          "id": "p85-budget-second",
+          "title": "Second budgeted local check",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only", "score": 0.86},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p83_outcome": {"decision": "improving_keep_watching"},
+          "p84_next_action": {"selected_next_action": "keep_watching", "human_approval_required": false},
+          "dry_run_command_name": "budget-second",
+          "mock_step_result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "outcome-worsened-queues-review",
+      "run_id": "p85-worsened-001",
+      "limits": {"max_iterations": 2, "max_budget_units": 2, "failure_streak_limit": 2},
+      "backlog": [
+        {
+          "id": "p85-worsened-after-mock-action",
+          "title": "Worsened outcome requires rollback or escalation review",
+          "budget_units": 1,
+          "p76_gate": {"decision": "approval_ready", "score": 0.9},
+          "p79_sandbox": {"decision": "mock_only"},
+          "p80_approval": {"decision": "mock_only"},
+          "p83_outcome": {"decision": "worsened_rollback_or_escalate"},
+          "p84_next_action": {"selected_next_action": "prepare_rollback_review", "human_approval_required": true},
+          "dry_run_command_name": "rollback-review-draft",
+          "mock_step_result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "resume-from-checkpoint",
+      "run_id": "p85-resume-001",
+      "limits": {"max_iterations": 3, "max_budget_units": 3, "failure_streak_limit": 2},
+      "resume_checkpoint": {
+        "cursor": 1,
+        "completed_item_ids": ["p85-resume-already-done"],
+        "failure_streak": 0
+      },
+      "backlog": [
+        {
+          "id": "p85-resume-already-done",
+          "title": "Already completed before resume",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only", "score": 0.86},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p83_outcome": {"decision": "improving_keep_watching"},
+          "p84_next_action": {"selected_next_action": "keep_watching", "human_approval_required": false},
+          "dry_run_command_name": "resume-already-done",
+          "mock_step_result": "passed"
+        },
+        {
+          "id": "p85-resume-next-safe",
+          "title": "Next safe item after resume",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only", "score": 0.9},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p83_outcome": {"decision": "improving_keep_watching"},
+          "p84_next_action": {"selected_next_action": "keep_watching", "human_approval_required": false},
+          "dry_run_command_name": "resume-next-safe",
+          "mock_step_result": "passed"
+        }
+      ]
+    }
+  ]
+}

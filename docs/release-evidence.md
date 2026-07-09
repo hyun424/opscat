@@ -2032,3 +2032,30 @@ Verification:
 Verified result: targeted tests passed; P84 smoke wrote `/tmp/opscat-outcome-driven-next-action-planner-latest.md` with scenario_count=6, stop_resolved_count=1, keep_watching_count=1, gather_more_evidence_count=2, escalate_to_human_count=0, prepare_rollback_review_count=1, update_comms_draft_count=0, block_unsafe_path_count=1, human_approval_required_count=3, communication_update_required_count=3, rollback_promotion_required_count=1, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, and passed=true.
 
 Boundary: offline local/mock planning only; no live APIs, credential reads, network calls, shell execution, production mutation, remediation execution, rollback execution, message sending, ticket creation, action execution, default external model/API calls, or unattended production-operation claim. Planner outputs are recommendations, drafts, or human-review gates only.
+
+## P85 Local Autonomous Supervisor Loop Evidence
+
+P85 models a resumable local/mock supervisor loop over candidate work. It selects only safe modeled local checks after P76/P79/P80/P83/P84 gates pass, persists checkpoints, stops on budget, human-review, no-safe-work, failed-guardrail, or completed-batch conditions, and preserves a strict zero-side-effect boundary.
+
+Artifacts:
+
+- `docs/operations/p85-ticket-roadmap.md`
+- `docs/operations/p85-final-summary.md`
+- `app/services/local_autonomous_supervisor_loop.py`
+- `scripts/run_local_autonomous_supervisor_loop.py`
+- `evals/actions/p85_local_autonomous_supervisor_loop.json`
+- `tests/test_local_autonomous_supervisor_loop.py`
+- `tests/test_p85_release_evidence.py`
+- `/tmp/opscat-local-autonomous-supervisor-loop-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_local_autonomous_supervisor_loop.py tests/test_p85_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/local_autonomous_supervisor_loop.py scripts/run_local_autonomous_supervisor_loop.py tests/test_local_autonomous_supervisor_loop.py tests/test_p85_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/local_autonomous_supervisor_loop.py scripts/run_local_autonomous_supervisor_loop.py tests/test_local_autonomous_supervisor_loop.py tests/test_p85_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_local_autonomous_supervisor_loop.py --cases evals/actions/p85_local_autonomous_supervisor_loop.json --output-json /tmp/opscat-local-autonomous-supervisor-loop-latest.json --output-md /tmp/opscat-local-autonomous-supervisor-loop-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P85 smoke wrote `/tmp/opscat-local-autonomous-supervisor-loop-latest.md` with scenario_count=6, completed_batch_count=2, needs_human_count=2, failed_guardrail_count=1, budget_exhausted_count=1, no_safe_work_count=0, selected_item_count=6, completed_mock_step_count=4, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, and passed=true.
+
+Boundary: offline local/mock supervisor modeling only; dry-run command names are text and are not executed. P85 performs no live API calls, credential reads, network calls, shell execution, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, or unattended production-operation claim.

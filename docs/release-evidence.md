@@ -1978,3 +1978,30 @@ Verification:
 Verified result: targeted tests passed; P82 smoke wrote `/tmp/opscat-slack-ticket-draft-automation-latest.md` with scenario_count=5, draft_ready_count=2, investigation_only_count=1, blocked_count=1, rejected_count=1, required_human_approval_count=5, message_send_count=0, ticket_creation_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, and passed=true.
 
 Boundary: offline local/mock draft artifact generation only; no live Slack, Jira, GitHub, Linear, or ticketing API calls; no credential reads; no network calls; no message sending; no ticket creation; no production mutation; no remediation execution; no action execution; no default external model/API calls; and no unattended production-operation claim. Every draft requires human approval before external communication or ticket action.
+
+## P83 Post-Action Outcome Monitor Evidence
+
+P83 evaluates local/mock post-action telemetry and evidence windows after a proposed or mock-applied incident action. It classifies the outcome as resolved, improving_keep_watching, unchanged_investigate, worsened_rollback_or_escalate, inconclusive_need_more_evidence, or blocked_unsafe_to_continue while preserving a strict zero-side-effect boundary.
+
+Artifacts:
+
+- `docs/operations/p83-ticket-roadmap.md`
+- `docs/operations/p83-final-summary.md`
+- `app/services/post_action_outcome_monitor.py`
+- `scripts/run_post_action_outcome_monitor.py`
+- `evals/actions/p83_post_action_outcome_monitor.json`
+- `tests/test_post_action_outcome_monitor.py`
+- `tests/test_p83_release_evidence.py`
+- `/tmp/opscat-post-action-outcome-monitor-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_post_action_outcome_monitor.py tests/test_p83_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/post_action_outcome_monitor.py scripts/run_post_action_outcome_monitor.py tests/test_post_action_outcome_monitor.py tests/test_p83_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/post_action_outcome_monitor.py scripts/run_post_action_outcome_monitor.py tests/test_post_action_outcome_monitor.py tests/test_p83_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_post_action_outcome_monitor.py --cases evals/actions/p83_post_action_outcome_monitor.json --output-json /tmp/opscat-post-action-outcome-monitor-latest.json --output-md /tmp/opscat-post-action-outcome-monitor-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P83 smoke wrote `/tmp/opscat-post-action-outcome-monitor-latest.md` with scenario_count=6, resolved_count=1, improving_keep_watching_count=1, unchanged_investigate_count=1, worsened_rollback_or_escalate_count=1, inconclusive_need_more_evidence_count=1, blocked_unsafe_to_continue_count=1, communication_update_count=5, rollback_human_review_promotion_count=2, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, and passed=true.
+
+Boundary: offline local/mock monitoring and outcome judgment only; no live APIs, credential reads, network calls, shell execution, production mutation, remediation execution, rollback execution, message sending, ticket creation, action execution, default external model/API calls, or unattended production-operation claim. Rollback and communication outputs are recommendations for human review only.

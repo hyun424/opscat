@@ -704,3 +704,11 @@ P82 active scope: Slack and Ticket Draft Automation. P82 generates safe, evidenc
 ## P82 implemented
 
 P82 implemented as Slack and Ticket Draft Automation evidence. P82 parses local fixture scenarios for confirmed deploy regression, suspected DB saturation requiring human confirmation, rollback draft ready, blocked credential/auth issue, and insufficient-evidence noisy alert; emits structured Slack incident update, escalation DM, status update, ticket title/body/labels/priority, evidence links, uncertainty, next actions, approval requirement, and audit metadata; preserves P76 evidence sufficiency, P80 approval, and P81 rollback draft status; and preserves no live Slack/Jira/GitHub/Linear API calls, no credential reads, no network calls, no message sending, no ticket creation, no production mutation, no remediation execution, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P83 active
+
+P83 active scope: Post-Action Outcome Monitor. P83 judges whether local/mock post-action evidence shows an action resolved, improved, failed to change, worsened, lacks enough evidence, or is unsafe to continue.
+
+## P83 implemented
+
+P83 implemented as Post-Action Outcome Monitor evidence. P83 parses local fixture scenarios for worker restart improvement, mock rollback resolution, unchanged DB saturation, worsened mitigation, noisy incomplete telemetry, and unsafe blocked action; emits structured outcome decisions, confidence, evidence references, metric/log deltas, missing evidence, next recommended step, communication draft update guidance, rollback draft human-review promotion guidance, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no rollback execution, no message sending, no ticket creation, no action execution, no default external model/API calls, and no unattended production-operation claim.

@@ -712,3 +712,11 @@ P83 active scope: Post-Action Outcome Monitor. P83 judges whether local/mock pos
 ## P83 implemented
 
 P83 implemented as Post-Action Outcome Monitor evidence. P83 parses local fixture scenarios for worker restart improvement, mock rollback resolution, unchanged DB saturation, worsened mitigation, noisy incomplete telemetry, and unsafe blocked action; emits structured outcome decisions, confidence, evidence references, metric/log deltas, missing evidence, next recommended step, communication draft update guidance, rollback draft human-review promotion guidance, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no rollback execution, no message sending, no ticket creation, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P84 active
+
+P84 active scope: Outcome-Driven Next Action Planner. P84 converts P83 post-action outcomes plus P76/P77/P80/P81/P82 safety and evidence state into the next safest local/mock operator plan.
+
+## P84 implemented
+
+P84 implemented as Outcome-Driven Next Action Planner evidence. P84 parses local fixture scenarios for resolved, improving, unchanged DB saturation, worsened mitigation, noisy incomplete telemetry, and unsafe blocked action; emits structured next-action plans with selected next action, rationale, required evidence, human approval requirement, communication update requirement, rollback promotion flag, wait/recheck window, guardrails, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no rollback execution, no message sending, no ticket creation, no action execution, no default external model/API calls, and no unattended production-operation claim.

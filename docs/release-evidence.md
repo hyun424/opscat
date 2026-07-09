@@ -2005,3 +2005,30 @@ Verification:
 Verified result: targeted tests passed; P83 smoke wrote `/tmp/opscat-post-action-outcome-monitor-latest.md` with scenario_count=6, resolved_count=1, improving_keep_watching_count=1, unchanged_investigate_count=1, worsened_rollback_or_escalate_count=1, inconclusive_need_more_evidence_count=1, blocked_unsafe_to_continue_count=1, communication_update_count=5, rollback_human_review_promotion_count=2, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, and passed=true.
 
 Boundary: offline local/mock monitoring and outcome judgment only; no live APIs, credential reads, network calls, shell execution, production mutation, remediation execution, rollback execution, message sending, ticket creation, action execution, default external model/API calls, or unattended production-operation claim. Rollback and communication outputs are recommendations for human review only.
+
+## P84 Outcome-Driven Next Action Planner Evidence
+
+P84 converts P83 post-action outcomes and adjacent P76/P77/P80/P81/P82 state into the next safest local/mock operator plan. It classifies next steps as stop_resolved, keep_watching, gather_more_evidence, escalate_to_human, prepare_rollback_review, update_comms_draft, or block_unsafe_path while preserving a strict zero-side-effect boundary.
+
+Artifacts:
+
+- `docs/operations/p84-ticket-roadmap.md`
+- `docs/operations/p84-final-summary.md`
+- `app/services/outcome_driven_next_action_planner.py`
+- `scripts/run_outcome_driven_next_action_planner.py`
+- `evals/actions/p84_outcome_driven_next_action_planner.json`
+- `tests/test_outcome_driven_next_action_planner.py`
+- `tests/test_p84_release_evidence.py`
+- `/tmp/opscat-outcome-driven-next-action-planner-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_outcome_driven_next_action_planner.py tests/test_p84_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/outcome_driven_next_action_planner.py scripts/run_outcome_driven_next_action_planner.py tests/test_outcome_driven_next_action_planner.py tests/test_p84_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/outcome_driven_next_action_planner.py scripts/run_outcome_driven_next_action_planner.py tests/test_outcome_driven_next_action_planner.py tests/test_p84_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_outcome_driven_next_action_planner.py --cases evals/actions/p84_outcome_driven_next_action_planner.json --output-json /tmp/opscat-outcome-driven-next-action-planner-latest.json --output-md /tmp/opscat-outcome-driven-next-action-planner-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P84 smoke wrote `/tmp/opscat-outcome-driven-next-action-planner-latest.md` with scenario_count=6, stop_resolved_count=1, keep_watching_count=1, gather_more_evidence_count=2, escalate_to_human_count=0, prepare_rollback_review_count=1, update_comms_draft_count=0, block_unsafe_path_count=1, human_approval_required_count=3, communication_update_required_count=3, rollback_promotion_required_count=1, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, and passed=true.
+
+Boundary: offline local/mock planning only; no live APIs, credential reads, network calls, shell execution, production mutation, remediation execution, rollback execution, message sending, ticket creation, action execution, default external model/API calls, or unattended production-operation claim. Planner outputs are recommendations, drafts, or human-review gates only.

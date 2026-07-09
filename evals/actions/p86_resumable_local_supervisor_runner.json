@@ -1,0 +1,174 @@
+{
+  "suite": {
+    "id": "p86-resumable-local-supervisor-runner",
+    "name": "P86 Resumable Local Supervisor Runner"
+  },
+  "scenarios": [
+    {
+      "id": "fresh-run-completes-two-safe-items",
+      "run_id": "p86-fresh-001",
+      "checkpoint_final_path": "/tmp/opscat-p86-fresh-state.json",
+      "limits": {"max_iterations": 4, "max_budget_units": 4, "failure_streak_limit": 2},
+      "backlog": [
+        {
+          "id": "p86-safe-local-evidence",
+          "title": "Refresh local P86 evidence",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only"},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p84_next_action": {"human_approval_required": false},
+          "dry_run_command_name": "pytest-p86-local-evidence",
+          "mock_step_result": "passed"
+        },
+        {
+          "id": "p86-safe-docs-smoke",
+          "title": "Run docs profile smoke",
+          "budget_units": 1,
+          "p76_gate": {"decision": "approval_ready"},
+          "p79_sandbox": {"decision": "mock_only"},
+          "p80_approval": {"decision": "mock_only"},
+          "p84_next_action": {"human_approval_required": false},
+          "dry_run_command_name": "docs-profile-smoke",
+          "mock_step_result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "interrupted-run-resumes-without-duplicates",
+      "run_id": "p86-resume-001",
+      "checkpoint_final_path": "/tmp/opscat-p86-resume-state.json",
+      "limits": {"max_iterations": 3, "max_budget_units": 3, "failure_streak_limit": 2},
+      "initial_state": {
+        "cursor": 1,
+        "completed_item_ids": ["p86-resume-already-done"],
+        "skipped_items": [],
+        "iteration_count": 0,
+        "failure_streak": 0,
+        "budget_used": 0
+      },
+      "backlog": [
+        {
+          "id": "p86-resume-already-done",
+          "title": "Already completed before interruption",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only"},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p84_next_action": {"human_approval_required": false},
+          "dry_run_command_name": "resume-already-done",
+          "mock_step_result": "passed"
+        },
+        {
+          "id": "p86-resume-next-safe",
+          "title": "Next safe item after resume",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only"},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p84_next_action": {"human_approval_required": false},
+          "dry_run_command_name": "resume-next-safe",
+          "mock_step_result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "max-iteration-limit-keeps-resumable-cursor",
+      "run_id": "p86-max-iteration-001",
+      "checkpoint_final_path": "/tmp/opscat-p86-max-iteration-state.json",
+      "limits": {"max_iterations": 1, "max_budget_units": 4, "failure_streak_limit": 2},
+      "backlog": [
+        {
+          "id": "p86-iteration-first",
+          "title": "First iteration-limited safe item",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only"},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p84_next_action": {"human_approval_required": false},
+          "dry_run_command_name": "iteration-first",
+          "mock_step_result": "passed"
+        },
+        {
+          "id": "p86-iteration-second",
+          "title": "Second item left for resume",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only"},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p84_next_action": {"human_approval_required": false},
+          "dry_run_command_name": "iteration-second",
+          "mock_step_result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "needs-human-records-blocked-work",
+      "run_id": "p86-needs-human-001",
+      "checkpoint_final_path": "/tmp/opscat-p86-needs-human-state.json",
+      "limits": {"max_iterations": 2, "max_budget_units": 2, "failure_streak_limit": 2},
+      "backlog": [
+        {
+          "id": "p86-human-approval-required",
+          "title": "Approval-gated worker restart remains blocked",
+          "budget_units": 1,
+          "p76_gate": {"decision": "approval_ready"},
+          "p79_sandbox": {"decision": "require_approval"},
+          "p80_approval": {"decision": "require_human"},
+          "p84_next_action": {"human_approval_required": true},
+          "dry_run_command_name": "restart-worker-dry-run",
+          "mock_step_result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "guardrail-failure-stops-after-failure-streak",
+      "run_id": "p86-guardrail-001",
+      "checkpoint_final_path": "/tmp/opscat-p86-guardrail-state.json",
+      "limits": {"max_iterations": 4, "max_budget_units": 4, "failure_streak_limit": 2},
+      "backlog": [
+        {
+          "id": "p86-failing-local-check-one",
+          "title": "First failing local check",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only"},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p84_next_action": {"human_approval_required": false},
+          "dry_run_command_name": "local-check-one",
+          "mock_step_result": "failed"
+        },
+        {
+          "id": "p86-failing-local-check-two",
+          "title": "Second failing local check",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only"},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p84_next_action": {"human_approval_required": false},
+          "dry_run_command_name": "local-check-two",
+          "mock_step_result": "failed"
+        }
+      ]
+    },
+    {
+      "id": "completed-all-terminal",
+      "run_id": "p86-terminal-001",
+      "checkpoint_final_path": "/tmp/opscat-p86-terminal-state.json",
+      "limits": {"max_iterations": 2, "max_budget_units": 2, "failure_streak_limit": 2},
+      "backlog": [
+        {
+          "id": "p86-terminal-safe",
+          "title": "Terminal safe item",
+          "budget_units": 1,
+          "p76_gate": {"decision": "sufficient_read_only"},
+          "p79_sandbox": {"decision": "allow"},
+          "p80_approval": {"decision": "auto_approve"},
+          "p84_next_action": {"human_approval_required": false},
+          "dry_run_command_name": "terminal-safe",
+          "mock_step_result": "passed"
+        }
+      ]
+    }
+  ]
+}

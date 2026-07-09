@@ -679,6 +679,16 @@ local_autonomous_supervisor_loop_smoke() {
   printf 'Wrote /tmp/opscat-local-autonomous-supervisor-loop-latest.md and %s/opscat-local-autonomous-supervisor-loop.json\n' "$VERIFY_TMPDIR"
 }
 
+resumable_local_supervisor_runner_smoke() {
+  section "P86 resumable local supervisor runner smoke"
+  "${UV_DEV[@]}" python scripts/run_resumable_local_supervisor_runner.py \
+    --cases evals/actions/p86_resumable_local_supervisor_runner.json \
+    --output-json "$VERIFY_TMPDIR/opscat-resumable-local-supervisor-runner.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-resumable-local-supervisor-runner.md" >/tmp/opscat-resumable-local-supervisor-runner-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-resumable-local-supervisor-runner.md" /tmp/opscat-resumable-local-supervisor-runner-latest.md
+  printf 'Wrote /tmp/opscat-resumable-local-supervisor-runner-latest.md and %s/opscat-resumable-local-supervisor-runner.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1167,7 +1177,8 @@ docs_contract_tests() {
     tests/test_p81_release_evidence.py \
     tests/test_p82_release_evidence.py \
     tests/test_p83_release_evidence.py \
-    tests/test_p85_release_evidence.py
+    tests/test_p85_release_evidence.py \
+    tests/test_p86_release_evidence.py
 }
 
 run_fast() {
@@ -1232,6 +1243,7 @@ run_eval() {
   post_action_outcome_monitor_smoke
   outcome_driven_next_action_planner_smoke
   local_autonomous_supervisor_loop_smoke
+  resumable_local_supervisor_runner_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

@@ -728,3 +728,11 @@ P85 active scope: Local Autonomous Supervisor Loop. P85 models a resumable local
 ## P85 implemented
 
 P85 implemented as Local Autonomous Supervisor Loop evidence. P85 parses local fixture scenarios for safe two-item batches, approval-blocked work, failure streaks, budget exhaustion, worsened outcome rollback/escalation review, and checkpoint resume; emits run IDs, selected and skipped item IDs, completed mock steps, wakeup recommendations, checkpoint records, audit metadata, resumable cursors, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no process spawning, no agent spawning, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P86 active
+
+P86 active scope: Resumable Local Supervisor Runner. P86 makes the P85 local supervisor contract operational as a resumable local/mock runner that can continue from persisted fixture state, record atomic checkpoint write plans, and stop deterministically on safe stop reasons.
+
+## P86 implemented
+
+P86 implemented as Resumable Local Supervisor Runner evidence. P86 parses local fixture scenarios for fresh two-item completion, interrupted resume without duplicate completed items, max-iteration resumable stop, human-review blocking, guardrail failure streaks, and terminal completed-all behavior; emits run IDs, cursors, completed and skipped item IDs, iteration counts, failure streaks, checkpoint write-plan metadata, wakeup recommendations, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no process spawning, no agent spawning, no action execution, no default external model/API calls, and no unattended production-operation claim.

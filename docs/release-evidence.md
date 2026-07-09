@@ -2059,3 +2059,30 @@ Verification:
 Verified result: targeted tests passed; P85 smoke wrote `/tmp/opscat-local-autonomous-supervisor-loop-latest.md` with scenario_count=6, completed_batch_count=2, needs_human_count=2, failed_guardrail_count=1, budget_exhausted_count=1, no_safe_work_count=0, selected_item_count=6, completed_mock_step_count=4, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, and passed=true.
 
 Boundary: offline local/mock supervisor modeling only; dry-run command names are text and are not executed. P85 performs no live API calls, credential reads, network calls, shell execution, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, or unattended production-operation claim.
+
+## P86 Resumable Local Supervisor Runner Evidence
+
+P86 makes the P85 local supervisor contract operational as a resumable local/mock runner. It executes multiple modeled safe supervisor iterations from fixture state, records checkpoint metadata with atomic temp_path to final_path write plans, resumes without duplicating completed work, and stops on safe deterministic reasons.
+
+Artifacts:
+
+- `docs/operations/p86-ticket-roadmap.md`
+- `docs/operations/p86-final-summary.md`
+- `app/services/resumable_local_supervisor_runner.py`
+- `scripts/run_resumable_local_supervisor_runner.py`
+- `evals/actions/p86_resumable_local_supervisor_runner.json`
+- `tests/test_resumable_local_supervisor_runner.py`
+- `tests/test_p86_release_evidence.py`
+- `/tmp/opscat-resumable-local-supervisor-runner-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_resumable_local_supervisor_runner.py tests/test_p86_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/resumable_local_supervisor_runner.py scripts/run_resumable_local_supervisor_runner.py tests/test_resumable_local_supervisor_runner.py tests/test_p86_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/resumable_local_supervisor_runner.py scripts/run_resumable_local_supervisor_runner.py tests/test_resumable_local_supervisor_runner.py tests/test_p86_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_resumable_local_supervisor_runner.py --cases evals/actions/p86_resumable_local_supervisor_runner.json --output-json /tmp/opscat-resumable-local-supervisor-runner-latest.json --output-md /tmp/opscat-resumable-local-supervisor-runner-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P86 smoke wrote `/tmp/opscat-resumable-local-supervisor-runner-latest.md` with scenario_count=6, resumed_count=1, completed_all_count=3, max_iteration_count=1, needs_human_count=1, failed_guardrail_count=1, budget_exhausted_count=0, no_safe_work_count=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, and passed=true.
+
+Boundary: offline local/mock runner modeling only; dry-run command names are text and are not executed. P86 performs no live API calls, credential reads, network calls, shell execution, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, or unattended production-operation claim.

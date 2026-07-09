@@ -2086,3 +2086,30 @@ Verification:
 Verified result: targeted tests passed; P86 smoke wrote `/tmp/opscat-resumable-local-supervisor-runner-latest.md` with scenario_count=6, resumed_count=1, completed_all_count=3, max_iteration_count=1, needs_human_count=1, failed_guardrail_count=1, budget_exhausted_count=0, no_safe_work_count=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, and passed=true.
 
 Boundary: offline local/mock runner modeling only; dry-run command names are text and are not executed. P86 performs no live API calls, credential reads, network calls, shell execution, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, or unattended production-operation claim.
+
+## P87 Supervisor Run Report Artifact Evidence
+
+P87 renders P86-style local/mock supervisor run state into a structured report artifact. It exposes what happened, why the run stopped, what remains, whether work is terminal or resumable, and what human decision is required while preserving a strict zero-side-effect boundary.
+
+Artifacts:
+
+- `docs/operations/p87-ticket-roadmap.md`
+- `docs/operations/p87-final-summary.md`
+- `app/services/supervisor_run_report_artifact.py`
+- `scripts/run_supervisor_run_report_artifact.py`
+- `evals/actions/p87_supervisor_run_report_artifact.json`
+- `tests/test_supervisor_run_report_artifact.py`
+- `tests/test_p87_release_evidence.py`
+- `/tmp/opscat-supervisor-run-report-artifact-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_supervisor_run_report_artifact.py tests/test_p87_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/supervisor_run_report_artifact.py scripts/run_supervisor_run_report_artifact.py tests/test_supervisor_run_report_artifact.py tests/test_p87_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/supervisor_run_report_artifact.py scripts/run_supervisor_run_report_artifact.py tests/test_supervisor_run_report_artifact.py tests/test_p87_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_supervisor_run_report_artifact.py --cases evals/actions/p87_supervisor_run_report_artifact.json --output-json /tmp/opscat-supervisor-run-report-artifact-latest.json --output-md /tmp/opscat-supervisor-run-report-artifact-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P87 smoke wrote `/tmp/opscat-supervisor-run-report-artifact-latest.md` with scenario_count=6, terminal_count=5, resumable_count=1, needs_human_count=1, failed_guardrail_count=1, no_safe_work_count=1, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, and passed=true.
+
+Boundary: offline local/mock report artifact only; P87 consumes modeled P86-style run state and deterministic fixture data. P87 performs no live API calls, credential reads, network calls, shell execution, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, or unattended production-operation claim.

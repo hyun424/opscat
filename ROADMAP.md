@@ -736,3 +736,11 @@ P86 active scope: Resumable Local Supervisor Runner. P86 makes the P85 local sup
 ## P86 implemented
 
 P86 implemented as Resumable Local Supervisor Runner evidence. P86 parses local fixture scenarios for fresh two-item completion, interrupted resume without duplicate completed items, max-iteration resumable stop, human-review blocking, guardrail failure streaks, and terminal completed-all behavior; emits run IDs, cursors, completed and skipped item IDs, iteration counts, failure streaks, checkpoint write-plan metadata, wakeup recommendations, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no process spawning, no agent spawning, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P87 active
+
+P87 active scope: Supervisor Run Report Artifact. P87 turns P86-style local/mock supervisor run state into a structured JSON and Markdown report that shows what happened, why it stopped, what remains, terminal versus resumable classification, safety gates hit, next action, wakeup guidance, and human decision requirements.
+
+## P87 implemented
+
+P87 implemented as Supervisor Run Report Artifact evidence. P87 parses local fixture scenarios for completed_all, max_iteration, needs_human, failed_guardrail, no_safe_work, and resumed-run reports; emits completed, skipped, blocked, and resumable item summaries, checkpoint timelines, safety gates, next recommended actions, human decision sections, audit metadata, claim boundary, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no process spawning, no agent spawning, no action execution, no default external model/API calls, and no unattended production-operation claim.

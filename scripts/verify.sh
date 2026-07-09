@@ -689,6 +689,16 @@ resumable_local_supervisor_runner_smoke() {
   printf 'Wrote /tmp/opscat-resumable-local-supervisor-runner-latest.md and %s/opscat-resumable-local-supervisor-runner.json\n' "$VERIFY_TMPDIR"
 }
 
+supervisor_run_report_artifact_smoke() {
+  section "P87 supervisor run report artifact smoke"
+  "${UV_DEV[@]}" python scripts/run_supervisor_run_report_artifact.py \
+    --cases evals/actions/p87_supervisor_run_report_artifact.json \
+    --output-json "$VERIFY_TMPDIR/opscat-supervisor-run-report-artifact.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-supervisor-run-report-artifact.md" >/tmp/opscat-supervisor-run-report-artifact-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-supervisor-run-report-artifact.md" /tmp/opscat-supervisor-run-report-artifact-latest.md
+  printf 'Wrote /tmp/opscat-supervisor-run-report-artifact-latest.md and %s/opscat-supervisor-run-report-artifact.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1244,6 +1254,7 @@ run_eval() {
   outcome_driven_next_action_planner_smoke
   local_autonomous_supervisor_loop_smoke
   resumable_local_supervisor_runner_smoke
+  supervisor_run_report_artifact_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

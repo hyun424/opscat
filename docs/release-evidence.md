@@ -2140,3 +2140,30 @@ Verification:
 Verified result: targeted tests passed; P88 smoke wrote `/tmp/opscat-bounded-local-supervisor-scheduler-latest.md` with scenario_count=6, completed_all_count=2, max_cycles_count=1, needs_human_count=1, failed_guardrail_count=1, budget_exhausted_count=1, executions=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, sleep_call_count=0, and passed=true.
 
 Boundary: offline local/mock scheduler contract only; P88 consumes modeled P86 runner state and P87 report status. Wakeups, backoff, and checkpoint writes are metadata only. P88 performs no live API calls, credential reads, network calls, shell execution, sleeping, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, or unattended production-operation claim.
+
+## P89 Safe Local Auto-Run Entrypoint Evidence
+
+P89 provides one operator-facing safe local auto-run entrypoint over the P85 supervisor, P86 resumable runner, P87 report artifact, and P88 bounded scheduler contracts. It loads deterministic fixture/config scenarios, models bounded cycles, emits resume state and report write-plan metadata, explains terminal status and stop reason, and preserves a strict zero-side-effect boundary.
+
+Artifacts:
+
+- `docs/operations/p89-ticket-roadmap.md`
+- `docs/operations/p89-final-summary.md`
+- `app/services/safe_local_auto_run_entrypoint.py`
+- `scripts/run_safe_local_auto_run_entrypoint.py`
+- `evals/actions/p89_safe_local_auto_run_entrypoint.json`
+- `tests/test_safe_local_auto_run_entrypoint.py`
+- `tests/test_p89_release_evidence.py`
+- `/tmp/opscat-safe-local-auto-run-entrypoint-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_safe_local_auto_run_entrypoint.py tests/test_p89_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/safe_local_auto_run_entrypoint.py scripts/run_safe_local_auto_run_entrypoint.py tests/test_safe_local_auto_run_entrypoint.py tests/test_p89_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/safe_local_auto_run_entrypoint.py scripts/run_safe_local_auto_run_entrypoint.py tests/test_safe_local_auto_run_entrypoint.py tests/test_p89_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_safe_local_auto_run_entrypoint.py --cases evals/actions/p89_safe_local_auto_run_entrypoint.json --output-json /tmp/opscat-safe-local-auto-run-entrypoint-latest.json --output-md /tmp/opscat-safe-local-auto-run-entrypoint-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P89 smoke wrote `/tmp/opscat-safe-local-auto-run-entrypoint-latest.md` with scenario_count=6, dry_run_count=5, resumed_count=1, completed_count=2, needs_human_count=1, failed_guardrail_count=1, max_cycles_count=1, no_safe_work_count=1, executions=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, sleep_call_count=0, and passed=true.
+
+Boundary: offline local/mock entrypoint contract only; P89 composes modeled supervisor, runner, reporting, and scheduler data. Cycles, wakeups, resume state writes, report writes, and next commands are metadata only. P89 performs no live API calls, credential reads, network calls, shell execution, sleeping, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, or unattended production-operation claim.

@@ -1,0 +1,114 @@
+{
+  "suite": {
+    "id": "p89-safe-local-auto-run-entrypoint",
+    "description": "Deterministic local/mock scenarios for the P89 safe local auto-run entrypoint."
+  },
+  "scenarios": [
+    {
+      "id": "dry-run-completes-safe-local-batch",
+      "entrypoint_id": "p89-dry-run-entrypoint",
+      "dry_run": true,
+      "resume": false,
+      "max_cycles": 4,
+      "max_iterations": 6,
+      "budgets": {"modeled_wall_clock_minutes": 60, "budget_units": 6},
+      "wakeup_policy": {"default_recheck_minutes": 30},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 45, "max_delay_minutes": 120},
+      "resume_state_path": "/tmp/opscat-p89-dry-run-state.json",
+      "report_path": "/tmp/opscat-p89-dry-run-report.md",
+      "cycles": [
+        {"cycle_id": "p89-dry-cycle-1", "status": "max_iterations", "iterations": 3, "budget_units": 2},
+        {"cycle_id": "p89-dry-cycle-2", "status": "completed_all", "iterations": 2, "budget_units": 2}
+      ]
+    },
+    {
+      "id": "resume-continues-from-checkpoint",
+      "entrypoint_id": "p89-resume-entrypoint",
+      "dry_run": false,
+      "resume": true,
+      "max_cycles": 3,
+      "max_iterations": 4,
+      "budgets": {"modeled_wall_clock_minutes": 40, "budget_units": 5},
+      "wakeup_policy": {"default_recheck_minutes": 30},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 45, "max_delay_minutes": 120},
+      "resume_state_path": "/tmp/opscat-p89-resume-state.json",
+      "report_path": "/tmp/opscat-p89-resume-report.md",
+      "initial_state": {"completed_cycle_ids": ["p89-resume-cycle-1"], "cycle_index": 1},
+      "cycles": [
+        {"cycle_id": "p89-resume-cycle-1", "status": "max_iterations", "iterations": 2, "budget_units": 1},
+        {"cycle_id": "p89-resume-cycle-2", "status": "completed_all", "iterations": 1, "budget_units": 1}
+      ]
+    },
+    {
+      "id": "needs-human-stops-with-handoff",
+      "entrypoint_id": "p89-human-entrypoint",
+      "dry_run": true,
+      "resume": false,
+      "max_cycles": 3,
+      "max_iterations": 4,
+      "budgets": {"modeled_wall_clock_minutes": 40, "budget_units": 5},
+      "wakeup_policy": {"default_recheck_minutes": 30},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 45, "max_delay_minutes": 120},
+      "resume_state_path": "/tmp/opscat-p89-human-state.json",
+      "report_path": "/tmp/opscat-p89-human-report.md",
+      "cycles": [
+        {
+          "cycle_id": "p89-human-cycle-1",
+          "status": "needs_human",
+          "iterations": 1,
+          "budget_units": 1,
+          "human_reason": "approval_required"
+        }
+      ]
+    },
+    {
+      "id": "failed-guardrail-stops-with-failure-report",
+      "entrypoint_id": "p89-guardrail-entrypoint",
+      "dry_run": true,
+      "resume": false,
+      "max_cycles": 3,
+      "max_iterations": 4,
+      "budgets": {"modeled_wall_clock_minutes": 40, "budget_units": 5},
+      "wakeup_policy": {"default_recheck_minutes": 30},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 45, "max_delay_minutes": 120},
+      "resume_state_path": "/tmp/opscat-p89-guardrail-state.json",
+      "report_path": "/tmp/opscat-p89-guardrail-report.md",
+      "cycles": [
+        {"cycle_id": "p89-guardrail-cycle-1", "status": "failed_guardrail", "iterations": 1, "budget_units": 1}
+      ]
+    },
+    {
+      "id": "max-cycles-stops-with-next-command",
+      "entrypoint_id": "p89-max-cycles-entrypoint",
+      "dry_run": true,
+      "resume": false,
+      "max_cycles": 1,
+      "max_iterations": 4,
+      "budgets": {"modeled_wall_clock_minutes": 40, "budget_units": 5},
+      "wakeup_policy": {"default_recheck_minutes": 30},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 45, "max_delay_minutes": 120},
+      "resume_state_path": "/tmp/opscat-p89-max-cycles-state.json",
+      "report_path": "/tmp/opscat-p89-max-cycles-report.md",
+      "cycles": [
+        {"cycle_id": "p89-max-cycle-1", "status": "max_iterations", "iterations": 4, "budget_units": 2},
+        {"cycle_id": "p89-max-cycle-2", "status": "completed_all", "iterations": 1, "budget_units": 1}
+      ]
+    },
+    {
+      "id": "no-safe-work-schedules-later-recheck",
+      "entrypoint_id": "p89-no-safe-work-entrypoint",
+      "dry_run": true,
+      "resume": false,
+      "max_cycles": 2,
+      "max_iterations": 4,
+      "budgets": {"modeled_wall_clock_minutes": 40, "budget_units": 5},
+      "wakeup_policy": {"default_recheck_minutes": 30},
+      "backoff_policy": {"failure_base_minutes": 10, "no_safe_work_base_minutes": 45, "max_delay_minutes": 120},
+      "resume_state_path": "/tmp/opscat-p89-no-safe-work-state.json",
+      "report_path": "/tmp/opscat-p89-no-safe-work-report.md",
+      "cycles": [
+        {"cycle_id": "p89-no-safe-cycle-1", "status": "no_safe_work", "iterations": 0, "budget_units": 0}
+      ]
+    }
+  ]
+}

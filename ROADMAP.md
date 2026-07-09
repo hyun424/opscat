@@ -752,3 +752,11 @@ P88 active scope: Bounded Local Supervisor Scheduler Contract. P88 models bounde
 ## P88 implemented
 
 P88 implemented as Bounded Local Supervisor Scheduler Contract evidence. P88 parses local fixture scenarios for completed work before max cycles, resumable work until max_cycles, immediate human handoff, guardrail failure backoff, no-safe-work budget exhaustion, and resumed scheduler duplicate protection; emits scheduler IDs, current cycle indexes, max cycles, modeled wall-clock budgets, selected run state IDs, terminal/resumable classification, stop reasons, next wakeup metadata, backoff policy, checkpoint write-plan metadata, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no sleeping, no process spawning, no agent spawning, no action execution, no default external model/API calls, and no unattended production-operation claim.
+
+## P89 active
+
+P89 active scope: Safe Local Auto-Run Entrypoint. P89 provides one operator-facing local/mock command and report contract that composes P85 supervisor, P86 runner, P87 reporting, and P88 scheduler ideas into bounded modeled cycles with resume/report write plans.
+
+## P89 implemented
+
+P89 implemented as Safe Local Auto-Run Entrypoint evidence. P89 parses local fixture scenarios for dry-run completion, checkpoint resume without duplicate cycle IDs, human handoff, guardrail failure, max-cycles resumability, and no-safe-work recheck; emits config summaries, scheduled cycle metadata, resume state and report write-plan metadata, terminal status, stop reason, next recommended command text, handoff/failure summaries, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no sleeping, no process spawning, no agent spawning, no action execution, no default external model/API calls, and no unattended production-operation claim.

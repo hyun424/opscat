@@ -792,3 +792,11 @@ P93 active scope: Portfolio Demo Narrative & Operator Walkthrough Evidence. P93 
 ## P93 implemented
 
 P93 implemented as Portfolio Demo Narrative evidence. P93 emits a deterministic structured artifact with demo_id, title, portfolio_pitch, target_role_signals, architecture_sections, operator_walkthrough_steps, proof_points, safety_boundaries, forbidden_claims, demo_commands, expected_outputs, readiness_status, remaining_gaps, zero-side-effect counters, JSON/Markdown outputs, and count-style CLI smoke; and preserves no auth work, no live APIs, no credentials, no network, no production mutation, no real remediation/action execution, no external model/API calls, no production autonomy, no production operator replacement approval, and no unattended production approval.
+
+## P94 active
+
+P94 active scope: Operator Transcript Demo / Human-like Incident Response Walkthrough. P94 adds a deterministic local/mock transcript that shows experienced incident-response reasoning across evidence, hypotheses, tool choices, safe decisions, handoffs, verification, reports, and improvement gaps.
+
+## P94 implemented
+
+P94 implemented as Operator Transcript Demo evidence. P94 emits four deterministic transcripts for payment deploy regression, DB connection pool saturation, noisy metric spike with missing evidence, and prompt-injection-like log content; each transcript includes transcript_id, scenario_id, title, operator_goal, at least ten transcript steps, at least three hypotheses, selected and skipped tools, read-only tool plan, safe decision, verification, report summary, safety boundaries, forbidden claims, zero-side-effect counters, JSON/Markdown outputs, and count-style CLI smoke; and preserves no auth work, no live APIs, no credentials, no network, no production mutation, no real remediation/action execution, no external model/API calls, no production autonomy, no production operator replacement approval, and no unattended production approval.

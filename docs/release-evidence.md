@@ -2276,3 +2276,31 @@ UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs
 Verified result: targeted tests passed; P93 smoke wrote `/tmp/opscat-portfolio-demo-pack-latest.md` with walkthrough_steps>=8 proof_points>=6 commands>=3 executions=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, external_model_call_count=0, real_remediation_execution_count=0, and passed=true.
 
 Boundary: offline local/mock portfolio evidence only; P93 composes existing release evidence and deterministic fixtures. Demo commands, role signals, architecture sections, walkthrough steps, proof points, remaining gaps, and forbidden claims are metadata only. P93 performs no auth work, live API calls, credential reads, network calls, production mutation, real remediation/action execution, external model/API calls, production autonomy, production operator replacement approval, or unattended production approval.
+
+## P94 Operator Transcript Demo / Human-like Incident Response Walkthrough
+
+P94 adds a deterministic reviewer-friendly transcript demo that reads like an experienced incident responder. It covers four local/mock scenarios: payment deploy regression to safe rollback PR draft with local_mock_recovery_proven, DB connection pool saturation to human-gated scale/connection-pool handoff with recovery_not_proven, noisy metric spike with missing evidence to blocked_more_evidence_needed, and prompt-injection-like log content to blocked_safety_guardrail. P94 is local/mock transcript evidence only and not production autonomy.
+
+Implemented files:
+
+- `app/services/operator_transcript_demo.py`
+- `scripts/run_operator_transcript_demo.py`
+- `tests/test_operator_transcript_demo.py`
+- `tests/test_p94_release_evidence.py`
+- `evals/actions/p94_operator_transcript_demo.json`
+- `docs/operator-transcript-demo.md`
+- `docs/operations/p94-ticket-roadmap.md`
+- `docs/operations/p94-final-summary.md`
+- `/tmp/opscat-operator-transcript-demo-latest.md`
+
+Commands:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_operator_transcript_demo.py
+uv run --no-sync --extra dev pytest -q tests/test_operator_transcript_demo.py tests/test_p94_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs
+```
+
+Verified result: P94 smoke writes `/tmp/opscat-operator-transcript-demo-latest.md` with scenarios=4, transcript_steps>=40, hypotheses>=12, executions=0, recovery_proven=1, blocked=2, human_gated=1, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, external_model_call_count=0, real_remediation_execution_count=0, and passed=true.
+
+Boundary: offline local/mock transcript evidence only. Transcript steps, hypotheses, tool plans, skipped tools, safe decisions, remediation drafts, handoff drafts, verification notes, report summaries, and improvement gaps are metadata only. P94 performs no auth work, live API calls, credential reads, network calls, production mutation, real remediation/action execution, external model/API calls, production autonomy, production operator replacement approval, or unattended production approval.

@@ -14,6 +14,14 @@ Expected smoke line:
 walkthrough_steps>=8 proof_points>=6 commands>=3 executions=0
 ```
 
+best quick demo for reviewers:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_operator_transcript_demo.py
+```
+
+This P94 transcript demo shows agentic reasoning with evidence but no production action across four incidents: safe rollback PR draft, human-gated DB scale/pool handoff, blocked noisy metric spike, and blocked prompt-injection-like log content.
+
 The command writes:
 
 - `/tmp/opscat-portfolio-demo-pack-latest.json`

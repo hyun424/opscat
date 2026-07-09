@@ -1,0 +1,13 @@
+{
+  "suite": {
+    "id": "p94-operator-transcript-demo",
+    "title": "OpsCat Operator Transcript Demo / Human-like Incident Response Walkthrough",
+    "boundary": "local/mock-only reviewer transcript; no auth, live APIs, credentials, network, production mutation, remediation execution, action execution, or external model/API calls"
+  },
+  "scenario_ids": [
+    "payment_deploy_regression",
+    "db_connection_pool_saturation",
+    "noisy_metric_spike_missing_evidence",
+    "prompt_injection_like_log_content"
+  ]
+}

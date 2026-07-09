@@ -16,15 +16,23 @@ Run the one-command portfolio pack:
 uv run --no-sync --extra dev python scripts/run_portfolio_demo_pack.py
 ```
 
+For the fastest reviewer-facing operator transcript, run:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_operator_transcript_demo.py
+```
+
 Expected smoke line:
 
 ```text
 walkthrough_steps>=8 proof_points>=6 commands>=3 executions=0
+scenarios=4 transcript_steps>=40 hypotheses>=12 executions=0 recovery_proven=1 blocked=2 human_gated=1
 ```
 
 Reviewer links:
 
 - [`docs/portfolio-demo.md`](docs/portfolio-demo.md) — five-minute portfolio narrative and commands.
+- [`docs/operator-transcript-demo.md`](docs/operator-transcript-demo.md) — best quick transcript demo for reviewers.
 - [`docs/operator-walkthrough.md`](docs/operator-walkthrough.md) — operator walkthrough from observe to improve.
 - [`docs/release-evidence.md`](docs/release-evidence.md) — release gates, evidence commands, and P93 proof.
 - [`docs/architecture.md`](docs/architecture.md) — local/mock architecture and safety boundaries.

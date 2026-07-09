@@ -759,6 +759,16 @@ portfolio_demo_pack_smoke() {
   printf 'Wrote /tmp/opscat-portfolio-demo-pack-latest.md and %s/opscat-portfolio-demo-pack.json\n' "$VERIFY_TMPDIR"
 }
 
+operator_transcript_demo_smoke() {
+  section "P94 operator transcript demo smoke"
+  "${UV_DEV[@]}" python scripts/run_operator_transcript_demo.py \
+    --input evals/actions/p94_operator_transcript_demo.json \
+    --output-json "$VERIFY_TMPDIR/opscat-operator-transcript-demo.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-operator-transcript-demo.md" >/tmp/opscat-operator-transcript-demo-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-operator-transcript-demo.md" /tmp/opscat-operator-transcript-demo-latest.md
+  printf 'Wrote /tmp/opscat-operator-transcript-demo-latest.md and %s/opscat-operator-transcript-demo.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1255,7 +1265,8 @@ docs_contract_tests() {
     tests/test_p90_release_evidence.py \
     tests/test_p91_release_evidence.py \
     tests/test_p92_release_evidence.py \
-    tests/test_p93_release_evidence.py
+    tests/test_p93_release_evidence.py \
+    tests/test_p94_release_evidence.py
 }
 
 run_fast() {
@@ -1328,6 +1339,7 @@ run_eval() {
   readiness_gap_remediation_planner_smoke
   operator_replacement_acceptance_drill_v3_smoke
   portfolio_demo_pack_smoke
+  operator_transcript_demo_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

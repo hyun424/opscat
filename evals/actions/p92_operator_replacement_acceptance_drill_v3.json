@@ -1,0 +1,210 @@
+{
+  "suite": {
+    "id": "p92-operator-replacement-acceptance-drill-v3",
+    "description": "Deterministic local/mock P80-P91 product quality evidence pack scenarios."
+  },
+  "scenarios": [
+    {
+      "id": "clean-local-dry-run-acceptance",
+      "readiness_result": {
+        "readiness_id": "p90:clean-local-dry-run-acceptance",
+        "readiness_level": "local_dry_run_ready",
+        "score": 100,
+        "blockers": [],
+        "warnings": [],
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 0,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "remediation_plan": {"plan_id": "p91:clean-local-dry-run-acceptance", "has_blocking_remediation": false, "remediation_items": []},
+      "source_snapshots": {
+        "p80": {"decision": "local_mock_auto_allowed"},
+        "p81": {"draft_only": true},
+        "p82": {"draft_only": true},
+        "p83": {"outcome": "resolved"},
+        "p84": {"next_action": "monitor"},
+        "p89": {"resumed": false, "terminal_status": "completed"},
+        "p90": {"readiness_level": "local_dry_run_ready"},
+        "p91": {"has_blocking_remediation": false}
+      }
+    },
+    {
+      "id": "supervised-shadow-minor-warnings",
+      "readiness_result": {
+        "readiness_id": "p90:supervised-shadow-minor-warnings",
+        "readiness_level": "supervised_shadow_ready",
+        "score": 92,
+        "blockers": [],
+        "warnings": ["incomplete_run_requires_supervised_resume"],
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 0,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "remediation_plan": {
+        "plan_id": "p91:supervised-shadow-minor-warnings",
+        "has_blocking_remediation": false,
+        "remediation_items": [{"id": "P91-HARDEN-RESUME-WARNING", "severity": "low"}]
+      },
+      "source_snapshots": {
+        "p80": {"decision": "local_mock_auto_allowed"},
+        "p89": {"resumed": false, "terminal_status": "completed_with_warning"},
+        "p90": {"readiness_level": "supervised_shadow_ready"},
+        "p91": {"has_blocking_remediation": false}
+      }
+    },
+    {
+      "id": "needs-human-approval",
+      "readiness_result": {
+        "readiness_id": "p90:needs-human-approval",
+        "readiness_level": "human_gated_staging_ready",
+        "score": 88,
+        "blockers": ["human_high_severity_approval_policy_missing"],
+        "warnings": ["human_review_required_before_continue"],
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 0,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "remediation_plan": {
+        "plan_id": "p91:needs-human-approval",
+        "has_blocking_remediation": true,
+        "remediation_items": [{"id": "P91-HUMAN-HANDOFF-APPROVAL", "severity": "high", "human_gated": true}]
+      },
+      "source_snapshots": {
+        "p80": {"decision": "human_required"},
+        "p89": {"resumed": false, "terminal_status": "needs_human"},
+        "p90": {"readiness_level": "human_gated_staging_ready"},
+        "p91": {"has_blocking_remediation": true}
+      },
+      "stage_overrides": {"readiness_gate": "warn", "gap_remediation_plan": "warn"}
+    },
+    {
+      "id": "failed-guardrail-side-effect",
+      "readiness_result": {
+        "readiness_id": "p90:failed-guardrail-side-effect",
+        "readiness_level": "blocked",
+        "score": 60,
+        "blockers": ["side_effect_counter_non_zero", "guardrail_failure_requires_fix_before_auto_run"],
+        "warnings": [],
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 1,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "remediation_plan": {
+        "plan_id": "p91:failed-guardrail-side-effect",
+        "has_blocking_remediation": true,
+        "remediation_items": [
+          {"id": "P91-EMERGENCY-ZERO-SIDE-EFFECTS", "severity": "emergency"},
+          {"id": "P91-GUARDRAIL-ROLLBACK-DRILL", "severity": "high"}
+        ]
+      },
+      "source_snapshots": {
+        "p80": {"decision": "blocked"},
+        "p89": {"resumed": false, "terminal_status": "failed_guardrail"},
+        "p90": {"readiness_level": "blocked"},
+        "p91": {"has_blocking_remediation": true}
+      }
+    },
+    {
+      "id": "missing-evidence-report",
+      "readiness_result": {
+        "readiness_id": "p90:missing-evidence-report",
+        "readiness_level": "not_ready",
+        "score": 72,
+        "blockers": ["p76_evidence_sufficiency_missing", "p87_report_missing"],
+        "warnings": [],
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 0,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "remediation_plan": {
+        "plan_id": "p91:missing-evidence-report",
+        "has_blocking_remediation": true,
+        "remediation_items": [
+          {"id": "P91-EVIDENCE-SUFFICIENCY", "severity": "high"},
+          {"id": "P91-REPORTABILITY", "severity": "medium"}
+        ]
+      },
+      "source_snapshots": {
+        "p76": {"evidence_sufficient": false},
+        "p87": {"report_present": false},
+        "p90": {"readiness_level": "not_ready"},
+        "p91": {"has_blocking_remediation": true}
+      }
+    },
+    {
+      "id": "resumed-auto-run-gap-plan",
+      "readiness_result": {
+        "readiness_id": "p90:resumed-auto-run-gap-plan",
+        "readiness_level": "supervised_shadow_ready",
+        "score": 90,
+        "blockers": [],
+        "warnings": ["incomplete_run_requires_supervised_resume"],
+        "zero_side_effect_counters": {
+          "action_execution_count": 0,
+          "live_api_call_count": 0,
+          "credential_read_count": 0,
+          "network_call_count": 0,
+          "production_mutation_count": 0,
+          "shell_execution_count": 0,
+          "process_spawn_count": 0,
+          "agent_spawn_count": 0,
+          "sleep_call_count": 0
+        }
+      },
+      "remediation_plan": {
+        "plan_id": "p91:resumed-auto-run-gap-plan",
+        "has_blocking_remediation": false,
+        "remediation_items": [
+          {"id": "P91-HARDEN-RESUME-WARNING", "severity": "low"},
+          {"id": "P91-MATURITY-SHADOW-SOAK", "severity": "maturity"}
+        ]
+      },
+      "source_snapshots": {
+        "p86": {"resumed": true, "duplicate_work": false},
+        "p89": {"resumed": true, "terminal_status": "completed"},
+        "p90": {"readiness_level": "supervised_shadow_ready"},
+        "p91": {"has_blocking_remediation": false}
+      }
+    }
+  ]
+}

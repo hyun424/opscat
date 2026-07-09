@@ -776,3 +776,11 @@ P91 active scope: Readiness Gap Remediation Planner. P91 turns P90 readiness blo
 ## P91 implemented
 
 P91 implemented as Readiness Gap Remediation Planner evidence. P91 parses local fixture scenarios for local-ready minor warnings, missing evidence/reportability, side-effect counter detection, failed guardrail, high-severity human handoff, and clean ready state; emits plan IDs, source readiness IDs, prioritized remediation items with severity, expected readiness lift, required evidence/tests, owner lane, dependencies, risk, stop condition, next safe operating mode, claims that remain forbidden, blocked/human-gated items, audit metadata, and zero-side-effect counters; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no sleeping, no process spawning, no agent spawning, no action execution, no default external model/API calls, no production autonomy, and no unattended production approval.
+
+## P92 active
+
+P92 active scope: Operator Replacement Acceptance Drill v3 / Product Quality Evidence Pack. P92 packages P80-P91 local/mock evidence into deterministic acceptance levels, end-to-end stage evidence, safety boundary checks, readiness scores, blockers, roadmap items, portfolio/demo summaries, and forbidden claims.
+
+## P92 implemented
+
+P92 implemented as Operator Replacement Acceptance Drill v3 evidence. P92 parses local fixture scenarios for clean local dry-run acceptance, supervised shadow with minor warnings, human-gated approval need, failed guardrail/side-effect block, missing evidence/report block, and resumed auto-run with gap plan; emits drill IDs, scenario IDs, operator replacement levels, end-to-end stages with evidence refs, safety boundary checks, zero-side-effect counters, final readiness scores, top blockers, next roadmap items, portfolio/demo Markdown summaries, audit metadata, and forbidden claims; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no sleeping, no process spawning, no agent spawning, no action execution, no default external model/API calls, no production autonomy, no production operator replacement approval, and no unattended production approval.

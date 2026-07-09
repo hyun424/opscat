@@ -2221,3 +2221,30 @@ Verification:
 Verified result: targeted tests passed; P91 smoke wrote `/tmp/opscat-readiness-gap-remediation-planner-latest.md` with scenario_count=6, blocking_plans=4, emergency_items=1, human_gated_items=1, maturity_items=2, executions=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, sleep_call_count=0, and passed=true.
 
 Boundary: offline local/mock roadmap/planning artifact only; P91 consumes modeled P90 readiness results. Remediation plans, required tests, risks, stop conditions, next safe modes, blocked/human-gated items, and forbidden claims are metadata only. P91 performs no live API calls, credential reads, network calls, shell execution, sleeping, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, production autonomy, or unattended production approval.
+
+## P92 Operator Replacement Acceptance Drill v3 / Product Quality Evidence Pack
+
+P92 packages the completed P80-P91 local/mock chain into a structured acceptance drill and Product Quality Evidence Pack. It classifies six deterministic scenarios as local/mock demo ready, supervised shadow candidate, human-gated candidate, or blocked; emits end-to-end stages with evidence refs; records safety boundary checks and zero side-effect counters; computes readiness scores; lists blockers and next roadmap items; renders portfolio/demo Markdown summaries; and keeps forbidden claims explicit. P92 is local/mock demo ready at most, not production autonomy and not unattended production approval.
+
+Artifacts:
+
+- `docs/operations/p92-ticket-roadmap.md`
+- `docs/operations/p92-final-summary.md`
+- `app/services/operator_replacement_acceptance_drill_v3.py`
+- `scripts/run_operator_replacement_acceptance_drill_v3.py`
+- `evals/actions/p92_operator_replacement_acceptance_drill_v3.json`
+- `tests/test_operator_replacement_acceptance_drill_v3.py`
+- `tests/test_p92_release_evidence.py`
+- `/tmp/opscat-operator-replacement-acceptance-drill-v3-latest.md`
+
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_operator_replacement_acceptance_drill_v3.py tests/test_p92_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/services/operator_replacement_acceptance_drill_v3.py scripts/run_operator_replacement_acceptance_drill_v3.py tests/test_operator_replacement_acceptance_drill_v3.py tests/test_p92_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/services/operator_replacement_acceptance_drill_v3.py scripts/run_operator_replacement_acceptance_drill_v3.py tests/test_operator_replacement_acceptance_drill_v3.py tests/test_p92_release_evidence.py`
+- `UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_operator_replacement_acceptance_drill_v3.py --cases evals/actions/p92_operator_replacement_acceptance_drill_v3.json --output-json /tmp/opscat-operator-replacement-acceptance-drill-v3-latest.json --output-md /tmp/opscat-operator-replacement-acceptance-drill-v3-latest.md`
+- `UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs`
+
+Verified result: targeted tests passed; P92 smoke wrote `/tmp/opscat-operator-replacement-acceptance-drill-v3-latest.md` with scenario_count=6, local_demo_ready_count=1, shadow_candidate_count=2, human_gated_count=1, blocked_count=2, executions=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, sleep_call_count=0, and passed=true.
+
+Boundary: offline local/mock Product Quality Evidence Pack only; P92 composes modeled P80-P91 outputs and deterministic fixtures. Acceptance levels, evidence stages, safety boundary checks, blockers, next roadmap items, portfolio/demo summaries, and forbidden claims are metadata only. P92 performs no live API calls, credential reads, network calls, shell execution, sleeping, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, production autonomy, or unattended production approval.

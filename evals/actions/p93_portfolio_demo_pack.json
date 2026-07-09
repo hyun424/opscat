@@ -1,0 +1,184 @@
+{
+  "demo_id": "p93-portfolio-demo-pack",
+  "title": "OpsCat Portfolio Demo Narrative & Operator Walkthrough",
+  "portfolio_pitch": "OpsCat is a local/mock agentic AI incident-response/operator-replacement evidence system. It shows how an operator loop can observe, correlate, investigate, decide, draft safe actions, verify outcomes, report evidence, and improve from gaps without claiming production autonomy.",
+  "target_role_signals": [
+    {
+      "signal": "tool_use",
+      "portfolio_readout": "Uses provider-shaped readers, correlation, runbook, policy, verification, reporting, and evidence-pack tools with structured inputs and outputs.",
+      "evidence_refs": ["docs/agentic-loop.md", "docs/architecture.md", "docs/release-evidence.md#p92"]
+    },
+    {
+      "signal": "evidence_grounded_reasoning",
+      "portfolio_readout": "Every decision is tied to evidence references, acceptance stages, proof points, and reportable output rather than free-form claims.",
+      "evidence_refs": ["docs/release-evidence.md", "docs/sample-incident-report.md", "evals/actions/p92_operator_replacement_acceptance_drill_v3.json"]
+    },
+    {
+      "signal": "policy_safety_gates",
+      "portfolio_readout": "Risk, approval, side-effect, and forbidden-claim gates are modeled before any action-like path is considered.",
+      "evidence_refs": ["docs/operations/safety-policy.md", "docs/threat-model.md", "tests/test_no_dangerous_production_mutations.py"]
+    },
+    {
+      "signal": "autonomous_loop",
+      "portfolio_readout": "The local/mock loop demonstrates observe-to-report progression and safe auto-run readiness without production execution.",
+      "evidence_refs": ["docs/agentic-loop.md", "docs/operations/p92-final-summary.md", "scripts/run_operator_replacement_acceptance_drill_v3.py"]
+    },
+    {
+      "signal": "evaluation_benchmarking",
+      "portfolio_readout": "Acceptance drills, release evidence, eval profiles, and docs gates make the portfolio claims reproducible.",
+      "evidence_refs": ["scripts/verify.sh", "docs/release-evidence.md", "tests/test_p92_release_evidence.py"]
+    },
+    {
+      "signal": "human_approval_handoff",
+      "portfolio_readout": "High-risk, low-confidence, protected, or human-gated scenarios remain explicit handoffs instead of silent automation.",
+      "evidence_refs": ["docs/human-on-exception-operations.md", "docs/wake-up-report.md", "docs/operations/p92-final-summary.md"]
+    },
+    {
+      "signal": "local_mock_dry_run_boundary",
+      "portfolio_readout": "The demo proves local/mock operator-replacement mechanics only: zero executions, zero live calls, zero credentials, zero network, and no production mutation.",
+      "evidence_refs": ["docs/release-evidence.md", "evals/actions/p93_portfolio_demo_pack.json"]
+    }
+  ],
+  "architecture_sections": [
+    {
+      "section": "control_plane",
+      "summary": "FastAPI and service-layer state model incidents, evidence, approvals, policies, reports, and audit artifacts."
+    },
+    {
+      "section": "tool_layer",
+      "summary": "Provider-shaped local/mock tools collect context, normalize signals, select runbooks, and prepare safe drafts."
+    },
+    {
+      "section": "reasoning_loop",
+      "summary": "The operator loop progresses from observation to correlation, investigation, decision, safe draft/action boundary, verification, reporting, and improvement."
+    },
+    {
+      "section": "safety_gates",
+      "summary": "Policy, risk, approval, evidence sufficiency, readiness, and side-effect counters keep automation inside the local/mock dry-run boundary."
+    },
+    {
+      "section": "evidence_system",
+      "summary": "Acceptance drills, release evidence, roadmap summaries, and docs-profile tests make portfolio claims auditable."
+    }
+  ],
+  "operator_walkthrough_steps": [
+    {
+      "stage": "observe",
+      "operator_view": "OpsCat starts from provider-shaped alert or fixture evidence and captures service, severity, environment, and timeline state.",
+      "evidence_refs": ["docs/demo-walkthrough.md", "docs/agentic-loop.md"]
+    },
+    {
+      "stage": "correlate",
+      "operator_view": "Signals are grouped with deployment, metric, and incident context so the operator can see likely relationships.",
+      "evidence_refs": ["app/services/correlation_service.py", "docs/architecture.md"]
+    },
+    {
+      "stage": "investigate",
+      "operator_view": "Read-only local/mock context tools produce evidence-grounded hypotheses and candidate causes.",
+      "evidence_refs": ["app/tools/mock_context.py", "docs/release-evidence.md"]
+    },
+    {
+      "stage": "decide",
+      "operator_view": "Readiness, confidence, policy, and evidence gates decide whether to proceed, hand off, or block.",
+      "evidence_refs": ["app/services/operator_replacement_acceptance_drill_v3.py", "docs/operations/p92-final-summary.md"]
+    },
+    {
+      "stage": "draft",
+      "operator_view": "OpsCat prepares report, ticket, rollback, or remediation drafts as metadata, not uncontrolled production mutation.",
+      "evidence_refs": ["app/services/rollback_pr_draft_automation.py", "app/services/slack_ticket_draft_automation.py"]
+    },
+    {
+      "stage": "act_safely",
+      "operator_view": "The P93 pack records zero executions and only points to local/mock dry-run evidence; live or production execution remains forbidden.",
+      "evidence_refs": ["evals/actions/p93_portfolio_demo_pack.json", "docs/operations/safety-policy.md"]
+    },
+    {
+      "stage": "verify",
+      "operator_view": "Post-action and acceptance evidence prove whether a local/mock path is demo-ready, shadow-only, human-gated, or blocked.",
+      "evidence_refs": ["scripts/run_operator_replacement_acceptance_drill_v3.py", "docs/release-evidence.md"]
+    },
+    {
+      "stage": "report",
+      "operator_view": "Generated Markdown and release docs make the incident and portfolio evidence easy to inspect.",
+      "evidence_refs": ["docs/sample-incident-report.md", "docs/portfolio-demo.md", "docs/operator-walkthrough.md"]
+    },
+    {
+      "stage": "improve",
+      "operator_view": "Remaining gaps are kept in roadmap and release evidence so the portfolio does not overstate production maturity.",
+      "evidence_refs": ["ROADMAP.md", "docs/operations/p93-final-summary.md"]
+    }
+  ],
+  "proof_points": [
+    "P92 acceptance drill proves six local/mock operator-replacement scenarios with executions=0.",
+    "P90 and P91 separate readiness decisions from remediation-gap planning.",
+    "Policy and approval gates remain visible instead of hidden behind a chatbot answer.",
+    "Docs-profile verification checks release evidence, roadmap, README, and demo narrative wiring.",
+    "The CLI smoke emits count-style evidence for walkthrough steps, proof points, commands, and zero executions.",
+    "Forbidden claims explicitly block production autonomy, live API operation, credentialed operation, and production remediation claims.",
+    "The README now places the portfolio story, local/mock boundary, quick demo command, and evidence links near the top."
+  ],
+  "safety_boundaries": [
+    "no auth work",
+    "no live APIs",
+    "no credentials",
+    "no network",
+    "no production mutation",
+    "no real remediation/action execution",
+    "no external model/API calls",
+    "local/mock-only evidence",
+    "no production autonomy"
+  ],
+  "forbidden_claims": [
+    "production_autonomy",
+    "unattended_production_operator_replacement",
+    "production_remediation_execution",
+    "live_api_operation",
+    "credentialed_operation",
+    "external_model_operation",
+    "production_readiness"
+  ],
+  "demo_commands": [
+    {
+      "label": "P93 one-command portfolio pack",
+      "command": "uv run --no-sync --extra dev python scripts/run_portfolio_demo_pack.py",
+      "purpose": "Builds deterministic JSON and Markdown portfolio evidence in /tmp without live calls or executions."
+    },
+    {
+      "label": "P92 acceptance smoke",
+      "command": "uv run --no-sync --extra dev python scripts/run_operator_replacement_acceptance_drill_v3.py",
+      "purpose": "Replays the accepted local/mock operator-replacement evidence that P93 summarizes."
+    },
+    {
+      "label": "Docs release gate",
+      "command": "UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs",
+      "purpose": "Checks release evidence, roadmap, README, docs contracts, and repository hygiene docs profile."
+    },
+    {
+      "label": "Full local release gate",
+      "command": "UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full",
+      "purpose": "Runs the complete local gate when a reviewer wants the full release proof."
+    }
+  ],
+  "expected_outputs": [
+    "walkthrough_steps>=8 proof_points>=6 commands>=3 executions=0",
+    "/tmp/opscat-portfolio-demo-pack-latest.json",
+    "/tmp/opscat-portfolio-demo-pack-latest.md",
+    "/tmp/opscat-operator-replacement-acceptance-drill-v3-latest.md"
+  ],
+  "readiness_status": "portfolio_demo_ready_local_mock",
+  "remaining_gaps": [
+    "Production auth and tenant administration remain out of scope.",
+    "Live connector OAuth, real provider mutation, and secret-manager integration remain out of scope.",
+    "Hosted workers, queue HA, load/soak testing, production deployment, backup/restore, and self-monitoring remain future work.",
+    "Production operator replacement requires supervised shadow evidence, human approval workflows, security review, and explicit owner approval."
+  ],
+  "zero_side_effect_counters": {
+    "action_execution_count": 0,
+    "live_api_call_count": 0,
+    "credential_read_count": 0,
+    "network_call_count": 0,
+    "production_mutation_count": 0,
+    "external_model_call_count": 0,
+    "real_remediation_execution_count": 0
+  }
+}

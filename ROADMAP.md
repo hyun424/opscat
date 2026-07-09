@@ -784,3 +784,11 @@ P92 active scope: Operator Replacement Acceptance Drill v3 / Product Quality Evi
 ## P92 implemented
 
 P92 implemented as Operator Replacement Acceptance Drill v3 evidence. P92 parses local fixture scenarios for clean local dry-run acceptance, supervised shadow with minor warnings, human-gated approval need, failed guardrail/side-effect block, missing evidence/report block, and resumed auto-run with gap plan; emits drill IDs, scenario IDs, operator replacement levels, end-to-end stages with evidence refs, safety boundary checks, zero-side-effect counters, final readiness scores, top blockers, next roadmap items, portfolio/demo Markdown summaries, audit metadata, and forbidden claims; and preserves no live API calls, no credential reads, no network calls, no production mutation, no remediation execution, no shell command execution, no sleeping, no process spawning, no agent spawning, no action execution, no default external model/API calls, no production autonomy, no production operator replacement approval, and no unattended production approval.
+
+## P93 active
+
+P93 active scope: Portfolio Demo Narrative & Operator Walkthrough Evidence. P93 packages P92 and selected prior local/mock evidence into a deterministic portfolio demo pack, operator walkthrough, README polish, architecture narrative, release evidence, and docs-profile verification for an agentic AI incident-response/operator-replacement portfolio story.
+
+## P93 implemented
+
+P93 implemented as Portfolio Demo Narrative evidence. P93 emits a deterministic structured artifact with demo_id, title, portfolio_pitch, target_role_signals, architecture_sections, operator_walkthrough_steps, proof_points, safety_boundaries, forbidden_claims, demo_commands, expected_outputs, readiness_status, remaining_gaps, zero-side-effect counters, JSON/Markdown outputs, and count-style CLI smoke; and preserves no auth work, no live APIs, no credentials, no network, no production mutation, no real remediation/action execution, no external model/API calls, no production autonomy, no production operator replacement approval, and no unattended production approval.

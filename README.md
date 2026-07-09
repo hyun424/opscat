@@ -6,6 +6,31 @@ This repository is intended as a portfolio-grade Agentic AI Engineer artifact an
 
 > Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. It now includes asynchronous webhook queueing by default, immutable execution attempts, connector idempotency replay/conflict protection, and a server-rendered operator dashboard. See [`docs/integration-verification.md`](docs/integration-verification.md).
 
+## Portfolio demo evidence
+
+OpsCat is designed to be read as an agentic AI incident-response/operator-replacement portfolio project. It proves the shape of an operator loop: tool use, evidence-grounded reasoning, policy and safety gates, autonomous observe-to-report flow, evaluation/benchmarking, human approval handoff, and a local/mock-only dry-run boundary.
+
+Run the one-command portfolio pack:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_portfolio_demo_pack.py
+```
+
+Expected smoke line:
+
+```text
+walkthrough_steps>=8 proof_points>=6 commands>=3 executions=0
+```
+
+Reviewer links:
+
+- [`docs/portfolio-demo.md`](docs/portfolio-demo.md) — five-minute portfolio narrative and commands.
+- [`docs/operator-walkthrough.md`](docs/operator-walkthrough.md) — operator walkthrough from observe to improve.
+- [`docs/release-evidence.md`](docs/release-evidence.md) — release gates, evidence commands, and P93 proof.
+- [`docs/architecture.md`](docs/architecture.md) — local/mock architecture and safety boundaries.
+
+Boundary: the portfolio demo is local/mock-only. It performs no auth work, live APIs, credentials, network, production mutation, real remediation/action execution, or external model/API calls; it is not production autonomy.
+
 ## Portfolio story
 
 OpsCat demonstrates a production-minded agent loop:

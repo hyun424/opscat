@@ -97,3 +97,15 @@ These are not fully implemented in the local MVP; they are documented as paid-be
 ## Current integration status
 
 The local/mock MVP now verifies through compileall, Ruff, mypy, pytest, deterministic demo smoke, coverage gate, and Docker Compose config. It remains intentionally local/mock-only: auth is header-based for demo, workflow queueing is SQLite/local rather than HA distributed infrastructure, and real provider side effects are disabled. See `docs/integration-verification.md` for command evidence.
+
+## P93 portfolio demo architecture narrative
+
+P93 packages the existing local/mock architecture into reviewer-readable evidence for an agentic AI incident-response/operator-replacement portfolio. The architecture story has five parts:
+
+1. Control plane: incidents, evidence, approvals, policies, reports, and audit metadata are modeled through the FastAPI/service/data layers.
+2. Tool layer: provider-shaped local/mock tools gather context, normalize signals, select runbooks, verify outcomes, and prepare reportable artifacts.
+3. Reasoning loop: the operator flow is observe, correlate, investigate, decide, draft, act safely, verify, report, and improve.
+4. Safety gates: readiness, policy, approval, evidence sufficiency, forbidden claims, and zero side-effect counters keep the demo local/mock-only.
+5. Evidence system: P92 acceptance results, P93 portfolio pack output, release evidence, roadmap entries, and docs-profile tests make the claims reproducible.
+
+The P93 architecture narrative is metadata only. It does not add auth work, live APIs, credentials, network, production mutation, real remediation/action execution, or external model/API calls, and it is not production autonomy.

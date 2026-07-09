@@ -749,6 +749,16 @@ operator_replacement_acceptance_drill_v3_smoke() {
   printf 'Wrote /tmp/opscat-operator-replacement-acceptance-drill-v3-latest.md and %s/opscat-operator-replacement-acceptance-drill-v3.json\n' "$VERIFY_TMPDIR"
 }
 
+portfolio_demo_pack_smoke() {
+  section "P93 portfolio demo pack smoke"
+  "${UV_DEV[@]}" python scripts/run_portfolio_demo_pack.py \
+    --input evals/actions/p93_portfolio_demo_pack.json \
+    --output-json "$VERIFY_TMPDIR/opscat-portfolio-demo-pack.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-portfolio-demo-pack.md" >/tmp/opscat-portfolio-demo-pack-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-portfolio-demo-pack.md" /tmp/opscat-portfolio-demo-pack-latest.md
+  printf 'Wrote /tmp/opscat-portfolio-demo-pack-latest.md and %s/opscat-portfolio-demo-pack.json\n' "$VERIFY_TMPDIR"
+}
+
 night_operator_drill_v2_smoke() {
   section "P50 night operator drill v2 smoke"
   "${UV_DEV[@]}" python scripts/run_night_operator_drill_v2.py \
@@ -1244,7 +1254,8 @@ docs_contract_tests() {
     tests/test_p89_release_evidence.py \
     tests/test_p90_release_evidence.py \
     tests/test_p91_release_evidence.py \
-    tests/test_p92_release_evidence.py
+    tests/test_p92_release_evidence.py \
+    tests/test_p93_release_evidence.py
 }
 
 run_fast() {
@@ -1316,6 +1327,7 @@ run_eval() {
   safe_auto_run_readiness_gate_smoke
   readiness_gap_remediation_planner_smoke
   operator_replacement_acceptance_drill_v3_smoke
+  portfolio_demo_pack_smoke
   night_operator_drill_v2_smoke
   operator_judgment_benchmark_v2_smoke
   failure_mining_loop_smoke

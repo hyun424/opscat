@@ -2248,3 +2248,31 @@ Verification:
 Verified result: targeted tests passed; P92 smoke wrote `/tmp/opscat-operator-replacement-acceptance-drill-v3-latest.md` with scenario_count=6, local_demo_ready_count=1, shadow_candidate_count=2, human_gated_count=1, blocked_count=2, executions=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, shell_execution_count=0, process_spawn_count=0, agent_spawn_count=0, sleep_call_count=0, and passed=true.
 
 Boundary: offline local/mock Product Quality Evidence Pack only; P92 composes modeled P80-P91 outputs and deterministic fixtures. Acceptance levels, evidence stages, safety boundary checks, blockers, next roadmap items, portfolio/demo summaries, and forbidden claims are metadata only. P92 performs no live API calls, credential reads, network calls, shell execution, sleeping, process spawning, agent spawning, production mutation, remediation execution, action execution, default external model/API calls, production autonomy, or unattended production approval.
+
+## P93 Portfolio Demo Narrative & Operator Walkthrough Evidence
+
+P93 packages P92 and selected prior local/mock evidence into a reviewer-facing portfolio demo pack for an agentic AI incident-response/operator-replacement role. It emits a deterministic structured artifact with demo_id, title, portfolio_pitch, target_role_signals, architecture_sections, operator_walkthrough_steps, proof_points, safety_boundaries, forbidden_claims, demo_commands, expected_outputs, readiness_status, remaining_gaps, and zero_side_effect_counters. P93 is local/mock portfolio evidence only and not production autonomy.
+
+Implemented files:
+
+- `app/services/portfolio_demo_pack.py`
+- `scripts/run_portfolio_demo_pack.py`
+- `tests/test_portfolio_demo_pack.py`
+- `tests/test_p93_release_evidence.py`
+- `evals/actions/p93_portfolio_demo_pack.json`
+- `docs/portfolio-demo.md`
+- `docs/operator-walkthrough.md`
+- `docs/operations/p93-ticket-roadmap.md`
+- `docs/operations/p93-final-summary.md`
+
+Commands:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_portfolio_demo_pack.py
+uv run --no-sync --extra dev pytest -q tests/test_portfolio_demo_pack.py tests/test_p93_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs
+```
+
+Verified result: targeted tests passed; P93 smoke wrote `/tmp/opscat-portfolio-demo-pack-latest.md` with walkthrough_steps>=8 proof_points>=6 commands>=3 executions=0, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, external_model_call_count=0, real_remediation_execution_count=0, and passed=true.
+
+Boundary: offline local/mock portfolio evidence only; P93 composes existing release evidence and deterministic fixtures. Demo commands, role signals, architecture sections, walkthrough steps, proof points, remaining gaps, and forbidden claims are metadata only. P93 performs no auth work, live API calls, credential reads, network calls, production mutation, real remediation/action execution, external model/API calls, production autonomy, production operator replacement approval, or unattended production approval.

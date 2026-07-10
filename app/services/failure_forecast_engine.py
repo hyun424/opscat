@@ -2589,6 +2589,286 @@ def _g006_source_preflight(mode: str, rows: Sequence[Mapping[str, Any]], ledger:
     }
 
 
+def _g006_normalize_partition(value: Any) -> str:
+    partition = str(value or "diagnostic")
+    return {"held_out_test": "held_out", "test": "held_out"}.get(partition, partition)
+
+
+def _g006_private_labels_by_window(ledger_path: Path) -> dict[str, dict[str, Any]]:
+    payload = _load_json(ledger_path)
+    labels: dict[str, dict[str, Any]] = {}
+    for record in _mapping_sequence(payload.get("records", ())):
+        window_ids = [str(record.get("source_window_id") or "")]
+        window_ids.extend(str(value) for value in _sequence(record.get("public_source_window_ids", ())))
+        for window_id in window_ids:
+            if not window_id:
+                continue
+            labels[window_id] = {
+                "incident_group_id": record.get("incident_group_id") or record.get("injection_id"),
+                "label_failure_mode": record.get("label_failure_mode") or record.get("expected_predicate") or record.get("injection_type"),
+                "label_incident_id": record.get("label_incident_id") or record.get("injection_id"),
+                "label_incident_start_timestamp": record.get("label_incident_start_timestamp"),
+                "label_positive": record.get("label_positive", True),
+                "lead_time_label_minutes": record.get("lead_time_label_minutes"),
+            }
+    return labels
+
+
+def _g006_manifest_artifact_path(manifest_path: Path, manifest: Mapping[str, Any], *keys: str) -> Path | None:
+    for container_key in ("artifact_paths", "artifacts"):
+        container = manifest.get(container_key)
+        if not isinstance(container, Mapping):
+            continue
+        for key in keys:
+            value = container.get(key)
+            if isinstance(value, str) and value:
+                return manifest_path.parent / value
+    return None
+
+
+def _g006_provenance_root(manifest_path: Path, manifest: Mapping[str, Any]) -> str | None:
+    provenance_path = _g006_manifest_artifact_path(manifest_path, manifest, "provenance_hashes")
+    if provenance_path is None or not provenance_path.exists():
+        return None
+    provenance = _load_json(provenance_path)
+    artifact_hashes = provenance.get("artifact_hashes")
+    if not isinstance(artifact_hashes, Mapping) or not artifact_hashes:
+        return None
+    for name, expected in artifact_hashes.items():
+        artifact_path = manifest_path.parent / str(name)
+        if not artifact_path.exists() or _sha256_path(artifact_path) != str(expected):
+            return None
+    return _sha256_text(_stable_json({"artifact_hashes": dict(artifact_hashes)}))
+
+
+def _g006_runtime_receipt_codes(
+    receipt_path: str | Path | None,
+    runtime_manifests: Mapping[str, str | Path | None],
+) -> set[str]:
+    if not _g006_receipt_is_verified(receipt_path):
+        return {"forged_source_runtime_receipt"}
+    receipt = _load_json(Path(str(receipt_path)))
+    envelopes = {
+        str(item.get("source")): item
+        for item in _mapping_sequence(receipt.get("run_envelopes", ()))
+        if item.get("run_label") == "run_1"
+    }
+    codes: set[str] = set()
+    expected_kind = {
+        "db_pool": "actual_sqlite_pool",
+        "queue": "actual_rabbitmq_docker",
+        "deploy": "actual_threading_http_server",
+    }
+    canonical_roots = receipt.get("canonical_roots", {}) if isinstance(receipt.get("canonical_roots"), Mapping) else {}
+    for source, path_value in runtime_manifests.items():
+        if path_value is None:
+            continue
+        manifest_path = Path(path_value)
+        envelope = envelopes.get(source)
+        if envelope is None or not manifest_path.exists():
+            codes.add("source_runtime_receipt_manifest_mismatch")
+            continue
+        manifest = _load_json(manifest_path)
+        diagnostic_value = manifest.get("diagnostic_profile")
+        diagnostic: Mapping[str, Any] = diagnostic_value if isinstance(diagnostic_value, Mapping) else {}
+        if manifest.get("test_fast_runtime") is True or diagnostic.get("non_qualifying") is True:
+            codes.add("test_fast_runtime_noncounting")
+        attestation_value = manifest.get("runtime_attestation")
+        attestation: Mapping[str, Any] = attestation_value if isinstance(attestation_value, Mapping) else {}
+        envelope_attestation_value = envelope.get("runtime_attestation")
+        envelope_attestation: Mapping[str, Any] = (
+            envelope_attestation_value if isinstance(envelope_attestation_value, Mapping) else {}
+        )
+        root = _g006_provenance_root(manifest_path, manifest)
+        if (
+            envelope.get("verified") is not True
+            or _sequence(envelope.get("validation_error_codes", ()))
+            or str(envelope.get("manifest_path") or "") != str(manifest_path)
+            or envelope.get("manifest_sha256") != _sha256_path(manifest_path)
+            or root is None
+            or envelope.get("canonical_artifact_root_sha256") != root
+            or canonical_roots.get(source) != root
+            or attestation.get("kind") != expected_kind[source]
+            or envelope_attestation.get("kind") != expected_kind[source]
+        ):
+            codes.add("source_runtime_receipt_manifest_mismatch")
+    return codes
+
+
+def _g006_receipt_review_binding_codes(
+    receipt_path: str | Path | None,
+    source_registry: str | Path | None,
+    source_eligibility: str | Path | None,
+) -> set[str]:
+    if receipt_path is None:
+        return set()
+    receipt = _load_json(Path(receipt_path))
+    for key, path_value in (("registry", source_registry), ("eligibility", source_eligibility)):
+        if path_value is None:
+            return {"source_runtime_receipt_registry_mismatch"}
+        path = Path(path_value)
+        binding = receipt.get(key)
+        if (
+            not path.exists()
+            or not isinstance(binding, Mapping)
+            or binding.get("path") != str(path)
+            or binding.get("sha256") != _sha256_path(path)
+        ):
+            return {"source_runtime_receipt_registry_mismatch"}
+    return set()
+
+
+def _g006_runtime_coverage_interval(
+    record: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    source_system: str,
+    family: str,
+    partition: str,
+) -> dict[str, Any] | None:
+    tick_seconds = float(manifest.get("tick_seconds") or 0)
+    if tick_seconds <= 0:
+        return None
+    tick = int(record.get("tick") or 0)
+    created_at = str(manifest.get("created_at") or "")
+    if not created_at:
+        return None
+    start = _parse_ts(created_at) + timedelta(seconds=tick * tick_seconds)
+    end = start + timedelta(seconds=tick_seconds)
+    return {
+        "coverage_interval_id": f"{source_system}:{record.get('source_window_id', tick)}",
+        "split_id": f"g006-{partition}",
+        "family": family,
+        "service": str(record.get("service") or record.get("service_id") or record.get("queue_name") or f"{family}-service"),
+        "source_system": source_system,
+        "start": start.isoformat().replace("+00:00", "Z"),
+        "end": end.isoformat().replace("+00:00", "Z"),
+        "timestamp_source": "actual_runtime_observation",
+    }
+
+
+def _g006_runtime_source_rows(
+    manifest_path: Path,
+    source_system: str,
+    sequence_start: int,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any], dict[str, Any]]:
+    manifest = _load_json(manifest_path)
+    public_path = _g006_manifest_artifact_path(manifest_path, manifest, "public_telemetry")
+    ledger_path = _g006_manifest_artifact_path(
+        manifest_path,
+        manifest,
+        "private_saturation_ledger",
+        "private_injection_ledger",
+    )
+    if public_path is None or ledger_path is None or not public_path.exists() or not ledger_path.exists():
+        raise ValueError(f"{source_system}_source_artifacts_missing")
+    labels_by_window = _g006_private_labels_by_window(ledger_path)
+    family = str(manifest.get("source_family") or {"db_pool": "database", "queue": "queue", "deploy": "deploy"}[source_system])
+    rows: list[dict[str, Any]] = []
+    ledger: list[dict[str, Any]] = []
+    for offset, raw_record, source_record in _g006_read_records(public_path):
+        sequence_index = sequence_start + offset + 1
+        partition = _g006_normalize_partition(source_record.get("partition_id") or source_record.get("pre_label_partition"))
+        window_id = str(source_record.get("source_window_id") or f"{source_system}-{offset}")
+        adapted_record = dict(source_record)
+        adapted_record["family"] = family
+        adapted_record["partition"] = partition
+        adapted_record["public_features"] = copy.deepcopy(source_record)
+        adapted_record["service"] = str(
+            source_record.get("service") or source_record.get("service_id") or source_record.get("queue_name") or f"{family}-service"
+        )
+        coverage_interval = _g006_runtime_coverage_interval(
+            source_record,
+            manifest,
+            source_system,
+            family,
+            partition,
+        )
+        adapted_record["coverage_interval"] = coverage_interval
+        adapted_record["source_timestamp"] = str(
+            coverage_interval.get("start") if coverage_interval is not None else manifest.get("created_at") or ""
+        )
+        row, label = _g006_row_from_record(
+            source_system=source_system,
+            source_dataset=public_path.stem,
+            source_manifest_key=str(source_record.get("source_key") or adapted_record["service"]),
+            source_path=public_path,
+            raw_record=raw_record,
+            record=adapted_record,
+            record_offset=offset,
+            partition=partition,
+            family=family,
+            sequence_index=sequence_index,
+            reviewed_label=labels_by_window.get(window_id, {"label_positive": False}),
+        )
+        rows.append(row)
+        ledger.append(label)
+    source_summary = _g006_source_preflight("verified-actual-runtime", rows, ledger)
+    source_manifest = {
+        "manifest_path": str(manifest_path),
+        "manifest_sha256": _sha256_path(manifest_path),
+        "public_telemetry_path": str(public_path),
+        "public_telemetry_sha256": _sha256_path(public_path),
+        "runtime_attestation": copy.deepcopy(manifest.get("runtime_attestation")),
+    }
+    return rows, ledger, source_summary, source_manifest
+
+
+def _g006_dejavu_rows(
+    manifest_path: Path,
+    sequence_start: int,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any], dict[str, Any]]:
+    manifest = _load_json(manifest_path)
+    public_path = manifest_path.parent / "p105-dejavu-a1-public-windows.jsonl"
+    ledger_path = manifest_path.parent / "p105-dejavu-a1-private-label-ledger.json"
+    if not public_path.exists() or not ledger_path.exists():
+        raise ValueError("dejavu_a1_source_artifacts_missing")
+    labels_by_window = _g006_private_labels_by_window(ledger_path)
+    rows: list[dict[str, Any]] = []
+    ledger: list[dict[str, Any]] = []
+    for offset, raw_record, source_record in _g006_read_records(public_path):
+        sequence_index = sequence_start + offset + 1
+        partition = _g006_normalize_partition(source_record.get("partition_id") or source_record.get("pre_label_partition"))
+        window_id = str(source_record.get("source_window_id") or f"dejavu-a1-{offset}")
+        start = datetime.fromtimestamp(float(source_record.get("window_start") or 0), tz=_parse_ts("1970-01-01T00:00:00Z").tzinfo)
+        end = datetime.fromtimestamp(float(source_record.get("window_end") or 0), tz=start.tzinfo)
+        adapted_record = dict(source_record)
+        adapted_record["source_timestamp"] = end.isoformat().replace("+00:00", "Z")
+        adapted_record["coverage_interval"] = {
+            "coverage_interval_id": f"dejavu_a1:{window_id}",
+            "split_id": f"g006-{partition}",
+            "family": "database",
+            "service": str(source_record.get("service") or "database-service"),
+            "source_system": "dejavu_a1",
+            "start": start.isoformat().replace("+00:00", "Z"),
+            "end": end.isoformat().replace("+00:00", "Z"),
+            "timestamp_source": "actual_dataset_timestamp_interval",
+        }
+        row, label = _g006_row_from_record(
+            source_system="dejavu_a1",
+            source_dataset="dejavu-a1",
+            source_manifest_key=str(source_record.get("source_key") or "dejavu-a1-reviewed-local"),
+            source_path=public_path,
+            raw_record=raw_record,
+            record=adapted_record,
+            record_offset=offset,
+            partition=partition,
+            family="database",
+            sequence_index=sequence_index,
+            reviewed_label=labels_by_window.get(window_id, {"label_positive": False}),
+        )
+        rows.append(row)
+        ledger.append(label)
+    source_summary = _g006_source_preflight("reviewed-local", rows, ledger)
+    source_manifest = {
+        "manifest_path": str(manifest_path),
+        "manifest_sha256": _sha256_path(manifest_path),
+        "public_telemetry_path": str(public_path),
+        "public_telemetry_sha256": _sha256_path(public_path),
+        "review_status": manifest.get("review_status"),
+    }
+    return rows, ledger, source_summary, source_manifest
+
+
 def materialize_p105_release_qualified_evidence(
     *,
     p32_replay: str | Path,
@@ -2679,8 +2959,40 @@ def materialize_p105_release_qualified_evidence(
             }
         seed_rows = []
         seed_ledger = []
-    rows = seed_rows + p44_rows
-    ledger_records = seed_ledger + p44_ledger
+    expanded_rows: list[dict[str, Any]] = []
+    expanded_ledger: list[dict[str, Any]] = []
+    expanded_preflight: dict[str, Any] = {}
+    expanded_source_manifest: dict[str, Any] = {}
+    sequence_start = len(seed_rows) + len(p44_rows)
+    if dejavu_a1_reviewed_local_manifest is not None:
+        source_rows, source_ledger, source_preflight, source_manifest_entry = _g006_dejavu_rows(
+            Path(dejavu_a1_reviewed_local_manifest),
+            sequence_start,
+        )
+        sequence_start += len(source_rows)
+        expanded_rows.extend(source_rows)
+        expanded_ledger.extend(source_ledger)
+        expanded_preflight["dejavu_a1"] = source_preflight
+        expanded_source_manifest["dejavu_a1"] = source_manifest_entry
+    for source_system, manifest_value in (
+        ("db_pool", db_pool_harness_manifest),
+        ("queue", queue_harness_manifest),
+        ("deploy", deploy_harness_manifest),
+    ):
+        if manifest_value is None:
+            continue
+        source_rows, source_ledger, source_preflight, source_manifest_entry = _g006_runtime_source_rows(
+            Path(manifest_value),
+            source_system,
+            sequence_start,
+        )
+        sequence_start += len(source_rows)
+        expanded_rows.extend(source_rows)
+        expanded_ledger.extend(source_ledger)
+        expanded_preflight[source_system] = source_preflight
+        expanded_source_manifest[source_system] = source_manifest_entry
+    rows = seed_rows + p44_rows + expanded_rows
+    ledger_records = seed_ledger + p44_ledger + expanded_ledger
     ledger = {
         "schema_version": "p105.private_scorer_label_ledger.v1",
         "public_artifact": False,
@@ -2717,6 +3029,7 @@ def materialize_p105_release_qualified_evidence(
                 ],
             },
             "p44": p44_preflight,
+            **expanded_preflight,
         },
         "families": {
             family: {
@@ -2747,10 +3060,22 @@ def materialize_p105_release_qualified_evidence(
     p24_parity, p24_hashes = _g006_p24_parity_manifest({"rows": rows}, set())
     source_input_manifest: dict[str, Any] = {
         "schema_version": "p105.source_manifest.v1",
-        "sources": source_manifest,
+        "sources": {**source_manifest, **expanded_source_manifest},
         "p44_mode": p44_mode,
         "p44_reviewed_local_manifest": str(p44_reviewed_local_manifest) if p44_reviewed_local_manifest else None,
+        "source_runtime_qualification_receipt": str(source_runtime_qualification_receipt) if source_runtime_qualification_receipt else None,
+        "source_runtime_qualification_receipt_sha256": (
+            _sha256_path(Path(source_runtime_qualification_receipt)) if source_runtime_qualification_receipt else None
+        ),
         "forbidden_inputs": [],
+    }
+    source_runtime_qualification = {
+        "receipt_path": str(source_runtime_qualification_receipt) if source_runtime_qualification_receipt else None,
+        "receipt_sha256": _sha256_path(Path(source_runtime_qualification_receipt)) if source_runtime_qualification_receipt else None,
+        "verified_release_counting": bool(
+            source_runtime_qualification_receipt and _g006_receipt_is_verified(source_runtime_qualification_receipt)
+        ),
+        "runtime_sources": sorted(key for key in expanded_preflight if key in {"db_pool", "queue", "deploy"}),
     }
     payload: dict[str, Any] = {
         "schema_version": "p105.forecast.release_benchmark.v1",
@@ -2770,6 +3095,7 @@ def materialize_p105_release_qualified_evidence(
         "private_scorer_label_ledger_path": "p105-private-scorer-label-ledger.json",
         "source_availability_preflight": source_availability_preflight,
         "source_input_manifest": source_input_manifest,
+        "source_runtime_qualification": source_runtime_qualification,
         "partition_manifest": partition_manifest,
         "coverage_manifest": coverage_manifest,
         "p24_parity_manifest": p24_parity,
@@ -4202,6 +4528,20 @@ def _g006_validate_materializer_runtime_inputs(
         codes.add("forged_source_runtime_receipt")
     if require_actual_runtime_attestation and source_runtime_qualification_receipt is None:
         codes.add("runtime_attestation_not_actual")
+    runtime_manifests = {
+        "db_pool": db_pool_harness_manifest,
+        "queue": queue_harness_manifest,
+        "deploy": deploy_harness_manifest,
+    }
+    if (count_only_verified_release_receipts or require_actual_runtime_attestation) and any(runtime_manifests.values()):
+        codes.update(_g006_runtime_receipt_codes(source_runtime_qualification_receipt, runtime_manifests))
+        codes.update(
+            _g006_receipt_review_binding_codes(
+                source_runtime_qualification_receipt,
+                source_registry,
+                source_eligibility,
+            )
+        )
     if reject_synthetic_four_day_coverage:
         paths = (
             p32_replay,
@@ -4225,15 +4565,32 @@ def _g006_path_contains_synthetic_four_day_coverage(path: Path) -> bool:
     if not path.exists() or not path.is_file():
         return False
     try:
-        text = path.read_text(encoding="utf-8")
-    except UnicodeDecodeError:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
         return False
-    return (
-        "fixed_four_day_constant" in text
-        or "fabricated-four-day" in text
-        or '"duration_seconds": 345600' in text
-        or '"duration_seconds":345600' in text
-    )
+
+    def contains(value: Any, parent_key: str = "") -> bool:
+        if parent_key in {"rejects", "forbidden_derivations", "forbidden_coverage_sources"}:
+            return False
+        if isinstance(value, Mapping):
+            for key, child in value.items():
+                key_text = str(key)
+                if key_text == "duration_seconds" and child == 4 * 24 * 60 * 60:
+                    return True
+                if key_text in {"coverage_source", "timestamp_source", "coverage_method"} and str(child) in {
+                    "fixed_four_day_constant",
+                    "fabricated-four-day",
+                    "raw_source_record_plus_fixed_4_days",
+                }:
+                    return True
+                if contains(child, key_text):
+                    return True
+            return False
+        if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+            return any(contains(child, parent_key) for child in value)
+        return False
+
+    return contains(payload)
 
 
 def _p105_macro_sequence_complete(macro: Mapping[str, Any], codes: set[str], errors: list[str]) -> bool:

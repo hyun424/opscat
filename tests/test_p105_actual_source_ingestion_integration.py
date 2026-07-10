@@ -170,7 +170,7 @@ def _canonical_root(manifest_path: Path) -> str:
     return hashlib.sha256(_stable_json({"artifact_hashes": provenance["artifact_hashes"]}).encode()).hexdigest()
 
 
-def _write_receipt(path: Path, manifests: dict[str, Path]) -> Path:
+def _write_receipt(path: Path, manifests: dict[str, Path], registry: Path, eligibility: Path) -> Path:
     envelopes = [
         {
             "schema_version": "p105.source-runtime-run-envelope.v1",
@@ -194,12 +194,20 @@ def _write_receipt(path: Path, manifests: dict[str, Path]) -> Path:
             "verified_release_counting": True,
             "run_envelopes": envelopes,
             "canonical_roots": {source: _canonical_root(manifest) for source, manifest in manifests.items()},
+            "registry": {"path": str(registry), "sha256": _sha256_path(registry)},
+            "eligibility": {"path": str(eligibility), "sha256": _sha256_path(eligibility)},
             "validation_error_codes": [],
         },
     )
 
 
-def _materialize(tmp_path: Path, *, test_fast: bool = False, tamper_receipt: bool = False) -> dict[str, Any]:
+def _materialize(
+    tmp_path: Path,
+    *,
+    test_fast: bool = False,
+    tamper_receipt: bool = False,
+    tamper_registry_after_receipt: bool = False,
+) -> dict[str, Any]:
     completed, dejavu_dir = _run_dejavu(tmp_path / "dejavu")
     assert completed.returncode == 0, completed.stderr
     manifests = {
@@ -213,13 +221,15 @@ def _materialize(tmp_path: Path, *, test_fast: bool = False, tamper_receipt: boo
             tmp_path / "runtime", source="deploy", family="deploy", runtime_kind="actual_threading_http_server", test_fast=test_fast
         ),
     }
-    receipt = _write_receipt(tmp_path / "receipt.json", manifests)
+    registry = _write_json(tmp_path / "registry.json", {"schema_version": "p105.source-registry.v1", "sources": []})
+    eligibility = _write_json(tmp_path / "eligibility.json", {"schema_version": "p105.source-eligibility.v1", "entries": []})
+    receipt = _write_receipt(tmp_path / "receipt.json", manifests, registry, eligibility)
     if tamper_receipt:
         payload = json.loads(receipt.read_text(encoding="utf-8"))
         payload["run_envelopes"][0]["manifest_sha256"] = "0" * 64
         _write_json(receipt, payload)
-    registry = _write_json(tmp_path / "registry.json", {"schema_version": "p105.source-registry.v1", "sources": []})
-    eligibility = _write_json(tmp_path / "eligibility.json", {"schema_version": "p105.source-eligibility.v1", "entries": []})
+    if tamper_registry_after_receipt:
+        _write_json(registry, {"schema_version": "p105.source-registry.v1", "sources": [{"source_key": "unreviewed"}]})
     return materialize_p105_release_qualified_evidence(
         p32_replay=P32_REPLAY,
         p41_sources=P41_SOURCES,
@@ -274,3 +284,8 @@ def test_receipt_must_hash_bind_every_ingested_runtime_manifest(tmp_path: Path) 
 def test_test_fast_runtime_sources_cannot_enter_release_counting_materialization(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="test_fast_runtime_noncounting"):
         _materialize(tmp_path, test_fast=True)
+
+
+def test_receipt_must_hash_bind_reviewed_registry_and_eligibility(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="source_runtime_receipt_registry_mismatch"):
+        _materialize(tmp_path, tamper_registry_after_receipt=True)

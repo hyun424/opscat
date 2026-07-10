@@ -449,6 +449,63 @@ def test_p100_handoff_adapter_rejects_unsound_validated_handoff_envelopes() -> N
             api.adapt_to_p100_policy_handoff(envelope)
 
 
+def test_sufficient_handoff_rejects_omitted_requirements_with_misbound_real_citation() -> None:
+    api = _api()
+    unsound_handoff = _base_envelope(
+        route="sufficient_for_policy_handoff",
+        evidence_states=[
+            {
+                "evidence_id": "ev-other-support",
+                "state": "supporting",
+                "requirement_ids": ["other-req"],
+                "tool_id": "metrics.query",
+                "source_family": "metrics",
+                "collected_at_tick": 12,
+                "trace_id": "trace-p104-misbound-real-citation",
+                "provenance": "synthetic.metrics",
+                "freshness_seconds": 60,
+                "summary": "A real supporting record exists, but it maps to other-req.",
+            }
+        ],
+        sufficiency_decision={
+            "critical_requirement_ids": ["req-a"],
+            "satisfied_requirement_ids": ["req-a"],
+            "missing_requirement_ids": [],
+            "citation_evidence_ids": ["ev-other-support"],
+            "telemetry_coverage": 0.94,
+            "hard_gates": [],
+        },
+    )
+    unsound_handoff.pop("requirements", None)
+
+    failures: list[str] = []
+    for label, action in (
+        ("validate_decision_envelope", lambda: api.validate_decision_envelope(unsound_handoff)),
+        ("adapt_to_p100_policy_handoff", lambda: api.adapt_to_p100_policy_handoff(unsound_handoff)),
+    ):
+        try:
+            action()
+        except ValueError:
+            continue
+        failures.append(f"{label} accepted omitted requirements with a citation mapped only to other-req")
+
+    case = _case("p104-supporting-metrics-logs")
+    generated = api.decide_evidence_sufficiency(
+        hypothesis_id=case["hypothesis_id"],
+        requirement_set_id=case["requirement_set_id"],
+        requirements=case["requirements"],
+        evidence_states=[record for records in case["tool_results"].values() for record in records],
+        telemetry_coverage=case["public_observation"]["measurements"]["telemetry_coverage"],
+        now_tick=20,
+    )
+    expected_requirement_ids = {requirement["requirement_id"] for requirement in case["requirements"]}
+    generated_requirement_ids = {requirement["requirement_id"] for requirement in generated.get("requirements", [])}
+    if generated["route"] == "sufficient_for_policy_handoff" and generated_requirement_ids != expected_requirement_ids:
+        failures.append("generated sufficient envelope omitted validated requirements needed for downstream trust")
+
+    assert failures == []
+
+
 def test_evidence_requirements_reject_optional_critical_unsupported_tools_and_scorer_truth() -> None:
     api = _api()
     validate = api.validate_evidence_requirement

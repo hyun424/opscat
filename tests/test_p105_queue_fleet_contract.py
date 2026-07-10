@@ -4,6 +4,7 @@ import hashlib
 import importlib
 import json
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +15,7 @@ DIAGNOSTIC_PROFILE_ID = "p105.queue-fleet.diagnostic.fast.v1"
 QUEUE_SCHEMA = "p105.queue.fleet_harness.v1"
 QUEUE_ADAPTER_KEY = "queue_fleet"
 QUEUE_ADAPTER_VERSION = "p105.adapter.rabbitmq-fleet-harness.v1"
+QUEUE_FLEET_FINALIZER = Path("scripts/finalize_p105_queue_fleet_output.py")
 
 
 def _api() -> Any:
@@ -190,6 +192,153 @@ def _queue_fleet_receipt() -> dict[str, Any]:
     }
 
 
+def _write_precontract_queue_fleet_output(output: Path, *, valid_raw_observations: bool = False) -> Path:
+    output.mkdir()
+    payload = _queue_fleet_manifest()
+    public_config = payload["public_config"]
+    public_config["runtime"]["broker_health_observed"] = True
+    private_ledger = payload["private_injection_ledger"]
+    telemetry_rows = 256 * 720
+    if valid_raw_observations:
+        public_rows = "".join(
+            json.dumps(
+                {
+                    "source_window_id": _source_window_id(
+                        "held_out" if service_index < 128 else "real_derived_shadow",
+                        service_index,
+                        sample_ordinal,
+                    )
+                },
+                sort_keys=True,
+            )
+            + "\n"
+            for sample_ordinal in range(720)
+            for service_index in range(256)
+        )
+    else:
+        public_rows = "{}\n" * telemetry_rows
+    (output / "p105-queue-fleet-public-telemetry.jsonl").write_text(public_rows, encoding="utf-8")
+    _write_json(output / "p105-queue-fleet-private-injection-ledger.json", private_ledger)
+    _write_json(
+        output / "p105-queue-fleet-pre-label-partitions.json",
+        {
+            "held_out": [_service_id(index) for index in range(128)],
+            "real_derived_shadow": [_service_id(index) for index in range(128, 256)],
+            "schema_version": "p105.queue.fleet_pre_label_partitions.v1",
+        },
+    )
+    coverage_segments = (
+        [
+            {
+                "canonical_duration_seconds": 3595,
+                "coverage_source": "receipt_bound_adjacent_monotonic_samples",
+                "end_sample_ordinal": 719,
+                "end_source_window_id": _source_window_id(
+                    "held_out" if service_index < 128 else "real_derived_shadow",
+                    service_index,
+                    719,
+                ),
+                "family": "queue",
+                "sample_count": 720,
+                "service": _service_id(service_index),
+                "split": "held_out" if service_index < 128 else "real_derived_shadow",
+                "start_sample_ordinal": 0,
+                "start_source_window_id": _source_window_id(
+                    "held_out" if service_index < 128 else "real_derived_shadow",
+                    service_index,
+                    0,
+                ),
+            }
+            for service_index in range(256)
+        ]
+        if valid_raw_observations
+        else [{"service": _service_id(index)} for index in range(256)]
+    )
+    _write_json(
+        output / "p105-queue-fleet-coverage.json",
+        {
+            "coverage_segments": coverage_segments,
+            "coverage_source": "receipt_bound_adjacent_monotonic_samples",
+            "counting_coverage_seconds": 920_320,
+            "diagnostic_only": False,
+            "schema_version": "p105.queue.fleet_coverage.v1",
+        },
+    )
+    raw_observations = (
+        [
+            {
+                "monotonic_ns": (sample_ordinal + 1) * 5_000_000_000,
+                "queue_counts": {
+                    "messages": 0,
+                    "messages_ready": 0,
+                    "messages_unacknowledged": 0,
+                    "name": f"p105-fleet-q-{service_index:03d}",
+                },
+                "sample_ordinal": sample_ordinal,
+                "service": _service_id(service_index),
+                "source_window_id": _source_window_id(
+                    "held_out" if service_index < 128 else "real_derived_shadow",
+                    service_index,
+                    sample_ordinal,
+                ),
+            }
+            for service_index in range(256)
+            for sample_ordinal in range(720)
+        ]
+        if valid_raw_observations
+        else [{}] * telemetry_rows
+    )
+    _write_json(
+        output / "p105-queue-fleet-runtime-attestation.raw.json",
+        {
+            "actual_runtime_executed": True,
+            "authority": {
+                "credential_reads": 0,
+                "host_ports": [],
+                "production_endpoint_attempts": 0,
+                "production_mutations": 0,
+            },
+            "capabilities": ["actual_rabbitmq_docker"],
+            "container_id": "queue-fleet-container",
+            "docker_network_name": "p105-queue-fleet-run-001_default",
+            "fixture_only": False,
+            "monotonic_finished_ns": 720 * 5_000_000_000,
+            "monotonic_started_ns": 5_000_000_000,
+            "rabbitmq_management_observed": True,
+            "raw_sample_observations": raw_observations,
+            "uses_in_memory_queue_simulation": False,
+        },
+    )
+    canonical_argv = [
+        "scripts/run_p105_queue_fleet_harness.py",
+        "--output-dir",
+        "<OUTPUT_DIR>",
+        "--full-runtime",
+        "--expect-no-host-ports",
+        "--expect-no-production-authority",
+    ]
+    manifest_path = _write_json(
+        output / "p105-queue-fleet-harness-manifest.json",
+        {
+            "artifact_paths": {
+                "coverage": "p105-queue-fleet-coverage.json",
+                "partitions": "p105-queue-fleet-pre-label-partitions.json",
+                "private_injection_ledger": "p105-queue-fleet-private-injection-ledger.json",
+                "provenance_hashes": "p105-queue-fleet-provenance-hashes.json",
+                "public_telemetry": "p105-queue-fleet-public-telemetry.jsonl",
+            },
+            "canonical_command_argv": canonical_argv,
+            "command_argv_sha256": _json_sha256(canonical_argv),
+            "diagnostic_only": False,
+            "public_config": public_config,
+            "runtime_attestation": {"kind": "actual_rabbitmq_docker"},
+            "schema_version": QUEUE_SCHEMA,
+        },
+    )
+    _write_json(output / "p105-queue-fleet-provenance-hashes.json", {"artifact_hashes": {}})
+    return manifest_path
+
+
 def test_queue_fleet_profile_requires_exact_public_capacity_shape_and_resource_bounds(tmp_path: Path) -> None:
     manifest = _write_json(tmp_path / "queue-fleet.json", _queue_fleet_manifest())
 
@@ -334,6 +483,94 @@ def test_queue_fleet_fast_diagnostic_profile_exercises_actual_rabbitmq_but_never
     assert result["receipt"] == {"locked": False, "release_counting": False}
     assert result["counting_coverage_seconds"] == 0
     assert result["release_floor_credit"] == {"rows": 0, "positives": 0, "groups": 0, "coverage_seconds": 0}
+
+
+def test_queue_fleet_finalizer_promotes_closed_safety_contract_without_replaying_runtime(tmp_path: Path) -> None:
+    output = tmp_path / "queue-fleet"
+    manifest_path = _write_precontract_queue_fleet_output(output, valid_raw_observations=True)
+    public_config = json.loads(manifest_path.read_text(encoding="utf-8"))["public_config"]
+
+    completed = subprocess.run(
+        [sys.executable, str(QUEUE_FLEET_FINALIZER), "--output-dir", str(output)],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["adapter_key"] == QUEUE_ADAPTER_KEY
+    assert manifest["adapter_version"] == QUEUE_ADAPTER_VERSION
+    assert manifest["source_key"] == "p105-queue-fleet-actual-soak"
+    assert manifest["program_version"] == "p105.queue.fleet.actual.v1"
+    assert manifest["authority"] == public_config["authority"]
+    assert manifest["cleanup"] == public_config["cleanup"]
+    assert manifest["artifact_paths"]["raw_attestation"] == "p105-queue-fleet-runtime-attestation.raw.json"
+    provenance = json.loads((output / "p105-queue-fleet-provenance-hashes.json").read_text(encoding="utf-8"))
+    assert provenance["program_version"] == manifest["program_version"]
+    assert provenance["command_argv_sha256"] == manifest["command_argv_sha256"]
+    assert "p105-queue-fleet-runtime-attestation.raw.json" not in provenance["artifact_hashes"]
+
+
+@pytest.mark.parametrize(
+    ("field", "unsafe_value"),
+    [
+        ("action_execution", True),
+        ("action_plan", True),
+        ("credentials_read", True),
+        ("external_broker_endpoint", True),
+        ("host_ports", [5672]),
+        ("production_mutation", True),
+        ("release_counting_authority", True),
+    ],
+)
+def test_queue_fleet_finalizer_rejects_every_nonzero_authority_field(tmp_path: Path, field: str, unsafe_value: Any) -> None:
+    output = tmp_path / field
+    manifest_path = _write_precontract_queue_fleet_output(output)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["public_config"]["authority"][field] = unsafe_value
+    _write_json(manifest_path, manifest)
+
+    with pytest.raises(ValueError, match="queue_fleet_nonzero_authority"):
+        _harness().finalize_existing_output(output)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected_error"),
+    [
+        ("forged_command_hash", "queue_fleet_canonical_command_hash_mismatch"),
+        ("partial_cleanup", "queue_fleet_cleanup_incomplete"),
+        ("missing_raw_observations", "queue_fleet_actual_raw_evidence_incomplete"),
+        ("same_count_invalid_raw_observations", "queue_fleet_actual_raw_observation_schema_invalid"),
+        ("stale_manifest_runtime_kind", "queue_fleet_manifest_runtime_kind_not_actual"),
+        ("diagnostic_command_masquerade", "queue_fleet_actual_command_contract_mismatch"),
+    ],
+)
+def test_queue_fleet_finalizer_rejects_forged_or_incomplete_actual_runtime(tmp_path: Path, mutation: str, expected_error: str) -> None:
+    output = tmp_path / mutation
+    manifest_path = _write_precontract_queue_fleet_output(output)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if mutation == "forged_command_hash":
+        manifest["command_argv_sha256"] = "a" * 64
+    elif mutation == "partial_cleanup":
+        manifest["public_config"]["cleanup"]["volume_removed"] = False
+    elif mutation == "missing_raw_observations":
+        raw_path = output / "p105-queue-fleet-runtime-attestation.raw.json"
+        raw = json.loads(raw_path.read_text(encoding="utf-8"))
+        raw["raw_sample_observations"] = []
+        _write_json(raw_path, raw)
+    elif mutation == "same_count_invalid_raw_observations":
+        pass
+    elif mutation == "stale_manifest_runtime_kind":
+        manifest["runtime_attestation"]["kind"] = "not_executed"
+    elif mutation == "diagnostic_command_masquerade":
+        manifest["canonical_command_argv"].remove("--full-runtime")
+        manifest["canonical_command_argv"].append("--diagnostic")
+        manifest["command_argv_sha256"] = _json_sha256(manifest["canonical_command_argv"])
+    _write_json(manifest_path, manifest)
+
+    with pytest.raises(ValueError, match=expected_error):
+        _harness().finalize_existing_output(output)
 
 
 def test_queue_fleet_public_config_rejects_labels_scores_deficits_and_release_outcomes(tmp_path: Path) -> None:

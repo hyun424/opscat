@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib
 import json
 import shutil
 import subprocess
@@ -16,6 +17,8 @@ DIAGNOSTIC_PROFILE_ID: Final = "p105.queue-fleet.diagnostic.fast.v1"
 SCHEMA_VERSION: Final = "p105.queue.fleet_harness.v1"
 ADAPTER_KEY: Final = "queue_fleet"
 ADAPTER_VERSION: Final = "p105.adapter.rabbitmq-fleet-harness.v1"
+ACTUAL_PROGRAM_VERSION: Final = "p105.queue.fleet.actual.v1"
+DIAGNOSTIC_PROGRAM_VERSION: Final = "p105.queue.fleet.diagnostic.v1"
 RABBITMQ_IMAGE: Final = "rabbitmq:3.13-management-alpine"
 SERVICE_COUNT: Final = 256
 DLQ_COUNT: Final = 256
@@ -28,6 +31,21 @@ MAX_MANAGEMENT_HTTP_CALLS: Final = 80_000
 MAX_OUTPUT_MIB: Final = 256
 CANONICAL_ARG_VALUE_FLAGS: Final = {"--output-dir"}
 QUEUE_KINDS: Final = ("consumer_slowdown", "consumer_pause", "poison_dead_letter", "bounded_producer_burst")
+EXPECTED_AUTHORITY: Final = {
+    "action_execution": False,
+    "action_plan": False,
+    "credentials_read": False,
+    "external_broker_endpoint": False,
+    "host_ports": [],
+    "production_mutation": False,
+    "release_counting_authority": False,
+}
+EXPECTED_RAW_AUTHORITY: Final = {
+    "credential_reads": 0,
+    "host_ports": [],
+    "production_endpoint_attempts": 0,
+    "production_mutations": 0,
+}
 
 
 @dataclass(frozen=True)
@@ -741,6 +759,192 @@ def _artifact_hashes(output_dir: Path) -> dict[str, str]:
     return {path.name: _sha256_path(path) for path in sorted(output_dir.iterdir()) if path.is_file() and path.name not in excluded}
 
 
+def finalize_existing_output(output_dir: Path) -> dict[str, Any]:
+    """Bind completed queue fleet artifacts to the closed registry contract."""
+    manifest_path = output_dir / "p105-queue-fleet-harness-manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    public_config = manifest.get("public_config")
+    if not isinstance(public_config, dict):
+        raise ValueError("queue_fleet_public_config_missing")
+    authority = public_config.get("authority")
+    cleanup = public_config.get("cleanup")
+    profile = public_config.get("profile")
+    if not isinstance(authority, dict) or not isinstance(cleanup, dict) or not isinstance(profile, dict):
+        raise ValueError("queue_fleet_closed_safety_contract_missing")
+    if authority != EXPECTED_AUTHORITY:
+        raise ValueError("queue_fleet_nonzero_authority")
+    canonical_argv = manifest.get("canonical_command_argv")
+    if not isinstance(canonical_argv, list) or not canonical_argv or not all(isinstance(item, str) for item in canonical_argv):
+        raise ValueError("queue_fleet_canonical_command_missing")
+    command_argv_sha256 = _sha256_text(_stable_json(canonical_argv))
+    if manifest.get("command_argv_sha256") != command_argv_sha256:
+        raise ValueError("queue_fleet_canonical_command_hash_mismatch")
+    profile_id = profile.get("id")
+    actual_profile = profile_id == PROFILE_ID and manifest.get("diagnostic_only") is False
+    artifact_paths = manifest.get("artifact_paths")
+    if not isinstance(artifact_paths, dict):
+        artifact_paths = {}
+        manifest["artifact_paths"] = artifact_paths
+    artifact_paths.update(
+        {
+            "coverage": "p105-queue-fleet-coverage.json",
+            "partitions": "p105-queue-fleet-pre-label-partitions.json",
+            "private_injection_ledger": "p105-queue-fleet-private-injection-ledger.json",
+            "provenance_hashes": "p105-queue-fleet-provenance-hashes.json",
+            "public_telemetry": "p105-queue-fleet-public-telemetry.jsonl",
+            "raw_attestation": "p105-queue-fleet-runtime-attestation.raw.json",
+        }
+    )
+    required_names = sorted(set(artifact_paths.values()) - {"p105-queue-fleet-provenance-hashes.json"})
+    missing = [name for name in required_names if not (output_dir / name).is_file()]
+    if missing:
+        raise ValueError(f"queue_fleet_artifacts_missing:{','.join(missing)}")
+    if actual_profile:
+        required_flags = {"--full-runtime", "--expect-no-host-ports", "--expect-no-production-authority"}
+        if not required_flags.issubset(canonical_argv) or {"--diagnostic", "--fixture-only", "--no-sleep"} & set(canonical_argv):
+            raise ValueError("queue_fleet_actual_command_contract_mismatch")
+        if public_config.get("adapter_key") != ADAPTER_KEY or public_config.get("adapter_version") != ADAPTER_VERSION:
+            raise ValueError("queue_fleet_closed_adapter_mismatch")
+        if public_config.get("schema_version") != SCHEMA_VERSION:
+            raise ValueError("queue_fleet_root_schema_mismatch")
+        runtime = public_config.get("runtime")
+        if not isinstance(runtime, dict) or runtime.get("kind") != "actual_rabbitmq_docker" or runtime.get("broker_health_observed") is not True:
+            raise ValueError("queue_fleet_actual_broker_health_missing")
+        manifest_runtime = manifest.get("runtime_attestation")
+        if not isinstance(manifest_runtime, dict) or manifest_runtime.get("kind") != "actual_rabbitmq_docker":
+            raise ValueError("queue_fleet_manifest_runtime_kind_not_actual")
+        if runtime.get("in_memory_queue_simulation") is not False or runtime.get("isolated_run_container") is not True:
+            raise ValueError("queue_fleet_actual_runtime_boundary_mismatch")
+        expected_cleanup = {
+            "cleanup_scope": "isolated_run_container_and_volume_only",
+            "container_removed": True,
+            "isolated_docker_project": "p105-queue-fleet-run-001",
+            "volume_removed": True,
+        }
+        if cleanup != expected_cleanup:
+            raise ValueError("queue_fleet_cleanup_incomplete")
+        sample_plan = public_config.get("sample_plan")
+        expected_offsets = _sample_offsets(SCHEDULED_SAMPLES_PER_SERVICE)
+        if not isinstance(sample_plan, dict) or sample_plan != {
+            "cadence_seconds": CADENCE_SECONDS,
+            "offsets_seconds": expected_offsets,
+            "requested_runtime_seconds": REQUESTED_RUNTIME_SECONDS,
+            "scheduled_samples_per_service": SCHEDULED_SAMPLES_PER_SERVICE,
+        }:
+            raise ValueError("queue_fleet_actual_sample_plan_mismatch")
+        if profile.get("hash") != _public_profile_hash(PROFILE_ID) or profile.get("hash_phase") != "before_private_schedule_loading":
+            raise ValueError("queue_fleet_public_profile_hash_mismatch")
+        private_ledger = json.loads((output_dir / artifact_paths["private_injection_ledger"]).read_text(encoding="utf-8"))
+        if private_ledger.get("loaded_after_public_config_hash") != _sha256_text(_stable_json(public_config)):
+            raise ValueError("queue_fleet_private_ledger_public_hash_mismatch")
+        if private_ledger.get("schedule") != _fleet_schedule():
+            raise ValueError("queue_fleet_private_schedule_mismatch")
+        partitions = json.loads((output_dir / artifact_paths["partitions"]).read_text(encoding="utf-8"))
+        if partitions.get("held_out") != [_service_id(index) for index in range(128)] or partitions.get("real_derived_shadow") != [
+            _service_id(index) for index in range(128, SERVICE_COUNT)
+        ]:
+            raise ValueError("queue_fleet_partition_mismatch")
+        raw_attestation = json.loads((output_dir / artifact_paths["raw_attestation"]).read_text(encoding="utf-8"))
+        raw_observations = raw_attestation.get("raw_sample_observations")
+        if (
+            raw_attestation.get("actual_runtime_executed") is not True
+            or raw_attestation.get("fixture_only") is not False
+            or raw_attestation.get("uses_in_memory_queue_simulation") is not False
+            or raw_attestation.get("rabbitmq_management_observed") is not True
+            or raw_attestation.get("authority") != EXPECTED_RAW_AUTHORITY
+            or raw_attestation.get("capabilities") != ["actual_rabbitmq_docker"]
+            or not isinstance(raw_attestation.get("container_id"), str)
+            or not raw_attestation.get("container_id")
+            or not isinstance(raw_attestation.get("docker_network_name"), str)
+            or not raw_attestation.get("docker_network_name")
+            or not isinstance(raw_observations, list)
+            or len(raw_observations) != SERVICE_COUNT * SCHEDULED_SAMPLES_PER_SERVICE
+        ):
+            raise ValueError("queue_fleet_actual_raw_evidence_incomplete")
+        started = raw_attestation.get("monotonic_started_ns")
+        finished = raw_attestation.get("monotonic_finished_ns")
+        if not isinstance(started, int) or not isinstance(finished, int) or finished <= started:
+            raise ValueError("queue_fleet_actual_monotonic_interval_invalid")
+        previous_monotonic_by_service: dict[int, int] = {}
+        for index, observation in enumerate(raw_observations):
+            service_index = index // SCHEDULED_SAMPLES_PER_SERVICE
+            sample_ordinal = index % SCHEDULED_SAMPLES_PER_SERVICE
+            expected_service = _service_id(service_index)
+            expected_window = _source_window_id(_split_for_service(service_index), service_index, sample_ordinal)
+            expected_queue = _queue_name(service_index)
+            if not isinstance(observation, dict):
+                raise ValueError("queue_fleet_actual_raw_observation_schema_invalid")
+            monotonic_ns = observation.get("monotonic_ns")
+            queue_counts = observation.get("queue_counts")
+            if (
+                not isinstance(monotonic_ns, int)
+                or monotonic_ns < started
+                or monotonic_ns > finished
+                or observation.get("sample_ordinal") != sample_ordinal
+                or observation.get("service") != expected_service
+                or observation.get("source_window_id") != expected_window
+                or not isinstance(queue_counts, dict)
+                or "name" not in queue_counts
+                or not set(queue_counts).issubset({"messages", "messages_ready", "messages_unacknowledged", "name"})
+                or queue_counts.get("name") != expected_queue
+                or not all(isinstance(value, int) and value >= 0 for key, value in queue_counts.items() if key != "name")
+            ):
+                raise ValueError("queue_fleet_actual_raw_observation_schema_invalid")
+            previous = previous_monotonic_by_service.get(service_index)
+            if previous is not None and monotonic_ns <= previous:
+                raise ValueError("queue_fleet_actual_raw_observation_not_monotonic")
+            previous_monotonic_by_service[service_index] = monotonic_ns
+        coverage = json.loads((output_dir / artifact_paths["coverage"]).read_text(encoding="utf-8"))
+        segments = coverage.get("coverage_segments")
+        if (
+            coverage.get("diagnostic_only") is not False
+            or coverage.get("coverage_source") != "receipt_bound_adjacent_monotonic_samples"
+            or coverage.get("counting_coverage_seconds", 0) <= 0
+            or not isinstance(segments, list)
+            or len(segments) != SERVICE_COUNT
+        ):
+            raise ValueError("queue_fleet_actual_coverage_incomplete")
+        telemetry_path = output_dir / artifact_paths["public_telemetry"]
+        with telemetry_path.open(encoding="utf-8") as handle:
+            telemetry_rows = sum(1 for line in handle if line.strip())
+        if telemetry_rows != SERVICE_COUNT * SCHEDULED_SAMPLES_PER_SERVICE:
+            raise ValueError("queue_fleet_actual_telemetry_incomplete")
+        verifier_module = "scripts.verify_p105_source_expansion_artifacts" if __package__ else "verify_p105_source_expansion_artifacts"
+        source_verifier = importlib.import_module(verifier_module)
+
+        verified_segments, _, verifier_errors = source_verifier._verify_fleet_coverage_for_envelope(
+            {
+                "source": ADAPTER_KEY,
+                "manifest_path": str(manifest_path),
+                "raw_attestation_path": str(output_dir / artifact_paths["raw_attestation"]),
+            }
+        )
+        if verifier_errors or len(verified_segments) != SERVICE_COUNT:
+            codes = ",".join(sorted(verifier_errors))
+            raise ValueError(f"queue_fleet_central_verifier_mismatch:{codes}")
+    manifest.update(
+        {
+            "adapter_key": ADAPTER_KEY,
+            "adapter_version": ADAPTER_VERSION,
+            "authority": authority,
+            "cleanup": cleanup,
+            "program_version": ACTUAL_PROGRAM_VERSION if actual_profile else DIAGNOSTIC_PROGRAM_VERSION,
+            "source_key": "p105-queue-fleet-actual-soak" if actual_profile else "p105-queue-fleet-diagnostic",
+        }
+    )
+    _write_json(manifest_path, manifest)
+    provenance = {
+        "artifact_hashes": _artifact_hashes(output_dir),
+        "canonical_command_argv": manifest.get("canonical_command_argv", []),
+        "command_argv_sha256": command_argv_sha256,
+        "profile_hash": profile.get("hash"),
+        "program_version": manifest["program_version"],
+        "schema_version": "p105.queue.fleet_provenance_hashes.v1",
+    }
+    _write_json(output_dir / "p105-queue-fleet-provenance-hashes.json", provenance)
+    return manifest
+
+
 def _validate_args(args: argparse.Namespace) -> list[str]:
     errors: list[str] = []
     if args.rabbitmq_image != RABBITMQ_IMAGE:
@@ -833,14 +1037,7 @@ def main(argv: list[str] | None = None) -> int:
         "source_harness_issues_verifier_qualification_receipt": False,
     }
     _write_json(args.output_dir / "p105-queue-fleet-harness-manifest.json", manifest)
-    provenance = {
-        "artifact_hashes": _artifact_hashes(args.output_dir),
-        "canonical_command_argv": canonical_argv,
-        "command_argv_sha256": manifest["command_argv_sha256"],
-        "profile_hash": public_config["profile"]["hash"],
-        "schema_version": "p105.queue.fleet_provenance_hashes.v1",
-    }
-    _write_json(args.output_dir / "p105-queue-fleet-provenance-hashes.json", provenance)
+    finalize_existing_output(args.output_dir)
     print(json.dumps({"fixture_only": args.fixture_only, "manifest_path": str(args.output_dir / "p105-queue-fleet-harness-manifest.json"), "telemetry_rows": len(telemetry)}, sort_keys=True))
     return 0
 

@@ -298,7 +298,7 @@ def test_existing_per_family_seven_day_union_gate_and_p106_lock_remain_unchanged
         "rows": [],
         "service_day_coverage": {
             family: {
-                "service_days": 365.0,
+                "service_days": 6.999_988,
                 "coverage_intervals": [
                     {
                         "split_id": "g006-held_out",

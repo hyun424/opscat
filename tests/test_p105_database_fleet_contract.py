@@ -9,12 +9,17 @@ DATABASE_FLEET_SCHEMA = "p105.database.fleet_harness.v1"
 DATABASE_FLEET_ADAPTER = "p105.adapter.sqlite-pool-fleet-harness.v1"
 
 FORBIDDEN_PUBLIC_KEYS = {
+    "label",
+    "labels",
     "label_positive",
+    "incident_answer_key",
     "incident_group_id",
     "private_failure_second",
     "private_failure_timestamp",
     "scorer_threshold",
+    "scorer_thresholds",
     "floor_deficit",
+    "floor_deficits",
     "release_qualified",
     "p106_unlocked",
 }
@@ -129,17 +134,27 @@ def test_database_fleet_schedule_is_exact_g00_to_g07_for_both_splits_with_databa
         assert group["private_failure_second"] == 3300 + 30 * g
         assert group["positive_precursor_range_seconds"] == [300 + 30 * g, 600 + 30 * g]
         assert group["lead_range_minutes"] == [45, 50]
-        assert group["kind"] in {"pool_saturation", "slow_transaction", "lock_contention", "checkout_timeout"}
+        assert group["kind"] == ["pool_saturation", "slow_transaction", "lock_contention", "checkout_timeout"][g % 4]
+        expected_windows = [
+            f"p105-fleet-database-{group['split']}-svc{service_index:03d}-sample{ordinal:03d}"
+            for service_index in range(split_base + 4 * g, split_base + 4 * g + 4)
+            for ordinal in range((300 + 30 * g) // 5, (600 + 30 * g) // 5 + 1)
+        ]
+        assert group["expected_bound_public_source_window_ids"] == expected_windows
 
 
 def test_database_fleet_public_config_excludes_private_labels_and_scorer_answers() -> None:
-    public_config = _database_fleet_contract()["public_config"]
+    contract = _database_fleet_contract()
+    public_config = contract["public_config"]
 
     assert _flatten_keys(public_config).isdisjoint(FORBIDDEN_PUBLIC_KEYS)
     assert public_config["profile"] == PROFILE
     assert public_config["adapter_key"] == "database_fleet"
     assert public_config["runtime_attestation_kind"] == "actual_sqlite_pool"
     assert public_config["partitioned_before_private_schedule_loading"] is True
+    assert len(public_config["profile_config_hash"]) == 64
+    assert public_config["profile_config_hash_phase"] == "before_private_schedule_loading"
+    assert contract["private_schedule_loaded_after_profile_hash"] is True
 
 
 def test_database_fleet_rejects_legacy_schema_or_wrong_profile_before_counting() -> None:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import json
 import subprocess
 import sys
@@ -11,6 +12,7 @@ REGISTRY_SCRIPT = Path("scripts/build_p105_source_registry.py")
 MATERIALIZER_SCRIPT = Path("scripts/materialize_p105_release_evidence.py")
 
 PROFILE = "p105.actual-fleet-soak.256x1h.v1"
+DIAGNOSTIC_PROFILE = "p105.deploy-fleet.diagnostic.fast.v1"
 DEPLOY_FLEET_SCHEMA = "p105.deploy.fleet_harness.v1"
 DEPLOY_FLEET_ADAPTER = "p105.adapter.threading-http-deploy-fleet-harness.v1"
 LEGACY_DEPLOY_SCHEMA = "p105.deploy.harness.manifest.v1"
@@ -37,6 +39,24 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
+def _api() -> Any:
+    return importlib.import_module("app.services.failure_forecast_engine")
+
+
+def _deploy_contract() -> dict[str, Any]:
+    builder = getattr(_api(), "build_p105_deploy_fleet_profile_contract", None)
+    assert callable(builder), "P105-031 RED: missing deploy fleet profile contract builder"
+    return dict(builder())
+
+
+def _flatten_keys(value: Any) -> set[str]:
+    if isinstance(value, dict):
+        return {str(key) for key in value} | set().union(*(_flatten_keys(child) for child in value.values()), set())
+    if isinstance(value, list):
+        return set().union(*(_flatten_keys(child) for child in value), set())
+    return set()
+
+
 def _run_deploy_fleet(output_dir: Path, *extra_args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [
@@ -47,7 +67,7 @@ def _run_deploy_fleet(output_dir: Path, *extra_args: str) -> subprocess.Complete
             "--seed",
             "105031",
             "--profile",
-            PROFILE,
+            DIAGNOSTIC_PROFILE,
             "--services",
             "256",
             "--heldout-services",
@@ -55,13 +75,13 @@ def _run_deploy_fleet(output_dir: Path, *extra_args: str) -> subprocess.Complete
             "--shadow-services",
             "128",
             "--requested-seconds",
-            "3600",
+            "30",
             "--sample-cadence-seconds",
             "5",
             "--samples-per-service",
-            "720",
+            "6",
             "--max-requests",
-            "184320",
+            "1536",
             "--max-concurrency",
             "64",
             "--max-live-sockets",
@@ -90,7 +110,24 @@ def _run_deploy_fleet(output_dir: Path, *extra_args: str) -> subprocess.Complete
     )
 
 
-def test_deploy_fleet_fast_diagnostic_emits_exact_256_path_profile_and_is_non_counting(tmp_path: Path) -> None:
+def test_deploy_fleet_full_profile_contract_is_exact_without_executing_an_accelerated_soak() -> None:
+    contract = _deploy_contract()
+
+    assert contract["profile"] == PROFILE
+    assert contract["requested_seconds"] == 3600
+    assert contract["sample_cadence_seconds"] == 5
+    assert contract["samples_per_service"] == 720
+    assert contract["sample_offsets_seconds"] == list(range(0, 3600, 5))
+    assert contract["request_cap"] == 184_320
+    assert len(contract["profile_config_hash"]) == 64
+    assert contract["profile_config_hash_phase"] == "before_private_schedule_loading"
+    assert contract["private_schedule_loaded_after_profile_hash"] is True
+    assert contract["service_paths"] == [f"/p105/fleet/deploy/{index:03d}" for index in range(256)]
+    assert contract["partitions"]["held_out"] == [f"p105.fleet.deploy.{index:03d}" for index in range(128)]
+    assert contract["partitions"]["real_derived_shadow"] == [f"p105.fleet.deploy.{index:03d}" for index in range(128, 256)]
+
+
+def test_deploy_fleet_fast_diagnostic_is_short_actual_and_non_counting(tmp_path: Path) -> None:
     output = tmp_path / "deploy-fleet"
     completed = _run_deploy_fleet(output)
 
@@ -101,14 +138,14 @@ def test_deploy_fleet_fast_diagnostic_emits_exact_256_path_profile_and_is_non_co
     assert manifest["schema_version"] == DEPLOY_FLEET_SCHEMA
     assert manifest["adapter_key"] == "deploy_fleet"
     assert manifest["adapter_version"] == DEPLOY_FLEET_ADAPTER
-    assert manifest["profile"] == PROFILE
+    assert manifest["profile"] == DIAGNOSTIC_PROFILE
     assert manifest["diagnostic_profile"] == {"enabled": True, "runtime_qualification_eligible": False}
     assert "release_counting_allowed" not in json.dumps(manifest, sort_keys=True)
-    assert manifest["requested_seconds"] == 3600
+    assert manifest["requested_seconds"] == 30
     assert manifest["sample_cadence_seconds"] == 5
-    assert manifest["samples_per_service"] == 720
-    assert manifest["sample_offsets_seconds"] == list(range(0, 3600, 5))
-    assert manifest["request_cap"] == 184_320
+    assert manifest["samples_per_service"] == 6
+    assert manifest["sample_offsets_seconds"] == [0, 5, 10, 15, 20, 25]
+    assert manifest["request_cap"] == 1_536
 
     service_paths = manifest["service_paths"]
     assert service_paths == [f"/p105/fleet/deploy/{index:03d}" for index in range(256)]
@@ -116,8 +153,22 @@ def test_deploy_fleet_fast_diagnostic_emits_exact_256_path_profile_and_is_non_co
     assert partitions["held_out"] == [f"p105.fleet.deploy.{index:03d}" for index in range(128)]
     assert partitions["real_derived_shadow"] == [f"p105.fleet.deploy.{index:03d}" for index in range(128, 256)]
 
-    public_keys = {key for row in telemetry for key in row}
-    assert public_keys.isdisjoint({"label", "incident_answer_key", "scorer_threshold", "floor_deficit", "release_qualified", "p106_unlocked"})
+    public_keys = _flatten_keys(telemetry)
+    assert public_keys.isdisjoint(
+        {
+            "label",
+            "labels",
+            "incident_answer_key",
+            "incident_group_id",
+            "private_failure_second",
+            "scorer_threshold",
+            "scorer_thresholds",
+            "floor_deficit",
+            "floor_deficits",
+            "release_qualified",
+            "p106_unlocked",
+        }
+    )
 
 
 def test_deploy_fleet_uses_actual_threading_http_server_loopback_caps_timeouts_body_memory_output_and_no_mutation(tmp_path: Path) -> None:
@@ -157,21 +208,8 @@ def test_deploy_fleet_uses_actual_threading_http_server_loopback_caps_timeouts_b
     }
 
 
-def test_deploy_fleet_private_schedule_has_exact_g00_to_g07_25_to_30m_leads_and_source_window_binding(tmp_path: Path) -> None:
-    output = tmp_path / "deploy-fleet"
-    completed = _run_deploy_fleet(output)
-
-    assert completed.returncode == 0, completed.stderr
-    manifest = _read_json(output / "p105-deploy-fleet-harness-manifest.json")
-    ledger = _read_json(output / "p105-deploy-fleet-private-injection-ledger.json")
-    telemetry = _read_jsonl(output / "p105-deploy-fleet-public-telemetry.jsonl")
-
-    assert ledger["label_join_phase"] == "after_sampling_and_partition"
-    assert ledger["profile_config_hash"] == manifest["profile_config_hash"]
-    assert ledger["private_schedule_loaded_after_profile_hash"] is True
-    public_windows = {row["source_window_id"]: row for row in telemetry}
-
-    incidents = ledger["incidents"]
+def test_deploy_fleet_private_schedule_contract_has_exact_g00_to_g07_25_to_30m_leads_and_window_ids() -> None:
+    incidents = _deploy_contract()["private_schedule"]
     assert [(item["split"], item["group_id"]) for item in incidents] == [(split, f"g{group:02d}") for split in ("held_out", "real_derived_shadow") for group in range(8)]
     for incident in incidents:
         group = int(incident["group_id"][1:])
@@ -180,18 +218,26 @@ def test_deploy_fleet_private_schedule_has_exact_g00_to_g07_25_to_30m_leads_and_
         affected = [f"p105.fleet.deploy.{base + (4 * group) + offset:03d}" for offset in range(4)]
 
         assert incident["incident_group_id"] == f"p105-fleet-deploy-{incident['split']}-g{group:02d}"
-        assert incident["kind"] in {"canary_error_regression", "latency_regression", "configuration_mismatch", "bounded_rollback_delay"}
+        assert (
+            incident["kind"]
+            == [
+                "canary_error_regression",
+                "latency_regression",
+                "configuration_mismatch",
+                "bounded_rollback_delay",
+            ][group % 4]
+        )
         assert incident["affected_services"] == affected
         assert incident["precursor_start_offset_seconds"] == start
         assert incident["precursor_end_offset_seconds"] == start + 300
         assert incident["private_failure_offset_seconds"] == 3300 + (30 * group)
         assert incident["lead_range_minutes"] == [25, 30]
-        assert incident["bound_public_source_window_ids"]
-        assert set(incident["bound_public_source_window_ids"]) <= set(public_windows)
-        for window_id in incident["bound_public_source_window_ids"]:
-            window = public_windows[window_id]
-            assert window["service_id"] in affected
-            assert start <= window["sample_offset_seconds"] <= start + 300
+        expected_windows = [
+            f"p105-fleet-deploy-{incident['split']}-svc{service_index:03d}-sample{ordinal:03d}"
+            for service_index in range(base + (4 * group), base + (4 * group) + 4)
+            for ordinal in range(start // 5, (start + 300) // 5 + 1)
+        ]
+        assert incident["expected_bound_public_source_window_ids"] == expected_windows
 
 
 def test_deploy_fleet_coverage_reconstructs_from_adjacent_monotonic_samples_and_caps_requested_credit(tmp_path: Path) -> None:
@@ -214,18 +260,15 @@ def test_deploy_fleet_coverage_reconstructs_from_adjacent_monotonic_samples_and_
     }
     assert coverage["diagnostic_only"] is True
     assert coverage["release_floor_credit_seconds"] == 0
-    assert coverage["family_seconds"]["deploy"] < 920_320
-    for segment in coverage["canonical_segments"]:
-        assert segment["endpoint_source_window_ids"]
-        assert segment["sample_count"] >= 2
-        assert "raw_elapsed_seconds" not in segment
-        assert "raw_adjacent_deltas_seconds" not in segment
-    assert all(4.0 <= delta <= 7.5 for delta in raw_attestation["adjacent_deltas_seconds"])
+    assert coverage["family_seconds"]["deploy"] == 0
+    assert coverage["canonical_segments"] == []
+    assert raw_attestation["observation_count"] > 0
+    assert raw_attestation["diagnostic_not_receipt_eligible"] is True
 
 
 def test_deploy_fleet_telemetry_loss_or_shutdown_failure_locks_receipt_and_fast_diagnostic_never_counts(tmp_path: Path) -> None:
     output = tmp_path / "deploy-fleet-loss"
-    completed = _run_deploy_fleet(output, "--inject-telemetry-loss-at-sample", "17", "--inject-server-shutdown-failure")
+    completed = _run_deploy_fleet(output, "--inject-telemetry-loss-at-sample", "1", "--inject-server-shutdown-failure")
 
     assert completed.returncode == 0, completed.stderr
     manifest = _read_json(output / "p105-deploy-fleet-harness-manifest.json")

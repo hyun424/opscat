@@ -154,24 +154,27 @@ def _queue_fleet_manifest() -> dict[str, Any]:
             "label_join_phase": "after_sampling_and_partition",
             "schedule": _fleet_schedule(),
         },
-        "verifier_receipt": {
-            "schema_version": "p105.source-runtime-qualification.v1",
-            "created_by": "scripts/verify_p105_source_expansion_artifacts.py",
-            "verified_release_counting": True,
-            "locked": False,
-            "release_counting": True,
-            "coverage_source": "receipt_bound_monotonic_segments",
-            "legacy_created_at_tick_seconds_coverage": False,
-            "telemetry_complete": True,
-            "failure_codes": [],
-        },
+    }
+
+
+def _queue_fleet_receipt() -> dict[str, Any]:
+    return {
+        "schema_version": "p105.source-runtime-qualification.v1",
+        "created_by": "scripts/verify_p105_source_expansion_artifacts.py",
+        "verified_release_counting": True,
+        "locked": False,
+        "release_counting": True,
+        "coverage_source": "receipt_bound_monotonic_segments",
+        "legacy_created_at_tick_seconds_coverage": False,
+        "telemetry_complete": True,
+        "failure_codes": [],
     }
 
 
 def test_queue_fleet_profile_requires_exact_public_capacity_shape_and_resource_bounds(tmp_path: Path) -> None:
     manifest = _write_json(tmp_path / "queue-fleet.json", _queue_fleet_manifest())
 
-    result = _validator()(manifest)
+    result = _validator()(manifest, verifier_receipt=_queue_fleet_receipt())
 
     assert result["accepted"] is True
     assert result["profile_id"] == PROFILE_ID
@@ -190,7 +193,7 @@ def test_queue_fleet_profile_requires_exact_public_capacity_shape_and_resource_b
 def test_queue_fleet_private_schedule_is_exact_g00_through_g07_with_35_to_40_minute_lead(tmp_path: Path) -> None:
     manifest = _write_json(tmp_path / "queue-fleet.json", _queue_fleet_manifest())
 
-    result = _validator()(manifest)
+    result = _validator()(manifest, verifier_receipt=_queue_fleet_receipt())
 
     assert result["schedule"]["groups_by_split"] == {
         "held_out": [f"g{index:02d}" for index in range(8)],
@@ -198,12 +201,16 @@ def test_queue_fleet_private_schedule_is_exact_g00_through_g07_with_35_to_40_min
     }
     assert result["schedule"]["queue_group_rows"] == [
         {
+            "split": split,
             "group": f"g{index:02d}",
             "kind_index": index % 4,
+            "kind": ["consumer_slowdown", "consumer_pause", "poison_dead_letter", "bounded_producer_burst"][index % 4],
+            "affected_services": [_service_id(base + 4 * index + offset) for offset in range(4)],
             "precursor_start_seconds": 900 + 30 * index,
             "private_failure_seconds": 3300 + 30 * index,
             "lead_minutes": {"minimum": 35, "maximum": 40},
         }
+        for split, base in (("held_out", 0), ("real_derived_shadow", 128))
         for index in range(8)
     ]
     assert result["schedule"]["controls_per_split"] == {"held_out": 96, "real_derived_shadow": 96}
@@ -212,7 +219,7 @@ def test_queue_fleet_private_schedule_is_exact_g00_through_g07_with_35_to_40_min
 def test_queue_fleet_public_config_is_label_blind_and_private_ledger_binds_exact_sampled_windows(tmp_path: Path) -> None:
     manifest = _write_json(tmp_path / "queue-fleet.json", _queue_fleet_manifest())
 
-    result = _validator()(manifest)
+    result = _validator()(manifest, verifier_receipt=_queue_fleet_receipt())
 
     assert result["public_config_forbidden_keys_present"] == []
     assert result["private_ledger_loaded_after_public_profile_hash"] is True
@@ -235,10 +242,11 @@ def test_queue_fleet_public_config_is_label_blind_and_private_ledger_binds_exact
 )
 def test_queue_fleet_failures_lock_receipt_and_make_all_fleet_evidence_non_counting(tmp_path: Path, mutation: str, expected_code: str) -> None:
     payload = _queue_fleet_manifest()
+    receipt = _queue_fleet_receipt()
     if mutation == "missing_broker_health":
         payload["public_config"]["runtime"]["broker_health_observed"] = False
     elif mutation == "telemetry_loss":
-        payload["verifier_receipt"]["telemetry_complete"] = False
+        receipt["telemetry_complete"] = False
     elif mutation == "cleanup_scope_escape":
         payload["public_config"]["cleanup"]["cleanup_scope"] = "all_docker_volumes"
     elif mutation == "partial_cleanup":
@@ -247,7 +255,7 @@ def test_queue_fleet_failures_lock_receipt_and_make_all_fleet_evidence_non_count
         payload["public_config"]["message_plan"]["maximum_published_messages"] = 35873
     manifest = _write_json(tmp_path / f"{mutation}.json", payload)
 
-    result = _validator()(manifest)
+    result = _validator()(manifest, verifier_receipt=receipt)
 
     assert result["accepted"] is False
     assert result["receipt"] == {"locked": True, "release_counting": False}
@@ -270,7 +278,7 @@ def test_queue_fleet_rejects_legacy_or_cross_profile_substitution(tmp_path: Path
     payload["public_config"]["profile"]["id"] = profile_id
     manifest = _write_json(tmp_path / "cross-profile.json", payload)
 
-    result = _validator()(manifest)
+    result = _validator()(manifest, verifier_receipt=_queue_fleet_receipt())
 
     assert result["accepted"] is False
     assert result["receipt"] == {"locked": True, "release_counting": False}
@@ -286,15 +294,6 @@ def test_queue_fleet_fast_diagnostic_profile_exercises_actual_rabbitmq_but_never
         "scheduled_samples_per_service": 6,
         "offsets_seconds": [0, 5, 10, 15, 20, 25],
     }
-    payload["verifier_receipt"] = {
-        "schema_version": "p105.source-runtime-qualification.v1",
-        "created_by": "scripts/verify_p105_source_expansion_artifacts.py",
-        "verified_release_counting": False,
-        "locked": False,
-        "release_counting": False,
-        "coverage_source": "diagnostic_actual_rabbitmq_plumbing_only",
-        "failure_codes": [],
-    }
     payload["public_config"]["authority"]["release_counting_authority"] = False
     payload["public_config"]["profile"]["hash"] = _json_sha256(
         {
@@ -303,9 +302,10 @@ def test_queue_fleet_fast_diagnostic_profile_exercises_actual_rabbitmq_but_never
             "cadence_seconds": 5,
         }
     )
+    payload["private_injection_ledger"]["loaded_after_public_config_hash"] = _json_sha256(payload["public_config"])
     manifest = _write_json(tmp_path / "queue-fleet-diagnostic.json", payload)
 
-    result = _validator()(manifest)
+    result = _validator()(manifest, verifier_receipt=None)
 
     assert result["accepted"] is True
     assert result["profile_id"] == DIAGNOSTIC_PROFILE_ID
@@ -324,7 +324,7 @@ def test_queue_fleet_public_config_rejects_labels_scores_deficits_and_release_ou
     payload["public_config"]["scorer_thresholds"] = {"minimum_union_service_days": 7.0}
     manifest = _write_json(tmp_path / "label-leak.json", payload)
 
-    result = _validator()(manifest)
+    result = _validator()(manifest, verifier_receipt=_queue_fleet_receipt())
 
     assert result["accepted"] is False
     assert result["receipt"] == {"locked": True, "release_counting": False}
@@ -341,7 +341,7 @@ def test_queue_fleet_profile_hash_is_frozen_before_private_schedule_loading(tmp_
     payload["private_injection_ledger"]["schedule"][0]["affected_services"] = [_service_id(127)]
     manifest = _write_json(tmp_path / "private-schedule-tamper.json", payload)
 
-    result = _validator()(manifest)
+    result = _validator()(manifest, verifier_receipt=_queue_fleet_receipt())
 
     assert result["accepted"] is False
     assert result["receipt"] == {"locked": True, "release_counting": False}
@@ -350,13 +350,14 @@ def test_queue_fleet_profile_hash_is_frozen_before_private_schedule_loading(tmp_
 
 def test_queue_fleet_rejects_duplicate_positive_group_or_service_interval_credit(tmp_path: Path) -> None:
     payload = _queue_fleet_manifest()
+    receipt = _queue_fleet_receipt()
     duplicate_window = payload["private_injection_ledger"]["schedule"][0]["bound_public_source_window_ids"][0]
     payload["private_injection_ledger"]["schedule"][0]["bound_public_source_window_ids"].append(duplicate_window)
-    payload["verifier_receipt"]["duplicate_group_ids"] = ["p105-fleet-queue-held_out-g00"]
-    payload["verifier_receipt"]["duplicate_service_interval_ids"] = ["p105.fleet.queue.000:sample180-181"]
+    receipt["duplicate_group_ids"] = ["p105-fleet-queue-held_out-g00"]
+    receipt["duplicate_service_interval_ids"] = ["p105.fleet.queue.000:sample180-181"]
     manifest = _write_json(tmp_path / "duplicate-credit.json", payload)
 
-    result = _validator()(manifest)
+    result = _validator()(manifest, verifier_receipt=receipt)
 
     assert result["accepted"] is False
     assert result["receipt"] == {"locked": True, "release_counting": False}
@@ -369,11 +370,12 @@ def test_queue_fleet_rejects_duplicate_positive_group_or_service_interval_credit
 
 def test_queue_fleet_receipt_rejects_legacy_created_at_tick_seconds_coverage_path(tmp_path: Path) -> None:
     payload = _queue_fleet_manifest()
-    payload["verifier_receipt"]["coverage_source"] = "created_at_plus_tick_seconds"
-    payload["verifier_receipt"]["legacy_created_at_tick_seconds_coverage"] = True
+    receipt = _queue_fleet_receipt()
+    receipt["coverage_source"] = "created_at_plus_tick_seconds"
+    receipt["legacy_created_at_tick_seconds_coverage"] = True
     manifest = _write_json(tmp_path / "legacy-coverage.json", payload)
 
-    result = _validator()(manifest)
+    result = _validator()(manifest, verifier_receipt=receipt)
 
     assert result["accepted"] is False
     assert result["receipt"] == {"locked": True, "release_counting": False}

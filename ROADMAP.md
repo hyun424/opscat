@@ -857,3 +857,15 @@ decisions, improved relevant-tool discovery from 76.92% Top-1 accuracy to 98.08%
 replanned 12 episodes, and retained the heuristic's 76.92% recovery rate with all
 hard safety gates passing. P103 remains synthetic-lab evidence, not production
 autonomy or operator-replacement approval.
+
+## P104 implemented
+
+P104 adds an Evidence Gap Investigator between the P103 diagnostic loop and P100's
+deterministic action boundary. It requires fresh critical evidence, explicit
+citations, no unresolved contradiction, adequate telemetry, and no unavailable
+critical capability before any policy handoff. The full committed 10-case fixture
+benchmark ran 150 equal-state rows across P104, P103, P101, fixed-tool, and
+control arms with default network calls 0, default model calls 0, provider action
+execution count 0, production mutation count 0, scorer leakage count 0, and
+repeated tool count 0. P104 remains no-auth, local/mock, advisory for optional
+provider use, and not production autonomy or unattended-operation approval.

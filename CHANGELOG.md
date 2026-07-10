@@ -63,6 +63,12 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 - Kept positive-evidence remediation behind P100's deterministic closed-registry policy with zero provider action authority.
 - Added equal-state fixed/heuristic/LLM comparisons, strict and outcome-based metrics, bounded NVIDIA evaluation, and release verification.
 
+### P104 evidence gap investigator
+
+- Added deterministic evidence sufficiency gates for missing, stale, contradicted, unavailable, duplicate, and valid-absence evidence states before policy handoff.
+- Added network-free CLI benchmark evidence over the full committed 10-case P104 fixture with P104/P103/P101/fixed-tool/control equal-state comparisons.
+- Added release evidence and verification integration while preserving no auth, no production mutation, no provider action authority, and default external calls at zero.
+
 ## Stable vs experimental
 
 Stable in local/mock mode: tests, evals, fixture ingestion, local-header demo identity, mock action policy gates, connector evals, docs, and verification profiles.

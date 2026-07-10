@@ -1188,6 +1188,16 @@ llm_diagnostic_episode_smoke() {
     --output-md "$VERIFY_TMPDIR/opscat-p103-llm-diagnostic-episode.md" >/tmp/opscat-p103-llm-diagnostic-episode-latest.txt
   printf 'Wrote /tmp/opscat-p103-llm-diagnostic-episode-latest.txt and %s/opscat-p103-llm-diagnostic-episode.json\n' "$VERIFY_TMPDIR"
 }
+
+evidence_gap_investigator_smoke() {
+  section "P104 evidence-gap investigator smoke"
+  "${UV_DEV[@]}" python scripts/run_evidence_gap_investigator.py \
+    --max-cases 10 --sample-size 10 --seeds 11 \
+    --output-json "$VERIFY_TMPDIR/opscat-p104-evidence-gap-investigator.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p104-evidence-gap-investigator.md" >/tmp/opscat-p104-evidence-gap-investigator-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-p104-evidence-gap-investigator.md" /tmp/opscat-p104-evidence-gap-investigator-latest.md
+  printf 'Wrote /tmp/opscat-p104-evidence-gap-investigator-latest.md and %s/opscat-p104-evidence-gap-investigator.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -1348,7 +1358,9 @@ docs_contract_tests() {
     tests/test_p100_release_evidence.py \
     tests/test_p101_release_evidence.py \
     tests/test_p102_release_evidence.py \
-    tests/test_p103_release_evidence.py
+    tests/test_p103_release_evidence.py \
+    tests/test_evidence_gap_investigator.py \
+    tests/test_p104_release_evidence.py
 }
 
 run_fast() {
@@ -1455,6 +1467,7 @@ run_eval() {
   tool_investigation_benchmark_smoke
   llm_tool_planner_evaluation_smoke
   llm_diagnostic_episode_smoke
+  evidence_gap_investigator_smoke
 }
 
 run_docs() {

@@ -4,7 +4,7 @@ OpsCat is a local **agentic AI on-call system** for human-on-exception operation
 
 This repository is intended as a portfolio-grade Agentic AI Engineer artifact and paid-beta design seed: it emphasizes state, tools, tenant boundaries, policy, approvals, verification, wake-up contracts, auditability, privacy, and safety boundaries rather than chatbot-style prompting.
 
-> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery. No production actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
+> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery; P104 adds network-free evidence-gap sufficiency checks before policy handoff. No production actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
 
 ## Portfolio demo evidence
 
@@ -41,6 +41,7 @@ Reviewer links:
 - [`docs/operations/p101-final-summary.md`](docs/operations/p101-final-summary.md) — hidden-evidence tool selection, recovery retention, and safety results.
 - [`docs/operations/p102-final-summary.md`](docs/operations/p102-final-summary.md) — offline and NVIDIA LLM tool-planning robustness evidence.
 - [`docs/operations/p103-final-summary.md`](docs/operations/p103-final-summary.md) — multi-step LLM replanning, discovery, and recovery evidence.
+- [`docs/operations/p104-final-summary.md`](docs/operations/p104-final-summary.md) — evidence-gap sufficiency, false-handoff, and safety-boundary evidence.
 - [`docs/architecture.md`](docs/architecture.md) — local/mock architecture and safety boundaries.
 
 Boundary: the portfolio demo is local/mock-only. It performs no auth work, live APIs, credentials, network, production mutation, real remediation/action execution, or external model/API calls; it is not production autonomy.
@@ -159,6 +160,23 @@ and allows up to three distinct diagnostics before safe escalation. In the recor
 52-family NVIDIA run, first-tool accuracy was 76.92%, multi-step discovery reached
 98.08%, and final recovery matched the heuristic investigator at 76.92%. The model
 made 67 advisory decisions and executed zero actions.
+
+## Evidence gap investigator (P104)
+
+```bash
+uv run --no-sync --extra dev python scripts/run_evidence_gap_investigator.py \
+  --max-cases 10 --sample-size 10 --seeds 11,29,47 \
+  --output-json /tmp/opscat-p104-evidence-gap-investigator-full.json \
+  --output-md /tmp/opscat-p104-evidence-gap-investigator-full.md
+```
+
+P104 checks whether evidence is fresh, sufficient, cited, non-conflicting, and
+available before any policy handoff. The default run is deterministic,
+network-free, model-call-free, advisory for optional provider use, and action
+disabled. In the recorded full committed fixture run, P104's false-remediation
+handoff rate was 0.0 versus 0.4 for P103, with provider action execution count 0
+and production mutation count 0. It distinguishes valid absence from unavailable
+telemetry and does not claim production effectiveness or unattended operation.
 
 ## Portfolio story
 

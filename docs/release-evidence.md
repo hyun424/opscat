@@ -2569,3 +2569,45 @@ synthetic local fixtures, and any subsequent action is a closed in-memory transi
 selected by P100 rather than the model. Results do not prove production diagnosis,
 connector safety, remediation effectiveness, unattended operation, or operator
 replacement.
+
+## P104 Evidence Gap Investigator
+
+P104 adds an evidence-sufficiency layer between P103's read-only diagnostic loop
+and P100's deterministic action boundary. It models evidence requirements,
+supporting/contradicting/absent/stale/unavailable/distracting/duplicate states,
+hard sufficiency gates, information-value next-tool selection, strict advisory
+gap proposals, and exact escalation payloads. It can explain why evidence is
+insufficient; it does not execute actions.
+
+Artifacts include `app/services/evidence_gap_investigator.py`,
+`scripts/run_evidence_gap_investigator.py`,
+`evals/evidence_gap/seed/scenarios.json`,
+`tests/test_evidence_gap_investigator.py`,
+`tests/test_p104_release_evidence.py`, and
+`docs/operations/p104-final-summary.md`.
+
+Benchmark evidence from the full committed P104 fixture:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_evidence_gap_investigator.py \
+  --max-cases 10 --sample-size 10 --seeds 11,29,47 \
+  --output-json /tmp/opscat-p104-evidence-gap-investigator-full.json \
+  --output-md /tmp/opscat-p104-evidence-gap-investigator-full.md
+```
+
+The run produced 150 equal-state comparison rows across 10 cases, three seeds,
+and five arms: p104, p103, p101, fixed_tool, and control. Execution was valid.
+P104 false-remediation handoff rate was 0.0 versus 0.4 for P103, 0.35 for P101,
+and 0.5 for the fixed-tool arm. Valid-case recovery retention delta versus P103
+was 0.0, and the report distinguishes valid absence from unavailable telemetry.
+
+Safety counters: default network calls: 0; default model calls: 0;
+`action_authority=false`; provider action execution count: 0; production
+mutation count: 0; mutating diagnostic count: 0; scorer leakage count: 0;
+repeated tool count: 0; unknown tool count: 0; state mismatch count: 0.
+
+Boundary: P104 remains no auth, network-free by default, action-disabled, and
+local/mock. It is not production evidence for diagnosis quality, remediation
+effectiveness, connector correctness, unattended production operation, or
+operator replacement. Optional live-provider mode is explicit opt-in,
+network-enabled by flag, bounded, and advisory-only.

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import importlib
 import json
@@ -85,7 +86,7 @@ def _write_floor_scale_p44_dataset(tmp_path: Path) -> Path:
     """Create enough distinct reviewed-local P44 records to satisfy G006 floors."""
 
     dataset_dir = tmp_path / "reviewed-p44"
-    dataset_dir.mkdir()
+    dataset_dir.mkdir(parents=True)
     records_path = dataset_dir / "p44-reviewed-local-records.jsonl"
     families = ("database", "deploy", "queue")
     lines: list[str] = []
@@ -156,6 +157,243 @@ def _write_floor_scale_p44_dataset(tmp_path: Path) -> Path:
         encoding="utf-8",
     )
     return manifest_path
+
+
+def _g006_row_for_regression(tmp_path: Path, record: dict[str, Any], *, sequence_index: int = 17) -> tuple[dict[str, Any], dict[str, Any]]:
+    source_path = tmp_path / "public-source-record.json"
+    public_record = copy.deepcopy(record)
+    public_record.pop("private_label", None)
+    source_path.write_text(json.dumps(public_record, sort_keys=True) + "\n", encoding="utf-8")
+    return _api()._g006_row_from_record(
+        source_system="p44",
+        source_dataset="public-source-record",
+        source_manifest_key="p44:reviewed:record-001",
+        source_path=source_path,
+        raw_record=json.dumps(record, sort_keys=True),
+        record=record,
+        record_offset=4,
+        partition="held_out",
+        family="deploy",
+        sequence_index=sequence_index,
+    )
+
+
+def _shuffle_private_ledger_labels(output_dir: Path) -> tuple[Path, dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
+    rows_path = output_dir / REQUIRED_OUTPUTS["rows"]
+    payload = json.loads(rows_path.read_text(encoding="utf-8"))
+    ledger_path = output_dir / REQUIRED_OUTPUTS["private_label_ledger"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    original_records = copy.deepcopy(ledger["records"])
+    label_fields = [
+        "label_incident_id",
+        "label_incident_start_timestamp",
+        "label_family",
+        "label_failure_mode",
+        "label_positive",
+        "lead_time_label_minutes",
+        "incident_group_id",
+    ]
+    shuffled_records = copy.deepcopy(original_records)
+    shifted_labels = [copy.deepcopy(record) for record in original_records[1:] + original_records[:1]]
+    for record, shifted in zip(shuffled_records, shifted_labels, strict=True):
+        for field in label_fields:
+            record[field] = shifted.get(field)
+    ledger["records"] = shuffled_records
+    payload["private_scorer_label_ledger"] = ledger
+    payload.pop("release_gate", None)
+    shuffled_path = output_dir / "p105-release-qualified-rows-shuffled-labels.json"
+    shuffled_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return shuffled_path, payload, original_records, shuffled_records
+
+
+def test_g006_public_materialization_is_invariant_when_only_private_labels_flip(tmp_path: Path) -> None:
+    base_record = {
+        "record_id": "p44-review-001",
+        "family": "deploy",
+        "failure_mode": "deploy_failure",
+        "partition": "held_out",
+        "service": "deploy-service",
+        "source_timestamp": "2026-02-01T10:00:00Z",
+        "source_window_id": "p44-window-review-001",
+        "metric_name": "deploy.error_budget",
+        "metric_value": 88,
+        "private_label": {
+            "label_positive": False,
+            "label_incident_id": None,
+            "incident_group_id": None,
+            "label_incident_start_timestamp": None,
+            "lead_time_label_minutes": None,
+        },
+    }
+    flipped_record = copy.deepcopy(base_record)
+    flipped_record["private_label"] = {
+        "label_positive": True,
+        "label_incident_id": "inc-review-001",
+        "incident_group_id": "group-review-001",
+        "label_incident_start_timestamp": "2026-02-01T11:00:00Z",
+        "lead_time_label_minutes": 60,
+    }
+
+    base_row, base_label = _g006_row_for_regression(tmp_path, base_record)
+    flipped_row, flipped_label = _g006_row_for_regression(tmp_path, flipped_record)
+
+    assert flipped_row["public_features"] == base_row["public_features"]
+    assert flipped_row["p24_input"] == base_row["p24_input"]
+    assert flipped_row["p24_input_hash"] == base_row["p24_input_hash"]
+    assert flipped_row["row_id"] == base_row["row_id"]
+    assert flipped_row["source_window_id"] == base_row["source_window_id"]
+    assert flipped_row["partition"] == base_row["partition"]
+    assert (
+        flipped_row["source_record_provenance"]["canonical_source_tuple"]["source_content_hash"]
+        == base_row["source_record_provenance"]["canonical_source_tuple"]["source_content_hash"]
+    )
+    assert (
+        flipped_row["source_record_provenance"]["canonical_source_tuple"]["materialized_record_hash"]
+        == base_row["source_record_provenance"]["canonical_source_tuple"]["materialized_record_hash"]
+    )
+    assert flipped_label["label_hash"] != base_label["label_hash"]
+
+
+def test_g006_metadata_words_do_not_create_positive_label_without_reviewed_private_label() -> None:
+    labels = _api()._g006_labels_from_record(
+        {
+            "record_id": "metadata-only-001",
+            "family": "deploy",
+            "failure_mode": "deploy_anomaly_regression_failure",
+            "incident_type": "anomaly",
+            "root_cause": "deploy regression",
+        },
+        "deploy",
+        "held_out",
+        3,
+    )
+
+    assert labels["label_positive"] is False
+    assert labels["label_incident_id"] is None
+    assert labels["incident_group_id"] is None
+
+
+def test_g006_reviewed_local_materialization_is_invariant_under_private_label_shuffle(tmp_path: Path) -> None:
+    first_manifest = _write_floor_scale_p44_dataset(tmp_path / "first")
+    second_manifest = _write_floor_scale_p44_dataset(tmp_path / "second")
+    records_path = Path(json.loads(second_manifest.read_text(encoding="utf-8"))["sources"][0]["local_materialized_path"])
+    records = [json.loads(line) for line in records_path.read_text(encoding="utf-8").splitlines()]
+    shifted_private_labels = [copy.deepcopy(record["private_label"]) for record in records[1:] + records[:1]]
+    for record, private_label in zip(records, shifted_private_labels, strict=True):
+        record["private_label"] = private_label
+    records_path.write_text("\n".join(json.dumps(record, sort_keys=True) for record in records) + "\n", encoding="utf-8")
+    manifest = json.loads(second_manifest.read_text(encoding="utf-8"))
+    manifest["sources"][0]["local_source_hash"] = hashlib.sha256(records_path.read_bytes()).hexdigest()
+    second_manifest.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+    first = _materialize(
+        p32_replay=P32_REPLAY,
+        p41_sources=P41_SOURCES,
+        p44_reviewed_local_manifest=first_manifest,
+        p44_mode="reviewed-local",
+        output_dir=tmp_path / "first-output",
+        mode="release_qualified",
+    )
+    second = _materialize(
+        p32_replay=P32_REPLAY,
+        p41_sources=P41_SOURCES,
+        p44_reviewed_local_manifest=second_manifest,
+        p44_mode="reviewed-local",
+        output_dir=tmp_path / "second-output",
+        mode="release_qualified",
+    )
+
+    fields = [
+        "row_id",
+        "source_id",
+        "source_window_id",
+        "partition",
+        "public_features",
+        "p24_input",
+        "p24_input_hash",
+    ]
+    first_rows = sorted(first["rows"], key=lambda row: row["row_id"])
+    second_rows = sorted(second["rows"], key=lambda row: row["row_id"])
+    assert [{field: row[field] for field in fields} for row in second_rows] == [{field: row[field] for field in fields} for row in first_rows]
+    assert [
+        row["source_record_provenance"]["canonical_source_tuple"]["source_content_hash"] for row in second_rows
+    ] == [row["source_record_provenance"]["canonical_source_tuple"]["source_content_hash"] for row in first_rows]
+    assert [
+        row["source_record_provenance"]["canonical_source_tuple"]["materialized_record_hash"] for row in second_rows
+    ] == [row["source_record_provenance"]["canonical_source_tuple"]["materialized_record_hash"] for row in first_rows]
+    assert [row["private_label_ref"]["label_hash"] for row in second_rows] != [row["private_label_ref"]["label_hash"] for row in first_rows]
+
+
+def test_g006_shuffled_private_label_ledger_changes_metrics_or_fails_release_closed(tmp_path: Path) -> None:
+    output_dir = tmp_path / "qualified-output"
+    reviewed_manifest = _write_floor_scale_p44_dataset(tmp_path / "reviewed")
+    _materialize(
+        p32_replay=P32_REPLAY,
+        p41_sources=P41_SOURCES,
+        p44_reviewed_local_manifest=reviewed_manifest,
+        p44_mode="reviewed-local",
+        output_dir=output_dir,
+        mode="release_qualified",
+    )
+    rows_path = output_dir / REQUIRED_OUTPUTS["rows"]
+    original_public_rows = json.dumps(json.loads(rows_path.read_text(encoding="utf-8"))["rows"], sort_keys=True)
+    original_report = _api().run_p105_benchmark(rows_path)
+
+    shuffled_path, shuffled_payload, _original_records, _shuffled_records = _shuffle_private_ledger_labels(output_dir)
+    shuffled_public_rows = json.dumps(shuffled_payload["rows"], sort_keys=True)
+    shuffled_report = _api().run_p105_benchmark(shuffled_path)
+
+    assert shuffled_public_rows == original_public_rows
+    assert shuffled_report["release_gate"]["release_qualified"] is False or shuffled_report["release_metrics"] != original_report["release_metrics"]
+
+
+def test_g006_shuffled_private_label_hashes_change_and_tamper_validation_fails_closed(tmp_path: Path) -> None:
+    output_dir = tmp_path / "qualified-output"
+    reviewed_manifest = _write_floor_scale_p44_dataset(tmp_path / "reviewed")
+    _materialize(
+        p32_replay=P32_REPLAY,
+        p41_sources=P41_SOURCES,
+        p44_reviewed_local_manifest=reviewed_manifest,
+        p44_mode="reviewed-local",
+        output_dir=output_dir,
+        mode="release_qualified",
+    )
+
+    shuffled_path, _payload, original_records, shuffled_records = _shuffle_private_ledger_labels(output_dir)
+    assert [record["label_hash"] for record in shuffled_records] == [record["label_hash"] for record in original_records]
+    assert any(
+        {key: record.get(key) for key in ("label_positive", "label_incident_id", "incident_group_id")}
+        != {key: original.get(key) for key in ("label_positive", "label_incident_id", "incident_group_id")}
+        for record, original in zip(shuffled_records, original_records, strict=True)
+    )
+
+    result = _api().validate_p105_release_qualified_tamper(shuffled_path)
+
+    assert "private_label_hash_mismatch" in result["validation_error_codes"]
+    assert "private_label_ledger_tamper" in result["validation_error_codes"]
+    assert result["release_gate"]["release_qualified"] is False
+    assert result["release_gate"]["p106_unlocked"] is False
+
+
+def test_g006_label_shuffled_release_fixture_cannot_qualify_from_label_engineered_public_features(tmp_path: Path) -> None:
+    output_dir = tmp_path / "qualified-output"
+    reviewed_manifest = _write_floor_scale_p44_dataset(tmp_path / "reviewed")
+    _materialize(
+        p32_replay=P32_REPLAY,
+        p41_sources=P41_SOURCES,
+        p44_reviewed_local_manifest=reviewed_manifest,
+        p44_mode="reviewed-local",
+        output_dir=output_dir,
+        mode="release_qualified",
+    )
+
+    shuffled_path, shuffled_payload, _original_records, _shuffled_records = _shuffle_private_ledger_labels(output_dir)
+    assert json.dumps(shuffled_payload["rows"], sort_keys=True) == json.dumps(json.loads((output_dir / REQUIRED_OUTPUTS["rows"]).read_text(encoding="utf-8"))["rows"], sort_keys=True)
+
+    report = _api().run_p105_benchmark(shuffled_path)
+
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
 
 
 def test_disabled_p44_negative_path_contributes_zero_p44_denominators_and_stays_locked(tmp_path: Path) -> None:

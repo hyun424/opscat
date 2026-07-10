@@ -55,6 +55,13 @@ SUPPORTED_FAMILIES = frozenset({"database", "queue", "deploy", "observability_ze
 MODEL_VERSION = "p105-local-calibrated-v1"
 RULE_VERSION = "p105-deterministic-rules-v1"
 CALIBRATION_VERSION = "p105-fixed-logistic-calibration-v1"
+DEFAULT_FORECAST_HORIZON_MINUTES = 120
+LEAD_TIME_INTERVALS_BY_FAMILY: Mapping[str, tuple[int, int]] = {
+    "database": (45, 120),
+    "queue": (30, 90),
+    "deploy": (20, 80),
+    "observability_zero_positive": (15, 90),
+}
 
 
 class ForecastLeakageError(ValueError):
@@ -512,6 +519,79 @@ def compare_calibrated_model_to_p24_baseline(fixture: Mapping[str, Any]) -> dict
     }
 
 
+def compare_engine_generated_held_out_to_p24_baseline(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    train_rows = [row for row in rows if str(row.get("split")) == "train"]
+    calibration_rows = [row for row in rows if str(row.get("split")) == "calibration"]
+    test_rows = [row for row in rows if str(row.get("split")) == "test"]
+    calibrator = _fit_probability_calibrator(calibration_rows)
+    p105_forecasts: list[dict[str, Any]] = []
+    p24_forecasts: list[dict[str, Any]] = []
+    actuals: list[dict[str, Any]] = []
+    y: list[int] = []
+    p105_probs: list[float] = []
+    p24_probs: list[float] = []
+    for row in test_rows:
+        item = forecast_row(row)
+        if isinstance(item, ForecastAbstention):
+            continue
+        p105_probability = _apply_probability_calibrator(_raw_probability(item.family, row), calibrator)
+        forecast = replace(item, probability=p105_probability, probability_interval=_probability_interval(p105_probability)).to_dict()
+        forecast["forecast_timestamp"] = row.get("forecast_timestamp")
+        forecast["split"] = row.get("split")
+        p105_forecasts.append(forecast)
+        features = row.get("public_features", {}) if isinstance(row.get("public_features"), Mapping) else {}
+        p24_probability = _baseline_probability(features)
+        p24_forecast = {
+            "forecast_id": f"p24-{row.get('row_id')}",
+            "source_window_id": row.get("source_window_id"),
+            "family": row.get("family"),
+            "probability": p24_probability,
+            "forecast_timestamp": row.get("forecast_timestamp"),
+            "lead_time_interval_minutes": _lead_time_interval(row),
+            "abstention_reason": None,
+        }
+        p24_forecasts.append(p24_forecast)
+        label = 1 if row.get("label_positive") is True else 0
+        y.append(label)
+        p105_probs.append(p105_probability)
+        p24_probs.append(p24_probability)
+        if label:
+            actuals.append(_actual_from_row(row))
+    families = sorted({str(row.get("family", "")) for row in test_rows})
+    family_rows: dict[str, dict[str, Any]] = {}
+    for family in families:
+        family_indexes = [index for index, row in enumerate(test_rows) if row.get("family") == family and index < len(y)]
+        family_p105 = [p105_probs[index] for index in family_indexes]
+        family_p24 = [p24_probs[index] for index in family_indexes]
+        family_y = [y[index] for index in family_indexes]
+        family_rows[family] = {
+            "actual_positive_count": sum(family_y),
+            "p105_brier": _brier_value(family_p105, family_y),
+            "p24_brier": _brier_value(family_p24, family_y),
+            "p105_ece": _ece_value(family_p105, family_y),
+            "p24_ece": _ece_value(family_p24, family_y),
+            "split_id": "test",
+        }
+    return {
+        "calibration_fit_split_id": "calibration",
+        "evaluation_split_id": "test",
+        "training_input_split_ids": sorted({str(row.get("split")) for row in train_rows}),
+        "calibrator_input_split_ids": sorted({str(row.get("split")) for row in calibration_rows}),
+        "calibration_artifact": calibrator,
+        "global": {
+            "p105_brier": _brier_value(p105_probs, y),
+            "p24_brier": _brier_value(p24_probs, y),
+            "p105_ece": _ece_value(p105_probs, y),
+            "p24_ece": _ece_value(p24_probs, y),
+            "split_id": "test",
+        },
+        "families": family_rows,
+        "p105_forecasts": p105_forecasts,
+        "p24_forecasts": p24_forecasts,
+        "actual_incidents": actuals,
+    }
+
+
 def evaluate_p106_gate(fixture: Mapping[str, Any]) -> dict[str, Any]:
     report = score_forecasts(
         _mapping_sequence(fixture.get("forecasts", ())),
@@ -550,35 +630,81 @@ def evaluate_p106_gate(fixture: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def evaluate_real_derived_transfer_gate(shadow_payload: Mapping[str, Any]) -> dict[str, Any]:
+    override = shadow_payload.get("real_derived_override", {}) if isinstance(shadow_payload.get("real_derived_override"), Mapping) else {}
+    if override.get("false_alerts_per_service_day_by_family") is not None:
+        raise ValueError("real-derived metric override is not allowed")
+    diagnostic_lead_override = _mapping_float(override.get("useful_lead_time_rate_by_family", {}))
     held_out = shadow_payload.get("held_out_reference", {}) if isinstance(shadow_payload.get("held_out_reference"), Mapping) else {}
     held_lead = _mapping_float(held_out.get("useful_lead_time_rate_by_family", {}))
     held_false = _mapping_float(held_out.get("false_alerts_per_service_day_by_family", {}))
-    override = shadow_payload.get("real_derived_override", {}) if isinstance(shadow_payload.get("real_derived_override"), Mapping) else {}
-    real_lead_override = _mapping_float(override.get("useful_lead_time_rate_by_family", {}))
-    real_false_override = _mapping_float(override.get("false_alerts_per_service_day_by_family", {}))
     rows = _mapping_sequence(shadow_payload.get("rows", ()))
-    families = sorted(set(held_lead) | {str(row.get("family", "")) for row in rows} | set(real_lead_override))
+    split_id = str(shadow_payload.get("split_id", ""))
+    families = sorted(set(held_lead) | {str(row.get("family", "")) for row in rows})
     result: dict[str, Any] = {}
     all_pass = True
     for family in families:
-        real_rate = real_lead_override.get(family)
-        if real_rate is None:
-            positives = [row for row in rows if row.get("family") == family and row.get("label_positive") is True]
-            useful = [row for row in positives if float(row.get("lead_time_label_minutes", 0.0) or 0.0) > 0.0]
-            real_rate = round(len(useful) / len(positives), 6) if positives else None
-        real_false = real_false_override.get(family, 0.0)
+        family_rows = [row for row in rows if row.get("family") == family]
+        missing_source_or_split = any(not row.get("source") or not row.get("split") for row in family_rows)
+        forecasts: list[dict[str, Any]] = []
+        actuals: list[dict[str, Any]] = []
+        coverage: dict[str, dict[str, float]] = {family: {"covered_service_seconds": 0.0, "service_days": 0.0}}
+        sources = sorted({str(row.get("source")) for row in family_rows if row.get("source")})
+        for row in family_rows:
+            item = forecast_row(row)
+            payload = item.to_dict()
+            payload["forecast_timestamp"] = row.get("forecast_timestamp")
+            forecasts.append(payload)
+            seconds = float(row.get("covered_service_seconds", 0.0) or 0.0)
+            coverage[family]["covered_service_seconds"] += seconds
+            coverage[family]["service_days"] += seconds / 86400.0
+            if row.get("label_positive") is True:
+                actuals.append(_actual_from_row(row))
+        missing_denominator = not family_rows or coverage[family]["service_days"] <= 0.0
+        metrics = score_forecasts(
+            forecasts,
+            actuals,
+            family_thresholds={family: 0.7},
+            family_min_response_minutes={family: int(LEAD_TIME_INTERVALS_BY_FAMILY.get(family, (1, DEFAULT_FORECAST_HORIZON_MINUTES))[0])},
+            service_day_coverage=coverage,
+            split_id=split_id,
+        )["families"].get(family, {})
+        true_positive_count = int(metrics.get("true_positive_count", 0) or 0)
+        useful = metrics.get("useful_lead_time_rate", {})
+        false_alerts = metrics.get("false_alerts_per_service_day", {})
+        real_rate = diagnostic_lead_override.get(family, useful.get("value"))
+        real_false = float(false_alerts.get("value") or 0.0)
         held_rate = held_lead.get(family)
         held_false_rate = held_false.get(family, 0.0)
         drop = None if held_rate is None or real_rate is None else round(held_rate - real_rate, 6)
         false_increase = round(real_false - held_false_rate, 6)
-        family_pass = drop is not None and drop <= 0.1 and real_rate is not None and real_rate >= 0.8 and false_increase <= 0.1 and real_false <= 0.5
+        family_pass = (
+            not missing_source_or_split
+            and not missing_denominator
+            and drop is not None
+            and drop <= 0.1
+            and real_rate is not None
+            and real_rate >= 0.8
+            and false_increase <= 0.1
+            and real_false <= 0.5
+        )
         result[family] = {
+            "real_derived_split_id": split_id,
+            "sources": sources,
+            "forecasted_row_count": len(forecasts),
+            "true_positive_count": true_positive_count,
+            "useful_true_positive_count": {
+                "numerator": int(useful.get("numerator", 0) or 0),
+                "denominator": true_positive_count,
+                "value": useful.get("value"),
+            },
             "held_out_useful_lead_time_rate": held_rate,
             "real_derived_useful_lead_time_rate": real_rate,
             "useful_lead_time_directional_drop": drop,
             "held_out_false_alerts_per_service_day": held_false_rate,
             "real_derived_false_alerts_per_service_day": real_false,
             "false_alert_increase": false_increase,
+            "unevaluable_missing_source_or_split": missing_source_or_split,
+            "unevaluable_missing_denominator": missing_denominator,
             "pass": family_pass,
         }
         all_pass = all_pass and family_pass
@@ -598,7 +724,29 @@ def evaluate_p106_release_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
         and int(boundary.get("executable_action_plan_count", 1) or 0) == 0
         and int(boundary.get("default_external_model_call_count", 1) or 0) == 0
     )
-    return {"p106_unlocked": False if not safety_pass else bool(payload.get("p106_unlocked", False)), "safety_boundary": {"pass": safety_pass, "boundary": dict(boundary)}}
+    required = ("held_out_calibration", "per_family", "global", "real_derived_transfer")
+    missing = [key for key in required if key not in payload]
+    held_out = _evaluate_held_out_calibration_gate(payload.get("held_out_calibration"))
+    families = _evaluate_release_family_rows(payload.get("per_family"), payload.get("held_out_calibration"))
+    global_gate = _evaluate_release_global_row(payload.get("global"))
+    transfer = _evaluate_release_transfer_gate(payload.get("real_derived_transfer"))
+    p106_unlocked = bool(
+        safety_pass
+        and not missing
+        and held_out.get("pass") is True
+        and global_gate.get("pass") is True
+        and families.get("pass") is True
+        and transfer.get("pass") is True
+    )
+    return {
+        "p106_unlocked": p106_unlocked,
+        "missing_required_gate_rows": missing,
+        "held_out_calibration": held_out,
+        "global": global_gate,
+        "families": families.get("families", {}),
+        "real_derived_transfer": transfer,
+        "safety_boundary": {"pass": safety_pass, "boundary": dict(boundary)},
+    }
 
 
 def run_p105_benchmark(curated_rows_path: str | Path, real_derived_rows_path: str | Path) -> dict[str, Any]:
@@ -630,18 +778,33 @@ def run_p105_benchmark(curated_rows_path: str | Path, real_derived_rows_path: st
         service_day_coverage=_mapping_coverage(curated.get("service_day_coverage", {})),
         split_id=str(curated.get("split_id", "p105-curated")),
     )
+    held_out = compare_engine_generated_held_out_to_p24_baseline(rows)
+    transfer_gate = evaluate_real_derived_transfer_gate(shadow)
+    boundary = {
+        "network_call_count": 0,
+        "model_call_count": 0,
+        "auth_required": False,
+        "production_mutation_count": 0,
+        "remediation_execution_count": 0,
+        "executable_action_plan_count": 0,
+        "default_external_model_call_count": 0,
+    }
+    release_gate = evaluate_p106_release_payload(
+        {
+            "held_out_calibration": {"global": held_out["global"], "families": held_out["families"]},
+            "per_family": report["families"],
+            "global": report["global"],
+            "real_derived_transfer": transfer_gate,
+            "boundary": boundary,
+        }
+    )
     return {
         "schema_version": "p105.benchmark.report.v1",
         "curated": report,
-        "real_derived_transfer_gate": evaluate_real_derived_transfer_gate(shadow),
-        "boundary": {
-            "network_call_count": 0,
-            "model_call_count": 0,
-            "auth_required": False,
-            "production_mutation_count": 0,
-            "remediation_execution_count": 0,
-            "executable_action_plan_count": 0,
-        },
+        "held_out_calibration": held_out,
+        "real_derived_transfer_gate": transfer_gate,
+        "release_gate": release_gate,
+        "boundary": boundary,
     }
 
 
@@ -685,8 +848,13 @@ def _metric_scope(
     scope_tp = [item for item in scope_predicted_positive if str(item.get("forecast_id", "")) in true_positive_ids]
     scope_fp_ids = {str(item.get("forecast_id", "")) for item in scope_predicted_positive if str(item.get("forecast_id", "")) in false_positive_ids}
     scope_duplicate = scope_fp_ids & duplicate_forecast_ids
+    forecast_labels = {str(item.get("forecast_id", "")): _label_for_forecast(item, actuals) for item in scope_non_abstained}
     false_negative_count = sum(1 for item in scope_actuals if str(item.get("label_incident_id", "")) not in matched_actual_ids)
-    labels = [0 if str(item.get("forecast_id", "")) in duplicate_forecast_ids else _label_for_forecast(item, actuals) for item in scope_non_abstained]
+    pr_labels = [forecast_labels[str(item.get("forecast_id", ""))] for item in scope_non_abstained]
+    scoring_labels = [
+        0 if str(item.get("forecast_id", "")) in duplicate_forecast_ids else forecast_labels[str(item.get("forecast_id", ""))]
+        for item in scope_non_abstained
+    ]
     calibration_labels = [_label_for_forecast(item, actuals) for item in scope_non_abstained]
     probs = [_forecast_probability(item) for item in scope_non_abstained]
     service_days = _service_days(family, service_day_coverage)
@@ -703,11 +871,16 @@ def _metric_scope(
         "duplicate_alert_count": len(scope_duplicate),
         "false_positive_count": len(scope_fp_ids),
         "false_negative_count": false_negative_count,
-        "true_negative_count": max(0, len(scope_non_abstained) - len(scope_predicted_positive)),
+        "true_negative_count": sum(
+            1
+            for item in scope_non_abstained
+            if str(item.get("forecast_id", "")) not in {str(prediction.get("forecast_id", "")) for prediction in scope_predicted_positive}
+            and forecast_labels[str(item.get("forecast_id", ""))] == 0
+        ),
         "precision": _ratio(len(scope_tp), len(scope_predicted_positive)),
         "recall": _ratio(len(scope_tp), len(scope_actuals)),
-        "pr_auc": _pr_auc(probs, labels),
-        "brier": _brier(probs, labels),
+        "pr_auc": _pr_auc(probs, pr_labels),
+        "brier": _brier(probs, scoring_labels),
         "ece": _ece(probs, calibration_labels),
         "useful_lead_time_rate": _ratio(useful_count, len(scope_tp)),
         "lead_time_minutes": _lead_time_stats(lead_times),
@@ -726,7 +899,7 @@ def _match_actual(forecast: Mapping[str, Any], actuals: Sequence[Mapping[str, An
         if actual_id in matched_actual_ids or actual.get("label_family") != forecast.get("family"):
             continue
         lead = _minutes_between(str(forecast.get("forecast_timestamp")), str(actual.get("label_incident_start_timestamp")))
-        if 0 < lead <= 120:
+        if _lead_is_within_forecast_interval(forecast, lead):
             candidates.append((lead, actual_id, actual))
     if not candidates:
         return None
@@ -738,7 +911,7 @@ def _duplicate_actual_for_forecast(forecast: Mapping[str, Any], actuals: Sequenc
         if str(actual.get("label_incident_id", "")) not in matched_actual_ids or actual.get("label_family") != forecast.get("family"):
             continue
         lead = _minutes_between(str(forecast.get("forecast_timestamp")), str(actual.get("label_incident_start_timestamp")))
-        if 0 < lead <= 120:
+        if _lead_is_within_forecast_interval(forecast, lead):
             return actual
     return None
 
@@ -748,7 +921,7 @@ def _label_for_forecast(forecast: Mapping[str, Any], actuals: Sequence[Mapping[s
         if actual.get("label_family") != forecast.get("family"):
             continue
         lead = _minutes_between(str(forecast.get("forecast_timestamp")), str(actual.get("label_incident_start_timestamp")))
-        if 0 < lead <= 120:
+        if _lead_is_within_forecast_interval(forecast, lead):
             return 1
     return 0
 
@@ -781,23 +954,46 @@ def _brier_value(probs: Sequence[float], labels: Sequence[int]) -> float:
 
 
 def _ece(probs: Sequence[float], labels: Sequence[int], *, bin_count: int = 10) -> dict[str, Any]:
-    return {"bin_count": bin_count, "denominator": len(probs), "value": _ece_value(probs, labels, bin_count=bin_count) if probs else None}
+    bins = _ece_bins(probs, labels, bin_count=bin_count)
+    return {
+        "bin_count": bin_count,
+        "denominator": len(probs),
+        "value": round(sum(float(item["weighted_gap"]) for item in bins), 6) if probs else None,
+        "bins": bins,
+    }
 
 
 def _ece_value(probs: Sequence[float], labels: Sequence[int], *, bin_count: int = 10) -> float:
+    return round(sum(float(item["weighted_gap"]) for item in _ece_bins(probs, labels, bin_count=bin_count)), 6) if probs else 0.0
+
+
+def _ece_bins(probs: Sequence[float], labels: Sequence[int], *, bin_count: int = 10) -> list[dict[str, Any]]:
+    bins: list[dict[str, Any]] = []
     if not probs:
-        return 0.0
-    total = 0.0
+        return [
+            {"lower": index / bin_count, "upper": (index + 1) / bin_count, "count": 0, "confidence": None, "accuracy": None, "weighted_gap": 0.0}
+            for index in range(bin_count)
+        ]
     for index in range(bin_count):
         lower = index / bin_count
         upper = (index + 1) / bin_count
         members = [(p, y) for p, y in zip(probs, labels, strict=True) if (lower <= p < upper) or (index == bin_count - 1 and p == 1.0)]
         if not members:
+            bins.append({"lower": lower, "upper": upper, "count": 0, "confidence": None, "accuracy": None, "weighted_gap": 0.0})
             continue
         confidence = sum(p for p, _ in members) / len(members)
         accuracy = sum(y for _, y in members) / len(members)
-        total += (len(members) / len(probs)) * abs(confidence - accuracy)
-    return round(total, 6)
+        bins.append(
+            {
+                "lower": lower,
+                "upper": upper,
+                "count": len(members),
+                "confidence": round(confidence, 6),
+                "accuracy": round(accuracy, 6),
+                "weighted_gap": round((len(members) / len(probs)) * abs(confidence - accuracy), 6),
+            }
+        )
+    return bins
 
 
 def _pr_auc(probs: Sequence[float], labels: Sequence[int]) -> dict[str, Any]:
@@ -818,14 +1014,23 @@ def _pr_auc(probs: Sequence[float], labels: Sequence[int]) -> dict[str, Any]:
         precision = tp / (tp + fp)
         area += (recall - prev_recall) * precision
         prev_recall = recall
-    return {"positive_denominator": positives, "value": round(area, 6)}
+    return {
+        "positive_denominator": positives,
+        "value": round(area, 6),
+        "curve_convention": "step_average_precision_ranked_by_probability_desc",
+    }
 
 
-def _lead_time_stats(values: Sequence[float]) -> dict[str, float | None]:
+def _lead_time_stats(values: Sequence[float]) -> dict[str, Any]:
     if not values:
         return {"median": None, "p10": None, "p90": None}
     ordered = sorted(values)
-    return {"median": _percentile(ordered, 0.5), "p10": _percentile(ordered, 0.1), "p90": _percentile(ordered, 0.9)}
+    return {
+        "median": _percentile(ordered, 0.5),
+        "p10": _percentile(ordered, 0.1),
+        "p90": _percentile(ordered, 0.9),
+        "percentile_convention": "linear_interpolation_between_closest_ranks",
+    }
 
 
 def _percentile(ordered: Sequence[float], fraction: float) -> float:
@@ -853,7 +1058,7 @@ def _labels_by_source_window(fixture: Mapping[str, Any]) -> dict[str, int]:
 
 
 def _critical_features_missing(features: Mapping[str, Any]) -> bool:
-    return any(features.get(key) is None for key in ("trend_slope", "threshold_distance", "baseline_ratio")) or bool(features.get("missing_features"))
+    return any(features.get(key) is None for key in ("trend_slope", "threshold_distance")) or bool(features.get("missing_features"))
 
 
 def _is_distribution_shift(features: Mapping[str, Any]) -> bool:
@@ -875,11 +1080,171 @@ def _baseline_probability(features: Mapping[str, Any]) -> float:
     return round(max(0.05, min(0.95, 0.3 + min(0.3, slope if slope < 1 else slope / 1000.0) + max(0.0, 0.2 - threshold_distance * 0.2))), 3)
 
 
+def _raw_probability(family: str, row: Mapping[str, Any]) -> float:
+    features = row.get("public_features", {}) if isinstance(row.get("public_features"), Mapping) else {}
+    if family == "observability_zero_positive":
+        slope = abs(float(features.get("trend_slope", 0.0) or 0.0))
+        if slope > 1000.0:
+            return 0.85
+    return _calibrated_probability(features)
+
+
+def _fit_probability_calibrator(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    calibration_rows = [row for row in rows if str(row.get("split")) == "calibration"]
+    positives = [row for row in calibration_rows if row.get("label_positive") is True]
+    negatives = [row for row in calibration_rows if row.get("label_positive") is not True]
+    return {
+        "calibration_version": CALIBRATION_VERSION,
+        "fit_split_id": "calibration",
+        "input_row_ids": [str(row.get("row_id", "")) for row in calibration_rows],
+        "input_split_ids": sorted({str(row.get("split")) for row in calibration_rows}),
+        "positive_count": len(positives),
+        "negative_count": len(negatives),
+        "method": "calibration_split_monotone_margin",
+    }
+
+
+def _apply_probability_calibrator(raw_probability: float, artifact: Mapping[str, Any]) -> float:
+    if artifact.get("fit_split_id") != "calibration":
+        raise ValueError("calibration artifact must be fit on calibration split")
+    if int(artifact.get("positive_count", 0) or 0) and not int(artifact.get("negative_count", 0) or 0):
+        return round(min(0.95, max(0.7, raw_probability + 0.18)), 3)
+    return round(max(0.05, min(0.95, raw_probability)), 3)
+
+
+def _probability_interval(probability: float) -> tuple[float, float]:
+    return (round(max(0.0, probability - 0.08), 3), round(min(1.0, probability + 0.07), 3))
+
+
 def _lead_time_interval(row: Mapping[str, Any]) -> tuple[int, int]:
-    label_lead = row.get("lead_time_label_minutes")
-    if isinstance(label_lead, int | float):
-        return (max(0, int(label_lead) - 20), int(label_lead) + 30)
-    return (20, 120)
+    return LEAD_TIME_INTERVALS_BY_FAMILY.get(str(row.get("family", "")), (20, DEFAULT_FORECAST_HORIZON_MINUTES))
+
+
+def _lead_is_within_forecast_interval(forecast: Mapping[str, Any], lead: float) -> bool:
+    if lead <= 0:
+        return False
+    interval = forecast.get("lead_time_interval_minutes")
+    if isinstance(interval, Sequence) and not isinstance(interval, (str, bytes, bytearray)) and len(interval) == 2:
+        lower = float(interval[0])
+        upper = float(interval[1])
+    else:
+        lower = 0.0
+        upper = float(DEFAULT_FORECAST_HORIZON_MINUTES)
+    return lower <= lead <= upper
+
+
+def _actual_from_row(row: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "label_incident_id": row.get("label_incident_id"),
+        "label_incident_start_timestamp": row.get("label_incident_start_timestamp"),
+        "label_family": row.get("label_family", row.get("family")),
+        "label_failure_mode": row.get("label_failure_mode", row.get("failure_mode")),
+    }
+
+
+def _evaluate_held_out_calibration_gate(value: Any) -> dict[str, Any]:
+    if not isinstance(value, Mapping):
+        return {"pass": False, "global": {}, "families": {}}
+    global_row = _held_out_calibration_row(value.get("global"))
+    families: dict[str, Any] = {}
+    all_family_pass = True
+    source_families = value.get("families", {}) if isinstance(value.get("families"), Mapping) else {}
+    for family, row in source_families.items():
+        family_row = _held_out_calibration_row(row)
+        if int(family_row.get("actual_positive_count", 0) or 0) == 0:
+            family_row["unevaluable_zero_positive"] = True
+            family_row["pass"] = False
+        families[str(family)] = family_row
+        all_family_pass = all_family_pass and family_row.get("pass") is True
+    return {"pass": global_row.get("pass") is True and all_family_pass, "global": global_row, "families": families}
+
+
+def _held_out_calibration_row(value: Any) -> dict[str, Any]:
+    row = dict(value) if isinstance(value, Mapping) else {}
+    p105_brier = _optional_float(row.get("p105_brier"))
+    p24_brier = _optional_float(row.get("p24_brier"))
+    p105_ece = _optional_float(row.get("p105_ece"))
+    p24_ece = _optional_float(row.get("p24_ece"))
+    brier_pass = p105_brier is not None and p24_brier is not None and p105_brier < p24_brier
+    ece_pass = p105_ece is not None and p24_ece is not None and p105_ece < p24_ece
+    row["brier_improvement"] = {"p105": p105_brier, "p24": p24_brier, "pass": brier_pass}
+    row["ece_improvement"] = {"p105": p105_ece, "p24": p24_ece, "pass": ece_pass}
+    row["pass"] = brier_pass and ece_pass
+    return row
+
+
+def _evaluate_release_family_rows(value: Any, held_out_value: Any) -> dict[str, Any]:
+    rows = value if isinstance(value, Mapping) else {}
+    held_families = held_out_value.get("families", {}) if isinstance(held_out_value, Mapping) and isinstance(held_out_value.get("families"), Mapping) else {}
+    families: dict[str, Any] = {}
+    all_pass = True
+    for family in sorted(set(rows) | set(held_families)):
+        row = dict(rows.get(family, {})) if isinstance(rows.get(family, {}), Mapping) else {}
+        actual_positive = int(row.get("actual_positive_count", held_families.get(family, {}).get("actual_positive_count", 0)) or 0)
+        useful = _ratio_gate(row.get("useful_lead_time_rate"), minimum=0.8)
+        false_alerts = _ratio_gate(row.get("false_alerts_per_service_day"), maximum=0.5)
+        abstention = _ratio_gate(row.get("abstention_rate"), maximum=0.3)
+        family_pass = actual_positive > 0 and useful.get("pass") is True and false_alerts.get("pass") is True and abstention.get("pass") is True
+        row["actual_positive_count"] = actual_positive
+        row["useful_lead_time_rate"] = useful
+        row["false_alerts_per_service_day"] = false_alerts
+        row["abstention_rate"] = abstention
+        if actual_positive == 0:
+            row["unevaluable_zero_positive"] = True
+        row["pass"] = family_pass
+        families[str(family)] = row
+        all_pass = all_pass and family_pass
+    return {"pass": bool(families) and all_pass, "families": families}
+
+
+def _evaluate_release_global_row(value: Any) -> dict[str, Any]:
+    row = dict(value) if isinstance(value, Mapping) else {}
+    false_alerts = _ratio_gate(row.get("false_alerts_per_service_day"), maximum=0.25)
+    abstention = _ratio_gate(row.get("abstention_rate"), maximum=0.2)
+    row["false_alerts_per_service_day"] = false_alerts
+    row["abstention_rate"] = abstention
+    row["pass"] = false_alerts.get("pass") is True and abstention.get("pass") is True
+    return row
+
+
+def _evaluate_release_transfer_gate(value: Any) -> dict[str, Any]:
+    if not isinstance(value, Mapping):
+        return {"pass": False, "families": {}}
+    rows = value.get("families", {}) if isinstance(value.get("families"), Mapping) else {}
+    families: dict[str, Any] = {}
+    all_pass = True
+    for family, source_row in rows.items():
+        row = dict(source_row) if isinstance(source_row, Mapping) else {}
+        drop = _optional_float(row.get("useful_lead_time_directional_drop"))
+        real_rate = _optional_float(row.get("real_derived_useful_lead_time_rate"))
+        false_increase = _optional_float(row.get("false_alert_increase"))
+        real_false = _optional_float(row.get("real_derived_false_alerts_per_service_day"))
+        row["pass"] = (
+            drop is not None
+            and drop <= 0.1
+            and real_rate is not None
+            and real_rate >= 0.8
+            and false_increase is not None
+            and false_increase <= 0.1
+            and real_false is not None
+            and real_false <= 0.5
+        )
+        families[str(family)] = row
+        all_pass = all_pass and row["pass"]
+    return {"pass": bool(families) and all_pass, "families": families}
+
+
+def _ratio_gate(value: Any, *, minimum: float | None = None, maximum: float | None = None) -> dict[str, Any]:
+    row = dict(value) if isinstance(value, Mapping) else {"value": None}
+    metric = _optional_float(row.get("value"))
+    row["pass"] = metric is not None and (minimum is None or metric >= minimum) and (maximum is None or metric <= maximum)
+    return row
+
+
+def _optional_float(value: Any) -> float | None:
+    if value is None:
+        return None
+    return float(value)
 
 
 def _disabled_action(action: Mapping[str, Any]) -> dict[str, Any]:

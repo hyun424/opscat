@@ -138,3 +138,99 @@ P105 is authorized to proceed to RED tests for:
 P106 remains locked until the exact P105 release gate passes with populated
 denominators, supported-family coverage, real-derived transfer evidence, and
 hard-zero safety counters.
+
+## 2026-07-10 Release-Hardening Review: `a21b81e` to `0da90a3`
+
+**APPROVED.** Independent review returned **REJECT** after commit `a21b81e`
+(`Make P105 release gate credible beyond tiny fixtures`) and then returned
+**APPROVE** after commit `0da90a3` (`Clarify P105 hardening gates before
+implementation`).
+
+This section appends the release-hardening review sequence. It does not replace
+or reinterpret the earlier review history through commit `8bb6d74`.
+
+### Scope Reviewed
+
+The release-hardening review covered only the P105 planning and documentation
+contract introduced or repaired by commits `a21b81e` and `0da90a3`:
+
+- P105 roadmap and release-hardening gate language:
+  `docs/operations/p105-ticket-roadmap.md`
+- P104-P108 proactive-prevention master-plan references:
+  `docs/operations/p104-p108-proactive-prevention-master-plan.md`
+- P105 release-hardening ticket set:
+  `docs/tickets/p105/p105-012-release-qualification-floors-mode-semantics.md`
+  through
+  `docs/tickets/p105/p105-015-release-docs-p24-parity-authority-lock.md`
+- P105 ticket index: `docs/tickets/p105/README.md`
+- Public planning summaries touched by the release-hardening amendment:
+  `README.md`, `ROADMAP.md`, `CHANGELOG.md`, and `docs/release-evidence.md`
+
+The review boundary excluded source implementation, runtime forecast behavior,
+fixtures beyond their planning-contract implications, production operation,
+P106 implementation, auth or credential scope, production mutation, remediation
+execution, executable action plans, and default external model calls.
+
+### Initial Rejection After `a21b81e`
+
+The independent reviewer rejected the `a21b81e` release-hardening amendment with
+five blockers:
+
+1. Missing or unknown run mode was not normalized to a distinct fail-closed
+   `smoke_only_missing_mode`, leaving room for tiny committed fixtures to appear
+   release-qualified.
+2. False-alert service-day exposure could be diluted by summed row coverage or
+   reused constants instead of unioned coverage intervals for the exact
+   split/family/service/source scope.
+3. Real-derived source participation and diversity were underspecified:
+   source IDs or broad record-set labels could satisfy floors without canonical
+   source tuples, explicit P32/P41/P44 family mapping, materialization, redaction,
+   and P44 opt-in boundaries.
+4. Safety-conformance diagnostics and intentional leakage checks were not
+   confined tightly enough to a private harness, and public or release artifacts
+   did not fail closed on raw leaked diagnostic payloads or post-incident keys.
+5. Public release-note wording risked claiming implemented hardening before
+   implementation and release evidence existed.
+
+### Repair in `0da90a3`
+
+Commit `0da90a3` resolved the rejection by:
+
+- normalizing missing, null, empty, or unknown mode metadata to
+  `smoke_only_missing_mode`, with `release_qualified=false`,
+  `p106_unlocked=false`, and no P106 gate-row pass credit;
+- identifying the current committed P105 fixture files as smoke-only evidence
+  until a future implementation emits explicit `mode=release_qualified` and
+  passes every release-hardening floor;
+- requiring false-alert service-day denominators to use unioned
+  `coverage_intervals` per `split_id`/`family`/`service`/`source_system` scope,
+  with overlapping intervals merged before computing service days;
+- defining canonical P32/P41/P44 source tuples, explicit source-family mapping,
+  P44 opt-in participation, materialization and redaction requirements, and
+  diversity denominators that exclude synthetic held-out rows;
+- limiting intentional leakage diagnostics to private safety-harness fixtures
+  and requiring public or release artifacts to publish only violation metadata
+  and hash-safe references;
+- changing `CHANGELOG.md` and release-doc requirements so P105-012 through
+  P105-015 remain planned hardening work until implemented and evidenced.
+
+### Final Approval and Authorization
+
+The final independent review approved the repaired planning state at
+`0da90a3`.
+
+Implementation is authorized for the release-hardening tickets only:
+
+1. P105-012 release qualification floors and mode semantics.
+2. P105-013 deterministic source-record row generation.
+3. P105-014 partition, coverage, and safety-conformance hardening.
+4. P105-015 release documentation, P24 parity, verify integration, and
+   authority lock.
+
+This authorization is limited to RED tests and implementation for P105-012
+through P105-015 under the exact reviewed boundaries above. It does not
+authorize P106 work, changing the approved P106 thresholds, claiming P106 unlock
+from smoke evidence, production mutation, auth or credential work, remediation
+execution, executable action plans, default external model calls, scorer-truth
+leakage, raw LLM confidence as an execution signal, or public release artifacts
+that contain post-incident keys or raw leaked diagnostic payloads.

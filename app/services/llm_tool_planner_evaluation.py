@@ -45,7 +45,8 @@ class MockToolPlanningProvider:
     def complete(self, messages: list[dict[str, str]]) -> Mapping[str, Any]:
         envelope = json.loads(messages[-1]["content"])
         packet = _mapping(envelope.get("packet"))
-        decision = HypothesisToolAgent().decide(packet, ())
+        history = tuple(_mapping(item) for item in _sequence(packet.get("tool_history")))
+        decision = HypothesisToolAgent().decide(packet, history)
         return {"route": decision.route, "tool": decision.tool, "rationale": decision.rationale}
 
 
@@ -63,7 +64,18 @@ class LLMToolPlanner:
 
 
 def build_tool_planner_prompt(packet: Mapping[str, Any]) -> list[dict[str, str]]:
-    public = {key: packet.get(key) for key in ("case_id", "symptom", "measurements", "tool_catalog", "boundary")}
+    public = {
+        key: packet.get(key)
+        for key in (
+            "case_id",
+            "symptom",
+            "measurements",
+            "tool_catalog",
+            "tool_history",
+            "remaining_tool_budget",
+            "boundary",
+        )
+    }
     allowed_tool_ids = [str(_mapping(item).get("tool_id")) for item in _sequence(packet.get("tool_catalog")) if _mapping(item).get("tool_id")]
     system = (
         "Choose the single best read-only diagnostic tool. Return exactly one JSON object and no other text. "

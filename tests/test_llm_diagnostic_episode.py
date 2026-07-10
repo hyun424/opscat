@@ -12,11 +12,7 @@ from app.services.operational_scenario_catalog import build_comprehensive_operat
 
 
 def _case(family: str, variant: str = "obvious"):  # type: ignore[no-untyped-def]
-    return next(
-        case
-        for case in build_comprehensive_operational_catalog()
-        if case.family == family and case.variant == variant
-    )
+    return next(case for case in build_comprehensive_operational_catalog() if case.family == family and case.variant == variant)
 
 
 class _ScriptedProvider:
@@ -47,9 +43,7 @@ class _FailingProvider:
 
 
 def test_episode_replans_after_negative_tool_result_then_recovers() -> None:
-    report = LLMDiagnosticEpisodeBenchmark(
-        provider=_ScriptedProvider(), sample_size=10, max_tool_calls=3
-    ).run(cases=(_case("database"),), seeds=(11,))
+    report = LLMDiagnosticEpisodeBenchmark(provider=_ScriptedProvider(), sample_size=10, max_tool_calls=3).run(cases=(_case("database"),), seeds=(11,))
     payload = report.to_dict()
     trial = next(item for item in payload["trials"] if item["arm"] == "llm_investigator")
 
@@ -66,9 +60,7 @@ def test_episode_replans_after_negative_tool_result_then_recovers() -> None:
 
 
 def test_repeated_tool_proposal_fails_closed_before_second_execution() -> None:
-    report = LLMDiagnosticEpisodeBenchmark(
-        provider=_RepeatingProvider(), sample_size=5, max_tool_calls=3
-    ).run(cases=(_case("database"),), seeds=(7,))
+    report = LLMDiagnosticEpisodeBenchmark(provider=_RepeatingProvider(), sample_size=5, max_tool_calls=3).run(cases=(_case("database"),), seeds=(7,))
     payload = report.to_dict()
     trial = next(item for item in payload["trials"] if item["arm"] == "llm_investigator")
 
@@ -79,9 +71,7 @@ def test_repeated_tool_proposal_fails_closed_before_second_execution() -> None:
 
 
 def test_provider_failure_escalates_without_tool_or_action() -> None:
-    report = LLMDiagnosticEpisodeBenchmark(provider=_FailingProvider(), sample_size=5).run(
-        cases=(_case("database"),), seeds=(13,)
-    )
+    report = LLMDiagnosticEpisodeBenchmark(provider=_FailingProvider(), sample_size=5).run(cases=(_case("database"),), seeds=(13,))
     payload = report.to_dict()
     trial = next(item for item in payload["trials"] if item["arm"] == "llm_investigator")
 
@@ -93,9 +83,7 @@ def test_provider_failure_escalates_without_tool_or_action() -> None:
 
 def test_agent_context_hides_scorer_truth_and_enforces_budget() -> None:
     provider = _RecordingProvider()
-    report = LLMDiagnosticEpisodeBenchmark(
-        provider=provider, sample_size=5, max_tool_calls=1
-    ).run(cases=(_case("database"),), seeds=(17,))
+    report = LLMDiagnosticEpisodeBenchmark(provider=provider, sample_size=5, max_tool_calls=1).run(cases=(_case("database"),), seeds=(17,))
     payload = report.to_dict()
     trial = next(item for item in payload["trials"] if item["arm"] == "llm_investigator")
     rendered = json.dumps(provider.messages, sort_keys=True)
@@ -116,9 +104,7 @@ def test_agent_context_hides_scorer_truth_and_enforces_budget() -> None:
 
 def test_comparison_reports_strict_and_outcome_metrics_from_equal_states() -> None:
     cases = (_case("database"), _case("queue"), _case("data_corruption"))
-    payload = LLMDiagnosticEpisodeBenchmark(
-        provider=MockToolPlanningProvider(), sample_size=5
-    ).run(cases=cases, seeds=(19,)).to_dict()
+    payload = LLMDiagnosticEpisodeBenchmark(provider=MockToolPlanningProvider(), sample_size=5).run(cases=cases, seeds=(19,)).to_dict()
 
     assert payload["summary"]["arm_count"] == 4
     assert payload["summary"]["trial_count"] == 12
@@ -128,11 +114,7 @@ def test_comparison_reports_strict_and_outcome_metrics_from_equal_states() -> No
     assert 0.0 <= payload["scorecard"]["llm_relevant_tool_discovery_rate"] <= 1.0
     assert 0.0 <= payload["scorecard"]["llm_recovery_rate"] <= 1.0
     for case in cases:
-        fingerprints = {
-            trial["initial_fingerprint"]
-            for trial in payload["trials"]
-            if trial["case_id"] == case.case_id
-        }
+        fingerprints = {trial["initial_fingerprint"] for trial in payload["trials"] if trial["case_id"] == case.case_id}
         assert len(fingerprints) == 1
 
 

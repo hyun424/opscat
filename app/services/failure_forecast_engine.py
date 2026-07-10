@@ -18,6 +18,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Self
 
+from app.services.proactive_risk_sentinel import ProactiveRiskSentinel, RiskSignal, load_proactive_fixtures
+
 SCORER_ONLY_KEYS = frozenset(
     {
         "label_incident_id",
@@ -59,15 +61,36 @@ CALIBRATION_VERSION = "p105-fixed-logistic-calibration-v1"
 DEFAULT_FORECAST_HORIZON_MINUTES = 120
 RELEASE_QUALIFIED_MODE = "release_qualified"
 SMOKE_ONLY_MODE = "smoke_only_missing_mode"
+DOCUMENTED_RELEASE_FLOORS: Mapping[str, Mapping[str, int | float]] = {
+    "held_out": {
+        "evaluated": 30,
+        "non_abstained": 24,
+        "actual_positive": 6,
+        "incident_groups": 4,
+        "service_days": 2.0,
+    },
+    "real_derived_shadow": {
+        "evaluated": 20,
+        "non_abstained": 16,
+        "actual_positive": 4,
+        "incident_groups": 3,
+        "service_days": 1.0,
+    },
+}
 RELEASE_FLOOR_DEFAULTS: Mapping[str, int | float] = {
-    "held_out_min_positive_per_family": 2,
-    "held_out_min_negative_per_family": 2,
-    "real_derived_min_positive_per_family": 2,
-    "real_derived_min_negative_per_family": 2,
     "minimum_union_service_days": 7,
     "minimum_source_record_sets": 3,
     "maximum_single_source_fraction": 0.6,
 }
+CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS: tuple[str, ...] = (
+    "source_system",
+    "source_dataset",
+    "source_manifest_key",
+    "source_content_hash",
+    "materialized_record_hash",
+    "materialization_version",
+)
+P24_PROACTIVE_FIXTURE_PATH = Path("evals/proactive/seed/risk_windows.json")
 LEAD_TIME_INTERVALS_BY_FAMILY: Mapping[str, tuple[int, int]] = {
     "database": (45, 120),
     "queue": (30, 90),
@@ -986,12 +1009,48 @@ def _compare_release_held_out_to_p24(fixture: Mapping[str, Any], rows: Sequence[
     comparison = compare_engine_generated_held_out_to_p24_baseline(comparison_rows)
     comparison["evaluation_split_id"] = "held_out"
     comparison["release_supported_families"] = list(_sequence(fixture.get("release_supported_families", ())))
-    comparison["p24_baseline"] = {
-        "authority": "app.services.proactive_risk_sentinel.RiskSignal",
-        "uses_actual_risk_signal_from_window": True,
-        "action_authority": False,
-    }
+    comparison["p24_baseline"] = _computed_p24_baseline(fixture, comparison["p24_forecasts"])
     return comparison
+
+
+def _computed_p24_baseline(fixture: Mapping[str, Any], fallback_forecasts: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    windows_by_id = {window.id: window for window in load_proactive_fixtures(P24_PROACTIVE_FIXTURE_PATH)}
+    requested_ids = {
+        str(row.get("source_window_id"))
+        for row in _mapping_sequence(fixture.get("rows", ()))
+        if row.get("partition") == "held_out" and row.get("source_window_id") in windows_by_id
+    }
+    requested_ids.update(str(row.get("source_window_id")) for row in fallback_forecasts if row.get("source_window_id") in windows_by_id)
+    if not requested_ids:
+        requested_ids.update(windows_by_id)
+    sentinel = ProactiveRiskSentinel()
+    parity_rows: list[dict[str, Any]] = []
+    for source_window_id in sorted(requested_ids):
+        window = windows_by_id[source_window_id]
+        signal = RiskSignal.from_window(window)
+        forecast = sentinel._forecast(signal).to_dict()
+        parity_rows.append(
+            {
+                "source_window_id": source_window_id,
+                "forecast_id": forecast["forecast_id"],
+                "risk_type": forecast["risk_type"],
+                "route": forecast["route"],
+                "eta_minutes": forecast["eta_minutes"],
+                "confidence": forecast["confidence"],
+                "impact": forecast["impact"],
+                "evidence_ids": forecast["evidence_ids"],
+            }
+        )
+    return {
+        "authority": "app.services.proactive_risk_sentinel.RiskSignal",
+        "forecast_path": "app.services.proactive_risk_sentinel.ProactiveRiskSentinel._forecast",
+        "uses_actual_risk_signal_from_window": True,
+        "uses_actual_risk_forecast_from_sentinel": True,
+        "metadata_source": "computed_not_payload_metadata",
+        "action_authority": False,
+        "fixture_path": str(P24_PROACTIVE_FIXTURE_PATH),
+        "parity_rows": parity_rows,
+    }
 
 
 def _evaluate_release_manifest_transfer_gate(
@@ -1053,30 +1112,44 @@ def _evaluate_release_qualification_floors(
 ) -> dict[str, Any]:
     qualification = payload.get("release_qualification", {}) if isinstance(payload.get("release_qualification"), Mapping) else {}
     floors = {key: qualification.get(key, default) for key, default in RELEASE_FLOOR_DEFAULTS.items()}
+    service_day_coverage = _mapping_coverage(payload.get("service_day_coverage", {}))
     family_report: dict[str, dict[str, Any]] = {}
     families_pass = True
     for family in sorted(supported_families):
         family_report[family] = {}
         for partition in eligible_partitions:
             partition_rows = [row for row in rows if row.get("partition") == partition and row.get("family") == family]
-            positives = [row for row in partition_rows if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("label_positive") is True]
-            negatives = [row for row in partition_rows if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("label_positive") is False]
-            positive_key = "real_derived_min_positive_per_family" if partition == "real_derived_shadow" else "held_out_min_positive_per_family"
-            negative_key = "real_derived_min_negative_per_family" if partition == "real_derived_shadow" else "held_out_min_negative_per_family"
-            positive_min = int(floors.get(positive_key, 0) or 0)
-            negative_min = int(floors.get(negative_key, 0) or 0)
-            row: dict[str, Any] = {
-                "positive_count": {"count": len(positives), "minimum": positive_min, "pass": len(positives) >= positive_min},
-                "negative_count": {"count": len(negatives), "minimum": negative_min, "pass": len(negatives) >= negative_min},
+            floor = _floor_contract_for_partition(qualification, partition)
+            positives = [row for row in partition_rows if _row_label_positive(row)]
+            negatives = [
+                row
+                for row in partition_rows
+                if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("label_positive") is False
+            ]
+            incident_groups = {
+                str(row["scorer_labels"].get("incident_group_id"))
+                for row in partition_rows
+                if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("incident_group_id")
             }
-            row["pass"] = row["positive_count"]["pass"] and row["negative_count"]["pass"]
+            non_abstained = sum(1 for row in partition_rows if isinstance(forecast_row(row), CalibratedForecast))
+            service_days = _service_days_for_floor(family, partition, service_day_coverage, partition_rows)
+            row: dict[str, Any] = {
+                "evaluated_count": _floor_count(len(partition_rows), int(floor["evaluated"])),
+                "non_abstained_count": _floor_count(non_abstained, int(floor["non_abstained"])),
+                "positive_count": _floor_count(len(positives), int(floor["actual_positive"])),
+                "negative_count": _floor_count(len(negatives), int(floor["actual_negative"])),
+                "incident_group_count": _floor_count(len(incident_groups), int(floor["incident_groups"])),
+                "service_day_count": _floor_count_float(service_days, float(floor["service_days"])),
+            }
+            row["pass"] = all(item["pass"] for item in row.values() if isinstance(item, Mapping))
             family_report[family][partition] = row
             families_pass = families_pass and row["pass"]
     coverage_report = _release_service_day_floor(payload.get("service_day_coverage"), supported_families, float(floors["minimum_union_service_days"]))
     diversity_report = _release_source_diversity_floor(
-        [row for row in rows if row.get("partition") in set(eligible_partitions)],
+        rows,
         int(floors["minimum_source_record_sets"]),
         float(floors["maximum_single_source_fraction"]),
+        legacy_source_id_fallback=qualification.get("floor_contract_version") == "p105-012",
     )
     return {
         "pass": bool(supported_families) and families_pass and coverage_report["pass"] and diversity_report["pass"],
@@ -1085,6 +1158,49 @@ def _evaluate_release_qualification_floors(
         "service_day_coverage": coverage_report,
         "source_diversity": diversity_report,
     }
+
+
+def _floor_contract_for_partition(qualification: Mapping[str, Any], partition: str) -> Mapping[str, int | float]:
+    if qualification.get("floor_contract_version") == "p105-012":
+        positive_key = "real_derived_min_positive_per_family" if partition == "real_derived_shadow" else "held_out_min_positive_per_family"
+        negative_key = "real_derived_min_negative_per_family" if partition == "real_derived_shadow" else "held_out_min_negative_per_family"
+        return {
+            "evaluated": 0,
+            "non_abstained": 0,
+            "actual_positive": int(qualification.get(positive_key, 0) or 0),
+            "actual_negative": int(qualification.get(negative_key, 0) or 0),
+            "incident_groups": 0,
+            "service_days": 0.0,
+        }
+    documented = dict(DOCUMENTED_RELEASE_FLOORS.get(partition, DOCUMENTED_RELEASE_FLOORS["held_out"]))
+    documented["actual_negative"] = 0
+    return documented
+
+
+def _row_label_positive(row: Mapping[str, Any]) -> bool:
+    labels = row.get("scorer_labels", {}) if isinstance(row.get("scorer_labels"), Mapping) else {}
+    return labels.get("label_positive", row.get("label_positive")) is True
+
+
+def _floor_count(count: int, minimum: int) -> dict[str, Any]:
+    return {"count": count, "minimum": minimum, "pass": count >= minimum}
+
+
+def _floor_count_float(count: float, minimum: float) -> dict[str, Any]:
+    rounded = round(count, 6)
+    return {"count": rounded, "minimum": minimum, "pass": rounded >= minimum}
+
+
+def _service_days_for_floor(
+    family: str,
+    partition: str,
+    service_day_coverage: Mapping[str, Mapping[str, Any]],
+    partition_rows: Sequence[Mapping[str, Any]],
+) -> float:
+    scoped = _scoped_coverage_intervals(family, partition, service_day_coverage, partition_rows)
+    if scoped:
+        return _union_service_days(scoped)
+    return _coverage_service_days(family, service_day_coverage)
 
 
 def _release_service_day_floor(value: Any, supported_families: Sequence[str], minimum_union_service_days: float) -> dict[str, Any]:
@@ -1130,8 +1246,20 @@ def _union_service_days(value: Any) -> float:
     return total_seconds / 86400.0
 
 
-def _release_source_diversity_floor(rows: Sequence[Mapping[str, Any]], minimum: int, maximum_fraction: float) -> dict[str, Any]:
-    keys = [_canonical_source_record_set(row) for row in rows]
+def _release_source_diversity_floor(
+    rows: Sequence[Mapping[str, Any]],
+    minimum: int,
+    maximum_fraction: float,
+    *,
+    legacy_source_id_fallback: bool = False,
+) -> dict[str, Any]:
+    keys = [
+        key
+        for row in rows
+        if row.get("partition") == "real_derived_shadow"
+        for key in [_canonical_source_record_set(row) or (_legacy_source_record_set(row) if legacy_source_id_fallback else None)]
+        if key is not None
+    ]
     counts: dict[tuple[str, str, str, str, str, str], int] = defaultdict(int)
     for key in keys:
         counts[key] += 1
@@ -1142,13 +1270,44 @@ def _release_source_diversity_floor(rows: Sequence[Mapping[str, Any]], minimum: 
     distinct_pass = distinct >= minimum
     fraction_pass = fraction is not None and fraction <= maximum_fraction
     return {
+        "source_scope": "real_derived_shadow",
+        "canonical_tuple_keys": sorted(CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS),
         "distinct_source_record_sets": {"count": distinct, "minimum": minimum, "pass": distinct_pass},
         "maximum_single_source_fraction": {"value": fraction, "maximum": maximum_fraction, "pass": fraction_pass},
         "pass": distinct_pass and fraction_pass,
     }
 
 
-def _canonical_source_record_set(row: Mapping[str, Any]) -> tuple[str, str, str, str, str, str]:
+def _canonical_source_record_set(row: Mapping[str, Any]) -> tuple[str, str, str, str, str, str] | None:
+    provenance = row.get("source_record_provenance", {}) if isinstance(row.get("source_record_provenance"), Mapping) else {}
+    canonical = provenance.get("canonical_source_tuple", {}) if isinstance(provenance.get("canonical_source_tuple"), Mapping) else {}
+    if all(canonical.get(key) for key in CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS):
+        return (
+            str(canonical["source_system"]),
+            str(canonical["source_dataset"]),
+            str(canonical["source_manifest_key"]),
+            str(canonical["source_content_hash"]),
+            str(canonical["materialized_record_hash"]),
+            str(canonical["materialization_version"]),
+        )
+    source_content_hash = provenance.get("source_content_hash")
+    materialized_record_hash = provenance.get("materialized_record_hash", provenance.get("source_record_hash"))
+    materialization_version = provenance.get("materialization_version")
+    if source_content_hash and materialized_record_hash and materialization_version:
+        derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
+        source_path = str(derivation.get("source_path", ""))
+        return (
+            str(canonical.get("source_system") or derivation.get("type") or derivation.get("derivation_type") or "real_derived"),
+            str(canonical.get("source_dataset") or Path(source_path).stem),
+            str(canonical.get("source_manifest_key") or derivation.get("source_event_id") or row.get("source_id", "")),
+            str(source_content_hash),
+            str(materialized_record_hash),
+            str(materialization_version),
+        )
+    return None
+
+
+def _legacy_source_record_set(row: Mapping[str, Any]) -> tuple[str, str, str, str, str, str]:
     derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
     source_path = str(derivation.get("source_path", "synthetic"))
     source_id = str(row.get("source_id", ""))
@@ -1504,7 +1663,7 @@ def _metric_scope(
     ]
     calibration_labels = [_label_for_forecast(item, actuals) for item in scope_non_abstained]
     probs = [_forecast_probability(item) for item in scope_non_abstained]
-    service_days = _service_days(family, service_day_coverage)
+    service_days = _scored_service_days(family, scope_forecasts, scope_actuals, service_day_coverage)
     lead_times = [match_lead_times[str(item.get("forecast_id", ""))] for item in scope_tp if str(item.get("forecast_id", "")) in match_lead_times]
     useful_minimum = min(family_min_response_minutes.values(), default=1) if family is None else int(family_min_response_minutes.get(family, 1))
     useful_count = sum(1 for lead in lead_times if lead >= useful_minimum and lead > 0)
@@ -1693,8 +1852,66 @@ def _percentile(ordered: Sequence[float], fraction: float) -> float:
 def _service_days(family: str | None, coverage: Mapping[str, Mapping[str, Any]]) -> float:
     if family is not None:
         family_coverage = coverage.get(family, {})
-        return float(family_coverage.get("service_days", 0.0) or 0.0)
-    return sum(float(item.get("service_days", 0.0) or 0.0) for item in coverage.values())
+        return _coverage_service_days(family, coverage) if family_coverage else 0.0
+    return sum(_coverage_service_days(family_key, coverage) for family_key in coverage)
+
+
+def _coverage_service_days(family: str, coverage: Mapping[str, Mapping[str, Any]]) -> float:
+    family_coverage = coverage.get(family, {})
+    union_days = _union_service_days(family_coverage.get("coverage_intervals"))
+    if union_days > 0.0:
+        return union_days
+    return float(family_coverage.get("service_days", 0.0) or 0.0)
+
+
+def _scored_service_days(
+    family: str | None,
+    forecasts: Sequence[Mapping[str, Any]],
+    actuals: Sequence[Mapping[str, Any]],
+    coverage: Mapping[str, Mapping[str, Any]],
+) -> float:
+    intervals: list[Mapping[str, Any]] = []
+    if family is not None:
+        intervals.extend(_scoped_coverage_intervals(family, None, coverage, forecasts))
+        if intervals:
+            return _union_service_days(intervals)
+        return _service_days(family, coverage)
+    for family_key in sorted({str(item.get("family", "")) for item in forecasts} | {str(item.get("label_family", "")) for item in actuals}):
+        intervals.extend(_scoped_coverage_intervals(family_key, None, coverage, forecasts))
+    if intervals:
+        return _union_service_days(intervals)
+    return _service_days(None, coverage)
+
+
+def _scoped_coverage_intervals(
+    family: str,
+    partition: str | None,
+    coverage: Mapping[str, Mapping[str, Any]],
+    rows: Sequence[Mapping[str, Any]],
+) -> list[Mapping[str, Any]]:
+    row_services = {
+        str(value)
+        for row in rows
+        if (partition is None or row.get("partition") == partition or row.get("split") == partition)
+        for value in (
+            row.get("service"),
+            row.get("service_id"),
+            (row.get("impact_scope", {}) if isinstance(row.get("impact_scope"), Mapping) else {}).get("service"),
+            (row.get("public_features", {}) if isinstance(row.get("public_features"), Mapping) else {}).get("service"),
+        )
+        if value
+    }
+    scoped: list[Mapping[str, Any]] = []
+    family_coverage = coverage.get(family, {})
+    for interval in _mapping_sequence(family_coverage.get("coverage_intervals")):
+        interval_partition = interval.get("partition") or interval.get("split")
+        if partition is not None and interval_partition not in {None, "", partition}:
+            continue
+        service = str(interval.get("service", "default"))
+        if row_services and service not in row_services:
+            continue
+        scoped.append(interval)
+    return scoped
 
 
 def _labels_by_source_window(fixture: Mapping[str, Any]) -> dict[str, int]:

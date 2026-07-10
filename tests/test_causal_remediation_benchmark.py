@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -116,7 +117,7 @@ def test_cli_writes_reproducible_smoke_reports(tmp_path: Path) -> None:
     output_md = tmp_path / "p97.md"
     completed = subprocess.run(
         [
-            "python",
+            sys.executable,
             "scripts/run_causal_remediation_benchmark.py",
             "--max-cases",
             "12",

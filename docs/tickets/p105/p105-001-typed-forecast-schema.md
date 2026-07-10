@@ -16,6 +16,15 @@ abstentions, benchmark rows, and release gate summaries.
   feature coverage, split ID, model/rule version, and calibration version.
 - Public serialization strips scorer-only labels, future outcome timestamps,
   incident-group answer keys, and hidden benchmark fields.
+- Fixture schema test requires each row to include `row_id`,
+  `source_window_id`, `family`, `failure_mode`, `service`, `metric`,
+  `forecast_timestamp`, `window_start_timestamp`/`window_end_timestamp` or
+  `sequence_start`/`sequence_end`, `public_features`, and hidden
+  `scorer_labels`.
+- Public stripping test rejects public packets that expose `label_incident_id`,
+  `label_incident_start_timestamp`, `label_family`, `label_failure_mode`,
+  `label_positive`, `lead_time_label_minutes`, `incident_group_id`, or any
+  `scorer_labels` member.
 
 ## Implementation Notes
 
@@ -27,12 +36,23 @@ abstentions, benchmark rows, and release gate summaries.
   `model_version`, `rule_version`, and `calibration_version`.
 - Required abstention fields: `forecast_id`, `source_window_id`,
   `abstention_reason`, `missing_features`, `coverage`, and `evidence_ids`.
+- Required hidden label fields for benchmark fixtures:
+  `label_incident_id`, `label_incident_start_timestamp`, `label_family`,
+  `label_failure_mode`, `label_positive`, `lead_time_label_minutes`, and
+  `incident_group_id`. These fields are scorer-only and never appear in
+  training, provider rationale, forecast rendering, or public release packets.
+- Release gate summaries must include each metric's formula, numerator,
+  denominator, threshold, split ID, family/source scope, and
+  pass/fail/unevaluable status.
 
 ## Acceptance
 
 - Every forecast and abstention has deterministic serialization.
 - Forecasts cite evidence but do not expose action authority.
 - Invalid or leaky schema payloads fail closed before benchmark scoring.
+- Missing gate denominators, zero denominators without explicit `null` values,
+  or leaked scorer labels make the release payload unevaluable and keep P106
+  locked.
 
 ## Verification
 

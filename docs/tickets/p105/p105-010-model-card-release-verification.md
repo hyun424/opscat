@@ -12,6 +12,9 @@ limitations, and release evidence needed to review P105 safely.
   abstention policy, limitations, and non-goals.
 - Release evidence test requires P24 baseline metrics, calibrated P105 metrics,
   shadow transfer metrics, safety counters, and P106 gate status.
+- Gate-table docs test requires the release evidence to list each P106 row with
+  formula, numerator, denominator, threshold, split ID, family/source scope, and
+  pass/fail/unevaluable status.
 - Boundary test requires no auth, no production mutation, no remediation
   execution, no default external calls, and no scorer leakage.
 
@@ -22,6 +25,10 @@ limitations, and release evidence needed to review P105 safely.
 - Keep release evidence local/offline by default.
 - Include a model/rule card because P105 may be deterministic rules plus
   calibration rather than a learned model.
+- The model/rule card must name `supported_families`; every supported family is
+  subject to the per-family `>= 0.80` useful-lead-time gate, calibration
+  improvement rows when positive labels exist, false-alert thresholds, and
+  abstention ceilings.
 
 ## Acceptance
 
@@ -29,6 +36,10 @@ limitations, and release evidence needed to review P105 safely.
 - Release evidence can be reproduced from committed fixtures and local scripts.
 - Known limitations are explicit, especially for unsupported families and low
   service-day coverage.
+- P106 unlock evidence is absent or `p106_unlocked=false` whenever any required
+  gate denominator is missing, any supported family is zero-positive and still
+  declared supported, held-out Brier/ECE do not improve, real-derived transfer
+  exceeds tolerance, or safety boundaries are violated.
 
 ## Verification
 

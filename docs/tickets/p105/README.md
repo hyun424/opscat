@@ -28,7 +28,10 @@ future-window leakage; raw LLM confidence never drives execution.
 
 - Forecast output is typed, calibrated, and action-free.
 - Existing P24/P25 callers can still consume forecast payloads through the
-  adapter, with `prevention_plan` marked `legacy_advisory`.
+  adapter, with `compatibility.legacy_advisory=true`,
+  `prevention_plan.legacy_advisory=true`, nested action
+  `action_execution_enabled=false`, and
+  `compatibility.p106_required_for_execution=true`.
 - Train/calibration/test splits are time ordered and incident-group isolated.
 - Deterministic P24 baseline metrics are published with the same denominators as
   P105 metrics.
@@ -36,5 +39,8 @@ future-window leakage; raw LLM confidence never drives execution.
   distribution shift abstain or stay conservative.
 - Reports include precision, recall, PR-AUC, Brier, ECE, lead time, false
   alerts/service-day, and abstention rate with exact denominators.
-- P106 remains blocked unless held-out calibration and real-derived shadow
-  transfer thresholds pass.
+- P106 remains blocked unless the exact P106 gate table passes: held-out
+  Brier/ECE improve over P24, useful lead-time rate is `>= 0.80` for every
+  supported family with positives, zero-positive supported families are
+  `unevaluable`, false alerts/service-day and abstention ceilings pass, and
+  real-derived P32/P41 transfer stays within tolerance.

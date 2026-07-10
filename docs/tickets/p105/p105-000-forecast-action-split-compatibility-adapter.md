@@ -11,8 +11,11 @@ through a versioned compatibility adapter.
 - Adapter test proves every calibrated forecast has no executable action list,
   no policy handoff route, and no remediation capability field.
 - Compatibility test proves the P24/P25 output shape still includes
-  `prevention_plan`, but it is marked `legacy_advisory=true`,
-  `action_execution_enabled=false`, and `p106_required_for_execution=true`.
+  `prevention_plan`, but the compatibility wrapper marks
+  `compatibility.legacy_advisory=true`, the nested plan marks
+  `prevention_plan.legacy_advisory=true`, every nested action keeps
+  `action_execution_enabled=false`, and the wrapper marks
+  `compatibility.p106_required_for_execution=true`.
 - Regression test proves P24/P25 calibration fixtures can still be rendered
   without changing existing fixture IDs or risk types.
 - Safety test proves advisory prevention plans cannot be consumed as P106 action
@@ -26,11 +29,20 @@ through a versioned compatibility adapter.
   `app/services/failure_forecast_engine.py`.
 - Keep existing P24 baseline logic intact for `RiskSignal.from_window` and
   `ProactiveRiskSentinel`.
+- Do not put `legacy_advisory` on an individual action as the only marker. The
+  exact placement is both the forecast compatibility metadata and the nested
+  `prevention_plan` object; nested action records keep their existing
+  `action_execution_enabled=false` safety field.
 
 ## Acceptance
 
 - Forecast output is action-free.
 - Legacy prevention content remains visible only as advisory compatibility data.
+- P24 legacy advisory placement is exact and machine-checkable:
+  `compatibility.legacy_advisory=true`,
+  `prevention_plan.legacy_advisory=true`, nested actions
+  `action_execution_enabled=false`, and
+  `compatibility.p106_required_for_execution=true`.
 - No auth, production mutation, remediation execution, or default external model
   call path is added.
 

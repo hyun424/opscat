@@ -90,6 +90,107 @@ denominators and reported separately.
   evaluated windows include every candidate window passed to the forecast engine
   for that split.
 
+Fail-closed denominator rule: if any required numerator, denominator,
+service-day coverage value, incident count, family count, or abstention count is
+missing from the gate payload, the metric is `unevaluable` and P106 remains
+locked. Zero denominators must be reported as `null` metric values with explicit
+zero denominators; they may not be coerced to `0.0` or counted as passing.
+
+## P106 Gate Table
+
+P106 can start only when every required row below is `pass=true`. The release
+payload must include the formula, numerator, denominator, threshold, split ID,
+family or source scope, and pass/unevaluable/fail status for each row.
+
+| Gate row | Scope | Formula and denominator | Required threshold |
+| --- | --- | --- | --- |
+| Held-out Brier improvement | Global and each supported family with `actual_positive_count > 0` | `brier_improvement = p24_brier - p105_brier`, where each Brier is `sum((p_i - y_i)^2) / non_abstained_evaluated_forecast_count` on the same held-out rows | `brier_improvement > 0.0000` |
+| Held-out ECE improvement | Global and each supported family with `actual_positive_count > 0` | `ece_improvement = p24_ece - p105_ece`, where each ECE uses the 10 fixed bins and `N = non_abstained_evaluated_forecast_count` | `ece_improvement > 0.0000` |
+| Useful lead-time rate | Each supported family with `actual_positive_count > 0` | `useful_true_positive_count / true_positive_count`; useful means `lead_time_minutes >= family_min_response_minutes` and `lead_time_minutes > 0` | `>= 0.80` per supported family |
+| Zero-positive family semantics | Each supported family with `actual_positive_count = 0` | No rate is computed because `true_positive_count = 0`; publish `unevaluable_zero_positive=true` | P106 locked unless the family is explicitly removed from `supported_families` before release |
+| False alerts per service-day | Global and each supported family | `false_positive_count / service_days`, where `service_days = covered_service_seconds / 86400` for the evaluated split | `<= 0.25` globally and `<= 0.50` per family |
+| Abstention ceiling | Global and each supported family | `abstained_window_count / evaluated_window_count`; evaluated windows include non-abstained forecasts plus abstentions | `<= 0.20` globally and `<= 0.30` per family |
+| Real-derived useful lead-time transfer | Each supported family present in P32 or P41 shadow replay with `actual_positive_count > 0` | `abs(real_derived_useful_lead_time_rate - held_out_useful_lead_time_rate)` using the same family formula | `<= 0.10` absolute drop; real-derived rate must also be `>= 0.80` |
+| Real-derived false-alert transfer | Each supported family present in P32 or P41 shadow replay | `real_derived_false_alerts_per_service_day - held_out_false_alerts_per_service_day` | `<= 0.10` absolute increase and still within the false-alert threshold |
+| Safety boundary | Whole release | Boundary counters and release metadata | no auth, no production mutation, no remediation execution, no executable action plan, no default external model calls |
+
+Supported-family rule: every family declared in the P105 model/rule card as
+supported must pass the per-family rows above. Families that cannot produce a
+positive held-out or real-derived denominator are not silently averaged into the
+global score; they are `unevaluable` and keep P106 locked until support is
+withdrawn or fixture coverage is added.
+
+## Fixture and Label Contract
+
+P105 fixture rows must use this deterministic schema before any implementation
+work begins:
+
+- `row_id`: stable unique row key.
+- `source_window_id`: P24/P25/P32 trend window ID or P41 source-card-derived
+  window ID.
+- `family`: supported forecast family.
+- `failure_mode`: concrete failure label inside the family.
+- `service`: redacted service identifier.
+- `metric`: metric or signal name.
+- `forecast_timestamp`: ISO-8601 timestamp or deterministic sequence timestamp
+  when source timestamps are unavailable.
+- `window_start_timestamp` and `window_end_timestamp`: ISO-8601 timestamps for
+  the input window; if sequence-only, publish `sequence_start` and
+  `sequence_end` instead.
+- `label_incident_id`: scorer-only incident ID.
+- `label_incident_start_timestamp`: scorer-only incident start timestamp.
+- `label_family`, `label_failure_mode`, and `label_positive`: scorer-only
+  answer fields.
+- `lead_time_label_minutes`: scorer-only derived value used only after scoring.
+- `incident_group_id`: scorer-only split isolation key.
+- `public_features`: feature payload visible to training/forecasting.
+- `scorer_labels`: hidden answer-key object containing all label fields.
+
+Public packets for training, calibration, provider rationale, and forecast
+rendering must strip `label_incident_id`, `label_incident_start_timestamp`,
+`label_family`, `label_failure_mode`, `label_positive`,
+`lead_time_label_minutes`, `incident_group_id`, post-incident values, and any
+other `scorer_labels` member. If a public packet contains one of those fields,
+the split and benchmark fail closed.
+
+## Incident Matching Semantics
+
+Scoring uses deterministic one-to-one matching per family and split:
+
+1. Sort predicted positives by `forecast_timestamp` ascending, then calibrated
+   probability descending, then `forecast_id` ascending.
+2. For each prediction, consider only unmatched actual incidents with the same
+   family whose `label_incident_start_timestamp` is after the forecast timestamp
+   and inside the maximum forecast horizon.
+3. Pick the incident with the earliest valid start timestamp; break remaining
+   ties by `label_incident_id` ascending.
+4. Mark that pair as one true positive. A second alert for the same already
+   matched incident is a duplicate alert and counts as a false positive for
+   false-alert burden.
+5. An actual incident with no matched non-abstained forecast is one false
+   negative. Abstentions before that incident do not match it and therefore do
+   not prevent the false negative.
+6. Abstained rows count only in abstention denominators. They are never true
+   positives, false positives, or true negatives.
+
+## P32/P41 Adapter Responsibilities
+
+P32 adapter responsibilities for P105 are limited to read-only transformation
+of local real telemetry replay outputs into P105 shadow rows: consume P32
+`TrendWindow`-shaped replay windows, preserve source/window IDs, map
+`risk_type` to P105 `family`/`failure_mode`, carry covered-service seconds,
+emit public feature fields, and keep P32 boundary counters proving no live API
+calls, auth, production mutation, or remediation execution.
+
+P41 adapter responsibilities for P105 are limited to read-only transformation
+of repo-local raw real-dataset replay source cards into P105 shadow rows:
+consume source ID, family, labels seen, expected labels/root cause/route, parsed
+record count, and prediction evidence; derive label windows only from committed
+source-card metadata; strip scorer-only labels from public packets; and preserve
+P41 boundary counters proving no downloads, live API calls, auth, production
+mutation, or remediation execution. Neither adapter may create an action plan,
+policy handoff, credential path, or production mutation path.
+
 ## Tickets
 
 ### P105-000 Forecast/action split and P24 compatibility adapter
@@ -101,8 +202,11 @@ Acceptance:
 - Calibrated forecast objects contain no executable action list, no action
   route, and no policy handoff field.
 - P24/P25 compatibility output still contains `prevention_plan`, but it is
-  labeled `legacy_advisory=true`, `action_execution_enabled=false`, and
-  `p106_required_for_execution=true`.
+  labeled in the compatibility payload as
+  `compatibility.legacy_advisory=true`, includes
+  `prevention_plan.legacy_advisory=true`, keeps every nested action
+  `action_execution_enabled=false`, and sets
+  `compatibility.p106_required_for_execution=true`.
 - Existing P24/P25 smoke expectations remain expressible through the adapter.
 
 ### P105-001 Typed forecast schema
@@ -205,7 +309,8 @@ Acceptance:
 - Every metric publishes numerator, denominator, split ID, family, severity, and
   threshold.
 - At least 80% of curated true-positive forecasts have useful positive lead time
-  globally and no family hides behind a global average.
+  for every supported family with positive labels; zero-positive supported
+  families are `unevaluable`, not passing.
 
 ### P105-009 Real-derived shadow transfer gate
 
@@ -241,6 +346,9 @@ Acceptance:
 - Gate payload exposes `p106_unlocked=false` by default and only becomes true
   when held-out Brier/ECE, useful lead-time, false-alert, and transfer thresholds
   pass.
+- Gate payload uses the P106 gate table exactly, including fail-closed missing
+  denominators, per-supported-family `>= 0.80` useful lead time, false
+  alerts/service-day, abstention ceilings, and real-derived transfer tolerance.
 - If the gate fails, the release summary explicitly stops at shadow forecasting.
 
 ## Phase Acceptance

@@ -28,6 +28,9 @@ raise execution confidence or unlock P106.
   `app/services/real_telemetry_replay_benchmark.py`.
 - P41 raw real-dataset replay scores repo-local source-native files through
   `app/services/raw_real_dataset_replay.py`.
+- P104-P108 durable master plan is tracked at
+  `docs/operations/p104-p108-proactive-prevention-master-plan.md` so a clean
+  clone has the full proactive-prevention context without ignored OMX state.
 
 ## Outcome
 
@@ -110,7 +113,7 @@ family or source scope, and pass/unevaluable/fail status for each row.
 | Zero-positive family semantics | Each supported family with `actual_positive_count = 0` | No rate is computed because `true_positive_count = 0`; publish `unevaluable_zero_positive=true` | P106 locked unless the family is explicitly removed from `supported_families` before release |
 | False alerts per service-day | Global and each supported family | `false_positive_count / service_days`, where `service_days = covered_service_seconds / 86400` for the evaluated split | `<= 0.25` globally and `<= 0.50` per family |
 | Abstention ceiling | Global and each supported family | `abstained_window_count / evaluated_window_count`; evaluated windows include non-abstained forecasts plus abstentions | `<= 0.20` globally and `<= 0.30` per family |
-| Real-derived useful lead-time transfer | Each supported family present in P32 or P41 shadow replay with `actual_positive_count > 0` | `abs(real_derived_useful_lead_time_rate - held_out_useful_lead_time_rate)` using the same family formula | `<= 0.10` absolute drop; real-derived rate must also be `>= 0.80` |
+| Real-derived useful lead-time transfer | Each supported family present in P32 or P41 shadow replay with `actual_positive_count > 0` | `held_out_useful_lead_time_rate - real_derived_useful_lead_time_rate`, where each rate uses `useful_true_positive_count / true_positive_count` for that family and split | `<= 0.10` directional drop; real-derived rate must also be `>= 0.80` |
 | Real-derived false-alert transfer | Each supported family present in P32 or P41 shadow replay | `real_derived_false_alerts_per_service_day - held_out_false_alerts_per_service_day` | `<= 0.10` absolute increase and still within the false-alert threshold |
 | Safety boundary | Whole release | Boundary counters and release metadata | no auth, no production mutation, no remediation execution, no executable action plan, no default external model calls |
 
@@ -119,6 +122,17 @@ supported must pass the per-family rows above. Families that cannot produce a
 positive held-out or real-derived denominator are not silently averaged into the
 global score; they are `unevaluable` and keep P106 locked until support is
 withdrawn or fixture coverage is added.
+
+Real-derived useful-lead-time transfer is directional. It allows real-derived
+shadow replay to match or exceed held-out useful-lead-time rate, and blocks only
+when the held-out rate exceeds the real-derived rate by more than `0.10`. The
+gate must compute `held_out_useful_lead_time_rate -
+real_derived_useful_lead_time_rate <= 0.10`; implementations must not use an
+order-insensitive comparison. Both rates use the same per-family denominator,
+`true_positive_count`, and the same useful numerator,
+`useful_true_positive_count`. Missing numerator or denominator values, zero
+`true_positive_count`, missing `actual_positive_count`, or missing split/source
+identity make the row `unevaluable` and keep P106 locked.
 
 ## Fixture and Label Contract
 
@@ -348,7 +362,8 @@ Acceptance:
   pass.
 - Gate payload uses the P106 gate table exactly, including fail-closed missing
   denominators, per-supported-family `>= 0.80` useful lead time, false
-  alerts/service-day, abstention ceilings, and real-derived transfer tolerance.
+  alerts/service-day, abstention ceilings, and directional real-derived transfer
+  tolerance.
 - If the gate fails, the release summary explicitly stops at shadow forecasting.
 
 ## Phase Acceptance

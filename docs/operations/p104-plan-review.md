@@ -14,7 +14,7 @@ mutation, auth/credential scope, or action execution by provider output.
 - P104 roadmap: `docs/operations/p104-ticket-roadmap.md`
 - P104 ticket set: `docs/tickets/p104/*.md`
 - P104-P108 prevention plan:
-  `.omx/plans/opscat-p104-p108-proactive-prevention.md`
+  `docs/operations/p104-p108-proactive-prevention-master-plan.md`
 - Baseline code boundaries:
   `app/services/tool_using_hypothesis_investigator.py`,
   `app/services/llm_tool_planner_evaluation.py`,

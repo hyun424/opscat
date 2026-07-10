@@ -41,15 +41,17 @@ source-native shadow replay before P106 can start.
 - Transfer report includes held-out and real-derived metrics with the same
   formulas and denominators.
 - Useful lead time transfers to real-derived shadow replay within configured
-  tolerance: absolute useful-lead-time-rate drop is `<= 0.10` per supported
-  family and the real-derived rate remains `>= 0.80`.
+  directional tolerance: `held_out_useful_lead_time_rate -
+  real_derived_useful_lead_time_rate <= 0.10` per supported family, using
+  `useful_true_positive_count / true_positive_count` for each split, and the
+  real-derived rate remains `>= 0.80`.
 - False alerts/service-day and abstention rate are explicit by source and
   family.
 - Real-derived false-alert transfer allows at most `<= 0.10` absolute increase
   over held-out false alerts/service-day and must still satisfy the per-family
   false-alert threshold.
-- Missing real-derived denominators or zero-positive supported families are
-  `unevaluable`, not passing.
+- Missing real-derived numerators, denominators, split/source identity, or
+  zero-positive supported families are `unevaluable`, not passing.
 - P106 remains blocked unless both held-out and real-derived gates pass.
 
 ## Verification

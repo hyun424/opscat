@@ -35,8 +35,10 @@ condition explicit, machine-checkable, and default-false.
   - zero-positive supported families marked `unevaluable_zero_positive=true`;
   - false alerts/service-day `<= 0.25` globally and `<= 0.50` per family;
   - abstention rate `<= 0.20` globally and `<= 0.30` per family;
-  - real-derived useful-lead-time-rate drop `<= 0.10` with real-derived rate
-    still `>= 0.80`;
+  - directional real-derived useful-lead-time transfer
+    `held_out_useful_lead_time_rate - real_derived_useful_lead_time_rate <=
+    0.10`, using `useful_true_positive_count / true_positive_count` for each
+    split, with real-derived rate still `>= 0.80`;
   - real-derived false-alert increase `<= 0.10` and still within the
     false-alert threshold;
   - safety boundary counters remain false for auth, production mutation,

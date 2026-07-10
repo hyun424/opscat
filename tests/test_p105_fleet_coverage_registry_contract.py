@@ -580,6 +580,8 @@ def test_existing_per_family_seven_day_union_gate_and_p106_lock_remain_unchanged
     [
         ({"adapter_key": "database_fleet", "acquisition_failed": True, "source_window_id": "sample999"}, 0.86),
         ({"adapter_key": "database_fleet", "transaction_duration_ms": 40.5, "source_window_id": "sample999"}, 0.86),
+        ({"adapter_key": "database_fleet", "transaction_slow_observed": True, "source_window_id": "sample999"}, 0.86),
+        ({"adapter_key": "database_fleet", "acquire_wait_slow_observed": True, "source_window_id": "sample999"}, 0.86),
         ({"adapter_key": "queue_fleet", "messages_ready": 1, "dlq_messages_ready": 0, "source_window_id": "sample999"}, 0.86),
         ({"adapter_key": "deploy_fleet", "status_code": 503, "source_window_id": "sample999"}, 0.86),
         ({"adapter_key": "queue_fleet", "messages_ready": 0, "dlq_messages_ready": 0, "source_window_id": "sample000"}, 0.01),

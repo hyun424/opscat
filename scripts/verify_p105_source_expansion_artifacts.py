@@ -280,8 +280,9 @@ def _compare_canonical_reruns(first_manifest: Path, second_manifest: Path, *, ki
         second_paths = second.get("artifact_paths")
         if not isinstance(first_paths, dict) or not isinstance(second_paths, dict):
             return [f"{kind}_rerun_canonical_unreadable"]
-        canonical_roles = sorted((set(first_paths) | set(second_paths)) - {"provenance_hashes", "raw_attestation"})
-        if set(first_paths) - {"provenance_hashes", "raw_attestation"} != set(second_paths) - {"provenance_hashes", "raw_attestation"}:
+        noncanonical_roles = {"provenance_hashes", "raw_attestation", "raw_measured_telemetry"}
+        canonical_roles = sorted((set(first_paths) | set(second_paths)) - noncanonical_roles)
+        if set(first_paths) - noncanonical_roles != set(second_paths) - noncanonical_roles:
             return [f"{kind}_rerun_not_byte_identical"]
         if first_manifest.read_bytes() != second_manifest.read_bytes():
             return [f"{kind}_rerun_not_byte_identical"]

@@ -2493,6 +2493,8 @@ def _g006_public_signal_strength(record: Mapping[str, Any], partition: str, fall
     if "fleet" in schema_version or adapter_key.endswith("_fleet") or "-fleet-" in source_key:
         if (
             public_record.get("acquisition_failed") is True
+            or public_record.get("acquire_wait_slow_observed") is True
+            or public_record.get("transaction_slow_observed") is True
             or int(public_record.get("sql_error_count") or 0) > 0
             or float(public_record.get("transaction_duration_ms") or 0.0) >= 20.0
         ):

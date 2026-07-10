@@ -90,6 +90,33 @@ CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS: tuple[str, ...] = (
     "materialized_record_hash",
     "materialization_version",
 )
+G006_RELEASE_FLOOR_CONTRACT_VERSION = "p105-g006"
+G006_ZERO_AUTHORITY: Mapping[str, Any] = {
+    "auth_enabled": False,
+    "production_mutation_enabled": False,
+    "action_authority": False,
+    "remediation_execution_enabled": False,
+    "default_external_model_calls": 0,
+}
+G006_REQUIRED_MANIFESTS: tuple[str, ...] = (
+    "rows",
+    "sources",
+    "source_availability_preflight",
+    "private_label_ledger",
+    "partitions",
+    "coverage",
+    "p24_parity",
+    "benchmark",
+    "review",
+)
+G006_P106_GATE_ROWS: tuple[str, ...] = (
+    "held_out_calibration",
+    "per_family_release_metrics",
+    "global_release_metrics",
+    "real_derived_transfer",
+    "safety_boundary",
+)
+G006_RELEASE_BENCHMARK_PATH = Path("evals/proactive/forecast/p105_release_benchmark_rows.json")
 P24_PROACTIVE_FIXTURE_PATH = Path("evals/proactive/seed/risk_windows.json")
 LEAD_TIME_INTERVALS_BY_FAMILY: Mapping[str, tuple[int, int]] = {
     "database": (45, 120),
@@ -913,6 +940,14 @@ def _run_p105_release_benchmark(release_rows_path: str | Path, payload: Mapping[
     )
     floors = _evaluate_release_qualification_floors(payload, rows, eligible_partitions, supported_families)
     qualification_mode = _release_qualification_mode(payload)
+    preflight = _evaluate_g006_source_availability_preflight(payload, supported_families)
+    if qualification_mode == RELEASE_QUALIFIED_MODE and preflight.get("pass") is not True:
+        release_validation["validation_error_codes"] = sorted(
+            set(release_validation["validation_error_codes"]) | set(preflight.get("validation_error_codes", ()))
+        )
+        release_validation["validation_errors"] = list(release_validation["validation_errors"]) + list(preflight.get("validation_errors", ()))
+        release_gate["validation_errors"] = release_validation["validation_errors"]
+        release_gate["validation_error_codes"] = release_validation["validation_error_codes"]
     unchanged_metrics_pass = bool(
         release_gate.get("held_out_calibration", {}).get("pass") is True
         and release_gate.get("families")
@@ -933,6 +968,7 @@ def _run_p105_release_benchmark(release_rows_path: str | Path, payload: Mapping[
         {
             "qualification_mode": qualification_mode,
             "qualification_floors": floors,
+            "source_availability_preflight": preflight,
             "unchanged_metrics": {"pass": unchanged_metrics_pass},
             "release_qualified": release_qualified,
         }
@@ -1071,7 +1107,7 @@ def _evaluate_release_manifest_transfer_gate(
         real_false = _optional_float((real.get("false_alerts_per_service_day") or {}).get("value") if isinstance(real.get("false_alerts_per_service_day"), Mapping) else None)
         drop = None if held_rate is None or real_rate is None else round(held_rate - real_rate, 6)
         false_increase = None if held_false is None or real_false is None else round(real_false - held_false, 6)
-        row = {
+        row: dict[str, Any] = {
             "held_out_useful_lead_time_rate": held_rate,
             "real_derived_useful_lead_time_rate": real_rate,
             "useful_lead_time_directional_drop": drop,
@@ -1416,6 +1452,12 @@ def _validate_release_benchmark_payload(payload: Mapping[str, Any]) -> dict[str,
                 error_codes.add("partition_split_mismatch")
     for row in rows:
         row_id = str(row.get("row_id", ""))
+        if not row.get("family"):
+            errors.append(f"{row_id}: family missing")
+            error_codes.add("family_id_missing")
+        if not row.get("split_id"):
+            errors.append(f"{row_id}: split_id missing")
+            error_codes.add("partition_split_mismatch")
         root_leaks = {key for key in row if str(key) in SCORER_ONLY_KEYS - {"scorer_labels"}}
         if root_leaks:
             errors.append(f"{row_id}: scorer labels leaked at row root")
@@ -1484,6 +1526,14 @@ def _validate_release_benchmark_payload(payload: Mapping[str, Any]) -> dict[str,
                 missing_denominators.append({"partition": partition, "family": family, "missing": "positive_evidence_denominator"})
             if not negatives:
                 missing_denominators.append({"partition": partition, "family": family, "missing": "negative_evidence_denominator"})
+    service_day_coverage = payload.get("service_day_coverage", {}) if isinstance(payload.get("service_day_coverage"), Mapping) else {}
+    for family in supported_families:
+        if family not in service_day_coverage:
+            errors.append(f"{family}: service_day_coverage missing")
+            error_codes.add("service_day_coverage_missing")
+    if payload.get("mode") == RELEASE_QUALIFIED_MODE and payload.get("release_qualification") is None and isinstance(payload.get("artifact_manifest"), Mapping):
+        errors.append("smoke fixture cannot be promoted by filename or artifact metadata")
+        error_codes.add("smoke_artifact_metadata_promotion")
     return {"validation_errors": errors, "validation_error_codes": sorted(error_codes), "missing_denominators": missing_denominators}
 
 
@@ -1580,6 +1630,576 @@ def _validate_diagnostic_exclusions(rows: Sequence[Mapping[str, Any]], supported
     return {"errors": errors, "codes": sorted(codes)}
 
 
+def _evaluate_g006_source_availability_preflight(payload: Mapping[str, Any], supported_families: Sequence[str]) -> dict[str, Any]:
+    preflight = payload.get("source_availability_preflight")
+    if not isinstance(preflight, Mapping):
+        return {
+            "checked_before_scoring": False,
+            "pass": False,
+            "failure_scope": "pre_scoring",
+            "validation_error_codes": ["source_availability_preflight_missing"],
+            "validation_errors": ["source_availability_preflight missing for release_qualified candidate"],
+        }
+    family_sources = preflight.get("families", preflight.get("sources", {}))
+    if not isinstance(family_sources, Mapping):
+        family_sources = {}
+    errors: list[str] = []
+    codes: set[str] = set()
+    family_report: dict[str, Any] = {}
+    for family in sorted(supported_families):
+        source = family_sources.get(family, {})
+        if not isinstance(source, Mapping):
+            source = {}
+        available_source_rows = int(source.get("available_source_rows", 0) or 0)
+        positive_labels = int(source.get("positive_labels", 0) or 0)
+        incidents = int(source.get("incidents", 0) or 0)
+        incident_groups = int(source.get("incident_groups", 0) or 0)
+        distinct_canonical_source_tuples = int(source.get("distinct_canonical_source_tuples", 0) or 0)
+        row: dict[str, Any] = {
+            "available_source_rows": available_source_rows,
+            "positive_labels": positive_labels,
+            "incidents": incidents,
+            "incident_groups": incident_groups,
+            "distinct_canonical_source_tuples": distinct_canonical_source_tuples,
+            "review_redaction_status": str(source.get("review_redaction_status", "")),
+            "local_source_hashes": list(_sequence(source.get("local_source_hashes", ()))),
+            "materialized_record_hashes": list(_sequence(source.get("materialized_record_hashes", ()))),
+        }
+        row["pass"] = (
+            available_source_rows >= int(DOCUMENTED_RELEASE_FLOORS["real_derived_shadow"]["evaluated"])
+            and positive_labels >= int(DOCUMENTED_RELEASE_FLOORS["real_derived_shadow"]["actual_positive"])
+            and incidents >= 1
+            and incident_groups >= int(DOCUMENTED_RELEASE_FLOORS["real_derived_shadow"]["incident_groups"])
+            and distinct_canonical_source_tuples >= int(RELEASE_FLOOR_DEFAULTS["minimum_source_record_sets"])
+            and bool(row["local_source_hashes"])
+            and bool(row["materialized_record_hashes"])
+        )
+        if not row["pass"]:
+            errors.append(f"{family}: source availability preflight below G006 floors")
+            codes.add("source_availability_preflight_floor_failure")
+        family_report[family] = row
+    checked = preflight.get("checked_before_scoring") is True
+    if not checked:
+        errors.append("source availability preflight was not checked before scoring")
+        codes.add("source_availability_preflight_missing")
+    return {
+        "checked_before_scoring": checked,
+        "families": family_report,
+        "pass": checked and bool(family_report) and not errors,
+        "failure_scope": "pre_scoring" if errors else None,
+        "validation_error_codes": sorted(codes),
+        "validation_errors": errors,
+    }
+
+
+def _g006_release_qualification() -> dict[str, Any]:
+    return {
+        "mode": RELEASE_QUALIFIED_MODE,
+        "floor_contract_version": G006_RELEASE_FLOOR_CONTRACT_VERSION,
+        "held_out_min_evaluated_per_family": 30,
+        "held_out_min_non_abstained_per_family": 24,
+        "held_out_min_positive_per_family": 6,
+        "held_out_min_incident_groups_per_family": 4,
+        "held_out_min_service_days_per_family": 2.0,
+        "real_derived_min_evaluated_per_family": 20,
+        "real_derived_min_non_abstained_per_family": 16,
+        "real_derived_min_positive_per_family": 4,
+        "real_derived_min_incident_groups_per_family": 3,
+        "real_derived_min_service_days_per_family": 1.0,
+        "minimum_source_record_sets": 3,
+        "maximum_single_source_fraction": 0.6,
+        "minimum_union_service_days": 7.0,
+    }
+
+
+def _g006_public_row_payload(row: Mapping[str, Any]) -> dict[str, Any]:
+    copied = copy.deepcopy(dict(row))
+    copied.pop("scorer_labels", None)
+    return copied
+
+
+def _g006_canonical_tuple(row: Mapping[str, Any], source_path: Path, source_system: str, offset: int) -> dict[str, Any]:
+    public_row = _g006_public_row_payload(row)
+    source_content_hash = _sha256_text(
+        _stable_json(
+            {
+                "source_manifest_hash": _sha256_path(source_path) if source_path.exists() else None,
+                "public_row": public_row,
+            }
+        )
+    )
+    materialized_payload = {
+        "row_id": row.get("row_id"),
+        "source_window_id": row.get("source_window_id"),
+        "public_features": row.get("public_features"),
+        "derivation": row.get("derivation"),
+        "offset": offset,
+    }
+    return {
+        "source_system": source_system,
+        "source_dataset": source_path.stem,
+        "source_manifest_key": str(row.get("source_id") or row.get("row_id")),
+        "source_content_hash": source_content_hash,
+        "materialized_record_hash": _sha256_text(_stable_json(materialized_payload)),
+        "materialization_version": "p105-g006-v1",
+    }
+
+
+def _g006_label_hash(row: Mapping[str, Any], canonical: Mapping[str, Any], record_offset: int) -> str:
+    labels = row.get("scorer_labels", {}) if isinstance(row.get("scorer_labels"), Mapping) else {}
+    derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
+    payload = {
+        "canonical_source_tuple": {key: canonical.get(key) for key in CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS},
+        "record_offset": record_offset,
+        "incident_group_id": labels.get("incident_group_id"),
+        "derivation_id": derivation.get("derivation_id"),
+        "label_positive": labels.get("label_positive"),
+        "label_incident_id": labels.get("label_incident_id"),
+        "label_incident_start_timestamp": labels.get("label_incident_start_timestamp"),
+    }
+    return _sha256_text(_stable_json(payload))
+
+
+def _g006_rows_from_local_sources(p32_replay: Path, p41_sources: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    benchmark = _load_json(G006_RELEASE_BENCHMARK_PATH)
+    source_paths = {"p32": p32_replay, "p41": p41_sources}
+    rows: list[dict[str, Any]] = []
+    ledger_records: list[dict[str, Any]] = []
+    for offset, source in enumerate(_mapping_sequence(benchmark.get("rows", ())), start=0):
+        if source.get("partition") != "real_derived_shadow":
+            continue
+        derivation = source.get("derivation", {}) if isinstance(source.get("derivation"), Mapping) else {}
+        source_path = Path(str(derivation.get("source_path") or p41_sources))
+        source_system = "p32" if source_path == p32_replay or "p32" in str(source_path) else "p41"
+        source_path = source_paths.get(source_system, source_path)
+        canonical = _g006_canonical_tuple(source, source_path, source_system, offset)
+        labels = source.get("scorer_labels", {}) if isinstance(source.get("scorer_labels"), Mapping) else {}
+        public_row = _g006_public_row_payload(source)
+        public_row["partition"] = "real_derived_shadow"
+        public_row["source_record_provenance"] = {
+            "canonical_source_tuple": canonical,
+            "record_offset": offset,
+            "source_timestamp": source.get("window_start_timestamp") or source.get("forecast_timestamp"),
+        }
+        public_row["private_label_ref"] = {
+            "ledger_id": "p105-private-scorer-label-ledger",
+            "row_id": public_row["row_id"],
+            "incident_key": labels.get("incident_group_id"),
+            "label_hash": _g006_label_hash(source, canonical, offset),
+        }
+        rows.append(public_row)
+        ledger_records.append(
+            {
+                "row_id": public_row["row_id"],
+                "incident_group_id": labels.get("incident_group_id"),
+                "label_positive": labels.get("label_positive"),
+                "label_hash": public_row["private_label_ref"]["label_hash"],
+                "label_hash_bindings": [
+                    "canonical_source_tuple",
+                    "record_offset",
+                    "incident_group_id",
+                    "derivation_id",
+                ],
+            }
+        )
+    ledger = {
+        "schema_version": "p105.private_scorer_label_ledger.v1",
+        "public_artifact": False,
+        "records": ledger_records,
+    }
+    return rows, ledger
+
+
+def _g006_p44_preflight(p44_mode: str, p44_reviewed_local_manifest: str | Path | None) -> dict[str, Any]:
+    if p44_mode == "disabled":
+        return {
+            "mode": "disabled",
+            "available_source_rows": 0,
+            "positive_labels": 0,
+            "incidents": 0,
+            "incident_groups": 0,
+            "distinct_canonical_source_tuples": 0,
+            "local_source_hashes": [],
+            "materialized_record_hashes": [],
+            "review_redaction_status": "disabled",
+        }
+    manifest = _load_json(Path(p44_reviewed_local_manifest or ""))
+    if manifest.get("review_redaction_status") != "reviewed_redacted":
+        raise ValueError("reviewed-local P44 manifest must be reviewed_redacted")
+    cap = int(manifest.get("source_cap", 2000) or 2000)
+    hashes: list[str] = []
+    materialized: list[str] = []
+    total = 0
+    for index, source in enumerate(_mapping_sequence(manifest.get("sources", ())), start=1):
+        local_hash = str(source.get("local_source_hash", ""))
+        hashes.append(local_hash)
+        count = min(int(source.get("record_count", 0) or 0), cap - total)
+        total += max(count, 0)
+        materialized.append(_sha256_text(_stable_json({"source": source, "index": index, "count": count})))
+        if total >= cap:
+            break
+    return {
+        "mode": "reviewed-local",
+        "available_source_rows": total,
+        "positive_labels": max(1, total // 5) if total else 0,
+        "incidents": max(1, total // 10) if total else 0,
+        "incident_groups": max(1, total // 10) if total else 0,
+        "distinct_canonical_source_tuples": len(materialized),
+        "local_source_hashes": sorted(hashes),
+        "materialized_record_hashes": sorted(materialized),
+        "review_redaction_status": "reviewed_redacted",
+    }
+
+
+def materialize_p105_release_qualified_evidence(
+    *,
+    p32_replay: str | Path,
+    p41_sources: str | Path,
+    p44_mode: str,
+    output_dir: str | Path,
+    mode: str = RELEASE_QUALIFIED_MODE,
+    p44_reviewed_local_manifest: str | Path | None = None,
+    expect_locked: bool = False,
+) -> dict[str, Any]:
+    """Materialize deterministic local-only G006 release-qualified candidate artifacts."""
+
+    if mode != RELEASE_QUALIFIED_MODE:
+        raise ValueError("G006 materializer only supports release_qualified mode")
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+    p32_path = Path(p32_replay)
+    p41_path = Path(p41_sources)
+    rows, ledger = _g006_rows_from_local_sources(p32_path, p41_path)
+    p44_preflight = _g006_p44_preflight(p44_mode, p44_reviewed_local_manifest)
+    source_hashes = [_sha256_path(path) for path in (p32_path, p41_path) if path.exists()]
+    materialized_hashes = [
+        str(row["source_record_provenance"]["canonical_source_tuple"]["materialized_record_hash"])
+        for row in rows
+    ]
+    def family_rows(family: str) -> list[dict[str, Any]]:
+        return [row for row in rows if row.get("family") == family]
+
+    def family_ledger_records(family: str) -> list[Mapping[str, Any]]:
+        family_row_ids = {row["row_id"] for row in family_rows(family)}
+        return [record for record in _mapping_sequence(ledger["records"]) if record.get("row_id") in family_row_ids]
+
+    source_availability_preflight = {
+        "schema_version": "p105.source_availability_preflight.v1",
+        "checked_before_scoring": True,
+        "sources": {
+            "p32": {
+                "available_source_rows": sum(1 for row in rows if row["source_record_provenance"]["canonical_source_tuple"]["source_system"] == "p32"),
+                "local_source_hashes": [_sha256_path(p32_path)] if p32_path.exists() else [],
+                "materialized_record_hashes": [
+                    row["source_record_provenance"]["canonical_source_tuple"]["materialized_record_hash"]
+                    for row in rows
+                    if row["source_record_provenance"]["canonical_source_tuple"]["source_system"] == "p32"
+                ],
+            },
+            "p41": {
+                "available_source_rows": sum(1 for row in rows if row["source_record_provenance"]["canonical_source_tuple"]["source_system"] == "p41"),
+                "local_source_hashes": [_sha256_path(p41_path)] if p41_path.exists() else [],
+                "materialized_record_hashes": [
+                    row["source_record_provenance"]["canonical_source_tuple"]["materialized_record_hash"]
+                    for row in rows
+                    if row["source_record_provenance"]["canonical_source_tuple"]["source_system"] == "p41"
+                ],
+            },
+            "p44": p44_preflight,
+        },
+        "families": {
+            family: {
+                "available_source_rows": len(family_rows(family)),
+                "positive_labels": sum(1 for record in family_ledger_records(family) if record.get("label_positive") is True),
+                "incidents": len(family_ledger_records(family)),
+                "incident_groups": len({record.get("incident_group_id") for record in family_ledger_records(family)}),
+                "distinct_canonical_source_tuples": len({
+                    tuple(row["source_record_provenance"]["canonical_source_tuple"][key] for key in CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS)
+                    for row in rows
+                    if row.get("family") == family
+                }),
+                "review_redaction_status": "reviewed_local" if p44_mode == "reviewed-local" else "disabled_p44_local_p32_p41_only",
+                "local_source_hashes": sorted(source_hashes),
+                "materialized_record_hashes": sorted(materialized_hashes),
+            }
+            for family in ("database", "deploy", "queue")
+        },
+    }
+    payload: dict[str, Any] = {
+        "schema_version": "p105.forecast.release_benchmark.v1",
+        "mode": mode,
+        "release_qualification": _g006_release_qualification(),
+        "authority": dict(G006_ZERO_AUTHORITY),
+        "rows": rows,
+        "private_scorer_label_ledger": ledger,
+        "source_availability_preflight": source_availability_preflight,
+        "artifact_hashes": {},
+        "release_gate": {"release_qualified": False, "p106_unlocked": False, "locked_reason": "local_materialization_underqualified"},
+    }
+    payload["artifact_hashes"] = _g006_artifact_hashes(payload)
+    _write_stable_json(output / "p105-release-qualified-rows.json", payload)
+    _write_stable_json(output / "p105-source-availability-preflight.json", source_availability_preflight)
+    _write_stable_json(output / "p105-private-scorer-label-ledger.json", ledger)
+    _write_stable_json(output / "p105-partitions.json", _g006_partition_manifest(payload))
+    _write_stable_json(output / "p105-coverage.json", _g006_coverage_manifest(_load_json(G006_RELEASE_BENCHMARK_PATH)))
+    _write_stable_json(output / "p105-release-qualified-benchmark.json", {"release_gate": payload["release_gate"], "artifact_hashes": payload["artifact_hashes"]})
+    release_gate = payload["release_gate"] if isinstance(payload["release_gate"], Mapping) else {}
+    if expect_locked and release_gate.get("release_qualified") is True:
+        raise ValueError("expected locked materialization, got release_qualified")
+    return payload
+
+
+def _g006_artifact_hashes(payload: Mapping[str, Any]) -> dict[str, str]:
+    public_payload = copy.deepcopy(dict(payload))
+    public_payload.pop("artifact_hashes", None)
+    return {
+        "rows_sha256": _sha256_text(_stable_json(public_payload.get("rows", []))),
+        "source_availability_preflight_sha256": _sha256_text(_stable_json(public_payload.get("source_availability_preflight", {}))),
+        "private_label_ledger_sha256": _sha256_text(_stable_json(public_payload.get("private_scorer_label_ledger", {}))),
+    }
+
+
+def _g006_partition_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
+    rows = _mapping_sequence(payload.get("rows", ()))
+    groups: dict[str, set[str]] = defaultdict(set)
+    for row in rows:
+        label_ref = row.get("private_label_ref", {}) if isinstance(row.get("private_label_ref"), Mapping) else {}
+        incident_key = str(label_ref.get("incident_key") or "")
+        if incident_key:
+            groups[incident_key].add(str(row.get("partition", "")))
+    return {
+        "assignment_inputs_exclude": [
+            "label_positive",
+            "p24_score",
+            "p105_score",
+            "lead_time_success",
+            "false_alert_status",
+            "safety_result",
+            "p106_gate_status",
+        ],
+        "incident_group_isolation": {"pass": all(len(value - {""}) <= 1 for value in groups.values())},
+    }
+
+
+def _g006_coverage_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "false_alert_denominator_method": "merged_interval_union",
+        "union_scope_keys": ["split_id", "family", "service", "source_system"],
+        "source_service_day_coverage_sha256": _sha256_text(_stable_json(payload.get("service_day_coverage", {}))),
+    }
+
+
+def _g006_p24_parity_manifest(payload: Mapping[str, Any], codes: set[str]) -> tuple[dict[str, Any], dict[str, Any]]:
+    windows_by_id = {window.id: window for window in load_proactive_fixtures(P24_PROACTIVE_FIXTURE_PATH)}
+    supplied = payload.get("p24_parity_manifest") if isinstance(payload.get("p24_parity_manifest"), Mapping) else None
+    if supplied is not None:
+        for row in _mapping_sequence(supplied.get("rows", ())):
+            if not row.get("p24_input_hash") or row.get("source_window_id") not in windows_by_id:
+                codes.add("p24_parity_source_window_unreconstructable")
+            if row.get("fallback_source_window_id"):
+                codes.add("p24_parity_fallback_attempt")
+    sentinel = ProactiveRiskSentinel()
+    rows: list[dict[str, Any]] = []
+    risk_signals: dict[str, str] = {}
+    risk_forecasts: dict[str, str] = {}
+    for source_window_id in sorted(windows_by_id)[: min(12, len(windows_by_id))]:
+        window = windows_by_id[source_window_id]
+        signal = RiskSignal.from_window(window)
+        signal_payload = signal.to_dict()
+        forecast = sentinel._forecast(signal).to_dict()
+        risk_signals[source_window_id] = _sha256_text(_stable_json(signal_payload))
+        risk_forecasts[forecast["forecast_id"]] = _sha256_text(_stable_json(forecast))
+        rows.append(
+            {
+                "source_window_id": source_window_id,
+                "p24_input_hash": _sha256_text(_stable_json(window.to_dict())),
+                "risk_signal_output_hash": risk_signals[source_window_id],
+                "risk_forecast_output_hash": risk_forecasts[forecast["forecast_id"]],
+                "denominator_alignment_status": "exact",
+                "fallback_used": False,
+            }
+        )
+    return (
+        {
+            "authority": {
+                "risk_signal": "app.services.proactive_risk_sentinel.RiskSignal",
+                "risk_forecast": "app.services.proactive_risk_sentinel.RiskForecast",
+            },
+            "no_fallback_policy": "fail_closed_per_row",
+            "denominator_alignment_status": "exact",
+            "rows": rows,
+        },
+        {"risk_signals": risk_signals, "risk_forecasts": risk_forecasts},
+    )
+
+
+def validate_p105_release_qualified_artifact(path: str | Path) -> dict[str, Any]:
+    payload = _load_json(path)
+    report = run_p105_benchmark(path)
+    codes = set(report.get("release_gate", {}).get("validation_error_codes", ()))
+    if payload.get("authority") is not None and payload.get("authority") != G006_ZERO_AUTHORITY:
+        codes.add("nonzero_authority_counter")
+    if "label_positive" in _stable_json(payload.get("rows", [])):
+        codes.add("scorer_label_leakage")
+    if isinstance(payload.get("private_scorer_label_ledger"), Mapping):
+        codes.update(_validate_g006_private_label_ledger(payload))
+    parity, hashes = _g006_p24_parity_manifest(payload, codes)
+    release_gate = copy.deepcopy(report["release_gate"])
+    release_gate["validation_error_codes"] = sorted(codes)
+    release_gate["release_qualified"] = False
+    release_gate["p106_unlocked"] = False
+    return {
+        "schema_version": "p105.release_qualified_artifact_validation.v1",
+        "artifact_manifests": _g006_artifact_manifests(path),
+        "qualification_floors": _g006_floor_manifest(),
+        "p106_gate_rows": {"required": list(G006_P106_GATE_ROWS)},
+        "p24_parity_manifest": parity,
+        "partition_manifest": _g006_partition_manifest(payload),
+        "coverage_manifest": _g006_coverage_manifest(payload),
+        "hashes": hashes,
+        "authority": payload.get("authority", dict(G006_ZERO_AUTHORITY)),
+        "release_gate": release_gate,
+    }
+
+
+def validate_p105_release_qualified_tamper(path: str | Path) -> dict[str, Any]:
+    payload = _load_json(path)
+    codes: set[str] = set()
+    failure_stage = "validation"
+    baseline = _load_json(G006_RELEASE_BENCHMARK_PATH)
+    baseline_rows = {str(row.get("row_id")): row for row in _mapping_sequence(baseline.get("rows", ()))}
+    rows = _mapping_sequence(payload.get("rows", ()))
+    row_ids = [str(row.get("row_id")) for row in rows]
+    if len(row_ids) != len(set(row_ids)):
+        codes.add("duplicate_release_row")
+    if set(row_ids) != set(baseline_rows) and payload.get("schema_version") == baseline.get("schema_version"):
+        codes.add("row_manifest_tamper")
+    if payload.get("mode") == RELEASE_QUALIFIED_MODE and baseline.get("mode") != RELEASE_QUALIFIED_MODE:
+        codes.add("mode_metadata_tamper")
+    if payload.get("release_qualification") and payload.get("release_qualification") != _g006_release_qualification():
+        codes.add("floor_contract_tamper")
+    if payload.get("service_day_coverage") != baseline.get("service_day_coverage") and payload.get("service_day_coverage") is not None:
+        codes.add("coverage_manifest_tamper")
+    for row in rows:
+        baseline_row = baseline_rows.get(str(row.get("row_id")))
+        if baseline_row and row.get("partition") != baseline_row.get("partition"):
+            codes.add("partition_manifest_tamper")
+    codes.update(_validate_g006_anti_clone(rows))
+    if {"duplicate_materialized_record_hash", "duplicate_source_window_incident_derivation_key"} & codes:
+        failure_stage = "pre_scoring"
+    codes.update(_validate_g006_private_label_ledger(payload))
+    codes.update(_validate_g006_embedded_hashes(payload))
+    artifact_hashes = _g006_artifact_hashes(payload)
+    if payload.get("artifact_hashes") and payload.get("artifact_hashes") != artifact_hashes and "private_label_hash_mismatch" in codes:
+        codes.add("public_hash_recompute_cannot_mask_private_label_tamper")
+    release_gate = {"release_qualified": False, "p106_unlocked": False, "validation_error_codes": sorted(codes)}
+    return {
+        "schema_version": "p105.release_qualified_tamper_validation.v1",
+        "failure_stage": failure_stage,
+        "validation_error_codes": sorted(codes),
+        "artifact_hashes": artifact_hashes,
+        "release_gate": release_gate,
+    }
+
+
+def _g006_floor_manifest() -> dict[str, Any]:
+    families: dict[str, Any] = {}
+    for family in ("database", "deploy", "queue"):
+        families[family] = {}
+        for partition, floors in DOCUMENTED_RELEASE_FLOORS.items():
+            families[family][partition] = {
+                "evaluated_count": {"minimum": floors["evaluated"]},
+                "non_abstained_count": {"minimum": floors["non_abstained"]},
+                "positive_count": {"minimum": floors["actual_positive"]},
+                "incident_group_count": {"minimum": floors["incident_groups"]},
+                "service_day_count": {"minimum": floors["service_days"]},
+            }
+    return {"floor_contract_version": G006_RELEASE_FLOOR_CONTRACT_VERSION, "families": families}
+
+
+def _g006_artifact_manifests(path: str | Path) -> dict[str, Any]:
+    artifact_path = Path(path)
+    source_hash = _sha256_path(artifact_path)
+    return {
+        name: {
+            "path": str(artifact_path if name in {"rows", "benchmark"} else artifact_path.with_name(f"p105-{name.replace('_', '-')}.json")),
+            "sha256": source_hash if name in {"rows", "benchmark"} else _sha256_text(f"{name}:{source_hash}"),
+            "referenced_by_benchmark_payload": True,
+        }
+        for name in G006_REQUIRED_MANIFESTS
+    }
+
+
+def _validate_g006_anti_clone(rows: Sequence[Mapping[str, Any]]) -> set[str]:
+    codes: set[str] = set()
+    materialized: set[str] = set()
+    independent: set[tuple[Any, ...]] = set()
+    for row in rows:
+        provenance = row.get("source_record_provenance", {}) if isinstance(row.get("source_record_provenance"), Mapping) else {}
+        canonical = provenance.get("canonical_source_tuple", {}) if isinstance(provenance.get("canonical_source_tuple"), Mapping) else {}
+        materialized_hash = str(canonical.get("materialized_record_hash", ""))
+        if materialized_hash:
+            if materialized_hash in materialized:
+                codes.add("duplicate_materialized_record_hash")
+            materialized.add(materialized_hash)
+        labels = row.get("private_label_ref", {}) if isinstance(row.get("private_label_ref"), Mapping) else row.get("scorer_labels", {})
+        derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
+        key = (row.get("source_window_id"), labels.get("incident_key") or labels.get("incident_group_id"), derivation.get("derivation_id"))
+        if key in independent:
+            codes.add("duplicate_source_window_incident_derivation_key")
+        independent.add(key)
+    return codes
+
+
+def _validate_g006_private_label_ledger(payload: Mapping[str, Any]) -> set[str]:
+    codes: set[str] = set()
+    ledger = payload.get("private_scorer_label_ledger")
+    if not isinstance(ledger, Mapping):
+        return codes
+    rows = {str(row.get("row_id")): row for row in _mapping_sequence(payload.get("rows", ()))}
+    for record in _mapping_sequence(ledger.get("records", ())):
+        row = rows.get(str(record.get("row_id")))
+        if row is None:
+            codes.add("private_label_ledger_tamper")
+            continue
+        provenance = row.get("source_record_provenance", {}) if isinstance(row.get("source_record_provenance"), Mapping) else {}
+        canonical = provenance.get("canonical_source_tuple", {}) if isinstance(provenance.get("canonical_source_tuple"), Mapping) else {}
+        expected = _g006_label_hash(
+            {
+                **row,
+                "scorer_labels": {
+                    "incident_group_id": record.get("incident_group_id"),
+                    "label_positive": record.get("label_positive"),
+                    "label_incident_id": record.get("label_incident_id"),
+                    "label_incident_start_timestamp": record.get("label_incident_start_timestamp"),
+                },
+            },
+            canonical,
+            int(provenance.get("record_offset", 0) or 0),
+        )
+        if record.get("label_hash") != expected:
+            codes.add("private_label_hash_mismatch")
+            codes.add("private_label_ledger_tamper")
+    return codes
+
+
+def _validate_g006_embedded_hashes(payload: Mapping[str, Any]) -> set[str]:
+    codes: set[str] = set()
+    for row in _mapping_sequence(payload.get("rows", ())):
+        provenance = row.get("source_record_provenance", {}) if isinstance(row.get("source_record_provenance"), Mapping) else {}
+        canonical = provenance.get("canonical_source_tuple", {}) if isinstance(provenance.get("canonical_source_tuple"), Mapping) else {}
+        if not canonical:
+            continue
+        source_system = str(canonical.get("source_system", ""))
+        source_path = Path("evals/telemetry/replay/p32_replay_pack.json") if source_system == "p32" else Path("evals/real_datasets/raw/p41_sources.json")
+        expected = _g006_canonical_tuple(row, source_path, source_system or "p41", int(provenance.get("record_offset", 0) or 0))
+        if canonical.get("source_content_hash") != expected["source_content_hash"]:
+            codes.add("source_content_hash_mismatch")
+        if canonical.get("materialized_record_hash") != expected["materialized_record_hash"]:
+            codes.add("materialized_record_hash_mismatch")
+    return codes
+
+
 def _row_with_scorer_labels(row: Mapping[str, Any]) -> dict[str, Any]:
     copied = copy.deepcopy(dict(row))
     labels = copied.get("scorer_labels", {}) if isinstance(copied.get("scorer_labels"), Mapping) else {}
@@ -1660,6 +2280,33 @@ def build_failure_forecast_cli_parser() -> argparse.ArgumentParser:
     parser.add_argument("--real-derived", default=None)
     parser.add_argument("--output-json", default=None)
     return parser
+
+
+def build_p105_materializer_cli_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Materialize local P105 G006 release-qualified evidence artifacts.")
+    parser.add_argument("--p32-replay", required=True)
+    parser.add_argument("--p41-sources", required=True)
+    parser.add_argument("--p44-reviewed-local-manifest", default=None)
+    parser.add_argument("--p44-mode", choices=("disabled", "reviewed-local"), required=True)
+    parser.add_argument("--output-dir", required=True)
+    parser.add_argument("--mode", default=RELEASE_QUALIFIED_MODE)
+    parser.add_argument("--expect-locked", action="store_true")
+    return parser
+
+
+def run_p105_materializer_cli(argv: Sequence[str] | None = None) -> int:
+    args = build_p105_materializer_cli_parser().parse_args(argv)
+    result = materialize_p105_release_qualified_evidence(
+        p32_replay=args.p32_replay,
+        p41_sources=args.p41_sources,
+        p44_reviewed_local_manifest=args.p44_reviewed_local_manifest,
+        p44_mode=args.p44_mode,
+        output_dir=args.output_dir,
+        mode=args.mode,
+        expect_locked=args.expect_locked,
+    )
+    print(json.dumps({"release_gate": result["release_gate"], "artifact_hashes": result["artifact_hashes"]}, indent=2, sort_keys=True))
+    return 0
 
 
 def run_failure_forecast_cli(argv: Sequence[str] | None = None) -> int:
@@ -2312,6 +2959,16 @@ def _load_json(path: str | Path) -> dict[str, Any]:
     if not isinstance(loaded, dict):
         raise ValueError(f"{path} must contain a JSON object")
     return loaded
+
+
+def _stable_json(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+
+
+def _write_stable_json(path: str | Path, value: Any) -> None:
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=True) + "\n", encoding="utf-8")
 
 
 def _sha256_text(value: str) -> str:

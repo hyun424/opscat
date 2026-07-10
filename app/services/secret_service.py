@@ -27,6 +27,7 @@ from app.services.redaction import redact_value
 
 _PROVIDER = "local-envelope"
 _DEFAULT_LOCAL_KEY = "local-development-secret-key-change-me"
+_DEFAULT_KEY_ALLOWED_MODES = {"local", "local-mock", "test"}
 
 
 class SecretNotFoundError(KeyError):
@@ -61,8 +62,8 @@ class LocalEncryptedSecretProvider:
 
     def __init__(self, master_key: str | None = None) -> None:
         self.master_key = master_key or get_settings().secret_key
-        if get_settings().opscat_mode not in {"local", "test"} and self.master_key == _DEFAULT_LOCAL_KEY:
-            raise ValueError("OPSCAT_SECRET_KEY must be set outside local/test mode")
+        if get_settings().opscat_mode not in _DEFAULT_KEY_ALLOWED_MODES and self.master_key == _DEFAULT_LOCAL_KEY:
+            raise ValueError("OPSCAT_SECRET_KEY must be set outside local/local-mock/test mode")
 
     def put_secret(self, db: Session, principal: Principal, name: str, value: str, metadata: dict[str, object] | None = None) -> SecretRef:
         _require_secret_admin(principal)

@@ -5,6 +5,7 @@ from typing import Any
 
 import pytest
 
+from app.config import get_settings
 from app.models import AuditEvent, SecretRecord
 from app.services.authorization import AuthorizationError
 from app.services.identity_service import Principal, get_or_create_local_principal
@@ -85,3 +86,14 @@ def test_delete_secret_removes_record_and_audits(db_session: Any) -> None:
 
     assert db_session.query(SecretRecord).count() == 0
     assert "secret_deleted" in [event.event_type for event in db_session.query(AuditEvent).all()]
+
+
+def test_local_mock_mode_allows_default_secret_key_for_quickstart(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("OPSCAT_MODE", "local-mock")
+    monkeypatch.delenv("SECRET_KEY", raising=False)
+    get_settings.cache_clear()
+    try:
+        provider = LocalEncryptedSecretProvider()
+        assert provider.master_key == "local-development-secret-key-change-me"
+    finally:
+        get_settings.cache_clear()

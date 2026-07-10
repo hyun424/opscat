@@ -44,6 +44,16 @@ reproducibility checks, or independent review evidence exist.
   `docs/operations/p105-release-qualified-evidence-test-spec.md`.
 - Plan review:
   `docs/operations/p105-release-qualified-evidence-plan-review.md`.
+- Implementation boundary:
+  `app/services/failure_forecast_engine.py`.
+- Command boundary:
+  `scripts/materialize_p105_release_evidence.py` for materialization and
+  `scripts/run_failure_forecast_benchmark.py` for scoring.
+- Future RED-to-GREEN tests:
+  `tests/test_p105_release_qualified_evidence_contract.py`,
+  `tests/test_p105_release_qualified_materializer.py`,
+  `tests/test_p105_release_qualified_artifacts.py`, and
+  `tests/test_p105_release_qualified_reproducibility.py`.
 - Ticket sequence:
   - `docs/tickets/p105/p105-016-release-qualified-evidence-contract.md`
   - `docs/tickets/p105/p105-017-deterministic-local-materializer.md`
@@ -327,6 +337,22 @@ not from source ID claims alone. Public downloads remain explicit opt-in and
 generated artifacts remain outside the repository unless converted into
 reviewed, redacted fixtures.
 
+P44 sampling is label-blind. Reviewed-local P44 rows are sampled
+deterministically from canonical raw public source bytes, record offset or row
+index, source manifest key, source timestamp when present, and a versioned
+salt before private labels, official label files, incident groups, P24/P105
+scores, release floors, or partitions are read. NAB `combined_windows.json`
+official label windows join only after sampling and only in the private scorer
+ledger; missing official windows or missing `nab_label_key` makes the affected
+row unevaluable. NAB max-value fallback, peak-value positives, threshold-created
+positives, ordinal positives, and synthetic anomaly labels are forbidden.
+
+LogHub public logs may count incidents only through a deterministic private
+scorer ledger with a reviewed parser version, error-burst predicate, line
+offsets, source-window boundaries, incident group IDs, and source hashes.
+Every-Nth-row, partition-position, ordinal, or floor-driven incidents are not
+release-qualified evidence.
+
 Canonical source tuple: every P32/P41/P44-derived row must publish
 `source_tuple=(source_system, source_dataset, source_manifest_key,
 source_content_hash, materialized_record_hash, materialization_version)`.
@@ -346,12 +372,21 @@ P32/P41/P44-to-P105 family mapping is canonical:
 | P32 | `canary_regression_risk`, `feature_flag_degradation_risk`, `schema_drift_risk` | `deploy` | Real-derived shadow if local replay output is materialized and source-hashed |
 | P41 | source-card `family=loghub` or `aiops` with `expected_root_cause=deploy_regression` or deploy/config labels | `deploy` | Real-derived shadow from repo-local source cards only |
 | P41 | source-card `family=nab` or `aiops` with metric anomaly, saturation, lag, or capacity labels | `database` or `queue` by service/metric manifest mapping | Real-derived shadow from repo-local source cards only |
-| P44 | opt-in public-source rows with manifest-declared database, queue, or deploy labels | manifest-declared `database`, `queue`, or `deploy` after deterministic label derivation | Real-derived shadow only after redacted fixture review |
+| P44 | LogHub `loghub_raw` sampled raw log windows with reviewed error-burst scorer ledger | `deploy` proxy only when the reviewed burst predicate represents deploy/config regression; otherwise `unsupported_family` | Real-derived shadow only after redacted fixture review and private ledger join |
+| P44 | NAB `nab_csv` sampled metric windows with official `combined_windows.json` label join after sampling | `database` or `queue` proxy only through committed service/metric mapping metadata; otherwise `unsupported_family` | Real-derived shadow only after redacted fixture review and private ledger join |
 
 Any source signal outside this table is `unsupported_family` until a future
 planning change adds an explicit mapping. Unsupported rows may be used only for
 private safety diagnostics or abstention checks; they do not satisfy supported
 family release floors.
+
+P44-to-P105 mappings are source-to-family proxies with explicit limitations,
+not proof of true production database, queue, or deploy failures. Release
+artifacts must publish `family_proxy_mapping`, `proxy_limitations`,
+`unsupported_family_count`, and mapping review status. Existing per-family
+floors are unchanged; if honest sampled public sources cannot satisfy them,
+G006 stays locked and adds reviewed sources instead of fabricating labels or
+lowering gates.
 
 ## Partition and Diagnostic Semantics
 
@@ -665,6 +700,14 @@ Acceptance:
   source_content_hash, materialized_record_hash, materialization_version)`.
 - Rows are generated from raw/materialized record bytes plus committed
   metadata, not source ID claims.
+- P44 rows are sampled before any label join and cannot use ordinal,
+  partition-position, max-value, P24/P105 score, family-floor, or private-label
+  signals.
+- NAB labels join from official `combined_windows.json` only after sampling;
+  missing or unmatched official windows are scorer-negative or unevaluable, not
+  relabeled through max-value fallback.
+- LogHub incidents come only from the reviewed deterministic error-burst
+  scorer ledger with line offsets and source hashes.
 - Two runs over the same inputs produce byte-identical rows and manifests.
 - A source-availability preflight manifest reports per-family rows, positives,
   incidents, source tuples, review-redaction status, and local hashes before
@@ -691,14 +734,17 @@ materialized rows.
 
 Acceptance:
 - The artifact includes row, source, partition, coverage, P24 parity,
-  source-availability preflight, private label, coverage, P24 parity,
-  benchmark, and review manifests with stable content hashes.
+  source-availability preflight, private label, benchmark, review,
+  privacy/redaction/license/citation, and provenance-hash manifests with stable
+  content hashes.
 - Every supported family passes the exact existing held-out and real-derived
   floors.
 - Private label hashes bind labels to canonical tuple, offset, incident group,
   and derivation ID; the private ledger is the metrics source of truth.
 - Source diversity uses canonical source tuples and excludes synthetic held-out
   rows from diversity denominators.
+- Raw public downloads remain uncommitted; only reviewed, redacted, derived
+  artifacts or fixtures may be committed.
 - Authority counters remain hard-zero.
 
 ### P105-020 Parity, partition, coverage, and isolation
@@ -715,7 +761,10 @@ Acceptance:
   denominator alignment status.
 - Fallback to unrelated seed windows or fixture defaults is forbidden.
 - Partition assignment is pre-scoring and outcome-neutral.
-- Incident groups do not cross partitions.
+- Public features and P24 `TrendWindow` inputs come from the same sampled
+  source record/window before private labels are joined.
+- Incident groups are created from official NAB windows or the reviewed LogHub
+  burst ledger and do not cross partitions.
 - False-alert service-day denominators use merged coverage intervals per
   `split_id`/`family`/`service`/`source_system`.
 
@@ -726,7 +775,9 @@ Make qualified evidence reproducible and tamper-evident.
 Acceptance:
 - Two materializer runs over the same inputs are byte-identical.
 - Source edits, scorer-label edits, row deletion, row duplication, mode edits,
-  partition edits, floor weakening, and coverage edits fail closed.
+  partition edits, floor weakening, coverage edits, official NAB label edits,
+  LogHub burst predicate edits, proxy-mapping edits, privacy/redaction/license
+  manifest edits, citation edits, and command-argument edits fail closed.
 - Label tamper fails both with unchanged public hashes and with recomputed
   public hashes when the private label ledger no longer matches.
 - Any tampered artifact emits `release_qualified=false` and
@@ -743,7 +794,11 @@ Acceptance:
   claim re-approval without a later independent verdict.
 - Release docs include locked smoke status, qualified artifact hash, exact
   floors, P106 gate rows, P24 parity, provenance, partition, coverage,
-  reproducibility, tamper, and authority evidence.
+  reproducibility, tamper, privacy, redaction, license, citation, proxy-family
+  limitation, and authority evidence.
+- Release-gate evidence records RED failures, GREEN commands, output artifact
+  paths, artifact hashes, reviewed-local P44 manifest hash, benchmark hash, and
+  locked stop reason if honest sources miss unchanged floors.
 - P106 unlock claims are absent unless the exact gate payload passes.
 - Docs, targeted P105 tests, fast verification, and benchmark commands are
   recorded with results.

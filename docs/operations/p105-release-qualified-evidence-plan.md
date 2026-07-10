@@ -25,6 +25,26 @@ The materializer must consume only local or explicitly materialized records:
   an explicit opt-in materialization run has produced reviewed and redacted
   local records.
 
+The current P44 reviewed-local candidate source set is the raw public artifact
+tree under `/private/tmp/opscat-p44-public-artifacts`:
+
+- LogHub raw logs:
+  `/private/tmp/opscat-p44-public-artifacts/loghub-apache-2k/data/Apache_2k.log`
+  and
+  `/private/tmp/opscat-p44-public-artifacts/loghub-linux-2k/data/Linux_2k.log`.
+- NAB raw data CSVs:
+  `/private/tmp/opscat-p44-public-artifacts/nab-machine-temperature/data/machine_temperature_system_failure.csv`,
+  `/private/tmp/opscat-p44-public-artifacts/nab-ambient-temperature/data/ambient_temperature_system_failure.csv`,
+  and
+  `/private/tmp/opscat-p44-public-artifacts/nab-ec2-cpu/data/ec2_cpu_utilization_24ae8d.csv`.
+- NAB official label windows:
+  `/private/tmp/opscat-p44-public-artifacts/*/labels/combined_windows.json`.
+
+The raw P44 files above are source inputs only. They do not become
+release-qualified artifacts until a future reviewed-local manifest records
+license, citation, redaction, privacy review, local file hashes, derived
+artifact hashes, and reviewer status.
+
 No ticket may download public data by default, call external providers by
 default, read credentials, use auth, mutate production, execute remediation, or
 create P106 action-planning authority.
@@ -126,6 +146,13 @@ label hashes must not be exposed in a way that reconstructs answer keys.
 The P32/P41/P44 materializer must be deterministic, local/offline by default,
 and read-only over source inputs.
 
+The implementation boundary is `app/services/failure_forecast_engine.py` plus
+the future command wrapper `scripts/materialize_p105_release_evidence.py`.
+Release scoring remains behind `scripts/run_failure_forecast_benchmark.py`.
+The materializer may read committed inputs and the explicitly supplied
+reviewed-local P44 manifest only; it must not read ignored draft outputs as
+implicit inputs.
+
 - Generate rows from canonical raw or materialized record bytes plus committed
   metadata, never from source ID claims alone.
 - Hash canonical source bytes into `source_content_hash`.
@@ -134,6 +161,32 @@ and read-only over source inputs.
 - Derive source window, evidence IDs, family, failure mode, labels, row IDs,
   incident-group IDs, and partitions from deterministic transforms over
   predeclared inputs.
+- For P44, perform label-blind deterministic sampling from raw public source
+  records before any official label join, max-value lookup, family floor
+  accounting, incident grouping, or partition assignment. Sampling inputs are
+  the canonical raw bytes, record offset or row index, source manifest key,
+  source timestamp when present, and a versioned salt. Sampling must not read
+  NAB `combined_windows.json`, LogHub incident heuristics, private labels,
+  anomaly scores, max observed values, P24/P105 scores, partition outcomes, or
+  any field derived from those values.
+- For NAB, join official `combined_windows.json` windows only after sampling
+  and only in the private scorer-label ledger. If a sampled NAB row does not
+  match an official window, it is scorer-negative for that family. There is no
+  max-value fallback, peak-value relabeling, threshold-created positive, or
+  synthetic anomaly label. Missing or unverifiable official NAB labels keep the
+  affected rows `unevaluable_label_join_missing`.
+- For LogHub, a deterministic scorer ledger may be used only if it defines
+  error-burst incidents from raw line windows before scoring. The ledger must
+  publish the predeclared parser version, burst predicate, line offsets,
+  window boundaries, incident group IDs, and source hashes in the private
+  answer-key ledger. Ordinal-only positives, partition-position positives,
+  every-Nth-row incidents, and labels inferred from release-floor needs are not
+  release-qualified evidence.
+- Public `public_features` and reconstructed P24 `TrendWindow` inputs must be
+  derived from the same sampled source record or sampled source window before
+  private labels are joined. A row is unevaluable if its public features, P24
+  input, scorer label, coverage interval, or source tuple cannot be traced to
+  the same sampled record/window identity.
 - Keep P44 explicit opt-in, capped at 2,000 records per public-source run.
 - Assign supported real-derived rows only to `real_derived_shadow`.
 - Mark unsupported mappings `unsupported_family`; they may support abstention
@@ -145,6 +198,23 @@ and read-only over source inputs.
 
 The canonical P32/P41/P44-to-P105 family mapping remains the table in
 `docs/operations/p105-ticket-roadmap.md`.
+
+Source-to-family proxy mapping is allowed only as an explicit, reviewable
+limitation. The mapping may route LogHub `loghub_raw` rows toward `deploy`
+when the predeclared burst predicate represents deploy/config regression
+signals, and NAB `nab_csv` metric streams toward `database` or `queue` only
+through committed service/metric mapping metadata. These are proxy families,
+not ground-truth service failures. The release manifest must publish
+`family_proxy_mapping`, `proxy_limitations`, `unsupported_family_count`, and
+`family_mapping_review_status`; proxy rows cannot hide unsupported mappings or
+lower the unchanged per-family floors.
+
+If honest reviewed-local sources cannot meet the existing floors, G006 remains
+locked. The only allowed repair is to add more reviewed public or local source
+material with the same label-blind sampling, provenance, privacy, license,
+citation, and tamper checks. Do not fabricate incidents, lower gates, relax
+per-family floors, ordinally assign positives, duplicate rows, or move valid
+rows into diagnostics to pass.
 
 ## Partition and Coverage Rules
 
@@ -224,6 +294,38 @@ the affected split `unevaluable_leakage_detected`.
 Each ticket follows RED to GREEN: add or update tests first, observe the
 intended RED failure, implement the smallest change, then rerun the exact
 acceptance commands until GREEN.
+
+Exact future RED-to-GREEN boundaries:
+
+- Module boundary: `app/services/failure_forecast_engine.py` must own the
+  deterministic G006 materialization, validation, scorer-ledger, partition,
+  coverage, P24 parity, and tamper-check APIs.
+- Script boundary: `scripts/materialize_p105_release_evidence.py` must expose
+  the P32/P41/P44 materialization command, and
+  `scripts/run_failure_forecast_benchmark.py` must score only committed or
+  reviewed-derived release rows.
+- Artifact boundary: the qualified run writes only derived artifacts under the
+  requested output directory, including `p105-release-qualified-rows.json`,
+  `p105-source-manifest.json`, `p105-source-availability-preflight.json`,
+  `p105-private-scorer-label-ledger.json`, `p105-partitions.json`,
+  `p105-coverage.json`, `p105-p24-parity.json`,
+  `p105-review-ledger.json`, `p105-privacy-redaction-license-citations.json`,
+  `p105-provenance-hashes.json`, and
+  `p105-release-qualified-benchmark.json`.
+- Commit boundary: raw public downloads remain uncommitted. Only reviewed,
+  redacted, derived artifacts or fixtures may be committed, and only after
+  their source hashes, license/citation metadata, reviewer status, and
+  tamper-check hashes are recorded.
+- Test boundary: `tests/test_p105_release_qualified_materializer.py` owns
+  label-blind sampling, NAB post-sampling label joins, LogHub scorer-ledger
+  constraints, and source-to-family proxy limitations;
+  `tests/test_p105_release_qualified_artifacts.py` owns public/private artifact
+  separation, P24 same-window parity, privacy/redaction/license/citation
+  manifests, and release-gate evidence;
+  `tests/test_p105_release_qualified_reproducibility.py` owns byte-identical
+  reruns, provenance hashes, and tamper failures; and
+  `tests/test_p105_release_qualified_evidence_contract.py` owns fail-closed
+  mode, floor, and P106-lock semantics.
 
 ## Acceptance Commands
 

@@ -1,8 +1,9 @@
 # P105 Release-Qualified Evidence Plan Review
 
-Status: second REVISE recorded. This document records the independent critic
-blockers reported for the initial G006 documentation-only planning commit, the
-first repair items, and the second narrow command repair. It does not claim
+Status: third repair recorded after second REVISE. This document records the
+independent critic blockers reported for the initial G006 documentation-only
+planning commit, the first repair items, the second narrow command repair, and
+the third honest reviewed-local P44 pipeline repair. It does not claim
 independent approval or re-approval.
 
 ## Review Scope
@@ -95,6 +96,45 @@ review returns an explicit APPROVE verdict, G006 remains in second
 REVISE-repaired status and must not be described as independently approved or
 re-approved.
 
+## Third Repair: Honest Reviewed-Local P44 Pipeline
+
+The third repair closes an additional release-qualification loophole: G006
+could still be interpreted as allowing ordinal, partition-position, max-value,
+or otherwise synthetic public-source signals to satisfy P44-backed floors.
+
+Repair:
+
+- Updated `docs/operations/p105-release-qualified-evidence-plan.md` to require
+  label-blind deterministic sampling from raw public source bytes before any
+  NAB official label join, LogHub scorer-ledger incident creation, partition
+  assignment, floor accounting, P24/P105 score use, or private label access.
+- Updated the plan to require NAB `combined_windows.json` labels to join only
+  after sampling and only in the private scorer-label ledger, with no max-value
+  fallback, peak-value relabeling, threshold-created positives, ordinal
+  positives, or synthetic anomaly labels.
+- Updated the plan to allow LogHub incidents only through a deterministic
+  private scorer ledger with reviewed parser version, burst predicate, line
+  offsets, source-window boundaries, incident groups, and source hashes.
+- Updated the plan to require public features and P24 `TrendWindow` inputs to
+  come from the same sampled source record/window before private labels are
+  joined.
+- Updated `docs/operations/p105-release-qualified-evidence-test-spec.md` with
+  future RED expectations and assertions for label-blind sampling, official
+  NAB post-sampling label joins, deterministic LogHub error-burst ledgers,
+  source-to-family proxy limitations, privacy/redaction/license/citation
+  manifests, committed-derived-artifact-only boundaries, and exact
+  provenance/hash/tamper checks.
+- Updated `docs/operations/p105-ticket-roadmap.md` to name the implementation,
+  command, artifact, and test boundaries and to keep the existing per-family
+  floors unchanged. If honest sources cannot meet those floors, the roadmap now
+  requires G006 to stay locked and add reviewed sources rather than fabricate
+  labels or lower gates.
+
+The repair documentation is ready for another independent review. Until that
+review returns an explicit APPROVE verdict, G006 remains in
+third-repair-after-second-REVISE status and must not be described as
+independently approved or re-approved.
+
 ## Verification Required for Repair Commit
 
 Run:
@@ -108,3 +148,10 @@ git show --check --stat HEAD
 
 Stop if any command fails or if the commit includes code, tests, fixtures, or
 implementation claims.
+
+Additional third-repair checks:
+
+```bash
+rg -- "label-blind|combined_windows|max-value|LogHub|error-burst|privacy/redaction/license/citation|provenance-hash|ordinal|partition-position" docs/operations/p105-release-qualified-evidence-plan.md docs/operations/p105-release-qualified-evidence-test-spec.md docs/operations/p105-ticket-roadmap.md
+git diff --name-only HEAD
+```

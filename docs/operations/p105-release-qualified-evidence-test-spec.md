@@ -9,7 +9,9 @@ exist yet.
 The test suite must prove that P105 release-qualified evidence is deterministic,
 local/offline, source-record based, outcome-neutral, tamper-evident,
 P24-comparable, and unable to unlock P106 unless every existing floor and gate
-passes.
+passes. It must also prove that G006 cannot pass by creating ordinal,
+partition-position, max-value, or other synthetic signals after seeing private
+labels or release floors.
 
 ## Test Files
 
@@ -35,6 +37,10 @@ Before implementation, the tests must fail for the intended missing behavior:
 - no tamper-fail-closed checks;
 - no P24 parity check against actual P24 classes for qualified rows;
 - no merged coverage and incident-isolation validator for qualified evidence.
+- no label-blind P44 sampling proof before NAB label joins or LogHub scorer
+  ledger generation;
+- no privacy/redaction/license/citation manifest or committed-derived-artifact
+  boundary for reviewed-local public artifacts.
 
 ## Contract Tests
 
@@ -85,6 +91,30 @@ Required assertions:
   source tuples, or hashes.
 - A P44-positive materializer run can count P44 only from a reviewed, redacted,
   local manifest with stable local source and materialized hashes.
+- P44 sampling is deterministic and label-blind. The sampler may use canonical
+  raw bytes, record offset or row index, source manifest key, source timestamp
+  when present, and a versioned salt. It must not use NAB official labels,
+  LogHub burst labels, private scorer labels, anomaly scores, max observed
+  values, P24/P105 scores, partition outcomes, or release-floor deficits.
+- NAB `combined_windows.json` labels are joined only after sampling and only
+  into the private scorer-label ledger. Sampled rows outside official NAB
+  windows are scorer-negative. Missing official windows, missing
+  `nab_label_key`, mismatched source hash, or unverifiable label JSON makes the
+  affected row `unevaluable_label_join_missing`.
+- NAB materialization rejects max-value fallback, peak-value positive creation,
+  threshold-created positives, ordinal positive assignment, and synthetic
+  anomaly labels.
+- LogHub rows may count incidents only through a deterministic scorer ledger
+  with parser version, burst predicate, line offsets, source-window boundaries,
+  incident group IDs, and source hashes. Every-Nth-row, partition-position,
+  ordinal, and floor-driven incident generation fails before scoring.
+- Public `public_features`, P24 `TrendWindow` inputs, coverage intervals, and
+  private scorer labels all trace to the same sampled source record or sampled
+  source window. Cross-record feature/label joins are unevaluable.
+- Source-to-family proxy mapping is explicit and limited: LogHub proxy rows may
+  map to `deploy` only through the reviewed burst predicate, and NAB metric
+  rows may map to `database` or `queue` only through committed service/metric
+  mapping metadata. Unsupported mappings remain `unsupported_family`.
 
 ## Artifact Tests
 
@@ -96,6 +126,17 @@ Required assertions:
 - Qualified artifacts include row manifest, source manifest, partition manifest,
   source-availability preflight manifest, private scorer-label ledger, coverage
   manifest, P24 parity manifest, benchmark payload, and review ledger.
+- Qualified artifacts include
+  `p105-privacy-redaction-license-citations.json` with source license URLs,
+  citation text, reviewer status, redaction decisions, privacy risk notes, and
+  redistribution status for every public source.
+- Qualified artifacts include `p105-provenance-hashes.json` binding raw source
+  hashes, reviewed-local manifest hash, materialized row hashes, private
+  ledger hash, public artifact hashes, benchmark hash, and command-line
+  arguments. Any missing or mismatched hash locks the release.
+- Raw public downloads under `/private/tmp/opscat-p44-public-artifacts` are not
+  release artifacts and are not committed by G006. Only reviewed, redacted,
+  derived artifacts or fixtures may be committed.
 - Every manifest has a stable content hash and the benchmark payload references
   those hashes.
 - The artifact records every authority counter and all counters are false or
@@ -115,6 +156,13 @@ Required assertions:
 - Editing a label and recomputing public row hashes still fails closed because
   the private label hash ledger no longer matches the reviewed manifest.
 - Public artifacts never expose answer-key labels or reversible label hashes.
+- The private label ledger records label join phase and source:
+  `sampled_before_label_join=true`, `label_join_source=official_nab_windows`
+  for NAB, or `label_join_source=deterministic_loghub_error_burst_ledger` for
+  LogHub.
+- The private label ledger rejects labels that are derived from partition ID,
+  row ordinal, release-floor deficits, family balancing needs, or max observed
+  source values.
 
 ## Partition and Coverage Tests
 
@@ -127,7 +175,14 @@ Required assertions:
   false-alert outcome, safety result, or gate status.
 - Partitions are predeclared before scoring and preserve time or deterministic
   sequence ordering.
+- Partition assignment for sampled P44 rows is computed from pre-label sampled
+  record/window identity. It cannot use joined labels, incident group
+  membership, useful lead time, positivity, family-floor deficits, or
+  release-gate status.
 - An `incident_group_id` appears in exactly one partition.
+- Incident groups are created only from official NAB windows or the reviewed
+  LogHub error-burst ledger. Synthetic incident groups based on row ordinal,
+  partition bucket, or family floor needs fail closed.
 - False-alert service-day exposure is the union of coverage intervals per
   `split_id`/`family`/`service`/`source_system` scope.
 - Overlapping intervals are merged before seconds are divided by 86400.
@@ -146,6 +201,9 @@ Required assertions:
 - Brier and ECE improvement rows use `p24_metric - p105_metric > 0.0000`.
 - Parity is reconstructable for every row from the exact P24 input bytes or
   canonical input object.
+- P24 `TrendWindow` public features are generated from the same sampled source
+  record/window as the P105 public feature packet before private labels are
+  joined.
 - The P24 parity manifest includes `source_window_id`, P24 input hash,
   `RiskSignal` hash, `RiskForecast` hash, and denominator alignment status.
 - Missing original P24 input makes the row unevaluable.
@@ -161,6 +219,10 @@ Required assertions:
 - Reordering input records changes only allowed deterministic ordering outputs
   or is normalized to byte-identical output.
 - Changing a source record changes the expected source and materialized hashes.
+- Changing raw P44 source bytes, reviewed-local manifest metadata, official NAB
+  label windows, LogHub burst predicates, source-to-family mapping metadata,
+  privacy/redaction/license/citation manifests, or command arguments changes
+  the expected provenance hash and fails closed until re-reviewed.
 - Changing a scorer label without updating the hash ledger fails closed.
 - Changing a scorer label and recomputing public row or artifact hashes still
   fails closed when the private label ledger hash does not match.
@@ -182,6 +244,12 @@ Required assertions:
 - Full verification evidence includes docs, targeted P105 tests, fast
   verification, release benchmark output, and no known errors.
 - Release docs do not claim P106 unlock unless the exact gate payload passes.
+- Release-gate evidence records the RED failure command, GREEN command, output
+  artifact paths, artifact hashes, reviewed-local P44 manifest hash, benchmark
+  hash, and `release_qualified=false` stop reason when floors cannot be met.
+- If honest sources cannot meet unchanged per-family floors, the expected GREEN
+  state is locked evidence plus an added-source requirement, not fabricated
+  labels, lowered gates, or synthetic ordinal/partition incidents.
 
 ## Acceptance Commands
 

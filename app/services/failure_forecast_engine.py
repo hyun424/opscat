@@ -2123,7 +2123,10 @@ G006_P44_FATAL_CODES = frozenset(
 
 
 def _g006_load_p44_private_ledger(manifest: Mapping[str, Any], manifest_path: Path, codes: list[str]) -> dict[str, Mapping[str, Any]]:
+    ledger_ref = manifest.get("private_ledger_ref")
     ledger_path_value = manifest.get("private_label_ledger_path")
+    if not ledger_path_value and isinstance(ledger_ref, Mapping):
+        ledger_path_value = ledger_ref.get("path")
     if not ledger_path_value:
         return {}
     ledger_path = Path(str(ledger_path_value))
@@ -2136,11 +2139,13 @@ def _g006_load_p44_private_ledger(manifest: Mapping[str, Any], manifest_path: Pa
         return {}
     if ledger.get("public_artifact") is True:
         codes.append("p44_private_label_ledger_public")
-    return {
-        str(record.get("record_id")): record
-        for record in _mapping_sequence(ledger.get("records", ()))
-        if record.get("record_id")
-    }
+    records: dict[str, Mapping[str, Any]] = {}
+    for record in _mapping_sequence(ledger.get("records", ())):
+        for key in ("record_id", "reviewed_record_id", "row_id"):
+            value = record.get(key)
+            if value:
+                records[str(value)] = record
+    return records
 
 
 def _g006_p44_record_validation_codes(
@@ -2187,14 +2192,24 @@ def _g006_p44_record_validation_codes(
         private_label = label if label is not None else record.get("private_label", {}) if embedded_private else {}
         is_positive = isinstance(private_label, Mapping) and private_label.get("label_positive") is True
         reviewed_join = record.get("reviewed_label_join", {}) if isinstance(record.get("reviewed_label_join"), Mapping) else {}
+        ledger_join_source = str(private_label.get("label_join_source") or "")
         if is_positive and "nab" in source_text:
-            if reviewed_join.get("label_source") != "official_nab_window" or reviewed_join.get("official_window_id") != record.get("source_window_id"):
+            ledger_official = ledger_join_source == "official_nab_windows" and private_label.get("matched_official_window") is True
+            public_official = reviewed_join.get("label_source") == "official_nab_window" and reviewed_join.get("official_window_id") == record.get("source_window_id")
+            if not (ledger_official or public_official):
                 codes.add("nab_official_window_join_missing")
                 codes.add("nab_max_value_label_fallback_forbidden")
         if is_positive and "loghub" in source_text:
-            if reviewed_join.get("label_source") != "reviewed_loghub_burst" or not reviewed_join.get("loghub_burst_id"):
+            ledger_burst = (
+                ledger_join_source == "deterministic_loghub_error_burst_ledger"
+                and bool(private_label.get("incident_group_id"))
+                and bool(private_label.get("parser_version"))
+                and bool(private_label.get("burst_predicate_version"))
+            )
+            public_burst = reviewed_join.get("label_source") == "reviewed_loghub_burst" and bool(reviewed_join.get("loghub_burst_id"))
+            if not (ledger_burst or public_burst):
                 codes.add("loghub_reviewed_burst_metadata_missing")
-            if label is None and not reviewed_join.get("source_hash"):
+            if not (private_label.get("source_hash") or reviewed_join.get("source_hash")):
                 codes.add("loghub_burst_source_hash_missing")
         if schema_version == "p105.reviewed_p44_local_manifest.v3":
             if label is None:

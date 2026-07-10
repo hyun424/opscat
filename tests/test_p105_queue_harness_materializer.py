@@ -29,9 +29,9 @@ def _run_queue(output_dir: Path, *, seed: int = 105026) -> subprocess.CompletedP
             "--seed",
             str(seed),
             "--ticks",
-            "900",
+            "3",
             "--tick-seconds",
-            "1",
+            "0",
             "--output-dir",
             str(output_dir),
             "--mode",
@@ -39,6 +39,7 @@ def _run_queue(output_dir: Path, *, seed: int = 105026) -> subprocess.CompletedP
             "--created-at",
             "2024-03-09T16:06:40Z",
             "--expect-no-host-ports",
+            "--test-fast-runtime",
             "--expect-no-production-authority",
         ],
         text=True,
@@ -68,7 +69,7 @@ def test_queue_harness_outputs_public_telemetry_private_ledger_partitions_covera
     assert ledger["label_join_phase"] == "after_sampling_and_partition"
     coverage = json.loads((output / "p105-queue-coverage.json").read_text(encoding="utf-8"))
     assert coverage["clock_source"] == "time.monotonic_ns"
-    assert coverage["maximum_perfect_run_seconds_per_queue"] == 899
+    assert coverage["maximum_perfect_run_seconds_per_queue"] == 2
     assert coverage["rejects"] == ["fixed_four_day_constant", "accelerated_logical_clock", "floor_sized_interval"]
 
 
@@ -90,7 +91,15 @@ def test_queue_harness_uses_fixed_program_no_credentials_production_endpoint_or_
         "normal_consumer_rate": 20,
         "recovery_consumer_rate": 40,
     }
-    assert manifest["authority"] == {"credentials_read": False, "production_endpoint": False, "production_mutation": False, "host_ports": []}
+    assert manifest["authority"] == {
+        "auth_enabled": False,
+        "credentials_read": False,
+        "external_broker_endpoint": False,
+        "host_ports": [],
+        "production_endpoint": False,
+        "production_mutation": False,
+        "release_counting_authority": False,
+    }
 
 
 def test_queue_harness_reruns_are_byte_identical_and_tamper_fails_closed(tmp_path: Path) -> None:

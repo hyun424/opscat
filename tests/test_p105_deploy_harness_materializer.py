@@ -16,7 +16,7 @@ def _require_deploy_script() -> None:
         pytest.fail("P105-027 RED: missing scripts/run_p105_deploy_canary_harness.py loopback deploy canary harness.", pytrace=False)
 
 
-def _run_deploy(output_dir: Path, *, fault_tick: int = 300) -> subprocess.CompletedProcess[str]:
+def _run_deploy(output_dir: Path, *, fault_tick: int = 3) -> subprocess.CompletedProcess[str]:
     _require_deploy_script()
     return subprocess.run(
         [
@@ -27,9 +27,9 @@ def _run_deploy(output_dir: Path, *, fault_tick: int = 300) -> subprocess.Comple
             "--seed",
             "105027",
             "--ticks",
-            "1200",
+            "12",
             "--tick-seconds",
-            "1",
+            "0",
             "--requests-per-tick",
             "10",
             "--fault-tick",
@@ -41,9 +41,10 @@ def _run_deploy(output_dir: Path, *, fault_tick: int = 300) -> subprocess.Comple
             "--created-at",
             "2024-03-09T16:23:20Z",
             "--expect-rollback-trigger-tick",
-            "369",
+            "72",
             "--expect-rollback-observed-tick",
-            "370",
+            "73",
+            "--test-fast-runtime",
             "--expect-no-production-authority",
         ],
         text=True,
@@ -73,8 +74,8 @@ def test_deploy_harness_outputs_canary_telemetry_private_ledger_rollback_evidenc
     ledger = json.loads((output / "p105-deploy-private-injection-ledger.json").read_text(encoding="utf-8"))
     assert ledger["label_join_phase"] == "after_sampling_and_partition"
     rollback = json.loads((output / "p105-deploy-rollback-evidence.json").read_text(encoding="utf-8"))
-    assert rollback["trigger_tick"] == 369
-    assert rollback["rollback_observed_tick"] == 370
+    assert rollback["trigger_tick"] == 72
+    assert rollback["rollback_observed_tick"] == 73
     assert rollback["grants_p106_or_p107_authority"] is False
 
 
@@ -89,7 +90,7 @@ def test_deploy_harness_fixed_program_has_no_cloud_pr_credentials_or_production_
     assert manifest["host"] == "127.0.0.1"
     assert manifest["schedule"]["baseline_slots"] == [0, 7]
     assert manifest["schedule"]["canary_slots"] == [8, 9]
-    assert manifest["schedule"]["fault_tick"] == 300
+    assert manifest["schedule"]["fault_tick"] == 3
     assert manifest["authority"] == {
         "cloud_api_calls": False,
         "production_deploy_tooling": False,

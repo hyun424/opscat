@@ -16,6 +16,27 @@ REGISTRY_SCHEMA_VERSION = "p105.source-registry.v1"
 ELIGIBILITY_SCHEMA_VERSION = "p105.source-eligibility.v1"
 LEDGER_SCHEMA_VERSION = "p105.source-review-ledger.v1"
 SOURCE_MANIFEST_SCHEMA_VERSION = "p105.reviewed-local-source.v1"
+REQUIRED_SCHEMA_ADAPTERS = {
+    "p32": "p105.adapter.p32-replay.v1",
+    "p41": "p105.adapter.p41-sources.v1",
+    "p44": "p105.adapter.p44-reviewed-local.v1",
+    "dejavu_a1": "p105.adapter.dejavu-a1-reviewed-local.v1",
+    "db_pool": "p105.adapter.database-pool-harness.v1",
+    "queue": "p105.adapter.rabbitmq-harness.v1",
+    "deploy": "p105.adapter.threading-http-deploy-harness.v1",
+}
+KNOWN_ROOT_SCHEMAS = {
+    SOURCE_MANIFEST_SCHEMA_VERSION,
+    "p105.reviewed_p44_local_manifest.v1",
+    "p105.reviewed_p44_local_manifest.v2",
+    "p105.reviewed_p44_local_manifest.v3",
+    "p105.dejavu_a1.reviewed_local_manifest.v1",
+    "p105.database.pool.harness_manifest.v1",
+    "p105.queue.harness_manifest.v1",
+    "p105.deploy.harness_manifest.v1",
+    "p32-replay-pack.v1",
+    "p41-raw-sources-v1",
+}
 ALLOWED_UNSUPPORTED_REASONS = {
     "unreviewed_source",
     "license_rejected",
@@ -112,6 +133,39 @@ def _validate_adapter(value: Any, *, context: str) -> dict[str, Any]:
         "command_argv_sha256": _json_sha256(command_argv),
     }
     return adapter
+
+
+def _parse_schema_adapters(values: list[str] | None) -> dict[str, str]:
+    adapters: dict[str, str] = {}
+    for value in values or []:
+        if "=" not in value:
+            raise RegistryError("unknown_source_schema: schema adapters must be source=adapter_version")
+        key, version = value.split("=", 1)
+        if not key or not version:
+            raise RegistryError("unknown_source_schema: schema adapters must be source=adapter_version")
+        adapters[key] = version
+    return adapters
+
+
+def _validate_schema_adapters(adapters: dict[str, str], *, fail_on_unknown_source_schema: bool) -> None:
+    if not fail_on_unknown_source_schema:
+        return
+    missing = [key for key, expected in REQUIRED_SCHEMA_ADAPTERS.items() if adapters.get(key) != expected]
+    unknown = [key for key in adapters if key not in REQUIRED_SCHEMA_ADAPTERS]
+    if missing or unknown:
+        raise RegistryError(f"unknown_source_schema: missing={','.join(missing)} unknown={','.join(unknown)}")
+
+
+def _root_schema(manifest: dict[str, Any]) -> str:
+    return str(manifest.get("schema_version") or manifest.get("version") or ("p32-replay-pack.v1" if manifest.get("id") == "p32-real-telemetry-replay-pack" else ""))
+
+
+def _validate_known_root_schema(manifest_path: Path, manifest: dict[str, Any], *, fail_on_unknown_source_schema: bool) -> None:
+    if not fail_on_unknown_source_schema:
+        return
+    schema = _root_schema(manifest)
+    if schema not in KNOWN_ROOT_SCHEMAS:
+        raise RegistryError(f"unknown_source_schema: {manifest_path}: {schema or 'missing'}")
 
 
 def _validate_license(value: Any, *, context: str) -> dict[str, str]:
@@ -236,6 +290,88 @@ def _registry_source(manifest_path: Path, manifest: dict[str, Any]) -> dict[str,
     return source
 
 
+def _adapter_key_for_manifest(manifest_path: Path, manifest: dict[str, Any]) -> str:
+    schema = _root_schema(manifest)
+    name = manifest_path.name
+    if schema == "p32-replay-pack.v1" or "p32" in name:
+        return "p32"
+    if schema == "p41-raw-sources-v1" or "p41" in name:
+        return "p41"
+    if "dejavu" in schema or "dejavu" in name:
+        return "dejavu_a1"
+    if "database.pool" in schema or "db-pool" in name or "db_pool" in name:
+        return "db_pool"
+    if "queue" in schema or "queue" in name:
+        return "queue"
+    if "deploy" in schema or "deploy" in name:
+        return "deploy"
+    if "p44" in schema or "p44" in name:
+        return "p44"
+    return "unknown"
+
+
+def _generic_registry_source(manifest_path: Path, manifest: dict[str, Any], adapters: dict[str, str], *, fail_on_unknown_source_schema: bool) -> dict[str, Any]:
+    context = f"source manifest {manifest_path}"
+    adapter_key = _adapter_key_for_manifest(manifest_path, manifest)
+    adapter_version = adapters.get(adapter_key)
+    if not adapter_version and fail_on_unknown_source_schema:
+        raise RegistryError(f"unknown_source_schema: missing adapter mapping for {adapter_key}")
+    if not adapter_version:
+        adapter_version = f"compatibility-inferred:{adapter_key}"
+    schema = _root_schema(manifest)
+    source_key = str(manifest.get("source_key") or manifest.get("id") or manifest.get("source_id") or manifest_path.stem)
+    family = str(manifest.get("source_family_candidate") or manifest.get("family") or UNSUPPORTED_FAMILY)
+    if family not in SUPPORTED_FAMILIES:
+        family = UNSUPPORTED_FAMILY
+    command_argv = [adapter_key, str(manifest_path)]
+    source = {
+        "source_key": source_key,
+        "source_system": adapter_key,
+        "source_dataset": str(manifest.get("source_dataset") or manifest.get("title") or manifest_path.stem),
+        "source_family_candidate": family,
+        "source_manifest_path": _normalize_path(manifest_path),
+        "source_manifest_sha256": _file_sha256(manifest_path),
+        "source_content_hashes": [{"path": _normalize_path(manifest_path), "sha256": _file_sha256(manifest_path)}],
+        "adapter_or_harness": {
+            "name": adapter_key,
+            "version": adapter_version,
+            "command_argv": command_argv,
+            "command_argv_sha256": _json_sha256(command_argv),
+        },
+        "created_at": str(manifest.get("created_at") or ""),
+        "license": {
+            "name": str(manifest.get("license_name") or "review-required"),
+            "url": str(manifest.get("license_url") or "https://example.invalid/review-required"),
+            "citation_text": str(manifest.get("citation_text") or "review required before release counting"),
+            "redistribution_status": str(manifest.get("redistribution_status") or "review-required"),
+        },
+        "privacy": {
+            "review_status": str(manifest.get("review_status") or "unreviewed"),
+            "reviewer_id": str(manifest.get("reviewer_id") or ""),
+            "reviewed_at": str(manifest.get("reviewed_at") or ""),
+            "redaction_status": str(manifest.get("redaction_status") or ""),
+            "notes": f"normalized by explicit schema adapter {adapter_version} from root schema {schema}",
+        },
+        "root_schema_version": schema,
+    }
+    if not schema:
+        raise RegistryError(f"{context} missing root schema")
+    source["provenance_sha256"] = _json_sha256(source)
+    return source
+
+
+def _registry_sources_for_manifest(
+    manifest_path: Path,
+    manifest: dict[str, Any],
+    adapters: dict[str, str],
+    *,
+    fail_on_unknown_source_schema: bool,
+) -> list[dict[str, Any]]:
+    if manifest.get("schema_version") == SOURCE_MANIFEST_SCHEMA_VERSION:
+        return [_registry_source(manifest_path, manifest)]
+    return [_generic_registry_source(manifest_path, manifest, adapters, fail_on_unknown_source_schema=fail_on_unknown_source_schema)]
+
+
 def _eligibility_entry(source: dict[str, Any], decision: dict[str, Any] | None) -> dict[str, Any]:
     privacy = source["privacy"]
     reviewed = privacy["review_status"] == "reviewed-local" and bool(privacy["reviewer_id"]) and bool(privacy["reviewed_at"])
@@ -278,9 +414,13 @@ def build_registry(
     schema_version: str,
     command_argv: list[str],
     fail_on_unreviewed_counting_source: bool,
+    schema_adapters: dict[str, str] | None = None,
+    fail_on_unknown_source_schema: bool = False,
 ) -> tuple[dict[str, Any], dict[str, Any], list[str]]:
     if schema_version != REGISTRY_SCHEMA_VERSION:
         raise RegistryError(f"schema_version must be {REGISTRY_SCHEMA_VERSION}")
+    adapters = dict(schema_adapters or {})
+    _validate_schema_adapters(adapters, fail_on_unknown_source_schema=fail_on_unknown_source_schema)
     ledger_sha256, decisions = _load_decisions(review_ledger)
     errors: list[str] = []
     sources: list[dict[str, Any]] = []
@@ -288,16 +428,22 @@ def build_registry(
 
     for manifest_path in candidate_manifests:
         manifest = _read_json(manifest_path, "source manifest")
-        source = _registry_source(manifest_path, manifest)
-        source_key = str(source["source_key"])
-        decision = decisions.get(source_key)
-        if decision is not None and decision["source_manifest_sha256"] != source["source_manifest_sha256"]:
-            raise RegistryError(f"source manifest hash mismatch for {source_key}: reviewed metadata was tampered")
-        sources.append(source)
-        entry = _eligibility_entry(source, decision)
-        entries.append(entry)
-        if fail_on_unreviewed_counting_source and entry["unsupported_family_reason"] == "unreviewed_source":
-            errors.append(f"{source_key}: unreviewed source is unsupported_family and cannot count")
+        _validate_known_root_schema(manifest_path, manifest, fail_on_unknown_source_schema=fail_on_unknown_source_schema)
+        for source in _registry_sources_for_manifest(
+            manifest_path,
+            manifest,
+            adapters,
+            fail_on_unknown_source_schema=fail_on_unknown_source_schema,
+        ):
+            source_key = str(source["source_key"])
+            decision = decisions.get(source_key)
+            if decision is not None and decision["source_manifest_sha256"] != source["source_manifest_sha256"]:
+                raise RegistryError(f"source manifest hash mismatch for {source_key}: reviewed metadata was tampered")
+            sources.append(source)
+            entry = _eligibility_entry(source, decision)
+            entries.append(entry)
+            if fail_on_unreviewed_counting_source and entry["unsupported_family_reason"] == "unreviewed_source":
+                errors.append(f"{source_key}: unreviewed source is unsupported_family and cannot count")
 
     command_hash = _json_sha256(command_argv)
     sources.sort(key=lambda item: str(item["source_key"]))
@@ -309,6 +455,7 @@ def build_registry(
         "command_argv_sha256": command_hash,
         "review_ledger_path": _normalize_path(review_ledger),
         "review_ledger_sha256": ledger_sha256,
+        "schema_adapters": dict(sorted(adapters.items())),
         "sources": sources,
     }
     registry["registry_sha256"] = _json_sha256(registry)
@@ -319,6 +466,7 @@ def build_registry(
         "command_argv_sha256": command_hash,
         "registry_sha256": registry["registry_sha256"],
         "review_ledger_sha256": ledger_sha256,
+        "schema_adapters": dict(sorted(adapters.items())),
         "entries": entries,
         "output_registry_path": _normalize_path(output_registry),
         "output_eligibility_path": _normalize_path(output_eligibility),
@@ -340,11 +488,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-eligibility", required=True, type=Path)
     parser.add_argument("--created-at", required=True)
     parser.add_argument("--schema-version", required=True)
+    parser.add_argument("--schema-adapter", action="append", default=[])
+    parser.add_argument("--fail-on-unknown-source-schema", action="store_true")
     parser.add_argument("--fail-on-unreviewed-counting-source", action="store_true")
     args = parser.parse_args(argv)
 
     command_argv = [sys.executable, str(Path(__file__)), *(argv if argv is not None else sys.argv[1:])]
     try:
+        schema_adapters = _parse_schema_adapters(args.schema_adapter)
         registry, eligibility, errors = build_registry(
             candidate_manifests=args.candidate_manifest,
             review_ledger=args.review_ledger,
@@ -354,6 +505,8 @@ def main(argv: list[str] | None = None) -> int:
             schema_version=args.schema_version,
             command_argv=command_argv,
             fail_on_unreviewed_counting_source=args.fail_on_unreviewed_counting_source,
+            schema_adapters=schema_adapters,
+            fail_on_unknown_source_schema=args.fail_on_unknown_source_schema,
         )
     except RegistryError as exc:
         print(str(exc), file=sys.stderr)

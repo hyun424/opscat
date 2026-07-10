@@ -400,7 +400,7 @@ def test_every_qualified_row_has_reconstructable_p24_parity_without_seed_fallbac
         assert "fallback_source_window_id" not in parity
 
 
-def test_materializer_output_is_self_benchmarkable_with_private_ledger_join_and_no_public_label_leakage(tmp_path: Path) -> None:
+def test_materializer_output_is_self_benchmarkable_but_stays_locked_without_actual_coverage(tmp_path: Path) -> None:
     output_dir = _materialize_reviewed_local(tmp_path)
     rows_path = output_dir / "p105-release-qualified-rows.json"
     payload = json.loads(rows_path.read_text(encoding="utf-8"))
@@ -414,21 +414,27 @@ def test_materializer_output_is_self_benchmarkable_with_private_ledger_join_and_
 
     assert report["private_ledger_join"]["source"] == "p105-private-scorer-label-ledger.json"
     assert report["private_ledger_join"]["joined_row_count"] == len(payload["rows"])
-    assert report["release_gate"]["release_qualified"] is True
-    assert report["release_gate"]["p106_unlocked"] is True
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
+    assert report["release_gate"]["qualification_floors"]["pass"] is False
+    for family in ("database", "deploy", "queue"):
+        coverage = report["release_gate"]["qualification_floors"]["service_day_coverage"]["families"][family]
+        assert coverage["union_service_days"] == 0.0
+        assert coverage["pass"] is False
 
 
-def test_validator_reports_real_gate_outcome_instead_of_forcing_false(tmp_path: Path) -> None:
+def test_validator_preserves_actual_coverage_lock_instead_of_forcing_success(tmp_path: Path) -> None:
     output_dir = _materialize_reviewed_local(tmp_path)
     rows_path = output_dir / "p105-release-qualified-rows.json"
 
     benchmark_report = _api().run_p105_benchmark(rows_path)
     validation = _validate_artifact(rows_path)
 
-    assert benchmark_report["release_gate"]["release_qualified"] is True
-    assert benchmark_report["release_gate"]["p106_unlocked"] is True
-    assert validation["release_gate"]["release_qualified"] is True
-    assert validation["release_gate"]["p106_unlocked"] is True
+    assert benchmark_report["release_gate"]["release_qualified"] is False
+    assert benchmark_report["release_gate"]["p106_unlocked"] is False
+    assert validation["release_gate"]["release_qualified"] is False
+    assert validation["release_gate"]["p106_unlocked"] is False
+    assert validation["release_gate"]["qualification_floors"]["service_day_coverage"]["pass"] is False
 
 
 def test_qualified_artifact_requires_privacy_license_citation_and_provenance_manifests(tmp_path: Path) -> None:

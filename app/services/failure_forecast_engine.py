@@ -13,6 +13,7 @@ import csv
 import hashlib
 import json
 import re
+import sys
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
@@ -130,6 +131,19 @@ P105_SOURCE_EXPANSION_FLOORS: Mapping[str, Mapping[str, int | float]] = {
 P105_SOURCE_EXPANSION_FAMILIES = frozenset({"database", "deploy", "queue"})
 P105_REVIEWED_FAMILY_AUTHORITY_SOURCES = frozenset({"reviewed_registry", "reviewed_source_registry", "registry_review"})
 P105_ACTUAL_COVERAGE_SOURCES = frozenset({"actual", "actual_source_run", "actual_source_runs", "measured", "reviewed_measured"})
+P105_RELEASE_COUNTING_RUNTIME_KINDS = frozenset({"actual_sqlite_pool", "actual_rabbitmq_docker", "actual_threading_http_server"})
+P105_FORGED_RELEASE_COUNTING_KEYS = frozenset(
+    {"verified_release_counting", "release_counting_allowed", "counting_rows", "counting_coverage_seconds"}
+)
+P105_REQUIRED_SCHEMA_ADAPTERS: Mapping[str, str] = {
+    "p32": "p105.adapter.p32-replay.v1",
+    "p41": "p105.adapter.p41-sources.v1",
+    "p44": "p105.adapter.p44-reviewed-local.v1",
+    "dejavu_a1": "p105.adapter.dejavu-a1-reviewed-local.v1",
+    "db_pool": "p105.adapter.database-pool-harness.v1",
+    "queue": "p105.adapter.rabbitmq-harness.v1",
+    "deploy": "p105.adapter.threading-http-deploy-harness.v1",
+}
 P105_LOG_PARSER_VERSION = "p105-reviewed-redacted-log-parser-v1"
 G006_RELEASE_BENCHMARK_PATH = Path("evals/proactive/forecast/p105_release_benchmark_rows.json")
 P24_PROACTIVE_FIXTURE_PATH = Path("evals/proactive/seed/risk_windows.json")
@@ -1783,7 +1797,8 @@ def validate_p105_source_expansion_release_inputs(
             if eligible and family in families and source_key not in reviewed_source_keys:
                 codes.add("source_not_in_reviewed_registry")
                 errors.append(f"{source_key}: source not present in reviewed registry")
-            if eligible and family in families and _p105_entry_has_actual_coverage(entry, codes, errors):
+            runtime_ok = _p105_entry_has_actual_runtime(entry, codes, errors)
+            if eligible and family in families and runtime_ok and _p105_entry_has_actual_coverage(entry, codes, errors):
                 counting_coverage_seconds += int(float(entry.get("coverage_seconds", 0) or 0))
 
     unsupported_count = 0
@@ -2129,6 +2144,29 @@ def _g006_p24_input(row_id: str, source_window_id: str, family: str, record: Map
     }
 
 
+def _g006_public_coverage_interval(record: Mapping[str, Any], family: str, partition: str, row_id: str) -> dict[str, Any] | None:
+    interval = record.get("coverage_interval") if isinstance(record.get("coverage_interval"), Mapping) else None
+    if interval is None:
+        return None
+    timestamp_source = str(interval.get("timestamp_source") or "actual_source_interval")
+    if timestamp_source in {"fixed_four_day_constant", "row_count_duration", "floor_sized_interval", "timestamp_padding"}:
+        return None
+    start = str(interval.get("start") or "")
+    end = str(interval.get("end") or "")
+    if not start or not end:
+        return None
+    return {
+        "coverage_interval_id": str(interval.get("coverage_interval_id") or interval.get("id") or f"coverage:{row_id}"),
+        "split_id": str(interval.get("split_id") or f"g006-{partition}"),
+        "family": str(interval.get("family") or family),
+        "service": str(interval.get("service") or record.get("service") or f"{family}-service"),
+        "source_system": str(interval.get("source_system") or record.get("source_system") or ""),
+        "start": start,
+        "end": end,
+        "timestamp_source": timestamp_source,
+    }
+
+
 def _g006_row_from_record(
     *,
     source_system: str,
@@ -2188,6 +2226,7 @@ def _g006_row_from_record(
             "canonical_source_tuple": canonical,
             "record_offset": record_offset,
             "source_timestamp": forecast_timestamp,
+            "coverage_interval": _g006_public_coverage_interval(record, family, partition, row_id),
         },
         "p24_input": p24_input,
         "p24_input_hash": p24_input_hash,
@@ -2558,12 +2597,43 @@ def materialize_p105_release_qualified_evidence(
     output_dir: str | Path,
     mode: str = RELEASE_QUALIFIED_MODE,
     p44_reviewed_local_manifest: str | Path | None = None,
+    dejavu_a1_reviewed_local_manifest: str | Path | None = None,
+    db_pool_harness_manifest: str | Path | None = None,
+    queue_harness_manifest: str | Path | None = None,
+    deploy_harness_manifest: str | Path | None = None,
+    source_registry: str | Path | None = None,
+    source_eligibility: str | Path | None = None,
+    schema_adapters: Mapping[str, str] | None = None,
+    reject_synthetic_four_day_coverage: bool = False,
+    require_actual_runtime_attestation: bool = False,
+    fail_on_unknown_source_schema: bool = False,
+    source_runtime_qualification_receipt: str | Path | None = None,
+    count_only_verified_release_receipts: bool = False,
     expect_locked: bool = False,
 ) -> dict[str, Any]:
     """Materialize deterministic local-only G006 release-qualified candidate artifacts."""
 
     if mode != RELEASE_QUALIFIED_MODE:
         raise ValueError("G006 materializer only supports release_qualified mode")
+    strict_codes = _g006_validate_materializer_runtime_inputs(
+        p32_replay=p32_replay,
+        p41_sources=p41_sources,
+        p44_reviewed_local_manifest=p44_reviewed_local_manifest,
+        dejavu_a1_reviewed_local_manifest=dejavu_a1_reviewed_local_manifest,
+        db_pool_harness_manifest=db_pool_harness_manifest,
+        queue_harness_manifest=queue_harness_manifest,
+        deploy_harness_manifest=deploy_harness_manifest,
+        source_registry=source_registry,
+        source_eligibility=source_eligibility,
+        schema_adapters=schema_adapters,
+        reject_synthetic_four_day_coverage=reject_synthetic_four_day_coverage,
+        require_actual_runtime_attestation=require_actual_runtime_attestation,
+        fail_on_unknown_source_schema=fail_on_unknown_source_schema,
+        source_runtime_qualification_receipt=source_runtime_qualification_receipt,
+        count_only_verified_release_receipts=count_only_verified_release_receipts,
+    )
+    if strict_codes:
+        raise ValueError(",".join(sorted(strict_codes)))
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
     p32_path = Path(p32_replay)
@@ -2763,20 +2833,26 @@ def _g006_coverage_manifest_from_rows(rows: Sequence[Mapping[str, Any]]) -> dict
                 continue
             provenance = row.get("source_record_provenance", {}) if isinstance(row.get("source_record_provenance"), Mapping) else {}
             canonical = provenance.get("canonical_source_tuple", {}) if isinstance(provenance.get("canonical_source_tuple"), Mapping) else {}
-            source_ts = str(provenance.get("source_timestamp") or row.get("forecast_timestamp") or "")
-            if not source_ts:
+            interval = provenance.get("coverage_interval") if isinstance(provenance.get("coverage_interval"), Mapping) else None
+            if interval is None:
                 continue
-            start = _parse_ts(source_ts)
-            end = start + timedelta(days=4)
+            start_text = str(interval.get("start") or "")
+            end_text = str(interval.get("end") or "")
+            if not start_text or not end_text:
+                continue
+            start = _parse_ts(start_text)
+            end = _parse_ts(end_text)
+            if end <= start:
+                continue
             intervals.append(
                 {
-                    "split_id": str(row.get("split_id") or f"g006-{row.get('partition', '')}"),
+                    "split_id": str(interval.get("split_id") or row.get("split_id") or f"g006-{row.get('partition', '')}"),
                     "family": family,
-                    "service": str(row.get("service") or f"{family}-service"),
-                    "source_system": str(canonical.get("source_system") or ""),
+                    "service": str(interval.get("service") or row.get("service") or f"{family}-service"),
+                    "source_system": str(interval.get("source_system") or canonical.get("source_system") or ""),
                     "start": start.isoformat().replace("+00:00", "Z"),
                     "end": end.isoformat().replace("+00:00", "Z"),
-                    "timestamp_source": "raw_source_record",
+                    "timestamp_source": str(interval.get("timestamp_source") or "actual_source_interval"),
                     "source_record_provenance_hash": _sha256_text(_stable_json(provenance)),
                 }
             )
@@ -2787,8 +2863,9 @@ def _g006_coverage_manifest_from_rows(rows: Sequence[Mapping[str, Any]]) -> dict
             "coverage_intervals": intervals,
         }
     return {
-        "false_alert_denominator_method": "merged_interval_union",
+        "false_alert_denominator_method": "actual_observed_interval_union",
         "union_scope_keys": ["split_id", "family", "service", "source_system"],
+        "rejects": ["fixed_four_day_constant", "row_count_duration", "floor_sized_interval", "timestamp_padding"],
         "service_day_coverage": coverage,
         "source_service_day_coverage_sha256": _sha256_text(_stable_json(coverage)),
         "row_count": len(rows),
@@ -3344,23 +3421,52 @@ def build_p105_materializer_cli_parser() -> argparse.ArgumentParser:
     parser.add_argument("--p41-sources", required=True)
     parser.add_argument("--p44-reviewed-local-manifest", default=None)
     parser.add_argument("--p44-mode", choices=("disabled", "reviewed-local"), required=True)
+    parser.add_argument("--dejavu-a1-reviewed-local-manifest", default=None)
+    parser.add_argument("--db-pool-harness-manifest", default=None)
+    parser.add_argument("--queue-harness-manifest", default=None)
+    parser.add_argument("--deploy-harness-manifest", default=None)
+    parser.add_argument("--schema-adapter", action="append", default=[])
+    parser.add_argument("--source-registry", default=None)
+    parser.add_argument("--source-eligibility", default=None)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--mode", default=RELEASE_QUALIFIED_MODE)
+    parser.add_argument("--reject-synthetic-four-day-coverage", action="store_true")
+    parser.add_argument("--require-actual-runtime-attestation", action="store_true")
+    parser.add_argument("--fail-on-unknown-source-schema", action="store_true")
+    parser.add_argument("--source-runtime-qualification-receipt", default=None)
+    parser.add_argument("--count-only-verified-release-receipts", action="store_true")
     parser.add_argument("--expect-locked", action="store_true")
     return parser
 
 
 def run_p105_materializer_cli(argv: Sequence[str] | None = None) -> int:
     args = build_p105_materializer_cli_parser().parse_args(argv)
-    result = materialize_p105_release_qualified_evidence(
-        p32_replay=args.p32_replay,
-        p41_sources=args.p41_sources,
-        p44_reviewed_local_manifest=args.p44_reviewed_local_manifest,
-        p44_mode=args.p44_mode,
-        output_dir=args.output_dir,
-        mode=args.mode,
-        expect_locked=args.expect_locked,
-    )
+    try:
+        schema_adapters = _g006_parse_schema_adapters(args.schema_adapter)
+        result = materialize_p105_release_qualified_evidence(
+            p32_replay=args.p32_replay,
+            p41_sources=args.p41_sources,
+            p44_reviewed_local_manifest=args.p44_reviewed_local_manifest,
+            p44_mode=args.p44_mode,
+            dejavu_a1_reviewed_local_manifest=args.dejavu_a1_reviewed_local_manifest,
+            db_pool_harness_manifest=args.db_pool_harness_manifest,
+            queue_harness_manifest=args.queue_harness_manifest,
+            deploy_harness_manifest=args.deploy_harness_manifest,
+            source_registry=args.source_registry,
+            source_eligibility=args.source_eligibility,
+            schema_adapters=schema_adapters,
+            output_dir=args.output_dir,
+            mode=args.mode,
+            reject_synthetic_four_day_coverage=args.reject_synthetic_four_day_coverage,
+            require_actual_runtime_attestation=args.require_actual_runtime_attestation,
+            fail_on_unknown_source_schema=args.fail_on_unknown_source_schema,
+            source_runtime_qualification_receipt=args.source_runtime_qualification_receipt,
+            count_only_verified_release_receipts=args.count_only_verified_release_receipts,
+            expect_locked=args.expect_locked,
+        )
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
     print(json.dumps({"release_gate": result["release_gate"], "artifact_hashes": result["artifact_hashes"]}, indent=2, sort_keys=True))
     return 0
 
@@ -4009,6 +4115,125 @@ def _p105_entry_has_actual_coverage(entry: Mapping[str, Any], codes: set[str], e
         errors.append(f"{source_key}: synthetic four-day coverage does not count")
         return False
     return actual
+
+
+def _p105_entry_has_actual_runtime(entry: Mapping[str, Any], codes: set[str], errors: list[str]) -> bool:
+    source_key = str(entry.get("source_key") or "")
+    forged_keys = sorted(key for key in P105_FORGED_RELEASE_COUNTING_KEYS if key in entry)
+    if forged_keys:
+        codes.add("source_forged_release_counting_authority")
+        errors.append(f"{source_key}: source artifact cannot grant release counting authority: {', '.join(forged_keys)}")
+    attestation = entry.get("runtime_attestation")
+    if not isinstance(attestation, Mapping):
+        return not forged_keys
+    kind = str(attestation.get("kind") or "")
+    if kind not in P105_RELEASE_COUNTING_RUNTIME_KINDS:
+        codes.add("runtime_attestation_not_actual")
+        errors.append(f"{source_key}: runtime_attestation.kind is non-counting: {kind or 'missing'}")
+        return False
+    return not forged_keys
+
+
+def _g006_parse_schema_adapters(values: Sequence[str] | None) -> dict[str, str]:
+    adapters: dict[str, str] = {}
+    for value in values or ():
+        if "=" not in value:
+            raise ValueError("unknown_source_schema")
+        key, version = value.split("=", 1)
+        if not key or not version:
+            raise ValueError("unknown_source_schema")
+        adapters[key] = version
+    return adapters
+
+
+def _g006_validate_schema_adapters(adapters: Mapping[str, str] | None, *, fail_on_unknown_source_schema: bool) -> set[str]:
+    if not fail_on_unknown_source_schema:
+        return set()
+    if adapters is None:
+        return {"unknown_source_schema"}
+    supplied = dict(adapters)
+    codes: set[str] = set()
+    for key, expected in P105_REQUIRED_SCHEMA_ADAPTERS.items():
+        if supplied.get(key) != expected:
+            codes.add("unknown_source_schema")
+    for key in supplied:
+        if key not in P105_REQUIRED_SCHEMA_ADAPTERS:
+            codes.add("unknown_source_schema")
+    return codes
+
+
+def _g006_receipt_is_verified(receipt_path: str | Path | None) -> bool:
+    if receipt_path is None:
+        return False
+    try:
+        receipt = _load_json(receipt_path)
+    except FileNotFoundError:
+        return False
+    created_by = str(receipt.get("created_by") or receipt.get("verified_by") or "")
+    envelopes = _mapping_sequence(receipt.get("run_envelopes", ()))
+    return (
+        receipt.get("schema_version") == "p105.source-runtime-qualification.v1"
+        and receipt.get("verified_release_counting") is True
+        and created_by in {"p105-source-expansion-verifier", "scripts/verify_p105_source_expansion_artifacts.py"}
+        and bool(envelopes)
+    )
+
+
+def _g006_validate_materializer_runtime_inputs(
+    *,
+    p32_replay: str | Path,
+    p41_sources: str | Path,
+    p44_reviewed_local_manifest: str | Path | None,
+    dejavu_a1_reviewed_local_manifest: str | Path | None,
+    db_pool_harness_manifest: str | Path | None,
+    queue_harness_manifest: str | Path | None,
+    deploy_harness_manifest: str | Path | None,
+    source_registry: str | Path | None,
+    source_eligibility: str | Path | None,
+    schema_adapters: Mapping[str, str] | None,
+    reject_synthetic_four_day_coverage: bool,
+    require_actual_runtime_attestation: bool,
+    fail_on_unknown_source_schema: bool,
+    source_runtime_qualification_receipt: str | Path | None,
+    count_only_verified_release_receipts: bool,
+) -> set[str]:
+    codes = _g006_validate_schema_adapters(schema_adapters, fail_on_unknown_source_schema=fail_on_unknown_source_schema)
+    if count_only_verified_release_receipts and not _g006_receipt_is_verified(source_runtime_qualification_receipt):
+        codes.add("forged_source_runtime_receipt")
+    if require_actual_runtime_attestation and source_runtime_qualification_receipt is None:
+        codes.add("runtime_attestation_not_actual")
+    if reject_synthetic_four_day_coverage:
+        paths = (
+            p32_replay,
+            p41_sources,
+            p44_reviewed_local_manifest,
+            dejavu_a1_reviewed_local_manifest,
+            db_pool_harness_manifest,
+            queue_harness_manifest,
+            deploy_harness_manifest,
+            source_registry,
+            source_eligibility,
+        )
+        for path_value in paths:
+            if path_value is not None and _g006_path_contains_synthetic_four_day_coverage(Path(path_value)):
+                codes.add("synthetic_four_day_coverage")
+                break
+    return codes
+
+
+def _g006_path_contains_synthetic_four_day_coverage(path: Path) -> bool:
+    if not path.exists() or not path.is_file():
+        return False
+    try:
+        text = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        return False
+    return (
+        "fixed_four_day_constant" in text
+        or "fabricated-four-day" in text
+        or '"duration_seconds": 345600' in text
+        or '"duration_seconds":345600' in text
+    )
 
 
 def _p105_macro_sequence_complete(macro: Mapping[str, Any], codes: set[str], errors: list[str]) -> bool:

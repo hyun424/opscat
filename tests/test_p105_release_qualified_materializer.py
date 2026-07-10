@@ -841,7 +841,7 @@ def test_materializer_cli_reviewed_local_p44_v3_positive_contract(tmp_path: Path
     assert (tmp_path / "p105-private-scorer-label-ledger.json").exists()
 
 
-def test_reviewed_local_p44_v3_end_to_end_materializes_and_unlocks_release_gate(tmp_path: Path) -> None:
+def test_reviewed_local_p44_v3_end_to_end_stays_locked_without_actual_coverage(tmp_path: Path) -> None:
     reviewed_manifest = _write_honest_v3_p44_dataset(tmp_path)
     output_dir = tmp_path / "qualified-output"
 
@@ -866,13 +866,15 @@ def test_reviewed_local_p44_v3_end_to_end_materializes_and_unlocks_release_gate(
         result["source_input_manifest"],
         sort_keys=True,
     )
-    assert result["release_gate"] == {"release_qualified": True, "p106_unlocked": True}
+    assert result["release_gate"]["release_qualified"] is False
+    assert result["release_gate"]["p106_unlocked"] is False
 
     rows_path = output_dir / REQUIRED_OUTPUTS["rows"]
     benchmark_path = output_dir / REQUIRED_OUTPUTS["benchmark"]
     report = _api().run_p105_benchmark(rows_path)
-    assert report["release_gate"]["release_qualified"] is True
-    assert report["release_gate"]["p106_unlocked"] is True
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
+    assert report["release_gate"]["qualification_floors"]["service_day_coverage"]["pass"] is False
     assert json.loads(benchmark_path.read_text(encoding="utf-8"))["release_gate"] == report["release_gate"]
 
     cli_output = output_dir / "cli-benchmark.json"
@@ -889,10 +891,10 @@ def test_reviewed_local_p44_v3_end_to_end_materializes_and_unlocks_release_gate(
         capture_output=True,
         check=False,
     )
-    assert completed.returncode == 0, completed.stderr
+    assert completed.returncode == 1, completed.stderr
     cli_report = json.loads(cli_output.read_text(encoding="utf-8"))
-    assert cli_report["release_gate"]["release_qualified"] is True
-    assert cli_report["release_gate"]["p106_unlocked"] is True
+    assert cli_report["release_gate"]["release_qualified"] is False
+    assert cli_report["release_gate"]["p106_unlocked"] is False
 
 
 def test_unsupported_reviewed_local_p44_v3_records_are_diagnostic_only_and_do_not_count_for_p106(tmp_path: Path) -> None:

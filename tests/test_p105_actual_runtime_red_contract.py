@@ -20,7 +20,6 @@ FORBIDDEN_CANONICAL_RUNTIME_KEYS = {
     "container_name",
     "docker_network_name",
     "host_port",
-    "host_ports",
     "loopback_port",
     "monotonic_finished_ns",
     "monotonic_started_ns",

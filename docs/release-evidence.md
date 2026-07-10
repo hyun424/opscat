@@ -2333,3 +2333,32 @@ UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full
 Verified result: the contributor quickstart completed with `No auth setup or production credentials were required`; the full clean-clone verification completed successfully across compile, lint, typecheck, pytest, smoke/eval checks, docs checks, and coverage; the coverage gate reported `80.71% >= 60.00%`.
 
 Boundary: P95 is clean-clone reproducibility evidence only. It performs no auth feature work, no live Sentry/GitHub/Slack/NVIDIA/provider API calls, no production credential reads, no customer-log ingestion, no production mutation, no real remediation/action execution, no production autonomy, no production operator replacement approval, and no unattended production approval.
+
+## P96 Real Prometheus Read-only Shadow Connector
+
+P96 adds the first bounded real observability read path. `prometheus.readonly` supports fixture-default `health.check`, `query.instant`, and `query.range` capabilities and an explicit real mode that calls only the configured Prometheus HTTP GET endpoints. Successful normalized metric output can be persisted as tenant/workspace-scoped incident evidence with an auditable timeline event.
+
+Artifacts:
+
+- `app/connectors/prometheus.py`
+- `app/services/connector_service.py`
+- `scripts/probe_prometheus.py`
+- `tests/test_prometheus_connector.py`
+- `tests/test_p96_release_evidence.py`
+- `docs/operations/p96-ticket-roadmap.md`
+- `docs/operations/p96-plan-review.md`
+- `docs/operations/p96-final-summary.md`
+
+Commands:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev pytest -q tests/test_prometheus_connector.py tests/test_connector_contract.py tests/test_connector_catalog.py tests/test_p96_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev ruff check app/connectors/prometheus.py app/config.py app/services/connector_service.py app/api/connectors.py scripts/probe_prometheus.py tests/test_prometheus_connector.py tests/test_p96_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev mypy app/connectors/prometheus.py app/config.py app/services/connector_service.py app/api/connectors.py scripts/probe_prometheus.py tests/test_prometheus_connector.py tests/test_p96_release_evidence.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/probe_prometheus.py
+UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full
+```
+
+Verified result: Prometheus connector tests passed 9/9; the final targeted P96/connector/catalog group passed 45 tests; targeted Ruff and mypy passed; and `bash scripts/verify.sh --profile full` passed compile, Ruff, mypy over 555 source files, the complete pytest suite, every eval/demo smoke, Docker Compose config, generated-artifact scan, whitespace checks, and coverage `80.48% >= 60.00%`. The fixture probe reports `ok=True mode=fixture capability=query.instant network_attempted=False`. No external Prometheus endpoint was contacted during verification; real HTTP behavior used deterministic injected transports.
+
+Boundary: fixture mode is network-free and remains the default. Real mode is explicit opt-in, obtains its endpoint only from trusted process configuration, rejects request-controlled destinations, requires an exact host allowlist match, permits HTTP only on loopback, uses GET only, and enforces query/response budgets. P96 adds no auth feature, write operation, remediation execution, production mutation, LLM action authority, production autonomy, or unattended production approval.

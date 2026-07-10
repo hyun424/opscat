@@ -4,7 +4,7 @@ OpsCat is a local **agentic AI on-call system** for human-on-exception operation
 
 This repository is intended as a portfolio-grade Agentic AI Engineer artifact and paid-beta design seed: it emphasizes state, tools, tenant boundaries, policy, approvals, verification, wake-up contracts, auditability, privacy, and safety boundaries rather than chatbot-style prompting.
 
-> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. It now includes asynchronous webhook queueing by default, immutable execution attempts, connector idempotency replay/conflict protection, and a server-rendered operator dashboard. See [`docs/integration-verification.md`](docs/integration-verification.md).
+> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 also adds an explicit opt-in, bounded Prometheus read-only shadow connector; fixture mode remains the default and no real actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
 
 ## Portfolio demo evidence
 
@@ -34,7 +34,7 @@ Reviewer links:
 - [`docs/portfolio-demo.md`](docs/portfolio-demo.md) — five-minute portfolio narrative and commands.
 - [`docs/operator-transcript-demo.md`](docs/operator-transcript-demo.md) — best quick transcript demo for reviewers.
 - [`docs/operator-walkthrough.md`](docs/operator-walkthrough.md) — operator walkthrough from observe to improve.
-- [`docs/release-evidence.md`](docs/release-evidence.md) — release gates, evidence commands, P93/P94 demo proof, and P95 clean-clone proof.
+- [`docs/release-evidence.md`](docs/release-evidence.md) — release gates, evidence commands, P93/P94 demo proof, P95 clean-clone proof, and the P96 Prometheus shadow connector.
 - [`docs/architecture.md`](docs/architecture.md) — local/mock architecture and safety boundaries.
 
 Boundary: the portfolio demo is local/mock-only. It performs no auth work, live APIs, credentials, network, production mutation, real remediation/action execution, or external model/API calls; it is not production autonomy.
@@ -63,11 +63,11 @@ See [`docs/human-on-exception-operations.md`](docs/human-on-exception-operations
 
 ## Paid-beta readiness stance
 
-The MVP remains local/mock-only. It is not production-ready until authentication, tenant-scoped authorization, encrypted integration token storage, real connector deployment, and redaction/idempotency tests exist. The paid-beta readiness bar and threat model are explicit in [`docs/paid-beta-readiness.md`](docs/paid-beta-readiness.md) and [`docs/threat-model.md`](docs/threat-model.md).
+The core MVP remains local/mock-first, with one explicit opt-in Prometheus read-only shadow path. It is not production-ready until authentication, tenant-scoped authorization, encrypted integration token storage, supervised real connector deployment, and broader live safety tests exist. The paid-beta readiness bar and threat model are explicit in [`docs/paid-beta-readiness.md`](docs/paid-beta-readiness.md) and [`docs/threat-model.md`](docs/threat-model.md).
 
 ## Safety boundary
 
-This MVP intentionally uses **mock Sentry/GitHub/Slack-style tools only**.
+This MVP uses **mock Sentry/GitHub/Slack-style tools by default** and exposes one explicit opt-in Prometheus read-only shadow connector.
 
 It does **not** include:
 
@@ -90,6 +90,33 @@ Safety is enforced by explicit action metadata, risk classification, approval st
 - Recovery verification and markdown incident reports under `data/mock_reports/`.
 - Docker Compose for FastAPI + PostgreSQL.
 - Pytest coverage for state machine, policy, full mock alert flow, approval/rejection, workflow queueing, connector idempotency, operator dashboard scoping, and Night Autopilot.
+
+## Prometheus read-only shadow probe
+
+The default probe is an offline fixture and makes no network calls:
+
+```bash
+uv run --no-sync --extra dev python scripts/probe_prometheus.py
+```
+
+To inspect a real local or staging Prometheus endpoint, configure the trusted endpoint and exact hostname allowlist in `.env`:
+
+```bash
+OPSCAT_PROMETHEUS_BASE_URL=http://127.0.0.1:9090
+OPSCAT_PROMETHEUS_ALLOWED_HOSTS=127.0.0.1
+```
+
+Then opt into the real read explicitly:
+
+```bash
+uv run --no-sync --extra dev python scripts/probe_prometheus.py \
+  --mode real \
+  --capability query.instant \
+  --query up \
+  --output-json /tmp/opscat-prometheus-probe.json
+```
+
+The connector does not accept request-controlled endpoint URLs. It uses GET only, blocks non-allowlisted hosts, requires HTTPS outside loopback, bounds query/response size, redacts provider output, and does not perform remediation.
 
 ## Documentation map
 

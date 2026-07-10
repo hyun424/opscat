@@ -45,6 +45,21 @@ curl -s http://localhost:8000/connectors \
 
 Minimum Sentry permission for future real-mode local experiments is project/organization issue and event read access only. Do not use broad admin tokens, organization owner tokens, or tokens that can mutate projects, releases, alerts, users, or billing. If the token/config is absent, invalid, rate-limited, or the provider fails, OpsCat fails closed and records redacted connector evidence/audit metadata.
 
+### prometheus.readonly
+
+- Capabilities: `health.check`, `query.instant`, `query.range`
+- Risk: `read_only`
+- Required role: `viewer`
+- Required secret: none in P96; auth remains deferred
+- Default mode: `fixture`; no network I/O
+- Real mode: explicit `provider_mode=real` or `scripts/probe_prometheus.py --mode real`
+- Endpoint source: trusted process configuration through `OPSCAT_PROMETHEUS_BASE_URL`, never a connector request payload
+- Destination policy: exact `OPSCAT_PROMETHEUS_ALLOWED_HOSTS` match; HTTPS required outside loopback
+- Query policy: bounded query length, range duration, sample points, series, response bytes, and timeout
+- Side effects: none; GET-only reads from `/api/v1/query` and `/api/v1/query_range`
+
+Use a Prometheus account or gateway policy that can query metrics only. Do not grant configuration, rule, target, alert-manager, admin, remote-write, or delete access. P96 does not add bearer-token auth; protected deployments remain blocked until a later scoped secret-integration ticket.
+
 ### slack.wake_up
 
 - Capabilities: `messages.write`

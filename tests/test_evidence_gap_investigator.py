@@ -80,6 +80,27 @@ def _collect_keys(value: Any) -> set[str]:
     return set()
 
 
+def _collect_key_paths(value: Any, prefix: str = "") -> set[str]:
+    if isinstance(value, dict):
+        paths: set[str] = set()
+        for key, child in value.items():
+            path = f"{prefix}.{key}" if prefix else str(key)
+            paths.add(path)
+            paths.update(_collect_key_paths(child, path))
+        return paths
+    if isinstance(value, list):
+        paths: set[str] = set()
+        for index, child in enumerate(value):
+            paths.update(_collect_key_paths(child, f"{prefix}[{index}]"))
+        return paths
+    return set()
+
+
+def _assert_no_scorer_keys(value: Any) -> None:
+    leaked = {path for path in _collect_key_paths(value) if "scorer" in path.lower()}
+    assert leaked == set()
+
+
 def _base_envelope(**overrides: Any) -> dict[str, Any]:
     envelope: dict[str, Any] = {
         "episode_id": "episode-p104-red",
@@ -152,6 +173,19 @@ def _requirement(**overrides: Any) -> dict[str, Any]:
         "contradiction_policy": "block_on_unadjudicated",
         "rationale": "Confirm fresh customer-visible impact.",
     }
+    requirement.update(overrides)
+    return requirement
+
+
+def _contradiction_requirement(**overrides: Any) -> dict[str, Any]:
+    requirement = _requirement(
+        requirement_id="req-deploy-contradiction",
+        source_family="deploy",
+        candidate_tools=["deploy.read_metadata"],
+        criticality="contradiction_check",
+        accepted_states=["absent"],
+        rationale="Rule out a conflicting deploy signal.",
+    )
     requirement.update(overrides)
     return requirement
 
@@ -279,6 +313,142 @@ def test_p100_handoff_adapter_accepts_only_sufficient_for_policy_handoff_route()
             api.adapt_to_p100_policy_handoff(api.validate_decision_envelope(_base_envelope(route=route)))
 
 
+def test_validate_decision_envelope_rejects_unsound_action_ready_citations_and_hard_gaps() -> None:
+    api = _api()
+    valid_handoff = _base_envelope(
+        route="sufficient_for_policy_handoff",
+        requirements=[_requirement(), _contradiction_requirement()],
+        evidence_states=[
+            _base_envelope()["evidence_states"][0],
+            {
+                "evidence_id": "ev-deploy-no-contradiction",
+                "state": "absent",
+                "requirement_ids": ["req-deploy-contradiction"],
+                "tool_id": "deploy.read_metadata",
+                "source_family": "deploy",
+                "collected_at_tick": 12,
+                "trace_id": "trace-p104-contradiction-check",
+                "provenance": "synthetic.deploy",
+                "freshness_seconds": 60,
+                "summary": "No conflicting deployment metadata found.",
+            },
+        ],
+        sufficiency_decision={
+            "critical_requirement_ids": ["req-metrics-error-rate", "req-deploy-contradiction"],
+            "satisfied_requirement_ids": ["req-metrics-error-rate", "req-deploy-contradiction"],
+            "missing_requirement_ids": [],
+            "citation_evidence_ids": ["ev-metrics-5xx-support", "ev-deploy-no-contradiction"],
+            "telemetry_coverage": 0.94,
+            "hard_gates": [],
+        },
+    )
+    assert api.validate_decision_envelope(valid_handoff)["route"] == "sufficient_for_policy_handoff"
+
+    invalid_handoffs = [
+        valid_handoff
+        | {
+            "sufficiency_decision": {
+                **valid_handoff["sufficiency_decision"],
+                "critical_requirement_ids": [],
+            }
+        },
+        valid_handoff
+        | {
+            "sufficiency_decision": {
+                **valid_handoff["sufficiency_decision"],
+                "citation_evidence_ids": ["ev-does-not-exist"],
+            }
+        },
+        valid_handoff
+        | {
+            "evidence_states": [
+                {**valid_handoff["evidence_states"][0], "state": "stale"},
+                valid_handoff["evidence_states"][1],
+            ]
+        },
+        valid_handoff
+        | {
+            "evidence_states": [
+                {**valid_handoff["evidence_states"][0], "state": "contradicting"},
+                valid_handoff["evidence_states"][1],
+            ]
+        },
+        valid_handoff
+        | {
+            "evidence_states": [
+                {**valid_handoff["evidence_states"][0], "state": "unavailable"},
+                valid_handoff["evidence_states"][1],
+            ]
+        },
+        valid_handoff
+        | {
+            "sufficiency_decision": {
+                **valid_handoff["sufficiency_decision"],
+                "hard_gates": ["missing"],
+            },
+            "gap_payload": {"gate_failures": ["missing"]},
+        },
+    ]
+    for envelope in invalid_handoffs:
+        with pytest.raises(ValueError):
+            api.validate_decision_envelope(envelope)
+
+
+def test_p100_handoff_adapter_rejects_unsound_validated_handoff_envelopes() -> None:
+    api = _api()
+    base_handoff = _base_envelope(
+        route="sufficient_for_policy_handoff",
+        requirements=[_requirement(), _contradiction_requirement()],
+        sufficiency_decision={
+            "critical_requirement_ids": ["req-metrics-error-rate", "req-deploy-contradiction"],
+            "satisfied_requirement_ids": ["req-metrics-error-rate", "req-deploy-contradiction"],
+            "missing_requirement_ids": [],
+            "citation_evidence_ids": ["ev-metrics-5xx-support"],
+            "telemetry_coverage": 0.94,
+            "hard_gates": [],
+        },
+    )
+
+    invalid_handoffs = [
+        base_handoff
+        | {
+            "sufficiency_decision": {
+                **base_handoff["sufficiency_decision"],
+                "critical_requirement_ids": ["req-metrics-error-rate"],
+            }
+        },
+        base_handoff
+        | {
+            "sufficiency_decision": {
+                **base_handoff["sufficiency_decision"],
+                "citation_evidence_ids": ["ev-fake"],
+            }
+        },
+        base_handoff
+        | {
+            "evidence_states": [
+                {
+                    **base_handoff["evidence_states"][0],
+                    "state": "unavailable",
+                    "capability_failure": "metrics_down",
+                }
+            ]
+        },
+        base_handoff
+        | {
+            "sufficiency_decision": {
+                **base_handoff["sufficiency_decision"],
+                "hard_gates": ["contradicted"],
+            },
+            "gap_payload": {"gate_failures": ["contradicted"]},
+        },
+    ]
+
+    for envelope in invalid_handoffs:
+        with pytest.raises(ValueError):
+            api.adapt_to_p100_policy_handoff(envelope)
+
+
 def test_evidence_requirements_reject_optional_critical_unsupported_tools_and_scorer_truth() -> None:
     api = _api()
     validate = api.validate_evidence_requirement
@@ -321,6 +491,51 @@ def test_action_ready_requirement_sets_need_critical_evidence_and_contradiction_
     ):
         with pytest.raises(ValueError):
             api.validate_requirement_set(requirements, build_diagnostic_tool_catalog(), action_ready=True)
+
+
+def test_action_ready_sufficiency_requires_critical_and_contradiction_check_requirements() -> None:
+    api = _api()
+
+    only_critical = [_requirement()]
+    only_contradiction_check = [_contradiction_requirement()]
+
+    for requirements, evidence_states in (
+        (
+            only_critical,
+            [
+                {
+                    "evidence_id": "ev-metrics-support",
+                    "state": "supporting",
+                    "requirement_ids": ["req-metrics-error-rate"],
+                    "tool_id": "metrics.query",
+                    "collected_at_tick": 10,
+                    "trace_id": "trace-metrics-support",
+                }
+            ],
+        ),
+        (
+            only_contradiction_check,
+            [
+                {
+                    "evidence_id": "ev-deploy-absent",
+                    "state": "absent",
+                    "requirement_ids": ["req-deploy-contradiction"],
+                    "tool_id": "deploy.read_metadata",
+                    "collected_at_tick": 10,
+                    "trace_id": "trace-deploy-absent",
+                }
+            ],
+        ),
+    ):
+        with pytest.raises(ValueError):
+            api.decide_evidence_sufficiency(
+                hypothesis_id="checkout_deploy_regression",
+                requirement_set_id="reqset-invalid-action-ready",
+                requirements=requirements,
+                evidence_states=evidence_states,
+                telemetry_coverage=0.95,
+                now_tick=11,
+            )
 
 
 def test_evidence_state_model_distinguishes_supporting_contradicting_absent_stale_unavailable_and_duplicate() -> None:
@@ -740,6 +955,76 @@ def test_equal_state_benchmark_reports_safety_metrics_and_hides_scorer_truth() -
     }
     for forbidden in SCORER_ONLY_KEYS:
         assert forbidden not in _all_public_text(report["public_report"])
+
+
+def test_benchmark_scorecard_recomputes_false_handoff_metrics_from_rows_with_denominators() -> None:
+    api = _api()
+    payload = _seed_payload()
+    report = api.EvidenceGapBenchmark(sample_size=10).run(cases=payload["cases"], seeds=(7, 11)).to_dict()
+    truth_by_case = {case["case_id"]: case["hidden_scorer_truth"] for case in payload["cases"]}
+
+    for arm in report["summary"]["arms"]:
+        arm_rows = [row for row in report["rows"] if row["arm"] == arm]
+        false_handoff_rows = [
+            row
+            for row in arm_rows
+            if truth_by_case[row["case_id"]]["expected_sufficiency"] != "sufficient"
+        ]
+        numerator = sum(1 for row in false_handoff_rows if row["action_ready_handoff"])
+        denominator = len(false_handoff_rows)
+        expected_rate = numerator / denominator if denominator else 0.0
+
+        metric = report["scorecard"]["false_remediation_handoff_rate"][arm]
+        assert metric["numerator"] == numerator
+        assert metric["denominator"] == denominator
+        assert metric["rate"] == expected_rate
+
+
+def test_support_only_benchmark_case_cannot_claim_absence_vs_unavailable_distinction() -> None:
+    api = _api()
+    support_only_case = _case("p104-supporting-metrics-logs")
+
+    report = api.EvidenceGapBenchmark(sample_size=1).run(cases=[support_only_case], seeds=(7,)).to_dict()
+
+    distinction = report["scorecard"]["distinguishes_absence_from_unavailable"]
+    assert distinction["valid_absence_denominator"] == 0
+    assert distinction["unavailable_denominator"] == 0
+    assert distinction["passed"] is False
+
+
+def test_provider_public_packet_removes_any_key_containing_scorer() -> None:
+    api = _api()
+    envelope = api.validate_decision_envelope(
+        _base_envelope(
+            scorer_shadow="must not survive",
+            public_observation={
+                "summary": "Public symptom only.",
+                "nested_scorer_label": "hidden scorer label",
+            },
+            evidence_states=[
+                _base_envelope()["evidence_states"][0]
+                | {
+                    "scorer_shadow": "hidden evidence label",
+                    "nested": {"scorer_notes": "hidden nested label"},
+                }
+            ],
+        )
+    )
+
+    packet = api.to_public_provider_packet(envelope)
+
+    _assert_no_scorer_keys(packet)
+    assert "hidden scorer label" not in _all_public_text(packet)
+    assert "hidden evidence label" not in _all_public_text(packet)
+    assert "hidden nested label" not in _all_public_text(packet)
+
+
+def test_benchmark_public_report_removes_any_key_containing_scorer() -> None:
+    api = _api()
+
+    report = api.EvidenceGapBenchmark(sample_size=10).run(cases=_seed_payload()["cases"], seeds=(7, 11)).to_dict()
+
+    _assert_no_scorer_keys(report["public_report"])
 
 
 def test_cli_parser_boundary_rejects_invalid_bounds_without_model_or_network_defaults() -> None:

@@ -71,14 +71,16 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 
 ### P105 planning hardening
 
-- Amended P105 planning artifacts with release-hardening tickets P105-012
-  through P105-015 after final review rejected tiny-fixture gate credibility.
-- Added explicit `smoke_only` versus `release_qualified` semantics, anti-tiny-N
-  held-out and real-derived floors, P32/P41/P44 source-record provenance,
-  per-row covered-second denominators, outcome-neutral partitioning,
-  safety-conformance diagnostic semantics, post-incident leakage fail-closed
-  behavior, actual P24 parity, release docs/verify integration, and continued no
-  auth, no production mutation, and no action authority.
+- Planned P105 release-hardening tickets P105-012 through P105-015 after review
+  identified tiny-fixture gate credibility gaps.
+- Planned explicit `smoke_only`/`release_qualified` mode semantics with
+  missing-mode normalization to `smoke_only_missing_mode`, default-false
+  release/P106 status, anti-tiny-N held-out and real-derived floors,
+  P32/P41/P44 source-record provenance, unioned service-day exposure
+  denominators, outcome-neutral partitioning, private-harness-only diagnostic
+  leaks, post-incident leakage fail-closed behavior, actual P24 parity, release
+  docs/verify integration, and continued no auth, no production mutation, and no
+  action authority.
 
 ## Stable vs experimental
 

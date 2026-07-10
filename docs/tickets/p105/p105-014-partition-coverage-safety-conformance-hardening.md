@@ -16,35 +16,45 @@ performance metrics.
   scoring, preserve time ordering, and keep incident groups isolated.
 - Selection test fails if partition assignment uses label positivity, P24/P105
   score, useful lead-time outcome, false-alert outcome, or safety result.
-- Coverage test verifies every row has `covered_seconds`, every partition/family
-  denominator is `sum(row.covered_seconds)`, and false-alert/service-day never
-  reuses a top-level constant.
-- Diagnostic semantics test verifies expected precondition violations in
-  `safety_conformance_diagnostic` are excluded from performance metrics, while
-  unexpected successful forecasts, action-shaped outputs, scorer leakage, auth
-  paths, production mutation, or external calls fail safety.
+- Coverage test verifies every row has coverage intervals, service-day exposure
+  is the union of intervals per `split_id`/`family`/`service`/`source_system`
+  scope, overlapping intervals are merged before summing, and
+  false-alert/service-day never reuses a top-level constant.
+- Diagnostic semantics test verifies intentional leaked diagnostics are confined
+  to a private safety harness, expected private precondition violations are
+  excluded from performance metrics, public/release artifacts publish only
+  violation metadata and hash-safe references, and unexpected successful
+  forecasts, action-shaped outputs, scorer leakage in public/release artifacts,
+  auth paths, production mutation, or external calls fail safety.
 - Valid-row test verifies supported-family rows that are valid and evaluable
   cannot be moved into diagnostics or excluded from performance.
 
 ## Implementation Notes
 
-- Diagnostic rows are for malformed packets, unsupported families, scorer-label
-  leakage, post-incident values, mutation authority, and external-call attempts.
+- Diagnostic rows are private-harness fixtures for malformed packets,
+  unsupported families, scorer-label leakage sentinels, post-incident values,
+  mutation authority, and external-call attempts.
 - Expected diagnostic violations are not performance failures; unexpected
   success on unsafe input is a safety failure.
+- Public and release artifacts may contain only diagnostic reason codes,
+  violation category metadata, and hash-safe references that cannot reconstruct
+  scorer labels, incident IDs, post-incident values, future timestamps, or raw
+  leaked payloads.
 - Post-incident key leakage in any public training, calibration, forecast,
-  rationale, or release packet makes the affected split
-  `unevaluable_leakage_detected`.
+  rationale, release packet, model card, release evidence, or verification
+  artifact makes the affected split `unevaluable_leakage_detected`.
 
 ## Acceptance
 
 - Time ordering and incident-group isolation are mandatory for all release
   partitions.
-- `covered_seconds` denominators are row-level and reproducible.
+- Service-day denominators are reproducible unions of row coverage intervals per
+  split/family/service/source scope, with overlap merged before division by
+  86400.
 - Safety diagnostic semantics cannot be used to hide poor valid-row
   performance.
-- Any leakage or unexpected safety result keeps `release_qualified=false` and
-  `p106_unlocked=false`.
+- Any public/release leakage, raw leaked diagnostic publication, or unexpected
+  safety result keeps `release_qualified=false` and `p106_unlocked=false`.
 
 ## Verification
 

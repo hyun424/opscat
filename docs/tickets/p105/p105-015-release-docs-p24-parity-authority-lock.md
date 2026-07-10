@@ -13,6 +13,9 @@ integration, and an explicit no-authority boundary.
 - Docs contract test requires the P105 model card, final summary, release
   evidence, README, ROADMAP, CHANGELOG, and verify documentation to name run
   mode, floors, source provenance, P106 status, limitations, and stop condition.
+- Docs contract test requires release docs to identify current committed P105
+  fixtures as `smoke_only_missing_mode` unless explicit release-qualified mode
+  metadata and all hardening floors are present.
 - Release docs test verifies anti-tiny-N floors are described as credibility
   floors, not statistical significance claims.
 - Verify integration test adds P105 docs/release checks without making normal
@@ -38,6 +41,9 @@ integration, and an explicit no-authority boundary.
 - P24 baseline rows are direct parity with current P24 behavior.
 - README, ROADMAP, CHANGELOG, release evidence, and verify docs do not claim
   production authority, production mutation safety, or P106 unlock from smoke.
+- CHANGELOG wording describes P105-012 through P105-015 as planned hardening
+  work until implementation and release evidence exist; it must not imply the
+  floors, source diversity, or diagnostic harness are already implemented.
 - P106 remains blocked whenever any release-hardening requirement is missing,
   failed, or unevaluable.
 

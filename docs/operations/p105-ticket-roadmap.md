@@ -87,8 +87,12 @@ denominators and reported separately.
 - `useful_lead_time_rate = useful_true_positive_count / true_positive_count`.
   If the denominator is zero, report `null` plus the zero denominator.
 - `false_alerts_per_service_day = false_positive_count / service_days`, where
-  `service_days` is the sum of covered seconds per service divided by 86400 for
-  the evaluated split. Publish service-day coverage per family.
+  `service_days` is computed from the union of coverage intervals for the exact
+  evaluated `split_id`/`family`/`service`/`source_system` scope. Overlapping
+  intervals for the same service and scope are merged before summing, so
+  duplicated rows or replay shards cannot dilute false-alert burden. Publish
+  coverage intervals, merged covered seconds, and service-day coverage per
+  split, family, service, and source scope.
 - `abstention_rate = abstained_window_count / evaluated_window_count`, where
   evaluated windows include every candidate window passed to the forecast engine
   for that split.
@@ -112,7 +116,18 @@ Gate modes are explicit:
   wiring and formulas, but it can never unlock P106.
 - `release_qualified`: the only mode eligible to evaluate `p106_unlocked=true`.
   It must pass every P106 gate row below and every release-hardening floor in
-  this roadmap. Missing mode metadata is `smoke_only` by default.
+  this roadmap. Missing mode metadata is normalized to
+  `smoke_only_missing_mode`.
+
+Mode normalization is deterministic and fail closed: any missing, null, empty,
+or unknown mode normalizes to `smoke_only_missing_mode`, which is a `smoke_only`
+substatus with `release_qualified=false`, `p106_unlocked=false`, and no P106
+gate-row pass credit. The current committed P105 fixture files are smoke
+fixtures only: `p105_curated_synthetic_rows.json` has no mode metadata and 12
+rows, `p105_real_derived_shadow_rows.json` has no mode metadata and 4 rows, and
+`p105_release_benchmark_rows.json` has no mode metadata and 21 rows. Until a
+future implementation emits explicit `mode=release_qualified` and passes every
+floor below, these committed fixtures normalize to `smoke_only_missing_mode`.
 
 The release-hardening floors are anti-tiny-N credibility checks, not statistical
 significance claims. They are sized to be meaningful but achievable from the P44
@@ -154,9 +169,14 @@ For every family in `supported_families`:
   `real_derived_covered_service_seconds / 86400 >= 1.0`.
 - Source diversity floor:
   `distinct_source_record_sets >= 3` across P32/P41/P44 materialized inputs for
-  the release, and no single source may contribute more than `0.60` of a
-  supported family's release-qualified rows:
-  `max_source_family_row_count / family_release_row_count <= 0.60`.
+  the release, and no single canonical source tuple may contribute more than
+  `0.60` of a supported family's release-qualified real-derived rows:
+  `max_source_tuple_family_row_count /
+  family_release_qualified_real_derived_row_count <= 0.60`. Synthetic held-out
+  rows are excluded from both the numerator and denominator of this diversity
+  fraction. P32/P41/P44 rows count only when they are materialized, canonicalized,
+  source-hashed, redacted, assigned to `real_derived_shadow`, and otherwise
+  release-qualified.
 - Service-day floor:
   global held-out plus real-derived coverage must satisfy
   `total_covered_service_seconds / 86400 >= 7.0`.
@@ -221,8 +241,11 @@ work begins:
   row index, source timestamp when available, materialization version, and the
   deterministic derivation trace for source window, evidence IDs, family, and
   label fields.
-- `covered_seconds`: row-level service coverage denominator used by
-  false-alert/service-day scoring.
+- `coverage_intervals`: one or more `[start_timestamp, end_timestamp)` service
+  coverage intervals for this row and source scope.
+- `covered_seconds`: row-level coverage seconds retained for row audit only;
+  false-alert/service-day scoring must use the union of `coverage_intervals` per
+  split/family/service/source scope instead of summing this value blindly.
 - `partition_id`: predeclared partition assignment, chosen before scoring and
   independent of outcome.
 
@@ -271,12 +294,43 @@ P41 boundary counters proving no downloads, live API calls, auth, production
 mutation, or remediation execution. Neither adapter may create an action plan,
 policy handoff, credential path, or production mutation path.
 
-P44 adapter responsibilities for P105 are limited to read-only transformation of
-explicitly materialized public-source records, capped at 2,000 records per
-opt-in public run. The adapter must generate rows from raw/materialized record
-content and hashes, not from source ID claims alone. Public downloads remain
-explicit opt-in and generated artifacts remain outside the repository unless
-converted into reviewed, redacted fixtures.
+P44 participation is optional, explicit opt-in, and never assumed from the
+presence of a public-source path. P44 adapter responsibilities for P105 are
+limited to read-only transformation of explicitly materialized public-source
+records, capped at 2,000 records per opt-in public run. P44 contributes to
+release floors only after materialized rows are canonicalized, source-hashed,
+family-mapped, redacted, and assigned to `real_derived_shadow`; otherwise P44
+has zero denominator contribution and cannot be counted for source diversity.
+The adapter must generate rows from raw/materialized record content and hashes,
+not from source ID claims alone. Public downloads remain explicit opt-in and
+generated artifacts remain outside the repository unless converted into
+reviewed, redacted fixtures.
+
+Canonical source tuple: every P32/P41/P44-derived row must publish
+`source_tuple=(source_system, source_dataset, source_manifest_key,
+source_content_hash, materialized_record_hash, materialization_version)`.
+`source_dataset` is the replay dataset or public-source collection name, not a
+human-readable provider label. `source_manifest_key` is the stable manifest path
+or logical key. `source_content_hash` is over canonical raw/source bytes.
+`materialized_record_hash` is over the canonical row payload after redaction but
+before scorer labels are attached. Diversity denominators group rows by this
+tuple; source IDs, service names, or file names alone are insufficient.
+
+P32/P41/P44-to-P105 family mapping is canonical:
+
+| Source | Source signal | P105 family | Participation |
+| --- | --- | --- | --- |
+| P32 | `connection_pool_saturation`, `slow_query_risk`, `lock_wait_risk`, `db_max_connections_risk`, `replica_lag_read_risk`, `wal_growth_risk`, `vacuum_lag_risk`, `index_bloat_risk` | `database` | Real-derived shadow if local replay output is materialized and source-hashed |
+| P32 | `queue_sla_breach`, `consumer_lag_risk`, `dead_letter_growth_risk`, `webhook_lag_risk` | `queue` | Real-derived shadow if local replay output is materialized and source-hashed |
+| P32 | `canary_regression_risk`, `feature_flag_degradation_risk`, `schema_drift_risk` | `deploy` | Real-derived shadow if local replay output is materialized and source-hashed |
+| P41 | source-card `family=loghub` or `aiops` with `expected_root_cause=deploy_regression` or deploy/config labels | `deploy` | Real-derived shadow from repo-local source cards only |
+| P41 | source-card `family=nab` or `aiops` with metric anomaly, saturation, lag, or capacity labels | `database` or `queue` by service/metric manifest mapping | Real-derived shadow from repo-local source cards only |
+| P44 | opt-in public-source rows with manifest-declared database, queue, or deploy labels | manifest-declared `database`, `queue`, or `deploy` after deterministic label derivation | Real-derived shadow only after redacted fixture review |
+
+Any source signal outside this table is `unsupported_family` until a future
+planning change adds an explicit mapping. Unsupported rows may be used only for
+private safety diagnostics or abstention checks; they do not satisfy supported
+family release floors.
 
 ## Partition and Diagnostic Semantics
 
@@ -292,22 +346,29 @@ Outcome-neutral IDs are required. `row_id`, `forecast_id`, `source_window_id`,
 pre-outcome fields plus a versioned salt. They must not encode label positivity,
 failure outcome, safety pass/fail, useful lead time, or gate status.
 
-Safety-conformance diagnostic rows exist only to prove boundary handling for
-expected invalid preconditions such as malformed public packets, unsupported
-families, leaked scorer labels, post-incident values, mutation authority, or
-external-call attempts. Expected precondition violations in this partition are
-excluded from performance metrics, but any unexpected successful forecast,
-unexpected action-shaped output, credential/auth path, production mutation,
-default external call, or nonzero safety counter fails the safety gate. Valid
-and evaluable rows from supported families may never be moved into
-`safety_conformance_diagnostic` or excluded from performance to improve scores.
+Safety-conformance diagnostic rows exist only in a private test harness to prove
+boundary handling for expected invalid preconditions such as malformed public
+packets, unsupported families, intentionally leaked scorer-label sentinels,
+post-incident values, mutation authority, or external-call attempts. Expected
+precondition violations in this private partition are excluded from performance
+metrics, and public/release artifacts may publish only violation metadata,
+reason codes, and hash-safe references that cannot reconstruct scorer labels,
+incident IDs, post-incident values, or future timestamps. Any unexpected
+successful forecast, unexpected action-shaped output, credential/auth path,
+production mutation, default external call, or nonzero safety counter fails the
+safety gate. Valid and evaluable rows from supported families may never be
+moved into `safety_conformance_diagnostic` or excluded from performance to
+improve scores.
 
 Post-incident key leakage fails closed. If a public training, calibration,
-forecast, rationale, or release packet contains post-incident values,
-scorer-only labels, incident IDs, incident-group answer keys, lead-time labels,
-future timestamps, or hashes derived from those fields, the affected split is
-`unevaluable_leakage_detected`, `release_qualified=false`, and
-`p106_unlocked=false`.
+forecast, rationale, release packet, release evidence file, model card, or
+verification artifact contains post-incident values, scorer-only labels,
+incident IDs, incident-group answer keys, lead-time labels, future timestamps,
+raw leaked diagnostic payloads, or hashes derived directly from those fields,
+the affected split is `unevaluable_leakage_detected`,
+`release_qualified=false`, and `p106_unlocked=false`. Intentional leak fixtures
+are allowed only inside the private safety harness and must never be copied into
+public or release artifacts.
 
 ## Tickets
 
@@ -483,12 +544,14 @@ Acceptance:
   `incident_group_count >= 4`, `service_days >= 2.0`) and the real-derived
   floors (`evaluated >= 20`, `non_abstained >= 16`, `actual_positive >= 4`,
   `incident_group_count >= 3`, `service_days >= 1.0`).
-- Release evidence proves at least three distinct source record sets across
-  P32/P41/P44 materialized inputs, no single source contributes more than 60%
-  of any supported family's release-qualified rows, and global service coverage
-  is at least seven service-days.
+- Release evidence proves at least three distinct canonical source tuples
+  across P32/P41/P44 materialized real-derived inputs, no single source tuple
+  contributes more than 60% of any supported family's release-qualified
+  real-derived rows, synthetic held-out rows are excluded from the source
+  diversity denominator, and global service coverage is at least seven
+  service-days.
 - Missing floor denominators or mode metadata fail closed as
-  `unevaluable_missing_denominator`.
+  `smoke_only_missing_mode` plus `unevaluable_missing_denominator`.
 
 ### P105-013 Deterministic source-record row generation
 
@@ -500,6 +563,9 @@ Acceptance:
   hash, materialized record hash, record offset or row index, source timestamp
   when available, materialization version, source-window derivation,
   evidence-ID derivation, family derivation, and label derivation.
+- Every P32/P41/P44 row records the canonical source tuple and uses the
+  P32/P41/P44-to-P105 family mapping table above; unsupported source signals are
+  abstained or private-diagnostic only and never count toward release floors.
 - Re-running the generator from the same raw/materialized inputs produces
   byte-identical rows and partition manifests.
 - Source-ID-only assertions are insufficient: rows without record offsets or
@@ -519,13 +585,16 @@ Acceptance:
   encode label or score outcomes.
 - Partitions are predeclared before scoring and preserve time ordering plus
   incident-group isolation; no outcome-shaped reassignment is allowed.
-- `covered_seconds` is present per row and rolled up per partition/family/source
-  as `sum(row.covered_seconds)`. False-alert/service-day metrics may not reuse
-  a top-level constant denominator.
+- `covered_seconds` is backed by row coverage intervals and rolled up as the
+  union of intervals per `split_id`/`family`/`service`/`source_system` scope.
+  False-alert/service-day metrics may not reuse a top-level constant denominator
+  or double-count overlapping row coverage.
 - Safety-conformance diagnostic rows with expected precondition violations are
-  excluded from performance metrics, but unexpected successful forecasts,
-  action-shaped outputs, leaked labels, auth paths, production mutation,
-  default external calls, or nonzero safety counters fail safety.
+  private-harness only; public/release artifacts publish only violation
+  metadata and hash-safe references. Unexpected successful forecasts,
+  action-shaped outputs, leaked labels in public/release artifacts, auth paths,
+  production mutation, default external calls, or nonzero safety counters fail
+  safety.
 - Valid and evaluable rows from supported families cannot be excluded from
   performance metrics or moved to diagnostics.
 
@@ -566,8 +635,9 @@ Acceptance:
   floors, source diversity, service-day coverage, source-record provenance,
   partition isolation, and diagnostic safety semantics. Smoke-only reports never
   unlock P106.
-- False-alert service-day denominators are computed from per-row/per-partition
-  `covered_seconds`, not reused top-level constants.
+- False-alert service-day denominators are computed from the union of row
+  coverage intervals per split/family/service/source scope, not reused
+  top-level constants or overlapping row sums.
 - P24 baseline parity is measured against actual P24 `RiskSignal` and
   `RiskForecast` behavior.
 - Real-derived shadow transfer passes before P106 can start.

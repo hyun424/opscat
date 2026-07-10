@@ -45,10 +45,24 @@ future-window leakage; raw LLM confidence never drives execution.
   alerts/service-day, and abstention rate with exact denominators.
 - `smoke_only` and tiny-N runs can verify wiring but always keep
   `release_qualified=false` and `p106_unlocked=false`.
+- Missing, null, empty, or unknown mode metadata normalizes to
+  `smoke_only_missing_mode`, which is smoke-only and default-false for both
+  `release_qualified` and `p106_unlocked`. Current committed P105 fixture files
+  have no release-qualified mode metadata and are smoke evidence only.
 - Release-qualified evidence passes the anti-tiny-N held-out and real-derived
   per-family floors, source diversity, service-day coverage, deterministic
   source-record provenance, outcome-neutral partitioning, and
   safety-conformance diagnostic semantics.
+- Service-day exposure is the union of row coverage intervals per
+  split/family/service/source scope; overlapping intervals are merged before
+  false-alert burden is computed.
+- P32/P41/P44 release rows use canonical source tuples and the roadmap's
+  P32/P41/P44-to-P105 family mapping; P44 is explicit opt-in only and does not
+  count until materialized, redacted, source-hashed, and assigned to
+  `real_derived_shadow`.
+- Intentional leaked diagnostics are private-harness only. Public and release
+  artifacts may publish violation metadata and hash-safe references only; raw
+  leakage in a public/release artifact fails closed.
 - P106 remains blocked unless the exact P106 gate table passes: held-out
   Brier/ECE improve over P24, useful lead-time rate is `>= 0.80` for every
   supported family with positives, zero-positive supported families are

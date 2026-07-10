@@ -8,7 +8,10 @@ unlock P106.
 
 ## Tests First
 
-- Mode test verifies missing mode metadata defaults to `smoke_only`.
+- Mode test verifies missing, null, empty, or unknown mode metadata normalizes
+  to `smoke_only_missing_mode`, a `smoke_only` substatus with
+  `release_qualified=false`, `p106_unlocked=false`, and no P106 gate-row pass
+  credit.
 - Smoke gate test verifies tiny, hand-computed, and fixture-only runs always
   emit `release_qualified=false` and `p106_unlocked=false`.
 - Held-out floor test verifies every supported family must satisfy
@@ -17,10 +20,11 @@ unlock P106.
 - Real-derived floor test verifies every supported family must satisfy
   `evaluated >= 20`, `non_abstained >= 16`, `actual_positive >= 4`,
   `incident_group_count >= 3`, and `covered_service_seconds / 86400 >= 1.0`.
-- Diversity test verifies at least three distinct source record sets across
-  P32/P41/P44 materialized inputs, no source supplies more than 60% of any
-  supported family's release-qualified rows, and global service coverage is at
-  least seven service-days.
+- Diversity test verifies at least three distinct canonical source tuples across
+  P32/P41/P44 materialized real-derived inputs, no source tuple supplies more
+  than 60% of any supported family's release-qualified real-derived rows,
+  synthetic held-out rows are excluded from the diversity numerator and
+  denominator, and global service coverage is at least seven service-days.
 - Fail-closed test verifies any missing numerator, denominator, source count,
   incident-group count, coverage value, split ID, family ID, or mode field makes
   the release `unevaluable_missing_denominator`.
@@ -33,6 +37,14 @@ unlock P106.
   path plus committed P32/P41 materialized replay fixtures.
 - If a supported family cannot meet the floors, keep the run `smoke_only` or
   remove the family from `supported_families` before release qualification.
+- Current committed P105 fixtures are smoke-only evidence: the curated
+  synthetic rows, real-derived shadow rows, and release benchmark rows omit mode
+  metadata and therefore normalize to `smoke_only_missing_mode` until a future
+  implementation emits explicit `mode=release_qualified` and passes every floor.
+- Source diversity uses the canonical source tuple
+  `(source_system, source_dataset, source_manifest_key, source_content_hash,
+  materialized_record_hash, materialization_version)`. File names, service
+  names, or source IDs alone do not satisfy the diversity floor.
 
 ## Acceptance
 
@@ -40,6 +52,9 @@ unlock P106.
 - Smoke and tiny-N runs can never unlock P106.
 - Every floor publishes numerator, denominator, split ID, source scope, family,
   threshold, value, and pass/fail/unevaluable status.
+- Service-day floors publish merged coverage intervals and use the union of
+  intervals per `split_id`/`family`/`service`/`source_system` scope; overlapping
+  rows cannot dilute false-alert burden.
 - P106 remains locked when any floor is missing, failed, or unevaluable.
 
 ## Verification

@@ -223,15 +223,17 @@ abstention reason. Replace raw threshold confidence with calibrated forecasts.
 11. P105-010 release verification and model-card documentation.
 12. P105-011 release integration and P106 gate lock.
 13. P105-012 release qualification floors and mode semantics:
-    `smoke_only` runs and tiny fixtures can never unlock P106; only
-    `release_qualified` runs with per-family held-out and real-derived floors
-    can evaluate the gate.
+    missing mode normalizes to `smoke_only_missing_mode`; `smoke_only` runs and
+    tiny fixtures can never unlock P106; only `release_qualified` runs with
+    per-family held-out and real-derived floors can evaluate the gate.
 14. P105-013 deterministic source-record row generation from P32/P41/P44
     raw/materialized records with content hashes, offsets/timestamps, and
     derivation traces for windows, evidence, family, and labels.
 15. P105-014 partition, coverage, and safety-conformance hardening:
-    outcome-neutral IDs, predeclared partitions, per-row covered seconds, and
-    diagnostic rows that cannot hide valid supported-family performance.
+    outcome-neutral IDs, predeclared partitions, unioned service-day exposure
+    per split/family/service/source scope, and private-harness diagnostic rows
+    that cannot hide valid supported-family performance or leak into release
+    artifacts.
 16. P105-015 release documentation, P24 parity, verify integration, and
     authority lock.
 
@@ -248,22 +250,30 @@ abstention reason. Replace raw threshold confidence with calibrated forecasts.
   action gate consumes raw LLM confidence.
 - 100% of low-coverage or shifted cases either abstain or retain a conservative
   route.
-- P105 `smoke_only` evidence can prove wiring only. P106 remains locked unless a
-  `release_qualified` run passes anti-tiny-N floors for every supported family:
+- P105 `smoke_only` evidence can prove wiring only, and missing mode metadata
+  normalizes to `smoke_only_missing_mode` with default-false release/P106
+  status. P106 remains locked unless a `release_qualified` run passes
+  anti-tiny-N floors for every supported family:
   held-out `evaluated >= 30`, `non_abstained >= 24`,
   `actual_positive >= 6`, `incident_group_count >= 4`, and
   `service_days >= 2.0`; real-derived `evaluated >= 20`,
   `non_abstained >= 16`, `actual_positive >= 4`,
   `incident_group_count >= 3`, and `service_days >= 1.0`; at least three
-  distinct source record sets; no source above 60% of a supported family's rows;
-  and at least seven global service-days. These are credibility floors, not
-  statistical significance claims.
+  distinct canonical source tuples across P32/P41/P44 real-derived rows; no
+  source tuple above 60% of a supported family's release-qualified
+  real-derived rows, with synthetic held-out rows excluded from that diversity
+  denominator; and at least seven global service-days. These are credibility
+  floors, not statistical significance claims.
 - P32/P41/P44 rows are generated from raw/materialized source records with
-  content hashes, offsets or row indexes, timestamps when available, and
-  deterministic derivation metadata. Source-ID-only claims are unevaluable.
-- False-alert service-day denominators come from per-row/per-partition
-  `covered_seconds`; valid supported-family rows cannot be excluded through the
-  safety diagnostic partition.
+  canonical source tuples, P32/P41/P44-to-P105 family mapping, content hashes,
+  offsets or row indexes, timestamps when available, and deterministic
+  derivation metadata. P44 participation is explicit opt-in only.
+  Source-ID-only claims are unevaluable.
+- False-alert service-day denominators come from the union of coverage intervals
+  per split/family/service/source scope, not overlapping row sums or top-level
+  constants. Valid supported-family rows cannot be excluded through the private
+  safety diagnostic partition, and public/release artifacts may publish only
+  violation metadata and hash-safe references.
 
 **Stop condition:** P106 remains blocked until probabilities are calibrated on a
 held-out time-ordered set, real-derived useful-lead-time transfer satisfies

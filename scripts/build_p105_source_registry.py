@@ -24,6 +24,39 @@ REQUIRED_SCHEMA_ADAPTERS = {
     "db_pool": "p105.adapter.database-pool-harness.v1",
     "queue": "p105.adapter.rabbitmq-harness.v1",
     "deploy": "p105.adapter.threading-http-deploy-harness.v1",
+    "database_fleet": "p105.adapter.sqlite-pool-fleet-harness.v1",
+    "queue_fleet": "p105.adapter.rabbitmq-fleet-harness.v1",
+    "deploy_fleet": "p105.adapter.threading-http-deploy-fleet-harness.v1",
+}
+FLEET_PROFILE = "p105.actual-fleet-soak.256x1h.v1"
+FLEET_DIAGNOSTIC_PROFILES = {
+    "database_fleet": "p105.database-fleet.diagnostic.fast.v1",
+    "queue_fleet": "p105.queue-fleet.diagnostic.fast.v1",
+    "deploy_fleet": "p105.deploy-fleet.diagnostic.fast.v1",
+}
+FLEET_ROOT_SCHEMAS = {
+    "database_fleet": "p105.database.fleet_harness.v1",
+    "queue_fleet": "p105.queue.fleet_harness.v1",
+    "deploy_fleet": "p105.deploy.fleet_harness.v1",
+}
+RUNTIME_FAMILY_BY_ADAPTER = {
+    "db_pool": "database",
+    "queue": "queue",
+    "deploy": "deploy",
+    "database_fleet": "database",
+    "queue_fleet": "queue",
+    "deploy_fleet": "deploy",
+}
+FLEET_ADAPTER_BY_ROOT_SCHEMA = {schema: adapter_key for adapter_key, schema in FLEET_ROOT_SCHEMAS.items()}
+LEGACY_RUNTIME_ROOT_SCHEMAS = {
+    "db_pool": {"p105.database.pool.harness_manifest.v1", "p105.database.pool.harness.manifest.v1"},
+    "queue": {"p105.queue.harness_manifest.v1", "p105.queue.harness.manifest.v1"},
+    "deploy": {"p105.deploy.harness_manifest.v1", "p105.deploy.harness.manifest.v1"},
+}
+LEGACY_RUNTIME_ADAPTER_BY_FLEET_ADAPTER = {
+    "database_fleet": "db_pool",
+    "queue_fleet": "queue",
+    "deploy_fleet": "deploy",
 }
 KNOWN_ROOT_SCHEMAS = {
     SOURCE_MANIFEST_SCHEMA_VERSION,
@@ -37,6 +70,7 @@ KNOWN_ROOT_SCHEMAS = {
     "p105.queue.harness.manifest.v1",
     "p105.deploy.harness_manifest.v1",
     "p105.deploy.harness.manifest.v1",
+    *FLEET_ROOT_SCHEMAS.values(),
     "p32-replay-pack.v1",
     "p41-raw-sources-v1",
 }
@@ -150,10 +184,16 @@ def _parse_schema_adapters(values: list[str] | None) -> dict[str, str]:
     return adapters
 
 
-def _validate_schema_adapters(adapters: dict[str, str], *, fail_on_unknown_source_schema: bool) -> None:
+def _validate_schema_adapters(
+    adapters: dict[str, str],
+    *,
+    fail_on_unknown_source_schema: bool,
+    required_keys: set[str] | None = None,
+) -> None:
     if not fail_on_unknown_source_schema:
         return
-    missing = [key for key, expected in REQUIRED_SCHEMA_ADAPTERS.items() if adapters.get(key) != expected]
+    required = required_keys or set(REQUIRED_SCHEMA_ADAPTERS)
+    missing = [key for key, expected in REQUIRED_SCHEMA_ADAPTERS.items() if key in required and adapters.get(key) != expected]
     unknown = [key for key in adapters if key not in REQUIRED_SCHEMA_ADAPTERS]
     if missing or unknown:
         raise RegistryError(f"unknown_source_schema: missing={','.join(missing)} unknown={','.join(unknown)}")
@@ -167,7 +207,13 @@ def _root_schema(manifest: dict[str, Any]) -> str:
     verifier_compatibility = manifest.get("verifier_compatibility")
     if isinstance(verifier_compatibility, dict) and isinstance(verifier_compatibility.get("manifest_schema"), str):
         return str(verifier_compatibility["manifest_schema"])
-    return str(manifest.get("schema_version") or manifest.get("version") or "")
+    schema = manifest.get("schema_version") or manifest.get("version")
+    if isinstance(schema, str) and schema:
+        return schema
+    public_config = manifest.get("public_config")
+    if isinstance(public_config, dict) and isinstance(public_config.get("schema_version"), str):
+        return str(public_config["schema_version"])
+    return ""
 
 
 def _validate_known_root_schema(manifest_path: Path, manifest: dict[str, Any], *, fail_on_unknown_source_schema: bool) -> None:
@@ -176,6 +222,103 @@ def _validate_known_root_schema(manifest_path: Path, manifest: dict[str, Any], *
     schema = _root_schema(manifest)
     if schema not in KNOWN_ROOT_SCHEMAS:
         raise RegistryError(f"unknown_source_schema: {manifest_path}: {schema or 'missing'}")
+
+
+def _fleet_declaration_payload(manifest: dict[str, Any]) -> dict[str, Any]:
+    public_config = manifest.get("public_config")
+    return public_config if isinstance(public_config, dict) else manifest
+
+
+def _fleet_declared_root_schema(manifest: dict[str, Any]) -> str:
+    declaration = _fleet_declaration_payload(manifest)
+    schema = declaration.get("schema_version")
+    if isinstance(schema, str) and schema:
+        return schema
+    return _root_schema(manifest)
+
+
+def _manifest_declared_adapter_key(manifest: dict[str, Any]) -> str | None:
+    declaration = _fleet_declaration_payload(manifest)
+    adapter_key = declaration.get("adapter_key")
+    if isinstance(adapter_key, str) and adapter_key:
+        return adapter_key
+    adapter = declaration.get("adapter_or_harness")
+    if isinstance(adapter, dict) and isinstance(adapter.get("name"), str) and adapter["name"]:
+        return str(adapter["name"])
+    return None
+
+
+def _manifest_declared_adapter_version(manifest: dict[str, Any]) -> str | None:
+    declaration = _fleet_declaration_payload(manifest)
+    adapter_version = declaration.get("adapter_version")
+    if isinstance(adapter_version, str) and adapter_version:
+        return adapter_version
+    adapter = declaration.get("adapter_or_harness")
+    if isinstance(adapter, dict) and isinstance(adapter.get("version"), str) and adapter["version"]:
+        return str(adapter["version"])
+    return None
+
+
+def _manifest_declared_profile(manifest: dict[str, Any]) -> str | None:
+    profile = _fleet_declaration_payload(manifest).get("profile")
+    if isinstance(profile, str) and profile:
+        return profile
+    if isinstance(profile, dict) and isinstance(profile.get("id"), str) and profile["id"]:
+        return str(profile["id"])
+    return None
+
+
+def _legacy_runtime_adapter_for_schema(schema: str) -> str | None:
+    for adapter_key, schemas in LEGACY_RUNTIME_ROOT_SCHEMAS.items():
+        if schema in schemas:
+            return adapter_key
+    return None
+
+
+def _validate_closed_adapter_profile(
+    manifest_path: Path,
+    manifest: dict[str, Any],
+    adapters: dict[str, str],
+    *,
+    fail_on_unknown_source_schema: bool,
+) -> None:
+    if not fail_on_unknown_source_schema:
+        return
+    schema = _fleet_declared_root_schema(manifest)
+    declared_adapter_key = _manifest_declared_adapter_key(manifest)
+    declared_adapter_version = _manifest_declared_adapter_version(manifest)
+    profile = _manifest_declared_profile(manifest)
+
+    expected_fleet_adapter = FLEET_ADAPTER_BY_ROOT_SCHEMA.get(schema)
+    if expected_fleet_adapter is not None:
+        expected_version = adapters.get(expected_fleet_adapter) or REQUIRED_SCHEMA_ADAPTERS[expected_fleet_adapter]
+        allowed_profiles = {FLEET_PROFILE, FLEET_DIAGNOSTIC_PROFILES[expected_fleet_adapter]}
+        if (
+            declared_adapter_key != expected_fleet_adapter
+            or declared_adapter_version != expected_version
+            or profile not in allowed_profiles
+        ):
+            raise RegistryError(
+                "cross_profile_schema_adapter_mismatch: "
+                f"{manifest_path}: root_schema={schema} expected_adapter={expected_fleet_adapter}"
+            )
+        return
+
+    if declared_adapter_key in FLEET_ROOT_SCHEMAS:
+        fleet_legacy_adapter = LEGACY_RUNTIME_ADAPTER_BY_FLEET_ADAPTER[declared_adapter_key]
+        if schema in LEGACY_RUNTIME_ROOT_SCHEMAS[fleet_legacy_adapter]:
+            family = "database" if declared_adapter_key == "database_fleet" else declared_adapter_key.removesuffix("_fleet")
+            raise RegistryError(f"fleet_adapter_rejects_legacy_{family}_root: {manifest_path}: {schema}")
+        raise RegistryError(f"cross_profile_schema_adapter_mismatch: {manifest_path}: {declared_adapter_key} cannot parse {schema or 'missing'}")
+
+    legacy_root_adapter = _legacy_runtime_adapter_for_schema(schema)
+    if legacy_root_adapter is not None and f"{legacy_root_adapter if legacy_root_adapter != 'db_pool' else 'database'}_fleet" in adapters:
+        if declared_adapter_key == legacy_root_adapter and declared_adapter_version == adapters.get(legacy_root_adapter):
+            if legacy_root_adapter == "deploy" and not isinstance(manifest.get("artifact_paths") or manifest.get("artifacts"), dict):
+                raise RegistryError(f"fleet_adapter_rejects_legacy_deploy_root: {manifest_path}: {schema}")
+            return
+        if legacy_root_adapter == "deploy":
+            raise RegistryError(f"fleet_adapter_rejects_legacy_deploy_root: {manifest_path}: {schema}")
 
 
 def _validate_license(value: Any, *, context: str) -> dict[str, str]:
@@ -554,7 +697,7 @@ def _runtime_source(manifest_path: Path, manifest: dict[str, Any], adapter_key: 
     if missing_artifacts:
         raise RegistryError(f"runtime source {adapter_key} is missing required artifacts: {','.join(missing_artifacts)}")
     command_argv = _command_from_manifest(adapter_key, manifest_path, manifest)
-    family = str(manifest.get("source_family") or manifest.get("family") or {"db_pool": "database", "queue": "queue", "deploy": "deploy"}.get(adapter_key, UNSUPPORTED_FAMILY))
+    family = str(manifest.get("source_family") or manifest.get("family") or RUNTIME_FAMILY_BY_ADAPTER.get(adapter_key, UNSUPPORTED_FAMILY))
     if family not in SUPPORTED_FAMILIES:
         family = UNSUPPORTED_FAMILY
     default_key = {"db_pool": "p105-db-pool", "queue": "p105-queue", "deploy": "p105-deploy"}.get(adapter_key, manifest_path.stem)
@@ -688,6 +831,14 @@ def _registry_source(manifest_path: Path, manifest: dict[str, Any]) -> dict[str,
 def _adapter_key_for_manifest(manifest_path: Path, manifest: dict[str, Any]) -> str:
     schema = _root_schema(manifest)
     name = manifest_path.name
+    if schema in FLEET_ADAPTER_BY_ROOT_SCHEMA:
+        return FLEET_ADAPTER_BY_ROOT_SCHEMA[schema]
+    if "database-fleet" in name or "database_fleet" in name:
+        return "database_fleet"
+    if "queue-fleet" in name or "queue_fleet" in name:
+        return "queue_fleet"
+    if "deploy-fleet" in name or "deploy_fleet" in name:
+        return "deploy_fleet"
     if schema == "p32-replay-pack.v1" or "p32" in name:
         return "p32"
     if schema == "p41-raw-sources-v1" or "p41" in name:
@@ -770,7 +921,7 @@ def _adapted_registry_sources(manifest_path: Path, manifest: dict[str, Any], ada
         return _p44_sources(manifest_path, manifest, adapter_version)
     if adapter_key == "dejavu_a1":
         return _dejavu_source(manifest_path, manifest, adapter_version)
-    if adapter_key in {"db_pool", "queue", "deploy"}:
+    if adapter_key in {"db_pool", "queue", "deploy", "database_fleet", "queue_fleet", "deploy_fleet"}:
         return _runtime_source(manifest_path, manifest, adapter_key, adapter_version)
     return [_generic_registry_source(manifest_path, manifest, adapters, fail_on_unknown_source_schema=fail_on_unknown_source_schema)]
 
@@ -819,8 +970,6 @@ def _eligibility_entry(source: dict[str, Any], decision: dict[str, Any] | None, 
         "label_join_phase": "after_sampling_and_partition",
         "adapter_or_parser_version": source["adapter_or_harness"]["version"],
         "privacy_license_registry_sha256": source["provenance_sha256"],
-        "counting_rows": 1 if eligible else 0,
-        "counting_coverage_seconds": int(window.get("coverage_seconds") or 0) if eligible else 0,
     }
     if entry["unsupported_family_reason"] is not None and entry["unsupported_family_reason"] not in ALLOWED_UNSUPPORTED_REASONS:
         raise RegistryError(f"unsupported_family_reason is not allowed: {entry['unsupported_family_reason']}")
@@ -851,7 +1000,17 @@ def build_registry(
     if schema_version != REGISTRY_SCHEMA_VERSION:
         raise RegistryError(f"schema_version must be {REGISTRY_SCHEMA_VERSION}")
     adapters = dict(schema_adapters or {})
-    _validate_schema_adapters(adapters, fail_on_unknown_source_schema=fail_on_unknown_source_schema)
+    required_adapter_keys = set(REQUIRED_SCHEMA_ADAPTERS) - set(FLEET_ROOT_SCHEMAS)
+    for candidate_manifest in candidate_manifests:
+        preview = _read_json(candidate_manifest, "source manifest")
+        fleet_adapter = FLEET_ADAPTER_BY_ROOT_SCHEMA.get(_root_schema(preview))
+        if fleet_adapter is not None:
+            required_adapter_keys.add(fleet_adapter)
+    _validate_schema_adapters(
+        adapters,
+        fail_on_unknown_source_schema=fail_on_unknown_source_schema,
+        required_keys=required_adapter_keys,
+    )
     ledger_sha256, decisions = _load_decisions(review_ledger)
     errors: list[str] = []
     sources: list[dict[str, Any]] = []
@@ -860,6 +1019,12 @@ def build_registry(
     for manifest_path in candidate_manifests:
         manifest = _read_json(manifest_path, "source manifest")
         _validate_known_root_schema(manifest_path, manifest, fail_on_unknown_source_schema=fail_on_unknown_source_schema)
+        _validate_closed_adapter_profile(
+            manifest_path,
+            manifest,
+            adapters,
+            fail_on_unknown_source_schema=fail_on_unknown_source_schema,
+        )
         for source in _registry_sources_for_manifest(
             manifest_path,
             manifest,

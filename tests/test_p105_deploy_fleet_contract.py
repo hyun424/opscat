@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+import importlib.util
 import json
 import subprocess
 import sys
@@ -41,6 +42,16 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
 
 def _api() -> Any:
     return importlib.import_module("app.services.failure_forecast_engine")
+
+
+def _harness() -> Any:
+    spec = importlib.util.spec_from_file_location("run_p105_deploy_fleet_harness", DEPLOY_FLEET_SCRIPT)
+    assert spec is not None
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 def _deploy_contract() -> dict[str, Any]:
@@ -110,6 +121,50 @@ def _run_deploy_fleet(output_dir: Path, *extra_args: str) -> subprocess.Complete
     )
 
 
+def _full_profile_args(output_dir: Path) -> list[str]:
+    return [
+        "--host",
+        "127.0.0.1",
+        "--seed",
+        "105031",
+        "--profile",
+        PROFILE,
+        "--services",
+        "256",
+        "--heldout-services",
+        "128",
+        "--shadow-services",
+        "128",
+        "--requested-seconds",
+        "3600",
+        "--sample-cadence-seconds",
+        "5",
+        "--samples-per-service",
+        "720",
+        "--max-requests",
+        "184320",
+        "--max-concurrency",
+        "64",
+        "--max-live-sockets",
+        "64",
+        "--request-timeout-seconds",
+        "2",
+        "--max-response-body-bytes",
+        "1024",
+        "--max-memory-mib",
+        "512",
+        "--max-output-mib",
+        "256",
+        "--output-dir",
+        str(output_dir),
+        "--mode",
+        "isolated-local",
+        "--created-at",
+        "2024-03-09T16:25:00Z",
+        "--expect-no-production-authority",
+    ]
+
+
 def test_deploy_fleet_full_profile_contract_is_exact_without_executing_an_accelerated_soak() -> None:
     contract = _deploy_contract()
 
@@ -125,6 +180,43 @@ def test_deploy_fleet_full_profile_contract_is_exact_without_executing_an_accele
     assert contract["service_paths"] == [f"/p105/fleet/deploy/{index:03d}" for index in range(256)]
     assert contract["partitions"]["held_out"] == [f"p105.fleet.deploy.{index:03d}" for index in range(128)]
     assert contract["partitions"]["real_derived_shadow"] == [f"p105.fleet.deploy.{index:03d}" for index in range(128, 256)]
+
+
+def test_deploy_fleet_harness_accepts_full_profile_contract_without_diagnostic_escape_hatch(tmp_path: Path) -> None:
+    harness = _harness()
+    parser = harness._parser()
+    args = parser.parse_args(_full_profile_args(tmp_path / "full"))
+
+    harness._validate_args(args)
+
+    assert harness._is_full_profile(args) is True
+    assert args.test_fast_diagnostic is False
+    assert harness._sample_offsets(args) == list(range(0, 3600, 5))
+    assert harness._command_argv(args).count("--test-fast-diagnostic") == 0
+    assert args.max_requests == args.services * args.samples_per_service == 184_320
+
+
+def test_deploy_fleet_harness_rejects_full_profile_with_diagnostic_flag_or_wrong_request_cap(tmp_path: Path) -> None:
+    harness = _harness()
+    parser = harness._parser()
+
+    with_test_flag = parser.parse_args([*_full_profile_args(tmp_path / "full"), "--test-fast-diagnostic"])
+    try:
+        harness._validate_args(with_test_flag)
+    except ValueError as exc:
+        assert "--test-fast-diagnostic is only valid" in str(exc)
+    else:
+        raise AssertionError("full profile must reject diagnostic escape hatch")
+
+    wrong_cap_args = _full_profile_args(tmp_path / "wrong-cap")
+    wrong_cap_args[wrong_cap_args.index("--max-requests") + 1] = "1536"
+    wrong_cap = parser.parse_args(wrong_cap_args)
+    try:
+        harness._validate_args(wrong_cap)
+    except ValueError as exc:
+        assert "max-requests must be 184320" in str(exc)
+    else:
+        raise AssertionError("full profile must enforce 184320 request cap")
 
 
 def test_deploy_fleet_fast_diagnostic_is_short_actual_and_non_counting(tmp_path: Path) -> None:
@@ -240,6 +332,67 @@ def test_deploy_fleet_private_schedule_contract_has_exact_g00_to_g07_25_to_30m_l
         assert incident["expected_bound_public_source_window_ids"] == expected_windows
 
 
+def test_deploy_fleet_full_schedule_binding_and_observed_monotonic_coverage_are_canonical() -> None:
+    harness = _harness()
+    observed_windows = {
+        "p105-fleet-deploy-held_out-svc000-sample300",
+        "p105-fleet-deploy-held_out-svc000-sample301",
+        "p105-fleet-deploy-held_out-svc000-sample302",
+        "p105-fleet-deploy-held_out-svc001-sample300",
+    }
+
+    incidents = harness._private_schedule_with_binding(observed_windows, bind_observed=True)
+    first = incidents[0]
+
+    assert first["incident_group_id"] == "p105-fleet-deploy-held_out-g00"
+    assert first["bound_public_source_window_ids"] == [
+        "p105-fleet-deploy-held_out-svc000-sample300",
+        "p105-fleet-deploy-held_out-svc000-sample301",
+        "p105-fleet-deploy-held_out-svc000-sample302",
+        "p105-fleet-deploy-held_out-svc001-sample300",
+    ]
+
+    telemetry = [
+        {
+            "sample_ordinal": 300,
+            "service_id": "p105.fleet.deploy.000",
+            "source_window_id": "p105-fleet-deploy-held_out-svc000-sample300",
+            "split": "held_out",
+            "telemetry_monotonic_ns": 10_000_000_000,
+        },
+        {
+            "sample_ordinal": 301,
+            "service_id": "p105.fleet.deploy.000",
+            "source_window_id": "p105-fleet-deploy-held_out-svc000-sample301",
+            "split": "held_out",
+            "telemetry_monotonic_ns": 15_100_000_000,
+        },
+        {
+            "sample_ordinal": 303,
+            "service_id": "p105.fleet.deploy.000",
+            "source_window_id": "p105-fleet-deploy-held_out-svc000-sample303",
+            "split": "held_out",
+            "telemetry_monotonic_ns": 25_100_000_000,
+        },
+    ]
+    segments, total_ns = harness._observed_coverage_segments(telemetry)
+
+    assert total_ns == 5_000_000_000
+    assert segments == [
+        {
+            "conservative_duration_seconds": 5,
+            "coverage_source": "receipt_bound_adjacent_monotonic_samples",
+            "end_sample_ordinal": 301,
+            "end_source_window_id": "p105-fleet-deploy-held_out-svc000-sample301",
+            "sample_count": 2,
+            "service_id": "p105.fleet.deploy.000",
+            "split": "held_out",
+            "start_sample_ordinal": 300,
+            "start_source_window_id": "p105-fleet-deploy-held_out-svc000-sample300",
+        }
+    ]
+
+
 def test_deploy_fleet_coverage_reconstructs_from_adjacent_monotonic_samples_and_caps_requested_credit(tmp_path: Path) -> None:
     output = tmp_path / "deploy-fleet"
     completed = _run_deploy_fleet(output)
@@ -275,6 +428,7 @@ def test_deploy_fleet_telemetry_loss_or_shutdown_failure_locks_receipt_and_fast_
 
     status = manifest["runtime_candidate_status"]
     assert status["runtime_qualification_eligible"] is False
+    assert status["harness_issues_receipts"] is False
     assert {"telemetry_loss", "server_shutdown_incomplete", "fast_diagnostic_non_counting"} <= set(status["validation_error_codes"])
     assert not (output / "p105-deploy-fleet-runtime-qualification-receipt.json").exists()
     assert manifest["cleanup"]["server_shutdown_complete"] is False

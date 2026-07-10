@@ -7,6 +7,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from scripts import verify_p105_source_expansion_artifacts as verifier
+
 REGISTRY_SCRIPT = Path("scripts/build_p105_source_registry.py")
 
 SCHEMA_ADAPTER_ARGS = [
@@ -309,6 +311,9 @@ def test_actual_root_schema_adapters_preserve_provenance_and_bindings(tmp_path: 
     assert entries[("p32-datadog-disk-queue", "p32-datadog-disk-queue")]["eligible_for_release_floor"] is False
     assert entries[("p41-loghub-apache-raw", "p41-loghub-apache-raw")]["unsupported_family_reason"] == "unreviewed_source"
     assert entries[("dejavu-a1-reviewed-local", "dejavu-a1-reviewed-local")]["unsupported_family_reason"] == "unreviewed_source"
+    assert verifier._validate_no_source_counting_authority("registry", registry) == []
+    assert verifier._validate_no_source_counting_authority("eligibility", eligibility) == []
+    assert all("counting_rows" not in entry and "counting_coverage_seconds" not in entry for entry in eligibility["entries"])
 
 
 def test_actual_runtime_adapter_rejects_manifest_hash_mismatch(tmp_path: Path) -> None:

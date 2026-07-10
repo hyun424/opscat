@@ -132,9 +132,7 @@ P105_SOURCE_EXPANSION_FAMILIES = frozenset({"database", "deploy", "queue"})
 P105_REVIEWED_FAMILY_AUTHORITY_SOURCES = frozenset({"reviewed_registry", "reviewed_source_registry", "registry_review"})
 P105_ACTUAL_COVERAGE_SOURCES = frozenset({"actual", "actual_source_run", "actual_source_runs", "measured", "reviewed_measured"})
 P105_RELEASE_COUNTING_RUNTIME_KINDS = frozenset({"actual_sqlite_pool", "actual_rabbitmq_docker", "actual_threading_http_server"})
-P105_FORGED_RELEASE_COUNTING_KEYS = frozenset(
-    {"verified_release_counting", "release_counting_allowed", "counting_rows", "counting_coverage_seconds"}
-)
+P105_FORGED_RELEASE_COUNTING_KEYS = frozenset({"verified_release_counting", "release_counting_allowed", "counting_rows", "counting_coverage_seconds"})
 P105_REQUIRED_SCHEMA_ADAPTERS: Mapping[str, str] = {
     "p32": "p105.adapter.p32-replay.v1",
     "p41": "p105.adapter.p41-sources.v1",
@@ -143,6 +141,17 @@ P105_REQUIRED_SCHEMA_ADAPTERS: Mapping[str, str] = {
     "db_pool": "p105.adapter.database-pool-harness.v1",
     "queue": "p105.adapter.rabbitmq-harness.v1",
     "deploy": "p105.adapter.threading-http-deploy-harness.v1",
+    "database_fleet": "p105.adapter.sqlite-pool-fleet-harness.v1",
+    "queue_fleet": "p105.adapter.rabbitmq-fleet-harness.v1",
+    "deploy_fleet": "p105.adapter.threading-http-deploy-fleet-harness.v1",
+}
+P105_FLEET_PROFILE = "p105.actual-fleet-soak.256x1h.v1"
+P105_QUEUE_FLEET_DIAGNOSTIC_PROFILE = "p105.queue-fleet.diagnostic.fast.v1"
+P105_DEPLOY_FLEET_DIAGNOSTIC_PROFILE = "p105.deploy-fleet.diagnostic.fast.v1"
+P105_FLEET_ROOT_SCHEMAS: Mapping[str, str] = {
+    "database_fleet": "p105.database.fleet_harness.v1",
+    "queue_fleet": "p105.queue.fleet_harness.v1",
+    "deploy_fleet": "p105.deploy.fleet_harness.v1",
 }
 P105_LOG_PARSER_VERSION = "p105-reviewed-redacted-log-parser-v1"
 G006_RELEASE_BENCHMARK_PATH = Path("evals/proactive/forecast/p105_release_benchmark_rows.json")
@@ -157,6 +166,469 @@ LEAD_TIME_INTERVALS_BY_FAMILY: Mapping[str, tuple[int, int]] = {
 
 class ForecastLeakageError(ValueError):
     """Raised when public training or provider packets contain scorer truth."""
+
+
+def _p105_fleet_service_id(family: str, index: int) -> str:
+    return f"p105.fleet.{family}.{index:03d}"
+
+
+def _p105_fleet_source_window_id(family: str, split: str, service_index: int, ordinal: int) -> str:
+    return f"p105-fleet-{family}-{split}-svc{service_index:03d}-sample{ordinal:03d}"
+
+
+def _p105_fleet_schedule(
+    family: str,
+    *,
+    precursor_base: int,
+    kinds: Sequence[str],
+    lead_range: tuple[int, int],
+) -> list[dict[str, Any]]:
+    schedule: list[dict[str, Any]] = []
+    for split, base in (("held_out", 0), ("real_derived_shadow", 128)):
+        for group in range(8):
+            start = precursor_base + 30 * group
+            affected_indexes = [base + 4 * group + offset for offset in range(4)]
+            schedule.append(
+                {
+                    "incident_group_id": f"p105-fleet-{family}-{split}-g{group:02d}",
+                    "group_id": f"g{group:02d}",
+                    "group": f"g{group:02d}",
+                    "split": split,
+                    "kind_index": group % 4,
+                    "kind": kinds[group % 4],
+                    "affected_services": [_p105_fleet_service_id(family, index) for index in affected_indexes],
+                    "group_start_second": start,
+                    "precursor_start_offset_seconds": start,
+                    "precursor_end_offset_seconds": start + 300,
+                    "positive_precursor_start_offset_seconds": start,
+                    "positive_precursor_end_offset_seconds": start + 300,
+                    "private_failure_second": 3300 + 30 * group,
+                    "private_failure_offset_seconds": 3300 + 30 * group,
+                    "positive_precursor_range_seconds": [start, start + 300],
+                    "lead_range_minutes": list(lead_range),
+                    "lead_time_minutes": {"minimum": lead_range[0], "maximum": lead_range[1]},
+                    "expected_bound_public_source_window_ids": [
+                        _p105_fleet_source_window_id(family, split, service_index, ordinal) for service_index in affected_indexes for ordinal in range(start // 5, (start + 300) // 5 + 1)
+                    ],
+                }
+            )
+    return schedule
+
+
+def build_p105_database_fleet_profile_contract() -> dict[str, Any]:
+    """Return the frozen, label-blind database fleet program contract."""
+
+    services = [_p105_fleet_service_id("database", index) for index in range(256)]
+    public_config = {
+        "profile": P105_FLEET_PROFILE,
+        "schema_version": P105_FLEET_ROOT_SCHEMAS["database_fleet"],
+        "adapter_key": "database_fleet",
+        "adapter_version": P105_REQUIRED_SCHEMA_ADAPTERS["database_fleet"],
+        "runtime_attestation_kind": "actual_sqlite_pool",
+        "partitioned_before_private_schedule_loading": True,
+        "services": services,
+        "partitions": {"held_out": services[:128], "real_derived_shadow": services[128:]},
+        "requested_wall_clock_seconds": 3600,
+        "observation_cadence_seconds": 5,
+        "scheduled_samples_per_service": 720,
+        "sample_offsets_seconds": list(range(0, 3600, 5)),
+    }
+    public_config["profile_config_hash"] = _sha256_text(json.dumps(public_config, sort_keys=True, separators=(",", ":")))
+    public_config["profile_config_hash_phase"] = "before_private_schedule_loading"
+    resources = {
+        "sqlite_shard_files": 64,
+        "bounded_pools": 64,
+        "services_per_shard": 4,
+        "pool_size": 3,
+        "max_live_sqlite_connections": 192,
+        "heartbeat_sql_transaction_interval_seconds": 30,
+        "max_sql_transaction_cycles": 40_000,
+        "worker_threads": 64,
+        "process_memory_bytes": 1024 * 1024 * 1024,
+        "sqlite_files_and_wal_bytes": 512 * 1024 * 1024,
+        "output_artifacts_bytes": 256 * 1024 * 1024,
+        "required_sql_operations": ["insert", "select", "update"],
+    }
+    private_schedule = _p105_fleet_schedule(
+        "database",
+        precursor_base=300,
+        kinds=("pool_saturation", "slow_transaction", "lock_contention", "checkout_timeout"),
+        lead_range=(45, 50),
+    )
+    for incident in private_schedule:
+        incident["group_id"] = incident["incident_group_id"]
+    return {
+        **public_config,
+        "public_config": public_config,
+        "resource_limits": resources,
+        "private_schedule": private_schedule,
+        "private_schedule_loaded_after_profile_hash": True,
+        "diagnostic_profile": {
+            "profile": "p105.database-fleet.diagnostic.fast.v1",
+            "non_qualifying": True,
+            "runtime_qualification_eligible": False,
+            "runtime_attestation_kind": "actual_sqlite_pool",
+            "requested_wall_clock_seconds": 30,
+            "service_count": 8,
+            "forbidden_release_credit": ["rows", "positives", "incident_groups", "coverage"],
+        },
+    }
+
+
+def validate_p105_database_fleet_manifest_contract(manifest: Mapping[str, Any]) -> dict[str, Any]:
+    codes: list[str] = []
+    if manifest.get("schema_version") != P105_FLEET_ROOT_SCHEMAS["database_fleet"]:
+        codes.append("database_fleet_schema_required")
+    if manifest.get("profile") != P105_FLEET_PROFILE:
+        codes.append("database_fleet_profile_required")
+    if manifest.get("adapter_key") != "database_fleet":
+        codes.append("database_fleet_adapter_required")
+    return {"accepted": not codes, "validation_error_codes": codes, "release_counting_allowed": False}
+
+
+def build_p105_deploy_fleet_profile_contract() -> dict[str, Any]:
+    """Return the frozen deploy fleet shape without claiming runtime observation."""
+
+    services = [_p105_fleet_service_id("deploy", index) for index in range(256)]
+    contract: dict[str, Any] = {
+        "profile": P105_FLEET_PROFILE,
+        "schema_version": P105_FLEET_ROOT_SCHEMAS["deploy_fleet"],
+        "adapter_key": "deploy_fleet",
+        "adapter_version": P105_REQUIRED_SCHEMA_ADAPTERS["deploy_fleet"],
+        "requested_seconds": 3600,
+        "sample_cadence_seconds": 5,
+        "samples_per_service": 720,
+        "sample_offsets_seconds": list(range(0, 3600, 5)),
+        "request_cap": 184_320,
+        "service_paths": [f"/p105/fleet/deploy/{index:03d}" for index in range(256)],
+        "partitions": {"held_out": services[:128], "real_derived_shadow": services[128:]},
+    }
+    contract["profile_config_hash"] = _sha256_text(json.dumps(contract, sort_keys=True, separators=(",", ":")))
+    contract["profile_config_hash_phase"] = "before_private_schedule_loading"
+    contract["private_schedule"] = _p105_fleet_schedule(
+        "deploy",
+        precursor_base=1500,
+        kinds=("canary_error_regression", "latency_regression", "configuration_mismatch", "bounded_rollback_delay"),
+        lead_range=(25, 30),
+    )
+    contract["private_schedule_loaded_after_profile_hash"] = True
+    return contract
+
+
+def _p105_nested_keys(value: Any) -> set[str]:
+    if isinstance(value, Mapping):
+        keys = {str(key) for key in value}
+        for child in value.values():
+            keys.update(_p105_nested_keys(child))
+        return keys
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        sequence_keys: set[str] = set()
+        for child in value:
+            sequence_keys.update(_p105_nested_keys(child))
+        return sequence_keys
+    return set()
+
+
+def _p105_mapping(value: Any) -> Mapping[str, Any]:
+    return value if isinstance(value, Mapping) else {}
+
+
+def validate_p105_queue_fleet_contract(
+    manifest: str | Path | Mapping[str, Any],
+    *,
+    verifier_receipt: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Validate queue fleet shape while keeping receipt authority external."""
+
+    payload = _load_json(manifest) if isinstance(manifest, (str, Path)) else dict(manifest)
+    public = _p105_mapping(payload.get("public_config"))
+    ledger = _p105_mapping(payload.get("private_injection_ledger"))
+    receipt = dict(verifier_receipt or {})
+    codes: set[str] = set()
+    profile = _p105_mapping(public.get("profile"))
+    profile_id = str(profile.get("id") or "")
+    diagnostic = profile_id == P105_QUEUE_FLEET_DIAGNOSTIC_PROFILE
+
+    if public.get("schema_version") != P105_FLEET_ROOT_SCHEMAS["queue_fleet"]:
+        codes.add("queue_fleet_rejects_legacy_root_schema")
+    if public.get("adapter_key") != "queue_fleet":
+        codes.add("queue_fleet_requires_closed_adapter_key")
+    if profile_id not in {P105_FLEET_PROFILE, P105_QUEUE_FLEET_DIAGNOSTIC_PROFILE}:
+        codes.add("queue_fleet_rejects_legacy_profile")
+    runtime = _p105_mapping(public.get("runtime"))
+    if runtime.get("broker_health_observed") is not True:
+        codes.add("queue_fleet_broker_health_missing")
+    if runtime.get("kind") != "actual_rabbitmq_docker":
+        codes.add("queue_fleet_actual_runtime_required")
+
+    services = [str(item) for item in _sequence(public.get("services", ()))]
+    partitions = _p105_mapping(public.get("partitions"))
+    sample_plan = _p105_mapping(public.get("sample_plan"))
+    queues = _p105_mapping(public.get("queues"))
+    message_plan = _p105_mapping(public.get("message_plan"))
+    management = _p105_mapping(public.get("management_plan"))
+    resources = _p105_mapping(public.get("resource_maxima"))
+    cleanup = _p105_mapping(public.get("cleanup"))
+
+    if len(services) != 256 or len(set(services)) != 256:
+        codes.add("queue_fleet_service_shape_mismatch")
+    if partitions.get("held_out") != services[:128] or partitions.get("real_derived_shadow") != services[128:]:
+        codes.add("queue_fleet_partition_shape_mismatch")
+    expected_sample_plan = (
+        {"requested_runtime_seconds": 30, "cadence_seconds": 5, "scheduled_samples_per_service": 6, "offsets_seconds": [0, 5, 10, 15, 20, 25]}
+        if diagnostic
+        else {
+            "requested_runtime_seconds": 3600,
+            "cadence_seconds": 5,
+            "scheduled_samples_per_service": 720,
+            "offsets_seconds": list(range(0, 3600, 5)),
+        }
+    )
+    if dict(sample_plan) != expected_sample_plan:
+        codes.add("queue_fleet_sample_plan_mismatch")
+    expected_profile_hash = _sha256_text(json.dumps({"profile": profile_id, "services": services, "cadence_seconds": 5}, sort_keys=True, separators=(",", ":")))
+    if profile.get("hash") != expected_profile_hash or profile.get("hash_phase") != "before_private_schedule_loading":
+        codes.add("queue_fleet_profile_hash_mismatch")
+
+    if len(_sequence(queues.get("queues", ()))) != 256 or len(_sequence(queues.get("dead_letter_queues", ()))) != 256:
+        codes.add("queue_fleet_queue_shape_mismatch")
+    if int(message_plan.get("maximum_published_messages", 0) or 0) > 35_872 or int(message_plan.get("maximum_consumed_or_rejected_messages", 0) or 0) > 35_872:
+        codes.add("queue_fleet_message_bound_breach")
+    if cleanup.get("cleanup_scope") != "isolated_run_container_and_volume_only":
+        codes.add("queue_fleet_cleanup_scope_escape")
+    if cleanup.get("container_removed") is not True or cleanup.get("volume_removed") is not True:
+        codes.add("queue_fleet_partial_cleanup")
+    forbidden = _p105_nested_keys(public)
+    leak_map = {
+        "queue_fleet_public_label_leak": {"label", "labels", "label_positive", "incident_answer_key", "incident_group_id"},
+        "queue_fleet_public_floor_deficit_leak": {"floor_deficit", "floor_deficits"},
+        "queue_fleet_public_release_outcome_leak": {"release_qualified", "p106_unlocked"},
+        "queue_fleet_public_scorer_threshold_leak": {"scorer_threshold", "scorer_thresholds"},
+    }
+    forbidden_present: set[str] = set()
+    for code, keys in leak_map.items():
+        present = forbidden & keys
+        if present:
+            codes.add(code)
+            forbidden_present.update(present)
+
+    expected_schedule = _p105_fleet_schedule(
+        "queue",
+        precursor_base=900,
+        kinds=("consumer_slowdown", "consumer_pause", "poison_dead_letter", "bounded_producer_burst"),
+        lead_range=(35, 40),
+    )
+    actual_schedule = [dict(item) for item in _mapping_sequence(ledger.get("schedule", ()))]
+    normalized_expected = []
+    for item in expected_schedule:
+        normalized_expected.append(
+            {
+                "incident_group_id": item["incident_group_id"],
+                "group": item["group"],
+                "split": item["split"],
+                "kind_index": item["kind_index"],
+                "kind": item["kind"],
+                "affected_services": item["affected_services"],
+                "private_failure_offset_seconds": item["private_failure_offset_seconds"],
+                "positive_precursor_start_offset_seconds": item["positive_precursor_start_offset_seconds"],
+                "positive_precursor_end_offset_seconds": item["positive_precursor_end_offset_seconds"],
+                "lead_time_minutes": item["lead_time_minutes"],
+                "bound_public_source_window_ids": item["expected_bound_public_source_window_ids"],
+            }
+        )
+    if actual_schedule != normalized_expected:
+        codes.add("queue_fleet_private_schedule_changed_after_public_profile_hash")
+    if ledger.get("loaded_after_public_config_hash") != _sha256_text(json.dumps(public, sort_keys=True, separators=(",", ":"))):
+        codes.add("queue_fleet_private_schedule_changed_after_public_profile_hash")
+
+    bound_ids = [str(window_id) for item in actual_schedule for window_id in _sequence(item.get("bound_public_source_window_ids", ()))]
+    if len(bound_ids) != len(set(bound_ids)):
+        codes.add("queue_fleet_duplicate_source_window_credit")
+    if _sequence(receipt.get("duplicate_group_ids", ())):
+        codes.add("queue_fleet_duplicate_group_credit")
+    if _sequence(receipt.get("duplicate_service_interval_ids", ())):
+        codes.add("queue_fleet_duplicate_service_interval_credit")
+    if receipt.get("legacy_created_at_tick_seconds_coverage") is True or receipt.get("coverage_source") == "created_at_plus_tick_seconds":
+        codes.add("queue_fleet_legacy_row_coverage_path")
+
+    accepted = not codes
+    queue_envelope = next(
+        (
+            item
+            for item in _mapping_sequence(receipt.get("run_envelopes", ()))
+            if item.get("source") == "queue_fleet" and item.get("run_label") == "run_1"
+        ),
+        None,
+    )
+    queue_envelope_errors = {str(code) for code in _sequence(_p105_mapping(queue_envelope).get("validation_error_codes", ()))}
+    if "telemetry_loss" in queue_envelope_errors:
+        codes.add("queue_fleet_telemetry_loss")
+    canonical_roots = _p105_mapping(receipt.get("canonical_roots"))
+    verified_coverage = _p105_mapping(receipt.get("verified_fleet_coverage_segments"))
+    release_counting = bool(
+        accepted
+        and not diagnostic
+        and receipt.get("schema_version") == "p105.source-runtime-qualification.v1"
+        and receipt.get("created_by") == "scripts/verify_p105_source_expansion_artifacts.py"
+        and receipt.get("verified_release_counting") is True
+        and isinstance(canonical_roots.get("queue_fleet"), str)
+        and isinstance(queue_envelope, Mapping)
+        and queue_envelope.get("verified") is True
+        and not _sequence(queue_envelope.get("validation_error_codes", ()))
+        and bool(_mapping_sequence(verified_coverage.get("queue_fleet", ())))
+    )
+    if accepted and not diagnostic and not release_counting:
+        codes.add("queue_fleet_verified_receipt_required")
+        accepted = False
+
+    queue_rows = [
+        {
+            "split": item["split"],
+            "group": item["group"],
+            "kind_index": item["kind_index"],
+            "kind": item["kind"],
+            "affected_services": item["affected_services"],
+            "precursor_start_seconds": item["positive_precursor_start_offset_seconds"],
+            "private_failure_seconds": item["private_failure_offset_seconds"],
+            "lead_minutes": item["lead_time_minutes"],
+        }
+        for item in normalized_expected
+    ]
+    return {
+        "accepted": accepted,
+        "validation_error_codes": sorted(codes),
+        "profile_id": profile_id,
+        "adapter_key": public.get("adapter_key"),
+        "runtime_kind": runtime.get("kind"),
+        "queue_count": len(_sequence(queues.get("queues", ()))),
+        "dead_letter_queue_count": len(_sequence(queues.get("dead_letter_queues", ()))),
+        "partition_counts": {
+            "held_out": len(_sequence(partitions.get("held_out", ()))),
+            "real_derived_shadow": len(_sequence(partitions.get("real_derived_shadow", ()))),
+        },
+        "scheduled_samples_per_service": sample_plan.get("scheduled_samples_per_service"),
+        "sample_offsets_seconds": {
+            "first": _sequence(sample_plan.get("offsets_seconds", ()))[:1][0] if _sequence(sample_plan.get("offsets_seconds", ())) else None,
+            "last": _sequence(sample_plan.get("offsets_seconds", ()))[:][-1] if _sequence(sample_plan.get("offsets_seconds", ())) else None,
+            "step": sample_plan.get("cadence_seconds"),
+        },
+        "message_maxima": {
+            "published": message_plan.get("maximum_published_messages"),
+            "consumed_or_rejected": message_plan.get("maximum_consumed_or_rejected_messages"),
+        },
+        "management_maxima": {
+            "concurrent_operations": management.get("maximum_concurrent_management_operations"),
+            "http_calls": management.get("maximum_management_http_calls"),
+        },
+        "resource_maxima": {
+            "queues": resources.get("maximum_total_queues"),
+            "memory_mib": resources.get("container_memory_mib"),
+            "disk_mib": resources.get("broker_disk_mib"),
+            "output_mib": resources.get("output_artifact_mib"),
+        },
+        "schedule": {
+            "groups_by_split": {split: [f"g{index:02d}" for index in range(8)] for split in ("held_out", "real_derived_shadow")},
+            "queue_group_rows": queue_rows,
+            "controls_per_split": {"held_out": 96, "real_derived_shadow": 96},
+        },
+        "public_config_forbidden_keys_present": sorted(forbidden_present),
+        "private_ledger_loaded_after_public_profile_hash": ledger.get("loaded_after_public_config_hash") == _sha256_text(json.dumps(public, sort_keys=True, separators=(",", ":"))),
+        "private_source_window_binding": {
+            "uses_exact_already_sampled_source_window_ids": len(bound_ids) == 16 * 4 * 61,
+            "uses_arithmetic_ranges": False,
+            "bound_window_count": len(bound_ids),
+        },
+        "diagnostic_only": diagnostic,
+        "receipt": {"locked": bool(codes), "release_counting": release_counting},
+        "counting_coverage_seconds": 0,
+        "release_floor_credit": {"rows": 0, "positives": 0, "groups": 0, "coverage_seconds": 0},
+    }
+
+
+def compute_p105_fleet_coverage_segments(
+    observations: Sequence[Mapping[str, Any]],
+    *,
+    source: str,
+    family: str,
+    split_id: str,
+    service: str,
+    run_id: str,
+    receipt_bound_source_window_ids: set[str],
+) -> list[dict[str, Any]]:
+    """Reconstruct conservative fleet coverage from receipt-bound monotonic adjacency."""
+
+    bound = [
+        row
+        for row in observations
+        if str(row.get("source_window_id") or "") in receipt_bound_source_window_ids and isinstance(row.get("sample_ordinal"), int) and isinstance(row.get("monotonic_ns"), int)
+    ]
+    bound.sort(key=lambda row: (int(row["sample_ordinal"]), int(row["monotonic_ns"])))
+    segments: list[list[Mapping[str, Any]]] = []
+    current: list[Mapping[str, Any]] = []
+    previous: Mapping[str, Any] | None = None
+    previous_ordinal_was_duplicate = False
+    for index, row in enumerate(bound):
+        ordinal = int(row["sample_ordinal"])
+        duplicate = (index > 0 and int(bound[index - 1]["sample_ordinal"]) == ordinal) or (index + 1 < len(bound) and int(bound[index + 1]["sample_ordinal"]) == ordinal)
+        if duplicate and index > 0 and int(bound[index - 1]["sample_ordinal"]) == ordinal:
+            if current:
+                segments.append(current)
+                current = []
+            previous = None
+            previous_ordinal_was_duplicate = True
+            continue
+        valid_adjacency = False
+        if previous is not None and not previous_ordinal_was_duplicate:
+            ordinal_delta = ordinal - int(previous["sample_ordinal"])
+            monotonic_delta = (int(row["monotonic_ns"]) - int(previous["monotonic_ns"])) / 1_000_000_000
+            valid_adjacency = ordinal_delta == 1 and 4.0 <= monotonic_delta <= 7.5
+        if not current:
+            current = [row]
+        elif valid_adjacency:
+            current.append(row)
+        else:
+            segments.append(current)
+            current = [row]
+        previous = row
+        previous_ordinal_was_duplicate = duplicate
+    if current:
+        segments.append(current)
+
+    result: list[dict[str, Any]] = []
+    for segment in segments:
+        elapsed = max(0, int(segment[-1]["monotonic_ns"]) - int(segment[0]["monotonic_ns"])) / 1_000_000_000
+        scheduled = max(0, len(segment) - 1) * 5
+        duration = min(scheduled, int(elapsed // 5) * 5)
+        result.append(
+            {
+                "source": source,
+                "family": family,
+                "split_id": split_id,
+                "service": service,
+                "run_id": run_id,
+                "start_source_window_id": str(segment[0]["source_window_id"]),
+                "end_source_window_id": str(segment[-1]["source_window_id"]),
+                "sample_count": len(segment),
+                "conservative_duration_seconds": duration,
+            }
+        )
+    return result
+
+
+def compute_p105_fleet_floor_credit(*, primary_run: Mapping[str, Any], reruns: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Count only the primary fleet run; reruns are reproducibility evidence."""
+
+    del reruns
+    return {
+        "counted_run_ids": [str(primary_run.get("run_id") or "")],
+        "primary_floor_credit": {
+            "rows": len(_sequence(primary_run.get("positive_source_window_ids", ()))),
+            "positives": len(_sequence(primary_run.get("positive_source_window_ids", ()))),
+            "incident_groups": len(_sequence(primary_run.get("incident_group_ids", ()))),
+            "coverage_seconds": sum(int(segment.get("duration_seconds", 0) or 0) for segment in _mapping_sequence(primary_run.get("segments", ()))),
+        },
+        "rerun_floor_credit": {"rows": 0, "positives": 0, "incident_groups": 0, "coverage_seconds": 0},
+    }
 
 
 @dataclass(frozen=True)
@@ -484,9 +956,7 @@ def score_forecasts(
 ) -> dict[str, Any]:
     actuals = [dict(item) for item in actual_incidents]
     non_abstained = [dict(item) for item in forecasts if item.get("abstention_reason") is None]
-    predicted_positive = [
-        forecast for forecast in non_abstained if _forecast_probability(forecast) >= float(family_thresholds.get(str(forecast.get("family")), 1.0))
-    ]
+    predicted_positive = [forecast for forecast in non_abstained if _forecast_probability(forecast) >= float(family_thresholds.get(str(forecast.get("family")), 1.0))]
     matched_actual_ids: set[str] = set()
     matched_forecast_ids: set[str] = set()
     duplicate_forecast_ids: set[str] = set()
@@ -769,14 +1239,7 @@ def evaluate_real_derived_transfer_gate(shadow_payload: Mapping[str, Any]) -> di
         drop = None if held_rate is None or real_rate is None else round(held_rate - real_rate, 6)
         false_increase = round(real_false - held_false_rate, 6)
         family_pass = (
-            not missing_source_or_split
-            and not missing_denominator
-            and drop is not None
-            and drop <= 0.1
-            and real_rate is not None
-            and real_rate >= 0.8
-            and false_increase <= 0.1
-            and real_false <= 0.5
+            not missing_source_or_split and not missing_denominator and drop is not None and drop <= 0.1 and real_rate is not None and real_rate >= 0.8 and false_increase <= 0.1 and real_false <= 0.5
         )
         result[family] = {
             "real_derived_split_id": split_id,
@@ -821,14 +1284,7 @@ def evaluate_p106_release_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
     families = _evaluate_release_family_rows(payload.get("per_family"), payload.get("held_out_calibration"))
     global_gate = _evaluate_release_global_row(payload.get("global"))
     transfer = _evaluate_release_transfer_gate(payload.get("real_derived_transfer"))
-    p106_unlocked = bool(
-        safety_pass
-        and not missing
-        and held_out.get("pass") is True
-        and global_gate.get("pass") is True
-        and families.get("pass") is True
-        and transfer.get("pass") is True
-    )
+    p106_unlocked = bool(safety_pass and not missing and held_out.get("pass") is True and global_gate.get("pass") is True and families.get("pass") is True and transfer.get("pass") is True)
     return {
         "p106_unlocked": p106_unlocked,
         "missing_required_gate_rows": missing,
@@ -918,18 +1374,12 @@ def _run_p105_release_benchmark(release_rows_path: str | Path, payload: Mapping[
     )
     if sidecar_codes:
         release_validation["validation_error_codes"] = sorted(set(release_validation["validation_error_codes"]) | sidecar_codes)
-        release_validation["validation_errors"] = list(release_validation["validation_errors"]) + [
-            f"{code}: required release-qualified sidecar missing or tampered" for code in sorted(sidecar_codes)
-        ]
+        release_validation["validation_errors"] = list(release_validation["validation_errors"]) + [f"{code}: required release-qualified sidecar missing or tampered" for code in sorted(sidecar_codes)]
     rows = [_row_with_scorer_labels(row) for row in _mapping_sequence(payload.get("rows", ()))]
     partitions = payload.get("partitions", {}) if isinstance(payload.get("partitions"), Mapping) else {}
     eligible_partitions = [str(item) for item in _sequence(payload.get("release_gate_eligible_partitions", ()))]
     supported_families = [str(item) for item in _sequence(payload.get("release_supported_families", ()))]
-    excluded_partitions = [
-        name
-        for name, spec in partitions.items()
-        if isinstance(spec, Mapping) and bool(spec.get("eligible_for_release_gate")) is not True
-    ]
+    excluded_partitions = [name for name, spec in partitions.items() if isinstance(spec, Mapping) and bool(spec.get("eligible_for_release_gate")) is not True]
     calibration_rows = [row for row in rows if row.get("partition") == "calibration"]
     calibrator = _fit_probability_calibrator(calibration_rows)
     held_out_rows = _partition_rows(rows, "held_out")
@@ -982,9 +1432,7 @@ def _run_p105_release_benchmark(release_rows_path: str | Path, payload: Mapping[
     qualification_mode = _release_qualification_mode(payload)
     preflight = _evaluate_g006_source_availability_preflight(payload, supported_families)
     if qualification_mode == RELEASE_QUALIFIED_MODE and preflight.get("pass") is not True:
-        release_validation["validation_error_codes"] = sorted(
-            set(release_validation["validation_error_codes"]) | set(preflight.get("validation_error_codes", ()))
-        )
+        release_validation["validation_error_codes"] = sorted(set(release_validation["validation_error_codes"]) | set(preflight.get("validation_error_codes", ())))
         release_validation["validation_errors"] = list(release_validation["validation_errors"]) + list(preflight.get("validation_errors", ()))
         release_gate["validation_errors"] = release_validation["validation_errors"]
         release_gate["validation_error_codes"] = release_validation["validation_error_codes"]
@@ -1108,11 +1556,7 @@ def _compare_release_held_out_to_p24(fixture: Mapping[str, Any], rows: Sequence[
 
 def _computed_p24_baseline(fixture: Mapping[str, Any], fallback_forecasts: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     windows_by_id = {window.id: window for window in load_proactive_fixtures(P24_PROACTIVE_FIXTURE_PATH)}
-    requested_ids = {
-        str(row.get("source_window_id"))
-        for row in _mapping_sequence(fixture.get("rows", ()))
-        if row.get("partition") == "held_out" and row.get("source_window_id") in windows_by_id
-    }
+    requested_ids = {str(row.get("source_window_id")) for row in _mapping_sequence(fixture.get("rows", ())) if row.get("partition") == "held_out" and row.get("source_window_id") in windows_by_id}
     requested_ids.update(str(row.get("source_window_id")) for row in fallback_forecasts if row.get("source_window_id") in windows_by_id)
     if not requested_ids:
         requested_ids.update(windows_by_id)
@@ -1176,14 +1620,7 @@ def _evaluate_release_manifest_transfer_gate(
             "forecasted_row_count": real.get("evaluated_window_count", 0),
         }
         row["pass"] = (
-            drop is not None
-            and drop <= 0.1
-            and real_rate is not None
-            and real_rate >= 0.8
-            and false_increase is not None
-            and false_increase <= 0.1
-            and real_false is not None
-            and real_false <= 0.5
+            drop is not None and drop <= 0.1 and real_rate is not None and real_rate >= 0.8 and false_increase is not None and false_increase <= 0.1 and real_false is not None and real_false <= 0.5
         )
         families[family] = row
         all_pass = all_pass and row["pass"]
@@ -1214,15 +1651,9 @@ def _evaluate_release_qualification_floors(
             partition_rows = [row for row in rows if row.get("partition") == partition and row.get("family") == family]
             floor = _floor_contract_for_partition(qualification, partition)
             positives = [row for row in partition_rows if _row_label_positive(row)]
-            negatives = [
-                row
-                for row in partition_rows
-                if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("label_positive") is False
-            ]
+            negatives = [row for row in partition_rows if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("label_positive") is False]
             incident_groups = {
-                str(row["scorer_labels"].get("incident_group_id"))
-                for row in partition_rows
-                if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("incident_group_id")
+                str(row["scorer_labels"].get("incident_group_id")) for row in partition_rows if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("incident_group_id")
             }
             non_abstained = sum(1 for row in partition_rows if isinstance(forecast_row(row), CalibratedForecast))
             service_days = _service_days_for_floor(family, partition, service_day_coverage, partition_rows)
@@ -1442,13 +1873,7 @@ def _diagnostic_partition_report(rows: Sequence[Mapping[str, Any]], supported_fa
     supported = set(supported_families)
     family_rows: dict[str, dict[str, Any]] = {}
     row_reports: list[dict[str, Any]] = []
-    source_paths = sorted(
-        {
-            str(row.get("derivation", {}).get("source_path"))
-            for row in rows
-            if isinstance(row.get("derivation"), Mapping) and row.get("derivation", {}).get("source_path")
-        }
-    )
+    source_paths = sorted({str(row.get("derivation", {}).get("source_path")) for row in rows if isinstance(row.get("derivation"), Mapping) and row.get("derivation", {}).get("source_path")})
     for row in rows:
         forecast = forecast_row(row)
         actual_disposition = "abstain" if isinstance(forecast, ForecastAbstention) else "fail_closed"
@@ -2103,11 +2528,7 @@ def _g006_public_features(family: str, record: Mapping[str, Any], partition: str
         "telemetry_unavailable": False,
     }
     _raise_if_leaky(features)
-    return {
-        key: copy.deepcopy(child)
-        for key, child in features.items()
-        if str(key) not in SCORER_ONLY_KEYS
-    }
+    return {key: copy.deepcopy(child) for key, child in features.items() if str(key) not in SCORER_ONLY_KEYS}
 
 
 def _g006_p24_input(row_id: str, source_window_id: str, family: str, record: Mapping[str, Any], partition: str, index: int) -> dict[str, Any]:
@@ -2567,21 +2988,14 @@ def _g006_disabled_p44_preflight() -> dict[str, Any]:
 
 def _g006_source_preflight(mode: str, rows: Sequence[Mapping[str, Any]], ledger: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     row_by_id = {str(row.get("row_id")): row for row in rows}
-    canonical = [
-        row["source_record_provenance"]["canonical_source_tuple"]
-        for row in rows
-        if isinstance(row.get("source_record_provenance"), Mapping)
-    ]
+    canonical = [row["source_record_provenance"]["canonical_source_tuple"] for row in rows if isinstance(row.get("source_record_provenance"), Mapping)]
     return {
         "mode": mode,
         "available_source_rows": len(rows),
         "positive_labels": sum(1 for record in ledger if record.get("label_positive") is True),
         "incidents": sum(1 for record in ledger if record.get("label_incident_id")),
         "incident_groups": len({record.get("incident_group_id") for record in ledger if record.get("incident_group_id")}),
-        "distinct_canonical_source_tuples": len({
-            tuple(item.get(key) for key in CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS)
-            for item in canonical
-        }),
+        "distinct_canonical_source_tuples": len({tuple(item.get(key) for key in CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS) for item in canonical}),
         "local_source_hashes": sorted({str(item.get("source_content_hash")) for item in canonical}),
         "materialized_record_hashes": sorted({str(item.get("materialized_record_hash")) for item in canonical}),
         "review_redaction_status": "reviewed_redacted" if mode == "reviewed-local" else mode,
@@ -2597,19 +3011,29 @@ def _g006_normalize_partition(value: Any) -> str:
 def _g006_private_labels_by_window(ledger_path: Path) -> dict[str, dict[str, Any]]:
     payload = _load_json(ledger_path)
     labels: dict[str, dict[str, Any]] = {}
-    for record in _mapping_sequence(payload.get("records", ())):
+    records = _mapping_sequence(payload.get("records", ()))
+    records.extend(_mapping_sequence(payload.get("incidents", ())))
+    records.extend(_mapping_sequence(payload.get("schedule", ())))
+    for record in records:
         window_ids = [str(record.get("source_window_id") or "")]
         window_ids.extend(str(value) for value in _sequence(record.get("public_source_window_ids", ())))
+        window_ids.extend(str(value) for value in _sequence(record.get("bound_public_source_window_ids", ())))
         for window_id in window_ids:
             if not window_id:
                 continue
+            sample_match = re.search(r"sample(?P<ordinal>\d+)$", window_id)
+            sample_offset = int(sample_match.group("ordinal")) * 5 if sample_match is not None else None
+            failure_offset = record.get("private_failure_offset_seconds") or record.get("private_failure_second")
+            lead_minutes = record.get("lead_time_label_minutes")
+            if lead_minutes is None and sample_offset is not None and isinstance(failure_offset, (int, float)):
+                lead_minutes = (float(failure_offset) - sample_offset) / 60.0
             labels[window_id] = {
-                "incident_group_id": record.get("incident_group_id") or record.get("injection_id"),
-                "label_failure_mode": record.get("label_failure_mode") or record.get("expected_predicate") or record.get("injection_type"),
-                "label_incident_id": record.get("label_incident_id") or record.get("injection_id"),
+                "incident_group_id": record.get("incident_group_id") or record.get("group_id") or record.get("injection_id"),
+                "label_failure_mode": record.get("label_failure_mode") or record.get("expected_predicate") or record.get("injection_type") or record.get("kind"),
+                "label_incident_id": record.get("label_incident_id") or record.get("incident_group_id") or record.get("group_id") or record.get("injection_id"),
                 "label_incident_start_timestamp": record.get("label_incident_start_timestamp"),
                 "label_positive": record.get("label_positive", True),
-                "lead_time_label_minutes": record.get("lead_time_label_minutes"),
+                "lead_time_label_minutes": lead_minutes,
             }
     return labels
 
@@ -2648,18 +3072,21 @@ def _g006_runtime_receipt_codes(
     if not _g006_receipt_is_verified(receipt_path):
         return {"forged_source_runtime_receipt"}
     receipt = _load_json(Path(str(receipt_path)))
-    envelopes = {
-        str(item.get("source")): item
-        for item in _mapping_sequence(receipt.get("run_envelopes", ()))
-        if item.get("run_label") == "run_1"
-    }
+    envelopes = {str(item.get("source")): item for item in _mapping_sequence(receipt.get("run_envelopes", ())) if item.get("run_label") == "run_1"}
     codes: set[str] = set()
     expected_kind = {
         "db_pool": "actual_sqlite_pool",
+        "database_fleet": "actual_sqlite_pool",
         "queue": "actual_rabbitmq_docker",
+        "queue_fleet": "actual_rabbitmq_docker",
         "deploy": "actual_threading_http_server",
+        "deploy_fleet": "actual_threading_http_server",
     }
     canonical_roots = receipt.get("canonical_roots", {}) if isinstance(receipt.get("canonical_roots"), Mapping) else {}
+    verified_fleet_coverage_value = receipt.get("verified_fleet_coverage_segments")
+    verified_fleet_coverage: Mapping[str, Any] = (
+        verified_fleet_coverage_value if isinstance(verified_fleet_coverage_value, Mapping) else {}
+    )
     for source, path_value in runtime_manifests.items():
         if path_value is None:
             continue
@@ -2671,14 +3098,20 @@ def _g006_runtime_receipt_codes(
         manifest = _load_json(manifest_path)
         diagnostic_value = manifest.get("diagnostic_profile")
         diagnostic: Mapping[str, Any] = diagnostic_value if isinstance(diagnostic_value, Mapping) else {}
-        if manifest.get("test_fast_runtime") is True or diagnostic.get("non_qualifying") is True:
+        public_config = _p105_mapping(manifest.get("public_config"))
+        public_profile = _p105_mapping(public_config.get("profile"))
+        if (
+            manifest.get("test_fast_runtime") is True
+            or manifest.get("diagnostic_only") is True
+            or diagnostic.get("non_qualifying") is True
+            or diagnostic.get("enabled") is True
+            or str(public_profile.get("id") or "").endswith("diagnostic.fast.v1")
+        ):
             codes.add("test_fast_runtime_noncounting")
         attestation_value = manifest.get("runtime_attestation")
         attestation: Mapping[str, Any] = attestation_value if isinstance(attestation_value, Mapping) else {}
         envelope_attestation_value = envelope.get("runtime_attestation")
-        envelope_attestation: Mapping[str, Any] = (
-            envelope_attestation_value if isinstance(envelope_attestation_value, Mapping) else {}
-        )
+        envelope_attestation: Mapping[str, Any] = envelope_attestation_value if isinstance(envelope_attestation_value, Mapping) else {}
         root = _g006_provenance_root(manifest_path, manifest)
         if (
             envelope.get("verified") is not True
@@ -2692,6 +3125,8 @@ def _g006_runtime_receipt_codes(
             or envelope_attestation.get("kind") != expected_kind[source]
         ):
             codes.add("source_runtime_receipt_manifest_mismatch")
+        if source.endswith("_fleet") and not _mapping_sequence(verified_fleet_coverage.get(source, ())):
+            codes.add("fleet_verifier_coverage_segments_missing")
     return codes
 
 
@@ -2708,12 +3143,7 @@ def _g006_receipt_review_binding_codes(
             return {"source_runtime_receipt_registry_mismatch"}
         path = Path(path_value)
         binding = receipt.get(key)
-        if (
-            not path.exists()
-            or not isinstance(binding, Mapping)
-            or binding.get("path") != str(path)
-            or binding.get("sha256") != _sha256_path(path)
-        ):
+        if not path.exists() or not isinstance(binding, Mapping) or binding.get("path") != str(path) or binding.get("sha256") != _sha256_path(path):
             return {"source_runtime_receipt_registry_mismatch"}
     return set()
 
@@ -2746,10 +3176,67 @@ def _g006_runtime_coverage_interval(
     }
 
 
+def _g006_fleet_coverage_by_service(
+    manifest_path: Path,
+    manifest: Mapping[str, Any],
+    source_system: str,
+    family: str,
+    *,
+    verified_segments: Sequence[Mapping[str, Any]] | None = None,
+) -> dict[tuple[str, str], dict[str, Any]]:
+    if verified_segments is None:
+        coverage_path = _g006_manifest_artifact_path(manifest_path, manifest, "coverage")
+        if coverage_path is None or not coverage_path.exists():
+            return {}
+        coverage = _load_json(coverage_path)
+        segments = _mapping_sequence(coverage.get("canonical_segments", ()))
+        segments.extend(_mapping_sequence(coverage.get("coverage_segments", ())))
+    else:
+        segments = [dict(segment) for segment in verified_segments]
+    anchor_text = str(manifest.get("created_at") or "2024-01-01T00:00:00Z")
+    try:
+        anchor = _parse_ts(anchor_text)
+    except ValueError:
+        anchor = _parse_ts("2024-01-01T00:00:00Z")
+    result: dict[tuple[str, str], dict[str, Any]] = {}
+    for index, segment in enumerate(segments):
+        service = str(segment.get("service_id") or segment.get("service") or "")
+        split = _g006_normalize_partition(segment.get("split") or segment.get("split_id"))
+        duration = int(
+            segment.get("conservative_duration_seconds")
+            or segment.get("canonical_duration_seconds")
+            or segment.get("duration_seconds")
+            or 0
+        )
+        if not service or split not in {"held_out", "real_derived_shadow"} or duration <= 0:
+            continue
+        start_ordinal_value = segment.get("start_sample_ordinal")
+        start_ordinal = int(start_ordinal_value) if isinstance(start_ordinal_value, int) else 0
+        start = anchor + timedelta(seconds=start_ordinal * 5)
+        end = start + timedelta(seconds=duration)
+        key = (service, split)
+        candidate = {
+            "coverage_interval_id": f"{source_system}:receipt-segment:{index}",
+            "split_id": f"g006-{split}",
+            "family": family,
+            "service": service,
+            "source_system": source_system,
+            "start": start.isoformat().replace("+00:00", "Z"),
+            "end": end.isoformat().replace("+00:00", "Z"),
+            "timestamp_source": "receipt_bound_monotonic_segment",
+        }
+        current = result.get(key)
+        if current is None or str(candidate["end"]) > str(current["end"]):
+            result[key] = candidate
+    return result
+
+
 def _g006_runtime_source_rows(
     manifest_path: Path,
     source_system: str,
     sequence_start: int,
+    *,
+    verified_fleet_coverage_segments: Sequence[Mapping[str, Any]] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any], dict[str, Any]]:
     manifest = _load_json(manifest_path)
     public_path = _g006_manifest_artifact_path(manifest_path, manifest, "public_telemetry")
@@ -2762,7 +3249,30 @@ def _g006_runtime_source_rows(
     if public_path is None or ledger_path is None or not public_path.exists() or not ledger_path.exists():
         raise ValueError(f"{source_system}_source_artifacts_missing")
     labels_by_window = _g006_private_labels_by_window(ledger_path)
-    family = str(manifest.get("source_family") or {"db_pool": "database", "queue": "queue", "deploy": "deploy"}[source_system])
+    family = str(
+        manifest.get("source_family")
+        or {
+            "db_pool": "database",
+            "queue": "queue",
+            "deploy": "deploy",
+            "database_fleet": "database",
+            "queue_fleet": "queue",
+            "deploy_fleet": "deploy",
+        }[source_system]
+    )
+    if source_system.endswith("_fleet") and verified_fleet_coverage_segments is None:
+        raise ValueError(f"{source_system}_verifier_coverage_segments_missing")
+    fleet_coverage = (
+        _g006_fleet_coverage_by_service(
+            manifest_path,
+            manifest,
+            source_system,
+            family,
+            verified_segments=verified_fleet_coverage_segments,
+        )
+        if source_system.endswith("_fleet")
+        else {}
+    )
     rows: list[dict[str, Any]] = []
     ledger: list[dict[str, Any]] = []
     for offset, raw_record, source_record in _g006_read_records(public_path):
@@ -2773,20 +3283,20 @@ def _g006_runtime_source_rows(
         adapted_record["family"] = family
         adapted_record["partition"] = partition
         adapted_record["public_features"] = copy.deepcopy(source_record)
-        adapted_record["service"] = str(
-            source_record.get("service") or source_record.get("service_id") or source_record.get("queue_name") or f"{family}-service"
-        )
-        coverage_interval = _g006_runtime_coverage_interval(
-            source_record,
-            manifest,
-            source_system,
-            family,
-            partition,
+        adapted_record["service"] = str(source_record.get("service") or source_record.get("service_id") or source_record.get("queue_name") or f"{family}-service")
+        coverage_interval = (
+            fleet_coverage.get((adapted_record["service"], partition))
+            if source_system.endswith("_fleet")
+            else _g006_runtime_coverage_interval(
+                source_record,
+                manifest,
+                source_system,
+                family,
+                partition,
+            )
         )
         adapted_record["coverage_interval"] = coverage_interval
-        adapted_record["source_timestamp"] = str(
-            coverage_interval.get("start") if coverage_interval is not None else manifest.get("created_at") or ""
-        )
+        adapted_record["source_timestamp"] = str(coverage_interval.get("start") if coverage_interval is not None else manifest.get("created_at") or "")
         row, label = _g006_row_from_record(
             source_system=source_system,
             source_dataset=public_path.stem,
@@ -2803,9 +3313,13 @@ def _g006_runtime_source_rows(
         rows.append(row)
         ledger.append(label)
     source_summary = _g006_source_preflight("verified-actual-runtime", rows, ledger)
+    canonical_artifact_root_sha256 = _g006_provenance_root(manifest_path, manifest)
+    if canonical_artifact_root_sha256 is None:
+        raise ValueError(f"{source_system}_canonical_artifact_root_missing")
     source_manifest = {
         "manifest_path": str(manifest_path),
         "manifest_sha256": _sha256_path(manifest_path),
+        "canonical_artifact_root_sha256": canonical_artifact_root_sha256,
         "public_telemetry_path": str(public_path),
         "public_telemetry_sha256": _sha256_path(public_path),
         "runtime_attestation": copy.deepcopy(manifest.get("runtime_attestation")),
@@ -2881,6 +3395,10 @@ def materialize_p105_release_qualified_evidence(
     db_pool_harness_manifest: str | Path | None = None,
     queue_harness_manifest: str | Path | None = None,
     deploy_harness_manifest: str | Path | None = None,
+    database_fleet_manifest: str | Path | None = None,
+    queue_fleet_manifest: str | Path | None = None,
+    deploy_fleet_manifest: str | Path | None = None,
+    fleet_runtime_qualification_receipt: str | Path | None = None,
     source_registry: str | Path | None = None,
     source_eligibility: str | Path | None = None,
     schema_adapters: Mapping[str, str] | None = None,
@@ -2903,6 +3421,10 @@ def materialize_p105_release_qualified_evidence(
         db_pool_harness_manifest=db_pool_harness_manifest,
         queue_harness_manifest=queue_harness_manifest,
         deploy_harness_manifest=deploy_harness_manifest,
+        database_fleet_manifest=database_fleet_manifest,
+        queue_fleet_manifest=queue_fleet_manifest,
+        deploy_fleet_manifest=deploy_fleet_manifest,
+        fleet_runtime_qualification_receipt=fleet_runtime_qualification_receipt,
         source_registry=source_registry,
         source_eligibility=source_eligibility,
         schema_adapters=schema_adapters,
@@ -2963,6 +3485,12 @@ def materialize_p105_release_qualified_evidence(
     expanded_ledger: list[dict[str, Any]] = []
     expanded_preflight: dict[str, Any] = {}
     expanded_source_manifest: dict[str, Any] = {}
+    verified_fleet_coverage_by_source: Mapping[str, Any] = {}
+    if fleet_runtime_qualification_receipt is not None:
+        fleet_receipt_payload = _load_json(Path(fleet_runtime_qualification_receipt))
+        coverage_value = fleet_receipt_payload.get("verified_fleet_coverage_segments")
+        if isinstance(coverage_value, Mapping):
+            verified_fleet_coverage_by_source = coverage_value
     sequence_start = len(seed_rows) + len(p44_rows)
     if dejavu_a1_reviewed_local_manifest is not None:
         source_rows, source_ledger, source_preflight, source_manifest_entry = _g006_dejavu_rows(
@@ -2978,6 +3506,9 @@ def materialize_p105_release_qualified_evidence(
         ("db_pool", db_pool_harness_manifest),
         ("queue", queue_harness_manifest),
         ("deploy", deploy_harness_manifest),
+        ("database_fleet", database_fleet_manifest),
+        ("queue_fleet", queue_fleet_manifest),
+        ("deploy_fleet", deploy_fleet_manifest),
     ):
         if manifest_value is None:
             continue
@@ -2985,6 +3516,11 @@ def materialize_p105_release_qualified_evidence(
             Path(manifest_value),
             source_system,
             sequence_start,
+            verified_fleet_coverage_segments=(
+                _mapping_sequence(verified_fleet_coverage_by_source.get(source_system, ()))
+                if source_system.endswith("_fleet")
+                else None
+            ),
         )
         sequence_start += len(source_rows)
         expanded_rows.extend(source_rows)
@@ -3037,20 +3573,12 @@ def materialize_p105_release_qualified_evidence(
                 "positive_labels": sum(1 for record in family_ledger_records(family) if record.get("label_positive") is True),
                 "incidents": len(family_ledger_records(family)),
                 "incident_groups": len({record.get("incident_group_id") for record in family_ledger_records(family)}),
-                "distinct_canonical_source_tuples": len({
-                    tuple(row["source_record_provenance"]["canonical_source_tuple"][key] for key in CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS)
-                    for row in rows
-                    if row.get("family") == family
-                }),
+                "distinct_canonical_source_tuples": len(
+                    {tuple(row["source_record_provenance"]["canonical_source_tuple"][key] for key in CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS) for row in rows if row.get("family") == family}
+                ),
                 "review_redaction_status": "reviewed_redacted" if p44_mode == "reviewed-local" else "disabled_p44_local_p32_p41_only",
-                "local_source_hashes": sorted({
-                    str(row["source_record_provenance"]["canonical_source_tuple"]["source_content_hash"])
-                    for row in family_rows(family)
-                }),
-                "materialized_record_hashes": sorted({
-                    str(row["source_record_provenance"]["canonical_source_tuple"]["materialized_record_hash"])
-                    for row in family_rows(family)
-                }),
+                "local_source_hashes": sorted({str(row["source_record_provenance"]["canonical_source_tuple"]["source_content_hash"]) for row in family_rows(family)}),
+                "materialized_record_hashes": sorted({str(row["source_record_provenance"]["canonical_source_tuple"]["materialized_record_hash"]) for row in family_rows(family)}),
             }
             for family in ("database", "deploy", "queue")
         },
@@ -3064,18 +3592,26 @@ def materialize_p105_release_qualified_evidence(
         "p44_mode": p44_mode,
         "p44_reviewed_local_manifest": str(p44_reviewed_local_manifest) if p44_reviewed_local_manifest else None,
         "source_runtime_qualification_receipt": str(source_runtime_qualification_receipt) if source_runtime_qualification_receipt else None,
-        "source_runtime_qualification_receipt_sha256": (
-            _sha256_path(Path(source_runtime_qualification_receipt)) if source_runtime_qualification_receipt else None
+        "source_runtime_qualification_receipt_sha256": (_sha256_path(Path(source_runtime_qualification_receipt)) if source_runtime_qualification_receipt else None),
+        "fleet_runtime_qualification_receipt": (str(fleet_runtime_qualification_receipt) if fleet_runtime_qualification_receipt else None),
+        "fleet_runtime_qualification_receipt_sha256": (_sha256_path(Path(fleet_runtime_qualification_receipt)) if fleet_runtime_qualification_receipt else None),
+        "registry": (
+            {"path": str(source_registry), "sha256": _sha256_path(Path(source_registry))}
+            if source_registry
+            else None
+        ),
+        "eligibility": (
+            {"path": str(source_eligibility), "sha256": _sha256_path(Path(source_eligibility))}
+            if source_eligibility
+            else None
         ),
         "forbidden_inputs": [],
     }
     source_runtime_qualification = {
         "receipt_path": str(source_runtime_qualification_receipt) if source_runtime_qualification_receipt else None,
         "receipt_sha256": _sha256_path(Path(source_runtime_qualification_receipt)) if source_runtime_qualification_receipt else None,
-        "verified_release_counting": bool(
-            source_runtime_qualification_receipt and _g006_receipt_is_verified(source_runtime_qualification_receipt)
-        ),
-        "runtime_sources": sorted(key for key in expanded_preflight if key in {"db_pool", "queue", "deploy"}),
+        "verified_release_counting": bool(source_runtime_qualification_receipt and _g006_receipt_is_verified(source_runtime_qualification_receipt)),
+        "runtime_sources": sorted(key for key in expanded_preflight if key in {"db_pool", "queue", "deploy", "database_fleet", "queue_fleet", "deploy_fleet"}),
     }
     payload: dict[str, Any] = {
         "schema_version": "p105.forecast.release_benchmark.v1",
@@ -3709,9 +4245,7 @@ def _source_record_row(program: str, manifest_path: Path, source: Mapping[str, A
         "source_dataset": dataset,
         "source_manifest_key": source_id,
         "source_content_hash": source_content_hash,
-        "materialized_record_hash": _sha256_text(
-            json.dumps({"family": family, "index": index, "source_id": source_id, "source_path": source_path}, sort_keys=True)
-        ),
+        "materialized_record_hash": _sha256_text(json.dumps({"family": family, "index": index, "source_id": source_id, "source_path": source_path}, sort_keys=True)),
         "materialization_version": str(source.get("version") or source.get("family") or "v1"),
     }
     provenance = {
@@ -3751,6 +4285,10 @@ def build_p105_materializer_cli_parser() -> argparse.ArgumentParser:
     parser.add_argument("--db-pool-harness-manifest", default=None)
     parser.add_argument("--queue-harness-manifest", default=None)
     parser.add_argument("--deploy-harness-manifest", default=None)
+    parser.add_argument("--database-fleet-manifest", default=None)
+    parser.add_argument("--queue-fleet-manifest", default=None)
+    parser.add_argument("--deploy-fleet-manifest", default=None)
+    parser.add_argument("--fleet-runtime-qualification-receipt", default=None)
     parser.add_argument("--schema-adapter", action="append", default=[])
     parser.add_argument("--source-registry", default=None)
     parser.add_argument("--source-eligibility", default=None)
@@ -3778,6 +4316,10 @@ def run_p105_materializer_cli(argv: Sequence[str] | None = None) -> int:
             db_pool_harness_manifest=args.db_pool_harness_manifest,
             queue_harness_manifest=args.queue_harness_manifest,
             deploy_harness_manifest=args.deploy_harness_manifest,
+            database_fleet_manifest=args.database_fleet_manifest,
+            queue_fleet_manifest=args.queue_fleet_manifest,
+            deploy_fleet_manifest=args.deploy_fleet_manifest,
+            fleet_runtime_qualification_receipt=args.fleet_runtime_qualification_receipt,
             source_registry=args.source_registry,
             source_eligibility=args.source_eligibility,
             schema_adapters=schema_adapters,
@@ -3839,10 +4381,7 @@ def _metric_scope(
     forecast_labels = {str(item.get("forecast_id", "")): _label_for_forecast(item, actuals) for item in scope_non_abstained}
     false_negative_count = sum(1 for item in scope_actuals if str(item.get("label_incident_id", "")) not in matched_actual_ids)
     pr_labels = [forecast_labels[str(item.get("forecast_id", ""))] for item in scope_non_abstained]
-    scoring_labels = [
-        0 if str(item.get("forecast_id", "")) in duplicate_forecast_ids else forecast_labels[str(item.get("forecast_id", ""))]
-        for item in scope_non_abstained
-    ]
+    scoring_labels = [0 if str(item.get("forecast_id", "")) in duplicate_forecast_ids else forecast_labels[str(item.get("forecast_id", ""))] for item in scope_non_abstained]
     calibration_labels = [_label_for_forecast(item, actuals) for item in scope_non_abstained]
     probs = [_forecast_probability(item) for item in scope_non_abstained]
     service_days = _scored_service_days(family, scope_forecasts, scope_actuals, service_day_coverage)
@@ -3862,8 +4401,7 @@ def _metric_scope(
         "true_negative_count": sum(
             1
             for item in scope_non_abstained
-            if str(item.get("forecast_id", "")) not in {str(prediction.get("forecast_id", "")) for prediction in scope_predicted_positive}
-            and forecast_labels[str(item.get("forecast_id", ""))] == 0
+            if str(item.get("forecast_id", "")) not in {str(prediction.get("forecast_id", "")) for prediction in scope_predicted_positive} and forecast_labels[str(item.get("forecast_id", ""))] == 0
         ),
         "precision": _ratio(len(scope_tp), len(scope_predicted_positive)),
         "recall": _ratio(len(scope_tp), len(scope_actuals)),
@@ -3958,10 +4496,7 @@ def _ece_value(probs: Sequence[float], labels: Sequence[int], *, bin_count: int 
 def _ece_bins(probs: Sequence[float], labels: Sequence[int], *, bin_count: int = 10) -> list[dict[str, Any]]:
     bins: list[dict[str, Any]] = []
     if not probs:
-        return [
-            {"lower": index / bin_count, "upper": (index + 1) / bin_count, "count": 0, "confidence": None, "accuracy": None, "weighted_gap": 0.0}
-            for index in range(bin_count)
-        ]
+        return [{"lower": index / bin_count, "upper": (index + 1) / bin_count, "count": 0, "confidence": None, "accuracy": None, "weighted_gap": 0.0} for index in range(bin_count)]
     for index in range(bin_count):
         lower = index / bin_count
         upper = (index + 1) / bin_count
@@ -4083,17 +4618,9 @@ def _scoped_coverage_intervals(
         )
         if value
     }
-    row_split_ids = {
-        str(row.get("split_id"))
-        for row in rows
-        if (partition is None or row.get("partition") == partition or row.get("split") == partition) and row.get("split_id")
-    }
+    row_split_ids = {str(row.get("split_id")) for row in rows if (partition is None or row.get("partition") == partition or row.get("split") == partition) and row.get("split_id")}
     row_source_systems = {
-        source_system
-        for row in rows
-        if (partition is None or row.get("partition") == partition or row.get("split") == partition)
-        for source_system in [_canonical_source_system(row)]
-        if source_system
+        source_system for row in rows if (partition is None or row.get("partition") == partition or row.get("split") == partition) for source_system in [_canonical_source_system(row)] if source_system
     }
     scoped: list[Mapping[str, Any]] = []
     family_coverage = coverage.get(family, {})
@@ -4322,14 +4849,7 @@ def _evaluate_release_transfer_gate(value: Any) -> dict[str, Any]:
         false_increase = _optional_float(row.get("false_alert_increase"))
         real_false = _optional_float(row.get("real_derived_false_alerts_per_service_day"))
         row["pass"] = (
-            drop is not None
-            and drop <= 0.1
-            and real_rate is not None
-            and real_rate >= 0.8
-            and false_increase is not None
-            and false_increase <= 0.1
-            and real_false is not None
-            and real_false <= 0.5
+            drop is not None and drop <= 0.1 and real_rate is not None and real_rate >= 0.8 and false_increase is not None and false_increase <= 0.1 and real_false is not None and real_false <= 0.5
         )
         families[str(family)] = row
         all_pass = all_pass and row["pass"]
@@ -4505,6 +5025,26 @@ def _g006_receipt_is_verified(receipt_path: str | Path | None) -> bool:
     )
 
 
+def _g006_fleet_manifest_codes(
+    key: str,
+    manifest_path: str | Path | None,
+) -> set[str]:
+    if manifest_path is None:
+        return set()
+    try:
+        payload = _load_json(manifest_path)
+    except (FileNotFoundError, json.JSONDecodeError, ValueError):
+        return {f"{key}_manifest_invalid"}
+    root: Mapping[str, Any] = _p105_mapping(payload.get("public_config")) or payload
+    profile_value = root.get("profile")
+    profile = str(profile_value.get("id") or "") if isinstance(profile_value, Mapping) else str(profile_value or "")
+    expected_root = P105_FLEET_ROOT_SCHEMAS[key]
+    expected_adapter = key
+    if root.get("schema_version") != expected_root or root.get("adapter_key") != expected_adapter or profile != P105_FLEET_PROFILE:
+        return {f"{key}_cross_profile_rejected"}
+    return set()
+
+
 def _g006_validate_materializer_runtime_inputs(
     *,
     p32_replay: str | Path,
@@ -4514,6 +5054,10 @@ def _g006_validate_materializer_runtime_inputs(
     db_pool_harness_manifest: str | Path | None,
     queue_harness_manifest: str | Path | None,
     deploy_harness_manifest: str | Path | None,
+    database_fleet_manifest: str | Path | None,
+    queue_fleet_manifest: str | Path | None,
+    deploy_fleet_manifest: str | Path | None,
+    fleet_runtime_qualification_receipt: str | Path | None,
     source_registry: str | Path | None,
     source_eligibility: str | Path | None,
     schema_adapters: Mapping[str, str] | None,
@@ -4524,20 +5068,50 @@ def _g006_validate_materializer_runtime_inputs(
     count_only_verified_release_receipts: bool,
 ) -> set[str]:
     codes = _g006_validate_schema_adapters(schema_adapters, fail_on_unknown_source_schema=fail_on_unknown_source_schema)
-    if count_only_verified_release_receipts and not _g006_receipt_is_verified(source_runtime_qualification_receipt):
-        codes.add("forged_source_runtime_receipt")
-    if require_actual_runtime_attestation and source_runtime_qualification_receipt is None:
-        codes.add("runtime_attestation_not_actual")
-    runtime_manifests = {
+    for key, manifest in (
+        ("database_fleet", database_fleet_manifest),
+        ("queue_fleet", queue_fleet_manifest),
+        ("deploy_fleet", deploy_fleet_manifest),
+    ):
+        codes.update(_g006_fleet_manifest_codes(key, manifest))
+    fleet_manifests_present = any((database_fleet_manifest, queue_fleet_manifest, deploy_fleet_manifest))
+    if fleet_manifests_present and not _g006_receipt_is_verified(fleet_runtime_qualification_receipt):
+        codes.add("fleet_verified_runtime_receipt_required")
+    legacy_runtime_manifests = {
         "db_pool": db_pool_harness_manifest,
         "queue": queue_harness_manifest,
         "deploy": deploy_harness_manifest,
     }
-    if (count_only_verified_release_receipts or require_actual_runtime_attestation) and any(runtime_manifests.values()):
-        codes.update(_g006_runtime_receipt_codes(source_runtime_qualification_receipt, runtime_manifests))
+    fleet_runtime_manifests = {
+        "database_fleet": database_fleet_manifest,
+        "queue_fleet": queue_fleet_manifest,
+        "deploy_fleet": deploy_fleet_manifest,
+    }
+    if fleet_manifests_present and not all(legacy_runtime_manifests.values()):
+        codes.add("fleet_baseline_runtime_manifests_required")
+    if fleet_manifests_present and not all(fleet_runtime_manifests.values()):
+        codes.add("fleet_runtime_manifests_incomplete")
+    legacy_manifests_present = any(legacy_runtime_manifests.values())
+    if fleet_manifests_present and not _g006_receipt_is_verified(source_runtime_qualification_receipt):
+        codes.add("fleet_baseline_verified_runtime_receipt_required")
+    if legacy_manifests_present and count_only_verified_release_receipts and not _g006_receipt_is_verified(source_runtime_qualification_receipt):
+        codes.add("forged_source_runtime_receipt")
+    if require_actual_runtime_attestation and legacy_manifests_present and source_runtime_qualification_receipt is None:
+        codes.add("runtime_attestation_not_actual")
+    if (count_only_verified_release_receipts or require_actual_runtime_attestation or fleet_manifests_present) and legacy_manifests_present:
+        codes.update(_g006_runtime_receipt_codes(source_runtime_qualification_receipt, legacy_runtime_manifests))
         codes.update(
             _g006_receipt_review_binding_codes(
                 source_runtime_qualification_receipt,
+                source_registry,
+                source_eligibility,
+            )
+        )
+    if fleet_manifests_present:
+        codes.update(_g006_runtime_receipt_codes(fleet_runtime_qualification_receipt, fleet_runtime_manifests))
+        codes.update(
+            _g006_receipt_review_binding_codes(
+                fleet_runtime_qualification_receipt,
                 source_registry,
                 source_eligibility,
             )
@@ -4551,6 +5125,9 @@ def _g006_validate_materializer_runtime_inputs(
             db_pool_harness_manifest,
             queue_harness_manifest,
             deploy_harness_manifest,
+            database_fleet_manifest,
+            queue_fleet_manifest,
+            deploy_fleet_manifest,
             source_registry,
             source_eligibility,
         )

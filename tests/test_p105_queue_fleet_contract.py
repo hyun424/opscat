@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import importlib
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +28,10 @@ def _validator() -> Any:
             pytrace=False,
         )
     return validator
+
+
+def _harness() -> Any:
+    return importlib.import_module("scripts.run_p105_queue_fleet_harness")
 
 
 def _json_sha256(value: Any) -> str:
@@ -162,12 +167,25 @@ def _queue_fleet_receipt() -> dict[str, Any]:
         "schema_version": "p105.source-runtime-qualification.v1",
         "created_by": "scripts/verify_p105_source_expansion_artifacts.py",
         "verified_release_counting": True,
-        "locked": False,
-        "release_counting": True,
-        "coverage_source": "receipt_bound_monotonic_segments",
-        "legacy_created_at_tick_seconds_coverage": False,
-        "telemetry_complete": True,
-        "failure_codes": [],
+        "canonical_roots": {"queue_fleet": "a" * 64},
+        "run_envelopes": [
+            {
+                "source": "queue_fleet",
+                "run_label": "run_1",
+                "verified": True,
+                "validation_error_codes": [],
+            }
+        ],
+        "verified_fleet_coverage_segments": {
+            "queue_fleet": [
+                {
+                    "service": "p105.fleet.queue.000",
+                    "split": "held_out",
+                    "conservative_duration_seconds": 3595,
+                }
+            ]
+        },
+        "validation_error_codes": [],
     }
 
 
@@ -246,7 +264,8 @@ def test_queue_fleet_failures_lock_receipt_and_make_all_fleet_evidence_non_count
     if mutation == "missing_broker_health":
         payload["public_config"]["runtime"]["broker_health_observed"] = False
     elif mutation == "telemetry_loss":
-        receipt["telemetry_complete"] = False
+        receipt["run_envelopes"][0]["verified"] = False
+        receipt["run_envelopes"][0]["validation_error_codes"] = ["telemetry_loss"]
     elif mutation == "cleanup_scope_escape":
         payload["public_config"]["cleanup"]["cleanup_scope"] = "all_docker_volumes"
     elif mutation == "partial_cleanup":
@@ -380,3 +399,162 @@ def test_queue_fleet_receipt_rejects_legacy_created_at_tick_seconds_coverage_pat
     assert result["accepted"] is False
     assert result["receipt"] == {"locked": True, "release_counting": False}
     assert "queue_fleet_legacy_row_coverage_path" in result["validation_error_codes"]
+
+
+def test_queue_fleet_harness_compose_and_management_commands_do_not_request_host_ports_or_credentials(tmp_path: Path) -> None:
+    harness = _harness()
+    compose_path = harness._compose_file(tmp_path, "rabbitmq:3.13-management-alpine")
+    compose_text = compose_path.read_text(encoding="utf-8")
+
+    assert "ports:" not in compose_text
+    assert "RABBITMQ_DEFAULT_USER" not in compose_text
+    assert "RABBITMQ_DEFAULT_PASS" not in compose_text
+
+    command = harness._rabbitmqadmin_command(compose_path, "p105-queue-fleet-test", ["list", "queues"])
+    rabbitmqadmin_args = command[command.index("rabbitmqadmin") :]
+
+    assert "-u" not in rabbitmqadmin_args
+    assert "-p" not in rabbitmqadmin_args
+    assert "guest" not in rabbitmqadmin_args
+    assert "--vhost=/" in rabbitmqadmin_args
+
+
+def test_queue_fleet_harness_derives_container_and_network_from_docker_commands(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    harness = _harness()
+    compose_path = tmp_path / "compose.yml"
+    attestations: list[Any] = []
+    commands: list[list[str]] = []
+
+    def fake_run(command: list[str], *, attestations: list[Any], step: str, input_text: str | None = None, timeout: int = 120) -> subprocess.CompletedProcess[str]:
+        del input_text, timeout
+        commands.append(command)
+        if step == "docker.compose.ps.rabbitmq":
+            stdout = "8f4a1c2b3d4e\n"
+        elif step == "docker.inspect.rabbitmq":
+            stdout = json.dumps([{"NetworkSettings": {"Networks": {"p105-queue-fleet-test_default": {}}}}])
+        else:
+            raise AssertionError(f"unexpected step {step}")
+        completed = subprocess.CompletedProcess(command, 0, stdout=stdout, stderr="")
+        attestations.append(harness.CommandAttestation(step=step, command=command, returncode=0, stdout=stdout, stderr=""))
+        return completed
+
+    monkeypatch.setattr(harness, "_run_command", fake_run)
+
+    evidence = harness._docker_runtime_evidence(compose_path, "p105-queue-fleet-test", attestations)
+
+    assert evidence == {
+        "container_id": "8f4a1c2b3d4e",
+        "docker_network_name": "p105-queue-fleet-test_default",
+    }
+    assert commands == [
+        ["docker", "compose", "-f", str(compose_path), "-p", "p105-queue-fleet-test", "ps", "-q", "rabbitmq"],
+        ["docker", "inspect", "8f4a1c2b3d4e"],
+    ]
+
+
+def test_queue_fleet_harness_broker_observation_is_bounded_and_verifier_keyed() -> None:
+    harness = _harness()
+    rows = [
+        {"name": f"p105-fleet-q-{index:03d}", "messages": index, "messages_ready": index % 2, "messages_unacknowledged": 0}
+        for index in range(10)
+    ] + [
+        {"name": f"p105-fleet-dlq-{index:03d}", "messages": 0, "messages_ready": 0, "messages_unacknowledged": 0}
+        for index in range(3)
+    ]
+
+    observation = harness._bounded_broker_observation(rows)
+
+    assert observation["bounded"] is True
+    assert observation["observed_queue_count"] == 10
+    assert observation["dead_letter_queue_count"] == 3
+    assert observation["truncated"] is True
+    assert len(observation["sample_rows"]) == 8
+    assert set(observation["sample_rows"][0]) == {"messages", "messages_ready", "messages_unacknowledged", "name"}
+
+
+def test_queue_fleet_harness_management_observed_requires_successful_rabbitmqadmin_command() -> None:
+    harness = _harness()
+    observed = [
+        harness.CommandAttestation(
+            step="rabbitmq.observe.bulk_queues",
+            command=["docker", "compose", "exec", "-T", "rabbitmq", "rabbitmqadmin", "--vhost=/", "--format=raw_json", "list", "queues"],
+            returncode=0,
+            stdout="[]",
+            stderr="",
+        )
+    ]
+    failed = [
+        harness.CommandAttestation(
+            step="rabbitmq.observe.bulk_queues",
+            command=["docker", "compose", "exec", "-T", "rabbitmq", "rabbitmqadmin", "--vhost=/", "--format=raw_json", "list", "queues"],
+            returncode=1,
+            stdout="",
+            stderr="failed",
+        )
+    ]
+
+    assert harness._rabbitmq_management_observed(observed) is True
+    assert harness._rabbitmq_management_observed(failed) is False
+
+
+def test_queue_fleet_actual_path_emits_verifier_required_rabbitmq_evidence_without_docker(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    harness = _harness()
+    args = type(
+        "Args",
+        (),
+        {
+            "diagnostic": True,
+            "no_sleep": True,
+            "output_dir": tmp_path,
+            "rabbitmq_image": "rabbitmq:3.13-management-alpine",
+        },
+    )()
+
+    def fake_run_command(command: list[str], *, attestations: list[Any], step: str, input_text: str | None = None, timeout: int = 120) -> subprocess.CompletedProcess[str]:
+        del input_text, timeout
+        if step == "docker.compose.ps.rabbitmq":
+            stdout = "container-123\n"
+        elif step == "docker.inspect.rabbitmq":
+            stdout = json.dumps([{"NetworkSettings": {"Networks": {"p105-queue-fleet-test_default": {}}}}])
+        else:
+            stdout = "ok\n"
+        attestations.append(harness.CommandAttestation(step=step, command=command, returncode=0, stdout=stdout, stderr=""))
+        return subprocess.CompletedProcess(command, 0, stdout=stdout, stderr="")
+
+    def fake_bulk_observe(compose_file: Path, project_name: str, attestations: list[Any]) -> list[dict[str, Any]]:
+        del compose_file, project_name
+        attestations.append(
+            harness.CommandAttestation(
+                step="rabbitmq.observe.bulk_queues",
+                command=["docker", "compose", "exec", "-T", "rabbitmq", "rabbitmqadmin", "--vhost=/", "--format=raw_json", "list", "queues"],
+                returncode=0,
+                stdout="[]",
+                stderr="",
+            )
+        )
+        return [
+            {"name": f"p105-fleet-q-{index:03d}", "messages": 0, "messages_ready": 0, "messages_unacknowledged": 0}
+            for index in range(256)
+        ] + [
+            {"name": f"p105-fleet-dlq-{index:03d}", "messages": 0, "messages_ready": 0, "messages_unacknowledged": 0}
+            for index in range(256)
+        ]
+
+    monkeypatch.setattr(harness.shutil, "which", lambda name: "/usr/bin/docker" if name == "docker" else None)
+    monkeypatch.setattr(harness, "_run_command", fake_run_command)
+    monkeypatch.setattr(harness, "_wait_for_broker", lambda compose_file, project_name, attestations: None)
+    monkeypatch.setattr(harness, "_declare_broker_shape", lambda compose_file, project_name, attestations: 1)
+    monkeypatch.setattr(harness, "_publish_rows", lambda compose_file, project_name, attestations, rows: None)
+    monkeypatch.setattr(harness, "_consume_queue", lambda compose_file, project_name, attestations, queue, valid_count, invalid_count: None)
+    monkeypatch.setattr(harness, "_bulk_observe", fake_bulk_observe)
+    monkeypatch.setattr(harness.subprocess, "run", lambda command, **kwargs: subprocess.CompletedProcess(command, 0, stdout="", stderr=""))
+
+    _telemetry, _coverage, raw_attestation, cleanup = harness._materialize_actual(args, 1, "p105-queue-fleet-test")
+
+    assert cleanup == {"container_removed": True, "volume_removed": True}
+    assert raw_attestation["actual_runtime_executed"] is True
+    assert raw_attestation["container_id"] == "container-123"
+    assert raw_attestation["docker_network_name"] == "p105-queue-fleet-test_default"
+    assert raw_attestation["rabbitmq_management_observed"] is True
+    assert raw_attestation["broker_observation"]["bounded"] is True
+    assert raw_attestation["broker_observation"]["observed_queue_count"] == 256

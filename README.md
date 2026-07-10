@@ -179,6 +179,20 @@ with provider action execution count 0/150 and production mutation count 0/150.
 It distinguishes valid absence from unavailable telemetry with denominators
 1 and 2, and does not claim production effectiveness or unattended operation.
 
+## P105 forecast gate planning
+
+P105 is planned as a calibrated failure forecast engine, not an action planner.
+Its amended release gate separates `smoke_only` wiring evidence from
+`release_qualified` evidence: tiny fixtures and hand-computed metric cases can
+never unlock P106. Release qualification requires per-family held-out and
+real-derived denominator floors, source-record provenance from P32/P41/P44
+materialized records, outcome-neutral partitions, per-row `covered_seconds`
+service-day denominators, actual P24 `RiskSignal`/`RiskForecast` parity, and
+zero authority counters. The floors are anti-tiny-N credibility checks, not
+statistical significance claims. See
+[`docs/operations/p105-ticket-roadmap.md`](docs/operations/p105-ticket-roadmap.md)
+and [`docs/tickets/p105/README.md`](docs/tickets/p105/README.md).
+
 ## Portfolio story
 
 OpsCat demonstrates a production-minded agent loop:

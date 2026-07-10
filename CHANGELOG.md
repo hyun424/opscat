@@ -69,6 +69,17 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 - Added network-free CLI benchmark evidence over the full committed 10-case P104 fixture with P104/P103/P101/fixed-tool/control equal-state comparisons.
 - Added release evidence and verification integration while preserving no auth, no production mutation, no provider action authority, and default external calls at zero.
 
+### P105 planning hardening
+
+- Amended P105 planning artifacts with release-hardening tickets P105-012
+  through P105-015 after final review rejected tiny-fixture gate credibility.
+- Added explicit `smoke_only` versus `release_qualified` semantics, anti-tiny-N
+  held-out and real-derived floors, P32/P41/P44 source-record provenance,
+  per-row covered-second denominators, outcome-neutral partitioning,
+  safety-conformance diagnostic semantics, post-incident leakage fail-closed
+  behavior, actual P24 parity, release docs/verify integration, and continued no
+  auth, no production mutation, and no action authority.
+
 ## Stable vs experimental
 
 Stable in local/mock mode: tests, evals, fixture ingestion, local-header demo identity, mock action policy gates, connector evals, docs, and verification profiles.

@@ -2615,3 +2615,27 @@ local/mock. It is not production evidence for diagnosis quality, remediation
 effectiveness, connector correctness, unattended production operation, or
 operator replacement. Optional live-provider mode is explicit opt-in,
 network-enabled by flag, bounded, and advisory-only.
+
+## P105 Planning Gate
+
+P105 is currently a planning artifact for calibrated failure forecasting, not a
+release evidence claim. The amended plan requires a future P105 release to
+separate `smoke_only` from `release_qualified`; smoke, tiny-N, and
+hand-computed fixtures can never unlock P106.
+
+Future release-qualified evidence must preserve the existing P106 thresholds and
+also pass anti-tiny-N credibility floors: every supported family needs held-out
+and real-derived denominator floors, incident-group diversity, source diversity
+across P32/P41/P44 materialized record sets, and service-day coverage. Rows must
+be generated from raw/materialized records with content hashes, offsets or row
+indexes, timestamps when available, and deterministic derivation traces.
+False-alert/service-day denominators must roll up per-row `covered_seconds`,
+not top-level constants. Safety-conformance diagnostic rows can cover expected
+precondition violations, but unexpected safety success fails closed and valid
+supported-family rows remain in performance denominators.
+
+P105 release docs must include actual P24 `RiskSignal`/`RiskForecast` parity,
+model-card and README/ROADMAP/CHANGELOG/verify integration, post-incident key
+leakage fail-closed checks, time ordering, incident-group isolation, and hard
+zero counters for auth, production mutation, remediation execution, action
+authority, and default external model calls.

@@ -221,6 +221,19 @@ abstention reason. Replace raw threshold confidence with calibrated forecasts.
 9. P105-008 lead-time and false-alert benchmark by risk family and severity.
 10. P105-009 shadow replay on source-native/real-derived datasets.
 11. P105-010 release verification and model-card documentation.
+12. P105-011 release integration and P106 gate lock.
+13. P105-012 release qualification floors and mode semantics:
+    `smoke_only` runs and tiny fixtures can never unlock P106; only
+    `release_qualified` runs with per-family held-out and real-derived floors
+    can evaluate the gate.
+14. P105-013 deterministic source-record row generation from P32/P41/P44
+    raw/materialized records with content hashes, offsets/timestamps, and
+    derivation traces for windows, evidence, family, and labels.
+15. P105-014 partition, coverage, and safety-conformance hardening:
+    outcome-neutral IDs, predeclared partitions, per-row covered seconds, and
+    diagnostic rows that cannot hide valid supported-family performance.
+16. P105-015 release documentation, P24 parity, verify integration, and
+    authority lock.
 
 **Acceptance criteria**
 
@@ -235,6 +248,22 @@ abstention reason. Replace raw threshold confidence with calibrated forecasts.
   action gate consumes raw LLM confidence.
 - 100% of low-coverage or shifted cases either abstain or retain a conservative
   route.
+- P105 `smoke_only` evidence can prove wiring only. P106 remains locked unless a
+  `release_qualified` run passes anti-tiny-N floors for every supported family:
+  held-out `evaluated >= 30`, `non_abstained >= 24`,
+  `actual_positive >= 6`, `incident_group_count >= 4`, and
+  `service_days >= 2.0`; real-derived `evaluated >= 20`,
+  `non_abstained >= 16`, `actual_positive >= 4`,
+  `incident_group_count >= 3`, and `service_days >= 1.0`; at least three
+  distinct source record sets; no source above 60% of a supported family's rows;
+  and at least seven global service-days. These are credibility floors, not
+  statistical significance claims.
+- P32/P41/P44 rows are generated from raw/materialized source records with
+  content hashes, offsets or row indexes, timestamps when available, and
+  deterministic derivation metadata. Source-ID-only claims are unevaluable.
+- False-alert service-day denominators come from per-row/per-partition
+  `covered_seconds`; valid supported-family rows cannot be excluded through the
+  safety diagnostic partition.
 
 **Stop condition:** P106 remains blocked until probabilities are calibrated on a
 held-out time-ordered set, real-derived useful-lead-time transfer satisfies

@@ -23,6 +23,10 @@ future-window leakage; raw LLM confidence never drives execution.
 - [P105-009 - Real-derived shadow transfer gate](p105-009-real-derived-shadow-transfer-gate.md)
 - [P105-010 - Model card and release verification](p105-010-model-card-release-verification.md)
 - [P105-011 - Release integration and P106 gate lock](p105-011-release-integration-p106-gate-lock.md)
+- [P105-012 - Release qualification floors and mode semantics](p105-012-release-qualification-floors-mode-semantics.md)
+- [P105-013 - Deterministic source-record row generation](p105-013-deterministic-source-record-row-generation.md)
+- [P105-014 - Partition, coverage, and safety-conformance hardening](p105-014-partition-coverage-safety-conformance-hardening.md)
+- [P105-015 - Release documentation, P24 parity, and authority lock](p105-015-release-docs-p24-parity-authority-lock.md)
 
 ## Phase Acceptance
 
@@ -39,6 +43,12 @@ future-window leakage; raw LLM confidence never drives execution.
   distribution shift abstain or stay conservative.
 - Reports include precision, recall, PR-AUC, Brier, ECE, lead time, false
   alerts/service-day, and abstention rate with exact denominators.
+- `smoke_only` and tiny-N runs can verify wiring but always keep
+  `release_qualified=false` and `p106_unlocked=false`.
+- Release-qualified evidence passes the anti-tiny-N held-out and real-derived
+  per-family floors, source diversity, service-day coverage, deterministic
+  source-record provenance, outcome-neutral partitioning, and
+  safety-conformance diagnostic semantics.
 - P106 remains blocked unless the exact P106 gate table passes: held-out
   Brier/ECE improve over P24, useful lead-time rate is `>= 0.80` for every
   supported family with positives, zero-positive supported families are

@@ -105,6 +105,22 @@ P106 can start only when every required row below is `pass=true`. The release
 payload must include the formula, numerator, denominator, threshold, split ID,
 family or source scope, and pass/unevaluable/fail status for each row.
 
+Gate modes are explicit:
+
+- `smoke_only`: bounded local verification, tiny fixtures, hand-computed metric
+  cases, and any run that misses one release-qualification floor. It may prove
+  wiring and formulas, but it can never unlock P106.
+- `release_qualified`: the only mode eligible to evaluate `p106_unlocked=true`.
+  It must pass every P106 gate row below and every release-hardening floor in
+  this roadmap. Missing mode metadata is `smoke_only` by default.
+
+The release-hardening floors are anti-tiny-N credibility checks, not statistical
+significance claims. They are sized to be meaningful but achievable from the P44
+max-2,000-record public-source path plus committed P32/P41 materialized replay
+fixtures. If a supported family cannot meet them, P105 must either keep the
+release in `smoke_only` or withdraw that family from `supported_families` before
+claiming release qualification.
+
 | Gate row | Scope | Formula and denominator | Required threshold |
 | --- | --- | --- | --- |
 | Held-out Brier improvement | Global and each supported family with `actual_positive_count > 0` | `brier_improvement = p24_brier - p105_brier`, where each Brier is `sum((p_i - y_i)^2) / non_abstained_evaluated_forecast_count` on the same held-out rows | `brier_improvement > 0.0000` |
@@ -116,6 +132,46 @@ family or source scope, and pass/unevaluable/fail status for each row.
 | Real-derived useful lead-time transfer | Each supported family present in P32 or P41 shadow replay with `actual_positive_count > 0` | `held_out_useful_lead_time_rate - real_derived_useful_lead_time_rate`, where each rate uses `useful_true_positive_count / true_positive_count` for that family and split | `<= 0.10` directional drop; real-derived rate must also be `>= 0.80` |
 | Real-derived false-alert transfer | Each supported family present in P32 or P41 shadow replay | `real_derived_false_alerts_per_service_day - held_out_false_alerts_per_service_day` | `<= 0.10` absolute increase and still within the false-alert threshold |
 | Safety boundary | Whole release | Boundary counters and release metadata | no auth, no production mutation, no remediation execution, no executable action plan, no default external model calls |
+
+## Release-Hardening Floors
+
+These floors preserve the existing P106 thresholds while preventing a tiny
+fixture from making the gate look credible.
+
+For every family in `supported_families`:
+
+- Held-out coverage floor:
+  `held_out_evaluated_window_count >= 30`,
+  `held_out_non_abstained_evaluated_forecast_count >= 24`,
+  `held_out_actual_positive_count >= 6`,
+  `held_out_incident_group_count >= 4`, and
+  `held_out_covered_service_seconds / 86400 >= 2.0`.
+- Real-derived coverage floor across P32/P41/P44-derived shadow rows:
+  `real_derived_evaluated_window_count >= 20`,
+  `real_derived_non_abstained_evaluated_forecast_count >= 16`,
+  `real_derived_actual_positive_count >= 4`,
+  `real_derived_incident_group_count >= 3`, and
+  `real_derived_covered_service_seconds / 86400 >= 1.0`.
+- Source diversity floor:
+  `distinct_source_record_sets >= 3` across P32/P41/P44 materialized inputs for
+  the release, and no single source may contribute more than `0.60` of a
+  supported family's release-qualified rows:
+  `max_source_family_row_count / family_release_row_count <= 0.60`.
+- Service-day floor:
+  global held-out plus real-derived coverage must satisfy
+  `total_covered_service_seconds / 86400 >= 7.0`.
+
+Fail-closed formulas:
+
+- `release_qualified = true` only if every supported family passes all held-out
+  and real-derived floors, every source-diversity floor passes, every P106 gate
+  row is `pass=true`, and every safety boundary counter is zero.
+- If any numerator, denominator, source count, incident-group count,
+  `covered_service_seconds`, split ID, family ID, or mode field is missing,
+  then `release_qualified=false`, `p106_unlocked=false`, and
+  `qualification_status="unevaluable_missing_denominator"`.
+- If a run is `smoke_only`, then `p106_unlocked=false` even when formulas pass
+  on the tiny fixture.
 
 Supported-family rule: every family declared in the P105 model/rule card as
 supported must pass the per-family rows above. Families that cannot produce a
@@ -159,6 +215,16 @@ work begins:
 - `incident_group_id`: scorer-only split isolation key.
 - `public_features`: feature payload visible to training/forecasting.
 - `scorer_labels`: hidden answer-key object containing all label fields.
+- `source_record_ref`: structured provenance object for raw/materialized
+  records, including source system (`p32`, `p41`, or `p44`), source path or
+  manifest key, source content hash, materialized record hash, record offset or
+  row index, source timestamp when available, materialization version, and the
+  deterministic derivation trace for source window, evidence IDs, family, and
+  label fields.
+- `covered_seconds`: row-level service coverage denominator used by
+  false-alert/service-day scoring.
+- `partition_id`: predeclared partition assignment, chosen before scoring and
+  independent of outcome.
 
 Public packets for training, calibration, provider rationale, and forecast
 rendering must strip `label_incident_id`, `label_incident_start_timestamp`,
@@ -204,6 +270,44 @@ source-card metadata; strip scorer-only labels from public packets; and preserve
 P41 boundary counters proving no downloads, live API calls, auth, production
 mutation, or remediation execution. Neither adapter may create an action plan,
 policy handoff, credential path, or production mutation path.
+
+P44 adapter responsibilities for P105 are limited to read-only transformation of
+explicitly materialized public-source records, capped at 2,000 records per
+opt-in public run. The adapter must generate rows from raw/materialized record
+content and hashes, not from source ID claims alone. Public downloads remain
+explicit opt-in and generated artifacts remain outside the repository unless
+converted into reviewed, redacted fixtures.
+
+## Partition and Diagnostic Semantics
+
+Partitions are predeclared before scoring: `train`, `calibration`,
+`held_out_test`, `real_derived_shadow`, and
+`safety_conformance_diagnostic`. Partition assignment uses timestamp or
+deterministic sequence order, source family, incident-group isolation, and
+source-record hashes. It must not use model outcomes, P105 scores, P24 scores,
+lead-time success, false-alert status, or safety results.
+
+Outcome-neutral IDs are required. `row_id`, `forecast_id`, `source_window_id`,
+`incident_group_id`, and `partition_id` must be deterministic hashes over
+pre-outcome fields plus a versioned salt. They must not encode label positivity,
+failure outcome, safety pass/fail, useful lead time, or gate status.
+
+Safety-conformance diagnostic rows exist only to prove boundary handling for
+expected invalid preconditions such as malformed public packets, unsupported
+families, leaked scorer labels, post-incident values, mutation authority, or
+external-call attempts. Expected precondition violations in this partition are
+excluded from performance metrics, but any unexpected successful forecast,
+unexpected action-shaped output, credential/auth path, production mutation,
+default external call, or nonzero safety counter fails the safety gate. Valid
+and evaluable rows from supported families may never be moved into
+`safety_conformance_diagnostic` or excluded from performance to improve scores.
+
+Post-incident key leakage fails closed. If a public training, calibration,
+forecast, rationale, or release packet contains post-incident values,
+scorer-only labels, incident IDs, incident-group answer keys, lead-time labels,
+future timestamps, or hashes derived from those fields, the affected split is
+`unevaluable_leakage_detected`, `release_qualified=false`, and
+`p106_unlocked=false`.
 
 ## Tickets
 
@@ -366,6 +470,84 @@ Acceptance:
   tolerance.
 - If the gate fails, the release summary explicitly stops at shadow forecasting.
 
+### P105-012 Release qualification floors and mode semantics
+
+Add explicit `smoke_only` versus `release_qualified` run modes plus
+anti-tiny-N floors for held-out and real-derived evidence.
+
+Acceptance:
+- Smoke, tiny-N, hand-computed, and fixture-only wiring runs always emit
+  `mode=smoke_only`, `release_qualified=false`, and `p106_unlocked=false`.
+- `release_qualified=true` requires every supported family to pass the held-out
+  floors (`evaluated >= 30`, `non_abstained >= 24`, `actual_positive >= 6`,
+  `incident_group_count >= 4`, `service_days >= 2.0`) and the real-derived
+  floors (`evaluated >= 20`, `non_abstained >= 16`, `actual_positive >= 4`,
+  `incident_group_count >= 3`, `service_days >= 1.0`).
+- Release evidence proves at least three distinct source record sets across
+  P32/P41/P44 materialized inputs, no single source contributes more than 60%
+  of any supported family's release-qualified rows, and global service coverage
+  is at least seven service-days.
+- Missing floor denominators or mode metadata fail closed as
+  `unevaluable_missing_denominator`.
+
+### P105-013 Deterministic source-record row generation
+
+Build the P32/P41/P44 row-generation contract from raw/materialized source
+records with content hashes and derivation metadata.
+
+Acceptance:
+- Every row records source system, source path or manifest key, source content
+  hash, materialized record hash, record offset or row index, source timestamp
+  when available, materialization version, source-window derivation,
+  evidence-ID derivation, family derivation, and label derivation.
+- Re-running the generator from the same raw/materialized inputs produces
+  byte-identical rows and partition manifests.
+- Source-ID-only assertions are insufficient: rows without record offsets or
+  content hashes are `unevaluable_provenance_missing`.
+- P44 public-source materialization remains opt-in, capped at 2,000 records,
+  and generated artifacts stay outside the repository unless separately
+  reviewed and redacted as fixtures.
+
+### P105-014 Partition, coverage, and safety-conformance hardening
+
+Make partition assignment outcome-neutral, compute coverage denominators per
+row and partition, and define diagnostic partition scoring.
+
+Acceptance:
+- `row_id`, `forecast_id`, `source_window_id`, `incident_group_id`, and
+  `partition_id` are deterministic over pre-outcome fields only and do not
+  encode label or score outcomes.
+- Partitions are predeclared before scoring and preserve time ordering plus
+  incident-group isolation; no outcome-shaped reassignment is allowed.
+- `covered_seconds` is present per row and rolled up per partition/family/source
+  as `sum(row.covered_seconds)`. False-alert/service-day metrics may not reuse
+  a top-level constant denominator.
+- Safety-conformance diagnostic rows with expected precondition violations are
+  excluded from performance metrics, but unexpected successful forecasts,
+  action-shaped outputs, leaked labels, auth paths, production mutation,
+  default external calls, or nonzero safety counters fail safety.
+- Valid and evaluable rows from supported families cannot be excluded from
+  performance metrics or moved to diagnostics.
+
+### P105-015 Release documentation, P24 parity, and authority lock
+
+Close the P105 release docs and verification contract without adding auth,
+production mutation, or action authority.
+
+Acceptance:
+- P105 model card, final summary, release evidence, README, ROADMAP, CHANGELOG,
+  and `scripts/verify.sh` docs/tests name the run mode, floors, source
+  provenance, P106 gate status, limitations, and stop condition.
+- The P24 baseline is actual `RiskSignal`/`RiskForecast` parity from the P24
+  implementation, not a simplified reimplementation or fixture-only proxy.
+- Release docs preserve the existing P106 thresholds and state that the
+  anti-tiny-N floors are credibility floors, not statistical significance
+  claims.
+- All P105 release outputs keep `auth_enabled=false`,
+  `production_mutation_enabled=false`, `action_authority=false`,
+  `remediation_execution_enabled=false`, and
+  `default_external_model_calls=0`.
+
 ## Phase Acceptance
 
 - Forecast output is typed, calibrated, and action-free.
@@ -380,6 +562,14 @@ Acceptance:
 - Optional NVIDIA rationale is never execution confidence.
 - Held-out reports include precision, recall, PR-AUC, Brier, ECE, lead time,
   false alerts/service-day, and abstention rate with exact denominators.
+- Release-qualified reports pass the anti-tiny-N held-out and real-derived
+  floors, source diversity, service-day coverage, source-record provenance,
+  partition isolation, and diagnostic safety semantics. Smoke-only reports never
+  unlock P106.
+- False-alert service-day denominators are computed from per-row/per-partition
+  `covered_seconds`, not reused top-level constants.
+- P24 baseline parity is measured against actual P24 `RiskSignal` and
+  `RiskForecast` behavior.
 - Real-derived shadow transfer passes before P106 can start.
 - No auth, no production mutation, no remediation execution, and no default
   external model/API calls remain true.

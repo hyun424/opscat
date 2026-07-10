@@ -869,3 +869,26 @@ control arms with default network calls 0, default model calls 0, provider actio
 execution count 0, production mutation count 0, scorer leakage count 0, and
 repeated tool count 0. P104 remains no-auth, local/mock, advisory for optional
 provider use, and not production autonomy or unattended-operation approval.
+
+## P105 active
+
+P105 active scope: Calibrated Failure Forecast Engine with release-hardening
+before any P106 action planning. P105 predicts failure family, mode, calibrated
+probability, lead-time interval, impact, evidence IDs, and abstention reason
+while preserving P24/P25 compatibility as legacy advisory output only.
+
+The final-review amendment adds a concrete release-hardening tranche:
+`smoke_only` and tiny-N runs can never unlock P106; `release_qualified` requires
+per-supported-family held-out floors (`evaluated >= 30`, `non_abstained >= 24`,
+`actual_positive >= 6`, `incident_group_count >= 4`, `service_days >= 2.0`) and
+real-derived floors (`evaluated >= 20`, `non_abstained >= 16`,
+`actual_positive >= 4`, `incident_group_count >= 3`, `service_days >= 1.0`),
+three distinct P32/P41/P44 source record sets, no single source above 60% of a
+supported family's rows, at least seven global service-days, deterministic
+source-record content hashes and offsets/timestamps, outcome-neutral partitions,
+per-row covered-second denominators, safety-conformance diagnostic semantics,
+post-incident leakage fail-closed behavior, actual P24 RiskSignal/RiskForecast
+parity, release docs/verify integration, and no auth, production mutation, or
+action authority. These floors are anti-tiny-N credibility checks, not
+statistical significance claims. See `docs/operations/p105-ticket-roadmap.md`
+and `docs/tickets/p105/README.md`.

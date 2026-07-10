@@ -63,6 +63,12 @@ reproducibility checks, or independent review evidence exist.
   `docs/operations/p105-g006-source-expansion-amendment.md`.
 - Source-expansion test-spec amendment:
   `docs/operations/p105-g006-source-expansion-test-spec-amendment.md`.
+- Qualification-capacity amendment:
+  `docs/operations/p105-g006-qualification-capacity-amendment.md`.
+- Qualification-capacity test spec:
+  `docs/operations/p105-g006-qualification-capacity-test-spec.md`.
+- Qualification-capacity plan review:
+  `docs/operations/p105-g006-qualification-capacity-plan-review.md`.
 - Ticket sequence:
   - `docs/tickets/p105/p105-016-release-qualified-evidence-contract.md`
   - `docs/tickets/p105/p105-017-deterministic-local-materializer.md`
@@ -78,6 +84,11 @@ reproducibility checks, or independent review evidence exist.
   - `docs/tickets/p105/p105-027-isolated-deploy-canary-harness.md`
   - `docs/tickets/p105/p105-028-actual-source-runs-release-benchmark.md`
   - `docs/tickets/p105/p105-029-independent-review-full-verify-p106-gate.md`
+  - `docs/tickets/p105/p105-030-qualification-capacity-plan-review.md`
+  - `docs/tickets/p105/p105-031-capacity-red-contract-tests.md`
+  - `docs/tickets/p105/p105-032-actual-fleet-harnesses.md`
+  - `docs/tickets/p105/p105-033-actual-fleet-runs-release-benchmark.md`
+  - `docs/tickets/p105/p105-034-capacity-independent-review-gate.md`
 
 ## G006 Source-Expansion Amendment
 
@@ -88,6 +99,13 @@ contract: plan review -> RED contract tests -> adapters/harness -> actual runs
 
 The amendment is documentation-only until implementation lands. It adds these
 execution boundaries:
+
+The implemented exact programs later proved mathematically unable to satisfy
+the unchanged queue, deploy, and global coverage floors. The second
+qualification-capacity amendment therefore preserves the deficient baseline as
+evidence and adds a separately reviewed conventional 256-service, one-hour
+actual-runtime fleet-soak program for every supported family. P105-030 through P105-034 own that repair;
+P106 remains locked until its independent final review passes.
 
 - Reviewed source registry and source eligibility manifest are mandatory before
   scoring. They bind `command_argv`, `created_at`, source hashes, materialized

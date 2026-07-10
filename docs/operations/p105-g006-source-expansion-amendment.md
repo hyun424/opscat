@@ -1,5 +1,11 @@
 # P105 G006 Source-Expansion Amendment
 
+Capacity follow-up:
+`docs/operations/p105-g006-qualification-capacity-amendment.md`. Independent
+post-implementation arithmetic proved that this amendment's exact queue/deploy
+programs cannot satisfy the unchanged floors; its trust and runtime boundaries
+remain authoritative, while the follow-up owns additional evidence capacity.
+
 Status: planning only. This amendment repairs the G006/P105-RQ source-expansion
 handoff at HEAD `fba7e87`. It changes no production or test code and does not
 change any P105 floor, metric threshold, or P106 gate.

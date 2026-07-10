@@ -4,6 +4,13 @@ Date: 2026-07-10
 
 Verdict: **APPROVE**
 
+Historical scope note: this approval remains valid for the actual-runtime,
+provenance, and fail-closed trust boundaries. A later exact-capacity audit found
+that the approved queue/deploy durations cannot satisfy the unchanged evidence
+floors. The additional program is therefore gated by the separate
+qualification-capacity amendment and a new independent review; this historical
+approval does not approve that later program.
+
 Independent review confirmed that the amended P105-RQ plan is implementation
 ready:
 

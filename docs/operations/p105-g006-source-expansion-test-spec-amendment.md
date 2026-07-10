@@ -1,5 +1,8 @@
 # P105 G006 Source-Expansion Test Spec Amendment
 
+Capacity follow-up:
+`docs/operations/p105-g006-qualification-capacity-test-spec.md`.
+
 Status: planning only. This amendment defines future RED-to-GREEN tests for the
 G006 source-expansion amendment. It does not claim those tests, adapters,
 harnesses, or artifacts exist.

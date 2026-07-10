@@ -105,3 +105,10 @@ future-window leakage; raw LLM confidence never drives execution.
   counting, and the macro sequence of plan review -> RED tests ->
   adapters/harness -> actual runs -> release benchmark -> independent code and
   architecture review -> full verify -> only then P106.
+- The qualification-capacity amendment records that the original exact
+  queue/deploy programs top out below the unchanged per-family and global
+  service-day floors. P105-030 through P105-034 preserve those deficient runs
+  as baseline evidence and add an independently reviewed, resource-bounded
+  256-service one-hour actual-runtime fleet soak for every supported family;
+  reruns, cloned incidents,
+  requested-duration constants, and scorer-targeted padding remain non-counting.

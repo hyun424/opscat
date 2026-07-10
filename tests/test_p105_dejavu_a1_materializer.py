@@ -74,13 +74,17 @@ def _write_a1_fixture(root: Path) -> tuple[Path, Path, Path]:
     graph.write_text(
         "\n".join(
             [
-                "services:",
-                "  db_003:",
-                "    node_type: DB Session",
-                "    metrics: [Proc_User_Used_Pct, Proc_Used_Pct, Sess_Connect]",
-                "  db_007:",
-                "    node_type: DB Session",
-                "    metrics: [Proc_User_Used_Pct, Proc_Used_Pct, Sess_Connect]",
+                "- class: node",
+                "  type: DB Session",
+                "  params:",
+                "    db:",
+                "      - db_003",
+                "      - db_007",
+                '  id: "{db} Session"',
+                "  metrics:",
+                '    - "{db}##Proc_User_Used_Pct"',
+                '    - "{db}##Proc_Used_Pct"',
+                '    - "{db}##Sess_Connect"',
             ]
         )
         + "\n",
@@ -151,6 +155,8 @@ def test_dejavu_a1_exact_seven_incident_mapping_and_source_insufficiency_are_rep
 
     assert completed.returncode == 0, completed.stderr
     manifest = json.loads((output / "p105-dejavu-a1-reviewed-local-manifest.json").read_text(encoding="utf-8"))
+    assert manifest["confirmed_graph_services"] == ["db_003", "db_007"]
+    assert manifest["public_window_count"] > 0
     assert manifest["incident_positive_window_counts"] == EXPECTED_POSITIVE_WINDOWS
     assert manifest["incident_group_counts"] == {"held_out_test": 4, "real_derived_shadow": 3}
     assert manifest["coverage_seconds"] == {"held_out_test": 151320, "real_derived_shadow": 147780}

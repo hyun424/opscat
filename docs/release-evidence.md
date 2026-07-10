@@ -2362,3 +2362,181 @@ UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full
 Verified result: Prometheus connector tests passed 9/9; the final targeted P96/connector/catalog group passed 45 tests; targeted Ruff and mypy passed; and `bash scripts/verify.sh --profile full` passed compile, Ruff, mypy over 555 source files, the complete pytest suite, every eval/demo smoke, Docker Compose config, generated-artifact scan, whitespace checks, and coverage `80.48% >= 60.00%`. The fixture probe reports `ok=True mode=fixture capability=query.instant network_attempted=False`. No external Prometheus endpoint was contacted during verification; real HTTP behavior used deterministic injected transports.
 
 Boundary: fixture mode is network-free and remains the default. Real mode is explicit opt-in, obtains its endpoint only from trusted process configuration, rejects request-controlled destinations, requires an exact host allowlist match, permits HTTP only on loopback, uses GET only, and enforces query/response budgets. P96 adds no auth feature, write operation, remediation execution, production mutation, LLM action authority, production autonomy, or unattended production approval.
+
+## P97 Causal Remediation Benchmark
+
+P97 adds comparative causal evaluation for remediation decisions. Each deterministic case/seed is reset and replayed through `no_action`, `human_runbook`, and `opscat`. The harness observes a real ephemeral loopback HTTP workload, applies only enumerated in-memory lab actions, re-observes service behavior, and scores measured recovery, utility lift, durability, collateral regression, unverified outcomes, and escalation correctness. Expected status is not read from a fixture to determine success. Family, variant, split, required actions, harmful actions, and runbook answers remain scorer-only. Non-`act` state-changing action requests are blocked and hard-gated.
+
+Artifacts:
+
+- `app/services/causal_remediation_benchmark.py`
+- `scripts/run_causal_remediation_benchmark.py`
+- `tests/test_causal_remediation_benchmark.py`
+- `tests/test_p97_release_evidence.py`
+- `docs/operations/p97-ticket-roadmap.md`
+- `docs/operations/p97-plan-review.md`
+- `docs/operations/p97-final-summary.md`
+- `/tmp/opscat-p97-full.json`
+- `/tmp/opscat-p97-full.md`
+
+Commands:
+
+```bash
+uv run --no-sync --extra dev pytest -q tests/test_causal_remediation_benchmark.py tests/test_p97_release_evidence.py
+uv run --no-sync --extra dev ruff check app/services/causal_remediation_benchmark.py scripts/run_causal_remediation_benchmark.py tests/test_causal_remediation_benchmark.py tests/test_p97_release_evidence.py
+uv run --no-sync --extra dev mypy app/services/causal_remediation_benchmark.py scripts/run_causal_remediation_benchmark.py
+uv run --no-sync --extra dev python scripts/run_causal_remediation_benchmark.py --full-matrix --output-json /tmp/opscat-p97-full.json --output-md /tmp/opscat-p97-full.md
+bash scripts/verify.sh --profile full
+```
+
+Measured full-matrix result: 120 cases, 12 families, 3 seeds, 3 arms, 1,080 trials, and 64,800 actual loopback HTTP requests. OpsCat recovery was 44.17%, the curated human runbook was 90.0% after the P100 catalog-consistency correction, no-action was 16.67%, causal recovery lift was 0.275, mean utility lift was 0.1281, action-effectiveness precision was 83.02%, unverified rate was 10%, escalation correctness and precision were 100% across 129 expected-escalation trials, and all hard safety counters were zero.
+
+Boundary: P97 uses a synthetic local fault lab bound to `127.0.0.1`; direct `http.client` connections bypass proxy environment variables. Its fixed actions mutate disposable in-memory lab state only. `summary.execution_valid` proves harness execution and safety integrity only; no performance pass threshold is defined. It performs no arbitrary shell, subprocess, filesystem mutation, credential access, external network, provider write, product action execution, or production mutation. It does not prove production remediation effectiveness.
+
+## P98 Selector Comparison and Blind Causal Evaluation
+
+P98 compares multiple decision selectors using the same P97 causal lab, cases, seeds, and measured post-action outcomes. The selectors receive only the public observation contract; family, variant, split, required actions, harmful actions, and expected outcomes remain scorer-only. The LLM-shaped adapter parses untrusted JSON, allowlists actions, blocks route/action mismatches, and fails closed to escalation. NVIDIA is explicit opt-in and advisory-only.
+
+Artifacts:
+
+- `app/services/selector_comparison.py`
+- `scripts/run_selector_comparison.py`
+- `tests/test_selector_comparison.py`
+- `tests/test_p98_release_evidence.py`
+- `docs/operations/p98-ticket-roadmap.md`
+- `docs/operations/p98-plan-review.md`
+- `docs/operations/p98-final-summary.md`
+- `/tmp/opscat-p98-full.json`
+
+Commands:
+
+```bash
+uv run --no-sync --extra dev pytest -q tests/test_selector_comparison.py tests/test_p98_release_evidence.py
+uv run --no-sync --extra dev ruff check app/services/selector_comparison.py scripts/run_selector_comparison.py tests/test_selector_comparison.py tests/test_p98_release_evidence.py
+uv run --no-sync --extra dev mypy app/services/selector_comparison.py
+uv run --no-sync --extra dev python scripts/run_selector_comparison.py --full-matrix --output-json /tmp/opscat-p98-full.json
+bash scripts/verify.sh --profile full
+```
+
+Measured full matrix result: 3 selectors, 120 cases, 3 seeds, and 1,080 OpsCat selector arms (360 per selector), plus 2,160 no-action/human-runbook control arms. Rule-based and mock LLM selectors both recovered 44.17% overall and 12.50% on blind cases with 0% harmful actions; observation-only recovered 16.67% overall and 8.33% on blind cases. All selector hard safety gates passed with zero unknown action execution, out-of-scope mutation, false recovery declaration, and route contract violation.
+
+Boundary: P98 does not execute external tools or production actions, and no NVIDIA API call occurred in the recorded default matrix. Results show comparative synthetic-lab behavior only; they do not prove production remediation effectiveness or operator replacement.
+
+## P99 Comprehensive Operational Failure Matrix
+
+P99 composes the original P97 catalog with 40 additional vendor-neutral operational families. Every family has the same ten stress variants, and every action remains an enumerated in-memory transition inside the loopback fault lab. High-risk families expose a visible approval boundary instead of requiring the selector to infer hidden permissions.
+
+Artifacts:
+
+- `app/services/operational_scenario_catalog.py`
+- `scripts/run_operational_scenario_matrix.py`
+- `tests/test_operational_scenario_catalog.py`
+- `tests/test_p99_release_evidence.py`
+- `docs/operations/p99-ticket-roadmap.md`
+- `docs/operations/p99-plan-review.md`
+- `docs/operations/p99-final-summary.md`
+- `/tmp/opscat-p99-full.json`
+- `/tmp/opscat-p99-full.md`
+
+Commands:
+
+```bash
+uv run --no-sync --extra dev pytest -q tests/test_operational_scenario_catalog.py tests/test_p99_release_evidence.py
+uv run --no-sync --extra dev ruff check app/services/causal_remediation_benchmark.py app/services/operational_scenario_catalog.py scripts/run_operational_scenario_matrix.py tests/test_operational_scenario_catalog.py tests/test_p99_release_evidence.py
+uv run --no-sync --extra dev mypy app/services/operational_scenario_catalog.py scripts/run_operational_scenario_matrix.py tests/test_operational_scenario_catalog.py
+uv run --no-sync --extra dev python scripts/run_operational_scenario_matrix.py --full-matrix --sample-size 10 --output-json /tmp/opscat-p99-full.json --output-md /tmp/opscat-p99-full.md
+bash scripts/verify.sh --profile fast
+bash scripts/verify.sh --profile docs
+```
+
+Measured full matrix result: 52 families, 520 cases, 3 seeds, 4,680 arms, and 140,400 actual loopback HTTP observations. OpsCat recovery was 34.55%, the curated human runbook was 89.87% after the P100 catalog-consistency correction, no-action was 11.47%, causal recovery lift was 0.2308, action-effectiveness precision was 80.64%, escalation correctness and precision were both 100% across 720 expected escalation arms, harmful actions were 0%, unverified outcomes were 10%, and all hard safety counters were zero.
+
+Boundary: P99 is a broad but not literally exhaustive synthetic taxonomy. It performs no arbitrary shell, subprocess, filesystem mutation, credential access, external network, vendor API, product connector write, or production mutation. It does not prove production remediation effectiveness or operator replacement.
+
+## P100 Stateful Multi-step Incident Investigator
+
+P100 adds a bounded stateful coordinator over the complete P99 catalog. The agent
+receives public observations and sanitized measured history only, executes at most
+one enumerated lab action per step, re-observes after each step, and stops on
+recovery, escalation, collateral regression, confirmed worsening, unsupported
+output, exhausted playbook, or a three-step budget.
+
+Artifacts:
+
+- `app/services/stateful_incident_investigator.py`
+- `scripts/run_stateful_incident_investigator.py`
+- `tests/test_stateful_incident_investigator.py`
+- `tests/test_p100_release_evidence.py`
+- `docs/operations/p100-ticket-roadmap.md`
+- `docs/operations/p100-plan-review.md`
+- `docs/operations/p100-final-summary.md`
+- `/tmp/opscat-p100-full.json`
+- `/tmp/opscat-p100-full.md`
+
+Commands:
+
+```bash
+uv run --no-sync --extra dev pytest -q tests/test_stateful_incident_investigator.py tests/test_p100_release_evidence.py
+uv run --no-sync --extra dev ruff check app/services/stateful_incident_investigator.py scripts/run_stateful_incident_investigator.py tests/test_stateful_incident_investigator.py tests/test_p100_release_evidence.py
+uv run --no-sync --extra dev mypy app/services/stateful_incident_investigator.py scripts/run_stateful_incident_investigator.py
+uv run --no-sync --extra dev python scripts/run_stateful_incident_investigator.py --seeds 11,29,47 --sample-size 10 --max-steps 3 --output-json /tmp/opscat-p100-full.json --output-md /tmp/opscat-p100-full.md
+bash scripts/verify.sh --profile fast
+bash scripts/verify.sh --profile docs
+```
+
+Measured full matrix result: 52 families, 520 cases, 3 seeds, 4 arms, 6,240
+trials, and 183,990 actual loopback HTTP requests. Stateful recovery was 56.47%
+versus 34.55% for one-shot and 11.47% for no-action. Blind recovery was 39.42%
+versus 2.88% for one-shot. Durable stateful recovery was 56.35%, expected
+escalation recall and precision were both 100% across 678 arms, stateful collateral
+regressions were zero, and every hard safety counter passed.
+
+Boundary: P100 keeps hidden required/harmful actions and lab effect labels outside
+agent context. All actions are closed-registry in-memory transitions in a disposable
+`127.0.0.1` fault lab. It performs no arbitrary shell, subprocess, filesystem
+mutation, credential access, external network, connector write, or production
+mutation. It does not prove unattended production safety or operator replacement.
+
+## P101 Tool-Using Hypothesis Investigator
+
+P101 requires executed read-only diagnostic evidence before action. The initial
+agent packet contains no evidence markers or scorer truth. Negative queries demote
+the current hypothesis, and correlated results are passed to the P100 stateful
+action boundary without lab effect labels.
+
+Artifacts include `app/services/tool_using_hypothesis_investigator.py`,
+`scripts/run_tool_investigation_benchmark.py`, P101 targeted/release tests, and the
+three P101 operations documents.
+
+Measured full matrix: 52 families, 520 cases, 3 seeds, 3 arms, 4,680 trials, and
+118,580 loopback requests. Tool-investigator and direct-visible recovery were both
+56.54%; fixed-tool recovery was 1.35%; relevant-tool discovery and recovery
+retention were 100%; Top-1 tool accuracy was 94.23%; unnecessary calls were 5.45%;
+and every hard safety counter was zero.
+
+Boundary: the 17 tools are synthetic local read-only queries. P101 makes no live
+Grafana, Datadog, Kubernetes, database, provider, or production calls and does not
+prove unseen-language, hidden-topology, or production effectiveness.
+
+## P102 LLM Diagnostic Tool Planner
+
+P102 places a provider-neutral LLM planner in front of P101's closed read-only tool
+catalog. The model receives only a redacted public packet and returns an exact JSON
+object. Unknown tools, malformed types, extra fields, action/argument proposals, and
+route conflicts fail closed to escalation. Provider output cannot execute a tool or
+action.
+
+Artifacts include `app/services/llm_tool_planner_evaluation.py`,
+`scripts/run_llm_tool_planner_evaluation.py`, P102 targeted/release tests, and the
+three P102 operations documents.
+
+The deterministic 52-case fixture run produced 208 decisions across four
+perturbations per case, 94.23% exact-tool accuracy, 100% valid output, zero unsafe
+tools, zero network calls, and zero action executions. The bounded live NVIDIA run
+used 12 operational families and 48 decisions; its measured result is recorded in
+the P102 final summary rather than used as a release approval.
+
+Boundary: live-provider mode is explicit opt-in and advisory-only. The score uses one
+scorer-selected exact tool, so plausible alternative diagnostics still count as
+misses. P102 does not prove production diagnosis quality, remediation effectiveness,
+unattended safety, or operator replacement.

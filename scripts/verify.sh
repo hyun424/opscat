@@ -1115,6 +1115,69 @@ local_safe_subprocess_runner_smoke() {
   cp "$VERIFY_TMPDIR/opscat-local-safe-subprocess-runner.md" /tmp/opscat-local-safe-subprocess-runner-latest.md
   printf 'Wrote /tmp/opscat-local-safe-subprocess-runner-latest.md and %s/opscat-local-safe-subprocess-runner.json\n' "$VERIFY_TMPDIR"
 }
+
+causal_remediation_benchmark_smoke() {
+  section "P97 causal remediation benchmark smoke"
+  "${UV_DEV[@]}" python scripts/run_causal_remediation_benchmark.py \
+    --max-cases 12 \
+    --seeds 11 \
+    --output-json "$VERIFY_TMPDIR/opscat-p97-causal-remediation.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p97-causal-remediation.md" >/tmp/opscat-p97-causal-remediation-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-p97-causal-remediation.md" /tmp/opscat-p97-causal-remediation-latest.md
+  printf 'Wrote /tmp/opscat-p97-causal-remediation-latest.md and %s/opscat-p97-causal-remediation.json\n' "$VERIFY_TMPDIR"
+}
+
+selector_comparison_smoke() {
+  section "P98 selector comparison smoke"
+  "${UV_DEV[@]}" python scripts/run_selector_comparison.py \
+    --max-cases 12 \
+    --seeds 11 \
+    --output-json "$VERIFY_TMPDIR/opscat-p98-selector-comparison.json" >/tmp/opscat-p98-selector-comparison-latest.txt
+  printf 'Wrote /tmp/opscat-p98-selector-comparison-latest.txt and %s/opscat-p98-selector-comparison.json\n' "$VERIFY_TMPDIR"
+}
+
+operational_scenario_matrix_smoke() {
+  section "P99 comprehensive operational scenario matrix smoke"
+  "${UV_DEV[@]}" python scripts/run_operational_scenario_matrix.py \
+    --max-cases 20 \
+    --seeds 11 \
+    --sample-size 5 \
+    --output-json "$VERIFY_TMPDIR/opscat-p99-operational-matrix.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p99-operational-matrix.md" >/tmp/opscat-p99-operational-matrix-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-p99-operational-matrix.md" /tmp/opscat-p99-operational-matrix-latest.md
+  printf 'Wrote /tmp/opscat-p99-operational-matrix-latest.md and %s/opscat-p99-operational-matrix.json\n' "$VERIFY_TMPDIR"
+}
+
+stateful_incident_investigator_smoke() {
+  section "P100 stateful multi-step incident investigator smoke"
+  "${UV_DEV[@]}" python scripts/run_stateful_incident_investigator.py \
+    --max-cases 16 \
+    --seeds 11 \
+    --sample-size 5 \
+    --max-steps 3 \
+    --output-json "$VERIFY_TMPDIR/opscat-p100-stateful-investigator.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p100-stateful-investigator.md" >/tmp/opscat-p100-stateful-investigator-latest.txt
+  cp "$VERIFY_TMPDIR/opscat-p100-stateful-investigator.md" /tmp/opscat-p100-stateful-investigator-latest.md
+  printf 'Wrote /tmp/opscat-p100-stateful-investigator-latest.md and %s/opscat-p100-stateful-investigator.json\n' "$VERIFY_TMPDIR"
+}
+
+tool_investigation_benchmark_smoke() {
+  section "P101 tool-using hypothesis investigator smoke"
+  "${UV_DEV[@]}" python scripts/run_tool_investigation_benchmark.py \
+    --max-cases 16 --seeds 11 --sample-size 5 \
+    --output-json "$VERIFY_TMPDIR/opscat-p101-tool-investigator.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p101-tool-investigator.md" >/tmp/opscat-p101-tool-investigator-latest.txt
+  printf 'Wrote /tmp/opscat-p101-tool-investigator-latest.txt and %s/opscat-p101-tool-investigator.json\n' "$VERIFY_TMPDIR"
+}
+
+llm_tool_planner_evaluation_smoke() {
+  section "P102 LLM diagnostic tool planner evaluation smoke"
+  "${UV_DEV[@]}" python scripts/run_llm_tool_planner_evaluation.py \
+    --max-cases 12 \
+    --output-json "$VERIFY_TMPDIR/opscat-p102-llm-tool-planner.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p102-llm-tool-planner.md" >/tmp/opscat-p102-llm-tool-planner-latest.txt
+  printf 'Wrote /tmp/opscat-p102-llm-tool-planner-latest.txt and %s/opscat-p102-llm-tool-planner.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -1268,7 +1331,13 @@ docs_contract_tests() {
     tests/test_p93_release_evidence.py \
     tests/test_p94_release_evidence.py \
     tests/test_p95_release_evidence.py \
-    tests/test_p96_release_evidence.py
+    tests/test_p96_release_evidence.py \
+    tests/test_p97_release_evidence.py \
+    tests/test_p98_release_evidence.py \
+    tests/test_p99_release_evidence.py \
+    tests/test_p100_release_evidence.py \
+    tests/test_p101_release_evidence.py \
+    tests/test_p102_release_evidence.py
 }
 
 run_fast() {
@@ -1368,6 +1437,12 @@ run_eval() {
   long_run_loop_controller_smoke
   real_subprocess_execution_dry_run_gate_smoke
   local_safe_subprocess_runner_smoke
+  causal_remediation_benchmark_smoke
+  selector_comparison_smoke
+  operational_scenario_matrix_smoke
+  stateful_incident_investigator_smoke
+  tool_investigation_benchmark_smoke
+  llm_tool_planner_evaluation_smoke
 }
 
 run_docs() {

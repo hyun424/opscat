@@ -816,3 +816,32 @@ P96 active scope: Real Prometheus Read-only Shadow Connector. P96 replaces the f
 ## P96 implemented
 
 P96 implemented `prometheus.readonly` with `health.check`, `query.instant`, and `query.range`; trusted configured endpoints; exact host allowlisting; loopback-only HTTP; GET-only transport; timeout, response, series, duration, and point budgets; normalized/redacted provider failures; incident evidence and timeline persistence; operator CLI; catalog/config documentation; and executable security contracts. Fixture mode remains the default and network-free. Real mode is explicit opt-in. P96 adds no auth feature, provider writes, remediation execution, production mutation, LLM action authority, production autonomy, or unattended production approval.
+
+## P97 implemented
+
+P97 implements a causal remediation benchmark that compares `no_action`, `human_runbook`, and `opscat` from identical resettable states. A disposable loopback HTTP fault lab supplies measured pre/post/durability observations while a closed in-memory action registry prevents arbitrary commands, endpoints, credentials, filesystem changes, subprocesses, external network, and production mutation. The catalog contains 120 cases across 12 operational families, 10 variants, and development/validation/blind splits. The full matrix ran 1,080 trials and 64,800 loopback requests. It is synthetic-lab evidence and does not claim production remediation effectiveness.
+
+## P98 implemented
+
+P98 adds an evidence-only selector comparison harness over P97. It compares `rule_based`, `observation_only`, and `mock_llm` selectors on identical case/seed states, reports overall and blind causal recovery, utility lift, harmful actions, unverified outcomes, escalation correctness, and human-runbook regret, and fails closed on malformed or unsafe model output. The explicit NVIDIA provider is key-gated and advisory-only. The full matrix produced 3 selectors × 120 cases × 3 seeds, with every hard safety gate passing; rule and mock LLM both recovered 44.17% overall and 12.50% on blind cases, while observation-only recovered 16.67% overall. P98 is comparative synthetic-lab evidence and does not claim production effectiveness.
+
+## P99 implemented
+
+P99 expands the causal catalog from 12 families/120 cases to 52 families/520 cases across resource, storage, database, network, dependency, platform, messaging, scheduler, configuration, security, data-integrity, regional, and cost failures. The full three-seed matrix ran 4,680 arms and 140,400 loopback HTTP observations. OpsCat recovered 34.55%, the curated human runbook recovered 89.87% after the P100 catalog-consistency correction, no-action recovered 11.47%, escalation correctness/precision were both 100%, harmful actions were 0%, and every hard safety gate passed. P99 remains a broad synthetic taxonomy, not a literally exhaustive incident set or proof of production effectiveness.
+
+## P100 implemented
+
+P100 replaces one-shot selection with a bounded stateful incident investigator. It receives only public evidence and sanitized measured history, chooses one closed-registry action per step, re-observes the service, falls back after ineffective actions, completes partial/compound remediation, confirms natural recovery without mutation, and escalates privileged or ambiguous cases. The full 52-family/520-case, three-seed, four-arm matrix ran 6,240 trials and 183,990 loopback requests. Stateful recovery was 56.47% versus one-shot 34.55%; blind recovery was 39.42% versus 2.88%; expected escalation recall/precision were 100%; collateral regressions were zero; and every hard safety gate passed. P100 remains synthetic-lab evidence and does not authorize unattended production remediation.
+
+## P101 implemented
+
+P101 adds a runtime tool-using hypothesis investigator. Initial evidence is hidden; the agent ranks diagnostic surfaces from symptoms, executes closed read-only tools, demotes failed hypotheses, incorporates evidence, and only then delegates to the P100 stateful action policy. The full 520-case, three-seed, three-arm matrix ran 4,680 trials and 118,580 loopback requests. Relevant-tool discovery and recovery retention were 100%, Top-1 tool accuracy was 94.23%, tool-investigator recovery was 56.54%, fixed-tool recovery was 1.35%, and every hard safety gate passed. P101 does not prove unseen-language, hidden-topology, or production generalization.
+
+## P102 implemented
+
+P102 adds a provider-neutral LLM diagnostic tool planner with an exact JSON output
+contract, a closed 17-tool read-only registry, fail-closed parsing, and four language,
+topology, distractor, and injection perturbations per case. Default fixture evaluation
+is deterministic and network-free; the NVIDIA provider is explicit opt-in and remains
+advisory-only. P102 records exact-tool accuracy and schema failures without executing
+tools or actions and does not convert benchmark output into production authority.

@@ -4,7 +4,7 @@ OpsCat is a local **agentic AI on-call system** for human-on-exception operation
 
 This repository is intended as a portfolio-grade Agentic AI Engineer artifact and paid-beta design seed: it emphasizes state, tools, tenant boundaries, policy, approvals, verification, wake-up contracts, auditability, privacy, and safety boundaries rather than chatbot-style prompting.
 
-> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 also adds an explicit opt-in, bounded Prometheus read-only shadow connector; fixture mode remains the default and no real actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
+> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner under language/topology/injection perturbations. No production actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
 
 ## Portfolio demo evidence
 
@@ -34,10 +34,111 @@ Reviewer links:
 - [`docs/portfolio-demo.md`](docs/portfolio-demo.md) — five-minute portfolio narrative and commands.
 - [`docs/operator-transcript-demo.md`](docs/operator-transcript-demo.md) — best quick transcript demo for reviewers.
 - [`docs/operator-walkthrough.md`](docs/operator-walkthrough.md) — operator walkthrough from observe to improve.
-- [`docs/release-evidence.md`](docs/release-evidence.md) — release gates, evidence commands, P93/P94 demo proof, P95 clean-clone proof, and the P96 Prometheus shadow connector.
+- [`docs/release-evidence.md`](docs/release-evidence.md) — release gates, evidence commands, P93/P94 demo proof, P95 clean-clone proof, P96 Prometheus shadow connector, and P97 causal remediation benchmark.
+- [`docs/operations/p98-final-summary.md`](docs/operations/p98-final-summary.md) — selector comparison, blind causal metrics, and LLM safety boundary.
+- [`docs/operations/p99-final-summary.md`](docs/operations/p99-final-summary.md) — comprehensive operational failure taxonomy and broad causal results.
+- [`docs/operations/p100-final-summary.md`](docs/operations/p100-final-summary.md) — stateful multi-step benchmark, blind-split lift, and safety results.
+- [`docs/operations/p101-final-summary.md`](docs/operations/p101-final-summary.md) — hidden-evidence tool selection, recovery retention, and safety results.
+- [`docs/operations/p102-final-summary.md`](docs/operations/p102-final-summary.md) — offline and NVIDIA LLM tool-planning robustness evidence.
 - [`docs/architecture.md`](docs/architecture.md) — local/mock architecture and safety boundaries.
 
 Boundary: the portfolio demo is local/mock-only. It performs no auth work, live APIs, credentials, network, production mutation, real remediation/action execution, or external model/API calls; it is not production autonomy.
+
+## Causal remediation evaluation (P97)
+
+P97 measures outcomes instead of awarding points for a fixture answer. It replays the same deterministic fault state through `no_action`, `human_runbook`, and `opscat`, samples a real ephemeral `127.0.0.1` HTTP workload before and after intervention, and compares recovery, utility, durability, collateral effects, and escalation behavior. The selector receives visible evidence only; family/variant/split labels, scorer-only required actions, and harmful-action maps stay outside its input. Non-`act` decisions cannot mutate lab state.
+
+Run the bounded 12-case smoke:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_causal_remediation_benchmark.py \
+  --output-json /tmp/opscat-p97-smoke.json \
+  --output-md /tmp/opscat-p97-smoke.md
+```
+
+Run all 120 cases across three seeds and three intervention arms:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_causal_remediation_benchmark.py \
+  --full-matrix \
+  --output-json /tmp/opscat-p97-full.json \
+  --output-md /tmp/opscat-p97-full.md
+```
+
+The recorded full matrix produced 1,080 trials and 64,800 loopback HTTP requests. OpsCat recovered 44.17% versus 16.67% for no-action and 90.0% for the curated human runbook after the P100 catalog-consistency correction, yielding a 0.275 causal recovery lift over no-action while all hard safety counters remained zero. This is synthetic-lab comparative evidence, not proof of production remediation effectiveness.
+
+## Selector comparison (P98)
+
+Compare the deterministic selector, an observation-only ablation, and the local LLM-shaped selector:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_selector_comparison.py \
+  --full-matrix --output-json /tmp/opscat-p98-full.json
+```
+
+The default run is local and network-free. NVIDIA is explicit opt-in with `--include-nvidia` and `NVIDIA_API_KEY`; the model can propose a bounded decision but cannot execute actions. P98 currently measures the same 44.17% overall and 12.50% blind recovery for the rule and mock LLM baselines, with 0% harmful actions and a passed hard safety gate. This is a comparison harness, not production effectiveness or operator-replacement approval.
+
+## Comprehensive operational matrix (P99)
+
+Run a bounded, family-spread smoke:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_operational_scenario_matrix.py \
+  --max-cases 20 --sample-size 5 \
+  --output-json /tmp/opscat-p99-smoke.json \
+  --output-md /tmp/opscat-p99-smoke.md
+```
+
+Run all 52 families and 520 cases across three deterministic seeds:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_operational_scenario_matrix.py \
+  --full-matrix --sample-size 10 \
+  --output-json /tmp/opscat-p99-full.json \
+  --output-md /tmp/opscat-p99-full.md
+```
+
+The recorded full matrix ran 4,680 arms and 140,400 loopback HTTP observations. OpsCat recovered 34.55%, the curated human runbook recovered 89.87% after the P100 catalog-consistency correction, and no-action recovered 11.47%. Escalation correctness and precision were both 100%, harmful actions were 0%, and every hard safety gate passed. The taxonomy is broad but not literally exhaustive, and the result is synthetic-lab evidence only.
+
+## Stateful multi-step investigator (P100)
+
+Run all 520 cases across three seeds and four equal-state arms:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_stateful_incident_investigator.py \
+  --seeds 11,29,47 --sample-size 10 --max-steps 3 \
+  --output-json /tmp/opscat-p100-full.json \
+  --output-md /tmp/opscat-p100-full.md
+```
+
+The recorded full matrix ran 6,240 trials and 183,990 loopback HTTP requests. The stateful agent recovered 56.47% overall versus 34.55% for the same one-shot selector and improved blind recovery from 2.88% to 39.42%. It recorded zero collateral regressions, 100% expected-escalation recall/precision, and passed every hard safety gate. The remaining gap to the 89.87% curated human runbook and the synthetic-lab boundary remain explicit.
+
+## Tool-using hypothesis investigator (P101)
+
+```bash
+uv run --no-sync --extra dev python scripts/run_tool_investigation_benchmark.py \
+  --seeds 11,29,47 --sample-size 10 \
+  --output-json /tmp/opscat-p101-full.json \
+  --output-md /tmp/opscat-p101-full.md
+```
+
+P101 hides initial evidence and requires an executed read-only diagnostic before action. Across 4,680 trials it discovered the relevant tool in 100% of eligible arms, achieved 94.23% Top-1 tool accuracy, retained 100% of the direct-visible 56.54% recovery rate, and reduced a fixed-tool ablation to 1.35%. All tools and actions remain synthetic local boundaries.
+
+## LLM diagnostic tool planner evaluation (P102)
+
+```bash
+uv run --no-sync --extra dev python scripts/run_llm_tool_planner_evaluation.py \
+  --max-cases 52 --output-json /tmp/opscat-p102-mock.json
+
+# Explicit live-provider evaluation; still advisory-only and executes no tool/action.
+uv run --no-sync --extra dev python scripts/run_llm_tool_planner_evaluation.py \
+  --max-cases 12 --include-nvidia --output-json /tmp/opscat-p102-nvidia.json
+```
+
+P102 tests one closed-registry diagnostic choice against original, paraphrased,
+opaque-topology, and prompt-injection-like symptoms. The default fixture mode is
+deterministic and network-free; NVIDIA mode is explicit opt-in, validates an exact
+JSON contract, and fails closed before any tool or remediation execution.
 
 ## Portfolio story
 

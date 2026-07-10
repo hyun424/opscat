@@ -95,3 +95,23 @@ bash scripts/verify.sh --profile full
 Result: PASS — the full local/mock release gate completed with `Verification complete (full)`.
 
 Boundary: auth remains deferred; OpsCat is local/mock and does not claim real customer production readiness, live provider mutation, or production credential handling.
+
+## P100 latest verification addendum
+
+P100 adds a stateful multi-step incident investigator and four-arm causal benchmark.
+The full recorded matrix covers 52 families, 520 cases, three seeds, 6,240 trials,
+and 183,990 loopback requests. Stateful recovery measured 56.47% versus 34.55%
+one-shot, with 39.42% versus 2.88% on blind cases, zero stateful collateral
+regressions, 100% expected-escalation recall/precision, and all hard safety gates
+passing. The implementation remains an isolated synthetic lab and enables no
+production mutation.
+
+## P102 latest verification addendum
+
+P102 adds an exact-schema, fail-closed LLM diagnostic tool planner over the P101
+closed read-only registry. The deterministic fixture matrix covered 52 families and
+208 perturbation decisions at 94.23% exact-tool accuracy. A bounded explicit NVIDIA
+run covered 12 families and 48 live decisions at 100% valid output and 83.33%
+exact-tool accuracy, with zero unsafe tools and zero tool/action executions. The live
+sample is advisory benchmark evidence only and does not prove production diagnosis,
+remediation effectiveness, unattended safety, or operator replacement.

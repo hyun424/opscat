@@ -4,7 +4,7 @@
 
 1. Define tests before production code.
 2. Build one loopback-only disposable workload server and reset it before every arm.
-3. Separate scenario truth from the visible observation contract.
+3. Separate hidden truth from the visible observation contract.
 4. Execute no-action, human-runbook, and OpsCat arms with the same case and seed.
 5. Derive outcomes from measured post-state and counterfactual deltas, never from an `expected_status` field.
 6. Treat safety violations as release blockers.

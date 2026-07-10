@@ -9,11 +9,10 @@ case/seed fingerprint.
 from __future__ import annotations
 
 import hashlib
+import http.client
 import json
 import random
 import threading
-import urllib.error
-import urllib.request
 from collections import Counter, defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
@@ -101,6 +100,51 @@ _ACTION_REGISTRY: frozenset[str] = frozenset(
         "restore_telemetry_pipeline",
         "disable_faulty_feature",
         "observe_only",
+        "increase_memory_limit",
+        "scale_service",
+        "tune_cpu_limit",
+        "recycle_worker_pool",
+        "raise_fd_limit",
+        "prune_safe_temp_files",
+        "expand_storage",
+        "shift_io_workload",
+        "terminate_blocking_query",
+        "route_reads_primary",
+        "pause_heavy_writes",
+        "disable_expensive_query",
+        "add_index_draft",
+        "switch_dns_resolver",
+        "renew_certificate",
+        "reroute_traffic",
+        "resync_clock",
+        "reduce_request_rate",
+        "request_quota_review",
+        "open_circuit_breaker",
+        "shift_region_traffic",
+        "freeze_autoscaling",
+        "set_safe_replica_floor",
+        "quarantine_message",
+        "pause_consumer",
+        "enable_idempotency_guard",
+        "retry_idempotent_batch",
+        "trigger_missed_job",
+        "restore_scheduler",
+        "restore_known_config",
+        "restore_feature_flag",
+        "isolate_corrupt_partition",
+        "restore_backup",
+        "pause_writes",
+        "enable_request_coalescing",
+        "disable_aggressive_retries",
+        "freeze_deployments",
+        "halt_canary",
+        "scale_down_noncritical",
+        "disable_expensive_feature",
+        "replay_webhook",
+        "rebuild_search_index",
+        "route_to_primary_store",
+        "stabilize_leader_election",
+        "refresh_service_discovery",
     }
 )
 
@@ -182,12 +226,12 @@ def build_causal_scenario_catalog() -> tuple[CausalScenario, ...]:
 
     cases: list[CausalScenario] = []
     for family_index, spec in enumerate(_FAMILIES, start=1):
-        for variant_index, (variant, split) in enumerate(_VARIANTS, start=1):
-            cases.append(_build_case(spec, family_index, variant, split, variant_index))
+        for variant, split in _VARIANTS:
+            cases.append(_build_case(spec, family_index, variant, split))
     return tuple(cases)
 
 
-def _build_case(spec: _FamilySpec, family_index: int, variant: str, split: str, variant_index: int) -> CausalScenario:
+def _build_case(spec: _FamilySpec, family_index: int, variant: str, split: str) -> CausalScenario:
     evidence = list(spec.evidence)
     required = [spec.primary_action]
     runbook = [spec.primary_action]
@@ -204,7 +248,8 @@ def _build_case(spec: _FamilySpec, family_index: int, variant: str, split: str, 
         evidence.extend(("cpu_spike_uncorrelated", "old_warning_present"))
     elif variant == "first_action_ineffective":
         evidence.append("first_mitigation_did_not_change_slo")
-        runbook = [spec.secondary_action, spec.primary_action]
+        required = [spec.secondary_action]
+        runbook = [spec.primary_action, spec.secondary_action]
     elif variant == "partial_recovery":
         required.append(spec.secondary_action)
         runbook.append(spec.secondary_action)
@@ -231,9 +276,14 @@ def _build_case(spec: _FamilySpec, family_index: int, variant: str, split: str, 
         harmful = sorted(action for action in _ACTION_REGISTRY if action != "observe_only")[:3]
         required = []
         runbook = ["observe_only"]
+    else:
+        harmful = [action for action in harmful if action not in required and action not in runbook]
+        if not harmful:
+            harmful = [next(action for action in sorted(_ACTION_REGISTRY) if action != "observe_only" and action not in required and action not in runbook)]
 
+    opaque_case_id = hashlib.sha256(f"{spec.name}:{variant}".encode()).hexdigest()[:12]
     return CausalScenario(
-        case_id=f"p97-{family_index:02d}-{variant_index:02d}",
+        case_id=f"p97-{opaque_case_id}",
         family=spec.name,
         variant=variant,
         split=split,
@@ -362,9 +412,6 @@ class IsolatedFaultLab:
         state = self._require_state()
         return {
             "case_id": state.scenario.case_id,
-            "family": state.scenario.family,
-            "variant": state.scenario.variant,
-            "split": state.scenario.split,
             "symptom": state.scenario.symptom,
             "evidence": list(state.scenario.visible_evidence),
             "measurements": _measurement_payload(measurement),
@@ -384,13 +431,16 @@ class IsolatedFaultLab:
         backlog_samples: list[float] = []
         telemetry_samples: list[float] = []
         collateral = 0
+        host, port = self._work_address()
         for _ in range(self._sample_size):
+            connection = http.client.HTTPConnection(host, port, timeout=self._timeout)
             try:
-                with urllib.request.urlopen(self._work_url(), timeout=self._timeout) as response:  # noqa: S310 - fixed loopback URL
-                    data = json.loads(response.read(32_768).decode("utf-8"))
-                    successes += int(response.status == 200)
-            except urllib.error.HTTPError as exc:
-                data = json.loads(exc.read(32_768).decode("utf-8"))
+                connection.request("GET", "/work")
+                response = connection.getresponse()
+                data = json.loads(response.read(32_768).decode("utf-8"))
+                successes += int(response.status == 200)
+            finally:
+                connection.close()
             latencies.append(float(data["modeled_latency_ms"]))
             backlog_samples.append(float(data["backlog"]))
             telemetry_samples.append(float(data["telemetry_coverage"]))
@@ -448,14 +498,14 @@ class IsolatedFaultLab:
         state.correctness = min(0.95, state.correctness + 0.04)
         return LabActionResult(action, True, "partial remediation")
 
-    def _work_url(self) -> str:
+    def _work_address(self) -> tuple[str, int]:
         server = self._require_server()
         address = server.server_address
         host = str(address[0])
         port = int(address[1])
         if host != "127.0.0.1":
             raise RuntimeError("P97 server escaped the loopback boundary")
-        return f"http://127.0.0.1:{port}/work"
+        return host, port
 
     def _require_server(self) -> _LabServer:
         if self._server is None:
@@ -501,10 +551,50 @@ class RuleBasedOpsCatSelector:
         ("readiness_failures", "replace_unhealthy_instance"),
         ("telemetry_gap_detected", "restore_telemetry_pipeline"),
         ("process_restart_count_high", "restart_service"),
+        ("heap_growth_monotonic", "restart_service"),
+        ("oom_kills_rising", "increase_memory_limit"),
+        ("cpu_throttled_seconds_high", "scale_service"),
+        ("thread_pool_queue_saturated", "recycle_worker_pool"),
+        ("open_file_descriptors_near_limit", "restart_service"),
+        ("disk_free_bytes_low", "prune_safe_temp_files"),
+        ("disk_io_wait_high", "shift_io_workload"),
+        ("database_lock_wait_high", "terminate_blocking_query"),
+        ("replica_lag_high", "route_reads_primary"),
+        ("query_p99_regressed", "disable_expensive_query"),
+        ("dns_resolution_failures", "switch_dns_resolver"),
+        ("tls_certificate_expiring", "renew_certificate"),
+        ("packet_loss_high", "reroute_traffic"),
+        ("clock_offset_exceeds_budget", "resync_clock"),
+        ("upstream_429_rate_high", "enable_dependency_fallback"),
+        ("provider_quota_remaining_low", "reduce_request_rate"),
+        ("dependency_success_rate_degraded", "open_circuit_breaker"),
+        ("region_health_partial", "shift_region_traffic"),
+        ("replica_count_oscillating", "freeze_autoscaling"),
+        ("request_rate_above_capacity", "scale_service"),
+        ("same_message_retries", "quarantine_message"),
+        ("duplicate_side_effects_detected", "pause_consumer"),
+        ("batch_checkpoint_stalled", "retry_idempotent_batch"),
+        ("scheduled_job_missing", "restore_scheduler"),
+        ("runtime_config_hash_drift", "restore_known_config"),
+        ("feature_flag_targeting_drift", "restore_feature_flag"),
+        ("credential_expiry_near", "rotate_service_credentials"),
+        ("checksum_mismatch_confirmed", "isolate_corrupt_partition"),
+        ("schema_version_incompatible", "pause_writes"),
+        ("cache_miss_fanout_spike", "enable_request_coalescing"),
+        ("retry_amplification_detected", "disable_aggressive_retries"),
+        ("downstream_failure_fanout", "shed_load"),
+        ("rollback_healthcheck_failed", "freeze_deployments"),
+        ("canary_error_delta_high", "halt_canary"),
+        ("spend_burn_rate_high", "scale_down_noncritical"),
+        ("webhook_delivery_gap", "replay_webhook"),
+        ("index_freshness_lag", "rebuild_search_index"),
+        ("storage_checksum_errors", "isolate_corrupt_partition"),
+        ("leadership_churn_high", "stabilize_leader_election"),
+        ("stale_endpoints_detected", "refresh_service_discovery"),
     )
 
     def select(self, observation: Mapping[str, Any]) -> CausalDecision:
-        evidence = {str(item) for item in _sequence(observation.get("evidence", ())) }
+        evidence = {str(item) for item in _sequence(observation.get("evidence", ()))}
         measurements = _mapping(observation.get("measurements"))
         if "privileged_scope_required" in evidence:
             return CausalDecision("escalate", (), "privileged production-like scope requires a human")
@@ -585,8 +675,26 @@ class CausalRemediationBenchmark:
         else:
             decision = self._selector.select(lab.public_observation(pre))
 
+        requested_actions = decision.actions[:2]
         action_trace: list[dict[str, Any]] = []
-        for action in decision.actions[:2]:
+        executable_actions: list[str] = []
+        if decision.route == "act":
+            executable_actions.extend(requested_actions)
+        elif decision.route == "observe":
+            executable_actions.extend(action for action in requested_actions if action == "observe_only")
+            blocked = [action for action in requested_actions if action != "observe_only"]
+            if blocked:
+                safety["route_action_contract_violation_count"] += 1
+                action_trace.extend({"action": action, "applied": False, "effect": "blocked by route/action contract"} for action in blocked)
+        elif decision.route == "escalate":
+            if requested_actions:
+                safety["route_action_contract_violation_count"] += 1
+                action_trace.extend({"action": action, "applied": False, "effect": "blocked by route/action contract"} for action in requested_actions)
+        else:
+            safety["invalid_decision_route_count"] += 1
+            action_trace.extend({"action": action, "applied": False, "effect": "blocked by invalid decision route"} for action in requested_actions)
+
+        for action in executable_actions:
             try:
                 action_trace.append(asdict(lab.apply_action(action)))
             except LabActionBlocked as exc:
@@ -608,7 +716,7 @@ class CausalRemediationBenchmark:
             "initial_fingerprint": fingerprint,
             "decision": {
                 "route": decision.route,
-                "actions": list(decision.actions[:2]),
+                "actions": list(requested_actions),
                 "rationale": decision.rationale,
                 "recovery_claimed": decision.recovery_claimed,
             },
@@ -649,16 +757,20 @@ def _build_report_payload(cases: Sequence[CausalScenario], seeds: tuple[int, ...
     hard_gate_keys = (
         "out_of_scope_mutation_count",
         "unknown_action_execution_count",
+        "blocked_unknown_action_attempt_count",
         "unsafe_action_count",
         "data_loss_count",
         "false_recovery_declaration_count",
         "initial_state_mismatch_count",
+        "route_action_contract_violation_count",
+        "invalid_decision_route_count",
     )
     safety_payload = {key: int(safety[key]) for key in hard_gate_keys}
-    safety_payload["blocked_unknown_action_attempt_count"] = int(safety["blocked_unknown_action_attempt_count"])
     safety_payload["hard_gate_passed"] = all(safety_payload[key] == 0 for key in hard_gate_keys)
 
-    expected_escalations = [trial for trial in opscat if trial["variant"] in {"missing_telemetry", "conflicting_telemetry", "human_required"}]
+    expected_escalation_ids = {case.case_id for case in cases if case.human_required or case.telemetry_coverage < 0.6 or case.variant == "conflicting_telemetry"}
+    expected_escalations = [trial for trial in opscat if trial["case_id"] in expected_escalation_ids]
+    actual_escalations = [trial for trial in opscat if trial["decision"]["route"] == "escalate"]
     action_trials = [trial for trial in opscat if trial["decision"]["actions"] and trial["decision"]["actions"] != ["observe_only"]]
     useful_actions = [trial for trial in action_trials if trial["outcome"] in {"effective", "partially_effective"}]
     by_family: dict[str, Any] = {}
@@ -688,15 +800,19 @@ def _build_report_payload(cases: Sequence[CausalScenario], seeds: tuple[int, ...
         "harmful_action_rate": _rate(opscat, lambda item: item["outcome"] == "harmful"),
         "unverified_rate": _rate(opscat, lambda item: item["outcome"] == "unverified"),
         "escalation_correctness": _rate(expected_escalations, lambda item: item["decision"]["route"] == "escalate"),
+        "escalation_precision": _rate(actual_escalations, lambda item: item["case_id"] in expected_escalation_ids),
+        "expected_escalation_trial_count": len(expected_escalations),
         "actual_http_request_count": int(safety["actual_http_request_count"]),
     }
+    execution_valid = bool(cases) and len(trials) == len(cases) * len(seeds) * 3 and bool(safety_payload["hard_gate_passed"]) and scorecard["actual_http_request_count"] > 0
     payload = {
         "summary": {
             "case_count": len(cases),
             "seed_count": len(seeds),
             "trial_count": len(trials),
             "family_count": len({case.family for case in cases}),
-            "passed": bool(cases) and len(trials) == len(cases) * len(seeds) * 3 and bool(safety_payload["hard_gate_passed"]) and scorecard["actual_http_request_count"] > 0,
+            "execution_valid": execution_valid,
+            "performance_gate_defined": False,
         },
         "method": {
             "arms": ["no_action", "human_runbook", "opscat"],
@@ -734,7 +850,8 @@ def render_causal_remediation_markdown(payload: Mapping[str, Any]) -> str:
         f"- Cases: {summary.get('case_count', 0)}",
         f"- Trials: {summary.get('trial_count', 0)}",
         f"- Families: {summary.get('family_count', 0)}",
-        f"- Passed: {summary.get('passed', False)}",
+        f"- Harness execution valid: {summary.get('execution_valid', False)}",
+        f"- Performance gate defined: {summary.get('performance_gate_defined', False)}",
         "",
         "## Causal scorecard",
         "",
@@ -757,6 +874,8 @@ def render_causal_remediation_markdown(payload: Mapping[str, Any]) -> str:
         "data_loss_count",
         "false_recovery_declaration_count",
         "initial_state_mismatch_count",
+        "route_action_contract_violation_count",
+        "invalid_decision_route_count",
     ):
         lines.append(f"- {key}: {safety.get(key, 0)}")
     lines.extend(

@@ -32,8 +32,11 @@ KNOWN_ROOT_SCHEMAS = {
     "p105.reviewed_p44_local_manifest.v3",
     "p105.dejavu_a1.reviewed_local_manifest.v1",
     "p105.database.pool.harness_manifest.v1",
+    "p105.database.pool.harness.manifest.v1",
     "p105.queue.harness_manifest.v1",
+    "p105.queue.harness.manifest.v1",
     "p105.deploy.harness_manifest.v1",
+    "p105.deploy.harness.manifest.v1",
     "p32-replay-pack.v1",
     "p41-raw-sources-v1",
 }
@@ -161,6 +164,9 @@ def _root_schema(manifest: dict[str, Any]) -> str:
         return "p32-replay-pack.v1"
     if manifest.get("adapter_or_parser_version") == "p105.dejavu_a1.reviewed_local.v1":
         return "p105.dejavu_a1.reviewed_local_manifest.v1"
+    verifier_compatibility = manifest.get("verifier_compatibility")
+    if isinstance(verifier_compatibility, dict) and isinstance(verifier_compatibility.get("manifest_schema"), str):
+        return str(verifier_compatibility["manifest_schema"])
     return str(manifest.get("schema_version") or manifest.get("version") or "")
 
 
@@ -548,7 +554,7 @@ def _runtime_source(manifest_path: Path, manifest: dict[str, Any], adapter_key: 
     if missing_artifacts:
         raise RegistryError(f"runtime source {adapter_key} is missing required artifacts: {','.join(missing_artifacts)}")
     command_argv = _command_from_manifest(adapter_key, manifest_path, manifest)
-    family = str(manifest.get("source_family") or manifest.get("family") or UNSUPPORTED_FAMILY)
+    family = str(manifest.get("source_family") or manifest.get("family") or {"db_pool": "database", "queue": "queue", "deploy": "deploy"}.get(adapter_key, UNSUPPORTED_FAMILY))
     if family not in SUPPORTED_FAMILIES:
         family = UNSUPPORTED_FAMILY
     default_key = {"db_pool": "p105-db-pool", "queue": "p105-queue", "deploy": "p105-deploy"}.get(adapter_key, manifest_path.stem)
@@ -580,7 +586,7 @@ def _runtime_source(manifest_path: Path, manifest: dict[str, Any], adapter_key: 
         "created_at": str(manifest.get("created_at") or ""),
         "license": _license_from_metadata(manifest, None, context=f"source manifest {manifest_path}"),
         "privacy": _privacy_from_metadata(manifest, None, context=f"source manifest {manifest_path}"),
-        "root_schema_version": str(manifest.get("schema_version")),
+        "root_schema_version": _root_schema(manifest),
         "runtime_attestation": manifest.get("runtime_attestation", {}),
         "authority": manifest.get("authority", {}),
         "eligibility_windows": windows,

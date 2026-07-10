@@ -353,3 +353,33 @@ def test_actual_runtime_adapter_rejects_empty_public_telemetry(tmp_path: Path) -
 
     assert completed.returncode != 0
     assert "public telemetry has no source windows" in completed.stderr
+
+
+def test_actual_deploy_manifest_uses_verifier_compatibility_schema_and_adapter_family(tmp_path: Path) -> None:
+    manifest_path = _runtime_manifest(
+        tmp_path,
+        source="deploy",
+        schema="deploy",
+        family="deploy",
+        ledger_key="private_injection_ledger",
+        attestation_kind="actual_threading_http_server",
+    )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest.pop("schema_version")
+    manifest.pop("source_family")
+    manifest["source_key"] = "p105-isolated-local-deploy-canary"
+    manifest["verifier_compatibility"] = {
+        "manifest_schema": "p105.deploy.harness.manifest.v1",
+        "raw_attestation_separated": True,
+    }
+    manifest_path = _write_json(manifest_path, manifest)
+    ledger = _ledger(tmp_path / "ledger.json", [manifest_path])
+
+    completed, registry, eligibility = _run_registry(tmp_path, [manifest_path], ledger)
+
+    assert completed.returncode == 0, completed.stderr
+    source = registry["sources"][0]
+    assert source["source_key"] == "p105-isolated-local-deploy-canary"
+    assert source["root_schema_version"] == "p105.deploy.harness.manifest.v1"
+    assert source["source_family"] == "deploy"
+    assert eligibility["entries"][0]["eligible_for_release_floor"] is True

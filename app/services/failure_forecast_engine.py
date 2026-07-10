@@ -15,7 +15,7 @@ import json
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Self
 
@@ -888,6 +888,16 @@ def _run_p105_legacy_benchmark(curated_rows_path: str | Path, real_derived_rows_
 def _run_p105_release_benchmark(release_rows_path: str | Path, payload: Mapping[str, Any]) -> dict[str, Any]:
     payload = _g006_payload_with_private_ledger(release_rows_path, payload)
     release_validation = _validate_release_benchmark_payload(payload)
+    sidecar_codes = _validate_g006_required_manifest_files(
+        Path(release_rows_path),
+        payload,
+        require_benchmark_manifest=Path(release_rows_path).with_name("p105-release-qualified-benchmark.json").exists(),
+    )
+    if sidecar_codes:
+        release_validation["validation_error_codes"] = sorted(set(release_validation["validation_error_codes"]) | sidecar_codes)
+        release_validation["validation_errors"] = list(release_validation["validation_errors"]) + [
+            f"{code}: required release-qualified sidecar missing or tampered" for code in sorted(sidecar_codes)
+        ]
     rows = [_row_with_scorer_labels(row) for row in _mapping_sequence(payload.get("rows", ()))]
     partitions = payload.get("partitions", {}) if isinstance(payload.get("partitions"), Mapping) else {}
     eligible_partitions = [str(item) for item in _sequence(payload.get("release_gate_eligible_partitions", ()))]
@@ -982,6 +992,8 @@ def _run_p105_release_benchmark(release_rows_path: str | Path, payload: Mapping[
     )
     if qualification_mode != RELEASE_QUALIFIED_MODE:
         release_gate["smoke_only_reason"] = "tiny_release_fixture_missing_release_qualification_floors"
+    if qualification_mode == RELEASE_QUALIFIED_MODE and release_validation["validation_error_codes"]:
+        release_gate["failure_stage"] = "pre_scoring"
     if not release_qualified:
         release_gate["p106_unlocked"] = False
     else:
@@ -1710,6 +1722,7 @@ def _evaluate_g006_source_availability_preflight(payload: Mapping[str, Any], sup
         if not row["pass"]:
             errors.append(f"{family}: source availability preflight below G006 floors")
             codes.add("source_availability_preflight_floor_failure")
+            codes.add("insufficient_honest_source_material")
         family_report[family] = row
     checked = preflight.get("checked_before_scoring") is True
     if not checked:
@@ -1853,14 +1866,26 @@ def _g006_family_from_source(source_system: str, manifest_source: Mapping[str, A
     return {"p32": "database", "p41": "deploy", "p44": "deploy"}.get(source_system, "database")
 
 
-def _g006_labels_from_record(record: Mapping[str, Any], family: str, partition: str, index: int) -> dict[str, Any]:
-    private = record.get("private_label", {}) if isinstance(record.get("private_label"), Mapping) else {}
+def _g006_labels_from_record(
+    record: Mapping[str, Any],
+    family: str,
+    partition: str,
+    index: int,
+    reviewed_label: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    private = reviewed_label if reviewed_label is not None else record.get("private_label", {}) if isinstance(record.get("private_label"), Mapping) else {}
     positive = private.get("label_positive") is True
     incident_id = private.get("label_incident_id") or (f"inc-{family}-{partition}-{index:04d}" if positive else None)
     group = private.get("incident_group_id") or (f"group-{family}-{partition}-{index % 7:03d}" if positive else None)
+    incident_timestamp = private.get("label_incident_start_timestamp")
+    if positive and reviewed_label is not None and not incident_timestamp:
+        source_timestamp = str(record.get("source_timestamp") or record.get("timestamp") or "")
+        if source_timestamp:
+            lead_minutes = int(private.get("lead_time_label_minutes") or 60)
+            incident_timestamp = (_parse_ts(source_timestamp) + timedelta(minutes=lead_minutes)).isoformat().replace("+00:00", "Z")
     return {
         "label_incident_id": incident_id,
-        "label_incident_start_timestamp": private.get("label_incident_start_timestamp") or (f"2026-03-{(index % 20) + 1:02d}T11:00:00Z" if positive else None),
+        "label_incident_start_timestamp": incident_timestamp or (f"2026-03-{(index % 20) + 1:02d}T11:00:00Z" if positive else None),
         "label_family": family,
         "label_failure_mode": str(private.get("label_failure_mode") or record.get("failure_mode") or f"{family}_failure"),
         "label_positive": positive,
@@ -1934,7 +1959,14 @@ def _g006_p24_input(row_id: str, source_window_id: str, family: str, record: Map
     return {
         "id": str(source_window.get("id") or source_window.get("window_id") or source_window_id or row_id),
         "service": str(source_window.get("service") or public_record.get("service") or f"{family}-service"),
-        "metric": str(source_window.get("metric") or public_record.get("metric") or public_record.get("metric_name") or public_features.get("metric") or public_features.get("metric_name") or f"{family}.saturation"),
+        "metric": str(
+            source_window.get("metric")
+            or public_record.get("metric")
+            or public_record.get("metric_name")
+            or public_features.get("metric")
+            or public_features.get("metric_name")
+            or f"{family}.saturation"
+        ),
         "risk_type": str(source_window.get("risk_type") or risk_type),
         "window_minutes": int(source_window.get("window_minutes", 15) or 15),
         "baseline": float(source_window.get("baseline", 1.0) or 1.0),
@@ -1959,8 +1991,9 @@ def _g006_row_from_record(
     partition: str,
     family: str,
     sequence_index: int,
+    reviewed_label: Mapping[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
-    labels = _g006_labels_from_record(record, family, partition, sequence_index)
+    labels = _g006_labels_from_record(record, family, partition, sequence_index, reviewed_label)
     row_id = f"p105-g006-{source_system}-{family}-{partition}-{sequence_index:04d}"
     canonical = _g006_canonical_tuple(
         source_system=source_system,
@@ -2077,6 +2110,100 @@ def _g006_seed_rows(p32_replay: Path, p41_sources: Path) -> tuple[list[dict[str,
     return rows, ledger, sources
 
 
+G006_P44_FATAL_CODES = frozenset(
+    {
+        "p44_reviewed_manifest_missing",
+        "p44_review_redaction_missing",
+        "p44_local_materialized_file_missing",
+        "p44_local_materialized_hash_mismatch",
+        "p44_record_count_mismatch",
+        "p44_family_mismatch",
+    }
+)
+
+
+def _g006_load_p44_private_ledger(manifest: Mapping[str, Any], manifest_path: Path, codes: list[str]) -> dict[str, Mapping[str, Any]]:
+    ledger_path_value = manifest.get("private_label_ledger_path")
+    if not ledger_path_value:
+        return {}
+    ledger_path = Path(str(ledger_path_value))
+    if not ledger_path.is_absolute():
+        ledger_path = manifest_path.parent / ledger_path
+    try:
+        ledger = _load_json(ledger_path)
+    except FileNotFoundError:
+        codes.append("p44_private_label_ledger_missing")
+        return {}
+    if ledger.get("public_artifact") is True:
+        codes.append("p44_private_label_ledger_public")
+    return {
+        str(record.get("record_id")): record
+        for record in _mapping_sequence(ledger.get("records", ()))
+        if record.get("record_id")
+    }
+
+
+def _g006_p44_record_validation_codes(
+    *,
+    manifest: Mapping[str, Any],
+    source_hash_by_path: Mapping[Path, str],
+    materialized: Sequence[tuple[Mapping[str, Any], Path, int, str, dict[str, Any]]],
+    label_by_record_id: Mapping[str, Mapping[str, Any]],
+) -> list[str]:
+    codes: set[str] = set()
+    schema_version = str(manifest.get("schema_version", ""))
+    if schema_version != "p105.reviewed_p44_local_manifest.v3":
+        codes.add("legacy_reviewed_manifest_version")
+    p24_windows: set[str] = set()
+    for source, _source_path, _offset, _raw_record, record in materialized:
+        record_id = str(record.get("record_id") or "")
+        label = label_by_record_id.get(record_id)
+        embedded_private = isinstance(record.get("private_label"), Mapping)
+        if embedded_private:
+            codes.add("embedded_private_label_not_reviewed_truth")
+            if record.get("family") or record.get("partition"):
+                codes.add("embedded_family_partition_not_sampling_authority")
+        if source.get("private_label_format") == "embedded_private_label":
+            codes.add("legacy_synthetic_floor_fixture")
+        timestamp = record.get("source_timestamp") or record.get("timestamp")
+        if not timestamp:
+            codes.add("source_timestamp_missing")
+        p24_input = record.get("p24_input", {}) if isinstance(record.get("p24_input"), Mapping) else {}
+        p24_window = str(p24_input.get("window_id") or p24_input.get("id") or record.get("source_window_id") or "")
+        if p24_window:
+            if p24_window in p24_windows:
+                codes.add("duplicate_p24_source_window")
+            p24_windows.add(p24_window)
+        source_text = " ".join(
+            str(value).lower()
+            for value in (
+                source.get("source_id"),
+                source.get("family"),
+                record.get("source_dataset"),
+                record.get("source_dataset_id"),
+            )
+            if value is not None
+        )
+        private_label = label if label is not None else record.get("private_label", {}) if embedded_private else {}
+        is_positive = isinstance(private_label, Mapping) and private_label.get("label_positive") is True
+        reviewed_join = record.get("reviewed_label_join", {}) if isinstance(record.get("reviewed_label_join"), Mapping) else {}
+        if is_positive and "nab" in source_text:
+            if reviewed_join.get("label_source") != "official_nab_window" or reviewed_join.get("official_window_id") != record.get("source_window_id"):
+                codes.add("nab_official_window_join_missing")
+                codes.add("nab_max_value_label_fallback_forbidden")
+        if is_positive and "loghub" in source_text:
+            if reviewed_join.get("label_source") != "reviewed_loghub_burst" or not reviewed_join.get("loghub_burst_id"):
+                codes.add("loghub_reviewed_burst_metadata_missing")
+            if label is None and not reviewed_join.get("source_hash"):
+                codes.add("loghub_burst_source_hash_missing")
+        if schema_version == "p105.reviewed_p44_local_manifest.v3":
+            if label is None:
+                codes.add("p44_private_label_ledger_join_missing")
+            if str(record.get("pre_label_partition") or "") not in {"held_out", "real_derived_shadow"}:
+                codes.add("p44_pre_label_partition_missing")
+    return sorted(codes)
+
+
 def _g006_validate_p44_manifest(manifest_path: Path) -> tuple[list[str], list[tuple[Mapping[str, Any], Path, int, str, dict[str, Any]]]]:
     codes: list[str] = []
     try:
@@ -2086,6 +2213,7 @@ def _g006_validate_p44_manifest(manifest_path: Path) -> tuple[list[str], list[tu
     if manifest.get("review_redaction_status") != "reviewed_redacted":
         codes.append("p44_review_redaction_missing")
     materialized: list[tuple[Mapping[str, Any], Path, int, str, dict[str, Any]]] = []
+    source_hash_by_path: dict[Path, str] = {}
     cap = int(manifest.get("source_cap", 2000) or 2000)
     total = 0
     for source in _mapping_sequence(manifest.get("sources", ())):
@@ -2094,6 +2222,7 @@ def _g006_validate_p44_manifest(manifest_path: Path) -> tuple[list[str], list[tu
             codes.append("p44_local_materialized_file_missing")
             continue
         actual_hash = _sha256_path(path)
+        source_hash_by_path[path] = actual_hash
         if source.get("local_source_hash") != actual_hash:
             codes.append("p44_local_materialized_hash_mismatch")
         records = _g006_read_records(path)
@@ -2110,22 +2239,56 @@ def _g006_validate_p44_manifest(manifest_path: Path) -> tuple[list[str], list[tu
                 break
             materialized.append((source, path, offset, raw_record, record))
             total += 1
+    label_by_record_id = _g006_load_p44_private_ledger(manifest, manifest_path, codes)
+    codes.extend(
+        _g006_p44_record_validation_codes(
+            manifest=manifest,
+            source_hash_by_path=source_hash_by_path,
+            materialized=materialized,
+            label_by_record_id=label_by_record_id,
+        )
+    )
     return sorted(set(codes)), materialized
 
 
 def _g006_p44_rows(p44_reviewed_local_manifest: str | Path | None) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any], list[str]]:
     if p44_reviewed_local_manifest is None:
         return [], [], _g006_disabled_p44_preflight(), ["p44_reviewed_manifest_missing"]
-    codes, materialized = _g006_validate_p44_manifest(Path(p44_reviewed_local_manifest))
+    manifest_path = Path(p44_reviewed_local_manifest)
+    manifest = _load_json(manifest_path)
+    codes, materialized = _g006_validate_p44_manifest(manifest_path)
+    label_by_record_id = _g006_load_p44_private_ledger(manifest, manifest_path, [])
+    fatal_codes = sorted(set(codes) & G006_P44_FATAL_CODES)
+    lock_only_codes = sorted(set(codes) - set(fatal_codes))
     rows: list[dict[str, Any]] = []
     ledger: list[dict[str, Any]] = []
+    unevaluable = 0
+    legacy_embedded_count = 0
     sequence = 0
-    if not codes:
+    if not fatal_codes:
+        seen_p24_windows: set[str] = set()
         for manifest_source, source_path, offset, raw_record, record in materialized:
+            schema_version = str(manifest.get("schema_version", ""))
+            embedded_private = isinstance(record.get("private_label"), Mapping)
+            if embedded_private:
+                legacy_embedded_count += 1
+            timestamp = record.get("source_timestamp") or record.get("timestamp")
+            p24_input = record.get("p24_input", {}) if isinstance(record.get("p24_input"), Mapping) else {}
+            p24_window = str(p24_input.get("window_id") or p24_input.get("id") or record.get("source_window_id") or "")
+            if not timestamp or (p24_window and p24_window in seen_p24_windows):
+                unevaluable += 1
+                if p24_window:
+                    seen_p24_windows.add(p24_window)
+                continue
+            if p24_window:
+                seen_p24_windows.add(p24_window)
+            if schema_version == "p105.reviewed_p44_local_manifest.v1":
+                continue
             family = _g006_family_from_source("p44", manifest_source, record)
-            partition = str(record.get("partition") or "real_derived_shadow")
+            partition = str(record.get("pre_label_partition") or record.get("partition") or "real_derived_shadow")
             if partition not in {"held_out", "real_derived_shadow"}:
                 partition = "real_derived_shadow"
+            reviewed_label = label_by_record_id.get(str(record.get("record_id")))
             sequence += 1
             row, label = _g006_row_from_record(
                 source_system="p44",
@@ -2138,14 +2301,34 @@ def _g006_p44_rows(p44_reviewed_local_manifest: str | Path | None) -> tuple[list
                 partition=partition,
                 family=family,
                 sequence_index=sequence,
+                reviewed_label=reviewed_label,
             )
+            if lock_only_codes:
+                row["partition"] = "diagnostic"
+                row["split"] = "diagnostic"
+                row["split_id"] = "p105-g006-diagnostic-v1"
+                row["evidence_qualification"] = {
+                    "status": "diagnostic_only",
+                    "qualified_by": "g006-local-materializer",
+                    "evidence_ids": [],
+                }
             rows.append(row)
             ledger.append(label)
     preflight = _g006_source_preflight("reviewed-local", rows, ledger)
-    preflight["record_count_verified_from_parsed_records"] = not codes
+    if lock_only_codes:
+        preflight["available_source_rows"] = 0
+        preflight["positive_labels"] = 0
+        preflight["incidents"] = 0
+        preflight["incident_groups"] = 0
+        preflight["distinct_canonical_source_tuples"] = 0
+    preflight["record_count_verified_from_parsed_records"] = not fatal_codes
     preflight["validation_error_codes"] = codes
     if materialized:
         preflight["local_source_hashes"] = sorted({_sha256_path(path) for _, path, _, _, _ in materialized})
+    if legacy_embedded_count:
+        preflight["legacy_embedded_private_label_row_count"] = legacy_embedded_count
+    if unevaluable:
+        preflight["unevaluable_row_count"] = unevaluable
     return rows, ledger, preflight, codes
 
 
@@ -2223,7 +2406,7 @@ def materialize_p105_release_qualified_evidence(
         p44_preflight = _g006_disabled_p44_preflight()
     else:
         p44_rows, p44_ledger, p44_preflight, p44_codes = _g006_p44_rows(p44_reviewed_local_manifest)
-        if p44_codes:
+        if sorted(set(p44_codes) & G006_P44_FATAL_CODES):
             locked_payload = {
                 "schema_version": "p105.forecast.release_benchmark.v1",
                 "mode": mode,
@@ -2363,12 +2546,18 @@ def materialize_p105_release_qualified_evidence(
     _write_stable_json(output / "p105-coverage.json", coverage_manifest)
     _write_stable_json(output / "p105-p24-parity.json", p24_parity)
     _write_stable_json(output / "p105-review.json", _g006_review_manifest(p44_mode, p44_codes))
+    _g006_copy_p44_sidecars(output, p44_reviewed_local_manifest)
     payload["artifact_manifests"] = _g006_artifact_manifests_for_output(output)
     payload["artifact_hashes"] = _g006_artifact_hashes(payload)
     _write_stable_json(rows_path, payload)
     benchmark_report = run_p105_benchmark(rows_path)
     benchmark_report["source_path"] = "p105-release-qualified-rows.json"
     payload["release_gate"] = benchmark_report["release_gate"]
+    if p44_codes:
+        merged_codes = sorted(set(payload["release_gate"].get("validation_error_codes", ())) | set(p44_codes))
+        payload["release_gate"]["validation_error_codes"] = merged_codes
+        payload["release_gate"]["release_qualified"] = False
+        payload["release_gate"]["p106_unlocked"] = False
     _write_stable_json(output / "p105-release-qualified-benchmark.json", benchmark_report)
     payload["artifact_manifests"] = _g006_artifact_manifests_for_output(output)
     payload["artifact_hashes"] = _g006_artifact_hashes(payload)
@@ -2398,27 +2587,33 @@ def _g006_payload_partitions(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any
 def _g006_coverage_manifest_from_rows(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     coverage: dict[str, dict[str, Any]] = {}
     for family in ("database", "deploy", "queue"):
-        intervals = [
-            {
-                "split_id": "g006-held-out",
-                "family": family,
-                "service": f"{family}-service",
-                "source_system": "p44",
-                "start": "2026-02-01T00:00:00Z",
-                "end": "2026-02-05T00:00:00Z",
-            },
-            {
-                "split_id": "g006-real-derived",
-                "family": family,
-                "service": f"{family}-service",
-                "source_system": "p44",
-                "start": "2026-02-05T00:00:00Z",
-                "end": "2026-02-09T00:00:00Z",
-            },
-        ]
+        intervals: list[dict[str, Any]] = []
+        for row in rows:
+            if row.get("family") != family:
+                continue
+            provenance = row.get("source_record_provenance", {}) if isinstance(row.get("source_record_provenance"), Mapping) else {}
+            canonical = provenance.get("canonical_source_tuple", {}) if isinstance(provenance.get("canonical_source_tuple"), Mapping) else {}
+            source_ts = str(provenance.get("source_timestamp") or row.get("forecast_timestamp") or "")
+            if not source_ts:
+                continue
+            start = _parse_ts(source_ts)
+            end = start + timedelta(days=4)
+            intervals.append(
+                {
+                    "split_id": str(row.get("split_id") or f"g006-{row.get('partition', '')}"),
+                    "family": family,
+                    "service": str(row.get("service") or f"{family}-service"),
+                    "source_system": str(canonical.get("source_system") or ""),
+                    "start": start.isoformat().replace("+00:00", "Z"),
+                    "end": end.isoformat().replace("+00:00", "Z"),
+                    "timestamp_source": "raw_source_record",
+                    "source_record_provenance_hash": _sha256_text(_stable_json(provenance)),
+                }
+            )
+        service_days = _union_service_days(intervals)
         coverage[family] = {
-            "covered_service_seconds": 8 * 86400,
-            "service_days": 8.0,
+            "covered_service_seconds": round(service_days * 86400, 6),
+            "service_days": round(service_days, 6),
             "coverage_intervals": intervals,
         }
     return {
@@ -2450,7 +2645,36 @@ def _g006_manifest_filenames() -> dict[str, str]:
         "p24": "p105-p24-parity.json",
         "benchmark": "p105-release-qualified-benchmark.json",
         "review": "p105-review.json",
+        "privacy": "p105-privacy-redaction-manifest.json",
+        "license": "p105-license-manifest.json",
+        "citation": "p105-citation-manifest.json",
+        "provenance": "p105-provenance-hash-manifest.json",
     }
+
+
+def _g006_copy_p44_sidecars(output: Path, p44_reviewed_local_manifest: str | Path | None) -> None:
+    if p44_reviewed_local_manifest is None:
+        return
+    try:
+        manifest = _load_json(p44_reviewed_local_manifest)
+    except FileNotFoundError:
+        return
+    key_to_filename = {
+        "privacy_manifest_path": "p105-privacy-redaction-manifest.json",
+        "license_manifest_path": "p105-license-manifest.json",
+        "citation_manifest_path": "p105-citation-manifest.json",
+        "provenance_hash_manifest_path": "p105-provenance-hash-manifest.json",
+    }
+    manifest_dir = Path(p44_reviewed_local_manifest).parent
+    for manifest_key, output_name in key_to_filename.items():
+        source_value = manifest.get(manifest_key)
+        if not source_value:
+            continue
+        source_path = Path(str(source_value))
+        if not source_path.is_absolute():
+            source_path = manifest_dir / source_path
+        if source_path.exists():
+            (output / output_name).write_bytes(source_path.read_bytes())
 
 
 def _g006_artifact_manifests_for_output(output: Path) -> dict[str, Any]:
@@ -2680,7 +2904,12 @@ def validate_p105_release_qualified_tamper(path: str | Path) -> dict[str, Any]:
     }
 
 
-def _validate_g006_required_manifest_files(path: Path, payload: Mapping[str, Any]) -> set[str]:
+def _validate_g006_required_manifest_files(
+    path: Path,
+    payload: Mapping[str, Any],
+    *,
+    require_benchmark_manifest: bool = True,
+) -> set[str]:
     codes: set[str] = set()
     embedded = payload.get("artifact_manifests")
     if not isinstance(embedded, Mapping):
@@ -2694,15 +2923,27 @@ def _validate_g006_required_manifest_files(path: Path, payload: Mapping[str, Any
         "p24": "p24_parity_manifest_tamper",
         "benchmark": "benchmark_manifest_tamper",
         "review": "review_manifest_tamper",
+        "privacy": "privacy_manifest_tamper",
+        "license": "license_manifest_tamper",
+        "citation": "citation_manifest_tamper",
+        "provenance": "provenance_hash_manifest_tamper",
+    }
+    missing_code_by_key = {
+        "privacy": "privacy_manifest_missing",
+        "license": "license_manifest_missing",
+        "citation": "citation_manifest_missing",
+        "provenance": "provenance_hash_manifest_missing",
     }
     for key, code in code_by_key.items():
+        if key == "benchmark" and not require_benchmark_manifest:
+            continue
         manifest = embedded.get(key)
         if not isinstance(manifest, Mapping):
-            codes.add(code)
+            codes.add(missing_code_by_key.get(key, code))
             continue
         manifest_path = path.with_name(str(manifest.get("path", "")))
         if not manifest_path.exists():
-            codes.add(code)
+            codes.add(missing_code_by_key.get(key, code))
             continue
         if manifest.get("sha256") != _sha256_path(manifest_path):
             codes.add(code)

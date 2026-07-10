@@ -157,7 +157,11 @@ def _validate_schema_adapters(adapters: dict[str, str], *, fail_on_unknown_sourc
 
 
 def _root_schema(manifest: dict[str, Any]) -> str:
-    return str(manifest.get("schema_version") or manifest.get("version") or ("p32-replay-pack.v1" if manifest.get("id") == "p32-real-telemetry-replay-pack" else ""))
+    if manifest.get("id") == "p32-real-telemetry-replay-pack":
+        return "p32-replay-pack.v1"
+    if manifest.get("adapter_or_parser_version") == "p105.dejavu_a1.reviewed_local.v1":
+        return "p105.dejavu_a1.reviewed_local_manifest.v1"
+    return str(manifest.get("schema_version") or manifest.get("version") or "")
 
 
 def _validate_known_root_schema(manifest_path: Path, manifest: dict[str, Any], *, fail_on_unknown_source_schema: bool) -> None:
@@ -198,6 +202,391 @@ def _validate_privacy(value: Any, *, context: str) -> dict[str, str]:
         "redaction_status": redaction_status,
         "notes": _require_string(value, "notes", context=f"{context} privacy", allow_empty=True),
     }
+
+
+def _resolve_ref(manifest_path: Path, value: Any) -> Path:
+    raw_path = value.get("path") if isinstance(value, dict) else value
+    path = Path(str(raw_path or ""))
+    if not path.is_absolute():
+        path = manifest_path.parent / path
+    return path
+
+
+def _artifact_entry(path: Path, *, expected_sha256: str | None = None, public_artifact: bool | None = None) -> dict[str, Any]:
+    if not path.exists():
+        raise RegistryError(f"artifact path is missing: {path}")
+    actual_sha256 = _file_sha256(path)
+    if expected_sha256 and expected_sha256 != actual_sha256:
+        raise RegistryError(f"artifact sha256 mismatch for {path}")
+    entry: dict[str, Any] = {"path": _normalize_path(path), "sha256": actual_sha256}
+    if public_artifact is not None:
+        entry["public_artifact"] = public_artifact
+    return entry
+
+
+def _artifact_hash_for_path(manifest: dict[str, Any], path: Path) -> str | None:
+    hashes = manifest.get("artifact_hashes")
+    if not isinstance(hashes, dict):
+        return None
+    value = hashes.get(path.name)
+    return str(value) if isinstance(value, str) and value else None
+
+
+def _artifact_paths(manifest_path: Path, manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    raw_paths = manifest.get("artifact_paths") or manifest.get("artifacts") or {}
+    if not isinstance(raw_paths, dict):
+        return {}
+    artifacts: dict[str, dict[str, Any]] = {}
+    for key, value in raw_paths.items():
+        if key in {"harness_manifest", "runtime_attestation"}:
+            continue
+        path = _resolve_ref(manifest_path, value)
+        if not path.exists():
+            raise RegistryError(f"artifact path is missing: {path}")
+        public_artifact = False if "private" in str(key) or "ledger" in str(key) else None
+        artifacts[str(key)] = _artifact_entry(path, expected_sha256=_artifact_hash_for_path(manifest, path), public_artifact=public_artifact)
+        if str(key) in {"coverage", "actual_coverage"}:
+            artifacts[str(key)]["actual_coverage"] = True
+    return artifacts
+
+
+def _content_hashes_from_artifacts(artifacts: dict[str, dict[str, Any]], manifest_path: Path) -> list[dict[str, str]]:
+    ordered_keys = ["public_telemetry", "public_records", "coverage", "actual_coverage", "partitions", "pre_label_partitions"]
+    hashes: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for key in [*ordered_keys, *sorted(artifacts)]:
+        artifact = artifacts.get(key)
+        if not artifact:
+            continue
+        path = str(artifact["path"])
+        if path in seen:
+            continue
+        seen.add(path)
+        hashes.append({"path": path, "sha256": str(artifact["sha256"])})
+    if hashes:
+        return hashes
+    return [{"path": _normalize_path(manifest_path), "sha256": _file_sha256(manifest_path)}]
+
+
+def _license_from_metadata(manifest: dict[str, Any], source: dict[str, Any] | None, *, context: str) -> dict[str, Any]:
+    value = manifest.get("license")
+    if isinstance(value, dict):
+        license_payload = dict(value)
+    else:
+        source = source or {}
+        license_payload = {
+            "name": str(source.get("license_name") or manifest.get("license_name") or "review-required"),
+            "url": str(source.get("license_url") or manifest.get("license_url") or "https://example.invalid/review-required"),
+            "citation_text": str(source.get("citation_text") or manifest.get("citation_text") or "review required before release counting"),
+            "redistribution_status": str(source.get("redistribution_status") or manifest.get("redistribution_status") or "review-required"),
+        }
+    for key, fallback in (
+        ("name", "review-required"),
+        ("url", "https://example.invalid/review-required"),
+        ("citation_text", "review required before release counting"),
+        ("redistribution_status", "review-required"),
+    ):
+        if not license_payload.get(key):
+            license_payload[key] = fallback
+    return license_payload
+
+
+def _privacy_from_metadata(manifest: dict[str, Any], source: dict[str, Any] | None, *, context: str) -> dict[str, Any]:
+    value = manifest.get("privacy")
+    if isinstance(value, dict):
+        privacy_payload = dict(value)
+    else:
+        source = source or {}
+        privacy_payload = {
+            "review_status": str(source.get("privacy_review_status") or manifest.get("review_status") or "unreviewed"),
+            "reviewer_id": str(source.get("reviewer_id") or manifest.get("reviewer_id") or ""),
+            "reviewed_at": str(source.get("reviewed_at") or manifest.get("reviewed_at") or ""),
+            "redaction_status": str(source.get("redaction_status") or manifest.get("review_redaction_status") or ""),
+            "notes": str(source.get("privacy_notes") or ""),
+        }
+    privacy_payload.setdefault("review_status", "unreviewed")
+    privacy_payload.setdefault("reviewer_id", "")
+    privacy_payload.setdefault("reviewed_at", "")
+    privacy_payload.setdefault("redaction_status", "")
+    privacy_payload.setdefault("notes", "")
+    if source and isinstance(source.get("redaction_decisions"), list):
+        privacy_payload["redaction_decisions"] = list(source["redaction_decisions"])
+    return privacy_payload
+
+
+def _command_from_manifest(adapter_key: str, manifest_path: Path, manifest: dict[str, Any]) -> list[str]:
+    command = manifest.get("canonical_command_argv") or manifest.get("command_argv")
+    if isinstance(command, list) and command and all(isinstance(item, str) and item for item in command):
+        return list(command)
+    return [adapter_key, str(manifest_path)]
+
+
+def _source_with_hash(source: dict[str, Any]) -> dict[str, Any]:
+    source["provenance_sha256"] = _json_sha256(source)
+    return source
+
+
+def _read_jsonl_objects(path: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        parsed = json.loads(line)
+        if isinstance(parsed, dict):
+            rows.append(parsed)
+    return rows
+
+
+def _coverage_interval_ids(artifacts: dict[str, dict[str, Any]], source_key: str) -> list[str]:
+    coverage = artifacts.get("coverage") or artifacts.get("actual_coverage")
+    if not coverage:
+        return []
+    path = Path(str(coverage["path"]))
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return [f"{source_key}:coverage:{coverage['sha256']}"]
+    intervals = payload.get("observed_intervals") or payload.get("coverage_intervals")
+    if isinstance(intervals, dict):
+        return [f"{source_key}:{service}:{index}" for service, values in sorted(intervals.items()) if isinstance(values, list) for index, _ in enumerate(values)]
+    if isinstance(intervals, list):
+        return [f"{source_key}:coverage:{index}" for index, _ in enumerate(intervals)]
+    return [f"{source_key}:coverage:{coverage['sha256']}"]
+
+
+def _source_bindings(artifacts: dict[str, dict[str, Any]], source_key: str) -> dict[str, Any]:
+    ledger = (
+        artifacts.get("private_injection_ledger")
+        or artifacts.get("private_saturation_ledger")
+        or artifacts.get("private_label_ledger")
+        or artifacts.get("private_ledger")
+    )
+    partitions = artifacts.get("partitions") or artifacts.get("pre_label_partitions")
+    coverage = artifacts.get("coverage") or artifacts.get("actual_coverage")
+    bindings: dict[str, Any] = {
+        "coverage_interval_ids": _coverage_interval_ids(artifacts, source_key),
+    }
+    if ledger:
+        bindings["private_ledger_ref"] = {"path": ledger["path"], "sha256": ledger["sha256"], "public_artifact": bool(ledger.get("public_artifact", False))}
+    if partitions:
+        bindings["pre_label_partitions_ref"] = {"path": partitions["path"], "sha256": partitions["sha256"]}
+    if coverage:
+        bindings["coverage_ref"] = {"path": coverage["path"], "sha256": coverage["sha256"], "actual_coverage": True}
+    return bindings
+
+
+def _p32_sources(manifest_path: Path, manifest: dict[str, Any], adapter_version: str) -> list[dict[str, Any]]:
+    sources = _require_list(manifest, "sources", context=f"source manifest {manifest_path}")
+    normalized: list[dict[str, Any]] = []
+    command_argv = _command_from_manifest("p32", manifest_path, manifest)
+    for index, raw in enumerate(sources):
+        if not isinstance(raw, dict):
+            raise RegistryError(f"source manifest {manifest_path} sources[{index}] must be an object")
+        source_key = _require_string(raw, "id", context=f"source manifest {manifest_path} sources[{index}]")
+        source_path = _resolve_ref(manifest_path, raw.get("path"))
+        content_hashes = [_artifact_entry(source_path)] if source_path.exists() else [{"path": _normalize_path(manifest_path), "sha256": _file_sha256(manifest_path)}]
+        normalized.append(
+            _source_with_hash(
+                {
+                    "source_key": source_key,
+                    "source_system": str(raw.get("source") or "p32"),
+                    "source_dataset": str(manifest.get("title") or source_key),
+                    "source_family": UNSUPPORTED_FAMILY,
+                    "source_family_candidate": UNSUPPORTED_FAMILY,
+                    "source_manifest_path": _normalize_path(manifest_path),
+                    "source_manifest_sha256": _file_sha256(manifest_path),
+                    "source_content_hashes": [{"path": item["path"], "sha256": item["sha256"]} for item in content_hashes],
+                    "adapter_or_harness": {"name": "p32", "version": adapter_version, "command_argv": command_argv, "command_argv_sha256": _json_sha256(command_argv)},
+                    "created_at": str(manifest.get("created_at") or ""),
+                    "license": _license_from_metadata(manifest, raw, context=f"source manifest {manifest_path}"),
+                    "privacy": _privacy_from_metadata({"review_status": "unreviewed"}, raw, context=f"source manifest {manifest_path}"),
+                    "root_schema_version": "p32-replay-pack.v1",
+                    "producer_metadata": {"expected_risks": raw.get("expected_risks", [])},
+                }
+            )
+        )
+    return normalized
+
+
+def _p41_sources(manifest_path: Path, manifest: dict[str, Any], adapter_version: str) -> list[dict[str, Any]]:
+    sources = _require_list(manifest, "sources", context=f"source manifest {manifest_path}")
+    normalized: list[dict[str, Any]] = []
+    command_argv = _command_from_manifest("p41", manifest_path, manifest)
+    for index, raw in enumerate(sources):
+        if not isinstance(raw, dict):
+            raise RegistryError(f"source manifest {manifest_path} sources[{index}] must be an object")
+        source_key = _require_string(raw, "id", context=f"source manifest {manifest_path} sources[{index}]")
+        source_path = _resolve_ref(manifest_path, raw.get("path"))
+        content_hashes = [_artifact_entry(source_path)] if source_path.exists() else [{"path": _normalize_path(manifest_path), "sha256": _file_sha256(manifest_path)}]
+        normalized.append(
+            _source_with_hash(
+                {
+                    "source_key": source_key,
+                    "source_system": "p41",
+                    "source_dataset": str(raw.get("family") or source_key),
+                    "source_family": UNSUPPORTED_FAMILY,
+                    "source_family_candidate": UNSUPPORTED_FAMILY,
+                    "source_manifest_path": _normalize_path(manifest_path),
+                    "source_manifest_sha256": _file_sha256(manifest_path),
+                    "source_content_hashes": [{"path": item["path"], "sha256": item["sha256"]} for item in content_hashes],
+                    "adapter_or_harness": {"name": "p41", "version": adapter_version, "command_argv": command_argv, "command_argv_sha256": _json_sha256(command_argv)},
+                    "created_at": str(manifest.get("created_at") or ""),
+                    "license": _license_from_metadata(manifest, raw, context=f"source manifest {manifest_path}"),
+                    "privacy": _privacy_from_metadata({"review_status": "unreviewed"}, raw, context=f"source manifest {manifest_path}"),
+                    "root_schema_version": "p41-raw-sources-v1",
+                    "producer_metadata": {"expected_labels": raw.get("expected_labels", []), "raw_family": raw.get("family")},
+                }
+            )
+        )
+    return normalized
+
+
+def _p44_sources(manifest_path: Path, manifest: dict[str, Any], adapter_version: str) -> list[dict[str, Any]]:
+    raw_sources = manifest.get("raw_sources") if isinstance(manifest.get("raw_sources"), list) else manifest.get("sources")
+    if not isinstance(raw_sources, list):
+        raise RegistryError(f"source manifest {manifest_path} requires raw_sources or sources")
+    reviewed_records = [item for item in manifest.get("reviewed_records", []) if isinstance(item, dict)]
+    command_argv = _command_from_manifest("p44", manifest_path, manifest)
+    normalized: list[dict[str, Any]] = []
+    for index, raw in enumerate(raw_sources):
+        if not isinstance(raw, dict):
+            raise RegistryError(f"source manifest {manifest_path} raw_sources[{index}] must be an object")
+        source_key = str(raw.get("source_key") or raw.get("source_id") or f"p44:source:{index}")
+        mapping_raw = raw.get("family_proxy_mapping")
+        mapping: dict[str, Any] = dict(mapping_raw) if isinstance(mapping_raw, dict) else {}
+        family = str(mapping.get("family") or raw.get("family") or UNSUPPORTED_FAMILY)
+        if mapping.get("mapping_review_status") not in {None, "reviewed_supported"}:
+            family = UNSUPPORTED_FAMILY
+        if family not in SUPPORTED_FAMILIES:
+            family = UNSUPPORTED_FAMILY
+        content_hashes: list[dict[str, str]] = []
+        local_path_value = raw.get("local_materialized_path") or raw.get("path")
+        if local_path_value:
+            local_path = _resolve_ref(manifest_path, local_path_value)
+            if local_path.exists():
+                expected_hash = str(raw.get("local_source_hash") or raw.get("source_content_hash") or raw.get("expected_sha256") or "")
+                entry = _artifact_entry(local_path, expected_sha256=expected_hash or None)
+                content_hashes.append({"path": entry["path"], "sha256": entry["sha256"]})
+        if not content_hashes:
+            content_hashes = [{"path": _normalize_path(manifest_path), "sha256": _file_sha256(manifest_path)}]
+        windows = [
+            {
+                "source_window_id": str(record.get("source_window_id") or source_key),
+                "pre_label_partition_id": str(record.get("pre_label_partition_id") or record.get("pre_label_partition") or "unpartitioned"),
+                "materialized_record_sha256": str(record.get("materialized_record_hash") or ""),
+            }
+            for record in reviewed_records
+            if str(record.get("source_key") or source_key) == source_key
+        ]
+        private_ref = manifest.get("private_ledger_ref") if isinstance(manifest.get("private_ledger_ref"), dict) else None
+        partition_ref = manifest.get("pre_label_partitions_path") if isinstance(manifest.get("pre_label_partitions_path"), dict) else None
+        source = {
+            "source_key": source_key,
+            "source_system": "p44",
+            "source_dataset": str(raw.get("source_dataset") or raw.get("source_id") or "p44-reviewed-local"),
+            "source_family": family,
+            "source_family_candidate": family,
+            "source_manifest_path": _normalize_path(manifest_path),
+            "source_manifest_sha256": _file_sha256(manifest_path),
+            "source_content_hashes": sorted(content_hashes, key=lambda item: (item["path"], item["sha256"])),
+            "adapter_or_harness": {"name": "p44", "version": adapter_version, "command_argv": command_argv, "command_argv_sha256": _json_sha256(command_argv)},
+            "created_at": str(manifest.get("created_at") or ""),
+            "license": _license_from_metadata(manifest, raw, context=f"source manifest {manifest_path}"),
+            "privacy": _privacy_from_metadata(manifest, raw, context=f"source manifest {manifest_path}"),
+            "root_schema_version": str(manifest.get("schema_version")),
+            "eligibility_windows": windows,
+            "family_proxy_mapping": mapping,
+        }
+        if private_ref:
+            private_path = _resolve_ref(manifest_path, private_ref)
+            source["private_ledger_ref"] = _artifact_entry(private_path, expected_sha256=str(private_ref.get("sha256") or ""), public_artifact=bool(private_ref.get("public_artifact", False)))
+        if partition_ref:
+            partition_path = _resolve_ref(manifest_path, partition_ref)
+            source["pre_label_partitions_ref"] = _artifact_entry(partition_path, expected_sha256=str(partition_ref.get("sha256") or ""))
+        normalized.append(_source_with_hash(source))
+    return normalized
+
+
+def _dejavu_source(manifest_path: Path, manifest: dict[str, Any], adapter_version: str) -> list[dict[str, Any]]:
+    command_argv = _command_from_manifest("dejavu_a1", manifest_path, manifest)
+    family = str(manifest.get("source_insufficiency", {}).get("family") or "database") if isinstance(manifest.get("source_insufficiency"), dict) else "database"
+    source = {
+        "source_key": "dejavu-a1-reviewed-local",
+        "source_system": "dejavu_a1",
+        "source_dataset": "dejavu-a1",
+        "source_family": family if family in SUPPORTED_FAMILIES else UNSUPPORTED_FAMILY,
+        "source_family_candidate": family if family in SUPPORTED_FAMILIES else UNSUPPORTED_FAMILY,
+        "source_manifest_path": _normalize_path(manifest_path),
+        "source_manifest_sha256": _file_sha256(manifest_path),
+        "source_content_hashes": [{"path": _normalize_path(manifest_path), "sha256": _file_sha256(manifest_path)}],
+        "source_hashes": manifest.get("source_hashes", {}),
+        "adapter_or_harness": {"name": "dejavu_a1", "version": adapter_version, "command_argv": command_argv, "command_argv_sha256": _json_sha256(command_argv)},
+        "created_at": str(manifest.get("created_at") or ""),
+        "license": _license_from_metadata(manifest, None, context=f"source manifest {manifest_path}"),
+        "privacy": _privacy_from_metadata(manifest, None, context=f"source manifest {manifest_path}"),
+        "root_schema_version": "p105.dejavu_a1.reviewed_local_manifest.v1",
+        "noncounting_reason": "source_insufficient" if isinstance(manifest.get("source_insufficiency"), dict) else None,
+        "source_insufficiency": manifest.get("source_insufficiency", {}),
+    }
+    return [_source_with_hash(source)]
+
+
+def _runtime_source(manifest_path: Path, manifest: dict[str, Any], adapter_key: str, adapter_version: str) -> list[dict[str, Any]]:
+    artifacts = _artifact_paths(manifest_path, manifest)
+    required_artifacts = {
+        "public_telemetry": artifacts.get("public_telemetry"),
+        "coverage": artifacts.get("coverage") or artifacts.get("actual_coverage"),
+        "partitions": artifacts.get("partitions") or artifacts.get("pre_label_partitions"),
+        "private_ledger": (
+            artifacts.get("private_injection_ledger")
+            or artifacts.get("private_saturation_ledger")
+            or artifacts.get("private_label_ledger")
+            or artifacts.get("private_ledger")
+        ),
+    }
+    missing_artifacts = sorted(key for key, value in required_artifacts.items() if value is None)
+    if missing_artifacts:
+        raise RegistryError(f"runtime source {adapter_key} is missing required artifacts: {','.join(missing_artifacts)}")
+    command_argv = _command_from_manifest(adapter_key, manifest_path, manifest)
+    family = str(manifest.get("source_family") or manifest.get("family") or UNSUPPORTED_FAMILY)
+    if family not in SUPPORTED_FAMILIES:
+        family = UNSUPPORTED_FAMILY
+    default_key = {"db_pool": "p105-db-pool", "queue": "p105-queue", "deploy": "p105-deploy"}.get(adapter_key, manifest_path.stem)
+    source_key = str(manifest.get("source_key") or default_key)
+    windows: list[dict[str, Any]] = []
+    public_telemetry = artifacts.get("public_telemetry")
+    if public_telemetry:
+        for row in _read_jsonl_objects(Path(str(public_telemetry["path"]))):
+            windows.append(
+                {
+                    "source_window_id": str(row.get("source_window_id") or source_key),
+                    "pre_label_partition_id": str(row.get("partition_id") or row.get("pre_label_partition") or "unpartitioned"),
+                    "coverage_seconds": int(row.get("coverage_bucket_seconds") or 0),
+                }
+            )
+    if not windows:
+        raise RegistryError(f"runtime source {adapter_key} public telemetry has no source windows")
+    source = {
+        "source_key": source_key,
+        "source_system": adapter_key,
+        "source_dataset": str(manifest.get("program_version") or source_key),
+        "source_family": family,
+        "source_family_candidate": family,
+        "source_manifest_path": _normalize_path(manifest_path),
+        "source_manifest_sha256": _file_sha256(manifest_path),
+        "source_content_hashes": _content_hashes_from_artifacts(artifacts, manifest_path),
+        "source_artifacts": artifacts,
+        "adapter_or_harness": {"name": adapter_key, "version": adapter_version, "command_argv": command_argv, "command_argv_sha256": _json_sha256(command_argv)},
+        "created_at": str(manifest.get("created_at") or ""),
+        "license": _license_from_metadata(manifest, None, context=f"source manifest {manifest_path}"),
+        "privacy": _privacy_from_metadata(manifest, None, context=f"source manifest {manifest_path}"),
+        "root_schema_version": str(manifest.get("schema_version")),
+        "runtime_attestation": manifest.get("runtime_attestation", {}),
+        "authority": manifest.get("authority", {}),
+        "eligibility_windows": windows,
+        **_source_bindings(artifacts, source_key),
+    }
+    return [_source_with_hash(source)]
 
 
 def _load_decisions(ledger_path: Path) -> tuple[str, dict[str, dict[str, Any]]]:
@@ -360,6 +749,26 @@ def _generic_registry_source(manifest_path: Path, manifest: dict[str, Any], adap
     return source
 
 
+def _adapted_registry_sources(manifest_path: Path, manifest: dict[str, Any], adapters: dict[str, str], *, fail_on_unknown_source_schema: bool) -> list[dict[str, Any]]:
+    adapter_key = _adapter_key_for_manifest(manifest_path, manifest)
+    adapter_version = adapters.get(adapter_key)
+    if not adapter_version and fail_on_unknown_source_schema:
+        raise RegistryError(f"unknown_source_schema: missing adapter mapping for {adapter_key}")
+    if not adapter_version:
+        adapter_version = f"compatibility-inferred:{adapter_key}"
+    if adapter_key == "p32":
+        return _p32_sources(manifest_path, manifest, adapter_version)
+    if adapter_key == "p41":
+        return _p41_sources(manifest_path, manifest, adapter_version)
+    if adapter_key == "p44":
+        return _p44_sources(manifest_path, manifest, adapter_version)
+    if adapter_key == "dejavu_a1":
+        return _dejavu_source(manifest_path, manifest, adapter_version)
+    if adapter_key in {"db_pool", "queue", "deploy"}:
+        return _runtime_source(manifest_path, manifest, adapter_key, adapter_version)
+    return [_generic_registry_source(manifest_path, manifest, adapters, fail_on_unknown_source_schema=fail_on_unknown_source_schema)]
+
+
 def _registry_sources_for_manifest(
     manifest_path: Path,
     manifest: dict[str, Any],
@@ -369,39 +778,55 @@ def _registry_sources_for_manifest(
 ) -> list[dict[str, Any]]:
     if manifest.get("schema_version") == SOURCE_MANIFEST_SCHEMA_VERSION:
         return [_registry_source(manifest_path, manifest)]
-    return [_generic_registry_source(manifest_path, manifest, adapters, fail_on_unknown_source_schema=fail_on_unknown_source_schema)]
+    return _adapted_registry_sources(manifest_path, manifest, adapters, fail_on_unknown_source_schema=fail_on_unknown_source_schema)
 
 
-def _eligibility_entry(source: dict[str, Any], decision: dict[str, Any] | None) -> dict[str, Any]:
+def _eligibility_entry(source: dict[str, Any], decision: dict[str, Any] | None, window: dict[str, Any] | None = None) -> dict[str, Any]:
+    window = window or {}
     privacy = source["privacy"]
-    reviewed = privacy["review_status"] == "reviewed-local" and bool(privacy["reviewer_id"]) and bool(privacy["reviewed_at"])
+    reviewed = _is_approved(decision) or (
+        privacy["review_status"] == "reviewed-local" and bool(privacy["reviewer_id"]) and bool(privacy["reviewed_at"])
+    )
     family = str(source["source_family_candidate"])
     reason = _noncounting_reason(str(source["source_key"]), family, decision, reviewed)
+    if reason is None and source.get("noncounting_reason"):
+        reason = str(source["noncounting_reason"])
     eligible = reason is None and family in SUPPORTED_FAMILIES
     family_candidate = family if eligible else UNSUPPORTED_FAMILY
+    private_ledger_raw = source.get("private_ledger_ref")
+    private_ledger_ref: dict[str, Any] = dict(private_ledger_raw) if isinstance(private_ledger_raw, dict) else {}
+    coverage_interval_ids = window.get("coverage_interval_ids") or source.get("coverage_interval_ids") or []
+    materialized_record_sha256 = str(window.get("materialized_record_sha256") or source["provenance_sha256"])
     entry = {
         "source_key": source["source_key"],
-        "source_window_id": source["source_key"],
+        "source_window_id": str(window.get("source_window_id") or source["source_key"]),
         "source_manifest_sha256": source["source_manifest_sha256"],
-        "materialized_record_sha256": source["provenance_sha256"],
-        "pre_label_partition_id": "unpartitioned",
+        "materialized_record_sha256": materialized_record_sha256,
+        "pre_label_partition_id": str(window.get("pre_label_partition_id") or "unpartitioned"),
         "family_candidate": family_candidate,
         "family_authority_source": "reviewed_source_registry",
         "eligible_for_release_floor": eligible,
         "unsupported_family_reason": reason,
-        "coverage_interval_ids": [],
-        "private_ledger_path": "",
-        "private_ledger_sha256": "",
+        "coverage_interval_ids": list(coverage_interval_ids) if isinstance(coverage_interval_ids, list) else [],
+        "private_ledger_path": str(private_ledger_ref.get("path") or ""),
+        "private_ledger_sha256": str(private_ledger_ref.get("sha256") or ""),
         "label_join_phase": "after_sampling_and_partition",
         "adapter_or_parser_version": source["adapter_or_harness"]["version"],
         "privacy_license_registry_sha256": source["provenance_sha256"],
         "counting_rows": 1 if eligible else 0,
-        "counting_coverage_seconds": 0,
+        "counting_coverage_seconds": int(window.get("coverage_seconds") or 0) if eligible else 0,
     }
     if entry["unsupported_family_reason"] is not None and entry["unsupported_family_reason"] not in ALLOWED_UNSUPPORTED_REASONS:
         raise RegistryError(f"unsupported_family_reason is not allowed: {entry['unsupported_family_reason']}")
     entry["provenance_sha256"] = _json_sha256(entry)
     return entry
+
+
+def _eligibility_entries(source: dict[str, Any], decision: dict[str, Any] | None) -> list[dict[str, Any]]:
+    windows = source.get("eligibility_windows")
+    if isinstance(windows, list) and windows:
+        return [_eligibility_entry(source, decision, window if isinstance(window, dict) else {}) for window in windows]
+    return [_eligibility_entry(source, decision)]
 
 
 def build_registry(
@@ -440,9 +865,9 @@ def build_registry(
             if decision is not None and decision["source_manifest_sha256"] != source["source_manifest_sha256"]:
                 raise RegistryError(f"source manifest hash mismatch for {source_key}: reviewed metadata was tampered")
             sources.append(source)
-            entry = _eligibility_entry(source, decision)
-            entries.append(entry)
-            if fail_on_unreviewed_counting_source and entry["unsupported_family_reason"] == "unreviewed_source":
+            source_entries = _eligibility_entries(source, decision)
+            entries.extend(source_entries)
+            if fail_on_unreviewed_counting_source and any(entry["unsupported_family_reason"] == "unreviewed_source" for entry in source_entries):
                 errors.append(f"{source_key}: unreviewed source is unsupported_family and cannot count")
 
     command_hash = _json_sha256(command_argv)

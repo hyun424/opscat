@@ -14,6 +14,17 @@ VERIFIER_ID = "scripts/verify_p105_source_expansion_artifacts.py"
 SOURCE_RUNTIME_RECEIPT_SCHEMA = "p105.source-runtime-qualification.v1"
 RUN_ENVELOPE_SCHEMA = "p105.source-runtime-run-envelope.v1"
 RELEASE_VERIFICATION_SCHEMA = "p105.release-verification.v1"
+RELEASE_ROWS_ARTIFACT = "p105-release-qualified-rows.json"
+RELEASE_SOURCE_MANIFEST = "p105-source-manifest.json"
+RELEASE_PREFLIGHT = "p105-source-availability-preflight.json"
+REQUIRED_RELEASE_SOURCE_ENTRIES = ("dejavu_a1", "db_pool", "queue", "deploy")
+EXPECTED_RELEASE_ZERO_AUTHORITY = {
+    "auth_enabled": False,
+    "production_mutation_enabled": False,
+    "action_authority": False,
+    "remediation_execution_enabled": False,
+    "default_external_model_calls": 0,
+}
 EXPECTED_RUNTIME_KIND_BY_SOURCE = {
     "db_pool": "actual_sqlite_pool",
     "deploy": "actual_threading_http_server",
@@ -383,6 +394,159 @@ def _hash_release_dir(release_dir: Path) -> tuple[list[dict[str, Any]], str | No
     return files, _sha256_text(_stable_json(files))
 
 
+def _binding_sha256(payload: dict[str, Any], name: str) -> str | None:
+    nested = payload.get(name)
+    if isinstance(nested, dict) and isinstance(nested.get("sha256"), str):
+        return nested["sha256"]
+    for key in (f"{name}_sha256", f"{name}_hash"):
+        if isinstance(payload.get(key), str):
+            return str(payload[key])
+    return None
+
+
+def _source_entry_root_sha256(entry: Any) -> str | None:
+    if not isinstance(entry, dict):
+        return None
+    for key in ("canonical_artifact_root_sha256", "artifact_root_sha256", "runtime_artifact_root_sha256"):
+        if isinstance(entry.get(key), str):
+            return str(entry[key])
+    return None
+
+
+def _release_artifact_manifests(release_dir: Path) -> tuple[dict[str, Any] | None, list[dict[str, str]], list[str]]:
+    rows_path = release_dir / RELEASE_ROWS_ARTIFACT
+    if not rows_path.exists():
+        return None, [], ["release_rows_missing"]
+    try:
+        rows_payload = _read_json(rows_path)
+    except (OSError, json.JSONDecodeError, ValueError):
+        return None, [], ["release_rows_unreadable"]
+    embedded = rows_payload.get("artifact_manifests")
+    if not isinstance(embedded, dict):
+        return rows_payload, [], ["release_artifact_manifest_missing"]
+    errors: list[str] = []
+    verified: list[dict[str, str]] = []
+    expected_paths = {
+        "source": RELEASE_SOURCE_MANIFEST,
+        "preflight": RELEASE_PREFLIGHT,
+    }
+    for required_key in expected_paths:
+        if not isinstance(embedded.get(required_key), dict):
+            errors.append(f"release_{required_key}_artifact_binding_missing")
+    for key, manifest in sorted(embedded.items()):
+        if not isinstance(key, str) or not isinstance(manifest, dict):
+            errors.append("release_artifact_manifest_malformed")
+            continue
+        relative_path = manifest.get("path")
+        expected_hash = manifest.get("sha256")
+        if not isinstance(relative_path, str) or not isinstance(expected_hash, str) or not expected_hash:
+            errors.append(f"release_{key}_artifact_binding_missing")
+            continue
+        expected_path = expected_paths.get(key)
+        if expected_path is not None and relative_path != expected_path:
+            errors.append(f"release_{key}_artifact_path_mismatch")
+            continue
+        relative_artifact_path = Path(relative_path)
+        if relative_artifact_path.is_absolute() or ".." in relative_artifact_path.parts:
+            errors.append("release_artifact_manifest_malformed")
+            continue
+        artifact_path = release_dir / relative_artifact_path
+        if not artifact_path.exists() or not artifact_path.is_file():
+            errors.append(f"release_{key}_artifact_missing")
+            continue
+        actual_hash = _sha256_path(artifact_path)
+        if actual_hash != expected_hash:
+            errors.append("release_artifact_hash_mismatch")
+            errors.append(f"release_{key}_artifact_hash_mismatch")
+            continue
+        verified.append({"key": key, "path": relative_path, "sha256": actual_hash})
+    return rows_payload, verified, errors
+
+
+def _verify_release_bindings(
+    *,
+    release_dir: Path,
+    receipt_path: Path | None,
+    receipt: dict[str, Any] | None,
+    registry_path: Path | None,
+    eligibility_path: Path | None,
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None, list[dict[str, str]], str | None, list[str]]:
+    errors: list[str] = []
+    rows_payload, verified_artifacts, artifact_errors = _release_artifact_manifests(release_dir)
+    errors.extend(artifact_errors)
+    if rows_payload is not None:
+        authority = rows_payload.get("authority")
+        if not isinstance(authority, dict):
+            errors.append("release_authority_missing")
+        elif authority != EXPECTED_RELEASE_ZERO_AUTHORITY:
+            errors.append("nonzero_authority_counter")
+    source_manifest_path = release_dir / RELEASE_SOURCE_MANIFEST
+    preflight_path = release_dir / RELEASE_PREFLIGHT
+    source_manifest: dict[str, Any] | None = None
+    preflight: dict[str, Any] | None = None
+    if not source_manifest_path.exists():
+        errors.append("source_manifest_missing")
+    else:
+        try:
+            source_manifest = _read_json(source_manifest_path)
+        except (OSError, json.JSONDecodeError, ValueError):
+            errors.append("source_manifest_unreadable")
+    if not preflight_path.exists():
+        errors.append("source_availability_preflight_missing")
+    else:
+        try:
+            preflight = _read_json(preflight_path)
+        except (OSError, json.JSONDecodeError, ValueError):
+            errors.append("source_availability_preflight_unreadable")
+    if source_manifest is not None:
+        expected_receipt_hash = _binding_sha256(source_manifest, "source_runtime_qualification_receipt")
+        actual_receipt_hash = _sha256_path(receipt_path) if receipt_path is not None and receipt_path.exists() else None
+        if expected_receipt_hash is None:
+            errors.append("source_runtime_receipt_binding_missing")
+        elif expected_receipt_hash != actual_receipt_hash:
+            errors.append("source_runtime_receipt_hash_mismatch")
+        expected_registry_hash = _binding_sha256(source_manifest, "registry") or _binding_sha256(source_manifest, "source_registry")
+        actual_registry_hash = _sha256_path(registry_path) if registry_path is not None and registry_path.exists() else None
+        if expected_registry_hash is None:
+            errors.append("registry_binding_missing")
+        elif expected_registry_hash != actual_registry_hash:
+            errors.append("registry_hash_mismatch")
+        expected_eligibility_hash = _binding_sha256(source_manifest, "eligibility") or _binding_sha256(source_manifest, "source_eligibility")
+        actual_eligibility_hash = _sha256_path(eligibility_path) if eligibility_path is not None and eligibility_path.exists() else None
+        if expected_eligibility_hash is None:
+            errors.append("eligibility_binding_missing")
+        elif expected_eligibility_hash != actual_eligibility_hash:
+            errors.append("eligibility_hash_mismatch")
+        sources = source_manifest.get("sources")
+        if not isinstance(sources, dict):
+            errors.append("source_manifest_sources_missing")
+            sources = {}
+        for source in REQUIRED_RELEASE_SOURCE_ENTRIES:
+            if not isinstance(sources.get(source), dict):
+                errors.append(f"source_manifest_{source}_missing")
+        receipt_roots = receipt.get("canonical_roots") if isinstance(receipt, dict) else None
+        if not isinstance(receipt_roots, dict):
+            receipt_roots = {}
+        for source in ("db_pool", "queue", "deploy"):
+            source_entry = sources.get(source) if isinstance(sources, dict) else None
+            source_root = _source_entry_root_sha256(source_entry)
+            receipt_root = receipt_roots.get(source)
+            if source_root is None:
+                errors.append(f"{source}_artifact_root_binding_missing")
+            elif source_root != receipt_root:
+                errors.append(f"{source}_artifact_root_mismatch")
+    if preflight is not None:
+        preflight_sources = preflight.get("sources")
+        if not isinstance(preflight_sources, dict):
+            errors.append("source_availability_preflight_sources_missing")
+            preflight_sources = {}
+        for source in REQUIRED_RELEASE_SOURCE_ENTRIES:
+            if not isinstance(preflight_sources.get(source), dict):
+                errors.append(f"source_preflight_{source}_missing")
+    verified_root = _sha256_text(_stable_json(verified_artifacts)) if verified_artifacts else None
+    return rows_payload, source_manifest, verified_artifacts, verified_root, errors
+
+
 def _run_release_phase(args: argparse.Namespace) -> int:
     errors: list[str] = []
     registry, registry_errors = _verify_optional_source_file(args.registry, name="registry")
@@ -411,6 +575,8 @@ def _run_release_phase(args: argparse.Namespace) -> int:
             errors.append("source_runtime_receipt_envelopes_missing")
     release_files: list[dict[str, Any]] = []
     release_root_hash: str | None = None
+    verified_artifacts: list[dict[str, str]] = []
+    verified_artifact_root_hash: str | None = None
     if args.release_dir is None:
         errors.append("release_dir_missing")
     elif not args.release_dir.exists() or not args.release_dir.is_dir():
@@ -419,6 +585,15 @@ def _run_release_phase(args: argparse.Namespace) -> int:
         release_files, release_root_hash = _hash_release_dir(args.release_dir)
         if not release_files:
             errors.append("release_dir_empty")
+        else:
+            _, _, verified_artifacts, verified_artifact_root_hash, release_binding_errors = _verify_release_bindings(
+                release_dir=args.release_dir,
+                receipt_path=receipt_path,
+                receipt=receipt,
+                registry_path=args.registry,
+                eligibility_path=args.eligibility,
+            )
+            errors.extend(release_binding_errors)
     if args.expect_db_pool_command_args and receipt is not None:
         db_envelopes = [item for item in receipt.get("run_envelopes", []) if isinstance(item, dict) and item.get("source") == "db_pool"]
         if not db_envelopes or any(not item.get("command_argv_sha256") for item in db_envelopes):
@@ -435,7 +610,9 @@ def _run_release_phase(args: argparse.Namespace) -> int:
         },
         "release_dir": str(args.release_dir) if args.release_dir is not None else None,
         "release_root_sha256": release_root_hash,
+        "verified_release_artifact_root_sha256": verified_artifact_root_hash,
         "release_files": release_files,
+        "verified_release_artifacts": verified_artifacts,
         "validation_error_codes": sorted(set(errors)),
     }
     if args.output_json:

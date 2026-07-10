@@ -5,6 +5,7 @@ import csv
 import hashlib
 import json
 import math
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -62,6 +63,13 @@ def _finite_float(value: str) -> float:
 
 
 def _graph_confirms_service(graph_text: str, service: str) -> bool:
+    for block in re.split(r"(?m)(?=^- class:\s*node\s*$)", graph_text):
+        if not re.search(r"(?m)^\s*type:\s*DB Session\s*$", block):
+            continue
+        if not re.search(rf"(?m)^\s*-\s*{re.escape(service)}\s*$", block):
+            continue
+        if all(re.search(rf"##{re.escape(metric)}(?:\"|\s|$)", block) for metric in DB_METRICS):
+            return True
     service_index = graph_text.find(f"{service}:")
     if service_index < 0:
         return False

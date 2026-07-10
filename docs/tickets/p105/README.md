@@ -27,6 +27,13 @@ future-window leakage; raw LLM confidence never drives execution.
 - [P105-013 - Deterministic source-record row generation](p105-013-deterministic-source-record-row-generation.md)
 - [P105-014 - Partition, coverage, and safety-conformance hardening](p105-014-partition-coverage-safety-conformance-hardening.md)
 - [P105-015 - Release documentation, P24 parity, and authority lock](p105-015-release-docs-p24-parity-authority-lock.md)
+- [P105-016 - Release-qualified evidence contract](p105-016-release-qualified-evidence-contract.md)
+- [P105-017 - Deterministic local materializer](p105-017-deterministic-local-materializer.md)
+- [P105-018 - Locked smoke artifact](p105-018-locked-smoke-artifact.md)
+- [P105-019 - Qualified artifact generation](p105-019-qualified-artifact-generation.md)
+- [P105-020 - Parity, partition, coverage, and isolation](p105-020-parity-partition-coverage-isolation.md)
+- [P105-021 - Reproducibility and tamper tests](p105-021-reproducibility-and-tamper-tests.md)
+- [P105-022 - Independent review and full verification](p105-022-independent-review-full-verification.md)
 
 ## Phase Acceptance
 
@@ -68,3 +75,13 @@ future-window leakage; raw LLM confidence never drives execution.
   supported family with positives, zero-positive supported families are
   `unevaluable`, false alerts/service-day and abstention ceilings pass, and
   real-derived P32/P41 transfer stays within tolerance.
+- G006 release-qualified evidence planning adds a deterministic local/offline
+  materializer sequence, separate locked smoke and qualified artifacts,
+  canonical six-field provenance, P24 parity, merged coverage, outcome-neutral
+  partitions, incident isolation, reproducibility/tamper tests, independent
+  review, and full verification. These are planning requirements until their
+  RED tests and implementation land.
+- The G006 repair plan also requires source-availability preflight manifests,
+  separate P44-disabled negative and reviewed-local P44 positive commands,
+  private scorer-label ledgers, per-row reconstructable P24 parity manifests,
+  anti-clone checks, and label-tamper tests before any release-qualified claim.

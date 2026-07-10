@@ -32,6 +32,27 @@ raise execution confidence or unlock P106.
   `docs/operations/p104-p108-proactive-prevention-master-plan.md` so a clean
   clone has the full proactive-prevention context without ignored OMX state.
 
+## G006 Release-Qualified Evidence Planning
+
+G006 is documentation-only planning until RED tests and implementation land. It
+does not claim that the deterministic materializer, qualified artifact,
+reproducibility checks, or independent review evidence exist.
+
+- Plan:
+  `docs/operations/p105-release-qualified-evidence-plan.md`.
+- Test spec:
+  `docs/operations/p105-release-qualified-evidence-test-spec.md`.
+- Plan review:
+  `docs/operations/p105-release-qualified-evidence-plan-review.md`.
+- Ticket sequence:
+  - `docs/tickets/p105/p105-016-release-qualified-evidence-contract.md`
+  - `docs/tickets/p105/p105-017-deterministic-local-materializer.md`
+  - `docs/tickets/p105/p105-018-locked-smoke-artifact.md`
+  - `docs/tickets/p105/p105-019-qualified-artifact-generation.md`
+  - `docs/tickets/p105/p105-020-parity-partition-coverage-isolation.md`
+  - `docs/tickets/p105/p105-021-reproducibility-and-tamper-tests.md`
+  - `docs/tickets/p105/p105-022-independent-review-full-verification.md`
+
 ## Outcome
 
 Build a local, deterministic-by-default failure forecast engine that reports:
@@ -616,6 +637,116 @@ Acceptance:
   `production_mutation_enabled=false`, `action_authority=false`,
   `remediation_execution_enabled=false`, and
   `default_external_model_calls=0`.
+
+### P105-016 Release-qualified evidence contract
+
+Define the G006 contract for a future release-qualified artifact while keeping
+the current smoke path locked.
+
+Acceptance:
+- `smoke_only` and `smoke_only_missing_mode` evidence always has
+  `release_qualified=false` and `p106_unlocked=false`.
+- `release_qualified=true` requires every existing P105 floor and every P106
+  gate row to be present and passing.
+- Missing denominators, missing mode, missing provenance, or unevaluable rows
+  fail closed.
+- Documentation distinguishes planned acceptance commands from implemented
+  behavior.
+
+### P105-017 Deterministic local materializer
+
+Build the local/offline P32/P41/P44 source-record materializer.
+
+Acceptance:
+- P32 and P41 consume only repo-local records; P44 is explicit opt-in only and
+  capped at 2,000 public-source records.
+- Every P32/P41/P44 row includes the canonical six-field source tuple:
+  `(source_system, source_dataset, source_manifest_key,
+  source_content_hash, materialized_record_hash, materialization_version)`.
+- Rows are generated from raw/materialized record bytes plus committed
+  metadata, not source ID claims.
+- Two runs over the same inputs produce byte-identical rows and manifests.
+- A source-availability preflight manifest reports per-family rows, positives,
+  incidents, source tuples, review-redaction status, and local hashes before
+  scoring.
+- P44-disabled negative and reviewed-local P44 positive commands are separate.
+- Unique materialized hashes and one row per source-window-incident key prevent
+  clone inflation.
+
+### P105-018 Locked smoke artifact
+
+Keep smoke evidence useful for wiring while making promotion impossible.
+
+Acceptance:
+- Smoke artifacts use `smoke_only` or `smoke_only_missing_mode`.
+- Tiny-N, hand-computed, fixture-only, and missing-mode runs never satisfy
+  release floors or P106 gate rows.
+- Smoke and qualified artifacts have separate files, manifests, hashes, mode
+  fields, and stop conditions.
+
+### P105-019 Qualified artifact generation
+
+Generate the future `release_qualified` candidate artifact from deterministic
+materialized rows.
+
+Acceptance:
+- The artifact includes row, source, partition, coverage, P24 parity,
+  source-availability preflight, private label, coverage, P24 parity,
+  benchmark, and review manifests with stable content hashes.
+- Every supported family passes the exact existing held-out and real-derived
+  floors.
+- Private label hashes bind labels to canonical tuple, offset, incident group,
+  and derivation ID; the private ledger is the metrics source of truth.
+- Source diversity uses canonical source tuples and excludes synthetic held-out
+  rows from diversity denominators.
+- Authority counters remain hard-zero.
+
+### P105-020 Parity, partition, coverage, and isolation
+
+Prove that release metrics are denominator-aligned and not outcome-shaped.
+
+Acceptance:
+- P24 baseline rows come from actual P24 `RiskSignal` and `RiskForecast`
+  behavior.
+- P24 and P105 metrics share rows, split IDs, families, incident matching,
+  coverage scopes, and denominators.
+- P24 parity is reconstructable per row and the parity manifest includes
+  `source_window_id`, input hash, `RiskSignal` hash, `RiskForecast` hash, and
+  denominator alignment status.
+- Fallback to unrelated seed windows or fixture defaults is forbidden.
+- Partition assignment is pre-scoring and outcome-neutral.
+- Incident groups do not cross partitions.
+- False-alert service-day denominators use merged coverage intervals per
+  `split_id`/`family`/`service`/`source_system`.
+
+### P105-021 Reproducibility and tamper tests
+
+Make qualified evidence reproducible and tamper-evident.
+
+Acceptance:
+- Two materializer runs over the same inputs are byte-identical.
+- Source edits, scorer-label edits, row deletion, row duplication, mode edits,
+  partition edits, floor weakening, and coverage edits fail closed.
+- Label tamper fails both with unchanged public hashes and with recomputed
+  public hashes when the private label ledger no longer matches.
+- Any tampered artifact emits `release_qualified=false` and
+  `p106_unlocked=false`.
+
+### P105-022 Independent review and full verification
+
+Close G006 only after independent review and full verification.
+
+Acceptance:
+- The review ledger records independent review scope, reviewed artifact hash,
+  findings, repairs, and final verdict.
+- A repair record may state initial `REVISE` and repairs made, but must not
+  claim re-approval without a later independent verdict.
+- Release docs include locked smoke status, qualified artifact hash, exact
+  floors, P106 gate rows, P24 parity, provenance, partition, coverage,
+  reproducibility, tamper, and authority evidence.
+- P106 unlock claims are absent unless the exact gate payload passes.
+- Docs, targeted P105 tests, fast verification, and benchmark commands are
+  recorded with results.
 
 ## Phase Acceptance
 

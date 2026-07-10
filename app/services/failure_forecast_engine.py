@@ -12,6 +12,7 @@ import copy
 import csv
 import hashlib
 import json
+import re
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
@@ -122,6 +123,14 @@ G006_P106_GATE_ROWS: tuple[str, ...] = (
     "real_derived_transfer",
     "safety_boundary",
 )
+P105_SOURCE_EXPANSION_FLOORS: Mapping[str, Mapping[str, int | float]] = {
+    "held_out": {"evaluated_count": 30, "non_abstained_count": 24, "positive_count": 6, "incident_group_count": 4, "service_day_count": 2.0},
+    "real_derived_shadow": {"evaluated_count": 20, "non_abstained_count": 16, "positive_count": 4, "incident_group_count": 3, "service_day_count": 1.0},
+}
+P105_SOURCE_EXPANSION_FAMILIES = frozenset({"database", "deploy", "queue"})
+P105_REVIEWED_FAMILY_AUTHORITY_SOURCES = frozenset({"reviewed_registry", "reviewed_source_registry", "registry_review"})
+P105_ACTUAL_COVERAGE_SOURCES = frozenset({"actual", "actual_source_run", "actual_source_runs", "measured", "reviewed_measured"})
+P105_LOG_PARSER_VERSION = "p105-reviewed-redacted-log-parser-v1"
 G006_RELEASE_BENCHMARK_PATH = Path("evals/proactive/forecast/p105_release_benchmark_rows.json")
 P24_PROACTIVE_FIXTURE_PATH = Path("evals/proactive/seed/risk_windows.json")
 LEAD_TIME_INTERVALS_BY_FAMILY: Mapping[str, tuple[int, int]] = {
@@ -1735,6 +1744,136 @@ def _evaluate_g006_source_availability_preflight(payload: Mapping[str, Any], sup
         "failure_scope": "pre_scoring" if errors else None,
         "validation_error_codes": sorted(codes),
         "validation_errors": errors,
+    }
+
+
+def validate_p105_source_expansion_release_inputs(
+    *,
+    rows_path: str | Path | None = None,
+    source_registry: str | Path | None = None,
+    source_eligibility: str | Path | None = None,
+    macro_sequence: str | Path | None = None,
+    expected_floors: Mapping[str, Mapping[str, int | float]] | None = None,
+    release_families: set[str] | frozenset[str] | Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Validate P105 source-expanded inputs before any release scoring."""
+
+    codes: set[str] = set()
+    errors: list[str] = []
+    rows = _p105_optional_rows(rows_path, codes, errors)
+    registry = _p105_optional_json(source_registry, "source_registry", codes, errors)
+    eligibility = _p105_optional_json(source_eligibility, "source_eligibility", codes, errors)
+    families = set(str(item) for item in (release_families if release_families is not None else P105_SOURCE_EXPANSION_FAMILIES))
+    floors = expected_floors if expected_floors is not None else P105_SOURCE_EXPANSION_FLOORS
+    if floors != P105_SOURCE_EXPANSION_FLOORS:
+        codes.add("qualification_floor_contract_mismatch")
+        errors.append("P105 source expansion floors must match the reviewed exact release floor contract")
+
+    reviewed_source_keys = _p105_reviewed_registry_source_keys(registry)
+    counting_coverage_seconds = 0
+    if isinstance(eligibility, Mapping):
+        for entry in _mapping_sequence(eligibility.get("entries", ())):
+            family = str(entry.get("family_candidate") or entry.get("family") or "")
+            eligible = entry.get("eligible_for_release_floor") is True
+            authority = str(entry.get("family_authority_source") or "")
+            if family in families and eligible and authority not in P105_REVIEWED_FAMILY_AUTHORITY_SOURCES:
+                codes.add("family_authority_not_reviewed_registry")
+                errors.append(f"{entry.get('source_key', '')}: family authority must come from reviewed registry")
+            source_key = str(entry.get("source_key") or "")
+            if eligible and family in families and source_key not in reviewed_source_keys:
+                codes.add("source_not_in_reviewed_registry")
+                errors.append(f"{source_key}: source not present in reviewed registry")
+            if eligible and family in families and _p105_entry_has_actual_coverage(entry, codes, errors):
+                counting_coverage_seconds += int(float(entry.get("coverage_seconds", 0) or 0))
+
+    unsupported_count = 0
+    for row in rows:
+        family = str(row.get("family") or "")
+        if family and family not in families:
+            unsupported_count += 1
+
+    macro = _p105_optional_json(macro_sequence, "macro_sequence", codes, errors) if macro_sequence is not None else {}
+    macro_complete = _p105_macro_sequence_complete(macro, codes, errors) if isinstance(macro, Mapping) else False
+    release_qualified = not codes and macro_complete
+    return {
+        "schema_version": "p105.source_expansion_release_input_validation.v1",
+        "failure_stage": "pre_scoring" if codes else None,
+        "validation_error_codes": sorted(codes),
+        "validation_errors": errors,
+        "release_families": sorted(families),
+        "unsupported_noncounting_rows": unsupported_count,
+        "counting_coverage_seconds": counting_coverage_seconds,
+        "qualification_floors": {
+            "floor_contract_version": G006_RELEASE_FLOOR_CONTRACT_VERSION,
+            "minimums": copy.deepcopy(dict(floors)),
+        },
+        "release_gate": {"release_qualified": release_qualified, "p106_unlocked": release_qualified and macro_complete},
+    }
+
+
+def materialize_p105_log_parser_source(
+    *,
+    parser_name: str,
+    source_path: str | Path,
+    reviewed_predicate: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Parse a reviewed local log source into redacted, non-counting public rows."""
+
+    parser = str(parser_name)
+    if parser not in {"apache", "hadoop", "zookeeper"}:
+        raise ValueError("parser_name must be one of: apache, hadoop, zookeeper")
+    path = Path(source_path)
+    source_bytes = path.read_bytes()
+    source_hash = hashlib.sha256(source_bytes).hexdigest()
+    text = source_bytes.decode("utf-8", errors="replace")
+    validation_codes: set[str] = set()
+    family, predicate_reviewed = _p105_reviewed_predicate_family(reviewed_predicate)
+    if reviewed_predicate is not None and not predicate_reviewed:
+        validation_codes.add("predicate_authority_not_reviewed")
+    public_rows: list[dict[str, Any]] = []
+    byte_offset = 0
+    for line_offset, raw_line in enumerate(text.splitlines()):
+        line_bytes = raw_line.encode("utf-8")
+        parsed = _p105_parse_log_line(parser, raw_line)
+        parse_status = "parsed" if parsed is not None else "parser_failed"
+        row_family = family if parse_status == "parsed" and predicate_reviewed else "unsupported_family"
+        redacted_payload = _p105_redacted_log_payload(raw_line)
+        public_rows.append(
+            {
+                "parser_name": parser,
+                "parser_version": P105_LOG_PARSER_VERSION,
+                "source_path_hash": _sha256_text(str(path)),
+                "source_byte_sha256": source_hash,
+                "line_offset": line_offset,
+                "byte_offset": byte_offset,
+                "parsed_timestamp": parsed.get("timestamp") if parsed is not None else None,
+                "parse_status": parse_status,
+                "redacted_public_payload": redacted_payload,
+                "public_event_hash": _sha256_text(
+                    _stable_json(
+                        {
+                            "parser_name": parser,
+                            "parser_version": P105_LOG_PARSER_VERSION,
+                            "source_byte_sha256": source_hash,
+                            "byte_offset": byte_offset,
+                            "redacted_public_payload": redacted_payload,
+                            "parsed": parsed or {},
+                        }
+                    )
+                ),
+                "family": row_family,
+                "eligible_for_release_floor": row_family in P105_SOURCE_EXPANSION_FAMILIES and predicate_reviewed,
+            }
+        )
+        byte_offset += len(line_bytes) + 1
+    return {
+        "schema_version": "p105.log_parser_source_materialization.v1",
+        "parser_name": parser,
+        "parser_version": P105_LOG_PARSER_VERSION,
+        "source_byte_sha256": source_hash,
+        "public_rows": public_rows,
+        "validation_error_codes": sorted(validation_codes),
+        "floor_credit": _p105_log_parser_floor_credit(public_rows),
     }
 
 
@@ -3824,6 +3963,127 @@ def _time_range(rows: Sequence[Mapping[str, Any]]) -> dict[str, str | None]:
 
 def _timestamp_sort_key(row: Mapping[str, Any]) -> tuple[datetime, str]:
     return (_parse_ts(str(row.get("forecast_timestamp", "1970-01-01T00:00:00Z"))), str(row.get("row_id", "")))
+
+
+def _p105_optional_json(path: str | Path | None, name: str, codes: set[str], errors: list[str]) -> dict[str, Any]:
+    if path is None:
+        codes.add(f"{name}_missing")
+        errors.append(f"{name} missing")
+        return {}
+    try:
+        return _load_json(path)
+    except (FileNotFoundError, json.JSONDecodeError, ValueError) as exc:
+        codes.add(f"{name}_missing")
+        errors.append(f"{name} missing or invalid: {exc}")
+        return {}
+
+
+def _p105_optional_rows(path: str | Path | None, codes: set[str], errors: list[str]) -> list[Mapping[str, Any]]:
+    if path is None:
+        return []
+    payload = _p105_optional_json(path, "rows", codes, errors)
+    return _mapping_sequence(payload.get("rows", ()))
+
+
+def _p105_reviewed_registry_source_keys(registry: Mapping[str, Any]) -> set[str]:
+    keys: set[str] = set()
+    for source in _mapping_sequence(registry.get("sources", ())):
+        reviewed = source.get("review_status") in {"reviewed", "approved", "reviewed_supported"} or source.get("reviewed") is True
+        source_key = str(source.get("source_key") or source.get("id") or "")
+        if reviewed and source_key:
+            keys.add(source_key)
+    return keys
+
+
+def _p105_entry_has_actual_coverage(entry: Mapping[str, Any], codes: set[str], errors: list[str]) -> bool:
+    source_key = str(entry.get("source_key") or "")
+    coverage_ids = [str(item) for item in _sequence(entry.get("coverage_interval_ids", ()))]
+    coverage_source = str(entry.get("coverage_source") or "")
+    coverage_seconds = int(float(entry.get("coverage_seconds", 0) or 0))
+    actual = bool(coverage_ids) and coverage_seconds > 0 and coverage_source in P105_ACTUAL_COVERAGE_SOURCES
+    if not actual:
+        codes.add("actual_coverage_missing")
+        errors.append(f"{source_key}: release floors require actual measured coverage")
+    if coverage_source == "fixed_four_day_constant" or "fabricated-four-day" in coverage_ids or coverage_seconds == 4 * 24 * 60 * 60:
+        codes.add("synthetic_four_day_coverage")
+        errors.append(f"{source_key}: synthetic four-day coverage does not count")
+        return False
+    return actual
+
+
+def _p105_macro_sequence_complete(macro: Mapping[str, Any], codes: set[str], errors: list[str]) -> bool:
+    plan_reviewed = isinstance(macro.get("plan_review"), Mapping) and macro["plan_review"].get("approved") is True
+    red_recorded = isinstance(macro.get("red_contract_failures"), Mapping) and macro["red_contract_failures"].get("recorded") is True
+    actual_runs = isinstance(macro.get("actual_source_runs"), Mapping) and macro["actual_source_runs"].get("completed") is True
+    code_review = isinstance(macro.get("independent_code_review"), Mapping) and macro["independent_code_review"].get("approved") is True
+    arch_review = isinstance(macro.get("independent_architecture_review"), Mapping) and macro["independent_architecture_review"].get("approved") is True
+    verification = isinstance(macro.get("full_verification"), Mapping) and macro["full_verification"].get("passed") is True
+    if not (plan_reviewed and red_recorded and actual_runs):
+        codes.add("macro_sequence_incomplete")
+        errors.append("P105 source expansion macro sequence is incomplete")
+    if not (code_review and arch_review):
+        codes.add("independent_review_missing")
+        errors.append("P105 source expansion requires independent code and architecture review")
+    if not verification:
+        codes.add("full_verification_missing")
+        errors.append("P105 source expansion requires full verification before P106 unlock")
+    return plan_reviewed and red_recorded and actual_runs and code_review and arch_review and verification
+
+
+def _p105_reviewed_predicate_family(reviewed_predicate: Mapping[str, Any] | None) -> tuple[str, bool]:
+    if not isinstance(reviewed_predicate, Mapping):
+        return ("unsupported_family", False)
+    authority = str(reviewed_predicate.get("authority_source") or "")
+    family = str(reviewed_predicate.get("family") or "")
+    reviewed = authority in P105_REVIEWED_FAMILY_AUTHORITY_SOURCES and family in P105_SOURCE_EXPANSION_FAMILIES
+    return (family if reviewed else "unsupported_family", reviewed)
+
+
+def _p105_parse_log_line(parser_name: str, line: str) -> dict[str, Any] | None:
+    if "\x00" in line:
+        return None
+    if parser_name == "apache":
+        match = re.match(r'^\S+ \S+ \S+ \[(?P<timestamp>[^\]]+)\] "(?P<method>[A-Z]+) (?P<path>[^"]+) (?P<protocol>[^"]+)" (?P<status>\d{3}) (?P<size>\S+)$', line)
+        if match is None:
+            return None
+        return {
+            "timestamp": datetime.strptime(match.group("timestamp"), "%d/%b/%Y:%H:%M:%S %z").isoformat(),
+            "severity": None,
+            "event": match.group("method"),
+            "status": match.group("status"),
+        }
+    if parser_name == "hadoop":
+        match = re.match(r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?P<severity>[A-Z]+) (?P<component>[^:]+): (?P<message>.*)$", line)
+        if match is None:
+            return None
+        return {
+            "timestamp": _p105_parse_millis_timestamp(match.group("timestamp")),
+            "severity": match.group("severity"),
+            "event": match.group("component"),
+        }
+    match = re.match(r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) \[[^\]]+\] - (?P<severity>[A-Z]+)\s+\[[^\]]+\] - (?P<message>.*)$", line)
+    if match is None:
+        return None
+    return {
+        "timestamp": _p105_parse_millis_timestamp(match.group("timestamp")),
+        "severity": match.group("severity"),
+        "event": match.group("message").split(maxsplit=1)[0] if match.group("message") else "",
+    }
+
+
+def _p105_parse_millis_timestamp(value: str) -> str:
+    return datetime.strptime(value, "%Y-%m-%d %H:%M:%S,%f").isoformat() + "Z"
+
+
+def _p105_redacted_log_payload(line: str) -> str:
+    redacted = re.sub(r"\b(?:\d{1,3}\.){3}\d{1,3}\b", "<ip>", line)
+    redacted = re.sub(r"(?i)(token|password|secret|key)=\S+", r"\1=<redacted>", redacted)
+    return redacted[:512]
+
+
+def _p105_log_parser_floor_credit(rows: Sequence[Mapping[str, Any]]) -> dict[str, int]:
+    eligible = [row for row in rows if row.get("eligible_for_release_floor") is True and row.get("parse_status") == "parsed"]
+    return {"rows": len(eligible), "positives": 0, "incident_groups": 0, "coverage_seconds": 0}
 
 
 def _parse_ts(value: str) -> datetime:

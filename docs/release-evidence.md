@@ -2616,26 +2616,54 @@ effectiveness, connector correctness, unattended production operation, or
 operator replacement. Optional live-provider mode is explicit opt-in,
 network-enabled by flag, bounded, and advisory-only.
 
-## P105 Planning Gate
+## P105 Calibrated Failure Forecast Evidence
 
-P105 is currently a planning artifact for calibrated failure forecasting, not a
-release evidence claim. The amended plan requires a future P105 release to
-separate `smoke_only` from `release_qualified`; smoke, tiny-N, and
-hand-computed fixtures can never unlock P106.
+P105 is a local calibrated failure-forecasting harness, not an action planner
+and not a production-remediation authority. The committed fixture
+`evals/proactive/forecast/p105_release_benchmark_rows.json` is tiny smoke
+evidence only and has no release mode metadata; it normalizes to
+`smoke_only_missing_mode`. P106 remains locked until a generated benchmark
+payload is explicitly `mode=release_qualified` and passes every P105 floor and
+gate row.
 
-Future release-qualified evidence must preserve the existing P106 thresholds and
-also pass anti-tiny-N credibility floors: every supported family needs held-out
-and real-derived denominator floors, incident-group diversity, source diversity
-across P32/P41/P44 materialized record sets, and service-day coverage. Rows must
-be generated from raw/materialized records with content hashes, offsets or row
-indexes, timestamps when available, and deterministic derivation traces.
-False-alert/service-day denominators must roll up per-row `covered_seconds`,
-not top-level constants. Safety-conformance diagnostic rows can cover expected
-precondition violations, but unexpected safety success fails closed and valid
-supported-family rows remain in performance denominators.
+Offline smoke command:
 
-P105 release docs must include actual P24 `RiskSignal`/`RiskForecast` parity,
-model-card and README/ROADMAP/CHANGELOG/verify integration, post-incident key
-leakage fail-closed checks, time ordering, incident-group isolation, and hard
-zero counters for auth, production mutation, remediation execution, action
-authority, and default external model calls.
+```bash
+uv run --no-sync --extra dev python scripts/run_failure_forecast_benchmark.py \
+  --release-benchmark evals/proactive/forecast/p105_release_benchmark_rows.json \
+  --output-json /tmp/opscat-p105-release-benchmark-smoke.json
+```
+
+Targeted release-evidence tests:
+
+```bash
+uv run --no-sync --extra dev pytest -q \
+  tests/test_failure_forecast_engine.py \
+  tests/test_p105_release_evidence.py
+```
+
+The release-qualified floor is intentionally stricter than the committed smoke
+fixture. Every supported family must pass held-out floors, real-derived floors,
+incident-group diversity, P32/P41/P44 source-record provenance with content
+hashes and offsets/timestamps, source-diversity limits, outcome-neutral
+partitions, post-incident leakage fail-closed checks, actual P24
+`RiskSignal`/`RiskForecast` baseline parity, and unioned service-day coverage.
+`false_alerts_per_service_day = false_positive_count / service_days`, where
+`service_days` is computed from merged coverage intervals for the evaluated
+split/family/service/source scope; overlapping intervals cannot dilute false
+alerts. `useful_lead_time_rate =
+useful_true_positive_count / true_positive_count`, and zero denominators are
+reported as `null` rather than passing as zero.
+
+Safety counters for a release-qualified payload must remain zero: auth,
+production mutation, remediation execution, executable action plan, action
+authority, default external model calls, provider action execution, and scorer
+leakage. Diagnostic safety rows publish only hash-safe metadata and never enter
+release denominators.
+
+Detailed references:
+
+- `docs/operations/p105-model-card.md`
+- `docs/operations/p105-final-summary.md`
+- `docs/operations/p105-ticket-roadmap.md`
+- `docs/tickets/p105/README.md`

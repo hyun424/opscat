@@ -892,3 +892,13 @@ parity, release docs/verify integration, and no auth, production mutation, or
 action authority. These floors are anti-tiny-N credibility checks, not
 statistical significance claims. See `docs/operations/p105-ticket-roadmap.md`
 and `docs/tickets/p105/README.md`.
+
+## P105 release integration
+
+P105 release integration is documented, but the current committed fixture is
+still a tiny `smoke_only_missing_mode` smoke fixture. P106 remains locked until
+fresh generated evidence is explicitly marked `release_qualified` and passes all
+held-out, real-derived, source-diversity, service-day, formula, P24 parity, and
+authority-counter floors. The P105 model card and final summary are
+`docs/operations/p105-model-card.md` and
+`docs/operations/p105-final-summary.md`.

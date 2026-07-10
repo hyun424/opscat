@@ -263,11 +263,13 @@ def test_run_p105_benchmark_reports_release_and_diagnostic_partitions_separately
     assert report["release_gate"]["diagnostic_denominator_count"] == 0
 
 
-def test_run_p105_benchmark_passes_unchanged_release_thresholds_on_credible_fixture() -> None:
+def test_run_p105_benchmark_keeps_p106_locked_when_only_unchanged_thresholds_pass_on_tiny_fixture() -> None:
     report = _api().run_p105_benchmark(RELEASE_BENCHMARK)
     gate = report["release_gate"]
 
-    assert gate["p106_unlocked"] is True
+    assert gate["p106_unlocked"] is False
+    assert gate["release_qualified"] is False
+    assert gate["unchanged_metrics"]["pass"] is True
     assert gate["thresholds"] == {
         "minimum_useful_lead_time_rate": 0.8,
         "maximum_family_false_alerts_per_service_day": 0.5,

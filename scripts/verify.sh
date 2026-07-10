@@ -1198,6 +1198,23 @@ evidence_gap_investigator_smoke() {
   cp "$VERIFY_TMPDIR/opscat-p104-evidence-gap-investigator.md" /tmp/opscat-p104-evidence-gap-investigator-latest.md
   printf 'Wrote /tmp/opscat-p104-evidence-gap-investigator-latest.md and %s/opscat-p104-evidence-gap-investigator.json\n' "$VERIFY_TMPDIR"
 }
+
+p105_release_benchmark_smoke() {
+  section "P105 release benchmark smoke"
+  set +e
+  "${UV_DEV[@]}" python scripts/run_failure_forecast_benchmark.py \
+    --release-benchmark evals/proactive/forecast/p105_release_benchmark_rows.json \
+    --output-json "$VERIFY_TMPDIR/opscat-p105-release-benchmark-smoke.json" >/tmp/opscat-p105-release-benchmark-smoke-latest.json
+  p105_status=$?
+  set -e
+  if [[ "$p105_status" -ne 1 ]]; then
+    printf 'Expected P105 smoke fixture to keep P106 locked with exit 1, got %s\n' "$p105_status" >&2
+    exit 1
+  fi
+  python3 -c "import json, sys; p=json.load(open(sys.argv[1])); assert p['release_gate']['p106_unlocked'] is False" "$VERIFY_TMPDIR/opscat-p105-release-benchmark-smoke.json"
+  cp "$VERIFY_TMPDIR/opscat-p105-release-benchmark-smoke.json" /tmp/opscat-p105-release-benchmark-smoke-latest.json
+  printf 'Wrote /tmp/opscat-p105-release-benchmark-smoke-latest.json and %s/opscat-p105-release-benchmark-smoke.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -1360,7 +1377,9 @@ docs_contract_tests() {
     tests/test_p102_release_evidence.py \
     tests/test_p103_release_evidence.py \
     tests/test_evidence_gap_investigator.py \
-    tests/test_p104_release_evidence.py
+    tests/test_p104_release_evidence.py \
+    tests/test_failure_forecast_engine.py \
+    tests/test_p105_release_evidence.py
 }
 
 run_fast() {
@@ -1468,6 +1487,7 @@ run_eval() {
   llm_tool_planner_evaluation_smoke
   llm_diagnostic_episode_smoke
   evidence_gap_investigator_smoke
+  p105_release_benchmark_smoke
 }
 
 run_docs() {

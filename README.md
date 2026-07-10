@@ -4,7 +4,7 @@ OpsCat is a local **agentic AI on-call system** for human-on-exception operation
 
 This repository is intended as a portfolio-grade Agentic AI Engineer artifact and paid-beta design seed: it emphasizes state, tools, tenant boundaries, policy, approvals, verification, wake-up contracts, auditability, privacy, and safety boundaries rather than chatbot-style prompting.
 
-> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery; P104 adds network-free evidence-gap sufficiency checks before policy handoff. No production actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
+> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery; P104 adds network-free evidence-gap sufficiency checks before policy handoff; P105 adds a local calibrated failure-forecasting harness whose committed tiny fixture is `smoke_only_missing_mode` evidence and must keep P106 locked until release-qualified generated evidence exists. No production actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
 
 ## Portfolio demo evidence
 
@@ -42,6 +42,8 @@ Reviewer links:
 - [`docs/operations/p102-final-summary.md`](docs/operations/p102-final-summary.md) — offline and NVIDIA LLM tool-planning robustness evidence.
 - [`docs/operations/p103-final-summary.md`](docs/operations/p103-final-summary.md) — multi-step LLM replanning, discovery, and recovery evidence.
 - [`docs/operations/p104-final-summary.md`](docs/operations/p104-final-summary.md) — evidence-gap sufficiency, false-handoff, and safety-boundary evidence.
+- [`docs/operations/p105-model-card.md`](docs/operations/p105-model-card.md) — P105 forecast model card, mode semantics, metric formulas, provenance scope, and authority limits.
+- [`docs/operations/p105-final-summary.md`](docs/operations/p105-final-summary.md) — P105 release-integration summary and P106 lock status.
 - [`docs/architecture.md`](docs/architecture.md) — local/mock architecture and safety boundaries.
 
 Boundary: the portfolio demo is local/mock-only. It performs no auth work, live APIs, credentials, network, production mutation, real remediation/action execution, or external model/API calls; it is not production autonomy.
@@ -179,18 +181,32 @@ with provider action execution count 0/150 and production mutation count 0/150.
 It distinguishes valid absence from unavailable telemetry with denominators
 1 and 2, and does not claim production effectiveness or unattended operation.
 
-## P105 forecast gate planning
+## P105 calibrated failure forecast smoke
 
-P105 is planned as a calibrated failure forecast engine, not an action planner.
-Its amended release gate separates `smoke_only` wiring evidence from
-`release_qualified` evidence: tiny fixtures and hand-computed metric cases can
-never unlock P106. Release qualification requires per-family held-out and
-real-derived denominator floors, source-record provenance from P32/P41/P44
-materialized records, outcome-neutral partitions, per-row `covered_seconds`
-service-day denominators, actual P24 `RiskSignal`/`RiskForecast` parity, and
-zero authority counters. The floors are anti-tiny-N credibility checks, not
-statistical significance claims. See
-[`docs/operations/p105-ticket-roadmap.md`](docs/operations/p105-ticket-roadmap.md)
+P105 is a calibrated failure forecast engine, not an action planner. The
+committed P105 fixture remains a tiny `smoke_only_missing_mode` wiring fixture:
+it proves local formulas, partition separation, diagnostics, and command
+integration only. It is not release-qualified performance evidence and must not
+unlock P106.
+
+Run the offline benchmark smoke:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_failure_forecast_benchmark.py \
+  --release-benchmark evals/proactive/forecast/p105_release_benchmark_rows.json \
+  --output-json /tmp/opscat-p105-release-benchmark-smoke.json
+```
+
+P105 release qualification requires explicit `mode=release_qualified`,
+per-family held-out and real-derived denominator floors, source-record
+provenance from P32/P41/P44 materialized records, outcome-neutral partitions,
+unioned service-day denominators from coverage intervals and covered seconds,
+actual P24 `RiskSignal`/`RiskForecast` parity, and zero authority counters. The
+floors are anti-tiny-N credibility checks, not statistical significance claims.
+See
+[`docs/operations/p105-ticket-roadmap.md`](docs/operations/p105-ticket-roadmap.md),
+[`docs/operations/p105-model-card.md`](docs/operations/p105-model-card.md),
+[`docs/operations/p105-final-summary.md`](docs/operations/p105-final-summary.md),
 and [`docs/tickets/p105/README.md`](docs/tickets/p105/README.md).
 
 ## Portfolio story

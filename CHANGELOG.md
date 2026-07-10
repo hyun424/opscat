@@ -82,6 +82,18 @@ All notable OpsCat local/mock release evidence changes are tracked here.
   docs/verify integration, and continued no auth, no production mutation, and no
   action authority.
 
+### P105 release integration
+
+- Added P105 model-card and final-summary docs that explicitly mark the
+  committed tiny fixture as `smoke_only_missing_mode` evidence and keep P106
+  locked until generated `release_qualified` evidence exists.
+- Documented P105 qualification floors, metric formulas, P32/P41/P44
+  source-record provenance scope, union service-day denominator rules, actual
+  P24 `RiskSignal`/`RiskForecast` parity, model limitations, and no-auth,
+  no-production-mutation, no-action-authority boundaries.
+- Wired P105 benchmark smoke and release evidence anchors into verification
+  documentation while preserving default offline, local/mock execution.
+
 ## Stable vs experimental
 
 Stable in local/mock mode: tests, evals, fixture ingestion, local-header demo identity, mock action policy gates, connector evals, docs, and verification profiles.

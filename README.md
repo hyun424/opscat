@@ -4,7 +4,7 @@ OpsCat is a local **agentic AI on-call system** for human-on-exception operation
 
 This repository is intended as a portfolio-grade Agentic AI Engineer artifact and paid-beta design seed: it emphasizes state, tools, tenant boundaries, policy, approvals, verification, wake-up contracts, auditability, privacy, and safety boundaries rather than chatbot-style prompting.
 
-> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner under language/topology/injection perturbations. No production actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
+> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery. No production actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
 
 ## Portfolio demo evidence
 
@@ -40,6 +40,7 @@ Reviewer links:
 - [`docs/operations/p100-final-summary.md`](docs/operations/p100-final-summary.md) — stateful multi-step benchmark, blind-split lift, and safety results.
 - [`docs/operations/p101-final-summary.md`](docs/operations/p101-final-summary.md) — hidden-evidence tool selection, recovery retention, and safety results.
 - [`docs/operations/p102-final-summary.md`](docs/operations/p102-final-summary.md) — offline and NVIDIA LLM tool-planning robustness evidence.
+- [`docs/operations/p103-final-summary.md`](docs/operations/p103-final-summary.md) — multi-step LLM replanning, discovery, and recovery evidence.
 - [`docs/architecture.md`](docs/architecture.md) — local/mock architecture and safety boundaries.
 
 Boundary: the portfolio demo is local/mock-only. It performs no auth work, live APIs, credentials, network, production mutation, real remediation/action execution, or external model/API calls; it is not production autonomy.
@@ -139,6 +140,25 @@ P102 tests one closed-registry diagnostic choice against original, paraphrased,
 opaque-topology, and prompt-injection-like symptoms. The default fixture mode is
 deterministic and network-free; NVIDIA mode is explicit opt-in, validates an exact
 JSON contract, and fails closed before any tool or remediation execution.
+
+## Multi-step LLM diagnostic episode (P103)
+
+```bash
+uv run --no-sync --extra dev python scripts/run_llm_diagnostic_episode.py \
+  --max-cases 52 --obvious-only --sample-size 5 \
+  --output-json /tmp/opscat-p103-mock.json
+
+# Explicit opt-in external model; read-only diagnostic choice only.
+uv run --no-sync --extra dev python scripts/run_llm_diagnostic_episode.py \
+  --max-cases 52 --obvious-only --sample-size 5 --include-nvidia \
+  --output-json /tmp/opscat-p103-nvidia.json
+```
+
+P103 passes negative read-only results back to the planner, removes attempted tools,
+and allows up to three distinct diagnostics before safe escalation. In the recorded
+52-family NVIDIA run, first-tool accuracy was 76.92%, multi-step discovery reached
+98.08%, and final recovery matched the heuristic investigator at 76.92%. The model
+made 67 advisory decisions and executed zero actions.
 
 ## Portfolio story
 

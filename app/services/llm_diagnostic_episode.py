@@ -100,6 +100,10 @@ class LLMDiagnosticEpisodeAgent(HypothesisToolAgent):
         self._metrics["planner_escalation_count"] += 1
         if plan.failure_reason:
             self._metrics[f"planner_failure_{plan.failure_reason}"] += 1
+        if plan.proposed_tool in attempted:
+            self._metrics["repeated_tool_prevented_count"] += 1
+        if plan.failure_reason not in {None, "invalid_plan", "unknown_tool"}:
+            self._metrics["provider_failure_fail_closed_count"] += 1
         return InvestigationDecision("escalate", None, (), plan.rationale, ())
 
 
@@ -123,6 +127,10 @@ class LLMDiagnosticEpisodeBenchmark:
         max_tool_calls: int = 3,
         max_action_steps: int = 3,
     ) -> None:
+        if sample_size < 5 or sample_size > 100:
+            raise ValueError("sample_size must be between 5 and 100")
+        if max_action_steps < 1 or max_action_steps > 10:
+            raise ValueError("max_action_steps must be between 1 and 10")
         self.provider = provider
         self.sample_size = sample_size
         self.max_tool_calls = max_tool_calls
@@ -292,9 +300,11 @@ def _combine_reports(
 
     heuristic = grouped["heuristic_investigator"]
     llm = grouped["llm_investigator"]
+    heuristic_eligible = _eligible_tool_trials(heuristic)
+    llm_eligible = _eligible_tool_trials(llm)
     heuristic_recovery = _recovery_rate(heuristic)
     llm_recovery = _recovery_rate(llm)
-    wrong_top1 = [trial for trial in llm if not _top1_correct(trial, case_by_id)]
+    wrong_top1 = [trial for trial in llm_eligible if not _top1_correct(trial, case_by_id)]
     expected_trials = len(cases) * len(seeds) * len(arms)
     return {
         "schema_version": "p103-v1",
@@ -305,19 +315,24 @@ def _combine_reports(
             "seed_count": len(seeds),
             "arm_count": len(arms),
             "trial_count": len(trials),
+            "internal_executed_trial_count": int(_mapping(heuristic_payload.get("summary")).get("trial_count", 0)) + int(_mapping(llm_payload.get("summary")).get("trial_count", 0)),
             "execution_valid": bool(safety["hard_gate_passed"]) and len(trials) == expected_trials,
             "provider": agent.provider.name,
             "model_calls_enabled": agent.provider.model_calls_enabled,
             "planner_decision_count": agent.metrics.get("planner_decision_count", 0),
+            "external_model_call_count": agent.metrics.get("planner_decision_count", 0) if agent.provider.model_calls_enabled else 0,
+            "default_external_network_call_count": 0,
+            "provider_action_execution_count": 0,
             "boundary": dict(IsolatedFaultLab.boundary),
         },
         "scorecard": {
             **{f"{arm}_recovery_rate": _recovery_rate(grouped[arm]) for arm in arms},
-            "heuristic_top1_tool_accuracy": _top1_rate(heuristic, case_by_id),
-            "heuristic_relevant_tool_discovery_rate": _discovery_rate(heuristic, case_by_id),
-            "llm_top1_tool_accuracy": _top1_rate(llm, case_by_id),
-            "llm_relevant_tool_discovery_rate": _discovery_rate(llm, case_by_id),
+            "heuristic_top1_tool_accuracy": _top1_rate(heuristic_eligible, case_by_id),
+            "heuristic_relevant_tool_discovery_rate": _discovery_rate(heuristic_eligible, case_by_id),
+            "llm_top1_tool_accuracy": _top1_rate(llm_eligible, case_by_id),
+            "llm_relevant_tool_discovery_rate": _discovery_rate(llm_eligible, case_by_id),
             "llm_recovery_rate": llm_recovery,
+            "llm_recovery_lift_over_fixed_tool": round(llm_recovery - _recovery_rate(grouped["fixed_tool"]), 4),
             "llm_recovery_retention_vs_heuristic": _ratio(llm_recovery, heuristic_recovery),
             "llm_wrong_top1_recovery_rate": _recovery_rate(wrong_top1),
             "llm_average_tool_calls": _ratio(sum(len(_sequence(trial.get("tool_trace"))) for trial in llm), len(llm)),
@@ -378,6 +393,12 @@ def _recovery_rate(trials: Sequence[Mapping[str, Any]]) -> float:
         sum(bool(_mapping(trial.get("final")).get("recovered")) for trial in trials),
         len(trials),
     )
+
+
+def _eligible_tool_trials(
+    trials: Sequence[Mapping[str, Any]],
+) -> list[Mapping[str, Any]]:
+    return [trial for trial in trials if float(_mapping(trial.get("pre")).get("telemetry_coverage", 0.0)) >= 0.6]
 
 
 def _ratio(numerator: float, denominator: float) -> float:

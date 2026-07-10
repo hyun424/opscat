@@ -56,6 +56,13 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 - Added deterministic offline and explicit opt-in NVIDIA scorecards with strict fail-closed validation and zero action authority.
 - Added targeted safety tests, CLI reports, release evidence, and verification integration.
 
+### P103 multi-step LLM diagnostic episode
+
+- Connected provider-neutral LLM tool selection to the bounded P101 investigation loop.
+- Added negative-result replanning, attempted-tool removal, explicit tool budgets, repeated-tool prevention, and provider-failure escalation.
+- Kept positive-evidence remediation behind P100's deterministic closed-registry policy with zero provider action authority.
+- Added equal-state fixed/heuristic/LLM comparisons, strict and outcome-based metrics, bounded NVIDIA evaluation, and release verification.
+
 ## Stable vs experimental
 
 Stable in local/mock mode: tests, evals, fixture ingestion, local-header demo identity, mock action policy gates, connector evals, docs, and verification profiles.

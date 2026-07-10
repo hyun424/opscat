@@ -115,3 +115,12 @@ run covered 12 families and 48 live decisions at 100% valid output and 83.33%
 exact-tool accuracy, with zero unsafe tools and zero tool/action executions. The live
 sample is advisory benchmark evidence only and does not prove production diagnosis,
 remediation effectiveness, unattended safety, or operator replacement.
+
+## P103 latest verification addendum
+
+P103 adds a bounded multi-step LLM diagnostic episode. The deterministic 520-case
+matrix retained 100% of heuristic recovery at 56.15%. In the explicit 52-family
+NVIDIA run, 67 external model decisions produced 76.92% Top-1 accuracy, 98.08%
+multi-step relevant-tool discovery, and 76.92% recovery, equal to the heuristic
+investigator. All hard safety gates passed and the provider executed zero actions.
+The result remains isolated synthetic-lab evidence rather than production approval.

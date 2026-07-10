@@ -845,3 +845,15 @@ topology, distractor, and injection perturbations per case. Default fixture eval
 is deterministic and network-free; the NVIDIA provider is explicit opt-in and remains
 advisory-only. P102 records exact-tool accuracy and schema failures without executing
 tools or actions and does not convert benchmark output into production authority.
+
+## P103 implemented
+
+P103 connects the strict P102 provider contract to P101's bounded investigation
+loop. Negative read-only results become sanitized history, attempted tools disappear
+from the next catalog, correlated evidence stops model tool selection, and P100's
+deterministic policy retains all action authority. The full offline 520-case run
+retained 100% of heuristic recovery. The 52-family NVIDIA sample made 67 model
+decisions, improved relevant-tool discovery from 76.92% Top-1 accuracy to 98.08%,
+replanned 12 episodes, and retained the heuristic's 76.92% recovery rate with all
+hard safety gates passing. P103 remains synthetic-lab evidence, not production
+autonomy or operator-replacement approval.

@@ -32,14 +32,29 @@ def main() -> int:
     parser.add_argument("--max-tool-calls", type=int, default=3)
     parser.add_argument("--max-action-steps", type=int, default=3)
     parser.add_argument("--include-nvidia", action="store_true")
+    parser.add_argument("--obvious-only", action="store_true")
     parser.add_argument("--output-json")
     parser.add_argument("--output-md")
     args = parser.parse_args()
     if args.max_cases < 1:
         parser.error("--max-cases must be at least 1")
+    if args.sample_size < 5 or args.sample_size > 100:
+        parser.error("--sample-size must be between 5 and 100")
+    if args.max_tool_calls < 1 or args.max_tool_calls > 10:
+        parser.error("--max-tool-calls must be between 1 and 10")
+    if args.max_action_steps < 1 or args.max_action_steps > 10:
+        parser.error("--max-action-steps must be between 1 and 10")
 
-    cases = list(build_comprehensive_operational_catalog())[: args.max_cases]
-    seeds = tuple(int(item.strip()) for item in args.seeds.split(",") if item.strip())
+    catalog = list(build_comprehensive_operational_catalog())
+    if args.obvious_only:
+        catalog = [case for case in catalog if case.variant == "obvious"]
+    cases = catalog[: args.max_cases]
+    try:
+        seeds = tuple(int(item.strip()) for item in args.seeds.split(",") if item.strip())
+    except ValueError:
+        parser.error("--seeds must contain comma-separated integers")
+    if not seeds:
+        parser.error("--seeds must contain at least one integer")
     providers: dict[str, ToolPlanningProvider] = {"mock": MockToolPlanningProvider()}
     if args.include_nvidia:
         providers["nvidia"] = build_nvidia_tool_provider()

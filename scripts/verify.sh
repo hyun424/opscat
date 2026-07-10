@@ -1178,6 +1178,16 @@ llm_tool_planner_evaluation_smoke() {
     --output-md "$VERIFY_TMPDIR/opscat-p102-llm-tool-planner.md" >/tmp/opscat-p102-llm-tool-planner-latest.txt
   printf 'Wrote /tmp/opscat-p102-llm-tool-planner-latest.txt and %s/opscat-p102-llm-tool-planner.json\n' "$VERIFY_TMPDIR"
 }
+
+llm_diagnostic_episode_smoke() {
+  section "P103 multi-step LLM diagnostic episode smoke"
+  "${UV_DEV[@]}" python scripts/run_llm_diagnostic_episode.py \
+    --max-cases 12 --obvious-only --seeds 11 --sample-size 5 \
+    --max-tool-calls 3 --max-action-steps 3 \
+    --output-json "$VERIFY_TMPDIR/opscat-p103-llm-diagnostic-episode.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p103-llm-diagnostic-episode.md" >/tmp/opscat-p103-llm-diagnostic-episode-latest.txt
+  printf 'Wrote /tmp/opscat-p103-llm-diagnostic-episode-latest.txt and %s/opscat-p103-llm-diagnostic-episode.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -1337,7 +1347,8 @@ docs_contract_tests() {
     tests/test_p99_release_evidence.py \
     tests/test_p100_release_evidence.py \
     tests/test_p101_release_evidence.py \
-    tests/test_p102_release_evidence.py
+    tests/test_p102_release_evidence.py \
+    tests/test_p103_release_evidence.py
 }
 
 run_fast() {
@@ -1443,6 +1454,7 @@ run_eval() {
   stateful_incident_investigator_smoke
   tool_investigation_benchmark_smoke
   llm_tool_planner_evaluation_smoke
+  llm_diagnostic_episode_smoke
 }
 
 run_docs() {

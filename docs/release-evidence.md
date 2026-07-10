@@ -2540,3 +2540,32 @@ Boundary: live-provider mode is explicit opt-in and advisory-only. The score use
 scorer-selected exact tool, so plausible alternative diagnostics still count as
 misses. P102 does not prove production diagnosis quality, remediation effectiveness,
 unattended safety, or operator replacement.
+
+## P103 Multi-step LLM Diagnostic Episode
+
+P103 adapts P102's strict provider output into P101's multi-step loop. The provider
+sees sanitized negative read-only results and a catalog with attempted tools removed.
+Correlated evidence stops model tool selection and delegates action choice to P100's
+deterministic closed-registry policy. Repeated proposals, invalid output, provider
+failure, and exhausted budgets fail closed.
+
+Artifacts include `app/services/llm_diagnostic_episode.py`,
+`scripts/run_llm_diagnostic_episode.py`, P103 targeted/release tests, and the three
+P103 operations documents.
+
+The deterministic 520-case run reported 2,080 comparison trials. The LLM-shaped
+mock retained 100% of heuristic recovery at 56.15%, found the relevant tool in 100%
+of eligible episodes, and recovered 77.78% of episodes after a wrong first tool.
+
+The bounded NVIDIA run covered one obvious case from each of 52 families and made
+67 external model decisions. Top-1 accuracy was 76.92%, multi-step relevant-tool
+discovery was 98.08%, 12 episodes replanned, recovery after a wrong first choice was
+75%, and final recovery was 76.92% for both NVIDIA and heuristic investigators.
+Fixed-tool recovery was 1.92%. Every hard safety gate passed; the provider executed
+zero actions.
+
+Boundary: external calls are explicit opt-in. Diagnostics and post-tool evidence are
+synthetic local fixtures, and any subsequent action is a closed in-memory transition
+selected by P100 rather than the model. Results do not prove production diagnosis,
+connector safety, remediation effectiveness, unattended operation, or operator
+replacement.

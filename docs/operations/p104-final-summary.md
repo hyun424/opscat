@@ -40,12 +40,17 @@ Measured result:
 - Default network calls: **0**.
 - Default model calls: **0**; `include_nvidia=false` and
   `network_enabled=false`.
-- P104 false-remediation handoff rate: **0.0**.
-- P103 false-remediation handoff rate in the equal-state comparison: **0.4**.
-- P101 false-remediation handoff rate in the equal-state comparison: **0.35**.
-- Fixed-tool false-remediation handoff rate: **0.5**.
-- Valid-case recovery retention delta, P104 versus P103: **0.0**.
-- The benchmark distinguishes **valid absence** from **unavailable** telemetry.
+- P104 false-remediation handoff rate: **0/27 = 0.0**.
+- P103 false-remediation handoff rate in the equal-state comparison:
+  **3/27 = 0.1111111111111111**.
+- P101 false-remediation handoff rate in the equal-state comparison:
+  **3/27 = 0.1111111111111111**.
+- Fixed-tool false-remediation handoff rate:
+  **3/27 = 0.1111111111111111**.
+- Valid-case recovery retention delta, P104 versus P103:
+  **0.0** with P104 **3/3 = 1.0** and P103 **3/3 = 1.0**.
+- The benchmark distinguishes **valid absence** from **unavailable** telemetry
+  with valid-absence denominator **1** and unavailable denominator **2**.
 
 ## Safety counters
 
@@ -62,6 +67,7 @@ Measured result:
 - Mutating diagnostic count: 0.
 - Unknown tool count: 0.
 - State mismatch count: 0.
+- Safety counter denominator: 150 rows for each counter above.
 
 ## Boundaries
 

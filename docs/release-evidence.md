@@ -2597,14 +2597,18 @@ UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/r
 
 The run produced 150 equal-state comparison rows across 10 cases, three seeds,
 and five arms: p104, p103, p101, fixed_tool, and control. Execution was valid.
-P104 false-remediation handoff rate was 0.0 versus 0.4 for P103, 0.35 for P101,
-and 0.5 for the fixed-tool arm. Valid-case recovery retention delta versus P103
-was 0.0, and the report distinguishes valid absence from unavailable telemetry.
+P104 false-remediation handoff rate was 0/27 = 0.0 versus
+3/27 = 0.1111111111111111 for P103, 3/27 = 0.1111111111111111 for P101,
+and 3/27 = 0.1111111111111111 for the fixed-tool arm. Valid-case recovery
+retention delta versus P103 was 0.0 with P104 3/3 = 1.0 and P103 3/3 = 1.0.
+The report distinguishes valid absence from unavailable telemetry with
+valid-absence denominator 1 and unavailable denominator 2.
 
 Safety counters: default network calls: 0; default model calls: 0;
 `action_authority=false`; provider action execution count: 0; production
 mutation count: 0; mutating diagnostic count: 0; scorer leakage count: 0;
-repeated tool count: 0; unknown tool count: 0; state mismatch count: 0.
+repeated tool count: 0; unknown tool count: 0; state mismatch count: 0. Each
+safety counter denominator is 150 rows.
 
 Boundary: P104 remains no auth, network-free by default, action-disabled, and
 local/mock. It is not production evidence for diagnosis quality, remediation

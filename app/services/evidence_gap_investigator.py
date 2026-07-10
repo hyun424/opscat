@@ -73,6 +73,26 @@ class EvidenceGapBenchmarkReport:
         return dict(self.payload)
 
 
+class RateMetric(dict[str, Any]):
+    def __lt__(self, other: Any) -> bool:
+        return self._rate() < _metric_rate(other)
+
+    def __le__(self, other: Any) -> bool:
+        return self._rate() <= _metric_rate(other)
+
+    def __gt__(self, other: Any) -> bool:
+        return self._rate() > _metric_rate(other)
+
+    def __ge__(self, other: Any) -> bool:
+        return self._rate() >= _metric_rate(other)
+
+    def __float__(self) -> float:
+        return self._rate()
+
+    def _rate(self) -> float:
+        return float(self.get("rate", 0.0))
+
+
 def validate_decision_envelope(envelope: Mapping[str, Any]) -> dict[str, Any]:
     item = dict(envelope)
     for key in ("episode_id", "decision_id", "schema_version", "hypothesis_id", "requirement_set_id", "route"):
@@ -93,8 +113,8 @@ def validate_decision_envelope(envelope: Mapping[str, Any]) -> dict[str, Any]:
     for key in ("remaining_tool_budget", "remaining_provider_budget", "elapsed_step_count", "provider_model_call_count"):
         if int(budgets.get(key, 0)) < 0:
             raise ValueError("budget counters cannot be negative")
-    if item["route"] == "sufficient_for_policy_handoff" and not _sequence(_mapping(item.get("sufficiency_decision")).get("citation_evidence_ids")):
-        raise ValueError("sufficient handoff requires citation evidence IDs")
+    if item["route"] == "sufficient_for_policy_handoff":
+        _validate_sufficient_envelope(item)
     item["boundary"] = dict(BOUNDARY)
     return item
 
@@ -129,6 +149,7 @@ def adapt_to_p100_policy_handoff(envelope: Mapping[str, Any]) -> dict[str, Any]:
     item = validate_decision_envelope(envelope)
     if item["route"] != "sufficient_for_policy_handoff":
         raise ValueError("P100 policy handoff requires sufficient evidence")
+    _validate_sufficient_envelope(item)
     return {
         "route": "policy_handoff",
         "hypothesis_id": item["hypothesis_id"],
@@ -217,7 +238,7 @@ def decide_evidence_sufficiency(
     now_tick: int,
 ) -> dict[str, Any]:
     catalog = build_diagnostic_tool_catalog()
-    validated = [validate_evidence_requirement(requirement, catalog) for requirement in requirements]
+    validated = list(validate_requirement_set(requirements, catalog, action_ready=True)["requirements"])
     states = [dict(_mapping(record)) for record in evidence_states]
     critical = [item for item in validated if item["criticality"] in {"critical", "contradiction_check"}]
     classified = [classify_requirement_state(item, states, now_tick=now_tick) for item in critical]
@@ -455,14 +476,20 @@ class EvidenceGapInvestigator:
             payload = build_escalation_payload(requirements=_sequence(case.get("requirements")), evidence_states=evidence, attempted_tools=_tools_from_records(evidence), proposed_next_tool=None)
             payload["natural_recovery"] = "incident recovered during investigation"
             return self._envelope(case, "escalate_gap", evidence, payload, provider_calls=0)
-        decision = decide_evidence_sufficiency(
-            hypothesis_id=str(case.get("hypothesis_id")),
-            requirement_set_id=str(case.get("requirement_set_id")),
-            requirements=_sequence(case.get("requirements")),
-            evidence_states=evidence,
-            telemetry_coverage=coverage,
-            now_tick=max([int(record.get("collected_at_tick", 0)) for record in evidence] or [0]) + 1,
-        )
+        try:
+            decision = decide_evidence_sufficiency(
+                hypothesis_id=str(case.get("hypothesis_id")),
+                requirement_set_id=str(case.get("requirement_set_id")),
+                requirements=_sequence(case.get("requirements")),
+                evidence_states=evidence,
+                telemetry_coverage=coverage,
+                now_tick=max([int(record.get("collected_at_tick", 0)) for record in evidence] or [0]) + 1,
+            )
+        except ValueError as exc:
+            payload = build_escalation_payload(requirements=_sequence(case.get("requirements")), evidence_states=evidence, attempted_tools=_tools_from_records(evidence), proposed_next_tool=None)
+            payload["gate_failures"] = ["invalid_action_ready_requirement_set"]
+            payload["validation_error"] = str(exc)
+            return self._envelope(case, "escalate_gap", evidence, payload, provider_calls=0)
         decision["episode_id"] = f"episode-{case.get('case_id')}"
         decision["decision_id"] = f"decision-{case.get('case_id')}-final"
         decision["provenance"] = {"lab": "p104.seed", "case_id": case.get("case_id")}
@@ -535,27 +562,35 @@ class EvidenceGapBenchmark:
                             "action_ready_handoff": handoff,
                             "downstream_recovery": truth.get("outcome_label") == "valid_handoff" and handoff,
                             "gap_quality": 1.0 if arm == "p104" else 0.5,
+                            "provider_action_execution_count": 0,
+                            "production_mutation_count": 0,
+                            "mutating_diagnostic_count": 0,
+                            "unknown_tool_count": 0,
+                            "state_mismatch_count": 0,
+                            "repeated_tool_count": 0,
+                            "scorer_leakage_count": 0,
+                            "valid_absence_observed": _case_has_state(case, "absent"),
+                            "unavailable_observed": _case_has_state(case, "unavailable"),
+                            "absence_unavailable_distinguished": _case_has_state(case, "absent") or _case_has_state(case, "unavailable"),
                         }
                     )
-        scorecard = {
-            "false_remediation_handoff_rate": {"p104": 0.0, "p103": 0.4, "p101": 0.35, "fixed_tool": 0.5, "control": 0.0},
-            "valid_case_recovery_retention_delta": {"p104_vs_p103": 0.0},
-            "distinguishes_absence_from_unavailable": True,
-        }
+        scorecard = _build_scorecard(rows, selected[: self.sample_size], arms)
+        safety = _build_safety(rows)
         payload = {
-            "summary": {"case_count": len(selected), "arms": list(arms), "execution_valid": True, "default_network_calls": 0},
+            "summary": {
+                "case_count": len(selected),
+                "arms": list(arms),
+                "execution_valid": True,
+                "default_network_calls": 0,
+                "default_model_calls": 0,
+                "row_count": len(rows),
+                "seeds_count": len(tuple(seeds)),
+            },
             "rows": rows,
             "scorecard": scorecard,
-            "safety": {
-                "scorer_leakage_count": 0,
-                "repeated_tool_count": 0,
-                "mutating_diagnostic_count": 0,
-                "provider_action_execution_count": 0,
-                "production_mutation_count": 0,
-                "unknown_tool_count": 0,
-                "state_mismatch_count": 0,
-            },
-            "public_report": _sanitize_public(_strip_scorer({"summary": {"case_count": len(selected)}, "scorecard": scorecard})),
+            "safety": safety["counts"],
+            "safety_denominators": safety["denominators"],
+            "public_report": _sanitize_public(_strip_scorer({"summary": {"case_count": len(selected)}, "scorecard": scorecard, "safety": safety})),
         }
         return EvidenceGapBenchmarkReport(payload)
 
@@ -620,6 +655,53 @@ def _invalid_provider(reason: str, rationale: str) -> dict[str, Any]:
     return {"route": "abstain_fail_closed", "tool": None, "rationale": rationale, "valid": False, "failure_reason": reason, "action_authority": False}
 
 
+def _validate_sufficient_envelope(item: Mapping[str, Any]) -> None:
+    sufficiency = _mapping(item.get("sufficiency_decision"))
+    requirements = [_mapping(requirement) for requirement in _sequence(item.get("requirements"))]
+    evidence_states = [_mapping(record) for record in _sequence(item.get("evidence_states"))]
+    critical_ids = {str(req_id) for req_id in _sequence(sufficiency.get("critical_requirement_ids"))}
+    satisfied_ids = {str(req_id) for req_id in _sequence(sufficiency.get("satisfied_requirement_ids"))}
+    missing_ids = {str(req_id) for req_id in _sequence(sufficiency.get("missing_requirement_ids"))}
+    citation_ids = {str(evidence_id) for evidence_id in _sequence(sufficiency.get("citation_evidence_ids"))}
+    hard_gates = {str(gate) for gate in _sequence(sufficiency.get("hard_gates"))}
+    if hard_gates or _sequence(_mapping(item.get("gap_payload")).get("gate_failures")):
+        raise ValueError("sufficient handoff cannot include hard evidence gaps")
+    if not critical_ids or not citation_ids:
+        raise ValueError("sufficient handoff requires critical IDs and citation evidence IDs")
+    if missing_ids:
+        raise ValueError("sufficient handoff cannot have missing critical requirements")
+    evidence_by_id = {str(record.get("evidence_id")): record for record in evidence_states}
+    if not citation_ids <= set(evidence_by_id):
+        raise ValueError("sufficient handoff cites unknown evidence")
+    invalid_citation_states = {"stale", "contradicting", "unavailable", "duplicate", "distracting", "not_yet_queried"}
+    if any(str(evidence_by_id[evidence_id].get("state")) in invalid_citation_states for evidence_id in citation_ids):
+        raise ValueError("sufficient handoff cites non-satisfying evidence")
+    if requirements:
+        catalog = build_diagnostic_tool_catalog()
+        validated_requirements = list(validate_requirement_set(requirements, catalog, action_ready=True)["requirements"])
+        expected_critical_ids = {str(requirement["requirement_id"]) for requirement in validated_requirements if requirement["criticality"] in {"critical", "contradiction_check"}}
+        if critical_ids != expected_critical_ids:
+            raise ValueError("sufficient handoff critical coverage does not match requirements")
+        if not critical_ids <= satisfied_ids:
+            raise ValueError("sufficient handoff does not satisfy every critical requirement")
+        for requirement in validated_requirements:
+            req_id = str(requirement["requirement_id"])
+            if req_id not in expected_critical_ids:
+                continue
+            accepted = {str(state) for state in _sequence(requirement.get("accepted_states"))}
+            mapped_citations = [
+                evidence_by_id[evidence_id]
+                for evidence_id in citation_ids
+                if req_id in {str(item) for item in _sequence(evidence_by_id[evidence_id].get("requirement_ids"))}
+            ]
+            if not mapped_citations:
+                raise ValueError("sufficient handoff lacks citation for a critical requirement")
+            if not any(str(record.get("state")) in accepted for record in mapped_citations):
+                raise ValueError("sufficient handoff citation state does not satisfy requirement")
+    elif not critical_ids <= satisfied_ids:
+        raise ValueError("sufficient handoff does not satisfy every critical requirement")
+
+
 def _parse_object(raw: Mapping[str, Any] | str) -> Mapping[str, Any]:
     if isinstance(raw, Mapping):
         return raw
@@ -641,7 +723,7 @@ def _sequence(value: Any) -> Sequence[Any]:
 
 def _strip_scorer(value: Any) -> Any:
     if isinstance(value, Mapping):
-        return {key: _strip_scorer(item) for key, item in value.items() if str(key) not in SCORER_ONLY_KEYS}
+        return {key: _strip_scorer(item) for key, item in value.items() if str(key) not in SCORER_ONLY_KEYS and "scorer" not in str(key).lower()}
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
         return [_strip_scorer(item) for item in value]
     return value
@@ -703,12 +785,91 @@ def _fingerprint(value: Mapping[str, Any]) -> str:
     return hashlib.sha256(json.dumps(_strip_scorer(value), sort_keys=True, default=str).encode("utf-8")).hexdigest()[:16]
 
 
+def _metric_rate(value: Any) -> float:
+    if isinstance(value, Mapping):
+        return float(value.get("rate", 0.0))
+    return float(value)
+
+
 def _simulated_handoff(arm: str, truth: Mapping[str, Any], p104_decision: Mapping[str, Any]) -> bool:
     if arm == "p104":
         return p104_decision.get("route") == "sufficient_for_policy_handoff"
     if arm == "control":
         return False
     return truth.get("outcome_label") in {"valid_handoff", "false_handoff_if_ignored"}
+
+
+def _case_has_state(case: Mapping[str, Any], state: str) -> bool:
+    return any(
+        _mapping(record).get("state") == state
+        for records in _mapping(case.get("tool_results")).values()
+        for record in _sequence(records)
+    )
+
+
+def _build_scorecard(rows: Sequence[Mapping[str, Any]], cases: Sequence[Mapping[str, Any]], arms: Sequence[str]) -> dict[str, Any]:
+    truth_by_case = {str(case.get("case_id")): _mapping(case.get("hidden_scorer_truth")) for case in cases}
+    false_rates: dict[str, RateMetric] = {}
+    for arm in arms:
+        false_handoff_rows = [
+            row
+            for row in rows
+            if row.get("arm") == arm and truth_by_case[str(row.get("case_id"))].get("expected_sufficiency") != "sufficient"
+        ]
+        numerator = sum(1 for row in false_handoff_rows if bool(row.get("action_ready_handoff")))
+        false_rates[arm] = _rate_metric(numerator, len(false_handoff_rows))
+    p104_valid = _recovery_rate(rows, truth_by_case, "p104")
+    p103_valid = _recovery_rate(rows, truth_by_case, "p103")
+    distinction = _absence_unavailable_metric(cases)
+    return {
+        "false_remediation_handoff_rate": false_rates,
+        "valid_case_recovery_retention_delta": {
+            "p104_vs_p103": round(p104_valid["rate"] - p103_valid["rate"], 10),
+            "p104": p104_valid,
+            "p103": p103_valid,
+        },
+        "distinguishes_absence_from_unavailable": True if distinction["passed"] else distinction,
+        "absence_unavailable_denominators": distinction,
+    }
+
+
+def _rate_metric(numerator: int, denominator: int) -> RateMetric:
+    return RateMetric({"numerator": numerator, "denominator": denominator, "rate": numerator / denominator if denominator else 0.0})
+
+
+def _recovery_rate(rows: Sequence[Mapping[str, Any]], truth_by_case: Mapping[str, Mapping[str, Any]], arm: str) -> RateMetric:
+    valid_rows = [
+        row
+        for row in rows
+        if row.get("arm") == arm and truth_by_case[str(row.get("case_id"))].get("expected_sufficiency") == "sufficient"
+    ]
+    return _rate_metric(sum(1 for row in valid_rows if bool(row.get("action_ready_handoff"))), len(valid_rows))
+
+
+def _absence_unavailable_metric(cases: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    valid_absence = sum(1 for case in cases if _mapping(case.get("hidden_scorer_truth")).get("expected_sufficiency") == "insufficient_absent")
+    unavailable = sum(1 for case in cases if _mapping(case.get("hidden_scorer_truth")).get("expected_sufficiency") == "blocked_unavailable")
+    return {
+        "valid_absence_denominator": valid_absence,
+        "unavailable_denominator": unavailable,
+        "passed": valid_absence > 0 and unavailable > 0,
+    }
+
+
+def _build_safety(rows: Sequence[Mapping[str, Any]]) -> dict[str, dict[str, int]]:
+    keys = (
+        "scorer_leakage_count",
+        "repeated_tool_count",
+        "mutating_diagnostic_count",
+        "provider_action_execution_count",
+        "production_mutation_count",
+        "unknown_tool_count",
+        "state_mismatch_count",
+    )
+    return {
+        "counts": {key: sum(int(row.get(key, 0)) for row in rows) for key in keys},
+        "denominators": {key: len(rows) for key in keys},
+    }
 
 
 def _load_seed_cases() -> list[dict[str, Any]]:

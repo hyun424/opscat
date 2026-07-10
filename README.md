@@ -174,9 +174,10 @@ P104 checks whether evidence is fresh, sufficient, cited, non-conflicting, and
 available before any policy handoff. The default run is deterministic,
 network-free, model-call-free, advisory for optional provider use, and action
 disabled. In the recorded full committed fixture run, P104's false-remediation
-handoff rate was 0.0 versus 0.4 for P103, with provider action execution count 0
-and production mutation count 0. It distinguishes valid absence from unavailable
-telemetry and does not claim production effectiveness or unattended operation.
+handoff rate was 0/27 = 0.0 versus 3/27 = 0.1111111111111111 for P103,
+with provider action execution count 0/150 and production mutation count 0/150.
+It distinguishes valid absence from unavailable telemetry with denominators
+1 and 2, and does not claim production effectiveness or unattended operation.
 
 ## Portfolio story
 

@@ -93,8 +93,15 @@ future-window leakage; raw LLM confidence never drives execution.
   private scorer-label ledgers, per-row reconstructable P24 parity manifests,
   anti-clone checks, and label-tamper tests before any release-qualified claim.
 - The G006 source-expansion amendment requires a reviewed source registry,
-  eligibility manifest, DejaVu A1 database adapter, actual Apache/Hadoop/
-  Zookeeper parsers, isolated local queue and deploy harnesses, actual coverage
-  only, and the macro sequence of plan review -> RED tests ->
+  eligibility manifest, DejaVu A1 database adapter, an additional honest
+  database connection-pool source or the exact `p105.database.pool.v1` local
+  SQLite pool harness when database remains supported, actual
+  Apache/Hadoop/Zookeeper parsers, actual RabbitMQ Docker queue runtime, actual
+  loopback `ThreadingHTTPServer` deploy runtime, actual monotonic coverage
+  only, closed schema adapters in the source registry/materializer, canonical
+  artifacts separated from verifier-owned runtime envelopes and raw runtime
+  attestations, exact runtime kinds `actual_sqlite_pool`, `actual_rabbitmq_docker`, and
+  `actual_threading_http_server`, no simulated/in-memory/accelerated release
+  counting, and the macro sequence of plan review -> RED tests ->
   adapters/harness -> actual runs -> release benchmark -> independent code and
   architecture review -> full verify -> only then P106.

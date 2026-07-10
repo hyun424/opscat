@@ -17,6 +17,16 @@ change any P105 floor, metric threshold, or P106 gate.
 - Coverage is the union of observed, evaluable timestamp intervals. It is
   never a top-level duration, row count, fixed four-day constant, accelerated
   logical clock, or floor-sized interval.
+- Simulated, in-memory, accelerated-clock, schedule-only, or synthetic
+  database/queue/deploy artifacts are RED contract evidence only. They may
+  prove that fail-closed tests are wired, but they count as zero rows,
+  positives, incident groups, source tuples, coverage, or P106 unlock credit.
+- Database release credit requires an actual SQLite connection-pool runtime
+  attestation; queue release credit requires an actual RabbitMQ Docker runtime
+  attestation; deploy release credit requires actual loopback
+  `ThreadingHTTPServer` request evidence. All three must bind coverage to real
+  `time.monotonic_ns()` elapsed duration and to observed SQL, broker, or
+  request rows.
 - The source and harness programs below are immutable inputs. Executors may not
   change salts, schedules, rates, windows, thresholds, or cohort mappings after
   reading labels or floor results. A deficient run stays locked and adds an
@@ -58,13 +68,22 @@ uv run --no-sync --extra dev python scripts/build_p105_source_registry.py \
   --candidate-manifest evals/real_datasets/raw/p41_sources.json \
   --candidate-manifest /tmp/opscat-p105-reviewed-p44/p44-reviewed-local-manifest.json \
   --candidate-manifest /tmp/opscat-p105-reviewed-dejavu-a1/p105-dejavu-a1-reviewed-local-manifest.json \
+  --candidate-manifest /tmp/opscat-p105-db-pool-harness/p105-db-pool-harness-manifest.json \
   --candidate-manifest /tmp/opscat-p105-queue-harness/p105-queue-harness-manifest.json \
   --candidate-manifest /tmp/opscat-p105-deploy-harness/p105-deploy-harness-manifest.json \
+  --schema-adapter p32=p105.adapter.p32-replay.v1 \
+  --schema-adapter p41=p105.adapter.p41-sources.v1 \
+  --schema-adapter p44=p105.adapter.p44-reviewed-local.v1 \
+  --schema-adapter dejavu_a1=p105.adapter.dejavu-a1-reviewed-local.v1 \
+  --schema-adapter db_pool=p105.adapter.database-pool-harness.v1 \
+  --schema-adapter queue=p105.adapter.rabbitmq-harness.v1 \
+  --schema-adapter deploy=p105.adapter.threading-http-deploy-harness.v1 \
   --review-ledger /tmp/opscat-p105-source-expansion/p105-source-review-ledger.json \
   --output-registry /tmp/opscat-p105-source-expansion/p105-reviewed-source-registry.json \
   --output-eligibility /tmp/opscat-p105-source-expansion/p105-source-eligibility-manifest.json \
   --created-at 2024-03-09T16:33:20Z \
   --schema-version p105.source-registry.v1 \
+  --fail-on-unknown-source-schema \
   --fail-on-unreviewed-counting-source
 ```
 
@@ -80,6 +99,27 @@ review_ledger_sha256: lowercase SHA-256
 sources: array sorted by source_key
 registry_sha256: SHA-256 of canonical JSON excluding registry_sha256
 ```
+
+`scripts/build_p105_source_registry.py` must use explicit schema adapters, not
+shape guessing. The producer command above is invalid unless it is implemented
+with this closed adapter registry:
+
+```text
+evals/telemetry/replay/p32_replay_pack.json -> p105.adapter.p32-replay.v1
+evals/real_datasets/raw/p41_sources.json -> p105.adapter.p41-sources.v1
+/tmp/opscat-p105-reviewed-p44/p44-reviewed-local-manifest.json -> p105.adapter.p44-reviewed-local.v1
+/tmp/opscat-p105-reviewed-dejavu-a1/p105-dejavu-a1-reviewed-local-manifest.json -> p105.adapter.dejavu-a1-reviewed-local.v1
+/tmp/opscat-p105-db-pool-harness/p105-db-pool-harness-manifest.json -> p105.adapter.database-pool-harness.v1
+/tmp/opscat-p105-queue-harness/p105-queue-harness-manifest.json -> p105.adapter.rabbitmq-harness.v1
+/tmp/opscat-p105-deploy-harness/p105-deploy-harness-manifest.json -> p105.adapter.threading-http-deploy-harness.v1
+```
+
+Each adapter emits one normalized reviewed-source entry with the exact
+`sources[]` schema below plus one or more eligibility candidates. Unknown root
+schema, missing adapter mapping, extra unknown fields, or adapter disagreement
+with reviewed ledger family authority is a hard failure. P105-023 owns the
+closed adapter/parser design and P105-028 owns running the producer with these
+inputs before release materialization.
 
 Every `sources[]` entry is exact and closed to unknown fields:
 
@@ -300,13 +340,158 @@ total = 147780 seconds = 1.7104166667 service-days
 A1 therefore proves the 4+3 incident-group floors but does not by itself meet
 the unchanged 2.0 held-out database service-day floor. Before release
 qualification, P105-028 must add another independently reviewed honest
-database source or isolated database harness with at least 21,480 observed,
-evaluable held-out service-seconds after interval union. That number is a
-preflight deficit report, not a harness target: the added source program must
-be designed and reviewed independently of floors, and its full actual coverage
-is counted without truncating or padding to the deficit. If no such source is
-approved, database remains `source_insufficient` and P106 stays locked. No A1
-incident may be copied, split, cloned, moved, or retuned.
+database source or isolated database connection-pool harness with explicit `db
+connection limit` or connection-pool-saturation truth. This is required even
+when the seven A1 incidents reproduce the 4+3 incident-group floor, because A1
+alone does not satisfy the unchanged held-out database coverage floor. The
+added source must contribute at least 21,480 observed, evaluable held-out
+service-seconds after interval union. That number is a preflight deficit
+report, not a harness target: the added source program must be designed and
+reviewed independently of floors, and its full actual coverage is counted
+without truncating or padding to the deficit. If no such source is approved,
+database remains `source_insufficient` and P106 stays locked. No A1 incident
+may be copied, split, cloned, moved, retimed, or multiplied.
+
+The added database source may be a reviewed raw dataset or the isolated local
+program `p105.database.pool.v1`, owned inside P105-028 rather than a new
+micro-ticket. Its manifest path is:
+
+```text
+/tmp/opscat-p105-db-pool-harness/p105-db-pool-harness-manifest.json
+```
+
+If implemented as a harness, `p105.database.pool.v1` is exact and executable:
+
+```text
+script path = scripts/run_p105_db_pool_harness.py
+runtime = Python standard library only: sqlite3, queue.Queue,
+          threading.BoundedSemaphore, threading, time, hashlib, json
+database path = /tmp/opscat-p105-db-pool-harness/p105-database-pool.sqlite3
+seed = 105028
+SOURCE_DATE_EPOCH = 1710000800
+services = dbpool-svc-00..dbpool-svc-07
+partition rule, assigned before reading the private schedule:
+  dbpool-svc-00..dbpool-svc-03 -> held_out_test
+  dbpool-svc-04..dbpool-svc-07 -> real_derived_shadow
+sqlite connections per service pool = 3
+worker threads per service = 12
+acquisition attempts per worker per second = 1
+acquire timeout = 75 ms
+SQL operation per successful acquisition:
+  INSERT INTO pool_events(service_id, tick, worker_id, attempt_id, started_ns)
+  SELECT COUNT(*) FROM pool_events WHERE service_id = ?
+  UPDATE pool_counters SET observed_count = observed_count + 1 WHERE service_id = ?
+normal hold time = 20 ms
+saturation hold time = 650 ms
+ticks = 7200
+tick_seconds = 1 real monotonic second
+```
+
+The local SQLite database is created by the harness, opened with WAL mode, and
+deleted or overwritten only under the declared output directory. Connections
+are actual `sqlite3.Connection` objects stored in a bounded `queue.Queue` and
+guarded by `threading.BoundedSemaphore(3)`; every successful public row must
+bind to at least one real SQL insert/select/update sequence. No in-memory
+database, mocked connection, synthetic queue, precomputed row generator,
+accelerated clock, app runtime dependency, credential read, network call, or
+production mutation is allowed.
+
+The fixed private saturation schedule is loaded only after public service
+partitions are written:
+
+```text
+dbpool-svc-00 saturation ticks 600..899 and stall ticks 2100..2159
+dbpool-svc-01 saturation ticks 1200..1499 and stall ticks 2700..2759
+dbpool-svc-02 saturation ticks 1800..2099 and stall ticks 3300..3359
+dbpool-svc-03 saturation ticks 2400..2699 and stall ticks 3900..3959
+dbpool-svc-04 saturation ticks 900..1199 and stall ticks 3000..3059
+dbpool-svc-05 saturation ticks 1500..1799 and stall ticks 3600..3659
+dbpool-svc-06 saturation ticks 2100..2399 and stall ticks 4200..4259
+dbpool-svc-07 saturation ticks 2700..2999 and stall ticks 4800..4859
+```
+
+During saturation ticks, nine of twelve workers per service hold acquired
+connections for the saturation hold time. During stall ticks, one acquired
+connection runs `BEGIN IMMEDIATE`, performs the SQL operation, sleeps for the
+stall hold time, and commits. The expected private predicate is
+`db_connection_limit` when either acquisition timeouts are nonzero or p95
+acquisition latency bucket lower bound is at least 250 ms for that service
+tick. The schedule never reads release floors and is not extended, truncated,
+or repeated to fill the A1 deficit; a perfect run contributes at most 28,796
+held-out service-seconds and 28,796 shadow service-seconds before missing-tick
+splits.
+
+Public DB-pool telemetry is one canonical JSONL row per service per successful
+tick:
+
+```text
+schema_version, program_version, runtime_attestation_kind,
+runtime_attestation_capability, seed, tick, event_time, source_window_id,
+service_id, partition_id, sqlite_pool_size, checked_out_count,
+available_count, wait_queue_length, acquisition_attempt_count,
+successful_acquisition_count, failed_acquisition_count, timeout_count,
+acquisition_latency_bucket_counts, acquisition_latency_p50_bucket_ms,
+acquisition_latency_p95_bucket_ms, sql_insert_count, sql_select_count,
+sql_update_count, sql_error_count, coverage_bucket_seconds,
+telemetry_row_sha256
+```
+
+Public telemetry contains deterministic epoch-normalized `event_time` values
+and bucketed latency/coverage summaries only. It must not serialize raw
+monotonic nanoseconds, thread identifiers, SQLite connection object IDs, or OS
+process IDs into canonical byte-identity files.
+
+The private ledger
+`p105-db-pool-private-saturation-ledger.json` contains `injection_id`, `seed`,
+`schedule_sha256`, `service_id`, `partition_id`, `injection_type`,
+`start_tick`, `end_tick`, expected timeout/latency predicate, bound public
+source-window IDs, `label_join_phase = "after_sampling_and_partition"`, and
+ledger hash. Private labels join only after public sampling and partitioning.
+
+Output paths are:
+
+```text
+/tmp/opscat-p105-db-pool-harness/p105-db-pool-public-telemetry.jsonl
+/tmp/opscat-p105-db-pool-harness/p105-db-pool-private-saturation-ledger.json
+/tmp/opscat-p105-db-pool-harness/p105-db-pool-pre-label-partitions.json
+/tmp/opscat-p105-db-pool-harness/p105-db-pool-coverage.json
+/tmp/opscat-p105-db-pool-harness/p105-db-pool-runtime-attestation.raw.json
+/tmp/opscat-p105-db-pool-harness/p105-db-pool-harness-manifest.json
+/tmp/opscat-p105-db-pool-harness/p105-db-pool-provenance-hashes.json
+```
+
+Exact command:
+
+```bash
+SOURCE_DATE_EPOCH=1710000800 \
+uv run --no-sync --extra dev python scripts/run_p105_db_pool_harness.py \
+  --sqlite-db /tmp/opscat-p105-db-pool-harness/p105-database-pool.sqlite3 \
+  --seed 105028 \
+  --services dbpool-svc-00,dbpool-svc-01,dbpool-svc-02,dbpool-svc-03,dbpool-svc-04,dbpool-svc-05,dbpool-svc-06,dbpool-svc-07 \
+  --heldout-services dbpool-svc-00,dbpool-svc-01,dbpool-svc-02,dbpool-svc-03 \
+  --shadow-services dbpool-svc-04,dbpool-svc-05,dbpool-svc-06,dbpool-svc-07 \
+  --pool-size 3 \
+  --workers-per-service 12 \
+  --acquisitions-per-worker-per-second 1 \
+  --acquire-timeout-ms 75 \
+  --normal-hold-ms 20 \
+  --saturation-hold-ms 650 \
+  --ticks 7200 \
+  --tick-seconds 1 \
+  --output-dir /tmp/opscat-p105-db-pool-harness \
+  --mode isolated-local \
+  --created-at 2024-03-09T16:13:20Z \
+  --expect-runtime-attestation-kind actual_sqlite_pool \
+  --expect-no-production-authority
+```
+
+Run twice into `/tmp/opscat-p105-db-pool-harness-rerun`. Canonical files must
+be byte-identical after normalizing only the output directory. The verifier
+separately changes one telemetry byte, one ledger byte, one SQL-operation
+counter, one pool-size argument, one runtime-attestation kind, and one raw
+attestation hash; each change must fail closed. Coverage counts only actual
+successful monotonic observations with at least one SQL operation and never the
+fixed epoch, row count, floor deficit, or cloned A1 incident.
 
 Exact A1 command:
 
@@ -355,10 +540,19 @@ post-incident values, or labels when producing public rows.
 P105-026 owns one component choice: RabbitMQ
 `rabbitmq:3.13-management-alpine`, run only by
 `tools/p105/queue/docker-compose.yml` on a private Docker network with no host
-port publication. The actual image ID and RepoDigest are captured in the
-registry; a changed digest requires review. The harness uses Docker CLI plus
-container-local `rabbitmqadmin`; it adds no Python or application runtime
-dependency.
+port publication. The actual image ID and RepoDigest exist only in the
+run-specific raw attestation and verifier-created envelope, never in the
+canonical registry or manifest; a changed digest fails runtime qualification
+until independently reviewed. The harness uses Docker CLI plus container-local
+`rabbitmqadmin`; it adds no Python or application runtime dependency.
+
+The current in-repo `scripts/run_p105_queue_harness.py` shape is acceptable as
+RED-only contract scaffolding if it simulates queue state in memory. It is not
+release-counting evidence. GREEN release evidence must start the Docker
+RabbitMQ service, publish messages to the broker, consume/reject through broker
+operations, observe broker state after each tick, capture the container ID,
+image ID, RepoDigest, compose file hash, Docker network name, and zero host
+port publications, and bind every public row to a broker observation hash.
 
 Topology is fixed: direct exchange `p105.events`, work queues
 `p105.heldout.work` and `p105.shadow.work`, dead-letter exchange `p105.dlx`, and
@@ -403,7 +597,7 @@ source_window_id, service, partition_id, queue_name,
 messages_ready, messages_unacknowledged, messages_total,
 published_count, acknowledged_count, rejected_count, dlq_messages_ready,
 ack_lag_p50_ticks, ack_lag_p95_ticks, ack_lag_max_ticks,
-oldest_unacked_age_ticks, broker_image_id, broker_repo_digest,
+oldest_unacked_age_ticks, runtime_attestation_kind,
 broker_observation_sha256
 ```
 
@@ -420,16 +614,20 @@ ledger hash. It is joined after public sampling and partitioning.
 
 Coverage for each queue is exactly the merged range of consecutive successful
 broker-observation ticks. The fixed epoch is only canonical timestamp
-normalization; the harness also records `clock_source=time.monotonic_ns` and
-must prove `monotonic_elapsed_seconds >= last_tick-first_tick`. A missing tick
-splits coverage. Thus a perfect run contributes at most 899 actual seconds per
-queue, never four days. Output paths are:
+normalization. Canonical coverage records the clock kind, observed tick
+intervals, and deterministic whole-second elapsed bucket only. The
+run-specific raw attestation records `monotonic_started_ns` and
+`monotonic_finished_ns`; the pre-materialization verifier must prove actual
+elapsed time is at least `last_tick-first_tick`. A missing tick splits coverage.
+Thus a perfect run contributes at most 899 actual seconds per queue, never four
+days. Output paths are:
 
 ```text
 /tmp/opscat-p105-queue-harness/p105-queue-public-telemetry.jsonl
 /tmp/opscat-p105-queue-harness/p105-queue-private-injection-ledger.json
 /tmp/opscat-p105-queue-harness/p105-queue-pre-label-partitions.json
 /tmp/opscat-p105-queue-harness/p105-queue-coverage.json
+/tmp/opscat-p105-queue-harness/p105-queue-runtime-attestation.raw.json
 /tmp/opscat-p105-queue-harness/p105-queue-harness-manifest.json
 /tmp/opscat-p105-queue-harness/p105-queue-provenance-hashes.json
 ```
@@ -451,18 +649,28 @@ uv run --no-sync --extra dev python scripts/run_p105_queue_harness.py \
   --expect-no-production-authority
 ```
 
-Run twice into `/tmp/opscat-p105-queue-harness-rerun`; all six canonical files
-must be byte-identical. The verifier separately changes one telemetry byte,
-one ledger byte, one schedule argument, and the image digest; each change must
-fail provenance verification. The harness stops and tears down the private
-network on any command failure, missing observation, digest mismatch,
-credential lookup, non-loopback/non-Docker endpoint, or host port publication.
+Run twice into `/tmp/opscat-p105-queue-harness-rerun`; all six canonical
+non-raw files must be byte-identical. The raw runtime attestation is verified
+through a separate verifier-owned run envelope, not through canonical artifact
+fields. The verifier separately changes one telemetry byte, one ledger byte,
+one schedule argument, one raw attestation hash in the run envelope, and the
+image digest; each change must fail provenance verification. The harness stops
+and tears down the private network on any command failure, missing observation,
+digest mismatch, credential lookup,
+non-loopback/non-Docker endpoint, or host port publication.
 
 ## Deploy Harness Contract
 
 P105-027 owns a standard-library-only loopback harness using two
 `ThreadingHTTPServer` instances inside one local process. It imports no OpsCat
 production adapter, cloud SDK, deploy client, credential provider, or PR API.
+The current in-repo `scripts/run_p105_deploy_canary_harness.py` shape is
+acceptable as RED-only contract scaffolding if it materializes request rows
+without serving real loopback HTTP traffic. It is not release-counting
+evidence. GREEN release evidence must bind every completed row to an actual
+client request to `127.0.0.1`, a `ThreadingHTTPServer` handler observation,
+measured `time.monotonic_ns()` latency, server port, server thread identity or
+name, and response status/body hash.
 
 Program `p105.deploy.canary.v1` is immutable:
 
@@ -526,10 +734,13 @@ pre/post config hashes, rollback-observed tick, first healthy request ID,
 oracle expected values, oracle result, and artifact hash. Rollback is an
 in-process local config swap only and grants no P106/P107 authority.
 
-Coverage is the union of consecutive ticks with all ten measured responses and
-a complete public telemetry row. It records `clock_source=time.monotonic_ns` and
-is bounded by real monotonic elapsed time; a perfect run contributes at most
-1,199 seconds. Missing requests split or remove coverage. Outputs are:
+Coverage is the union of consecutive ticks with all ten measured loopback
+responses and a complete public telemetry row. Canonical coverage records the
+clock kind, observed tick intervals, and deterministic whole-second elapsed
+bucket only. Raw monotonic start/finish nanoseconds stay in the run-specific
+attestation, and the pre-materialization verifier proves the real elapsed-time
+bound. A perfect run contributes at most 1,199 seconds. Missing requests split
+or remove coverage. Outputs are:
 
 ```text
 /tmp/opscat-p105-deploy-harness/p105-deploy-public-telemetry.jsonl
@@ -537,6 +748,7 @@ is bounded by real monotonic elapsed time; a perfect run contributes at most
 /tmp/opscat-p105-deploy-harness/p105-deploy-pre-label-partitions.json
 /tmp/opscat-p105-deploy-harness/p105-deploy-rollback-evidence.json
 /tmp/opscat-p105-deploy-harness/p105-deploy-coverage.json
+/tmp/opscat-p105-deploy-harness/p105-deploy-runtime-attestation.raw.json
 /tmp/opscat-p105-deploy-harness/p105-deploy-harness-manifest.json
 /tmp/opscat-p105-deploy-harness/p105-deploy-provenance-hashes.json
 ```
@@ -561,8 +773,11 @@ uv run --no-sync --extra dev python scripts/run_p105_deploy_canary_harness.py \
 ```
 
 Run twice into `/tmp/opscat-p105-deploy-harness-rerun`; all seven canonical
-files must be byte-identical. Tampering with telemetry, private ledger, config
-hash, rollback window, command argument, or authority counter must fail closed.
+non-raw files must be byte-identical. The raw runtime attestation is verified
+through a separate verifier-owned run envelope, not through canonical artifact
+fields. Tampering with telemetry, private ledger, config hash, rollback window,
+command argument, raw attestation hash in the run envelope, or authority counter
+must fail closed.
 
 ## Reproducibility and Hash Binding
 
@@ -572,16 +787,108 @@ newline. JSONL applies the same rule per line. `created_at` must equal the
 command's explicit value and `SOURCE_DATE_EPOCH`; wall-clock time is not
 serialized. Every manifest records ordered `command_argv`,
 `command_argv_sha256`, source hashes, public artifact hashes, private-ledger
-hash, partition hash, coverage hash, registry hash, eligibility hash, and a
-root provenance hash.
+hash, partition hash, coverage hash, registry hash, eligibility hash, runtime
+attestation kind/capability, and a canonical artifact root hash. Canonical
+artifacts and manifests must not record raw attestation paths, raw attestation
+hashes, or any hash derived from per-run volatile attestation fields.
 
 Fixed epoch normalization never grants coverage. Queue and deploy coverage is
 valid only when their monotonic elapsed-time attestation passes and each
 covered tick has an actual broker/request observation.
 
+Runtime attestation is deliberately split from canonical byte-identity files.
+Canonical artifacts are deterministic semantic summaries: public telemetry,
+private ledgers, pre-label partitions, coverage interval summaries, rollback
+evidence, reviewed manifests, source registry, eligibility manifest, release
+rows, benchmark outputs, and provenance-hash summaries. They may include
+bucketed elapsed-duration summaries and runtime attestation kind/capability,
+but they must not include boolean release-counting decisions, raw attestation
+paths, raw attestation hashes, container IDs, Docker network names, host port
+scan details, raw monotonic nanoseconds, process IDs, thread IDs, thread names,
+SQLite connection object IDs, ephemeral server ports, or any value derived from
+those volatile fields.
+
+Run-specific raw attestation files are independently verified by
+verifier-owned runtime verification envelopes and excluded from canonical
+byte-identical rerun comparison:
+
+```text
+/tmp/opscat-p105-db-pool-harness/p105-db-pool-runtime-attestation.raw.json
+/tmp/opscat-p105-queue-harness/p105-queue-runtime-attestation.raw.json
+/tmp/opscat-p105-deploy-harness/p105-deploy-runtime-attestation.raw.json
+/tmp/opscat-p105-source-runtime-verification/envelopes/db-pool-run-1.json
+/tmp/opscat-p105-source-runtime-verification/envelopes/db-pool-run-2.json
+/tmp/opscat-p105-source-runtime-verification/envelopes/queue-run-1.json
+/tmp/opscat-p105-source-runtime-verification/envelopes/queue-run-2.json
+/tmp/opscat-p105-source-runtime-verification/envelopes/deploy-run-1.json
+/tmp/opscat-p105-source-runtime-verification/envelopes/deploy-run-2.json
+```
+
+Raw attestations may contain volatile facts required to prove actual runtime:
+container ID, image ID, RepoDigest, Docker network name, zero host port
+publication evidence, raw `monotonic_started_ns`/`monotonic_finished_ns`,
+process ID, thread identity/name, loopback port, and per-runtime observation
+IDs. Pre-materialization runtime verification binds both lanes by creating a
+run envelope that records the canonical artifact root hash, raw attestation
+path, raw attestation SHA-256, runtime attestation kind/capability, and
+verification result. The verifier checks the raw attestation hash for that run
+and compares only canonical artifacts across reruns; run envelopes and raw
+volatile hashes may differ.
+
+`runtime_attestation.kind` has exactly these release-counting values:
+
+```text
+actual_sqlite_pool
+actual_rabbitmq_docker
+actual_threading_http_server
+```
+
+Source telemetry and manifests declare only runtime attestation kind/capability.
+They must not contain `release_counting_allowed`,
+`verified_release_counting`, or equivalent counting authority. Before central
+materialization, `scripts/verify_p105_source_expansion_artifacts.py --phase
+runtime` verifies canonical source artifacts, both raw attestations, runtime
+kinds, command arguments, tamper fixtures, canonical rerun identity, and source
+eligibility. It creates the run envelopes itself and writes
+`p105-source-runtime-qualification.json` as the only verifier-owned source
+qualification receipt with `verified_release_counting=true`. Any other kind,
+including
+`simulated`, `in_memory`, `accelerated_clock`, `schedule_only`, `synthetic`,
+missing, null, or forged values, is always non-counting even if a source
+artifact forges a counting field.
+
 ## Final Run and Verification
 
-P105-028 consumes the reviewed registry and eligibility artifacts exactly:
+P105-028 first creates verifier-owned runtime envelopes and the source
+qualification receipt. Harnesses never create verifier-owned files:
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache \
+uv run --no-sync --extra dev python scripts/verify_p105_source_expansion_artifacts.py \
+  --phase runtime \
+  --registry /tmp/opscat-p105-source-expansion/p105-reviewed-source-registry.json \
+  --eligibility /tmp/opscat-p105-source-expansion/p105-source-eligibility-manifest.json \
+  --db-pool-manifest /tmp/opscat-p105-db-pool-harness/p105-db-pool-harness-manifest.json \
+  --db-pool-rerun-manifest /tmp/opscat-p105-db-pool-harness-rerun/p105-db-pool-harness-manifest.json \
+  --db-pool-raw-attestation /tmp/opscat-p105-db-pool-harness/p105-db-pool-runtime-attestation.raw.json \
+  --db-pool-rerun-raw-attestation /tmp/opscat-p105-db-pool-harness-rerun/p105-db-pool-runtime-attestation.raw.json \
+  --queue-manifest /tmp/opscat-p105-queue-harness/p105-queue-harness-manifest.json \
+  --queue-rerun-manifest /tmp/opscat-p105-queue-harness-rerun/p105-queue-harness-manifest.json \
+  --queue-raw-attestation /tmp/opscat-p105-queue-harness/p105-queue-runtime-attestation.raw.json \
+  --queue-rerun-raw-attestation /tmp/opscat-p105-queue-harness-rerun/p105-queue-runtime-attestation.raw.json \
+  --deploy-manifest /tmp/opscat-p105-deploy-harness/p105-deploy-harness-manifest.json \
+  --deploy-rerun-manifest /tmp/opscat-p105-deploy-harness-rerun/p105-deploy-harness-manifest.json \
+  --deploy-raw-attestation /tmp/opscat-p105-deploy-harness/p105-deploy-runtime-attestation.raw.json \
+  --deploy-rerun-raw-attestation /tmp/opscat-p105-deploy-harness-rerun/p105-deploy-runtime-attestation.raw.json \
+  --write-run-envelopes-dir /tmp/opscat-p105-source-runtime-verification/envelopes \
+  --output-json /tmp/opscat-p105-source-runtime-verification/p105-source-runtime-qualification.json \
+  --expect-byte-identical-canonical-reruns \
+  --expect-tamper-fixtures-fail-closed \
+  --expect-runtime-kinds actual_sqlite_pool,actual_rabbitmq_docker,actual_threading_http_server
+```
+
+The central materializer then consumes that already-existing, hash-bound source
+qualification receipt exactly once:
 
 ```bash
 SOURCE_DATE_EPOCH=1710002000 \
@@ -591,25 +898,51 @@ uv run --no-sync --extra dev python scripts/materialize_p105_release_evidence.py
   --p44-reviewed-local-manifest /tmp/opscat-p105-reviewed-p44/p44-reviewed-local-manifest.json \
   --p44-mode reviewed-local \
   --dejavu-a1-reviewed-local-manifest /tmp/opscat-p105-reviewed-dejavu-a1/p105-dejavu-a1-reviewed-local-manifest.json \
+  --db-pool-harness-manifest /tmp/opscat-p105-db-pool-harness/p105-db-pool-harness-manifest.json \
   --queue-harness-manifest /tmp/opscat-p105-queue-harness/p105-queue-harness-manifest.json \
   --deploy-harness-manifest /tmp/opscat-p105-deploy-harness/p105-deploy-harness-manifest.json \
+  --schema-adapter p32=p105.adapter.p32-replay.v1 \
+  --schema-adapter p41=p105.adapter.p41-sources.v1 \
+  --schema-adapter p44=p105.adapter.p44-reviewed-local.v1 \
+  --schema-adapter dejavu_a1=p105.adapter.dejavu-a1-reviewed-local.v1 \
+  --schema-adapter db_pool=p105.adapter.database-pool-harness.v1 \
+  --schema-adapter queue=p105.adapter.rabbitmq-harness.v1 \
+  --schema-adapter deploy=p105.adapter.threading-http-deploy-harness.v1 \
   --source-registry /tmp/opscat-p105-source-expansion/p105-reviewed-source-registry.json \
   --source-eligibility /tmp/opscat-p105-source-expansion/p105-source-eligibility-manifest.json \
   --output-dir /tmp/opscat-p105-release-qualified \
-  --mode release_qualified
+  --mode release_qualified \
+  --reject-synthetic-four-day-coverage \
+  --require-actual-runtime-attestation \
+  --fail-on-unknown-source-schema \
+  --source-runtime-qualification-receipt /tmp/opscat-p105-source-runtime-verification/p105-source-runtime-qualification.json \
+  --count-only-verified-release-receipts
 ```
 
-If the additional honest database source is unavailable, run the same command
-with `--expect-locked`; publish the exact source-insufficiency report and do not
-run an unlock benchmark.
+P105-024 owns the RED tests for this parser/enforcement surface. P105-028 owns
+the central materializer CLI implementation, schema-adapter parser, unknown
+schema fail-closed behavior, and release-counting enforcement. P105-029 owns
+final release verification and P106 gate enforcement. The central materializer
+counts only rows covered by the pre-materialization source runtime
+qualification receipt bound to canonical source roots and verifier-created run
+envelopes. Final verification validates the resulting release directory but
+does not retroactively grant source counting authority.
+
+If the additional honest database source is unavailable, or if
+database/queue/deploy artifacts are simulated, in-memory, accelerated,
+schedule-only, or missing actual runtime attestation, run the same command with
+`--expect-locked`; publish the exact source-insufficiency or
+runtime-insufficiency report and do not run an unlock benchmark.
 
 The one macro sequence remains:
 
 1. P105-023 records independent plan review and freezes schemas/programs.
 2. P105-024 records RED contract failures.
-3. P105-025 through P105-027 implement adapters and the two frozen harnesses.
+3. P105-025 through P105-027 implement adapters and the two frozen actual
+   runtime harnesses.
 4. P105-028 performs actual runs, registry production, eligibility review, and
-   the release benchmark once.
+   the release benchmark once, including the additional honest database
+   connection-pool source/harness if database is still supported.
 5. P105-029 records independent code review and architecture review, runs the
    complete verification block, and evaluates P106 only after all evidence is
    present.
@@ -639,6 +972,7 @@ uv run --no-sync --extra dev pytest -q \
   tests/test_p105_source_registry_eligibility.py \
   tests/test_p105_source_expansion_contract.py \
   tests/test_p105_dejavu_a1_materializer.py \
+  tests/test_p105_db_pool_harness_materializer.py \
   tests/test_p105_log_parser_materializers.py \
   tests/test_p105_queue_harness_materializer.py \
   tests/test_p105_deploy_harness_materializer.py \
@@ -658,16 +992,14 @@ uv run --no-sync --extra dev pytest -q
 ```bash
 UV_CACHE_DIR=/private/tmp/opscat-uv-cache \
 uv run --no-sync --extra dev python scripts/verify_p105_source_expansion_artifacts.py \
+  --phase release \
   --registry /tmp/opscat-p105-source-expansion/p105-reviewed-source-registry.json \
   --eligibility /tmp/opscat-p105-source-expansion/p105-source-eligibility-manifest.json \
   --dejavu-manifest /tmp/opscat-p105-reviewed-dejavu-a1/p105-dejavu-a1-reviewed-local-manifest.json \
-  --queue-manifest /tmp/opscat-p105-queue-harness/p105-queue-harness-manifest.json \
-  --queue-rerun-manifest /tmp/opscat-p105-queue-harness-rerun/p105-queue-harness-manifest.json \
-  --deploy-manifest /tmp/opscat-p105-deploy-harness/p105-deploy-harness-manifest.json \
-  --deploy-rerun-manifest /tmp/opscat-p105-deploy-harness-rerun/p105-deploy-harness-manifest.json \
+  --source-runtime-qualification-receipt /tmp/opscat-p105-source-runtime-verification/p105-source-runtime-qualification.json \
   --release-dir /tmp/opscat-p105-release-qualified \
-  --expect-byte-identical-reruns \
-  --expect-tamper-fixtures-fail-closed \
+  --expect-verified-release-counting-receipt \
+  --expect-db-pool-command-args \
   --output-json /tmp/opscat-p105-release-qualified/p105-artifact-hash-verification.json
 ```
 
@@ -696,8 +1028,11 @@ Stop and keep `release_qualified=false` and `p106_unlocked=false` on any schema
 deviation, unreviewed license/privacy decision, hash mismatch, unsupported row
 counting, family heuristic, label leakage, post-label partition, changed salt,
 changed harness schedule, changed threshold, floor-aware tuning, cloned
-incident, duplicated window, synthetic coverage, accelerated-clock coverage,
-missing actual observation, non-byte-identical canonical rerun, tamper
+incident, duplicated window, synthetic four-day coverage, simulated or
+in-memory release-counting queue/deploy artifact, accelerated-clock coverage,
+missing actual RabbitMQ Docker attestation, missing actual loopback
+`ThreadingHTTPServer` attestation, missing actual observation,
+non-byte-identical canonical rerun, tamper
 acceptance, production endpoint, credential read, host port, cloud/deploy API,
 real PR, production mutation, self-review, failed verification, or honest
 source insufficiency.

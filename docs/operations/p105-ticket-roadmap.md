@@ -97,18 +97,47 @@ execution boundaries:
   incident groups, source diversity, and coverage.
 - DejaVu A1 at `/private/tmp/opscat-dejavu-A1/A1` is the reviewed-local
   database source candidate for explicit `db connection limit` ground truth
-  under CC-BY-4.0 metadata review.
+  under CC-BY-4.0 metadata review. Because A1 has only seven eligible
+  incidents and does not by itself satisfy the unchanged held-out database
+  coverage floor, database remains locked unless P105-028 also supplies an
+  independently reviewed honest database connection-pool source or isolated
+  `p105.database.pool.v1` harness using local SQLite, `sqlite3` connections in
+  a bounded `queue.Queue`/`threading.BoundedSemaphore` pool, actual SQL
+  insert/select/update operations, fixed partitions, fixed saturation/stall
+  schedule, and observed monotonic service-seconds.
 - Apache, Hadoop, and Zookeeper rows require actual parser outputs plus
   reviewed deploy/config-regression predicates before counting.
-- Queue evidence must come from an isolated local RabbitMQ/Kafka or lighter
-  repo-compatible harness that emits real consumer lag, backlog, and
-  dead-letter telemetry plus a private injection ledger.
-- Deploy evidence must come from an isolated local canary/config regression
-  harness with measurable error, latency, rollback observation, and private
-  injection ledger.
+- Queue evidence must come from an isolated local RabbitMQ Docker runtime that
+  emits real consumer lag, backlog, and dead-letter telemetry plus a private
+  injection ledger. In-memory or schedule-only queue artifacts are RED-only and
+  non-counting.
+- Deploy evidence must come from actual loopback `ThreadingHTTPServer`
+  canary/config regression traffic with measurable error, latency, rollback
+  observation, and private injection ledger. Deterministic row materialization
+  without HTTP serving is RED-only and non-counting.
 - Coverage must come from actual source or harness timestamps only. Fabricated
-  four-day coverage, row-count-derived duration, floor-sized intervals, and
-  top-level constants are not release-qualified evidence.
+  four-day coverage, row-count-derived duration, floor-sized intervals,
+  accelerated logical clocks, and top-level constants are not
+  release-qualified evidence.
+- Registry and materializer schema handling is closed: P105-024 owns RED
+  adapter/enforcement tests, P105-028 owns explicit schema-adapter CLI parsing
+  and fail-closed materialization, and P105-029 owns verifier checks for
+  DB-pool arguments, raw runtime attestations, tamper fixtures, and P106 gate
+  enforcement.
+- Canonical release artifacts exclude volatile runtime IDs, raw monotonic
+  nanoseconds, thread identities, container/network IDs, and ephemeral ports.
+  Canonical artifacts and manifests also exclude raw attestation paths, raw
+  attestation hashes, and any per-run volatile-derived value. Each run writes a
+  verifier-owned runtime verification envelope that binds the canonical
+  artifact root hash, raw attestation path/hash, and verification result;
+  canonical rerun comparison compares only canonical files, while the two run
+  envelopes and raw attestations are independently verified and may differ.
+- Release-counting runtime kinds are exactly `actual_sqlite_pool`,
+  `actual_rabbitmq_docker`, and `actual_threading_http_server`. Source
+  telemetry/manifests declare only runtime attestation kind/capability; the
+  independent verifier writes the qualification receipt with
+  `verified_release_counting=true` only after all checks, and forged source
+  fields remain non-counting.
 - Existing floors and P106 gate thresholds remain unchanged.
 
 ## Outcome

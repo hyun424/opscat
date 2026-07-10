@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib
 import json
 from datetime import datetime
@@ -9,14 +10,24 @@ from typing import Any
 
 import pytest
 
-
 RELEASE_BENCHMARK = Path("evals/proactive/forecast/p105_release_benchmark_rows.json")
 DIAGNOSTIC_CORPUS = Path("evals/proactive/forecast/p105_curated_synthetic_rows.json")
 P32_REPLAY_PACK = Path("evals/telemetry/replay/p32_replay_pack.json")
 P41_SOURCE_CARDS = Path("evals/real_datasets/raw/p41_sources.json")
+P44_MATRIX_MANIFEST = Path("evals/real_datasets/external/p44_benchmark_matrix_manifest.json")
+P105_MODEL_CARD = Path("docs/operations/p105-model-card.md")
+P105_FINAL_SUMMARY = Path("docs/operations/p105-final-summary.md")
+VERIFY_SCRIPT = Path("scripts/verify.sh")
 
 RELEASE_FAMILIES = {"database", "queue", "deploy"}
 SCORER_ONLY_PREFIXES = ("label_", "lead_time_label_minutes", "incident_group_id")
+HASH_SAFE_DIAGNOSTIC_KEYS = {
+    "row_id_hash",
+    "diagnostic_reason_code",
+    "expected_disposition",
+    "actual_disposition",
+    "counted_in_release_gate",
+}
 
 
 def _api() -> Any:
@@ -40,6 +51,72 @@ def _parse_ts(value: str) -> datetime:
 
 def _row_by_id(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {str(row["row_id"]): row for row in payload["rows"]}
+
+
+def _write_payload(tmp_path: Path, name: str, payload: dict[str, Any]) -> Path:
+    path = tmp_path / name
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+    return path
+
+
+def _release_floor_fixture() -> dict[str, Any]:
+    payload = copy.deepcopy(_payload(RELEASE_BENCHMARK))
+    payload["mode"] = "release_qualified"
+    payload["release_qualification"] = {
+        "mode": "release_qualified",
+        "floor_contract_version": "p105-012",
+        "held_out_min_positive_per_family": 2,
+        "held_out_min_negative_per_family": 2,
+        "real_derived_min_positive_per_family": 2,
+        "real_derived_min_negative_per_family": 2,
+        "minimum_union_service_days": 7,
+        "minimum_source_record_sets": 3,
+        "maximum_single_source_fraction": 0.6,
+    }
+    new_rows: list[dict[str, Any]] = []
+    for family in sorted(RELEASE_FAMILIES):
+        for partition in ("held_out", "real_derived_shadow"):
+            base_rows = [row for row in payload["rows"] if row["partition"] == partition and row["family"] == family]
+            for index, base in enumerate(base_rows, start=1):
+                duplicate = copy.deepcopy(base)
+                duplicate["row_id"] = f"{base['row_id']}-floor-extra-{index}"
+                duplicate["source_window_id"] = f"{base['source_window_id']}-floor-extra-{index}"
+                duplicate["forecast_timestamp"] = "2026-01-20T10:00:00Z"
+                duplicate["window_start_timestamp"] = "2026-01-20T09:45:00Z"
+                duplicate["window_end_timestamp"] = "2026-01-20T10:00:00Z"
+                duplicate["scorer_labels"]["incident_group_id"] = f"{duplicate['row_id']}-group"
+                if duplicate["scorer_labels"]["label_positive"] is True:
+                    duplicate["scorer_labels"]["label_incident_id"] = f"{duplicate['row_id']}-incident"
+                    duplicate["scorer_labels"]["label_incident_start_timestamp"] = "2026-01-20T11:00:00Z"
+                    duplicate["scorer_labels"]["lead_time_label_minutes"] = 60
+                if partition == "real_derived_shadow" and index == 2:
+                    duplicate["source_id"] = "p44:loghub:hdfs:public-matrix"
+                    duplicate["derivation"] = {
+                        "type": "p44_public_matrix_adaptation",
+                        "source_path": str(P44_MATRIX_MANIFEST),
+                        "source_event_id": "p44:loghub:hdfs:public-matrix",
+                        "derivation_id": f"derive-{duplicate['row_id']}",
+                        "source_record_hash": hashlib.sha256(duplicate["row_id"].encode()).hexdigest(),
+                        "byte_offset": index * 100,
+                    }
+                else:
+                    duplicate["derivation"]["derivation_id"] = f"derive-{duplicate['row_id']}"
+                    duplicate["derivation"]["source_event_id"] = duplicate["source_id"]
+                new_rows.append(duplicate)
+                payload["partitions"][partition]["row_ids"].append(duplicate["row_id"])
+    payload["rows"].extend(new_rows)
+    payload["service_day_coverage"] = {
+        family: {
+            "coverage_intervals": [
+                {"service": f"{family}-primary", "start": "2026-01-01T00:00:00Z", "end": "2026-01-04T12:00:00Z"},
+                {"service": f"{family}-primary", "start": "2026-01-04T12:00:00Z", "end": "2026-01-08T00:00:00Z"},
+            ],
+            "covered_service_seconds": 604800,
+            "service_days": 7.0,
+        }
+        for family in sorted(RELEASE_FAMILIES)
+    }
+    return payload
 
 
 def _public_key_paths(value: Any, prefix: str = "") -> set[str]:
@@ -243,3 +320,202 @@ def test_run_p105_benchmark_locks_p106_when_any_release_family_or_evidence_denom
             "missing": "negative_evidence_denominator",
         }
     ]
+
+
+def test_run_p105_benchmark_normalizes_missing_mode_to_smoke_only_missing_mode() -> None:
+    report = _api().run_p105_benchmark(RELEASE_BENCHMARK)
+
+    assert report["release_gate"]["qualification_mode"] == "smoke_only_missing_mode"
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
+
+
+def test_run_p105_benchmark_normalizes_unknown_mode_to_smoke_only_missing_mode(tmp_path: Path) -> None:
+    payload = _payload(RELEASE_BENCHMARK)
+    payload["mode"] = "release-ready-but-not-predeclared"
+    path = _write_payload(tmp_path, "p105-unknown-mode.json", payload)
+
+    report = _api().run_p105_benchmark(path)
+
+    assert report["release_gate"]["qualification_mode"] == "smoke_only_missing_mode"
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
+
+
+def test_current_committed_release_fixture_is_smoke_only_until_floor_metadata_exists() -> None:
+    report = _api().run_p105_benchmark(RELEASE_BENCHMARK)
+
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["smoke_only_reason"] == "tiny_release_fixture_missing_release_qualification_floors"
+    assert report["release_gate"]["p106_unlocked"] is False
+
+
+def test_release_qualification_requires_anti_tiny_n_source_diversity_and_union_service_day_floors(tmp_path: Path) -> None:
+    payload = _release_floor_fixture()
+    payload["rows"] = [
+        row
+        for row in payload["rows"]
+        if not (row["partition"] == "real_derived_shadow" and row["family"] == "deploy" and row["scorer_labels"]["label_positive"] is False)
+    ]
+    path = _write_payload(tmp_path, "p105-floor-missing-deploy-real-negative.json", payload)
+
+    report = _api().run_p105_benchmark(path)
+
+    floors = report["release_gate"]["qualification_floors"]
+    assert floors["families"]["deploy"]["real_derived_shadow"]["negative_count"]["pass"] is False
+    assert floors["source_diversity"]["distinct_source_record_sets"]["minimum"] == 3
+    assert floors["source_diversity"]["maximum_single_source_fraction"]["maximum"] == 0.6
+    assert floors["service_day_coverage"]["union_service_days"]["minimum"] == 7
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
+
+
+def test_coverage_interval_union_prevents_overlapping_service_day_dilution(tmp_path: Path) -> None:
+    payload = _release_floor_fixture()
+    payload["service_day_coverage"]["database"] = {
+        "coverage_intervals": [
+            {"service": "checkout-api", "start": "2026-01-01T00:00:00Z", "end": "2026-01-06T00:00:00Z"},
+            {"service": "checkout-api", "start": "2026-01-03T00:00:00Z", "end": "2026-01-08T00:00:00Z"},
+        ],
+        "covered_service_seconds": 864000,
+        "service_days": 10.0,
+    }
+    path = _write_payload(tmp_path, "p105-overlapping-coverage.json", payload)
+
+    report = _api().run_p105_benchmark(path)
+
+    database_coverage = report["release_gate"]["qualification_floors"]["service_day_coverage"]["families"]["database"]
+    assert database_coverage["raw_service_days"] == 10.0
+    assert database_coverage["union_service_days"] == 7.0
+    assert database_coverage["pass"] is True
+
+
+def test_post_incident_public_features_fail_release_closed(tmp_path: Path) -> None:
+    payload = _payload(RELEASE_BENCHMARK)
+    payload["rows"][0]["public_features"]["post_incident"] = {"resolved_at": "2026-01-03T11:00:00Z"}
+    path = _write_payload(tmp_path, "p105-post-incident-leak.json", payload)
+
+    report = _api().run_p105_benchmark(path)
+
+    assert "post_incident_leakage" in report["release_gate"]["validation_error_codes"]
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
+
+
+def test_predeclared_partitions_reject_time_order_and_incident_group_isolation_violations(tmp_path: Path) -> None:
+    payload = _payload(RELEASE_BENCHMARK)
+    held_out_row = next(row for row in payload["rows"] if row["partition"] == "held_out")
+    shadow_row = next(row for row in payload["rows"] if row["partition"] == "real_derived_shadow")
+    shadow_row["scorer_labels"]["incident_group_id"] = held_out_row["scorer_labels"]["incident_group_id"]
+    shadow_row["forecast_timestamp"] = "2026-01-01T00:00:00Z"
+    path = _write_payload(tmp_path, "p105-partition-isolation-break.json", payload)
+
+    report = _api().run_p105_benchmark(path)
+
+    assert "incident_group_partition_overlap" in report["release_gate"]["validation_error_codes"]
+    assert "partition_time_order_violation" in report["release_gate"]["validation_error_codes"]
+    assert report["release_gate"]["release_qualified"] is False
+
+
+def test_supported_valid_rows_cannot_be_hidden_in_private_safety_diagnostics(tmp_path: Path) -> None:
+    payload = _payload(RELEASE_BENCHMARK)
+    hidden = copy.deepcopy(next(row for row in payload["rows"] if row["partition"] == "held_out" and row["family"] == "database"))
+    hidden["row_id"] = "p105-hidden-supported-valid-diagnostic"
+    hidden["partition"] = "diagnostic"
+    hidden["split"] = "diagnostic"
+    hidden["split_id"] = payload["partitions"]["diagnostic"]["split_id"]
+    hidden["expected_diagnostic_disposition"] = "abstain_fail_closed"
+    payload["rows"].append(hidden)
+    payload["partitions"]["diagnostic"]["row_ids"].append(hidden["row_id"])
+    path = _write_payload(tmp_path, "p105-hidden-valid-diagnostic.json", payload)
+
+    report = _api().run_p105_benchmark(path)
+
+    assert "supported_valid_row_hidden_in_diagnostic" in report["release_gate"]["validation_error_codes"]
+    assert report["release_gate"]["release_qualified"] is False
+
+
+def test_private_safety_diagnostics_publish_only_hash_safe_metadata() -> None:
+    report = _api().run_p105_benchmark(RELEASE_BENCHMARK)
+
+    for row in report["diagnostic_partition"]["rows"]:
+        assert set(row) <= HASH_SAFE_DIAGNOSTIC_KEYS
+        assert "row_id" not in row
+        assert len(row["row_id_hash"]) == 64
+
+
+def test_source_record_row_generator_is_deterministic_and_emits_canonical_provenance(tmp_path: Path) -> None:
+    api = _api()
+
+    first = api.generate_p105_source_record_rows(max_rows=2000, output_path=tmp_path / "first.json")
+    api.generate_p105_source_record_rows(max_rows=2000, output_path=tmp_path / "second.json")
+
+    assert first["row_count"] <= 2000
+    assert (tmp_path / "first.json").read_bytes() == (tmp_path / "second.json").read_bytes()
+    for row in first["rows"]:
+        provenance = row["source_record_provenance"]
+        assert {
+            "canonical_source_tuple",
+            "source_content_hash",
+            "source_record_hash",
+            "byte_offset",
+            "record_offset",
+            "source_timestamp",
+            "derivation_id",
+            "derivation_type",
+        } <= set(provenance)
+        assert set(provenance["canonical_source_tuple"]) == {
+            "program",
+            "family",
+            "dataset",
+            "source_id",
+            "source_path",
+            "source_version",
+        }
+
+
+def test_source_id_only_provenance_fails_closed_for_release(tmp_path: Path) -> None:
+    payload = _payload(RELEASE_BENCHMARK)
+    real_row = next(row for row in payload["rows"] if row["partition"] == "real_derived_shadow")
+    real_row["derivation"] = {"source_path": "evals/telemetry/replay/p32_replay_pack.json"}
+    path = _write_payload(tmp_path, "p105-source-id-only-provenance.json", payload)
+
+    report = _api().run_p105_benchmark(path)
+
+    assert "source_record_provenance_missing" in report["release_gate"]["validation_error_codes"]
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
+
+
+def test_release_benchmark_uses_actual_p24_risk_signal_baseline_authority() -> None:
+    report = _api().run_p105_benchmark(RELEASE_BENCHMARK)
+
+    assert report["held_out_calibration"]["p24_baseline"]["authority"] == "app.services.proactive_risk_sentinel.RiskSignal"
+    assert report["held_out_calibration"]["p24_baseline"]["uses_actual_risk_signal_from_window"] is True
+
+
+def test_release_docs_verify_model_card_and_final_summary_are_wired() -> None:
+    model_card = P105_MODEL_CARD.read_text(encoding="utf-8")
+    final_summary = P105_FINAL_SUMMARY.read_text(encoding="utf-8")
+    verify = VERIFY_SCRIPT.read_text(encoding="utf-8")
+
+    assert "P105 model card" in model_card
+    assert "smoke_only_missing_mode" in model_card
+    assert "release_qualified" in model_card
+    assert "P106 remains locked" in final_summary
+    assert "p105_release_benchmark_smoke" in verify
+    assert "tests/test_p105_release_evidence.py" in verify
+
+
+def test_floor_scale_generated_evidence_is_release_qualified_only_when_metrics_and_safety_pass(tmp_path: Path) -> None:
+    payload = _release_floor_fixture()
+    path = _write_payload(tmp_path, "p105-floor-scale-release-qualified.json", payload)
+
+    report = _api().run_p105_benchmark(path)
+
+    assert report["release_gate"]["qualification_mode"] == "release_qualified"
+    assert report["release_gate"]["qualification_floors"]["pass"] is True
+    assert report["release_gate"]["unchanged_metrics"]["pass"] is True
+    assert report["release_gate"]["safety_boundary"]["pass"] is True
+    assert report["release_gate"]["release_qualified"] is True
+    assert report["release_gate"]["p106_unlocked"] is True

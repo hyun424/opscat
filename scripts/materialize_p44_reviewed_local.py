@@ -6,6 +6,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -233,11 +234,51 @@ def _nab_public_records(source: dict[str, Any], manifest_path: Path) -> tuple[li
     return records, summary
 
 
-def _parse_loghub_timestamp(line: str) -> datetime:
-    parts = line.split()
-    if len(parts) >= 2:
-        return _parse_timestamp(f"{parts[0]} {parts[1]}")
-    raise ValueError("loghub timestamp missing")
+APACHE_LOGHUB_RE = re.compile(r"^\[(?P<ts>[A-Z][a-z]{2} [A-Z][a-z]{2} +\d{1,2} \d{2}:\d{2}:\d{2} \d{4})\] \[(?P<level>[A-Za-z]+)\]")
+HADOOP_LOGHUB_RE = re.compile(r"^(?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}),\d{3} (?P<level>[A-Z]+)\b")
+ZOOKEEPER_LOGHUB_RE = re.compile(r"^(?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}),\d{3} - (?P<level>[A-Z]+)\b")
+HDFS_LOGHUB_RE = re.compile(r"^(?P<date>\d{6}) (?P<time>\d{6}) \d+ (?P<level>[A-Z]+)\b")
+
+
+def _declared_loghub_dataset(source: dict[str, Any]) -> str:
+    declared = " ".join(
+        str(source.get(key) or "")
+        for key in ("source_key", "source_dataset", "source_manifest_key", "parser_version")
+    ).lower()
+    if "apache" in declared:
+        return "apache"
+    if "hadoop" in declared:
+        return "hadoop"
+    if "zookeeper" in declared:
+        return "zookeeper"
+    if "hdfs" in declared:
+        return "hdfs"
+    return ""
+
+
+def _parse_loghub_line(line: str, source: dict[str, Any]) -> tuple[datetime, str]:
+    dataset = _declared_loghub_dataset(source)
+    if dataset == "apache":
+        match = APACHE_LOGHUB_RE.match(line)
+        if not match:
+            raise ValueError("apache loghub timestamp missing")
+        return datetime.strptime(match.group("ts"), "%a %b %d %H:%M:%S %Y").replace(tzinfo=UTC), match.group("level").upper()
+    if dataset == "hadoop":
+        match = HADOOP_LOGHUB_RE.match(line)
+        if not match:
+            raise ValueError("hadoop loghub timestamp missing")
+        return _parse_timestamp(match.group("ts")), match.group("level").upper()
+    if dataset == "zookeeper":
+        match = ZOOKEEPER_LOGHUB_RE.match(line)
+        if not match:
+            raise ValueError("zookeeper loghub timestamp missing")
+        return _parse_timestamp(match.group("ts")), match.group("level").upper()
+    if dataset == "hdfs":
+        match = HDFS_LOGHUB_RE.match(line)
+        if not match:
+            raise ValueError("hdfs loghub timestamp missing")
+        return _parse_timestamp(f"{match.group('date')} {match.group('time')}"), match.group("level").upper()
+    raise ValueError("declared loghub parser_version/source dataset unsupported")
 
 
 def _loghub_public_records(source: dict[str, Any], manifest_path: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -251,11 +292,10 @@ def _loghub_public_records(source: dict[str, Any], manifest_path: Path) -> tuple
     for line_index, line in enumerate(lines):
         if not line.strip():
             continue
-        ts = _parse_loghub_timestamp(line)
+        ts, level = _parse_loghub_line(line, source)
         timestamps.append(ts)
         start = _format_ts(ts)
         end = _format_ts(ts + timedelta(seconds=1))
-        level = line.split()[3] if len(line.split()) > 3 else "INFO"
         source_window_id = f"{source['source_key']}:line:{line_index}"
         seed = {
             "canonical_raw_bytes": line,

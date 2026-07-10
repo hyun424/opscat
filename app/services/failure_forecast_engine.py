@@ -1866,6 +1866,17 @@ def _g006_family_from_source(source_system: str, manifest_source: Mapping[str, A
     return {"p32": "database", "p41": "deploy", "p44": "deploy"}.get(source_system, "database")
 
 
+def _g006_reviewed_v3_family(record: Mapping[str, Any]) -> str | None:
+    mapping = record.get("family_proxy_mapping", {}) if isinstance(record.get("family_proxy_mapping"), Mapping) else {}
+    if mapping:
+        if record.get("countable_for_release_floors") is False or mapping.get("mapping_review_status") != "reviewed_supported":
+            return None
+        family = str(mapping.get("family") or "")
+        return family if family in {"database", "deploy", "queue"} else None
+    family = str(record.get("family") or "")
+    return family if family in {"database", "deploy", "queue"} else None
+
+
 def _g006_labels_from_record(
     record: Mapping[str, Any],
     family: str,
@@ -2299,7 +2310,12 @@ def _g006_p44_rows(p44_reviewed_local_manifest: str | Path | None) -> tuple[list
                 seen_p24_windows.add(p24_window)
             if schema_version == "p105.reviewed_p44_local_manifest.v1":
                 continue
-            family = _g006_family_from_source("p44", manifest_source, record)
+            if schema_version == "p105.reviewed_p44_local_manifest.v3":
+                family = _g006_reviewed_v3_family(record)
+                if family is None:
+                    continue
+            else:
+                family = _g006_family_from_source("p44", manifest_source, record)
             partition = str(record.get("pre_label_partition") or record.get("partition") or "real_derived_shadow")
             if partition not in {"held_out", "real_derived_shadow"}:
                 partition = "real_derived_shadow"

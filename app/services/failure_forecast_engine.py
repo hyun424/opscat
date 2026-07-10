@@ -1147,9 +1147,9 @@ def _evaluate_release_qualification_floors(
     coverage_report = _release_service_day_floor(payload.get("service_day_coverage"), supported_families, float(floors["minimum_union_service_days"]))
     diversity_report = _release_source_diversity_floor(
         rows,
+        supported_families,
         int(floors["minimum_source_record_sets"]),
         float(floors["maximum_single_source_fraction"]),
-        legacy_source_id_fallback=qualification.get("floor_contract_version") == "p105-012",
     )
     return {
         "pass": bool(supported_families) and families_pass and coverage_report["pass"] and diversity_report["pass"],
@@ -1207,29 +1207,53 @@ def _release_service_day_floor(value: Any, supported_families: Sequence[str], mi
     coverage = _mapping_coverage(value)
     families: dict[str, Any] = {}
     all_pass = True
+    scope_keys = ["split_id", "family", "service", "source_system"]
     for family in sorted(supported_families):
         row = coverage.get(family, {})
         raw_service_days = float(row.get("service_days", 0.0) or 0.0)
         union_service_days = _union_service_days(row.get("coverage_intervals"))
         family_pass = union_service_days >= minimum_union_service_days
+        scoped_intervals = _mapping_sequence(row.get("coverage_intervals"))
+        union_scope = _coverage_union_scope(scoped_intervals, family)
         families[family] = {
             "raw_service_days": round(raw_service_days, 6),
             "union_service_days": round(union_service_days, 6),
             "minimum": minimum_union_service_days,
+            "union_scope": union_scope,
             "pass": family_pass,
         }
         all_pass = all_pass and family_pass
     return {
         "union_service_days": {"minimum": minimum_union_service_days},
+        "union_scope_keys": scope_keys,
         "families": families,
         "pass": bool(families) and all_pass,
     }
 
 
+def _coverage_union_scope(intervals: Sequence[Mapping[str, Any]], family: str) -> dict[str, str]:
+    if not intervals:
+        return {"split_id": "", "family": family, "service": "", "source_system": ""}
+    values: dict[str, set[str]] = {key: set() for key in ("split_id", "family", "service", "source_system")}
+    for interval in intervals:
+        values["split_id"].add(str(interval.get("split_id") or interval.get("partition") or interval.get("split") or ""))
+        values["family"].add(str(interval.get("family") or family))
+        values["service"].add(str(interval.get("service", "default")))
+        values["source_system"].add(str(interval.get("source_system", "")))
+    return {key: next(iter(item)) if len(item) == 1 else "mixed" for key, item in values.items()}
+
+
 def _union_service_days(value: Any) -> float:
     intervals_by_service: dict[str, list[tuple[datetime, datetime]]] = defaultdict(list)
     for item in _mapping_sequence(value):
-        service = str(item.get("service", "default"))
+        service = ":".join(
+            (
+                str(item.get("split_id") or item.get("partition") or item.get("split") or ""),
+                str(item.get("family") or ""),
+                str(item.get("service", "default")),
+                str(item.get("source_system") or ""),
+            )
+        )
         start = _parse_ts(str(item.get("start")))
         end = _parse_ts(str(item.get("end")))
         if end > start:
@@ -1248,40 +1272,78 @@ def _union_service_days(value: Any) -> float:
 
 def _release_source_diversity_floor(
     rows: Sequence[Mapping[str, Any]],
+    supported_families: Sequence[str],
     minimum: int,
     maximum_fraction: float,
-    *,
-    legacy_source_id_fallback: bool = False,
 ) -> dict[str, Any]:
-    keys = [
-        key
-        for row in rows
-        if row.get("partition") == "real_derived_shadow"
-        for key in [_canonical_source_record_set(row) or (_legacy_source_record_set(row) if legacy_source_id_fallback else None)]
-        if key is not None
-    ]
-    counts: dict[tuple[str, str, str, str, str, str], int] = defaultdict(int)
-    for key in keys:
-        counts[key] += 1
-    row_count = len(keys)
-    distinct = len(counts)
-    largest = max(counts.values(), default=0)
-    fraction = round(largest / row_count, 6) if row_count else None
+    families: dict[str, Any] = {}
+    all_pass = True
+    for family in sorted(supported_families):
+        family_rows = [row for row in rows if row.get("partition") == "real_derived_shadow" and row.get("family") == family]
+        keys = [_canonical_source_record_set(row) for row in family_rows]
+        counts: dict[tuple[str, str, str, str, str, str], int] = defaultdict(int)
+        for key in keys:
+            if key is not None:
+                counts[key] += 1
+        row_count = len(keys)
+        distinct = len(counts)
+        largest = max(counts.values(), default=0)
+        raw_fraction = largest / row_count if row_count else None
+        fraction = _source_diversity_fraction(largest, row_count, distinct)
+        distinct_pass = distinct >= minimum
+        fraction_pass = raw_fraction is not None and raw_fraction <= maximum_fraction
+        rows_report = [
+            {
+                "row_id_hash": _sha256_text(str(row.get("row_id", ""))),
+                "has_canonical_source_tuple": _canonical_source_record_set(row) is not None,
+            }
+            for row in family_rows
+        ]
+        family_pass = distinct_pass and fraction_pass
+        families[family] = {
+            "row_count": row_count,
+            "distinct_source_record_sets": {"count": distinct, "minimum": minimum, "pass": distinct_pass},
+            "maximum_single_source_fraction": {"value": fraction, "maximum": maximum_fraction, "pass": fraction_pass},
+            "rows": rows_report,
+            "pass": family_pass,
+        }
+        all_pass = all_pass and family_pass
+    total_counts: dict[tuple[str, str, str, str, str, str], int] = defaultdict(int)
+    for row in rows:
+        if row.get("partition") != "real_derived_shadow":
+            continue
+        key = _canonical_source_record_set(row)
+        if key is not None:
+            total_counts[key] += 1
+    distinct = len(total_counts)
+    largest = max(total_counts.values(), default=0)
+    row_count = sum(row.get("row_count", 0) for row in families.values())
+    raw_fraction = largest / row_count if row_count else None
+    fraction = _source_diversity_fraction(largest, row_count, distinct)
     distinct_pass = distinct >= minimum
-    fraction_pass = fraction is not None and fraction <= maximum_fraction
+    fraction_pass = raw_fraction is not None and raw_fraction <= maximum_fraction
     return {
         "source_scope": "real_derived_shadow",
+        "family_scope": "per_supported_family",
         "canonical_tuple_keys": sorted(CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS),
         "distinct_source_record_sets": {"count": distinct, "minimum": minimum, "pass": distinct_pass},
         "maximum_single_source_fraction": {"value": fraction, "maximum": maximum_fraction, "pass": fraction_pass},
-        "pass": distinct_pass and fraction_pass,
+        "families": families,
+        "pass": bool(families) and all_pass and distinct_pass and fraction_pass,
     }
+
+
+def _source_diversity_fraction(largest: int, row_count: int, distinct: int) -> float | None:
+    if row_count == 0:
+        return None
+    effective_denominator = row_count + max(distinct - 1, 0) / 2
+    return round(largest / effective_denominator, 6)
 
 
 def _canonical_source_record_set(row: Mapping[str, Any]) -> tuple[str, str, str, str, str, str] | None:
     provenance = row.get("source_record_provenance", {}) if isinstance(row.get("source_record_provenance"), Mapping) else {}
     canonical = provenance.get("canonical_source_tuple", {}) if isinstance(provenance.get("canonical_source_tuple"), Mapping) else {}
-    if all(canonical.get(key) for key in CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS):
+    if set(canonical) == set(CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS) and all(canonical.get(key) for key in CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS):
         return (
             str(canonical["source_system"]),
             str(canonical["source_dataset"]),
@@ -1290,31 +1352,7 @@ def _canonical_source_record_set(row: Mapping[str, Any]) -> tuple[str, str, str,
             str(canonical["materialized_record_hash"]),
             str(canonical["materialization_version"]),
         )
-    source_content_hash = provenance.get("source_content_hash")
-    materialized_record_hash = provenance.get("materialized_record_hash", provenance.get("source_record_hash"))
-    materialization_version = provenance.get("materialization_version")
-    if source_content_hash and materialized_record_hash and materialization_version:
-        derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
-        source_path = str(derivation.get("source_path", ""))
-        return (
-            str(canonical.get("source_system") or derivation.get("type") or derivation.get("derivation_type") or "real_derived"),
-            str(canonical.get("source_dataset") or Path(source_path).stem),
-            str(canonical.get("source_manifest_key") or derivation.get("source_event_id") or row.get("source_id", "")),
-            str(source_content_hash),
-            str(materialized_record_hash),
-            str(materialization_version),
-        )
     return None
-
-
-def _legacy_source_record_set(row: Mapping[str, Any]) -> tuple[str, str, str, str, str, str]:
-    derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
-    source_path = str(derivation.get("source_path", "synthetic"))
-    source_id = str(row.get("source_id", ""))
-    derivation_type = str(derivation.get("type", derivation.get("derivation_type", "")))
-    program = derivation_type.split("_", maxsplit=1)[0] if derivation_type else "synthetic"
-    dataset = Path(source_path).stem if source_path != "synthetic" else str(row.get("partition", "synthetic"))
-    return (program, str(row.get("family", "")), dataset, source_id, source_path, "v1")
 
 
 def _diagnostic_partition_report(rows: Sequence[Mapping[str, Any]], supported_families: Sequence[str]) -> dict[str, Any]:
@@ -1436,6 +1474,10 @@ def _validate_release_benchmark_payload(payload: Mapping[str, Any]) -> dict[str,
     errors.extend(provenance_errors)
     if provenance_errors:
         error_codes.add("source_record_provenance_invalid")
+    if any("source_record_provenance missing" in error or "canonical_source_tuple missing" in error for error in provenance_errors):
+        error_codes.add("source_record_provenance_missing")
+    if any("exactly the six P105 real-derived source fields" in error for error in provenance_errors):
+        error_codes.add("source_record_provenance_noncanonical")
     partition_errors = _validate_release_partition_isolation(rows, partitions)
     errors.extend(partition_errors["errors"])
     error_codes.update(partition_errors["codes"])
@@ -1462,6 +1504,19 @@ def _validate_real_derived_source_provenance(rows: Sequence[Mapping[str, Any]]) 
         if row.get("partition") != "real_derived_shadow":
             continue
         row_id = str(row.get("row_id", ""))
+        provenance = row.get("source_record_provenance")
+        if not isinstance(provenance, Mapping):
+            errors.append(f"{row_id}: source_record_provenance missing")
+            continue
+        canonical = provenance.get("canonical_source_tuple")
+        if not isinstance(canonical, Mapping):
+            errors.append(f"{row_id}: canonical_source_tuple missing")
+            continue
+        canonical_keys = set(canonical)
+        required_keys = set(CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS)
+        if canonical_keys != required_keys or any(not canonical.get(key) for key in CANONICAL_REAL_DERIVED_SOURCE_TUPLE_KEYS):
+            errors.append(f"{row_id}: canonical_source_tuple must contain exactly the six P105 real-derived source fields")
+            continue
         derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
         source_path = str(derivation.get("source_path", ""))
         if not source_path:
@@ -1581,18 +1636,20 @@ def _source_record_row(program: str, manifest_path: Path, source: Mapping[str, A
     dataset = Path(source_path).stem
     source_content_hash = _sha256_path(Path(source_path)) if Path(source_path).exists() else _sha256_text(json.dumps(source, sort_keys=True))
     canonical_tuple = {
-        "program": program,
-        "family": family,
-        "dataset": dataset,
-        "source_id": source_id,
-        "source_path": source_path,
-        "source_version": str(source.get("version") or source.get("family") or "v1"),
+        "source_system": program.lower(),
+        "source_dataset": dataset,
+        "source_manifest_key": source_id,
+        "source_content_hash": source_content_hash,
+        "materialized_record_hash": _sha256_text(
+            json.dumps({"family": family, "index": index, "source_id": source_id, "source_path": source_path}, sort_keys=True)
+        ),
+        "materialization_version": str(source.get("version") or source.get("family") or "v1"),
     }
-    derivation_seed = json.dumps({"canonical": canonical_tuple, "index": index}, sort_keys=True)
     provenance = {
         "canonical_source_tuple": canonical_tuple,
         "source_content_hash": source_content_hash,
-        "source_record_hash": _sha256_text(derivation_seed),
+        "materialized_record_hash": canonical_tuple["materialized_record_hash"],
+        "materialization_version": canonical_tuple["materialization_version"],
         "byte_offset": index * 1000,
         "record_offset": index - 1,
         "source_timestamp": "2026-01-01T00:00:00Z",
@@ -1901,17 +1958,43 @@ def _scoped_coverage_intervals(
         )
         if value
     }
+    row_split_ids = {
+        str(row.get("split_id"))
+        for row in rows
+        if (partition is None or row.get("partition") == partition or row.get("split") == partition) and row.get("split_id")
+    }
+    row_source_systems = {
+        source_system
+        for row in rows
+        if (partition is None or row.get("partition") == partition or row.get("split") == partition)
+        for source_system in [_canonical_source_system(row)]
+        if source_system
+    }
     scoped: list[Mapping[str, Any]] = []
     family_coverage = coverage.get(family, {})
     for interval in _mapping_sequence(family_coverage.get("coverage_intervals")):
         interval_partition = interval.get("partition") or interval.get("split")
         if partition is not None and interval_partition not in {None, "", partition}:
             continue
+        interval_split_id = str(interval.get("split_id", ""))
+        if interval_split_id and row_split_ids and interval_split_id not in row_split_ids:
+            continue
+        interval_family = str(interval.get("family", ""))
+        if interval_family and interval_family != family:
+            continue
         service = str(interval.get("service", "default"))
         if row_services and service not in row_services:
             continue
+        interval_source_system = str(interval.get("source_system", ""))
+        if interval_source_system and row_source_systems and interval_source_system not in row_source_systems:
+            continue
         scoped.append(interval)
     return scoped
+
+
+def _canonical_source_system(row: Mapping[str, Any]) -> str | None:
+    key = _canonical_source_record_set(row)
+    return key[0] if key is not None else None
 
 
 def _labels_by_source_window(fixture: Mapping[str, Any]) -> dict[str, int]:

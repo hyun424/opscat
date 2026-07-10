@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
@@ -58,6 +59,15 @@ LEGACY_RUNTIME_ADAPTER_BY_FLEET_ADAPTER = {
     "queue_fleet": "queue",
     "deploy_fleet": "deploy",
 }
+LEGACY_DEPLOY_REQUIRED_ARTIFACT_ROLES = {
+    "actual_coverage",
+    "harness_manifest",
+    "pre_label_partitions",
+    "private_injection_ledger",
+    "provenance_hashes",
+    "public_telemetry",
+    "rollback_evidence",
+}
 KNOWN_ROOT_SCHEMAS = {
     SOURCE_MANIFEST_SCHEMA_VERSION,
     "p105.reviewed_p44_local_manifest.v1",
@@ -101,7 +111,11 @@ def _json_sha256(value: Any) -> str:
 
 
 def _file_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _read_json(path: Path, label: str) -> dict[str, Any]:
@@ -318,6 +332,14 @@ def _validate_closed_adapter_profile(
                 raise RegistryError(f"fleet_adapter_rejects_legacy_deploy_root: {manifest_path}: {schema}")
             return
         if legacy_root_adapter == "deploy":
+            artifacts = manifest.get("artifact_paths") or manifest.get("artifacts")
+            if (
+                declared_adapter_key is None
+                and declared_adapter_version is None
+                and isinstance(artifacts, dict)
+                and LEGACY_DEPLOY_REQUIRED_ARTIFACT_ROLES <= set(artifacts)
+            ):
+                return
             raise RegistryError(f"fleet_adapter_rejects_legacy_deploy_root: {manifest_path}: {schema}")
 
 
@@ -475,15 +497,14 @@ def _source_with_hash(source: dict[str, Any]) -> dict[str, Any]:
     return source
 
 
-def _read_jsonl_objects(path: Path) -> list[dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        parsed = json.loads(line)
-        if isinstance(parsed, dict):
-            rows.append(parsed)
-    return rows
+def _read_jsonl_objects(path: Path) -> Iterator[dict[str, Any]]:
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            parsed = json.loads(line)
+            if isinstance(parsed, dict):
+                yield parsed
 
 
 def _coverage_interval_ids(artifacts: dict[str, dict[str, Any]], source_key: str) -> list[str]:
@@ -704,13 +725,22 @@ def _runtime_source(manifest_path: Path, manifest: dict[str, Any], adapter_key: 
     source_key = str(manifest.get("source_key") or default_key)
     windows: list[dict[str, Any]] = []
     public_telemetry = artifacts.get("public_telemetry")
-    if public_telemetry:
+    if adapter_key.endswith("_fleet"):
+        windows.append(
+            {
+                "source_window_id": source_key,
+                "pre_label_partition_id": "receipt_bound_fleet",
+            }
+        )
+    elif public_telemetry:
         for row in _read_jsonl_objects(Path(str(public_telemetry["path"]))):
+            source_window_id = str(row.get("source_window_id") or source_key)
             windows.append(
                 {
-                    "source_window_id": str(row.get("source_window_id") or source_key),
+                    "source_window_id": source_window_id,
                     "pre_label_partition_id": str(row.get("partition_id") or row.get("pre_label_partition") or "unpartitioned"),
                     "coverage_seconds": int(row.get("coverage_bucket_seconds") or 0),
+                    "coverage_interval_ids": [f"{source_key}:window:{source_window_id}"],
                 }
             )
     if not windows:
@@ -941,7 +971,7 @@ def _registry_sources_for_manifest(
 def _eligibility_entry(source: dict[str, Any], decision: dict[str, Any] | None, window: dict[str, Any] | None = None) -> dict[str, Any]:
     window = window or {}
     privacy = source["privacy"]
-    reviewed = _is_approved(decision) or (
+    reviewed = decision is not None or (
         privacy["review_status"] == "reviewed-local" and bool(privacy["reviewer_id"]) and bool(privacy["reviewed_at"])
     )
     family = str(source["source_family_candidate"])

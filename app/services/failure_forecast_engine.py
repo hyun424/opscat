@@ -15,7 +15,7 @@ import json
 import re
 import sys
 from collections import defaultdict
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, replace
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -2403,32 +2403,46 @@ def _g006_label_hash(row: Mapping[str, Any], canonical: Mapping[str, Any], recor
     return _sha256_text(_stable_json(payload))
 
 
-def _g006_read_records(path: Path) -> list[tuple[int, str, dict[str, Any]]]:
+def _g006_iter_records(path: Path) -> Iterator[tuple[int, str, dict[str, Any]]]:
     if not path.exists():
         raise FileNotFoundError(path)
-    text = path.read_text(encoding="utf-8")
     if path.suffix == ".jsonl":
-        rows: list[tuple[int, str, dict[str, Any]]] = []
-        for offset, line in enumerate(text.splitlines()):
-            if line.strip():
-                parsed = json.loads(line)
-                if isinstance(parsed, Mapping):
-                    rows.append((offset, line, dict(parsed)))
-        return rows
+        with path.open(encoding="utf-8") as handle:
+            for offset, line in enumerate(handle):
+                raw = line.rstrip("\r\n")
+                if raw.strip():
+                    parsed = json.loads(raw)
+                    if isinstance(parsed, Mapping):
+                        yield (offset, raw, dict(parsed))
+        return
+    text = path.read_text(encoding="utf-8")
     if path.suffix == ".csv":
-        csv_rows = list(csv.DictReader(text.splitlines()))
-        return [(offset, _stable_json(row), dict(row)) for offset, row in enumerate(csv_rows)]
+        for offset, row in enumerate(csv.DictReader(text.splitlines())):
+            yield (offset, _stable_json(row), dict(row))
+        return
     payload = json.loads(text)
     if isinstance(payload, Mapping):
         if isinstance(payload.get("data"), Mapping) and isinstance(payload["data"].get("result"), Sequence):
-            return [(offset, _stable_json(item), dict(item)) for offset, item in enumerate(payload["data"]["result"]) if isinstance(item, Mapping)]
+            for offset, item in enumerate(payload["data"]["result"]):
+                if isinstance(item, Mapping):
+                    yield (offset, _stable_json(item), dict(item))
+            return
         for key in ("series", "issues", "sources"):
             if isinstance(payload.get(key), Sequence):
-                return [(offset, _stable_json(item), dict(item)) for offset, item in enumerate(payload[key]) if isinstance(item, Mapping)]
-        return [(0, _stable_json(payload), dict(payload))]
+                for offset, item in enumerate(payload[key]):
+                    if isinstance(item, Mapping):
+                        yield (offset, _stable_json(item), dict(item))
+                return
+        yield (0, _stable_json(payload), dict(payload))
+        return
     if isinstance(payload, Sequence) and not isinstance(payload, (str, bytes, bytearray)):
-        return [(offset, _stable_json(item), dict(item)) for offset, item in enumerate(payload) if isinstance(item, Mapping)]
-    return []
+        for offset, item in enumerate(payload):
+            if isinstance(item, Mapping):
+                yield (offset, _stable_json(item), dict(item))
+
+
+def _g006_read_records(path: Path) -> list[tuple[int, str, dict[str, Any]]]:
+    return list(_g006_iter_records(path))
 
 
 def _g006_family_from_source(source_system: str, manifest_source: Mapping[str, Any], record: Mapping[str, Any]) -> str:
@@ -3248,6 +3262,150 @@ def _g006_fleet_coverage_by_service(
     return result
 
 
+def _g006_select_runtime_records(
+    records: Iterable[tuple[int, str, dict[str, Any]]],
+    *,
+    source_system: str,
+) -> list[tuple[int, str, dict[str, Any]]]:
+    """Select bounded, label-blind runtime evidence per service and partition."""
+
+    buckets: dict[tuple[str, str], dict[str, tuple[int, str, dict[str, Any]]]] = {}
+    fleet_signal_samples: dict[
+        tuple[str, str, int | float], tuple[int, str, dict[str, Any]]
+    ] = {}
+    fleet_signal_fallbacks: dict[
+        tuple[Any, ...], tuple[int, str, dict[str, Any]]
+    ] = {}
+    family = {
+        "db_pool": "database",
+        "queue": "queue",
+        "deploy": "deploy",
+        "database_fleet": "database",
+        "queue_fleet": "queue",
+        "deploy_fleet": "deploy",
+    }[source_system]
+    for offset, raw_record, source_record in records:
+        partition = _g006_runtime_partition(source_record)
+        service = str(
+            source_record.get("service")
+            or source_record.get("service_id")
+            or source_record.get("queue_name")
+            or f"{family}-service"
+        )
+        key = (service, partition)
+        candidate = (offset, raw_record, source_record)
+        bucket = buckets.setdefault(key, {})
+        signal = _g006_public_signal_strength(source_record, partition, offset)
+        if not source_system.endswith("_fleet") or signal < 0.7:
+            bucket.setdefault("first", candidate)
+        if signal >= 0.7:
+            if source_system.endswith("_fleet"):
+                event_ordinal = source_record.get("sample_ordinal")
+                if not isinstance(event_ordinal, (int, float)):
+                    event_ordinal = source_record.get("tick")
+                public_signal_shape = tuple(
+                    source_record.get(field)
+                    for field in (
+                        "acquisition_failed",
+                        "acquire_wait_slow_observed",
+                        "transaction_slow_observed",
+                        "sql_error_count",
+                        "messages_ready",
+                        "dlq_messages_ready",
+                        "status_code",
+                    )
+                )
+                if isinstance(event_ordinal, (int, float)):
+                    fleet_signal_samples.setdefault(
+                        (service, partition, event_ordinal), candidate
+                    )
+                else:
+                    fleet_signal_fallbacks.setdefault(
+                        (partition, public_signal_shape), candidate
+                    )
+            else:
+                bucket.setdefault("signal", candidate)
+        else:
+            bucket.setdefault("normal", candidate)
+        if not source_system.endswith("_fleet") or signal < 0.7:
+            bucket["tail"] = candidate
+    selected: dict[int, tuple[int, str, dict[str, Any]]] = {}
+    for bucket in buckets.values():
+        for role in ("first", "signal", "normal", "tail"):
+            bucket_candidate = bucket.get(role)
+            if bucket_candidate is not None:
+                selected[bucket_candidate[0]] = bucket_candidate
+    ordinals_by_service_partition: dict[
+        tuple[str, str], list[tuple[int | float, tuple[int, str, dict[str, Any]]]]
+    ] = {}
+    for (service, partition, event_ordinal), candidate in fleet_signal_samples.items():
+        ordinals_by_service_partition.setdefault((service, partition), []).append(
+            (event_ordinal, candidate)
+        )
+    fleet_episode_candidates: list[
+        tuple[str, int | float, str, tuple[int, str, dict[str, Any]]]
+    ] = []
+    episode_gap_tolerance = 7 if source_system == "database_fleet" else 1
+    for (service, partition), ordinal_candidates in ordinals_by_service_partition.items():
+        previous_ordinal: int | float | None = None
+        for event_ordinal, candidate in sorted(ordinal_candidates, key=lambda item: item[0]):
+            if (
+                previous_ordinal is None
+                or event_ordinal > previous_ordinal + episode_gap_tolerance
+            ):
+                fleet_episode_candidates.append(
+                    (partition, event_ordinal, service, candidate)
+                )
+            previous_ordinal = event_ordinal
+    if source_system == "database_fleet":
+        candidates_by_partition: dict[
+            str,
+            list[tuple[int | float, str, tuple[int, str, dict[str, Any]]]],
+        ] = {}
+        for partition, event_ordinal, service, candidate in fleet_episode_candidates:
+            candidates_by_partition.setdefault(partition, []).append(
+                (event_ordinal, service, candidate)
+            )
+        for partition_candidates in candidates_by_partition.values():
+            ordered = sorted(partition_candidates, key=lambda item: item[0])
+            cursor = 0
+            while cursor < len(ordered):
+                cluster_start = ordered[cursor][0]
+                cluster = []
+                while (
+                    cursor < len(ordered)
+                    and ordered[cursor][0] <= cluster_start + 4
+                ):
+                    cluster.append(ordered[cursor])
+                    cursor += 1
+                if len({service for _, service, _ in cluster}) >= 3:
+                    candidate = min(cluster, key=lambda item: item[2][0])[2]
+                    selected[candidate[0]] = candidate
+    else:
+        fleet_episode_onsets: dict[
+            tuple[str, int | float], tuple[int, str, dict[str, Any]]
+        ] = {}
+        for partition, event_ordinal, _, candidate in fleet_episode_candidates:
+            fleet_episode_onsets.setdefault((partition, event_ordinal), candidate)
+        for candidate in fleet_episode_onsets.values():
+            selected[candidate[0]] = candidate
+    for candidate in fleet_signal_fallbacks.values():
+        selected[candidate[0]] = candidate
+    return [selected[offset] for offset in sorted(selected)]
+
+
+def _g006_runtime_partition(record: Mapping[str, Any]) -> str:
+    declared = record.get("partition_id") or record.get("pre_label_partition") or record.get("partition") or record.get("split") or record.get("split_id")
+    if declared:
+        return _g006_normalize_partition(declared)
+    source_window_id = str(record.get("source_window_id") or "")
+    if "real_derived_shadow" in source_window_id:
+        return "real_derived_shadow"
+    if "held_out" in source_window_id:
+        return "held_out"
+    return "diagnostic"
+
+
 def _g006_runtime_source_rows(
     manifest_path: Path,
     source_system: str,
@@ -3292,9 +3450,10 @@ def _g006_runtime_source_rows(
     )
     rows: list[dict[str, Any]] = []
     ledger: list[dict[str, Any]] = []
-    for offset, raw_record, source_record in _g006_read_records(public_path):
-        sequence_index = sequence_start + offset + 1
-        partition = _g006_normalize_partition(source_record.get("partition_id") or source_record.get("pre_label_partition"))
+    selected_records = _g006_select_runtime_records(_g006_iter_records(public_path), source_system=source_system)
+    for selected_index, (offset, raw_record, source_record) in enumerate(selected_records):
+        sequence_index = sequence_start + selected_index + 1
+        partition = _g006_runtime_partition(source_record)
         window_id = str(source_record.get("source_window_id") or f"{source_system}-{offset}")
         adapted_record = dict(source_record)
         adapted_record["family"] = family
@@ -3398,6 +3557,26 @@ def _g006_dejavu_rows(
         "review_status": manifest.get("review_status"),
     }
     return rows, ledger, source_summary, source_manifest
+
+
+def _g006_source_is_release_eligible(
+    source_eligibility: str | Path | None,
+    source_key: str,
+) -> bool:
+    """Honor an explicit source-level eligibility decision when one exists."""
+
+    if source_eligibility is None:
+        return True
+    payload = _load_json(Path(source_eligibility))
+    matching_entries = [
+        entry
+        for entry in _mapping_sequence(payload.get("entries", ()))
+        if str(entry.get("source_key") or "") == source_key
+    ]
+    return not matching_entries or any(
+        entry.get("eligible_for_release_floor") is True
+        for entry in matching_entries
+    )
 
 
 def materialize_p105_release_qualified_evidence(
@@ -3509,7 +3688,13 @@ def materialize_p105_release_qualified_evidence(
         if isinstance(coverage_value, Mapping):
             verified_fleet_coverage_by_source = coverage_value
     sequence_start = len(seed_rows) + len(p44_rows)
-    if dejavu_a1_reviewed_local_manifest is not None:
+    if (
+        dejavu_a1_reviewed_local_manifest is not None
+        and _g006_source_is_release_eligible(
+            source_eligibility,
+            "dejavu-a1-reviewed-local",
+        )
+    ):
         source_rows, source_ledger, source_preflight, source_manifest_entry = _g006_dejavu_rows(
             Path(dejavu_a1_reviewed_local_manifest),
             sequence_start,

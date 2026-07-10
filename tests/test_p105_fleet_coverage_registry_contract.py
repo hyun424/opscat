@@ -242,6 +242,30 @@ def test_registry_accepts_exact_nested_queue_fleet_declarations_before_later_val
     assert "runtime source queue_fleet is missing required artifacts" in completed.stderr
 
 
+def test_registry_accepts_complete_legacy_deploy_manifest_alongside_closed_fleet_adapter() -> None:
+    registry = _registry_api()
+    manifest = {
+        "verifier_compatibility": {"manifest_schema": "p105.deploy.harness.manifest.v1"},
+        "artifact_paths": {
+            "actual_coverage": "coverage.json",
+            "harness_manifest": "manifest.json",
+            "pre_label_partitions": "partitions.json",
+            "private_injection_ledger": "private.json",
+            "provenance_hashes": "provenance.json",
+            "public_telemetry": "telemetry.jsonl",
+            "raw_attestation": "attestation.json",
+            "rollback_evidence": "rollback.json",
+        },
+    }
+
+    registry._validate_closed_adapter_profile(
+        Path("legacy-deploy-manifest.json"),
+        manifest,
+        ALL_SCHEMA_ADAPTERS,
+        fail_on_unknown_source_schema=True,
+    )
+
+
 def test_registry_infers_exact_fleet_families_from_nested_public_config_without_top_level_family(tmp_path: Path) -> None:
     manifests = [_minimal_nested_fleet_runtime_manifest(tmp_path, adapter_key) for adapter_key in ("database_fleet", "queue_fleet", "deploy_fleet")]
     ledger = _write_json(tmp_path / "ledger.json", {"schema_version": "p105.source-review-ledger.v1", "decisions": []})
@@ -276,6 +300,57 @@ def test_registry_infers_exact_fleet_families_from_nested_public_config_without_
         "queue_fleet": ("queue", "queue"),
         "deploy_fleet": ("deploy", "deploy"),
     }
+
+
+def test_fleet_registry_uses_one_receipt_bound_source_entry_instead_of_copying_every_sample(tmp_path: Path) -> None:
+    manifest = _minimal_nested_fleet_runtime_manifest(tmp_path, "queue_fleet")
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    public_path = manifest.parent / payload["artifact_paths"]["public_telemetry"]
+    _write_jsonl(
+        public_path,
+        [
+            {
+                "source_key": "p105-fleet-queue",
+                "source_window_id": f"p105-fleet-queue-window-{index:03d}",
+                "partition_id": "held_out_test",
+                "coverage_bucket_seconds": 60,
+            }
+            for index in range(100)
+        ],
+    )
+    ledger = _write_json(tmp_path / "ledger.json", {"schema_version": "p105.source-review-ledger.v1", "decisions": []})
+    registry_path = tmp_path / "registry.json"
+    eligibility_path = tmp_path / "eligibility.json"
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(REGISTRY_SCRIPT),
+            "--candidate-manifest",
+            str(manifest),
+            "--review-ledger",
+            str(ledger),
+            "--output-registry",
+            str(registry_path),
+            "--output-eligibility",
+            str(eligibility_path),
+            "--created-at",
+            "2024-03-09T16:33:20Z",
+            "--schema-version",
+            "p105.source-registry.v1",
+            "--fail-on-unknown-source-schema",
+            *[item for key, adapter in ALL_SCHEMA_ADAPTERS.items() for item in ("--schema-adapter", f"{key}={adapter}")],
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    entries = json.loads(eligibility_path.read_text(encoding="utf-8"))["entries"]
+    assert len(entries) == 1
+    assert entries[0]["source_window_id"] == "p105-fleet-queue"
+    assert entries[0]["coverage_interval_ids"]
 
 
 def test_materializer_cli_accepts_fleet_manifest_args_and_receipt_root() -> None:
@@ -335,6 +410,190 @@ def test_verifier_runtime_cli_accepts_fleet_run_envelope_roots() -> None:
     assert args.database_fleet_manifest == Path("database-fleet.json")
     assert args.queue_fleet_manifest == Path("queue-fleet.json")
     assert args.deploy_fleet_manifest == Path("deploy-fleet.json")
+
+
+def test_fleet_only_canonical_rerun_selection_does_not_require_legacy_manifests() -> None:
+    verifier = _verifier_api()
+    args = verifier._build_arg_parser().parse_args(
+        [
+            "--phase",
+            "runtime",
+            "--database-fleet-manifest",
+            "database-fleet.json",
+            "--database-fleet-rerun-manifest",
+            "database-fleet-rerun.json",
+            "--queue-fleet-manifest",
+            "queue-fleet.json",
+            "--queue-fleet-rerun-manifest",
+            "queue-fleet-rerun.json",
+            "--deploy-fleet-manifest",
+            "deploy-fleet.json",
+            "--deploy-fleet-rerun-manifest",
+            "deploy-fleet-rerun.json",
+        ]
+    )
+
+    specs = verifier._canonical_rerun_specs(args, legacy_args_present=False, fleet_args_present=True)
+
+    assert [source for source, _, _ in specs] == ["database_fleet", "queue_fleet", "deploy_fleet"]
+
+
+def test_runtime_materializer_selects_bounded_public_evidence_per_service_partition() -> None:
+    selector = _forecast_api()._g006_select_runtime_records
+    records = [
+        (
+            index,
+            json.dumps({"source_window_id": f"window-{index}"}),
+                {
+                    "adapter_key": "queue_fleet",
+                    "source_window_id": f"window-{index}",
+                "service": "queue-svc-001",
+                "partition_id": "held_out",
+                "messages_ready": 1 if index == 500 else 0,
+                "private_label": {"label_positive": index % 2 == 0},
+            },
+        )
+        for index in range(1000)
+    ]
+
+    selected = selector(records, source_system="queue_fleet")
+    selected_without_private_labels = selector(
+        [(offset, raw, {key: value for key, value in record.items() if key != "private_label"}) for offset, raw, record in records],
+        source_system="queue_fleet",
+    )
+
+    assert [offset for offset, _, _ in selected] == [0, 500, 999]
+    assert [offset for offset, _, _ in selected_without_private_labels] == [0, 500, 999]
+
+
+def test_runtime_partition_falls_back_to_fleet_window_identity() -> None:
+    partition = _forecast_api()._g006_runtime_partition(
+        {"source_window_id": "p105-fleet-deploy-real_derived_shadow-svc007-sample123"}
+    )
+
+    assert partition == "real_derived_shadow"
+
+
+def test_runtime_selector_deduplicates_same_fleet_signal_across_services() -> None:
+    selector = _forecast_api()._g006_select_runtime_records
+    records = []
+    offset = 0
+    for service_index in range(10):
+        for sample_ordinal, messages_ready in ((0, 0), (181, 1), (719, 0)):
+            record = {
+                "adapter_key": "queue_fleet",
+                "source_window_id": f"queue-held_out-svc{service_index:03d}-sample{sample_ordinal:03d}",
+                "service": f"queue-svc-{service_index:03d}",
+                "partition_id": "held_out",
+                "sample_ordinal": sample_ordinal,
+                "messages_ready": messages_ready,
+                "dlq_messages_ready": 0,
+            }
+            records.append((offset, json.dumps(record), record))
+            offset += 1
+
+    selected = selector(records, source_system="queue_fleet")
+
+    assert sum(record["messages_ready"] > 0 for _, _, record in selected) == 1
+
+
+def test_runtime_selector_collapses_contiguous_fleet_signal_episode() -> None:
+    selector = _forecast_api()._g006_select_runtime_records
+    records = []
+    for offset, (sample_ordinal, messages_ready) in enumerate(
+        ((0, 0), (181, 1), (182, 1), (183, 1), (400, 0), (500, 1), (501, 1), (719, 0))
+    ):
+        record = {
+            "adapter_key": "queue_fleet",
+            "source_window_id": f"queue-held_out-svc000-sample{sample_ordinal:03d}",
+            "service": "queue-svc-000",
+            "partition_id": "held_out",
+            "sample_ordinal": sample_ordinal,
+            "messages_ready": messages_ready,
+            "dlq_messages_ready": 0,
+        }
+        records.append((offset, json.dumps(record), record))
+
+    selected = selector(records, source_system="queue_fleet")
+
+    selected_signal_ordinals = [
+        record["sample_ordinal"]
+        for _, _, record in selected
+        if record["messages_ready"] > 0
+    ]
+    assert selected_signal_ordinals == [181, 500]
+
+
+def test_runtime_selector_requires_correlated_database_fleet_precursors() -> None:
+    selector = _forecast_api()._g006_select_runtime_records
+    records = []
+    offset = 0
+    for service_index, onset in ((0, 60), (1, 61), (2, 62), (4, 66), (5, 66), (6, 67)):
+        for sample_ordinal in (0, onset, onset + 4, 719):
+            signal = sample_ordinal in (onset, onset + 4)
+            record = {
+                "adapter_key": "database_fleet",
+                "source_window_id": f"database-held_out-svc{service_index:03d}-sample{sample_ordinal:03d}",
+                "service_id": f"database-svc-{service_index:03d}",
+                "partition_id": "held_out",
+                "sample_ordinal": sample_ordinal,
+                "acquisition_failed": False,
+                "acquire_wait_slow_observed": False,
+                "transaction_slow_observed": signal,
+                "sql_error_count": 0,
+            }
+            records.append((offset, json.dumps(record), record))
+            offset += 1
+    for sample_ordinal in (0, 300, 719):
+        isolated = {
+            "adapter_key": "database_fleet",
+            "source_window_id": f"database-held_out-svc100-sample{sample_ordinal:03d}",
+            "service_id": "database-svc-100",
+            "partition_id": "held_out",
+            "sample_ordinal": sample_ordinal,
+            "acquisition_failed": False,
+            "acquire_wait_slow_observed": False,
+            "transaction_slow_observed": sample_ordinal == 300,
+            "sql_error_count": 0,
+        }
+        records.append((offset, json.dumps(isolated), isolated))
+        offset += 1
+
+    selected = selector(records, source_system="database_fleet")
+
+    selected_signal_ordinals = [
+        record["sample_ordinal"]
+        for _, _, record in selected
+        if record["transaction_slow_observed"]
+    ]
+    assert selected_signal_ordinals == [60, 66]
+
+
+def test_runtime_selector_does_not_bypass_database_correlation_at_boundaries() -> None:
+    selector = _forecast_api()._g006_select_runtime_records
+    records = []
+    for offset, (sample_ordinal, signal) in enumerate(
+        ((0, True), (10, False), (20, True))
+    ):
+        record = {
+            "adapter_key": "database_fleet",
+            "source_window_id": f"database-held_out-svc100-sample{sample_ordinal:03d}",
+            "service_id": "database-svc-100",
+            "partition_id": "held_out",
+            "sample_ordinal": sample_ordinal,
+            "acquisition_failed": False,
+            "acquire_wait_slow_observed": False,
+            "transaction_slow_observed": signal,
+            "sql_error_count": 0,
+        }
+        records.append((offset, json.dumps(record), record))
+
+    selected = selector(records, source_system="database_fleet")
+
+    assert all(
+        record["transaction_slow_observed"] is False
+        for _, _, record in selected
+    )
 
 
 def test_raw_monotonic_adjacency_accepts_only_4_0_through_7_5_second_deltas() -> None:

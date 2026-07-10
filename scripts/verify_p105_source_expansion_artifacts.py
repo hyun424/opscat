@@ -39,7 +39,13 @@ EXPECTED_RUNTIME_KIND_BY_SOURCE = {
     "queue_fleet": "actual_rabbitmq_docker",
 }
 RAW_EVIDENCE_KEYS = {
-    "actual_rabbitmq_docker": ("container_id", "docker_network_name", "rabbitmq_management_observed", "broker_observation"),
+    "actual_rabbitmq_docker": (
+        "container_id",
+        "docker_network_name",
+        "rabbitmq_management_observed",
+        "broker_observation",
+        "raw_broker_observations",
+    ),
     "actual_sqlite_pool": ("sqlite_connection_observations", "sql_operation_evidence", "monotonic_started_ns"),
     "actual_threading_http_server": ("loopback_port", "thread_id", "handler_observation", "monotonic_started_ns"),
 }
@@ -687,6 +693,32 @@ def _parse_expected_runtime_kinds(value: str | None) -> set[str]:
     return {item.strip() for item in value.split(",") if item.strip()}
 
 
+def _canonical_rerun_specs(
+    args: argparse.Namespace,
+    *,
+    legacy_args_present: bool,
+    fleet_args_present: bool,
+) -> list[tuple[str, Path | None, Path | None]]:
+    specs: list[tuple[str, Path | None, Path | None]] = []
+    if legacy_args_present:
+        specs.extend(
+            [
+                ("db_pool", args.db_pool_manifest, args.db_pool_rerun_manifest),
+                ("queue", args.queue_manifest, args.queue_rerun_manifest),
+                ("deploy", args.deploy_manifest, args.deploy_rerun_manifest),
+            ]
+        )
+    if fleet_args_present:
+        specs.extend(
+            [
+                ("database_fleet", args.database_fleet_manifest, args.database_fleet_rerun_manifest),
+                ("queue_fleet", args.queue_fleet_manifest, args.queue_fleet_rerun_manifest),
+                ("deploy_fleet", args.deploy_fleet_manifest, args.deploy_fleet_rerun_manifest),
+            ]
+        )
+    return specs
+
+
 def _run_runtime_phase(args: argparse.Namespace) -> int:
     errors: list[str] = []
     registry, registry_errors = _verify_optional_source_file(args.registry, name="registry")
@@ -753,19 +785,11 @@ def _run_runtime_phase(args: argparse.Namespace) -> int:
             if segments_sha256 is not None:
                 verified_fleet_coverage_segment_sha256[source] = segments_sha256
     if args.expect_byte_identical_canonical_reruns:
-        rerun_specs = [
-            ("db_pool", args.db_pool_manifest, args.db_pool_rerun_manifest),
-            ("queue", args.queue_manifest, args.queue_rerun_manifest),
-            ("deploy", args.deploy_manifest, args.deploy_rerun_manifest),
-        ]
-        if fleet_args_present:
-            rerun_specs.extend(
-                [
-                    ("database_fleet", args.database_fleet_manifest, args.database_fleet_rerun_manifest),
-                    ("queue_fleet", args.queue_fleet_manifest, args.queue_fleet_rerun_manifest),
-                    ("deploy_fleet", args.deploy_fleet_manifest, args.deploy_fleet_rerun_manifest),
-                ]
-            )
+        rerun_specs = _canonical_rerun_specs(
+            args,
+            legacy_args_present=legacy_args_present,
+            fleet_args_present=fleet_args_present,
+        )
         for source, primary, rerun in rerun_specs:
             if primary is None or rerun is None:
                 errors.append(f"{source}_rerun_manifest_missing")
@@ -949,6 +973,10 @@ def _verify_release_bindings(
         or any(source in source_manifest_sources for source in FLEET_RUNTIME_SOURCE_ENTRIES)
         or any(source in preflight_sources for source in FLEET_RUNTIME_SOURCE_ENTRIES)
     )
+    require_dejavu = _source_is_release_eligible(
+        eligibility_path,
+        "dejavu-a1-reviewed-local",
+    )
     if source_manifest is not None:
         expected_receipt_hash = _binding_sha256(source_manifest, "source_runtime_qualification_receipt")
         actual_receipt_hash = _sha256_path(source_receipt_path) if source_receipt_path is not None and source_receipt_path.exists() else None
@@ -984,7 +1012,11 @@ def _verify_release_bindings(
         if not isinstance(fleet_receipt_roots, dict):
             fleet_receipt_roots = {}
         runtime_sources = (*LEGACY_RUNTIME_SOURCE_ENTRIES, *FLEET_RUNTIME_SOURCE_ENTRIES) if fleet_release else LEGACY_RUNTIME_SOURCE_ENTRIES
-        for source in ("dejavu_a1", *runtime_sources):
+        required_manifest_sources = (
+            *(("dejavu_a1",) if require_dejavu else ()),
+            *runtime_sources,
+        )
+        for source in required_manifest_sources:
             if not isinstance(source_manifest_sources.get(source), dict):
                 errors.append(f"source_manifest_{source}_missing")
         for source in runtime_sources:
@@ -998,7 +1030,7 @@ def _verify_release_bindings(
                 errors.append(f"{source}_artifact_root_mismatch")
     if preflight is not None:
         preflight_required_sources = (
-            "dejavu_a1",
+            *(("dejavu_a1",) if require_dejavu else ()),
             *((*LEGACY_RUNTIME_SOURCE_ENTRIES, *FLEET_RUNTIME_SOURCE_ENTRIES) if fleet_release else LEGACY_RUNTIME_SOURCE_ENTRIES),
         )
         for source in preflight_required_sources:
@@ -1006,6 +1038,62 @@ def _verify_release_bindings(
                 errors.append(f"source_preflight_{source}_missing")
     verified_root = _sha256_text(_stable_json(verified_artifacts)) if verified_artifacts else None
     return rows_payload, source_manifest, verified_artifacts, verified_root, errors
+
+
+def _source_is_release_eligible(
+    eligibility_path: Path | None,
+    source_key: str,
+) -> bool:
+    if eligibility_path is None or not eligibility_path.exists():
+        return True
+    try:
+        payload = _read_json(eligibility_path)
+    except (OSError, json.JSONDecodeError, ValueError):
+        return True
+    entries = payload.get("entries")
+    if not isinstance(entries, list):
+        return True
+    matching_entries = [
+        entry
+        for entry in entries
+        if isinstance(entry, dict) and str(entry.get("source_key") or "") == source_key
+    ]
+    return not matching_entries or any(
+        entry.get("eligible_for_release_floor") is True
+        for entry in matching_entries
+    )
+
+
+def _release_gate_semantically_valid(bound_gate: dict[str, Any]) -> bool:
+    if (
+        bound_gate.get("release_qualified") is not True
+        or bound_gate.get("p106_unlocked") is not True
+        or bound_gate.get("validation_error_codes") != []
+        or bound_gate.get("validation_errors") != []
+        or bound_gate.get("missing_denominators") != []
+        or bound_gate.get("missing_required_gate_rows") != []
+    ):
+        return False
+    for key in (
+        "safety_boundary",
+        "source_availability_preflight",
+        "held_out_calibration",
+        "real_derived_transfer",
+        "qualification_floors",
+        "global",
+    ):
+        value = bound_gate.get(key)
+        if not isinstance(value, dict) or value.get("pass") is not True:
+            return False
+    families = bound_gate.get("families")
+    return (
+        isinstance(families, dict)
+        and bool(families)
+        and all(
+            isinstance(family_gate, dict) and family_gate.get("pass") is True
+            for family_gate in families.values()
+        )
+    )
 
 
 def _verify_release_receipt(
@@ -1071,6 +1159,7 @@ def _run_release_phase(args: argparse.Namespace) -> int:
     release_root_hash: str | None = None
     verified_artifacts: list[dict[str, str]] = []
     verified_artifact_root_hash: str | None = None
+    release_rows_payload: dict[str, Any] | None = None
     if args.release_dir is None:
         errors.append("release_dir_missing")
     elif not args.release_dir.exists() or not args.release_dir.is_dir():
@@ -1080,7 +1169,7 @@ def _run_release_phase(args: argparse.Namespace) -> int:
         if not release_files:
             errors.append("release_dir_empty")
         else:
-            _, _, verified_artifacts, verified_artifact_root_hash, release_binding_errors = _verify_release_bindings(
+            release_rows_payload, _, verified_artifacts, verified_artifact_root_hash, release_binding_errors = _verify_release_bindings(
                 release_dir=args.release_dir,
                 source_receipt_path=source_receipt_path,
                 source_receipt=source_receipt,
@@ -1094,13 +1183,29 @@ def _run_release_phase(args: argparse.Namespace) -> int:
         db_envelopes = [item for item in source_receipt.get("run_envelopes", []) if isinstance(item, dict) and item.get("source") == "db_pool"]
         if not db_envelopes or any(not item.get("command_argv_sha256") for item in db_envelopes):
             errors.append("db_pool_command_args_missing")
+    release_gate = {"p106_unlocked": False, "release_qualified": False}
+    bound_gate = (
+        release_rows_payload.get("release_gate")
+        if isinstance(release_rows_payload, dict)
+        else None
+    )
+    claimed_unlock = False
+    if isinstance(bound_gate, dict):
+        claimed_unlock = (
+            bound_gate.get("p106_unlocked") is True
+            or bound_gate.get("release_qualified") is True
+        )
+        if claimed_unlock and not _release_gate_semantically_valid(bound_gate):
+            errors.append("release_gate_semantic_validation_failed")
+        if not errors and claimed_unlock:
+            release_gate = {"p106_unlocked": True, "release_qualified": True}
     result = {
         "schema_version": RELEASE_VERIFICATION_SCHEMA,
         "created_by": VERIFIER_ID,
         "verified": not errors,
         "verified_release_counting_receipt": bool(source_receipt and source_receipt.get("verified_release_counting") is True),
         "verified_fleet_release_counting_receipt": bool(fleet_receipt and fleet_receipt.get("verified_release_counting") is True),
-        "release_gate": {"p106_unlocked": False, "release_qualified": False},
+        "release_gate": release_gate,
         "source_runtime_qualification_receipt": {
             "path": str(source_receipt_path) if source_receipt_path is not None else None,
             "sha256": _sha256_path(source_receipt_path) if source_receipt_path is not None and source_receipt_path.exists() else None,

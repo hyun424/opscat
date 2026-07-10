@@ -207,6 +207,7 @@ def _materialize(
     test_fast: bool = False,
     tamper_receipt: bool = False,
     tamper_registry_after_receipt: bool = False,
+    dejavu_eligible: bool | None = None,
 ) -> dict[str, Any]:
     completed, dejavu_dir = _run_dejavu(tmp_path / "dejavu")
     assert completed.returncode == 0, completed.stderr
@@ -222,7 +223,21 @@ def _materialize(
         ),
     }
     registry = _write_json(tmp_path / "registry.json", {"schema_version": "p105.source-registry.v1", "sources": []})
-    eligibility = _write_json(tmp_path / "eligibility.json", {"schema_version": "p105.source-eligibility.v1", "entries": []})
+    eligibility_entries = []
+    if dejavu_eligible is not None:
+        eligibility_entries.append(
+            {
+                "source_key": "dejavu-a1-reviewed-local",
+                "eligible_for_release_floor": dejavu_eligible,
+            }
+        )
+    eligibility = _write_json(
+        tmp_path / "eligibility.json",
+        {
+            "schema_version": "p105.source-eligibility.v1",
+            "entries": eligibility_entries,
+        },
+    )
     receipt = _write_receipt(tmp_path / "receipt.json", manifests, registry, eligibility)
     if tamper_receipt:
         payload = json.loads(receipt.read_text(encoding="utf-8"))
@@ -273,6 +288,17 @@ def test_verified_actual_sources_become_central_rows_coverage_and_preflight(tmp_
     assert all(row["source_record_provenance"]["coverage_interval"] for row in actual_rows)
     assert result["coverage_manifest"]["false_alert_denominator_method"] == "actual_observed_interval_union"
     assert result["source_runtime_qualification"]["receipt_sha256"]
+
+
+def test_explicitly_ineligible_dejavu_source_is_not_release_scored(tmp_path: Path) -> None:
+    result = _materialize(tmp_path, dejavu_eligible=False)
+
+    source_systems = {
+        row["source_record_provenance"]["canonical_source_tuple"]["source_system"]
+        for row in result["rows"]
+    }
+    assert "dejavu_a1" not in source_systems
+    assert "dejavu_a1" not in result["source_availability_preflight"]["sources"]
     assert result["release_gate"]["p106_unlocked"] is False
 
 

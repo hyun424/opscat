@@ -141,6 +141,18 @@ def test_unreviewed_or_unsupported_sources_are_noncounting_zero_credit(tmp_path:
             assert entry.get("counting_coverage_seconds", 0) == 0
 
 
+def test_explicitly_rejected_source_is_reviewed_noncounting_not_unreviewed(tmp_path: Path) -> None:
+    source = _source_manifest(tmp_path, source_key="rejected-source", family="database", reviewed=False)
+    ledger = _review_ledger(tmp_path / "ledger.json", [source], approve=False)
+
+    completed, _, eligibility_path = _run_registry(tmp_path, [source], ledger)
+
+    assert completed.returncode == 0, completed.stderr
+    entry = json.loads(eligibility_path.read_text(encoding="utf-8"))["entries"][0]
+    assert entry["eligible_for_release_floor"] is False
+    assert entry["unsupported_family_reason"] == "license_rejected"
+
+
 def test_missing_command_created_at_hashes_or_reviewer_fields_fail_closed(tmp_path: Path) -> None:
     _require_registry_script()
     manifest = _source_manifest(tmp_path, source_key="queue-missing-provenance", family="queue")

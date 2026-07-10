@@ -71,9 +71,30 @@ def _runtime_receipt(path: Path, registry: Path, eligibility: Path, roots: dict[
     )
 
 
-def _release_dir(tmp_path: Path, *, include_fleet: bool = False) -> tuple[Path, Path, Path | None, Path, Path]:
+def _release_dir(
+    tmp_path: Path,
+    *,
+    include_fleet: bool = False,
+    dejavu_eligible: bool | None = None,
+    release_qualified: bool = False,
+) -> tuple[Path, Path, Path | None, Path, Path]:
     registry = _write_json(tmp_path / "registry.json", {"schema_version": "p105.source-registry.v1", "sources": []})
-    eligibility = _write_json(tmp_path / "eligibility.json", {"schema_version": "p105.source-eligibility.v1", "entries": []})
+    eligibility = _write_json(
+        tmp_path / "eligibility.json",
+        {
+            "schema_version": "p105.source-eligibility.v1",
+            "entries": (
+                []
+                if dejavu_eligible is None
+                else [
+                    {
+                        "source_key": "dejavu-a1-reviewed-local",
+                        "eligible_for_release_floor": dejavu_eligible,
+                    }
+                ]
+            ),
+        },
+    )
     receipt = _runtime_receipt(tmp_path / "receipt.json", registry, eligibility, LEGACY_ROOTS)
     receipt_payload = _read_json(receipt)
     fleet_receipt = _runtime_receipt(tmp_path / "fleet-receipt.json", registry, eligibility, FLEET_ROOTS) if include_fleet else None
@@ -89,7 +110,16 @@ def _release_dir(tmp_path: Path, *, include_fleet: bool = False) -> tuple[Path, 
         "source_eligibility_sha256": _sha256_path(eligibility),
         "forbidden_inputs": [],
         "sources": {
-            "dejavu_a1": {"manifest_path": "dejavu.json", "manifest_sha256": hashlib.sha256(b"dejavu").hexdigest()},
+            **(
+                {}
+                if dejavu_eligible is False
+                else {
+                    "dejavu_a1": {
+                        "manifest_path": "dejavu.json",
+                        "manifest_sha256": hashlib.sha256(b"dejavu").hexdigest(),
+                    }
+                }
+            ),
             **{
                 source: {
                     "manifest_path": f"{source}.json",
@@ -117,7 +147,13 @@ def _release_dir(tmp_path: Path, *, include_fleet: bool = False) -> tuple[Path, 
                 "local_source_hashes": [hashlib.sha256(source.encode()).hexdigest()],
                 "materialized_record_hashes": [hashlib.sha256(f"{source}:row".encode()).hexdigest()],
             }
-            for source in ("dejavu_a1", "db_pool", "queue", "deploy", *((FLEET_ROOTS.keys()) if include_fleet else ()))
+            for source in (
+                *(("dejavu_a1",) if dejavu_eligible is not False else ()),
+                "db_pool",
+                "queue",
+                "deploy",
+                *((FLEET_ROOTS.keys()) if include_fleet else ()),
+            )
         },
     }
     source_path = _write_json(release_dir / "p105-source-manifest.json", source_manifest)
@@ -134,7 +170,30 @@ def _release_dir(tmp_path: Path, *, include_fleet: bool = False) -> tuple[Path, 
                 "remediation_execution_enabled": False,
                 "default_external_model_calls": 0,
             },
-            "release_gate": {"release_qualified": False, "p106_unlocked": False},
+            "release_gate": {
+                "release_qualified": release_qualified,
+                "p106_unlocked": release_qualified,
+                **(
+                    {
+                        "validation_error_codes": [],
+                        "validation_errors": [],
+                        "missing_denominators": [],
+                        "missing_required_gate_rows": [],
+                        "safety_boundary": {"pass": True},
+                        "source_availability_preflight": {"pass": True},
+                        "held_out_calibration": {"pass": True},
+                        "real_derived_transfer": {"pass": True},
+                        "qualification_floors": {"pass": True},
+                        "global": {"pass": True},
+                        "families": {
+                            family: {"pass": True}
+                            for family in ("database", "deploy", "queue")
+                        },
+                    }
+                    if release_qualified
+                    else {}
+                ),
+            },
             "source_input_manifest": source_manifest,
             "source_availability_preflight": preflight,
             "artifact_manifests": {
@@ -218,6 +277,74 @@ def test_release_phase_binds_fleet_release_to_legacy_and_fleet_receipts(tmp_path
     assert verification["verified_release_counting_receipt"] is True
     assert verification["verified_fleet_release_counting_receipt"] is True
     assert verification["validation_error_codes"] == []
+
+
+def test_release_phase_does_not_require_explicitly_ineligible_dejavu_source(tmp_path: Path) -> None:
+    release_dir, receipt, _, registry, eligibility = _release_dir(
+        tmp_path,
+        dejavu_eligible=False,
+    )
+
+    completed = _verify_release(
+        release_dir,
+        receipt,
+        registry,
+        eligibility,
+        tmp_path / "verification.json",
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    verification = _read_json(tmp_path / "verification.json")
+    assert verification["verified"] is True
+
+
+def test_release_phase_reports_verified_bound_unlock_gate(tmp_path: Path) -> None:
+    release_dir, receipt, _, registry, eligibility = _release_dir(
+        tmp_path,
+        release_qualified=True,
+    )
+
+    completed = _verify_release(
+        release_dir,
+        receipt,
+        registry,
+        eligibility,
+        tmp_path / "verification.json",
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    verification = _read_json(tmp_path / "verification.json")
+    assert verification["release_gate"] == {
+        "release_qualified": True,
+        "p106_unlocked": True,
+    }
+
+
+def test_release_phase_rejects_claimed_unlock_with_validation_errors(tmp_path: Path) -> None:
+    release_dir, receipt, _, registry, eligibility = _release_dir(
+        tmp_path,
+        release_qualified=True,
+    )
+    rows_path = release_dir / "p105-release-qualified-rows.json"
+    rows = _read_json(rows_path)
+    rows["release_gate"]["validation_error_codes"] = ["forged_success"]
+    _write_json(rows_path, rows)
+
+    completed = _verify_release(
+        release_dir,
+        receipt,
+        registry,
+        eligibility,
+        tmp_path / "verification.json",
+    )
+
+    assert completed.returncode == 1
+    verification = _read_json(tmp_path / "verification.json")
+    assert "release_gate_semantic_validation_failed" in verification["validation_error_codes"]
+    assert verification["release_gate"] == {
+        "release_qualified": False,
+        "p106_unlocked": False,
+    }
 
 
 def test_release_phase_rejects_source_owned_fleet_receipt_impersonating_release_counting(tmp_path: Path) -> None:

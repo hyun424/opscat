@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from scripts import build_p105_source_registry as registry_builder
 from scripts import verify_p105_source_expansion_artifacts as verifier
 
 REGISTRY_SCRIPT = Path("scripts/build_p105_source_registry.py")
@@ -314,6 +315,45 @@ def test_actual_root_schema_adapters_preserve_provenance_and_bindings(tmp_path: 
     assert verifier._validate_no_source_counting_authority("registry", registry) == []
     assert verifier._validate_no_source_counting_authority("eligibility", eligibility) == []
     assert all("counting_rows" not in entry and "counting_coverage_seconds" not in entry for entry in eligibility["entries"])
+
+
+def test_runtime_eligibility_binds_each_window_to_one_coverage_reference(tmp_path: Path) -> None:
+    manifest_path = _runtime_manifest(
+        tmp_path,
+        source="queue",
+        schema="queue",
+        family="queue",
+        ledger_key="private_injection_ledger",
+        attestation_kind="actual_rabbitmq_docker",
+    )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    coverage_path = manifest_path.parent / manifest["artifact_paths"]["coverage"]
+    coverage = json.loads(coverage_path.read_text(encoding="utf-8"))
+    coverage["observed_intervals"] = {
+        "queue-svc": [{"start_tick": index, "end_tick": index + 1} for index in range(100)]
+    }
+    _write_json(coverage_path, coverage)
+    manifest["artifact_hashes"][coverage_path.name] = _sha256_path(coverage_path)
+    _write_json(manifest_path, manifest)
+
+    source = registry_builder._runtime_source(
+        manifest_path,
+        manifest,
+        "queue",
+        registry_builder.REQUIRED_SCHEMA_ADAPTERS["queue"],
+    )[0]
+    entries = registry_builder._eligibility_entries(source, None)
+
+    assert len(entries) == 1
+    assert len(source["coverage_interval_ids"]) == 100
+    assert entries[0]["coverage_interval_ids"] == ["p105-queue:window:queue-window-001"]
+
+
+def test_runtime_verifier_accepts_harness_raw_broker_observation_collection() -> None:
+    assert verifier._raw_evidence_present(
+        {"raw_broker_observations": [{"messages_ready": 1, "monotonic_ns": 1}]},
+        "actual_rabbitmq_docker",
+    )
 
 
 def test_actual_runtime_adapter_rejects_manifest_hash_mismatch(tmp_path: Path) -> None:

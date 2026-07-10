@@ -328,12 +328,43 @@ def test_evidence_state_model_distinguishes_supporting_contradicting_absent_stal
     requirement = _requirement()
     records = [
         {"evidence_id": "ev-support", "state": "supporting", "requirement_ids": ["req-metrics-error-rate"], "tool_id": "metrics.query", "collected_at_tick": 20, "trace_id": "trace-support"},
-        {"evidence_id": "ev-contradict", "state": "contradicting", "requirement_ids": ["req-metrics-error-rate"], "tool_id": "deploy.read_metadata", "collected_at_tick": 20, "trace_id": "trace-contradict"},
+        {
+            "evidence_id": "ev-contradict",
+            "state": "contradicting",
+            "requirement_ids": ["req-metrics-error-rate"],
+            "tool_id": "deploy.read_metadata",
+            "collected_at_tick": 20,
+            "trace_id": "trace-contradict",
+        },
         {"evidence_id": "ev-absent", "state": "absent", "requirement_ids": ["req-metrics-error-rate"], "tool_id": "metrics.query", "collected_at_tick": 20, "trace_id": "trace-absent"},
         {"evidence_id": "ev-stale", "state": "stale", "requirement_ids": ["req-metrics-error-rate"], "tool_id": "metrics.query", "collected_at_tick": 1, "trace_id": "trace-stale"},
-        {"evidence_id": "ev-unavailable", "state": "unavailable", "requirement_ids": ["req-metrics-error-rate"], "tool_id": "metrics.query", "collected_at_tick": 20, "trace_id": "trace-unavailable", "capability_failure": "telemetry_down"},
-        {"evidence_id": "ev-duplicate-a", "state": "supporting", "requirement_ids": ["req-metrics-error-rate"], "tool_id": "metrics.query", "content_fingerprint": "same", "collected_at_tick": 20, "trace_id": "trace-dup-a"},
-        {"evidence_id": "ev-duplicate-b", "state": "duplicate", "requirement_ids": ["req-metrics-error-rate"], "tool_id": "metrics.query", "content_fingerprint": "same", "collected_at_tick": 21, "trace_id": "trace-dup-b"},
+        {
+            "evidence_id": "ev-unavailable",
+            "state": "unavailable",
+            "requirement_ids": ["req-metrics-error-rate"],
+            "tool_id": "metrics.query",
+            "collected_at_tick": 20,
+            "trace_id": "trace-unavailable",
+            "capability_failure": "telemetry_down",
+        },
+        {
+            "evidence_id": "ev-duplicate-a",
+            "state": "supporting",
+            "requirement_ids": ["req-metrics-error-rate"],
+            "tool_id": "metrics.query",
+            "content_fingerprint": "same",
+            "collected_at_tick": 20,
+            "trace_id": "trace-dup-a",
+        },
+        {
+            "evidence_id": "ev-duplicate-b",
+            "state": "duplicate",
+            "requirement_ids": ["req-metrics-error-rate"],
+            "tool_id": "metrics.query",
+            "content_fingerprint": "same",
+            "collected_at_tick": 21,
+            "trace_id": "trace-dup-b",
+        },
     ]
 
     classified = api.classify_requirement_state(requirement, records, now_tick=25)
@@ -380,7 +411,15 @@ def test_critical_sufficiency_gate_blocks_missing_stale_unavailable_contradicted
             "unavailable",
             [
                 {"evidence_id": "ev-metrics", "state": "supporting", "requirement_ids": ["req-metrics-error-rate"], "tool_id": "metrics.query", "collected_at_tick": 10, "trace_id": "trace-metrics"},
-                {"evidence_id": "ev-log-unavailable", "state": "unavailable", "requirement_ids": ["req-log-signature"], "tool_id": "logs.search_read_only", "collected_at_tick": 10, "trace_id": "trace-logs", "capability_failure": "logs_down"},
+                {
+                    "evidence_id": "ev-log-unavailable",
+                    "state": "unavailable",
+                    "requirement_ids": ["req-log-signature"],
+                    "tool_id": "logs.search_read_only",
+                    "collected_at_tick": 10,
+                    "trace_id": "trace-logs",
+                    "capability_failure": "logs_down",
+                },
             ],
             0.95,
         ),
@@ -389,7 +428,14 @@ def test_critical_sufficiency_gate_blocks_missing_stale_unavailable_contradicted
             [
                 {"evidence_id": "ev-metrics", "state": "supporting", "requirement_ids": ["req-metrics-error-rate"], "tool_id": "metrics.query", "collected_at_tick": 10, "trace_id": "trace-metrics"},
                 {"evidence_id": "ev-logs", "state": "supporting", "requirement_ids": ["req-log-signature"], "tool_id": "logs.search_read_only", "collected_at_tick": 10, "trace_id": "trace-logs"},
-                {"evidence_id": "ev-deploy-contradict", "state": "contradicting", "requirement_ids": ["req-deploy-contradiction"], "tool_id": "deploy.read_metadata", "collected_at_tick": 10, "trace_id": "trace-deploy"},
+                {
+                    "evidence_id": "ev-deploy-contradict",
+                    "state": "contradicting",
+                    "requirement_ids": ["req-deploy-contradiction"],
+                    "tool_id": "deploy.read_metadata",
+                    "collected_at_tick": 10,
+                    "trace_id": "trace-deploy",
+                },
             ],
             0.95,
         ),
@@ -398,7 +444,14 @@ def test_critical_sufficiency_gate_blocks_missing_stale_unavailable_contradicted
             [
                 {"evidence_id": "ev-metrics", "state": "supporting", "requirement_ids": ["req-metrics-error-rate"], "tool_id": "metrics.query", "collected_at_tick": 10, "trace_id": "trace-metrics"},
                 {"evidence_id": "ev-logs", "state": "supporting", "requirement_ids": ["req-log-signature"], "tool_id": "logs.search_read_only", "collected_at_tick": 10, "trace_id": "trace-logs"},
-                {"evidence_id": "ev-deploy-absent", "state": "absent", "requirement_ids": ["req-deploy-contradiction"], "tool_id": "deploy.read_metadata", "collected_at_tick": 10, "trace_id": "trace-deploy"},
+                {
+                    "evidence_id": "ev-deploy-absent",
+                    "state": "absent",
+                    "requirement_ids": ["req-deploy-contradiction"],
+                    "tool_id": "deploy.read_metadata",
+                    "collected_at_tick": 10,
+                    "trace_id": "trace-deploy",
+                },
             ],
             0.41,
         ),

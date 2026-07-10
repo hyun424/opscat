@@ -293,6 +293,7 @@ def decide_evidence_sufficiency(
             "hypothesis_id": hypothesis_id,
             "requirement_set_id": requirement_set_id,
             "route": route,
+            "requirements": validated,
             "evidence_states": states,
             "sufficiency_decision": sufficiency,
             "gap_payload": gap_payload,
@@ -657,7 +658,6 @@ def _invalid_provider(reason: str, rationale: str) -> dict[str, Any]:
 
 def _validate_sufficient_envelope(item: Mapping[str, Any]) -> None:
     sufficiency = _mapping(item.get("sufficiency_decision"))
-    requirements = [_mapping(requirement) for requirement in _sequence(item.get("requirements"))]
     evidence_states = [_mapping(record) for record in _sequence(item.get("evidence_states"))]
     critical_ids = {str(req_id) for req_id in _sequence(sufficiency.get("critical_requirement_ids"))}
     satisfied_ids = {str(req_id) for req_id in _sequence(sufficiency.get("satisfied_requirement_ids"))}
@@ -676,30 +676,69 @@ def _validate_sufficient_envelope(item: Mapping[str, Any]) -> None:
     invalid_citation_states = {"stale", "contradicting", "unavailable", "duplicate", "distracting", "not_yet_queried"}
     if any(str(evidence_by_id[evidence_id].get("state")) in invalid_citation_states for evidence_id in citation_ids):
         raise ValueError("sufficient handoff cites non-satisfying evidence")
-    if requirements:
-        catalog = build_diagnostic_tool_catalog()
+    requirements: list[Mapping[str, Any]] = [_mapping(requirement) for requirement in _sequence(item.get("requirements"))]
+    inferred_requirements = bool(item.get("_inferred_legacy_requirements"))
+    if not requirements:
+        requirements = list(_infer_requirements_from_sufficient_citations(critical_ids, citation_ids, evidence_by_id))
+        inferred_requirements = True
+        if isinstance(item, dict):
+            item["requirements"] = requirements
+            item["_inferred_legacy_requirements"] = True
+    catalog = build_diagnostic_tool_catalog()
+    if inferred_requirements:
+        validated_requirements = [validate_evidence_requirement(requirement, catalog) for requirement in requirements]
+    else:
         validated_requirements = list(validate_requirement_set(requirements, catalog, action_ready=True)["requirements"])
-        expected_critical_ids = {str(requirement["requirement_id"]) for requirement in validated_requirements if requirement["criticality"] in {"critical", "contradiction_check"}}
-        if critical_ids != expected_critical_ids:
-            raise ValueError("sufficient handoff critical coverage does not match requirements")
-        if not critical_ids <= satisfied_ids:
-            raise ValueError("sufficient handoff does not satisfy every critical requirement")
-        for requirement in validated_requirements:
-            req_id = str(requirement["requirement_id"])
-            if req_id not in expected_critical_ids:
-                continue
-            accepted = {str(state) for state in _sequence(requirement.get("accepted_states"))}
-            mapped_citations = [
-                evidence_by_id[evidence_id]
-                for evidence_id in citation_ids
-                if req_id in {str(item) for item in _sequence(evidence_by_id[evidence_id].get("requirement_ids"))}
-            ]
-            if not mapped_citations:
-                raise ValueError("sufficient handoff lacks citation for a critical requirement")
-            if not any(str(record.get("state")) in accepted for record in mapped_citations):
-                raise ValueError("sufficient handoff citation state does not satisfy requirement")
-    elif not critical_ids <= satisfied_ids:
+    expected_critical_ids = {str(requirement["requirement_id"]) for requirement in validated_requirements if requirement["criticality"] in {"critical", "contradiction_check"}}
+    if critical_ids != expected_critical_ids:
+        raise ValueError("sufficient handoff critical coverage does not match requirements")
+    if not critical_ids <= satisfied_ids:
         raise ValueError("sufficient handoff does not satisfy every critical requirement")
+    for requirement in validated_requirements:
+        req_id = str(requirement["requirement_id"])
+        if req_id not in expected_critical_ids:
+            continue
+        accepted = {str(state) for state in _sequence(requirement.get("accepted_states"))}
+        mapped_citations = [
+            evidence_by_id[evidence_id]
+            for evidence_id in citation_ids
+            if req_id in {str(item) for item in _sequence(evidence_by_id[evidence_id].get("requirement_ids"))}
+            and str(evidence_by_id[evidence_id].get("state")) in accepted
+        ]
+        if not mapped_citations:
+            raise ValueError("sufficient handoff lacks eligible citation for a critical requirement")
+
+
+def _infer_requirements_from_sufficient_citations(
+    critical_ids: set[str],
+    citation_ids: set[str],
+    evidence_by_id: Mapping[str, Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    inferred: list[dict[str, Any]] = []
+    for req_id in sorted(critical_ids):
+        mapped = [
+            evidence_by_id[evidence_id]
+            for evidence_id in sorted(citation_ids)
+            if req_id in {str(item) for item in _sequence(evidence_by_id[evidence_id].get("requirement_ids"))}
+        ]
+        if not mapped:
+            raise ValueError("sufficient handoff requires serialized validated requirements")
+        record = mapped[0]
+        state = str(record.get("state"))
+        inferred.append(
+            {
+                "requirement_id": req_id,
+                "hypothesis_id": "",
+                "source_family": str(record.get("source_family", "unknown")),
+                "candidate_tools": [str(record.get("tool_id"))],
+                "criticality": "contradiction_check" if state == "absent" else "critical",
+                "accepted_states": [state],
+                "freshness_seconds": int(record.get("freshness_seconds", 10**9)),
+                "contradiction_policy": "block_on_unadjudicated",
+                "rationale": "Inferred from validated sufficient envelope citation.",
+            }
+        )
+    return inferred
 
 
 def _parse_object(raw: Mapping[str, Any] | str) -> Mapping[str, Any]:

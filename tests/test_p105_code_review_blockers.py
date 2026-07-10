@@ -109,6 +109,71 @@ def test_underqualified_release_mode_uses_exact_documented_floor_rows_and_stays_
     assert report["release_gate"]["p106_unlocked"] is False
 
 
+def test_p105_012_canonical_underqualified_payload_reports_documented_nonzero_floor_minima(tmp_path: Path) -> None:
+    payload = _release_qualified_payload()
+    payload["release_qualification"]["floor_contract_version"] = "p105-012"
+    for partition in ("held_out", "real_derived_shadow"):
+        for family in payload["release_supported_families"]:
+            base_rows = [row for row in payload["rows"] if row["partition"] == partition and row["family"] == family]
+            assert len(base_rows) == 2
+            for index, base in enumerate(base_rows, start=1):
+                duplicate = copy.deepcopy(base)
+                duplicate["row_id"] = f"{base['row_id']}-p105-012-underqualified-{index}"
+                duplicate["source_window_id"] = f"{base['source_window_id']}-p105-012-underqualified-{index}"
+                duplicate["forecast_timestamp"] = "2026-01-20T10:00:00Z"
+                duplicate["window_start_timestamp"] = "2026-01-20T09:45:00Z"
+                duplicate["window_end_timestamp"] = "2026-01-20T10:00:00Z"
+                duplicate["derivation"] = dict(duplicate["derivation"])
+                duplicate["derivation"]["derivation_id"] = f"derive-{duplicate['row_id']}"
+                duplicate["derivation"]["source_event_id"] = duplicate["source_id"]
+                duplicate["scorer_labels"] = dict(duplicate["scorer_labels"])
+                duplicate["scorer_labels"]["incident_group_id"] = f"{duplicate['row_id']}-group"
+                if duplicate["scorer_labels"]["label_positive"] is True:
+                    duplicate["scorer_labels"]["label_incident_id"] = f"{duplicate['row_id']}-incident"
+                    duplicate["scorer_labels"]["label_incident_start_timestamp"] = "2026-01-20T11:00:00Z"
+                    duplicate["scorer_labels"]["lead_time_label_minutes"] = 60
+                payload["rows"].append(duplicate)
+                payload["partitions"][partition]["row_ids"].append(duplicate["row_id"])
+
+    for row in payload["rows"]:
+        if row["partition"] in {"held_out", "real_derived_shadow"}:
+            row["source_record_provenance"] = {
+                "canonical_source_tuple": {
+                    "source_system": "p32" if row["family"] != "queue" else "p41",
+                    "source_dataset": f"{row['family']}-{row['partition']}",
+                    "source_manifest_key": row["row_id"],
+                    "source_content_hash": f"{row['row_id']}-source",
+                    "materialized_record_hash": f"{row['row_id']}-materialized",
+                    "materialization_version": "v1",
+                }
+            }
+
+    path = _write_payload(tmp_path, payload, "p105-012-canonical-underqualified.json")
+
+    report = _api().run_p105_benchmark(path)
+
+    floors = report["release_gate"]["qualification_floors"]
+    assert floors["floor_contract_version"] == "p105-012"
+    assert floors["source_diversity"]["pass"] is True
+    for family in payload["release_supported_families"]:
+        held_out = floors["families"][family]["held_out"]
+        assert held_out["evaluated_count"] == {"count": 4, "minimum": 30, "pass": False}
+        assert held_out["non_abstained_count"] == {"count": 4, "minimum": 24, "pass": False}
+        assert held_out["positive_count"]["minimum"] == 6
+        assert held_out["incident_group_count"]["minimum"] == 4
+        assert held_out["service_day_count"]["minimum"] == 2.0
+
+        real_derived = floors["families"][family]["real_derived_shadow"]
+        assert real_derived["evaluated_count"] == {"count": 4, "minimum": 20, "pass": False}
+        assert real_derived["non_abstained_count"] == {"count": 4, "minimum": 16, "pass": False}
+        assert real_derived["positive_count"]["minimum"] == 4
+        assert real_derived["incident_group_count"]["minimum"] == 3
+        assert real_derived["service_day_count"]["minimum"] == 1.0
+
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
+
+
 def test_source_diversity_counts_only_real_derived_canonical_materialized_tuples_and_rejects_heldout_inflation(tmp_path: Path) -> None:
     payload = _release_qualified_payload()
     for row in payload["rows"]:

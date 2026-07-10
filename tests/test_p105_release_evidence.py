@@ -20,6 +20,14 @@ P105_FINAL_SUMMARY = Path("docs/operations/p105-final-summary.md")
 VERIFY_SCRIPT = Path("scripts/verify.sh")
 
 RELEASE_FAMILIES = {"database", "queue", "deploy"}
+CANONICAL_SOURCE_TUPLE_KEYS = {
+    "source_system",
+    "source_dataset",
+    "source_manifest_key",
+    "source_content_hash",
+    "materialized_record_hash",
+    "materialization_version",
+}
 SCORER_ONLY_PREFIXES = ("label_", "lead_time_label_minutes", "incident_group_id")
 HASH_SAFE_DIAGNOSTIC_KEYS = {
     "row_id_hash",
@@ -459,21 +467,17 @@ def test_source_record_row_generator_is_deterministic_and_emits_canonical_proven
         assert {
             "canonical_source_tuple",
             "source_content_hash",
-            "source_record_hash",
+            "materialized_record_hash",
+            "materialization_version",
             "byte_offset",
             "record_offset",
             "source_timestamp",
             "derivation_id",
             "derivation_type",
         } <= set(provenance)
-        assert set(provenance["canonical_source_tuple"]) == {
-            "program",
-            "family",
-            "dataset",
-            "source_id",
-            "source_path",
-            "source_version",
-        }
+        assert set(provenance["canonical_source_tuple"]) == CANONICAL_SOURCE_TUPLE_KEYS
+        for key in CANONICAL_SOURCE_TUPLE_KEYS:
+            assert provenance["canonical_source_tuple"][key]
 
 
 def test_source_id_only_provenance_fails_closed_for_release(tmp_path: Path) -> None:
@@ -487,6 +491,132 @@ def test_source_id_only_provenance_fails_closed_for_release(tmp_path: Path) -> N
     assert "source_record_provenance_missing" in report["release_gate"]["validation_error_codes"]
     assert report["release_gate"]["release_qualified"] is False
     assert report["release_gate"]["p106_unlocked"] is False
+
+
+def test_p105_012_source_id_only_payload_can_never_release_qualify_or_unlock_p106(tmp_path: Path) -> None:
+    payload = _release_floor_fixture()
+    assert payload["release_qualification"]["floor_contract_version"] == "p105-012"
+    for row in payload["rows"]:
+        row.pop("source_record_provenance", None)
+        if row["partition"] == "real_derived_shadow":
+            row["source_id"] = f"legacy-source-id-only:{row['family']}:{row['row_id']}"
+            row["derivation"]["source_event_id"] = row["source_id"]
+    path = _write_payload(tmp_path, "p105-012-legacy-source-id-only.json", payload)
+
+    report = _api().run_p105_benchmark(path)
+
+    diversity = report["release_gate"]["qualification_floors"]["source_diversity"]
+    assert diversity["canonical_tuple_keys"] == sorted(CANONICAL_SOURCE_TUPLE_KEYS)
+    assert diversity["pass"] is False
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
+
+
+def test_release_qualified_real_derived_rows_require_exact_six_field_canonical_tuple(tmp_path: Path) -> None:
+    payload = _release_floor_fixture()
+    real_row = next(row for row in payload["rows"] if row["partition"] == "real_derived_shadow")
+    real_row["source_record_provenance"] = {
+        "canonical_source_tuple": {
+            "source_system": "p32",
+            "source_dataset": "replay",
+            "source_manifest_key": "manifest-001",
+            "source_content_hash": "source-content-001",
+            "materialized_record_hash": "materialized-001",
+            "materialization_version": "v1",
+            "source_id": "legacy-extra-field",
+        }
+    }
+    path = _write_payload(tmp_path, "p105-extra-canonical-field.json", payload)
+
+    report = _api().run_p105_benchmark(path)
+
+    assert "source_record_provenance_noncanonical" in report["release_gate"]["validation_error_codes"]
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False
+
+
+def test_source_diversity_max_fraction_is_computed_per_family_over_real_derived_rows_only(tmp_path: Path) -> None:
+    payload = _release_floor_fixture()
+    real_family_seen: dict[str, int] = {}
+    for row in payload["rows"]:
+        if row["partition"] == "held_out":
+            row["source_record_provenance"] = {
+                "canonical_source_tuple": {
+                    key: f"heldout-{row['family']}-{row['row_id']}-{key}" for key in CANONICAL_SOURCE_TUPLE_KEYS
+                }
+            }
+            continue
+        if row["partition"] != "real_derived_shadow":
+            continue
+        family = row["family"]
+        real_family_seen[family] = real_family_seen.get(family, 0) + 1
+        source_number = "dominant" if family == "database" and real_family_seen[family] <= 3 else row["row_id"]
+        row["source_record_provenance"] = {
+            "canonical_source_tuple": {
+                "source_system": "p32",
+                "source_dataset": f"{family}-dataset",
+                "source_manifest_key": f"{family}-{source_number}",
+                "source_content_hash": f"{family}-{source_number}-source",
+                "materialized_record_hash": f"{family}-{source_number}-materialized",
+                "materialization_version": "v1",
+            }
+        }
+    path = _write_payload(tmp_path, "p105-per-family-source-diversity.json", payload)
+
+    diversity = _api().run_p105_benchmark(path)["release_gate"]["qualification_floors"]["source_diversity"]
+
+    assert diversity["source_scope"] == "real_derived_shadow"
+    assert diversity["family_scope"] == "per_supported_family"
+    assert set(diversity["families"]) == RELEASE_FAMILIES
+    assert diversity["families"]["database"]["maximum_single_source_fraction"] == {
+        "value": 0.666667,
+        "maximum": 0.6,
+        "pass": False,
+    }
+    assert all(
+        family == "database" or row["maximum_single_source_fraction"]["pass"] is True
+        for family, row in diversity["families"].items()
+    )
+    assert diversity["pass"] is False
+
+
+def test_coverage_union_scope_keys_include_split_family_service_and_source_system(tmp_path: Path) -> None:
+    payload = _release_floor_fixture()
+    for row in payload["rows"]:
+        if row["partition"] == "real_derived_shadow":
+            row["source_record_provenance"] = {
+                "canonical_source_tuple": {
+                    "source_system": "p32" if row["family"] != "queue" else "p41",
+                    "source_dataset": f"{row['family']}-dataset",
+                    "source_manifest_key": row["row_id"],
+                    "source_content_hash": f"{row['row_id']}-source",
+                    "materialized_record_hash": f"{row['row_id']}-materialized",
+                    "materialization_version": "v1",
+                }
+            }
+    for family, coverage in payload["service_day_coverage"].items():
+        coverage["coverage_intervals"] = [
+            {
+                "split_id": "p105-release-real-derived-shadow-v1",
+                "family": family,
+                "service": f"{family}-primary",
+                "source_system": "p32",
+                "start": "2026-01-01T00:00:00Z",
+                "end": "2026-01-08T00:00:00Z",
+            }
+        ]
+    path = _write_payload(tmp_path, "p105-coverage-scope-keys.json", payload)
+
+    coverage = _api().run_p105_benchmark(path)["release_gate"]["qualification_floors"]["service_day_coverage"]
+
+    assert coverage["union_scope_keys"] == ["split_id", "family", "service", "source_system"]
+    for family, row in coverage["families"].items():
+        assert row["union_scope"] == {
+            "split_id": "p105-release-real-derived-shadow-v1",
+            "family": family,
+            "service": f"{family}-primary",
+            "source_system": "p32",
+        }
 
 
 def test_release_benchmark_uses_actual_p24_risk_signal_baseline_authority() -> None:
@@ -509,15 +639,16 @@ def test_release_docs_verify_model_card_and_final_summary_are_wired() -> None:
     assert "tests/test_p105_release_evidence.py" in verify
 
 
-def test_floor_scale_generated_evidence_is_release_qualified_only_when_metrics_and_safety_pass(tmp_path: Path) -> None:
+def test_floor_scale_generated_evidence_stays_locked_until_full_canonical_hardening_evidence_exists(tmp_path: Path) -> None:
     payload = _release_floor_fixture()
     path = _write_payload(tmp_path, "p105-floor-scale-release-qualified.json", payload)
 
     report = _api().run_p105_benchmark(path)
 
     assert report["release_gate"]["qualification_mode"] == "release_qualified"
-    assert report["release_gate"]["qualification_floors"]["pass"] is True
+    assert report["release_gate"]["qualification_floors"]["floor_contract_version"] == "p105-012"
+    assert report["release_gate"]["qualification_floors"]["pass"] is False
     assert report["release_gate"]["unchanged_metrics"]["pass"] is True
     assert report["release_gate"]["safety_boundary"]["pass"] is True
-    assert report["release_gate"]["release_qualified"] is True
-    assert report["release_gate"]["p106_unlocked"] is True
+    assert report["release_gate"]["release_qualified"] is False
+    assert report["release_gate"]["p106_unlocked"] is False

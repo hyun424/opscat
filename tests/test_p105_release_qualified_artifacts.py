@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib
 import json
 import subprocess
@@ -90,46 +91,95 @@ def _validate_artifact(path: Path) -> dict[str, Any]:
     return validator(path)
 
 
-def _reviewed_p44_manifest(tmp_path: Path) -> Path:
-    records_path = tmp_path / "reviewed-p44-records.jsonl"
+def _reviewed_p44_v3_manifest(tmp_path: Path) -> Path:
+    records_path = tmp_path / "reviewed-p44-v3-public-records.jsonl"
+    ledger_path = tmp_path / "reviewed-p44-v3-private-ledger.json"
     records = []
+    labels = []
     for family in ("database", "deploy", "queue"):
         for partition, count, positives in (("held_out", 30, 6), ("real_derived_shadow", 20, 4)):
             for index in range(count):
+                positive = index < positives
+                window_id = f"p44-v3-window-{family}-{partition}-{index:03d}"
+                label_source = "official_nab_window" if family in {"database", "queue"} else "reviewed_loghub_burst"
                 records.append(
                     {
-                        "record_id": f"{family}-{partition}-{index:03d}",
+                        "record_id": f"p44-v3-{family}-{partition}-{index:03d}",
+                        "source_dataset": "p44-reviewed-local-v3",
                         "family": family,
-                        "partition": partition,
-                        "source_window_id": f"p44-window-{family}-{partition}-{index:03d}",
-                        "public_features": {"metric": f"{family}.saturation", "value": 100 + index},
-                        "private_label": {
-                            "label_positive": index < positives,
-                            "label_incident_id": f"inc-{family}-{partition}-{index:03d}" if index < positives else None,
-                            "incident_group_id": f"group-{family}-{partition}-{index % max(positives, 1):03d}",
-                            "lead_time_label_minutes": 60 if index < positives else None,
+                        "pre_label_partition": partition,
+                        "source_timestamp": f"2026-05-{(index % 20) + 1:02d}T10:00:00Z",
+                        "source_window_id": window_id,
+                        "public_features": {
+                            "metric": f"{family}.saturation",
+                            "value": 100 + index,
+                            "trend": "rising" if positive else "flat",
                         },
                         "p24_input": {
-                            "window_id": f"p44-window-{family}-{partition}-{index:03d}",
+                            "id": window_id,
+                            "window_id": window_id,
+                            "service": f"{family}-service",
+                            "metric": f"{family}.saturation",
+                            "risk_type": family,
+                            "values": [1.0, 2.0, 4.0, 7.0, 9.0] if positive else [1.0, 1.1, 1.3, 1.5, 1.7],
+                        },
+                        "coverage_interval": {
+                            "timestamp_source": "raw_source_record",
+                            "split_id": f"g006-{partition}",
                             "family": family,
-                            "value": 100 + index,
+                            "service": f"{family}-service",
+                            "source_system": "p44",
+                        },
+                        "reviewed_label_join": {
+                            "sampled_before_label_join": True,
+                            "label_source": label_source,
+                            "official_window_id": window_id if label_source == "official_nab_window" else None,
+                            "loghub_burst_id": f"burst-{window_id}" if label_source == "reviewed_loghub_burst" else None,
                         },
                     }
                 )
+                labels.append(
+                    {
+                        "record_id": f"p44-v3-{family}-{partition}-{index:03d}",
+                        "source_window_id": window_id,
+                        "label_positive": positive,
+                        "label_incident_id": f"inc-v3-{family}-{partition}-{index:03d}" if positive else None,
+                        "incident_group_id": f"group-v3-{family}-{partition}-{index % max(positives, 1):03d}" if positive else None,
+                        "lead_time_label_minutes": 60 if positive else None,
+                        "label_source": label_source,
+                    }
+                )
     records_path.write_text("\n".join(json.dumps(record, sort_keys=True) for record in records) + "\n", encoding="utf-8")
-    manifest_path = tmp_path / "p44-reviewed-local-manifest.json"
+    ledger_path.write_text(json.dumps({"schema_version": "p105.reviewed_p44_private_label_ledger.v1", "records": labels}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    source_hash = hashlib.sha256(records_path.read_bytes()).hexdigest()
+    ledger_hash = hashlib.sha256(ledger_path.read_bytes()).hexdigest()
+    for filename, payload in {
+        "p105-privacy-redaction-manifest.json": {"schema_version": "p105.privacy_redaction.v1", "raw_private_labels_embedded": False},
+        "p105-license-manifest.json": {"schema_version": "p105.license.v1", "license_id": "fixture-only-reviewed-local"},
+        "p105-citation-manifest.json": {"schema_version": "p105.citation.v1", "citation_id": "fixture:p44:v3"},
+        "p105-provenance-hash-manifest.json": {"schema_version": "p105.provenance_hash.v1", "public_records_sha256": source_hash, "private_ledger_sha256": ledger_hash},
+    }.items():
+        (tmp_path / filename).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    manifest_path = tmp_path / "p44-reviewed-local-manifest-v3.json"
     manifest_path.write_text(
         json.dumps(
             {
-                "schema_version": "p105.reviewed_p44_local_manifest.v2",
+                "schema_version": "p105.reviewed_p44_local_manifest.v3",
                 "review_redaction_status": "reviewed_redacted",
+                "private_label_ledger_path": str(ledger_path),
+                "privacy_manifest_path": str(tmp_path / "p105-privacy-redaction-manifest.json"),
+                "license_manifest_path": str(tmp_path / "p105-license-manifest.json"),
+                "citation_manifest_path": str(tmp_path / "p105-citation-manifest.json"),
+                "provenance_hash_manifest_path": str(tmp_path / "p105-provenance-hash-manifest.json"),
                 "sources": [
                     {
-                        "source_id": "p44:test:reviewed-local",
+                        "source_id": "p44:v3:reviewed-local",
                         "family": "multi",
                         "local_materialized_path": str(records_path),
-                        "local_source_hash": __import__("hashlib").sha256(records_path.read_bytes()).hexdigest(),
+                        "local_source_hash": source_hash,
                         "record_count": len(records),
+                        "private_label_format": "separate_private_ledger",
+                        "partition_format": "pre_label_partition",
                     }
                 ],
             },
@@ -153,7 +203,7 @@ def _materialize_reviewed_local(tmp_path: Path) -> Path:
             "--p41-sources",
             str(P41_SOURCES),
             "--p44-reviewed-local-manifest",
-            str(_reviewed_p44_manifest(tmp_path)),
+            str(_reviewed_p44_v3_manifest(tmp_path)),
             "--p44-mode",
             "reviewed-local",
             "--output-dir",
@@ -395,18 +445,31 @@ def test_qualified_artifact_requires_privacy_license_citation_and_provenance_man
         assert payload["artifact_manifests"][key]["sha256"] == __import__("hashlib").sha256(path.read_bytes()).hexdigest()
 
 
-def test_missing_privacy_license_citation_or_provenance_artifact_locks_before_scoring(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    ("manifest_key", "expected_code"),
+    [
+        ("privacy", "privacy_manifest_missing"),
+        ("license", "license_manifest_missing"),
+        ("citation", "citation_manifest_missing"),
+        ("provenance", "provenance_hash_manifest_missing"),
+    ],
+)
+def test_missing_privacy_license_citation_or_provenance_artifact_locks_before_scoring(
+    tmp_path: Path,
+    manifest_key: str,
+    expected_code: str,
+) -> None:
     output_dir = _materialize_reviewed_local(tmp_path)
     rows_path = output_dir / "p105-release-qualified-rows.json"
+    payload = json.loads(rows_path.read_text(encoding="utf-8"))
+    assert manifest_key in payload["artifact_manifests"], f"v3 materializer must register {manifest_key} sidecar manifest"
+    target = output_dir / payload["artifact_manifests"][manifest_key]["path"]
+    assert target.exists(), f"v3 materializer must write {manifest_key} before deletion tamper can be tested"
+    target.unlink()
 
     validation = _validate_artifact(rows_path)
 
-    assert {
-        "privacy_manifest_missing",
-        "license_manifest_missing",
-        "citation_manifest_missing",
-        "provenance_hash_manifest_missing",
-    } <= set(validation["release_gate"]["validation_error_codes"])
+    assert expected_code in validation["release_gate"]["validation_error_codes"]
     assert validation["release_gate"]["failure_stage"] == "pre_scoring"
     assert validation["release_gate"]["release_qualified"] is False
     assert validation["release_gate"]["p106_unlocked"] is False

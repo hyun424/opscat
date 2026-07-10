@@ -83,7 +83,7 @@ def _reviewed_p44_manifest(tmp_path: Path) -> Path:
 
 
 def _write_floor_scale_p44_dataset(tmp_path: Path) -> Path:
-    """Create enough distinct reviewed-local P44 records to satisfy G006 floors."""
+    """Legacy v2 synthetic fixture: floor-shaped, but not honest release evidence."""
 
     dataset_dir = tmp_path / "reviewed-p44"
     dataset_dir.mkdir(parents=True)
@@ -147,6 +147,140 @@ def _write_floor_scale_p44_dataset(tmp_path: Path) -> Path:
                         "local_source_hash": hashlib.sha256(records_path.read_bytes()).hexdigest(),
                         "record_count": len(lines),
                         "private_label_format": "embedded_private_label",
+                    }
+                ],
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    return manifest_path
+
+
+def _write_honest_v3_p44_dataset(tmp_path: Path) -> Path:
+    dataset_dir = tmp_path / "reviewed-p44-v3"
+    dataset_dir.mkdir(parents=True)
+    records_path = dataset_dir / "p44-reviewed-local-public-records.jsonl"
+    ledger_path = dataset_dir / "p44-reviewed-local-private-ledger.json"
+    records: list[dict[str, Any]] = []
+    labels: list[dict[str, Any]] = []
+    for family_index, family in enumerate(("database", "deploy", "queue"), start=1):
+        label_source = "official_nab_window" if family in {"database", "queue"} else "reviewed_loghub_burst"
+        for partition, count, positives in (("held_out", 30, 6), ("real_derived_shadow", 20, 4)):
+            for index in range(count):
+                positive = index < positives
+                window_id = f"p44-v3-{family}-{partition}-{index:03d}"
+                timestamp = f"2026-05-{family_index:02d}T{(index % 20):02d}:00:00Z"
+                metric_value = 92.0 if positive else 11.0 + index
+                records.append(
+                    {
+                        "record_id": f"p44-v3-{family}-{partition}-{index:03d}",
+                        "source_dataset": "p44-reviewed-local-v3",
+                        "family": family,
+                        "pre_label_partition": partition,
+                        "source_timestamp": timestamp,
+                        "source_window_id": window_id,
+                        "public_features": {
+                            "metric_name": f"{family}.saturation",
+                            "metric_value": metric_value,
+                            "trend": "rising" if positive else "flat",
+                        },
+                        "p24_input": {
+                            "id": window_id,
+                            "window_id": window_id,
+                            "service": f"{family}-service",
+                            "metric": f"{family}.saturation",
+                            "risk_type": family,
+                            "window_minutes": 15,
+                            "baseline": 1.0,
+                            "threshold": 10.0,
+                            "values": [1.0, 2.5, 4.5, 7.0, 9.5] if positive else [1.0, 1.1, 1.2, 1.4, 1.6],
+                        },
+                        "coverage_interval": {
+                            "timestamp_source": "raw_source_record",
+                            "split_id": f"g006-{partition}",
+                            "family": family,
+                            "service": f"{family}-service",
+                            "source_system": "p44",
+                            "start": f"2026-05-{family_index:02d}T00:00:00Z",
+                            "end": f"2026-05-{family_index + 1:02d}T00:00:00Z",
+                        },
+                        "reviewed_label_join": {
+                            "sampled_before_label_join": True,
+                            "label_source": label_source,
+                            "official_window_id": window_id if label_source == "official_nab_window" else None,
+                            "loghub_burst_id": f"burst-{window_id}" if label_source == "reviewed_loghub_burst" else None,
+                            "source_line_offset": index,
+                            "source_hash": "filled-by-manifest",
+                        },
+                    }
+                )
+                labels.append(
+                    {
+                        "record_id": f"p44-v3-{family}-{partition}-{index:03d}",
+                        "source_window_id": window_id,
+                        "label_positive": positive,
+                        "label_incident_id": f"inc-v3-{family}-{partition}-{index:03d}" if positive else None,
+                        "incident_group_id": f"group-v3-{family}-{partition}-{index % max(positives, 1):03d}" if positive else None,
+                        "label_incident_start_timestamp": f"2026-05-{family_index:02d}T{((index % 20) + 1):02d}:00:00Z" if positive else None,
+                        "lead_time_label_minutes": 60 if positive else None,
+                        "label_source": label_source,
+                    }
+                )
+    records_path.write_text("\n".join(json.dumps(record, sort_keys=True) for record in records) + "\n", encoding="utf-8")
+    source_hash = hashlib.sha256(records_path.read_bytes()).hexdigest()
+    for record in records:
+        record["reviewed_label_join"]["source_hash"] = source_hash
+    records_path.write_text("\n".join(json.dumps(record, sort_keys=True) for record in records) + "\n", encoding="utf-8")
+    source_hash = hashlib.sha256(records_path.read_bytes()).hexdigest()
+    ledger_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "p105.reviewed_p44_private_label_ledger.v1",
+                "join_timing": "after_sampling_and_pre_label_partition",
+                "public_artifact": False,
+                "records": labels,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    for filename, payload in {
+        "p105-privacy-redaction-manifest.json": {"schema_version": "p105.privacy_redaction.v1", "review_status": "reviewed_redacted", "raw_private_labels_embedded": False},
+        "p105-license-manifest.json": {"schema_version": "p105.license.v1", "sources": [{"source_id": "p44:v3:reviewed-local", "license_id": "fixture-only-reviewed-local"}]},
+        "p105-citation-manifest.json": {"schema_version": "p105.citation.v1", "citations": [{"citation_id": "fixture:p44:v3", "source_id": "p44:v3:reviewed-local"}]},
+        "p105-provenance-hash-manifest.json": {
+            "schema_version": "p105.provenance_hash.v1",
+            "public_records_sha256": source_hash,
+            "private_ledger_sha256": hashlib.sha256(ledger_path.read_bytes()).hexdigest(),
+        },
+    }.items():
+        (dataset_dir / filename).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    manifest_path = dataset_dir / "p44-reviewed-local-manifest-v3.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "p105.reviewed_p44_local_manifest.v3",
+                "review_redaction_status": "reviewed_redacted",
+                "source_cap": 2000,
+                "private_label_ledger_path": str(ledger_path),
+                "privacy_manifest_path": str(dataset_dir / "p105-privacy-redaction-manifest.json"),
+                "license_manifest_path": str(dataset_dir / "p105-license-manifest.json"),
+                "citation_manifest_path": str(dataset_dir / "p105-citation-manifest.json"),
+                "provenance_hash_manifest_path": str(dataset_dir / "p105-provenance-hash-manifest.json"),
+                "sources": [
+                    {
+                        "source_id": "p44:v3:reviewed-local",
+                        "family": "multi",
+                        "local_materialized_path": str(records_path),
+                        "local_source_hash": source_hash,
+                        "record_count": len(records),
+                        "private_label_format": "separate_private_ledger",
+                        "partition_format": "pre_label_partition",
                     }
                 ],
             },
@@ -422,7 +556,7 @@ def test_disabled_p44_negative_path_contributes_zero_p44_denominators_and_stays_
     assert result["release_gate"]["p106_unlocked"] is False
 
 
-def test_reviewed_local_p44_positive_path_counts_only_reviewed_redacted_local_records(tmp_path: Path) -> None:
+def test_legacy_v1_reviewed_local_p44_manifest_cannot_supply_positive_release_rows(tmp_path: Path) -> None:
     reviewed_manifest = _reviewed_p44_manifest(tmp_path)
 
     result = _materialize(
@@ -437,10 +571,11 @@ def test_reviewed_local_p44_positive_path_counts_only_reviewed_redacted_local_re
     preflight = result["source_availability_preflight"]["sources"]["p44"]
     assert preflight["mode"] == "reviewed-local"
     assert preflight["review_redaction_status"] == "reviewed_redacted"
-    assert preflight["available_source_rows"] > 0
-    assert preflight["available_source_rows"] <= 2000
-    assert preflight["local_source_hashes"]
-    assert preflight["materialized_record_hashes"]
+    assert preflight["available_source_rows"] == 0
+    assert preflight["positive_labels"] == 0
+    assert "legacy_reviewed_manifest_version" in preflight["validation_error_codes"]
+    assert result["release_gate"]["release_qualified"] is False
+    assert result["release_gate"]["p106_unlocked"] is False
 
 
 def test_materialized_rows_publish_exact_canonical_provenance_and_independent_record_keys(tmp_path: Path) -> None:
@@ -541,7 +676,7 @@ def test_materializer_cli_disabled_p44_expect_locked_contract(tmp_path: Path) ->
     assert (tmp_path / "p105-source-availability-preflight.json").exists()
 
 
-def test_materializer_cli_reviewed_local_p44_positive_contract(tmp_path: Path) -> None:
+def test_materializer_cli_reviewed_local_p44_v3_positive_contract(tmp_path: Path) -> None:
     completed = subprocess.run(
         [
             sys.executable,
@@ -551,7 +686,7 @@ def test_materializer_cli_reviewed_local_p44_positive_contract(tmp_path: Path) -
             "--p41-sources",
             str(P41_SOURCES),
             "--p44-reviewed-local-manifest",
-            str(_reviewed_p44_manifest(tmp_path)),
+            str(_write_honest_v3_p44_dataset(tmp_path)),
             "--p44-mode",
             "reviewed-local",
             "--output-dir",
@@ -569,8 +704,8 @@ def test_materializer_cli_reviewed_local_p44_positive_contract(tmp_path: Path) -
     assert (tmp_path / "p105-private-scorer-label-ledger.json").exists()
 
 
-def test_reviewed_local_p44_end_to_end_materializes_and_unlocks_release_gate(tmp_path: Path) -> None:
-    reviewed_manifest = _write_floor_scale_p44_dataset(tmp_path)
+def test_reviewed_local_p44_v3_end_to_end_materializes_and_unlocks_release_gate(tmp_path: Path) -> None:
+    reviewed_manifest = _write_honest_v3_p44_dataset(tmp_path)
     output_dir = tmp_path / "qualified-output"
 
     result = _materialize(
@@ -642,21 +777,18 @@ def test_legacy_floor_scale_p44_synthetic_fixture_remains_locked_and_cannot_unlo
 
 
 def test_p44_public_sampling_partition_features_and_p24_input_ignore_official_label_changes(tmp_path: Path) -> None:
-    base_manifest = _write_floor_scale_p44_dataset(tmp_path / "base")
-    edited_manifest = _write_floor_scale_p44_dataset(tmp_path / "edited")
-    edited_records_path = Path(json.loads(edited_manifest.read_text(encoding="utf-8"))["sources"][0]["local_materialized_path"])
-    edited_records = [json.loads(line) for line in edited_records_path.read_text(encoding="utf-8").splitlines()]
-    for record in edited_records:
-        label = record["private_label"]
+    base_manifest = _write_honest_v3_p44_dataset(tmp_path / "base")
+    edited_manifest = _write_honest_v3_p44_dataset(tmp_path / "edited")
+    edited_payload = json.loads(edited_manifest.read_text(encoding="utf-8"))
+    edited_ledger_path = Path(edited_payload["private_label_ledger_path"])
+    edited_ledger = json.loads(edited_ledger_path.read_text(encoding="utf-8"))
+    for label in edited_ledger["records"]:
         label["label_positive"] = not label["label_positive"]
-        label["label_incident_id"] = f"changed-{record['record_id']}"
-        label["incident_group_id"] = f"changed-group-{record['record_id']}"
+        label["label_incident_id"] = f"changed-{label['record_id']}"
+        label["incident_group_id"] = f"changed-group-{label['record_id']}"
         label["label_incident_start_timestamp"] = "2026-04-01T11:00:00Z"
         label["lead_time_label_minutes"] = 120
-    edited_records_path.write_text("\n".join(json.dumps(record, sort_keys=True) for record in edited_records) + "\n", encoding="utf-8")
-    edited_payload = json.loads(edited_manifest.read_text(encoding="utf-8"))
-    edited_payload["sources"][0]["local_source_hash"] = hashlib.sha256(edited_records_path.read_bytes()).hexdigest()
-    edited_manifest.write_text(json.dumps(edited_payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    edited_ledger_path.write_text(json.dumps(edited_ledger, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     base = _materialize(
         p32_replay=P32_REPLAY,
@@ -684,7 +816,7 @@ def test_p44_public_sampling_partition_features_and_p24_input_ignore_official_la
 
 
 def test_p44_coverage_comes_only_from_real_source_timestamps(tmp_path: Path) -> None:
-    reviewed_manifest = _write_floor_scale_p44_dataset(tmp_path)
+    reviewed_manifest = _write_honest_v3_p44_dataset(tmp_path)
 
     result = _materialize(
         p32_replay=P32_REPLAY,
@@ -701,7 +833,7 @@ def test_p44_coverage_comes_only_from_real_source_timestamps(tmp_path: Path) -> 
             assert interval.get("source_record_provenance_hash")
 
 
-def test_reviewed_local_p44_manifest_uses_parsed_records_hashes_and_private_labels(tmp_path: Path) -> None:
+def test_legacy_v2_reviewed_local_p44_manifest_with_embedded_private_labels_stays_locked(tmp_path: Path) -> None:
     reviewed_manifest = _write_floor_scale_p44_dataset(tmp_path)
     records_path = Path(json.loads(reviewed_manifest.read_text(encoding="utf-8"))["sources"][0]["local_materialized_path"])
     parsed_records = [json.loads(line) for line in records_path.read_text(encoding="utf-8").splitlines()]
@@ -717,11 +849,12 @@ def test_reviewed_local_p44_manifest_uses_parsed_records_hashes_and_private_labe
 
     p44 = result["source_availability_preflight"]["sources"]["p44"]
     assert p44["local_source_hashes"] == [hashlib.sha256(records_path.read_bytes()).hexdigest()]
-    assert p44["available_source_rows"] == len(parsed_records)
-    assert p44["record_count_verified_from_parsed_records"] is True
-    assert p44["positive_labels"] == sum(1 for record in parsed_records if record["private_label"]["label_positive"] is True)
-    assert p44["incidents"] == sum(1 for record in parsed_records if record["private_label"]["label_incident_id"])
-    assert p44["incident_groups"] == len({record["private_label"]["incident_group_id"] for record in parsed_records})
+    assert p44.get("legacy_embedded_private_label_row_count") == len(parsed_records)
+    assert p44["available_source_rows"] == 0
+    assert p44["positive_labels"] == 0
+    assert "embedded_private_label_not_reviewed_truth" in p44["validation_error_codes"]
+    assert result["release_gate"]["release_qualified"] is False
+    assert result["release_gate"]["p106_unlocked"] is False
 
 
 @pytest.mark.parametrize(

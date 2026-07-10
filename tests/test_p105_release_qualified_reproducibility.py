@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib
 import json
 import subprocess
@@ -15,6 +16,16 @@ P32_REPLAY = Path("evals/telemetry/replay/p32_replay_pack.json")
 P41_SOURCES = Path("evals/real_datasets/raw/p41_sources.json")
 MATERIALIZER_SCRIPT = Path("scripts/materialize_p105_release_evidence.py")
 BENCHMARK_SCRIPT = Path("scripts/run_failure_forecast_benchmark.py")
+REQUIRED_MANIFEST_FILES = {
+    "source": "p105-source-manifest.json",
+    "preflight": "p105-source-availability-preflight.json",
+    "private_label": "p105-private-scorer-label-ledger.json",
+    "partition": "p105-partitions.json",
+    "coverage": "p105-coverage.json",
+    "p24": "p105-p24-parity.json",
+    "benchmark": "p105-release-qualified-benchmark.json",
+    "review": "p105-review.json",
+}
 
 
 def _api() -> Any:
@@ -50,6 +61,79 @@ def _tamper_check(path: Path) -> dict[str, Any]:
     if checker is None:
         pytest.fail("G006 tamper validator missing: expose validate_p105_release_qualified_tamper.", pytrace=False)
     return checker(path)
+
+
+def _reviewed_p44_manifest(tmp_path: Path) -> Path:
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    records_path = tmp_path / "reviewed-p44-records.jsonl"
+    rows = []
+    for family in ("database", "deploy", "queue"):
+        for partition, count, positives in (("held_out", 30, 6), ("real_derived_shadow", 20, 4)):
+            for index in range(count):
+                rows.append(
+                    {
+                        "record_id": f"{family}-{partition}-{index:03d}",
+                        "family": family,
+                        "partition": partition,
+                        "source_window_id": f"p44-window-{family}-{partition}-{index:03d}",
+                        "public_features": {"metric": f"{family}.saturation", "value": index},
+                        "private_label": {
+                            "label_positive": index < positives,
+                            "label_incident_id": f"inc-{family}-{partition}-{index:03d}" if index < positives else None,
+                            "incident_group_id": f"group-{family}-{partition}-{index % max(positives, 1):03d}",
+                        },
+                        "p24_input": {"window_id": f"p44-window-{family}-{partition}-{index:03d}", "family": family},
+                    }
+                )
+    records_path.write_text("\n".join(json.dumps(row, sort_keys=True) for row in rows) + "\n", encoding="utf-8")
+    manifest_path = tmp_path / "p44-reviewed-local-manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "p105.reviewed_p44_local_manifest.v2",
+                "review_redaction_status": "reviewed_redacted",
+                "sources": [
+                    {
+                        "source_id": "p44:test:reviewed-local",
+                        "family": "multi",
+                        "local_materialized_path": str(records_path),
+                        "local_source_hash": hashlib.sha256(records_path.read_bytes()).hexdigest(),
+                        "record_count": len(rows),
+                    }
+                ],
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    return manifest_path
+
+
+def _materialize_reviewed_local(output_dir: Path, manifest_path: Path) -> None:
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(MATERIALIZER_SCRIPT),
+            "--p32-replay",
+            str(P32_REPLAY),
+            "--p41-sources",
+            str(P41_SOURCES),
+            "--p44-reviewed-local-manifest",
+            str(manifest_path),
+            "--p44-mode",
+            "reviewed-local",
+            "--output-dir",
+            str(output_dir),
+            "--mode",
+            "release_qualified",
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
 
 
 def test_materializer_runs_are_byte_identical_for_rows_manifests_partitions_coverage_and_benchmark(tmp_path: Path) -> None:
@@ -236,3 +320,70 @@ def test_materializer_cli_reproducibility_contract_is_byte_identical(tmp_path: P
     assert (first_dir / "p105-release-qualified-rows.json").read_bytes() == (
         second_dir / "p105-release-qualified-rows.json"
     ).read_bytes()
+
+
+def test_required_manifest_files_exist_and_hashes_are_verified(tmp_path: Path) -> None:
+    output_dir = tmp_path / "qualified"
+    _materialize_reviewed_local(output_dir, _reviewed_p44_manifest(tmp_path))
+    rows_payload = json.loads((output_dir / "p105-release-qualified-rows.json").read_text(encoding="utf-8"))
+
+    assert set(rows_payload["artifact_manifests"]) == set(REQUIRED_MANIFEST_FILES)
+    for key, filename in REQUIRED_MANIFEST_FILES.items():
+        path = output_dir / filename
+        assert path.exists(), key
+        assert rows_payload["artifact_manifests"][key]["path"] == filename
+        assert rows_payload["artifact_manifests"][key]["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+@pytest.mark.parametrize(
+    ("manifest_key", "expected_code"),
+    [
+        ("source", "source_manifest_tamper"),
+        ("preflight", "source_availability_preflight_tamper"),
+        ("private_label", "private_label_ledger_tamper"),
+        ("partition", "partition_manifest_tamper"),
+        ("coverage", "coverage_manifest_tamper"),
+        ("p24", "p24_parity_manifest_tamper"),
+        ("benchmark", "benchmark_manifest_tamper"),
+        ("review", "review_manifest_tamper"),
+    ],
+)
+def test_deleting_required_manifest_fails_closed(tmp_path: Path, manifest_key: str, expected_code: str) -> None:
+    output_dir = tmp_path / f"delete-{manifest_key}"
+    _materialize_reviewed_local(output_dir, _reviewed_p44_manifest(tmp_path / f"fixture-{manifest_key}"))
+    target = output_dir / REQUIRED_MANIFEST_FILES[manifest_key]
+    assert target.exists(), f"materializer must write required {manifest_key} manifest before deletion tamper can be tested"
+    target.unlink()
+
+    tamper = _tamper_check(output_dir / "p105-release-qualified-rows.json")
+
+    assert expected_code in tamper["validation_error_codes"]
+    assert tamper["release_gate"]["release_qualified"] is False
+    assert tamper["release_gate"]["p106_unlocked"] is False
+
+
+@pytest.mark.parametrize(
+    ("manifest_key", "expected_code"),
+    [
+        ("source", "source_manifest_tamper"),
+        ("preflight", "source_availability_preflight_tamper"),
+        ("private_label", "private_label_ledger_tamper"),
+        ("partition", "partition_manifest_tamper"),
+        ("coverage", "coverage_manifest_tamper"),
+        ("p24", "p24_parity_manifest_tamper"),
+        ("benchmark", "benchmark_manifest_tamper"),
+        ("review", "review_manifest_tamper"),
+    ],
+)
+def test_tampering_required_manifest_fails_closed(tmp_path: Path, manifest_key: str, expected_code: str) -> None:
+    output_dir = tmp_path / f"tamper-{manifest_key}"
+    _materialize_reviewed_local(output_dir, _reviewed_p44_manifest(tmp_path / f"fixture-tamper-{manifest_key}"))
+    target = output_dir / REQUIRED_MANIFEST_FILES[manifest_key]
+    assert target.exists(), f"materializer must write required {manifest_key} manifest before content tamper can be tested"
+    target.write_text(target.read_text(encoding="utf-8") + "\n{\"tampered\": true}\n", encoding="utf-8")
+
+    tamper = _tamper_check(output_dir / "p105-release-qualified-rows.json")
+
+    assert expected_code in tamper["validation_error_codes"]
+    assert tamper["release_gate"]["release_qualified"] is False
+    assert tamper["release_gate"]["p106_unlocked"] is False

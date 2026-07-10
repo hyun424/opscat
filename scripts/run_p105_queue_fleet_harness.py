@@ -144,15 +144,14 @@ def _affected_incidents_by_service() -> dict[int, list[dict[str, Any]]]:
 def _message_count_for_service(service_index: int, offset_seconds: int, incidents_by_service: dict[int, list[dict[str, Any]]]) -> tuple[int, int]:
     if offset_seconds % HEARTBEAT_PERIOD_SECONDS != 0:
         return 0, 0
-    valid_messages = 1
+    valid_messages = 0
     invalid_messages = 0
     for incident in incidents_by_service[service_index]:
         start = int(incident["positive_precursor_start_offset_seconds"])
-        end = int(incident["positive_precursor_end_offset_seconds"])
-        if start <= offset_seconds <= end and incident["kind"] == "bounded_producer_burst":
-            valid_messages = 5
         if offset_seconds == start and incident["kind"] == "poison_dead_letter":
-            invalid_messages += 2
+            invalid_messages += 1
+        elif offset_seconds == start:
+            valid_messages += 1
     return valid_messages, invalid_messages
 
 
@@ -182,12 +181,13 @@ def _public_config(profile_id: str, sample_count: int, project_name: str) -> dic
             "maximum_management_http_calls": MAX_MANAGEMENT_HTTP_CALLS,
         },
         "message_plan": {
-            "heartbeat_messages_per_service": 1,
             "heartbeat_period_seconds": HEARTBEAT_PERIOD_SECONDS,
             "maximum_consumed_or_rejected_messages": MAX_MESSAGES,
             "maximum_published_messages": MAX_MESSAGES,
-            "poison_invalid_messages_per_affected_service": 2,
-            "producer_burst_messages_per_affected_service": 5,
+            "normal_heartbeat_messages_per_service": 0,
+            "poison_invalid_messages_per_affected_service": 1,
+            "precursor_seed_messages_per_affected_service": 1,
+            "publish_mode": "one_shot_at_private_precursor_start_then_observe_broker_state",
         },
         "partitions": {
             "assigned_before_private_schedule_loading": True,
@@ -437,27 +437,45 @@ def _publish_rows(compose_file: Path, project_name: str, attestations: list[Comm
     )
 
 
-def _consume_queue(compose_file: Path, project_name: str, attestations: list[CommandAttestation], queue: str, valid_count: int, invalid_count: int) -> None:
-    if valid_count:
-        _run_command(
-            _rabbitmqadmin_command(compose_file, project_name, ["get", f"queue={queue}", f"count={valid_count}", "ackmode=ack_requeue_false", "encoding=auto"]),
-            step=f"rabbitmq.consume.{queue}.ack",
-            attestations=attestations,
-        )
-    if invalid_count:
-        _run_command(
-            _rabbitmqadmin_command(compose_file, project_name, ["get", f"queue={queue}", f"count={invalid_count}", "ackmode=reject_requeue_false", "encoding=auto"]),
-            step=f"rabbitmq.consume.{queue}.reject",
-            attestations=attestations,
-        )
+def _consume_rows(
+    compose_file: Path,
+    project_name: str,
+    attestations: list[CommandAttestation],
+    rows: list[tuple[str, int, str]],
+) -> None:
+    if not rows:
+        return
+    input_rows = "".join(f"{queue}\t{count}\t{ackmode}\n" for queue, count, ackmode in rows)
+    script = (
+        "while IFS='\t' read -r queue count ackmode; do "
+        "rabbitmqadmin -q --vhost=/ get queue=\"$queue\" count=\"$count\" ackmode=\"$ackmode\" encoding=auto >/dev/null; "
+        "done"
+    )
+    _run_command(
+        _compose_command(compose_file, project_name, ["exec", "-T", "rabbitmq", "sh", "-eu", "-c", script]),
+        step="rabbitmq.consume.batch",
+        attestations=attestations,
+        input_text=input_rows,
+        timeout=120,
+    )
 
 
-def _telemetry_row(service_index: int, sample_ordinal: int, *, broker_observed: bool, messages_ready: int, published_count: int, rejected_count: int) -> dict[str, Any]:
+def _telemetry_row(
+    service_index: int,
+    sample_ordinal: int,
+    *,
+    broker_observed: bool,
+    messages_ready: int,
+    dlq_messages_ready: int,
+    published_count: int,
+    rejected_count: int,
+) -> dict[str, Any]:
     split = _split_for_service(service_index)
     row = {
         "adapter_key": ADAPTER_KEY,
         "authority_counters": {"credential_reads": 0, "host_ports": 0, "production_endpoint_attempts": 0, "production_mutations": 0},
         "broker_observed": broker_observed,
+        "dlq_messages_ready": dlq_messages_ready,
         "family": "queue",
         "messages_ready": messages_ready,
         "partition_id": split,
@@ -530,7 +548,15 @@ def _segment_rows(service_index: int, rows: list[dict[str, Any]]) -> list[dict[s
 
 def _materialize_fixture(sample_count: int, *, diagnostic_only: bool) -> tuple[list[dict[str, Any]], dict[str, Any], dict[str, Any], dict[str, Any]]:
     telemetry = [
-        _telemetry_row(service_index, sample_ordinal, broker_observed=False, messages_ready=0, published_count=0, rejected_count=0)
+        _telemetry_row(
+            service_index,
+            sample_ordinal,
+            broker_observed=False,
+            messages_ready=0,
+            dlq_messages_ready=0,
+            published_count=0,
+            rejected_count=0,
+        )
         for sample_ordinal in range(sample_count)
         for service_index in range(SERVICE_COUNT)
     ]
@@ -587,7 +613,7 @@ def _materialize_actual(args: argparse.Namespace, sample_count: int, project_nam
         for sample_ordinal, offset_seconds in enumerate(_sample_offsets(sample_count)):
             tick_started = time.monotonic()
             publish_batch: list[tuple[str, dict[str, Any]]] = []
-            consume_plan: list[tuple[int, int, int]] = []
+            consume_plan: list[tuple[str, int, str]] = []
             for service_index in range(SERVICE_COUNT):
                 valid_count, invalid_count = _message_count_for_service(service_index, offset_seconds, incidents_by_service)
                 if valid_count or invalid_count:
@@ -600,15 +626,24 @@ def _materialize_actual(args: argparse.Namespace, sample_count: int, project_nam
                     published_by_service[service_index] += valid_count + invalid_count
                     rejected_by_service[service_index] += invalid_count
                     published_total += valid_count + invalid_count
-                    consumed_total += valid_count + invalid_count
-                    consume_plan.append((service_index, valid_count, invalid_count))
+                    if invalid_count:
+                        consume_plan.append((_queue_name(service_index), invalid_count, "reject_requeue_false"))
+                        consumed_total += invalid_count
                     if split not in {"held_out", "real_derived_shadow"}:
                         raise RuntimeError("invalid_split")
+                for incident in incidents_by_service[service_index]:
+                    cleanup_offset = int(incident["positive_precursor_end_offset_seconds"]) + CADENCE_SECONDS
+                    if offset_seconds != cleanup_offset:
+                        continue
+                    if incident["kind"] == "poison_dead_letter":
+                        consume_plan.append((_dlq_name(service_index), 1, "ack_requeue_false"))
+                    else:
+                        consume_plan.append((_queue_name(service_index), 1, "ack_requeue_false"))
+                    consumed_total += 1
             if published_total > MAX_MESSAGES or consumed_total > MAX_MESSAGES:
                 raise RuntimeError("queue_fleet_message_bound_breach")
             _publish_rows(compose_file, project_name, attestations, publish_batch)
-            for service_index, valid_count, invalid_count in consume_plan:
-                _consume_queue(compose_file, project_name, attestations, _queue_name(service_index), valid_count, invalid_count)
+            _consume_rows(compose_file, project_name, attestations, consume_plan)
             broker_rows = _bulk_observe(compose_file, project_name, attestations)
             management_calls += 1
             if management_calls > MAX_MANAGEMENT_HTTP_CALLS:
@@ -618,6 +653,7 @@ def _materialize_actual(args: argparse.Namespace, sample_count: int, project_nam
             sample_monotonic_ns = time.monotonic_ns()
             for service_index in range(SERVICE_COUNT):
                 counts = broker_counts.get(_queue_name(service_index), {})
+                dlq_counts = broker_counts.get(_dlq_name(service_index), {})
                 messages_ready = int(counts.get("messages_ready", 0)) if counts else 0
                 telemetry.append(
                     _telemetry_row(
@@ -625,6 +661,7 @@ def _materialize_actual(args: argparse.Namespace, sample_count: int, project_nam
                         sample_ordinal,
                         broker_observed=True,
                         messages_ready=messages_ready,
+                        dlq_messages_ready=int(dlq_counts.get("messages_ready", 0)) if dlq_counts else 0,
                         published_count=published_by_service[service_index],
                         rejected_count=rejected_by_service[service_index],
                     )

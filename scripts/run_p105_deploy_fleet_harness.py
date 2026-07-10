@@ -158,6 +158,10 @@ def _incident_indexes_by_sample() -> set[tuple[int, int]]:
     return faulted
 
 
+def _status_code_for_fault(faulted: bool) -> int:
+    return 503 if faulted else 200
+
+
 @dataclass
 class RuntimeState:
     lock: threading.Lock = field(default_factory=threading.Lock)
@@ -198,7 +202,7 @@ def _make_handler(state: RuntimeState, *, max_response_body_bytes: int) -> type[
             sample_ordinal = int(params.get("sample_ordinal", ["0"])[0])
             split = _split_for_service(service_index)
             faulted = params.get("faulted", ["0"])[0] == "1"
-            status_code = 503 if faulted and service_index % 4 == 0 else 200
+            status_code = _status_code_for_fault(faulted)
             version = FAULTED_CONFIG_VERSION if faulted else CONFIG_VERSION
             body = _stable_json(
                 {

@@ -2487,6 +2487,21 @@ def _g006_labels_from_record(
 def _g006_public_signal_strength(record: Mapping[str, Any], partition: str, fallback_index: int) -> float:
     public_record = _g006_public_source_record(record)
     public_features = public_record.get("public_features", {}) if isinstance(public_record.get("public_features"), Mapping) else {}
+    schema_version = str(public_record.get("schema_version") or "")
+    adapter_key = str(public_record.get("adapter_key") or "")
+    source_key = str(public_record.get("source_key") or "")
+    if "fleet" in schema_version or adapter_key.endswith("_fleet") or "-fleet-" in source_key:
+        if (
+            public_record.get("acquisition_failed") is True
+            or int(public_record.get("sql_error_count") or 0) > 0
+            or float(public_record.get("transaction_duration_ms") or 0.0) >= 20.0
+        ):
+            return 0.86
+        if int(public_record.get("messages_ready") or 0) > 0 or int(public_record.get("dlq_messages_ready") or 0) > 0:
+            return 0.86
+        if int(public_record.get("status_code") or 0) >= 500:
+            return 0.86
+        return 0.01
     trend = str(public_features.get("trend") or public_record.get("trend") or "").lower()
     if trend in {"rising", "spiking", "increasing", "degrading"}:
         return 0.86

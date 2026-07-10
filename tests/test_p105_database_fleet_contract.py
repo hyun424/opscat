@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib
 from collections.abc import Mapping
+from types import SimpleNamespace
 from typing import Any
 
 PROFILE = "p105.actual-fleet-soak.256x1h.v1"
@@ -14,6 +15,7 @@ FORBIDDEN_PUBLIC_KEYS = {
     "label_positive",
     "incident_answer_key",
     "incident_group_id",
+    "incident_runtime_kind",
     "private_failure_second",
     "private_failure_timestamp",
     "scorer_threshold",
@@ -27,6 +29,10 @@ FORBIDDEN_PUBLIC_KEYS = {
 
 def _api() -> Any:
     return importlib.import_module("app.services.failure_forecast_engine")
+
+
+def _harness() -> Any:
+    return importlib.import_module("scripts.run_p105_database_fleet_harness")
 
 
 def _database_fleet_contract() -> Mapping[str, Any]:
@@ -185,3 +191,57 @@ def test_database_fleet_fast_diagnostic_uses_actual_sqlite_pool_but_is_non_count
     assert diagnostic["service_count"] < 256
     assert diagnostic["forbidden_release_credit"] == ["rows", "positives", "incident_groups", "coverage"]
     assert "release_counting_allowed" not in diagnostic
+
+
+def test_database_fleet_public_telemetry_carries_observed_slow_transaction_without_private_incident_kind() -> None:
+    harness = _harness()
+    shard = SimpleNamespace(shard_id=0, stats=SimpleNamespace(sql_errors=0))
+    row = harness._telemetry_row(
+        service_index=0,
+        sample_ordinal=61,
+        sample_offset_seconds=305,
+        sample_monotonic_ns=1,
+        heartbeat_result={
+            "acquire_failed": False,
+            "acquire_wait_ms": 0.2,
+            "incident_kind": "slow_transaction",
+            "sample_offset_seconds": 300,
+            "sql_ok": True,
+            "transaction_duration_ms": 40.5,
+        },
+        heartbeat_observation_age_seconds=5,
+        partition_id="held_out",
+        shard=shard,
+    )
+
+    assert row["transaction_duration_ms"] == 40.5
+    assert row["heartbeat_observation_age_seconds"] == 5
+    assert "incident_runtime_kind" not in row
+
+
+def test_database_fleet_public_telemetry_without_observation_excludes_private_incident_kind() -> None:
+    harness = _harness()
+    shard = SimpleNamespace(shard_id=0, stats=SimpleNamespace(sql_errors=0))
+    row = harness._telemetry_row(
+        service_index=0,
+        sample_ordinal=62,
+        sample_offset_seconds=310,
+        sample_monotonic_ns=2,
+        heartbeat_result=None,
+        heartbeat_observation_age_seconds=None,
+        partition_id="held_out",
+        shard=shard,
+    )
+
+    assert _flatten_keys(row).isdisjoint(FORBIDDEN_PUBLIC_KEYS)
+    assert "incident_runtime_kind" not in row
+
+
+def test_database_fleet_samples_each_precursor_window_but_not_post_window_or_private_failure_probe() -> None:
+    harness = _harness()
+    schedule = harness._build_schedule()
+
+    assert 0 in harness._runtime_service_indexes(305, schedule)
+    assert 0 in harness._runtime_service_indexes(600, schedule)
+    assert 0 not in harness._runtime_service_indexes(605, schedule)
+    assert not hasattr(harness, "_failure_probe_for")

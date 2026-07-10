@@ -573,3 +573,17 @@ def test_existing_per_family_seven_day_union_gate_and_p106_lock_remain_unchanged
     assert coverage["pass"] is False
     assert report["release_gate"]["release_qualified"] is False
     assert report["release_gate"]["p106_unlocked"] is False
+
+
+@pytest.mark.parametrize(
+    ("record", "expected"),
+    [
+        ({"adapter_key": "database_fleet", "acquisition_failed": True, "source_window_id": "sample999"}, 0.86),
+        ({"adapter_key": "database_fleet", "transaction_duration_ms": 40.5, "source_window_id": "sample999"}, 0.86),
+        ({"adapter_key": "queue_fleet", "messages_ready": 1, "dlq_messages_ready": 0, "source_window_id": "sample999"}, 0.86),
+        ({"adapter_key": "deploy_fleet", "status_code": 503, "source_window_id": "sample999"}, 0.86),
+        ({"adapter_key": "queue_fleet", "messages_ready": 0, "dlq_messages_ready": 0, "source_window_id": "sample000"}, 0.01),
+    ],
+)
+def test_fleet_signal_strength_is_derived_from_observed_telemetry_not_row_order(record: dict[str, Any], expected: float) -> None:
+    assert _forecast_api()._g006_public_signal_strength(record, "held_out", 0) == expected

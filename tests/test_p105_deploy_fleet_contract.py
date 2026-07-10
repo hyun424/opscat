@@ -196,6 +196,13 @@ def test_deploy_fleet_harness_accepts_full_profile_contract_without_diagnostic_e
     assert args.max_requests == args.services * args.samples_per_service == 184_320
 
 
+def test_deploy_fleet_every_faulted_treatment_request_returns_observed_503() -> None:
+    harness = _harness()
+
+    assert harness._status_code_for_fault(False) == 200
+    assert harness._status_code_for_fault(True) == 503
+
+
 def test_deploy_fleet_harness_rejects_full_profile_with_diagnostic_flag_or_wrong_request_cap(tmp_path: Path) -> None:
     harness = _harness()
     parser = harness._parser()

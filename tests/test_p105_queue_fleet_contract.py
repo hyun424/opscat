@@ -119,9 +119,10 @@ def _queue_fleet_manifest() -> dict[str, Any]:
         },
         "message_plan": {
             "heartbeat_period_seconds": 30,
-            "heartbeat_messages_per_service": 1,
-            "producer_burst_messages_per_affected_service": 5,
-            "poison_invalid_messages_per_affected_service": 2,
+            "normal_heartbeat_messages_per_service": 0,
+            "precursor_seed_messages_per_affected_service": 1,
+            "poison_invalid_messages_per_affected_service": 1,
+            "publish_mode": "one_shot_at_private_precursor_start_then_observe_broker_state",
             "maximum_published_messages": 35872,
             "maximum_consumed_or_rejected_messages": 35872,
         },
@@ -497,6 +498,51 @@ def test_queue_fleet_harness_management_observed_requires_successful_rabbitmqadm
     assert harness._rabbitmq_management_observed(failed) is False
 
 
+def test_queue_fleet_incident_messages_are_one_shot_and_normal_services_do_not_create_command_fanout() -> None:
+    harness = _harness()
+    incidents = harness._affected_incidents_by_service()
+
+    assert harness._message_count_for_service(64, 0, incidents) == (0, 0)
+    assert harness._message_count_for_service(0, 900, incidents) == (1, 0)
+    assert harness._message_count_for_service(0, 930, incidents) == (0, 0)
+    assert harness._message_count_for_service(8, 960, incidents) == (0, 1)
+    assert harness._message_count_for_service(8, 990, incidents) == (0, 0)
+
+    active_service_ticks = sum(
+        bool(harness._message_count_for_service(service_index, offset, incidents) != (0, 0))
+        for offset in harness._sample_offsets(harness.SCHEDULED_SAMPLES_PER_SERVICE)
+        for service_index in range(harness.SERVICE_COUNT)
+    )
+    assert active_service_ticks == 64
+
+
+def test_queue_fleet_consumption_is_one_compose_exec_batch(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    harness = _harness()
+    calls: list[tuple[list[str], str | None, str]] = []
+
+    def fake_run(command: list[str], *, attestations: list[Any], step: str, input_text: str | None = None, timeout: int = 120) -> subprocess.CompletedProcess[str]:
+        del attestations, timeout
+        calls.append((command, input_text, step))
+        return subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+
+    monkeypatch.setattr(harness, "_run_command", fake_run)
+    harness._consume_rows(
+        tmp_path / "compose.yml",
+        "p105-queue-fleet-test",
+        [],
+        [
+            ("p105-fleet-q-000", 1, "ack_requeue_false"),
+            ("p105-fleet-dlq-008", 1, "ack_requeue_false"),
+        ],
+    )
+
+    assert len(calls) == 1
+    command, input_text, step = calls[0]
+    assert command[:6] == ["docker", "compose", "-f", str(tmp_path / "compose.yml"), "-p", "p105-queue-fleet-test"]
+    assert input_text == "p105-fleet-q-000\t1\tack_requeue_false\np105-fleet-dlq-008\t1\tack_requeue_false\n"
+    assert step == "rabbitmq.consume.batch"
+
+
 def test_queue_fleet_actual_path_emits_verifier_required_rabbitmq_evidence_without_docker(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     harness = _harness()
     args = type(
@@ -545,7 +591,7 @@ def test_queue_fleet_actual_path_emits_verifier_required_rabbitmq_evidence_witho
     monkeypatch.setattr(harness, "_wait_for_broker", lambda compose_file, project_name, attestations: None)
     monkeypatch.setattr(harness, "_declare_broker_shape", lambda compose_file, project_name, attestations: 1)
     monkeypatch.setattr(harness, "_publish_rows", lambda compose_file, project_name, attestations, rows: None)
-    monkeypatch.setattr(harness, "_consume_queue", lambda compose_file, project_name, attestations, queue, valid_count, invalid_count: None)
+    monkeypatch.setattr(harness, "_consume_rows", lambda compose_file, project_name, attestations, rows: None)
     monkeypatch.setattr(harness, "_bulk_observe", fake_bulk_observe)
     monkeypatch.setattr(harness.subprocess, "run", lambda command, **kwargs: subprocess.CompletedProcess(command, 0, stdout="", stderr=""))
 

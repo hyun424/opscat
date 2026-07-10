@@ -222,11 +222,10 @@ def _incident_for(service_index: int, sample_offset_seconds: int, schedule: list
     return None
 
 
-def _failure_probe_for(service_index: int, sample_offset_seconds: int, schedule: list[dict[str, Any]]) -> dict[str, Any] | None:
-    for incident in schedule:
-        if service_index in incident["affected_service_indexes"] and sample_offset_seconds == incident["private_failure_offset_seconds"]:
-            return incident
-    return None
+def _runtime_service_indexes(sample_offset_seconds: int, schedule: list[dict[str, Any]]) -> list[int]:
+    if sample_offset_seconds % HEARTBEAT_INTERVAL_SECONDS == 0:
+        return list(range(SERVICE_COUNT))
+    return [service_index for service_index in range(SERVICE_COUNT) if _incident_for(service_index, sample_offset_seconds, schedule) is not None]
 
 
 def _init_shard_database(db_path: Path, service_ids: list[str]) -> None:
@@ -298,26 +297,30 @@ def _heartbeat_transaction(
     sample_ordinal: int,
     sample_offset_seconds: int,
     incident_kind: str | None,
-    failure_probe: bool,
 ) -> dict[str, Any]:
     timeout_seconds = 0.001 if incident_kind == "checkout_timeout" else 0.5
+    transaction_started_ns = time.monotonic_ns()
     connection = pool.acquire(timeout_seconds)
     if connection is None:
         return {
             "acquire_failed": True,
+            "acquire_wait_ms": (time.monotonic_ns() - transaction_started_ns) / 1_000_000,
             "incident_kind": incident_kind,
+            "sample_offset_seconds": sample_offset_seconds,
             "sample_ordinal": sample_ordinal,
             "service_id": service_id,
             "sql_ok": False,
+            "transaction_duration_ms": (time.monotonic_ns() - transaction_started_ns) / 1_000_000,
         }
+    acquired_ns = time.monotonic_ns()
     started_ns = time.monotonic_ns()
     try:
         try:
-            if incident_kind == "lock_contention" or failure_probe:
+            if incident_kind == "lock_contention":
                 with pool.sql_lock:
                     connection.execute("BEGIN IMMEDIATE")
                     connection.execute("UPDATE fleet_locks SET touched_count = touched_count + 1 WHERE lock_name = 'database_fleet_lock'")
-                    time.sleep(0.02 if failure_probe else 0.04)
+                    time.sleep(0.04)
                     connection.execute("COMMIT")
             with pool.sql_lock:
                 connection.execute(
@@ -352,22 +355,28 @@ def _heartbeat_transaction(
             pool.stats.transaction_cycles += 1
             return {
                 "acquire_failed": False,
+                "acquire_wait_ms": (acquired_ns - transaction_started_ns) / 1_000_000,
                 "connection_object_id": id(connection),
                 "incident_kind": incident_kind,
+                "sample_offset_seconds": sample_offset_seconds,
                 "sample_ordinal": sample_ordinal,
                 "service_id": service_id,
                 "sql_ok": True,
                 "thread_id": threading.get_ident(),
+                "transaction_duration_ms": (time.monotonic_ns() - transaction_started_ns) / 1_000_000,
             }
         except sqlite3.Error as error:
             pool.stats.sql_errors += 1
             return {
                 "acquire_failed": False,
+                "acquire_wait_ms": (acquired_ns - transaction_started_ns) / 1_000_000,
                 "incident_kind": incident_kind,
+                "sample_offset_seconds": sample_offset_seconds,
                 "sample_ordinal": sample_ordinal,
                 "service_id": service_id,
                 "sqlite_error": error.__class__.__name__,
                 "sql_ok": False,
+                "transaction_duration_ms": (time.monotonic_ns() - transaction_started_ns) / 1_000_000,
             }
     finally:
         pool.release(connection)
@@ -380,11 +389,11 @@ def _run_sample(
     sample_ordinal: int,
     sample_offset_seconds: int,
     schedule: list[dict[str, Any]],
+    service_indexes: list[int],
 ) -> list[dict[str, Any]]:
     futures: list[concurrent.futures.Future[dict[str, Any]]] = []
-    for service_index in range(SERVICE_COUNT):
+    for service_index in service_indexes:
         incident = _incident_for(service_index, sample_offset_seconds, schedule)
-        failure_probe = _failure_probe_for(service_index, sample_offset_seconds, schedule) is not None
         shard_id = service_index // SERVICES_PER_SHARD
         futures.append(
             executor.submit(
@@ -394,7 +403,6 @@ def _run_sample(
                 sample_ordinal=sample_ordinal,
                 sample_offset_seconds=sample_offset_seconds,
                 incident_kind=None if incident is None else str(incident["kind"]),
-                failure_probe=failure_probe,
             )
         )
     return [future.result() for future in futures]
@@ -407,6 +415,7 @@ def _telemetry_row(
     sample_offset_seconds: int,
     sample_monotonic_ns: int,
     heartbeat_result: dict[str, Any] | None,
+    heartbeat_observation_age_seconds: int | None,
     partition_id: str,
     shard: SQLiteShardPool,
 ) -> dict[str, Any]:
@@ -415,6 +424,7 @@ def _telemetry_row(
         "adapter_key": ADAPTER_KEY,
         "adapter_version": ADAPTER_VERSION,
         "heartbeat_sql_cycle_observed": heartbeat_result is not None and heartbeat_result.get("sql_ok") is True,
+        "heartbeat_observation_age_seconds": heartbeat_observation_age_seconds,
         "partition_id": partition_id,
         "profile": PROFILE,
         "program_version": PROGRAM_VERSION,
@@ -433,17 +443,17 @@ def _telemetry_row(
         row.update(
             {
                 "acquisition_failed": heartbeat_result.get("acquire_failed") is True,
-                "incident_runtime_kind": heartbeat_result.get("incident_kind"),
+                "acquire_wait_ms": heartbeat_result.get("acquire_wait_ms"),
                 "sql_insert_count": 1 if heartbeat_result.get("sql_ok") is True else 0,
                 "sql_select_count": 1 if heartbeat_result.get("sql_ok") is True else 0,
                 "sql_update_count": 1 if heartbeat_result.get("sql_ok") is True else 0,
+                "transaction_duration_ms": heartbeat_result.get("transaction_duration_ms"),
             }
         )
     else:
         row.update(
             {
                 "acquisition_failed": False,
-                "incident_runtime_kind": None,
                 "sql_insert_count": 0,
                 "sql_select_count": 0,
                 "sql_update_count": 0,
@@ -649,15 +659,16 @@ def _materialize_runtime(
                 sample_monotonic_ns = time.monotonic_ns()
                 sample_offset_seconds = sample_ordinal * CADENCE_SECONDS
                 sampled_ordinals.add(sample_ordinal)
-                is_heartbeat = sample_offset_seconds % HEARTBEAT_INTERVAL_SECONDS == 0
                 heartbeat_results_by_service: dict[str, dict[str, Any]] = {}
-                if is_heartbeat:
+                runtime_service_indexes = _runtime_service_indexes(sample_offset_seconds, schedule)
+                if runtime_service_indexes:
                     heartbeat_results = _run_sample(
                         executor=executor,
                         pools=pools,
                         sample_ordinal=sample_ordinal,
                         sample_offset_seconds=sample_offset_seconds,
                         schedule=schedule,
+                        service_indexes=runtime_service_indexes,
                     )
                     heartbeat_results_by_service = {str(result["service_id"]): result for result in heartbeat_results}
                     raw_heartbeat_observations.extend(heartbeat_results[: min(16, len(heartbeat_results))])
@@ -668,6 +679,8 @@ def _materialize_runtime(
 
                 for service_index, service_id in enumerate(services):
                     shard = pools[service_index // SERVICES_PER_SHARD]
+                    heartbeat_result = heartbeat_results_by_service.get(service_id)
+                    heartbeat_observation_age_seconds = 0 if heartbeat_result is not None else None
                     source_window_id = _source_window_id(service_index, sample_ordinal)
                     raw_sample = {
                         "monotonic_ns": sample_monotonic_ns,
@@ -683,7 +696,8 @@ def _materialize_runtime(
                             sample_ordinal=sample_ordinal,
                             sample_offset_seconds=sample_offset_seconds,
                             sample_monotonic_ns=sample_monotonic_ns,
-                            heartbeat_result=heartbeat_results_by_service.get(service_id),
+                            heartbeat_result=heartbeat_result,
+                            heartbeat_observation_age_seconds=heartbeat_observation_age_seconds,
                             partition_id=_split_for_index(service_index),
                             shard=shard,
                         )

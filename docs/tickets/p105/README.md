@@ -34,6 +34,13 @@ future-window leakage; raw LLM confidence never drives execution.
 - [P105-020 - Parity, partition, coverage, and isolation](p105-020-parity-partition-coverage-isolation.md)
 - [P105-021 - Reproducibility and tamper tests](p105-021-reproducibility-and-tamper-tests.md)
 - [P105-022 - Independent review and full verification](p105-022-independent-review-full-verification.md)
+- [P105-023 - Source registry, eligibility contract, and plan review](p105-023-source-registry-eligibility-plan-review.md)
+- [P105-024 - Source-expansion RED contract tests](p105-024-source-expansion-red-contract-tests.md)
+- [P105-025 - DejaVu A1 and log parser adapters](p105-025-dejavu-a1-and-log-parser-adapters.md)
+- [P105-026 - Isolated local queue harness](p105-026-isolated-queue-harness.md)
+- [P105-027 - Isolated deploy canary and config regression harness](p105-027-isolated-deploy-canary-harness.md)
+- [P105-028 - Actual source runs and release benchmark](p105-028-actual-source-runs-release-benchmark.md)
+- [P105-029 - Independent review, full verification, and P106 gate](p105-029-independent-review-full-verify-p106-gate.md)
 
 ## Phase Acceptance
 
@@ -85,3 +92,9 @@ future-window leakage; raw LLM confidence never drives execution.
   separate P44-disabled negative and reviewed-local P44 positive commands,
   private scorer-label ledgers, per-row reconstructable P24 parity manifests,
   anti-clone checks, and label-tamper tests before any release-qualified claim.
+- The G006 source-expansion amendment requires a reviewed source registry,
+  eligibility manifest, DejaVu A1 database adapter, actual Apache/Hadoop/
+  Zookeeper parsers, isolated local queue and deploy harnesses, actual coverage
+  only, and the macro sequence of plan review -> RED tests ->
+  adapters/harness -> actual runs -> release benchmark -> independent code and
+  architecture review -> full verify -> only then P106.

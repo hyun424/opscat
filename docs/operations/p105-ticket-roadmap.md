@@ -59,6 +59,10 @@ reproducibility checks, or independent review evidence exist.
   local raw paths under `/private/tmp/opscat-p44-public-artifacts` or an
   explicit raw-source manifest. It writes
   `/tmp/opscat-p105-reviewed-p44/p44-reviewed-local-manifest.json`.
+- Source-expansion amendment:
+  `docs/operations/p105-g006-source-expansion-amendment.md`.
+- Source-expansion test-spec amendment:
+  `docs/operations/p105-g006-source-expansion-test-spec-amendment.md`.
 - Ticket sequence:
   - `docs/tickets/p105/p105-016-release-qualified-evidence-contract.md`
   - `docs/tickets/p105/p105-017-deterministic-local-materializer.md`
@@ -67,6 +71,45 @@ reproducibility checks, or independent review evidence exist.
   - `docs/tickets/p105/p105-020-parity-partition-coverage-isolation.md`
   - `docs/tickets/p105/p105-021-reproducibility-and-tamper-tests.md`
   - `docs/tickets/p105/p105-022-independent-review-full-verification.md`
+  - `docs/tickets/p105/p105-023-source-registry-eligibility-plan-review.md`
+  - `docs/tickets/p105/p105-024-source-expansion-red-contract-tests.md`
+  - `docs/tickets/p105/p105-025-dejavu-a1-and-log-parser-adapters.md`
+  - `docs/tickets/p105/p105-026-isolated-queue-harness.md`
+  - `docs/tickets/p105/p105-027-isolated-deploy-canary-harness.md`
+  - `docs/tickets/p105/p105-028-actual-source-runs-release-benchmark.md`
+  - `docs/tickets/p105/p105-029-independent-review-full-verify-p106-gate.md`
+
+## G006 Source-Expansion Amendment
+
+The source-expansion amendment adds one macro sequence after the base P105-RQ
+contract: plan review -> RED contract tests -> adapters/harness -> actual runs
+-> release benchmark -> independent code and architecture review -> full verify
+-> only then P106.
+
+The amendment is documentation-only until implementation lands. It adds these
+execution boundaries:
+
+- Reviewed source registry and source eligibility manifest are mandatory before
+  scoring. They bind `command_argv`, `created_at`, source hashes, materialized
+  hashes, privacy/license/citation status, reviewer status, parser or harness
+  version, and eligibility decisions.
+- Unsupported-family rows are non-counting for release floors, positives,
+  incident groups, source diversity, and coverage.
+- DejaVu A1 at `/private/tmp/opscat-dejavu-A1/A1` is the reviewed-local
+  database source candidate for explicit `db connection limit` ground truth
+  under CC-BY-4.0 metadata review.
+- Apache, Hadoop, and Zookeeper rows require actual parser outputs plus
+  reviewed deploy/config-regression predicates before counting.
+- Queue evidence must come from an isolated local RabbitMQ/Kafka or lighter
+  repo-compatible harness that emits real consumer lag, backlog, and
+  dead-letter telemetry plus a private injection ledger.
+- Deploy evidence must come from an isolated local canary/config regression
+  harness with measurable error, latency, rollback observation, and private
+  injection ledger.
+- Coverage must come from actual source or harness timestamps only. Fabricated
+  four-day coverage, row-count-derived duration, floor-sized intervals, and
+  top-level constants are not release-qualified evidence.
+- Existing floors and P106 gate thresholds remain unchanged.
 
 ## Outcome
 

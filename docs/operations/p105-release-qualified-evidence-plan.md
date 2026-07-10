@@ -4,6 +4,14 @@ Status: planning only. This document does not claim that release-qualified P105
 evidence, the materializer, tamper checks, or the qualified artifact already
 exist.
 
+Amendment: G006 source expansion is defined in
+`docs/operations/p105-g006-source-expansion-amendment.md`. That amendment adds
+reviewed source registry and eligibility manifest gates; DejaVu A1 database
+evidence; actual Apache, Hadoop, and Zookeeper parser requirements; isolated
+local queue and deploy harnesses; and the macro sequence that must complete
+before P106 can be considered. It does not change any floor or threshold in
+this base plan.
+
 ## Goal
 
 Produce deterministic local/offline P105 evidence that can be reviewed as a
@@ -522,3 +530,8 @@ Stop and keep P106 locked if any of the following is true:
 - Reproducibility runs are not byte-identical, or tamper tests do not fail
   closed.
 - Independent review rejects the evidence or full verification fails.
+- The source-expansion amendment is in scope and any required reviewed source
+  registry, eligibility manifest, parser, DejaVu A1 private ledger, queue
+  harness ledger, deploy harness ledger, `command_argv`, `created_at`, license,
+  privacy, provenance, actual coverage, or macro-sequence review/verification
+  artifact is missing.

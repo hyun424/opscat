@@ -4,6 +4,13 @@ Status: planning only. This test spec defines the RED-to-GREEN evidence gate
 for future implementation work; it does not claim the tests or materializer
 exist yet.
 
+Amendment: G006 source-expansion tests are defined in
+`docs/operations/p105-g006-source-expansion-test-spec-amendment.md`. Those
+tests extend this spec with reviewed source registry, eligibility manifest,
+DejaVu A1, Apache/Hadoop/Zookeeper parser, queue harness, deploy harness,
+actual coverage, and macro-sequence P106-lock assertions. Existing floors and
+P106 gate thresholds remain unchanged.
+
 ## Test Scope
 
 The test suite must prove that P105 release-qualified evidence is deterministic,
@@ -23,6 +30,12 @@ Future implementation must add or update:
 - `tests/test_p105_release_qualified_reproducibility.py`
 - `tests/test_p105_release_evidence.py`
 - `tests/test_failure_forecast_engine.py`
+- `tests/test_p105_source_registry_eligibility.py`
+- `tests/test_p105_source_expansion_contract.py`
+- `tests/test_p105_dejavu_a1_materializer.py`
+- `tests/test_p105_log_parser_materializers.py`
+- `tests/test_p105_queue_harness_materializer.py`
+- `tests/test_p105_deploy_harness_materializer.py`
 
 ## RED Expectations
 
@@ -379,3 +392,10 @@ missing private label ledger, non-byte-identical reproducibility run, tamper
 acceptance, clone inflation, partition leakage, public scorer leakage, P24
 parity gap, nonzero authority counter, independent review rejection, or failed
 verification command.
+
+When the source-expansion amendment is in scope, also stop on missing reviewed
+source registry, missing source eligibility manifest, missing `command_argv` or
+`created_at`, heuristic family authority, unsupported-family floor credit,
+DejaVu A1 label leakage, parser-free Apache/Hadoop/Zookeeper family claims,
+non-isolated queue/deploy harnesses, fabricated coverage, or P106 unlock before
+the full macro sequence completes.

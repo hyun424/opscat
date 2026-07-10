@@ -6,8 +6,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-import pytest
-
 RELEASE_BENCHMARK = Path("evals/proactive/forecast/p105_release_benchmark_rows.json")
 
 RELEASE_FAMILIES = {"database", "deploy", "queue"}
@@ -165,5 +163,57 @@ def test_smoke_cannot_be_promoted_by_mode_filename_or_manifest_metadata_only(tmp
 
     assert "smoke_artifact_metadata_promotion" in gate["validation_error_codes"]
     assert gate["qualification_floors"]["pass"] is False
+    assert gate["release_qualified"] is False
+    assert gate["p106_unlocked"] is False
+
+
+def test_missing_privacy_license_citation_provenance_evidence_locks_before_metrics(tmp_path: Path) -> None:
+    payload = _release_qualified_fixture()
+    payload["artifact_manifests"] = {
+        "rows": {"path": "candidate.json", "sha256": "0" * 64, "referenced_by_benchmark_payload": True},
+        "source": {"path": "p105-source-manifest.json", "sha256": "1" * 64, "referenced_by_benchmark_payload": True},
+    }
+    path = _write_payload(tmp_path, payload, "missing-privacy-provenance.json")
+
+    gate = _api().run_p105_benchmark(path)["release_gate"]
+
+    assert {
+        "privacy_manifest_missing",
+        "license_manifest_missing",
+        "citation_manifest_missing",
+        "provenance_hash_manifest_missing",
+    } <= set(gate["validation_error_codes"])
+    assert gate["failure_stage"] == "pre_scoring"
+    assert gate["release_qualified"] is False
+    assert gate["p106_unlocked"] is False
+
+
+def test_insufficient_honest_source_preflight_stays_locked_without_synthetic_credit(tmp_path: Path) -> None:
+    payload = _release_qualified_fixture()
+    payload["source_availability_preflight"] = {
+        "schema_version": "p105.source_availability_preflight.v1",
+        "checked_before_scoring": True,
+        "sources": {},
+        "families": {},
+    }
+    payload["source_availability_preflight"]["families"] = {
+        family: {
+            "available_source_rows": 4,
+            "positive_labels": 1,
+            "incidents": 1,
+            "incident_groups": 1,
+            "distinct_canonical_source_tuples": 1,
+            "review_redaction_status": "reviewed_redacted",
+            "local_source_hashes": [f"source-{family}"],
+            "materialized_record_hashes": [f"materialized-{family}"],
+        }
+        for family in RELEASE_FAMILIES
+    }
+    path = _write_payload(tmp_path, payload, "insufficient-honest-sources.json")
+
+    gate = _api().run_p105_benchmark(path)["release_gate"]
+
+    assert "insufficient_honest_source_material" in gate["validation_error_codes"]
+    assert gate["source_availability_preflight"]["failure_scope"] == "pre_scoring"
     assert gate["release_qualified"] is False
     assert gate["p106_unlocked"] is False

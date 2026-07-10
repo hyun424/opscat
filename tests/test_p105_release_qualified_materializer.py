@@ -623,6 +623,84 @@ def test_reviewed_local_p44_end_to_end_materializes_and_unlocks_release_gate(tmp
     assert cli_report["release_gate"]["p106_unlocked"] is True
 
 
+def test_legacy_floor_scale_p44_synthetic_fixture_remains_locked_and_cannot_unlock_p106(tmp_path: Path) -> None:
+    reviewed_manifest = _write_floor_scale_p44_dataset(tmp_path)
+
+    result = _materialize(
+        p32_replay=P32_REPLAY,
+        p41_sources=P41_SOURCES,
+        p44_reviewed_local_manifest=reviewed_manifest,
+        p44_mode="reviewed-local",
+        output_dir=tmp_path / "synthetic-output",
+        mode="release_qualified",
+    )
+
+    assert result["source_availability_preflight"]["sources"]["p44"]["mode"] == "reviewed-local"
+    assert "legacy_synthetic_floor_fixture" in set(result["release_gate"].get("validation_error_codes", ()))
+    assert result["release_gate"]["release_qualified"] is False
+    assert result["release_gate"]["p106_unlocked"] is False
+
+
+def test_p44_public_sampling_partition_features_and_p24_input_ignore_official_label_changes(tmp_path: Path) -> None:
+    base_manifest = _write_floor_scale_p44_dataset(tmp_path / "base")
+    edited_manifest = _write_floor_scale_p44_dataset(tmp_path / "edited")
+    edited_records_path = Path(json.loads(edited_manifest.read_text(encoding="utf-8"))["sources"][0]["local_materialized_path"])
+    edited_records = [json.loads(line) for line in edited_records_path.read_text(encoding="utf-8").splitlines()]
+    for record in edited_records:
+        label = record["private_label"]
+        label["label_positive"] = not label["label_positive"]
+        label["label_incident_id"] = f"changed-{record['record_id']}"
+        label["incident_group_id"] = f"changed-group-{record['record_id']}"
+        label["label_incident_start_timestamp"] = "2026-04-01T11:00:00Z"
+        label["lead_time_label_minutes"] = 120
+    edited_records_path.write_text("\n".join(json.dumps(record, sort_keys=True) for record in edited_records) + "\n", encoding="utf-8")
+    edited_payload = json.loads(edited_manifest.read_text(encoding="utf-8"))
+    edited_payload["sources"][0]["local_source_hash"] = hashlib.sha256(edited_records_path.read_bytes()).hexdigest()
+    edited_manifest.write_text(json.dumps(edited_payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+    base = _materialize(
+        p32_replay=P32_REPLAY,
+        p41_sources=P41_SOURCES,
+        p44_reviewed_local_manifest=base_manifest,
+        p44_mode="reviewed-local",
+        output_dir=tmp_path / "base-output",
+        mode="release_qualified",
+    )
+    edited = _materialize(
+        p32_replay=P32_REPLAY,
+        p41_sources=P41_SOURCES,
+        p44_reviewed_local_manifest=edited_manifest,
+        p44_mode="reviewed-local",
+        output_dir=tmp_path / "edited-output",
+        mode="release_qualified",
+    )
+
+    public_fields = ["row_id", "source_window_id", "partition", "family", "public_features", "p24_input", "p24_input_hash"]
+    base_rows = sorted(base["rows"], key=lambda row: row["row_id"])
+    edited_rows = sorted(edited["rows"], key=lambda row: row["row_id"])
+    assert [{field: row[field] for field in public_fields} for row in edited_rows] == [
+        {field: row[field] for field in public_fields} for row in base_rows
+    ]
+
+
+def test_p44_coverage_comes_only_from_real_source_timestamps(tmp_path: Path) -> None:
+    reviewed_manifest = _write_floor_scale_p44_dataset(tmp_path)
+
+    result = _materialize(
+        p32_replay=P32_REPLAY,
+        p41_sources=P41_SOURCES,
+        p44_reviewed_local_manifest=reviewed_manifest,
+        p44_mode="reviewed-local",
+        output_dir=tmp_path / "coverage-output",
+        mode="release_qualified",
+    )
+
+    for family_coverage in result["coverage_manifest"]["service_day_coverage"].values():
+        for interval in family_coverage["coverage_intervals"]:
+            assert interval.get("timestamp_source") == "raw_source_record"
+            assert interval.get("source_record_provenance_hash")
+
+
 def test_reviewed_local_p44_manifest_uses_parsed_records_hashes_and_private_labels(tmp_path: Path) -> None:
     reviewed_manifest = _write_floor_scale_p44_dataset(tmp_path)
     records_path = Path(json.loads(reviewed_manifest.read_text(encoding="utf-8"))["sources"][0]["local_materialized_path"])

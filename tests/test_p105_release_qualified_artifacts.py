@@ -61,6 +61,12 @@ OUTPUT_MANIFESTS = {
     "benchmark": "p105-release-qualified-benchmark.json",
     "review": "p105-review.json",
 }
+REQUIRED_PRIVACY_PROVENANCE_MANIFESTS = {
+    "privacy": "p105-privacy-redaction-manifest.json",
+    "license": "p105-license-manifest.json",
+    "citation": "p105-citation-manifest.json",
+    "provenance": "p105-provenance-hash-manifest.json",
+}
 
 
 def _api() -> Any:
@@ -373,3 +379,34 @@ def test_validator_reports_real_gate_outcome_instead_of_forcing_false(tmp_path: 
     assert benchmark_report["release_gate"]["p106_unlocked"] is True
     assert validation["release_gate"]["release_qualified"] is True
     assert validation["release_gate"]["p106_unlocked"] is True
+
+
+def test_qualified_artifact_requires_privacy_license_citation_and_provenance_manifests(tmp_path: Path) -> None:
+    output_dir = _materialize_reviewed_local(tmp_path)
+    rows_path = output_dir / "p105-release-qualified-rows.json"
+    payload = json.loads(rows_path.read_text(encoding="utf-8"))
+
+    assert REQUIRED_PRIVACY_PROVENANCE_MANIFESTS.items() <= {
+        (key, manifest["path"]) for key, manifest in payload["artifact_manifests"].items()
+    }
+    for key, filename in REQUIRED_PRIVACY_PROVENANCE_MANIFESTS.items():
+        path = output_dir / filename
+        assert path.exists(), key
+        assert payload["artifact_manifests"][key]["sha256"] == __import__("hashlib").sha256(path.read_bytes()).hexdigest()
+
+
+def test_missing_privacy_license_citation_or_provenance_artifact_locks_before_scoring(tmp_path: Path) -> None:
+    output_dir = _materialize_reviewed_local(tmp_path)
+    rows_path = output_dir / "p105-release-qualified-rows.json"
+
+    validation = _validate_artifact(rows_path)
+
+    assert {
+        "privacy_manifest_missing",
+        "license_manifest_missing",
+        "citation_manifest_missing",
+        "provenance_hash_manifest_missing",
+    } <= set(validation["release_gate"]["validation_error_codes"])
+    assert validation["release_gate"]["failure_stage"] == "pre_scoring"
+    assert validation["release_gate"]["release_qualified"] is False
+    assert validation["release_gate"]["p106_unlocked"] is False

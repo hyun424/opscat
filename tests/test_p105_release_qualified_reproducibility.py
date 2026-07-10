@@ -26,6 +26,12 @@ REQUIRED_MANIFEST_FILES = {
     "benchmark": "p105-release-qualified-benchmark.json",
     "review": "p105-review.json",
 }
+REQUIRED_PRIVACY_PROVENANCE_FILES = {
+    "privacy": "p105-privacy-redaction-manifest.json",
+    "license": "p105-license-manifest.json",
+    "citation": "p105-citation-manifest.json",
+    "provenance": "p105-provenance-hash-manifest.json",
+}
 
 
 def _api() -> Any:
@@ -383,6 +389,37 @@ def test_tampering_required_manifest_fails_closed(tmp_path: Path, manifest_key: 
     target.write_text(target.read_text(encoding="utf-8") + "\n{\"tampered\": true}\n", encoding="utf-8")
 
     tamper = _tamper_check(output_dir / "p105-release-qualified-rows.json")
+
+    assert expected_code in tamper["validation_error_codes"]
+    assert tamper["release_gate"]["release_qualified"] is False
+    assert tamper["release_gate"]["p106_unlocked"] is False
+
+
+@pytest.mark.parametrize(
+    ("manifest_key", "expected_code"),
+    [
+        ("privacy", "privacy_manifest_tamper"),
+        ("license", "license_manifest_tamper"),
+        ("citation", "citation_manifest_tamper"),
+        ("provenance", "provenance_hash_manifest_tamper"),
+    ],
+)
+def test_privacy_license_citation_and_provenance_manifest_tamper_fails_closed(
+    tmp_path: Path,
+    manifest_key: str,
+    expected_code: str,
+) -> None:
+    output_dir = tmp_path / f"tamper-{manifest_key}"
+    _materialize_reviewed_local(output_dir, _reviewed_p44_manifest(tmp_path / f"fixture-{manifest_key}"))
+    rows_path = output_dir / "p105-release-qualified-rows.json"
+    rows_payload = json.loads(rows_path.read_text(encoding="utf-8"))
+    target = output_dir / REQUIRED_PRIVACY_PROVENANCE_FILES[manifest_key]
+
+    assert target.exists(), f"materializer must write required {manifest_key} manifest before tamper can be tested"
+    assert rows_payload["artifact_manifests"][manifest_key]["sha256"] == hashlib.sha256(target.read_bytes()).hexdigest()
+    target.write_text(target.read_text(encoding="utf-8") + "\n{\"tampered\": true}\n", encoding="utf-8")
+
+    tamper = _tamper_check(rows_path)
 
     assert expected_code in tamper["validation_error_codes"]
     assert tamper["release_gate"]["release_qualified"] is False

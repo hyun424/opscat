@@ -1,11 +1,11 @@
 # P105 Release-Qualified Evidence Plan Review
 
-Status: fourth repair recorded after independent REQUEST CHANGES against
-`f6214c2`. This document records the independent critic blockers reported for
-the initial G006 documentation-only planning commit, the first repair items, the
-second narrow command repair, the third honest reviewed-local P44 pipeline
-repair, and the fourth command/schema hardening repair. It does not claim
-independent approval or re-approval.
+Status: independent PLAN-ONLY APPROVE recorded for HEAD `c3c03d2`. This
+document records the independent critic blockers reported for the initial G006
+documentation-only planning commit, the first repair items, the second narrow
+command repair, the third honest reviewed-local P44 pipeline repair, the fourth
+command/schema hardening repair, and the final plan-only approval. The approval
+applies to the documentation plan only; implementation remains future work.
 
 ## Review Scope
 
@@ -193,6 +193,47 @@ The repair documentation is ready for another independent review. Until that
 review returns an explicit APPROVE verdict, G006 remains in
 fourth-repair-after-REQUEST-CHANGES status and must not be described as
 independently approved or re-approved.
+
+## Plan-Only Approval for HEAD c3c03d2
+
+Independent critic verdict for HEAD `c3c03d2`: PLAN-ONLY APPROVE.
+
+Approval scope:
+
+- Documentation-only G006/P105 release-qualified evidence plan, test spec,
+  roadmap, ticket handoff, and review-history updates present at HEAD
+  `c3c03d2`.
+- The approval confirms that the planning docs close the prior release
+  qualification loopholes without claiming implementation completion.
+- The approval does not approve runtime behavior, materialized artifacts,
+  benchmark results, source expansion, or production release evidence.
+
+Evidence considered:
+
+- Disabled P44 remains a locked negative path; reviewed-local P44 is the only
+  positive release-qualified path.
+- Raw P44 source handoff uses exact flat `/private/tmp` paths or an explicit
+  reviewed raw-source manifest, with no implicit nested discovery.
+- Reviewed-local and private scorer-label schemas require raw source hashes,
+  label-blind sampling, private post-sampling label joins, pre-label partition
+  binding, reviewer/privacy/license/citation fields, and provenance hashes.
+- Legacy synthetic P44 floor-scale data is documented as negative-only and
+  cannot satisfy rows, positives, partitions, coverage, source diversity, or
+  floors.
+- Source insufficiency stays locked; source expansion requires separate
+  reviewed input evidence rather than fabricated labels, partitions, coverage,
+  or floor counts.
+
+Expected implementation gaps are next steps, not approval blockers:
+
+- Implement the reviewed-local P44 materializer, manifest validation, private
+  ledger handling, same-window P24 parity checks, coverage denominator checks,
+  tamper tests, and release-qualified artifact generation.
+- Generate real reviewed-local artifacts and run future RED/GREEN verification
+  before claiming release-qualified evidence.
+- Keep G006 locked whenever reviewed source availability, privacy/license
+  evidence, private scorer-ledger evidence, parity, or coverage floors are
+  insufficient.
 
 ## Verification Required for Repair Commit
 

@@ -377,7 +377,7 @@ def test_required_manifest_files_exist_and_hashes_are_verified(tmp_path: Path) -
     _materialize_reviewed_local(output_dir, _reviewed_p44_v3_manifest(tmp_path))
     rows_payload = json.loads((output_dir / "p105-release-qualified-rows.json").read_text(encoding="utf-8"))
 
-    assert set(rows_payload["artifact_manifests"]) == set(REQUIRED_MANIFEST_FILES)
+    assert set(rows_payload["artifact_manifests"]) == set(REQUIRED_MANIFEST_FILES) | set(REQUIRED_PRIVACY_PROVENANCE_FILES)
     for key, filename in REQUIRED_MANIFEST_FILES.items():
         path = output_dir / filename
         assert path.exists(), key

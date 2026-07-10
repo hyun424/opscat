@@ -16,6 +16,7 @@ router = APIRouter(prefix="/connectors", tags=["connectors"])
 _DISPLAY_NAMES = {
     "fake.observability": "Fake Observability",
     "sentry.readonly": "Sentry Read-Only Fixtures",
+    "prometheus.readonly": "Prometheus Read-Only",
     "slack.wake_up": "Slack Wake-Up Preview",
     "github.issues": "GitHub Draft Issue Preview",
 }
@@ -23,6 +24,7 @@ _DISPLAY_NAMES = {
 _DESCRIPTIONS = {
     "fake.observability": "Read synthetic observability events and metrics for local demos.",
     "sentry.readonly": "Read sanitized Sentry-style recorded fixtures; no network calls are performed.",
+    "prometheus.readonly": "Read bounded metric evidence from offline fixtures or an explicitly configured allowlisted Prometheus endpoint.",
     "slack.wake_up": "Build redacted Slack wake-up message previews; real sends are disabled.",
     "github.issues": "Build approval-gated GitHub issue previews; live issue creation is disabled.",
 }

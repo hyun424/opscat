@@ -10,9 +10,11 @@ from typing import Any, cast
 
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.connectors.base import ConnectorCallRequest, ConnectorCallResult
 from app.connectors.fake import FakeObservabilityConnector
 from app.connectors.github import GitHubDraftIssueConnector
+from app.connectors.prometheus import PrometheusReadOnlyConnector, parse_allowed_hosts
 from app.connectors.registry import ConnectorRegistry
 from app.connectors.sentry import SentryReadOnlyConnector
 from app.connectors.slack import SlackWakeUpConnector
@@ -29,9 +31,17 @@ _ROLE_ORDER = {"viewer": 0, "operator": 1, "admin": 2, "owner": 3}
 
 
 def default_connector_registry() -> ConnectorRegistry:
+    settings = get_settings()
     registry = ConnectorRegistry()
     registry.register(FakeObservabilityConnector())
     registry.register(SentryReadOnlyConnector())
+    registry.register(
+        PrometheusReadOnlyConnector(
+            base_url=settings.prometheus_base_url,
+            allowed_hosts=parse_allowed_hosts(settings.prometheus_allowed_hosts),
+            timeout_seconds=settings.prometheus_timeout_seconds,
+        )
+    )
     registry.register(SlackWakeUpConnector())
     registry.register(GitHubDraftIssueConnector())
     return registry
@@ -124,8 +134,53 @@ class ConnectorService:
                 error="connector read-only contract violation",
                 evidence_summary="Connector result was rejected because it violated the registered read-only capability contract.",
             )
+        if result.ok:
+            self._record_success_evidence(db, principal, request, result)
         self._record_result(db, principal, request, result, failed=not result.ok, request_hash=request_hash)
         return result
+
+    def _record_success_evidence(self, db: Session, principal: Principal, request: ConnectorCallRequest, result: ConnectorCallResult) -> None:
+        if request.incident_id is None:
+            return
+        evidence_payload = result.output.get("evidence")
+        if not isinstance(evidence_payload, Mapping):
+            return
+        incident = (
+            db.query(Incident)
+            .filter(
+                Incident.id == request.incident_id,
+                Incident.tenant_id == principal.tenant_id,
+                Incident.workspace_id == principal.workspace_id,
+            )
+            .one_or_none()
+        )
+        if incident is None:
+            return
+        redacted_metadata = redact_value(dict(evidence_payload))
+        metadata = dict(redacted_metadata) if isinstance(redacted_metadata, Mapping) else {}
+        evidence_type = str(metadata.pop("evidence_type", "connector_observation"))
+        evidence = Evidence(
+            incident_id=incident.id,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
+            type=evidence_type,
+            source=f"connector:{request.connector_id}",
+            source_url=f"connector://{request.connector_id}/{request.capability}",
+            content=redact_text(result.evidence_summary or "Read-only connector evidence collected."),
+            evidence_metadata=metadata,
+        )
+        incident.evidence.append(evidence)
+        add_timeline_event(
+            db,
+            incident.id,
+            tenant_id=incident.tenant_id,
+            workspace_id=incident.workspace_id,
+            actor="connector",
+            event_type="connector_evidence_collected",
+            content=f"Collected normalized evidence from {request.connector_id}.{request.capability}.",
+            metadata={"connector_id": request.connector_id, "capability": request.capability, "evidence_type": evidence_type},
+        )
+        db.flush()
 
     def _with_resolved_secret(
         self,

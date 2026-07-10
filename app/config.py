@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     night_autopilot_max_automatic_risk: str = "low"
     night_autopilot_max_attempts: int = 1
     secret_key: str = "local-development-secret-key-change-me"
+    prometheus_base_url: str | None = None
+    prometheus_allowed_hosts: str = "localhost,127.0.0.1,::1"
+    prometheus_timeout_seconds: float = 5.0
 
 
 @lru_cache

@@ -1,0 +1,348 @@
+{
+  "schema_version": "p105.forecast.hand_computed.metrics.v1",
+  "case_id": "one_to_one_duplicate_abstention_zero_positive",
+  "split_id": "p105-hand-metrics-v1",
+  "maximum_forecast_horizon_minutes": 120,
+  "family_thresholds": {
+    "database": 0.7,
+    "queue": 0.7,
+    "deploy": 0.7,
+    "observability_zero_positive": 0.7
+  },
+  "family_min_response_minutes": {
+    "database": 45,
+    "queue": 30,
+    "deploy": 20,
+    "observability_zero_positive": 15
+  },
+  "service_day_coverage": {
+    "database": {
+      "covered_service_seconds": 172800,
+      "service_days": 2.0
+    },
+    "queue": {
+      "covered_service_seconds": 86400,
+      "service_days": 1.0
+    },
+    "deploy": {
+      "covered_service_seconds": 86400,
+      "service_days": 1.0
+    },
+    "observability_zero_positive": {
+      "covered_service_seconds": 86400,
+      "service_days": 1.0
+    }
+  },
+  "forecasts": [
+    {
+      "forecast_id": "metric-f001-db-tp",
+      "source_window_id": "metric-row-db-001",
+      "family": "database",
+      "failure_mode": "max_connections_exhaustion",
+      "service": "checkout-api",
+      "forecast_timestamp": "2026-01-20T09:00:00Z",
+      "probability": 0.9,
+      "probability_interval": [
+        0.82,
+        0.95
+      ],
+      "lead_time_interval_minutes": [
+        60,
+        120
+      ],
+      "abstention_reason": null
+    },
+    {
+      "forecast_id": "metric-f002-db-duplicate",
+      "source_window_id": "metric-row-db-002",
+      "family": "database",
+      "failure_mode": "max_connections_exhaustion",
+      "service": "checkout-api",
+      "forecast_timestamp": "2026-01-20T09:10:00Z",
+      "probability": 0.8,
+      "probability_interval": [
+        0.7,
+        0.88
+      ],
+      "lead_time_interval_minutes": [
+        40,
+        110
+      ],
+      "abstention_reason": null
+    },
+    {
+      "forecast_id": "metric-f003-queue-tp",
+      "source_window_id": "metric-row-queue-001",
+      "family": "queue",
+      "failure_mode": "dead_letter_growth",
+      "service": "email-worker",
+      "forecast_timestamp": "2026-01-21T10:00:00Z",
+      "probability": 0.76,
+      "probability_interval": [
+        0.68,
+        0.83
+      ],
+      "lead_time_interval_minutes": [
+        30,
+        70
+      ],
+      "abstention_reason": null
+    },
+    {
+      "forecast_id": "metric-f004-deploy-below-threshold",
+      "source_window_id": "metric-row-deploy-001",
+      "family": "deploy",
+      "failure_mode": "canary_regression",
+      "service": "payments-api",
+      "forecast_timestamp": "2026-01-22T11:00:00Z",
+      "probability": 0.65,
+      "probability_interval": [
+        0.52,
+        0.74
+      ],
+      "lead_time_interval_minutes": [
+        20,
+        80
+      ],
+      "abstention_reason": null
+    },
+    {
+      "forecast_id": "metric-f005-db-tn",
+      "source_window_id": "metric-row-db-negative",
+      "family": "database",
+      "failure_mode": "slow_query_risk",
+      "service": "orders-api",
+      "forecast_timestamp": "2026-01-23T12:00:00Z",
+      "probability": 0.2,
+      "probability_interval": [
+        0.12,
+        0.31
+      ],
+      "lead_time_interval_minutes": [
+        80,
+        120
+      ],
+      "abstention_reason": null
+    },
+    {
+      "forecast_id": "metric-f006-queue-tn",
+      "source_window_id": "metric-row-queue-negative",
+      "family": "queue",
+      "failure_mode": "consumer_lag_saturation",
+      "service": "invoice-worker",
+      "forecast_timestamp": "2026-01-23T12:20:00Z",
+      "probability": 0.6,
+      "probability_interval": [
+        0.49,
+        0.69
+      ],
+      "lead_time_interval_minutes": [
+        30,
+        90
+      ],
+      "abstention_reason": null
+    },
+    {
+      "forecast_id": "metric-f007-deploy-abstention",
+      "source_window_id": "metric-row-deploy-abstain",
+      "family": "deploy",
+      "failure_mode": "canary_regression",
+      "service": "payments-api",
+      "forecast_timestamp": "2026-01-22T10:50:00Z",
+      "probability": null,
+      "probability_interval": null,
+      "lead_time_interval_minutes": null,
+      "abstention_reason": "missing_critical_feature"
+    },
+    {
+      "forecast_id": "metric-f008-zero-positive-fp",
+      "source_window_id": "metric-row-observability-fp",
+      "family": "observability_zero_positive",
+      "failure_mode": "metrics_cardinality_risk",
+      "service": "search-node",
+      "forecast_timestamp": "2026-01-24T12:00:00Z",
+      "probability": 0.85,
+      "probability_interval": [
+        0.74,
+        0.91
+      ],
+      "lead_time_interval_minutes": [
+        20,
+        90
+      ],
+      "abstention_reason": null
+    }
+  ],
+  "actual_incidents": [
+    {
+      "label_incident_id": "metric-inc-db-001",
+      "label_incident_start_timestamp": "2026-01-20T10:30:00Z",
+      "label_family": "database",
+      "label_failure_mode": "max_connections_exhaustion"
+    },
+    {
+      "label_incident_id": "metric-inc-queue-001",
+      "label_incident_start_timestamp": "2026-01-21T10:45:00Z",
+      "label_family": "queue",
+      "label_failure_mode": "dead_letter_growth"
+    },
+    {
+      "label_incident_id": "metric-inc-deploy-001",
+      "label_incident_start_timestamp": "2026-01-22T11:50:00Z",
+      "label_family": "deploy",
+      "label_failure_mode": "canary_regression"
+    }
+  ],
+  "p24_baseline_forecasts": [
+    {
+      "forecast_id": "p24-metric-f001-db",
+      "source_window_id": "metric-row-db-001",
+      "family": "database",
+      "probability": 0.74
+    },
+    {
+      "forecast_id": "p24-metric-f002-db-duplicate",
+      "source_window_id": "metric-row-db-002",
+      "family": "database",
+      "probability": 0.72
+    },
+    {
+      "forecast_id": "p24-metric-f003-queue",
+      "source_window_id": "metric-row-queue-001",
+      "family": "queue",
+      "probability": 0.71
+    },
+    {
+      "forecast_id": "p24-metric-f004-deploy",
+      "source_window_id": "metric-row-deploy-001",
+      "family": "deploy",
+      "probability": 0.55
+    },
+    {
+      "forecast_id": "p24-metric-f005-db",
+      "source_window_id": "metric-row-db-negative",
+      "family": "database",
+      "probability": 0.45
+    },
+    {
+      "forecast_id": "p24-metric-f006-queue",
+      "source_window_id": "metric-row-queue-negative",
+      "family": "queue",
+      "probability": 0.52
+    },
+    {
+      "forecast_id": "p24-metric-f008-zero-positive",
+      "source_window_id": "metric-row-observability-fp",
+      "family": "observability_zero_positive",
+      "probability": 0.82
+    }
+  ],
+  "expected_metrics": {
+    "global": {
+      "evaluated_window_count": 8,
+      "non_abstained_evaluated_forecast_count": 7,
+      "abstained_window_count": 1,
+      "actual_positive_count": 3,
+      "predicted_positive_count": 4,
+      "true_positive_count": 2,
+      "duplicate_alert_count": 1,
+      "false_positive_count": 2,
+      "false_negative_count": 1,
+      "true_negative_count": 2,
+      "precision": {
+        "numerator": 2,
+        "denominator": 4,
+        "value": 0.5
+      },
+      "recall": {
+        "numerator": 2,
+        "denominator": 3,
+        "value": 0.666667
+      },
+      "pr_auc": {
+        "positive_denominator": 4,
+        "value": 0.804167
+      },
+      "brier": {
+        "numerator": 1.9526,
+        "denominator": 7,
+        "value": 0.278943
+      },
+      "ece": {
+        "bin_count": 10,
+        "denominator": 7,
+        "value": 0.205714
+      },
+      "useful_lead_time_rate": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "lead_time_minutes": {
+        "median": 67.5,
+        "p10": 45,
+        "p90": 90
+      },
+      "false_alerts_per_service_day": {
+        "numerator": 2,
+        "denominator_service_days": 5.0,
+        "value": 0.4
+      },
+      "abstention_rate": {
+        "numerator": 1,
+        "denominator": 8,
+        "value": 0.125
+      }
+    },
+    "families": {
+      "database": {
+        "true_positive_count": 1,
+        "duplicate_alert_count": 1,
+        "false_positive_count": 1,
+        "false_negative_count": 0,
+        "useful_lead_time_rate": {
+          "numerator": 1,
+          "denominator": 1,
+          "value": 1.0
+        },
+        "false_alerts_per_service_day": {
+          "numerator": 1,
+          "denominator_service_days": 2.0,
+          "value": 0.5
+        }
+      },
+      "queue": {
+        "true_positive_count": 1,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "useful_lead_time_rate": {
+          "numerator": 1,
+          "denominator": 1,
+          "value": 1.0
+        },
+        "false_alerts_per_service_day": {
+          "numerator": 0,
+          "denominator_service_days": 1.0,
+          "value": 0.0
+        }
+      },
+      "deploy": {
+        "true_positive_count": 0,
+        "false_positive_count": 0,
+        "false_negative_count": 1,
+        "abstained_window_count": 1,
+        "useful_lead_time_rate": {
+          "numerator": 0,
+          "denominator": 0,
+          "value": null
+        }
+      },
+      "observability_zero_positive": {
+        "actual_positive_count": 0,
+        "true_positive_count": 0,
+        "false_positive_count": 1,
+        "unevaluable_zero_positive": true
+      }
+    }
+  }
+}

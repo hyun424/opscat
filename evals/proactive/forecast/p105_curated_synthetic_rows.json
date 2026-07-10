@@ -1,0 +1,712 @@
+{
+  "schema_version": "p105.forecast.curated.synthetic.v1",
+  "split_id": "p105-curated-time-ordered-v1",
+  "generated_at": "2026-01-01T00:00:00Z",
+  "supported_families": [
+    "database",
+    "queue",
+    "deploy",
+    "observability_zero_positive"
+  ],
+  "family_thresholds": {
+    "database": 0.7,
+    "queue": 0.72,
+    "deploy": 0.68,
+    "observability_zero_positive": 0.75
+  },
+  "family_min_response_minutes": {
+    "database": 45,
+    "queue": 30,
+    "deploy": 20,
+    "observability_zero_positive": 15
+  },
+  "service_day_coverage": {
+    "database": {
+      "covered_service_seconds": 172800,
+      "service_days": 2.0
+    },
+    "queue": {
+      "covered_service_seconds": 129600,
+      "service_days": 1.5
+    },
+    "deploy": {
+      "covered_service_seconds": 129600,
+      "service_days": 1.5
+    },
+    "observability_zero_positive": {
+      "covered_service_seconds": 86400,
+      "service_days": 1.0
+    }
+  },
+  "rows": [
+    {
+      "row_id": "p105-synth-train-db-001",
+      "source_window_id": "pre-db-pool-wait-rising",
+      "family": "database",
+      "failure_mode": "connection_pool_saturation",
+      "service": "checkout-api",
+      "metric": "db_pool_wait_seconds_p95",
+      "split": "train",
+      "forecast_timestamp": "2026-01-03T09:00:00Z",
+      "window_start_timestamp": "2026-01-03T08:45:00Z",
+      "window_end_timestamp": "2026-01-03T09:00:00Z",
+      "label_incident_id": "inc-db-001",
+      "label_incident_start_timestamp": "2026-01-03T10:25:00Z",
+      "label_family": "database",
+      "label_failure_mode": "connection_pool_saturation",
+      "label_positive": true,
+      "lead_time_label_minutes": 85,
+      "incident_group_id": "grp-db-001",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "connection_pool_saturation",
+        "trend_slope": 0.54,
+        "threshold_distance": 0.18,
+        "baseline_ratio": 5.7,
+        "feature_coverage": 0.96,
+        "p104_evidence": {
+          "episode_id": "p104-episode-db-001",
+          "decision_id": "p104-decision-db-001",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "metric:connection_pool_saturation:0:primary",
+            "metric:connection_pool_saturation:0:trend"
+          ],
+          "valid_absence_evidence_ids": [
+            "deploy:checkout-api:no_recent_change"
+          ],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          0.05,
+          0.58,
+          1.05,
+          1.58,
+          2.12,
+          2.85
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": "inc-db-001",
+        "label_incident_start_timestamp": "2026-01-03T10:25:00Z",
+        "label_family": "database",
+        "label_failure_mode": "connection_pool_saturation",
+        "label_positive": true,
+        "lead_time_label_minutes": 85,
+        "incident_group_id": "grp-db-001"
+      }
+    },
+    {
+      "row_id": "p105-synth-train-queue-001",
+      "source_window_id": "pre-queue-sla-breach",
+      "family": "queue",
+      "failure_mode": "queue_sla_breach",
+      "service": "email-worker",
+      "metric": "queue_lag_messages",
+      "split": "train",
+      "forecast_timestamp": "2026-01-04T11:00:00Z",
+      "window_start_timestamp": "2026-01-04T10:45:00Z",
+      "window_end_timestamp": "2026-01-04T11:00:00Z",
+      "label_incident_id": "inc-queue-001",
+      "label_incident_start_timestamp": "2026-01-04T11:50:00Z",
+      "label_family": "queue",
+      "label_failure_mode": "queue_sla_breach",
+      "label_positive": true,
+      "lead_time_label_minutes": 50,
+      "incident_group_id": "grp-queue-001",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "queue_sla_breach",
+        "trend_slope": 118.0,
+        "threshold_distance": 0.16,
+        "baseline_ratio": 4.4,
+        "feature_coverage": 0.93,
+        "p104_evidence": {
+          "episode_id": "p104-episode-queue-001",
+          "decision_id": "p104-decision-queue-001",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "metric:queue_sla_breach:2:primary",
+            "metric:queue_sla_breach:2:trend"
+          ],
+          "valid_absence_evidence_ids": [
+            "provider:email:no_rate_limit"
+          ],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          120,
+          360,
+          710,
+          980,
+          1260,
+          1610
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": "inc-queue-001",
+        "label_incident_start_timestamp": "2026-01-04T11:50:00Z",
+        "label_family": "queue",
+        "label_failure_mode": "queue_sla_breach",
+        "label_positive": true,
+        "lead_time_label_minutes": 50,
+        "incident_group_id": "grp-queue-001"
+      }
+    },
+    {
+      "row_id": "p105-synth-train-deploy-001",
+      "source_window_id": "pre-canary-regression-rising",
+      "family": "deploy",
+      "failure_mode": "canary_regression",
+      "service": "payments-api",
+      "metric": "canary_5xx_rate",
+      "split": "train",
+      "forecast_timestamp": "2026-01-05T13:00:00Z",
+      "window_start_timestamp": "2026-01-05T12:45:00Z",
+      "window_end_timestamp": "2026-01-05T13:00:00Z",
+      "label_incident_id": "inc-deploy-001",
+      "label_incident_start_timestamp": "2026-01-05T13:35:00Z",
+      "label_family": "deploy",
+      "label_failure_mode": "canary_regression",
+      "label_positive": true,
+      "lead_time_label_minutes": 35,
+      "incident_group_id": "grp-deploy-001",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "canary_regression_risk",
+        "trend_slope": 0.025,
+        "threshold_distance": 0.12,
+        "baseline_ratio": 6.1,
+        "feature_coverage": 0.91,
+        "p104_evidence": {
+          "episode_id": "p104-episode-deploy-001",
+          "decision_id": "p104-decision-deploy-001",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "metric:canary_regression:0:primary",
+            "deploy:payments-api:canary-release"
+          ],
+          "valid_absence_evidence_ids": [],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          0.002,
+          0.006,
+          0.014,
+          0.025,
+          0.038,
+          0.052
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": "inc-deploy-001",
+        "label_incident_start_timestamp": "2026-01-05T13:35:00Z",
+        "label_family": "deploy",
+        "label_failure_mode": "canary_regression",
+        "label_positive": true,
+        "lead_time_label_minutes": 35,
+        "incident_group_id": "grp-deploy-001"
+      }
+    },
+    {
+      "row_id": "p105-synth-cal-db-002",
+      "source_window_id": "pre-db-lock-wait-cal",
+      "family": "database",
+      "failure_mode": "lock_wait_amplification",
+      "service": "orders-api",
+      "metric": "db_lock_wait_seconds_p95",
+      "split": "calibration",
+      "forecast_timestamp": "2026-01-10T09:00:00Z",
+      "window_start_timestamp": "2026-01-10T08:45:00Z",
+      "window_end_timestamp": "2026-01-10T09:00:00Z",
+      "label_incident_id": "inc-db-002",
+      "label_incident_start_timestamp": "2026-01-10T10:10:00Z",
+      "label_family": "database",
+      "label_failure_mode": "lock_wait_amplification",
+      "label_positive": true,
+      "lead_time_label_minutes": 70,
+      "incident_group_id": "grp-db-002",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "lock_wait_risk",
+        "trend_slope": 0.31,
+        "threshold_distance": 0.2,
+        "baseline_ratio": 4.8,
+        "feature_coverage": 0.95,
+        "p104_evidence": {
+          "episode_id": "p104-episode-db-002",
+          "decision_id": "p104-decision-db-002",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "metric:lock_wait:0:primary",
+            "trace:orders-api:db-span-regression"
+          ],
+          "valid_absence_evidence_ids": [],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          0.1,
+          0.3,
+          0.7,
+          1.2,
+          1.7,
+          2.3
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": "inc-db-002",
+        "label_incident_start_timestamp": "2026-01-10T10:10:00Z",
+        "label_family": "database",
+        "label_failure_mode": "lock_wait_amplification",
+        "label_positive": true,
+        "lead_time_label_minutes": 70,
+        "incident_group_id": "grp-db-002"
+      }
+    },
+    {
+      "row_id": "p105-synth-cal-queue-002",
+      "source_window_id": "pre-consumer-lag-cal",
+      "family": "queue",
+      "failure_mode": "consumer_lag_saturation",
+      "service": "invoice-worker",
+      "metric": "consumer_lag_messages",
+      "split": "calibration",
+      "forecast_timestamp": "2026-01-11T10:00:00Z",
+      "window_start_timestamp": "2026-01-11T09:45:00Z",
+      "window_end_timestamp": "2026-01-11T10:00:00Z",
+      "label_incident_id": "inc-queue-002",
+      "label_incident_start_timestamp": "2026-01-11T10:55:00Z",
+      "label_family": "queue",
+      "label_failure_mode": "consumer_lag_saturation",
+      "label_positive": true,
+      "lead_time_label_minutes": 55,
+      "incident_group_id": "grp-queue-002",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "consumer_lag_risk",
+        "trend_slope": 190.0,
+        "threshold_distance": 0.19,
+        "baseline_ratio": 4.9,
+        "feature_coverage": 0.94,
+        "p104_evidence": {
+          "episode_id": "p104-episode-queue-002",
+          "decision_id": "p104-decision-queue-002",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "metric:consumer_lag:0:primary",
+            "metric:consumer_lag:0:trend"
+          ],
+          "valid_absence_evidence_ids": [
+            "deploy:invoice-worker:no_recent_change"
+          ],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          200,
+          520,
+          830,
+          1210,
+          1700,
+          2180
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": "inc-queue-002",
+        "label_incident_start_timestamp": "2026-01-11T10:55:00Z",
+        "label_family": "queue",
+        "label_failure_mode": "consumer_lag_saturation",
+        "label_positive": true,
+        "lead_time_label_minutes": 55,
+        "incident_group_id": "grp-queue-002"
+      }
+    },
+    {
+      "row_id": "p105-synth-test-db-003",
+      "source_window_id": "pre-db-max-conn-test",
+      "family": "database",
+      "failure_mode": "max_connections_exhaustion",
+      "service": "checkout-api",
+      "metric": "db_connections_used_ratio",
+      "split": "test",
+      "forecast_timestamp": "2026-01-20T09:00:00Z",
+      "window_start_timestamp": "2026-01-20T08:45:00Z",
+      "window_end_timestamp": "2026-01-20T09:00:00Z",
+      "label_incident_id": "inc-db-003",
+      "label_incident_start_timestamp": "2026-01-20T10:30:00Z",
+      "label_family": "database",
+      "label_failure_mode": "max_connections_exhaustion",
+      "label_positive": true,
+      "lead_time_label_minutes": 90,
+      "incident_group_id": "grp-db-003",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "db_max_connections_risk",
+        "trend_slope": 0.055,
+        "threshold_distance": 0.11,
+        "baseline_ratio": 5.3,
+        "feature_coverage": 0.96,
+        "p104_evidence": {
+          "episode_id": "p104-episode-db-003",
+          "decision_id": "p104-decision-db-003",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "metric:max_connections:0:primary",
+            "metric:max_connections:0:trend"
+          ],
+          "valid_absence_evidence_ids": [],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          0.61,
+          0.68,
+          0.74,
+          0.81,
+          0.87,
+          0.93
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": "inc-db-003",
+        "label_incident_start_timestamp": "2026-01-20T10:30:00Z",
+        "label_family": "database",
+        "label_failure_mode": "max_connections_exhaustion",
+        "label_positive": true,
+        "lead_time_label_minutes": 90,
+        "incident_group_id": "grp-db-003"
+      }
+    },
+    {
+      "row_id": "p105-synth-test-db-003-duplicate-alert",
+      "source_window_id": "pre-db-max-conn-test-duplicate",
+      "family": "database",
+      "failure_mode": "max_connections_exhaustion",
+      "service": "checkout-api",
+      "metric": "db_connections_used_ratio",
+      "split": "test",
+      "forecast_timestamp": "2026-01-20T09:10:00Z",
+      "window_start_timestamp": "2026-01-20T08:55:00Z",
+      "window_end_timestamp": "2026-01-20T09:10:00Z",
+      "label_incident_id": "inc-db-003",
+      "label_incident_start_timestamp": "2026-01-20T10:30:00Z",
+      "label_family": "database",
+      "label_failure_mode": "max_connections_exhaustion",
+      "label_positive": true,
+      "lead_time_label_minutes": 80,
+      "incident_group_id": "grp-db-003",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "db_max_connections_risk",
+        "trend_slope": 0.058,
+        "threshold_distance": 0.09,
+        "baseline_ratio": 5.8,
+        "feature_coverage": 0.96,
+        "p104_evidence": {
+          "episode_id": "p104-episode-db-003b",
+          "decision_id": "p104-decision-db-003b",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "metric:max_connections:0:primary",
+            "metric:max_connections:0:duplicate-window"
+          ],
+          "valid_absence_evidence_ids": [],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          0.64,
+          0.7,
+          0.77,
+          0.84,
+          0.9,
+          0.95
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": "inc-db-003",
+        "label_incident_start_timestamp": "2026-01-20T10:30:00Z",
+        "label_family": "database",
+        "label_failure_mode": "max_connections_exhaustion",
+        "label_positive": true,
+        "lead_time_label_minutes": 80,
+        "incident_group_id": "grp-db-003"
+      }
+    },
+    {
+      "row_id": "p105-synth-test-queue-003",
+      "source_window_id": "pre-dead-letter-growth-test",
+      "family": "queue",
+      "failure_mode": "dead_letter_growth",
+      "service": "email-worker",
+      "metric": "dead_letter_messages",
+      "split": "test",
+      "forecast_timestamp": "2026-01-21T10:00:00Z",
+      "window_start_timestamp": "2026-01-21T09:45:00Z",
+      "window_end_timestamp": "2026-01-21T10:00:00Z",
+      "label_incident_id": "inc-queue-003",
+      "label_incident_start_timestamp": "2026-01-21T10:45:00Z",
+      "label_family": "queue",
+      "label_failure_mode": "dead_letter_growth",
+      "label_positive": true,
+      "lead_time_label_minutes": 45,
+      "incident_group_id": "grp-queue-003",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "dead_letter_growth_risk",
+        "trend_slope": 22.0,
+        "threshold_distance": 0.14,
+        "baseline_ratio": 4.1,
+        "feature_coverage": 0.92,
+        "p104_evidence": {
+          "episode_id": "p104-episode-queue-003",
+          "decision_id": "p104-decision-queue-003",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "metric:dead_letter_growth:0:primary",
+            "logs:email-worker:retry-errors"
+          ],
+          "valid_absence_evidence_ids": [],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          0,
+          2,
+          8,
+          17,
+          29,
+          45
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": "inc-queue-003",
+        "label_incident_start_timestamp": "2026-01-21T10:45:00Z",
+        "label_family": "queue",
+        "label_failure_mode": "dead_letter_growth",
+        "label_positive": true,
+        "lead_time_label_minutes": 45,
+        "incident_group_id": "grp-queue-003"
+      }
+    },
+    {
+      "row_id": "p105-synth-test-deploy-003-abstain",
+      "source_window_id": "pre-canary-regression-test-abstain",
+      "family": "deploy",
+      "failure_mode": "canary_regression",
+      "service": "payments-api",
+      "metric": "canary_5xx_rate",
+      "split": "test",
+      "forecast_timestamp": "2026-01-22T11:00:00Z",
+      "window_start_timestamp": "2026-01-22T10:45:00Z",
+      "window_end_timestamp": "2026-01-22T11:00:00Z",
+      "label_incident_id": "inc-deploy-003",
+      "label_incident_start_timestamp": "2026-01-22T11:50:00Z",
+      "label_family": "deploy",
+      "label_failure_mode": "canary_regression",
+      "label_positive": true,
+      "lead_time_label_minutes": 50,
+      "incident_group_id": "grp-deploy-003",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "canary_regression_risk",
+        "trend_slope": 0.019,
+        "threshold_distance": 0.18,
+        "baseline_ratio": 4.6,
+        "feature_coverage": 0.39,
+        "expected_abstention_reason": "missing_critical_feature",
+        "missing_features": [
+          "deployment_metadata",
+          "canary_baseline"
+        ],
+        "p104_evidence": {
+          "episode_id": "p104-episode-deploy-003",
+          "decision_id": "p104-decision-deploy-003",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "metric:canary_regression:3:primary"
+          ],
+          "valid_absence_evidence_ids": [],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          0.003,
+          0.006,
+          0.011,
+          0.017,
+          0.024,
+          0.031
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": "inc-deploy-003",
+        "label_incident_start_timestamp": "2026-01-22T11:50:00Z",
+        "label_family": "deploy",
+        "label_failure_mode": "canary_regression",
+        "label_positive": true,
+        "lead_time_label_minutes": 50,
+        "incident_group_id": "grp-deploy-003"
+      }
+    },
+    {
+      "row_id": "p105-synth-test-deploy-004-insufficient-p104",
+      "source_window_id": "pre-schema-drift-insufficient-evidence",
+      "family": "deploy",
+      "failure_mode": "schema_drift",
+      "service": "catalog-api",
+      "metric": "schema_error_rate",
+      "split": "test",
+      "forecast_timestamp": "2026-01-23T12:00:00Z",
+      "window_start_timestamp": "2026-01-23T11:45:00Z",
+      "window_end_timestamp": "2026-01-23T12:00:00Z",
+      "label_incident_id": "inc-deploy-004",
+      "label_incident_start_timestamp": "2026-01-23T12:40:00Z",
+      "label_family": "deploy",
+      "label_failure_mode": "schema_drift",
+      "label_positive": true,
+      "lead_time_label_minutes": 40,
+      "incident_group_id": "grp-deploy-004",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "schema_drift_risk",
+        "trend_slope": 0.014,
+        "threshold_distance": 0.25,
+        "baseline_ratio": 2.2,
+        "feature_coverage": 0.88,
+        "expected_abstention_reason": "insufficient_p104_evidence",
+        "p104_evidence": {
+          "episode_id": "p104-episode-deploy-004",
+          "decision_id": "p104-decision-deploy-004",
+          "sufficiency_status": "insufficient",
+          "evidence_ids": [
+            "metric:schema_drift:0:primary"
+          ],
+          "missing_requirement_ids": [
+            "req-deploy-metadata",
+            "req-schema-owner"
+          ],
+          "valid_absence_evidence_ids": [],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          0.001,
+          0.002,
+          0.004,
+          0.007,
+          0.011,
+          0.018
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": "inc-deploy-004",
+        "label_incident_start_timestamp": "2026-01-23T12:40:00Z",
+        "label_family": "deploy",
+        "label_failure_mode": "schema_drift",
+        "label_positive": true,
+        "lead_time_label_minutes": 40,
+        "incident_group_id": "grp-deploy-004"
+      }
+    },
+    {
+      "row_id": "p105-synth-test-observability-zero-positive",
+      "source_window_id": "pre-observability-gap-zero-positive",
+      "family": "observability_zero_positive",
+      "failure_mode": "metrics_cardinality_risk",
+      "service": "search-node",
+      "metric": "metrics_series_count",
+      "split": "test",
+      "forecast_timestamp": "2026-01-24T12:00:00Z",
+      "window_start_timestamp": "2026-01-24T11:45:00Z",
+      "window_end_timestamp": "2026-01-24T12:00:00Z",
+      "label_incident_id": null,
+      "label_incident_start_timestamp": null,
+      "label_family": "observability_zero_positive",
+      "label_failure_mode": "metrics_cardinality_risk",
+      "label_positive": false,
+      "lead_time_label_minutes": null,
+      "incident_group_id": "grp-observability-001",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "metrics_cardinality_risk",
+        "trend_slope": 1200.0,
+        "threshold_distance": 0.33,
+        "baseline_ratio": 1.6,
+        "feature_coverage": 0.89,
+        "p104_evidence": {
+          "episode_id": "p104-episode-observability-001",
+          "decision_id": "p104-decision-observability-001",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "metric:cardinality:0:primary",
+            "logs:search-node:no-drop"
+          ],
+          "valid_absence_evidence_ids": [
+            "incident:search-node:no_customer_impact"
+          ],
+          "telemetry_unavailable": false
+        },
+        "pre_incident_values": [
+          200000,
+          203000,
+          207500,
+          212000,
+          216000,
+          221000
+        ]
+      },
+      "scorer_labels": {
+        "label_incident_id": null,
+        "label_incident_start_timestamp": null,
+        "label_family": "observability_zero_positive",
+        "label_failure_mode": "metrics_cardinality_risk",
+        "label_positive": false,
+        "lead_time_label_minutes": null,
+        "incident_group_id": "grp-observability-001"
+      }
+    },
+    {
+      "row_id": "p105-synth-test-telemetry-unavailable",
+      "source_window_id": "pre-trace-drop-telemetry-unavailable",
+      "family": "observability_zero_positive",
+      "failure_mode": "trace_drop_risk",
+      "service": "checkout-api",
+      "metric": "trace_ingest_rate",
+      "split": "test",
+      "forecast_timestamp": "2026-01-25T12:00:00Z",
+      "window_start_timestamp": "2026-01-25T11:45:00Z",
+      "window_end_timestamp": "2026-01-25T12:00:00Z",
+      "label_incident_id": null,
+      "label_incident_start_timestamp": null,
+      "label_family": "observability_zero_positive",
+      "label_failure_mode": "trace_drop_risk",
+      "label_positive": false,
+      "lead_time_label_minutes": null,
+      "incident_group_id": "grp-observability-002",
+      "covered_service_seconds": 43200,
+      "public_features": {
+        "risk_type": "trace_drop_risk",
+        "trend_slope": null,
+        "threshold_distance": null,
+        "baseline_ratio": null,
+        "feature_coverage": 0.12,
+        "expected_abstention_reason": "telemetry_unavailable",
+        "p104_evidence": {
+          "episode_id": "p104-episode-observability-002",
+          "decision_id": "p104-decision-observability-002",
+          "sufficiency_status": "telemetry_unavailable",
+          "evidence_ids": [
+            "telemetry:trace_ingest:unavailable"
+          ],
+          "valid_absence_evidence_ids": [],
+          "telemetry_unavailable": true
+        },
+        "pre_incident_values": []
+      },
+      "scorer_labels": {
+        "label_incident_id": null,
+        "label_incident_start_timestamp": null,
+        "label_family": "observability_zero_positive",
+        "label_failure_mode": "trace_drop_risk",
+        "label_positive": false,
+        "lead_time_label_minutes": null,
+        "incident_group_id": "grp-observability-002"
+      }
+    }
+  ]
+}

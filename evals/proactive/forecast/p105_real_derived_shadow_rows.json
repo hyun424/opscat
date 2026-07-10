@@ -1,0 +1,251 @@
+{
+  "schema_version": "p105.forecast.real_derived.shadow.v1",
+  "split_id": "p105-real-derived-shadow-v1",
+  "sources": [
+    "p32_real_telemetry_replay",
+    "p41_raw_real_dataset_replay"
+  ],
+  "boundary": {
+    "live_api_call_count": 0,
+    "download_count": 0,
+    "auth_required": false,
+    "production_mutation_count": 0,
+    "remediation_execution_count": 0,
+    "executable_action_plan_count": 0
+  },
+  "held_out_reference": {
+    "split_id": "p105-curated-time-ordered-v1",
+    "useful_lead_time_rate_by_family": {
+      "database": 1.0,
+      "queue": 1.0,
+      "deploy": 0.8
+    },
+    "false_alerts_per_service_day_by_family": {
+      "database": 0.25,
+      "queue": 0.0,
+      "deploy": 0.0
+    }
+  },
+  "rows": [
+    {
+      "row_id": "p105-shadow-p32-db-001",
+      "source": "p32_real_telemetry_replay",
+      "source_window_id": "p32-prometheus-checkout-db-pool",
+      "family": "database",
+      "failure_mode": "connection_pool_saturation",
+      "service": "checkout-api",
+      "metric": "db_pool_wait_seconds_p95",
+      "split": "real_derived_shadow",
+      "forecast_timestamp": "2026-02-03T09:00:00Z",
+      "window_start_timestamp": "2026-02-03T08:45:00Z",
+      "window_end_timestamp": "2026-02-03T09:00:00Z",
+      "label_incident_id": "shadow-inc-db-001",
+      "label_incident_start_timestamp": "2026-02-03T10:20:00Z",
+      "label_family": "database",
+      "label_failure_mode": "connection_pool_saturation",
+      "label_positive": true,
+      "lead_time_label_minutes": 80,
+      "incident_group_id": "shadow-grp-db-001",
+      "covered_service_seconds": 86400,
+      "public_features": {
+        "adapter": "p32_trend_window",
+        "source_replay_id": "p32-prometheus-replay",
+        "risk_type": "connection_pool_saturation",
+        "trend_slope": 0.49,
+        "threshold_distance": 0.13,
+        "feature_coverage": 0.93,
+        "p104_evidence": {
+          "episode_id": "p104-shadow-db-001",
+          "decision_id": "p104-shadow-decision-db-001",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "p32:metric:checkout-db-pool",
+            "p32:trace:checkout-db-waits"
+          ],
+          "telemetry_unavailable": false
+        },
+        "boundary": {
+          "live_api_calls_enabled": false,
+          "production_mutation_enabled": false,
+          "remediation_execution_enabled": false
+        }
+      },
+      "scorer_labels": {
+        "label_incident_id": "shadow-inc-db-001",
+        "label_incident_start_timestamp": "2026-02-03T10:20:00Z",
+        "label_family": "database",
+        "label_failure_mode": "connection_pool_saturation",
+        "label_positive": true,
+        "lead_time_label_minutes": 80,
+        "incident_group_id": "shadow-grp-db-001"
+      }
+    },
+    {
+      "row_id": "p105-shadow-p32-queue-001",
+      "source": "p32_real_telemetry_replay",
+      "source_window_id": "p32-datadog-email-consumer-lag",
+      "family": "queue",
+      "failure_mode": "consumer_lag_saturation",
+      "service": "email-worker",
+      "metric": "consumer_lag_messages",
+      "split": "real_derived_shadow",
+      "forecast_timestamp": "2026-02-04T10:00:00Z",
+      "window_start_timestamp": "2026-02-04T09:45:00Z",
+      "window_end_timestamp": "2026-02-04T10:00:00Z",
+      "label_incident_id": "shadow-inc-queue-001",
+      "label_incident_start_timestamp": "2026-02-04T10:50:00Z",
+      "label_family": "queue",
+      "label_failure_mode": "consumer_lag_saturation",
+      "label_positive": true,
+      "lead_time_label_minutes": 50,
+      "incident_group_id": "shadow-grp-queue-001",
+      "covered_service_seconds": 86400,
+      "public_features": {
+        "adapter": "p32_trend_window",
+        "source_replay_id": "p32-datadog-replay",
+        "risk_type": "consumer_lag_risk",
+        "trend_slope": 175.0,
+        "threshold_distance": 0.17,
+        "feature_coverage": 0.91,
+        "p104_evidence": {
+          "episode_id": "p104-shadow-queue-001",
+          "decision_id": "p104-shadow-decision-queue-001",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "p32:metric:email-consumer-lag",
+            "p32:logs:email-retry-errors"
+          ],
+          "telemetry_unavailable": false
+        },
+        "boundary": {
+          "live_api_calls_enabled": false,
+          "production_mutation_enabled": false,
+          "remediation_execution_enabled": false
+        }
+      },
+      "scorer_labels": {
+        "label_incident_id": "shadow-inc-queue-001",
+        "label_incident_start_timestamp": "2026-02-04T10:50:00Z",
+        "label_family": "queue",
+        "label_failure_mode": "consumer_lag_saturation",
+        "label_positive": true,
+        "lead_time_label_minutes": 50,
+        "incident_group_id": "shadow-grp-queue-001"
+      }
+    },
+    {
+      "row_id": "p105-shadow-p41-deploy-001",
+      "source": "p41_raw_real_dataset_replay",
+      "source_window_id": "p41-loghub-apache-raw-canary",
+      "family": "deploy",
+      "failure_mode": "canary_regression",
+      "service": "payments-api",
+      "metric": "raw_error_signature_rate",
+      "split": "real_derived_shadow",
+      "forecast_timestamp": "2026-02-05T11:00:00Z",
+      "window_start_timestamp": "2026-02-05T10:45:00Z",
+      "window_end_timestamp": "2026-02-05T11:00:00Z",
+      "label_incident_id": "shadow-inc-deploy-001",
+      "label_incident_start_timestamp": "2026-02-05T11:35:00Z",
+      "label_family": "deploy",
+      "label_failure_mode": "canary_regression",
+      "label_positive": true,
+      "lead_time_label_minutes": 35,
+      "incident_group_id": "shadow-grp-deploy-001",
+      "covered_service_seconds": 86400,
+      "public_features": {
+        "adapter": "p41_source_card",
+        "source_card_id": "p41-loghub-apache-raw",
+        "parsed_record_count": 4,
+        "risk_type": "canary_regression_risk",
+        "trend_slope": 0.021,
+        "threshold_distance": 0.19,
+        "feature_coverage": 0.88,
+        "p104_evidence": {
+          "episode_id": "p104-shadow-deploy-001",
+          "decision_id": "p104-shadow-decision-deploy-001",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "p41:source:loghub-apache",
+            "p41:label:deploy_regression"
+          ],
+          "telemetry_unavailable": false
+        },
+        "boundary": {
+          "repo_local_raw_files_only": true,
+          "external_dataset_downloads_enabled": false,
+          "live_api_calls_enabled": false,
+          "production_mutation_enabled": false,
+          "remediation_execution_enabled": false
+        }
+      },
+      "scorer_labels": {
+        "label_incident_id": "shadow-inc-deploy-001",
+        "label_incident_start_timestamp": "2026-02-05T11:35:00Z",
+        "label_family": "deploy",
+        "label_failure_mode": "canary_regression",
+        "label_positive": true,
+        "lead_time_label_minutes": 35,
+        "incident_group_id": "shadow-grp-deploy-001"
+      }
+    },
+    {
+      "row_id": "p105-shadow-p41-db-negative-001",
+      "source": "p41_raw_real_dataset_replay",
+      "source_window_id": "p41-nab-known-cause-raw-db-negative",
+      "family": "database",
+      "failure_mode": "slow_query_risk",
+      "service": "orders-api",
+      "metric": "raw_latency_signature_rate",
+      "split": "real_derived_shadow",
+      "forecast_timestamp": "2026-02-06T12:00:00Z",
+      "window_start_timestamp": "2026-02-06T11:45:00Z",
+      "window_end_timestamp": "2026-02-06T12:00:00Z",
+      "label_incident_id": null,
+      "label_incident_start_timestamp": null,
+      "label_family": "database",
+      "label_failure_mode": "slow_query_risk",
+      "label_positive": false,
+      "lead_time_label_minutes": null,
+      "incident_group_id": "shadow-grp-db-negative-001",
+      "covered_service_seconds": 86400,
+      "public_features": {
+        "adapter": "p41_source_card",
+        "source_card_id": "p41-nab-known-cause-raw",
+        "parsed_record_count": 2,
+        "risk_type": "slow_query_risk",
+        "trend_slope": 0.004,
+        "threshold_distance": 0.55,
+        "feature_coverage": 0.9,
+        "p104_evidence": {
+          "episode_id": "p104-shadow-db-negative-001",
+          "decision_id": "p104-shadow-decision-db-negative-001",
+          "sufficiency_status": "qualified",
+          "evidence_ids": [
+            "p41:source:nab-known-cause"
+          ],
+          "valid_absence_evidence_ids": [
+            "p41:label:no_db_incident"
+          ],
+          "telemetry_unavailable": false
+        },
+        "boundary": {
+          "repo_local_raw_files_only": true,
+          "external_dataset_downloads_enabled": false,
+          "live_api_calls_enabled": false,
+          "production_mutation_enabled": false,
+          "remediation_execution_enabled": false
+        }
+      },
+      "scorer_labels": {
+        "label_incident_id": null,
+        "label_incident_start_timestamp": null,
+        "label_family": "database",
+        "label_failure_mode": "slow_query_risk",
+        "label_positive": false,
+        "lead_time_label_minutes": null,
+        "incident_group_id": "shadow-grp-db-negative-001"
+      }
+    }
+  ]
+}

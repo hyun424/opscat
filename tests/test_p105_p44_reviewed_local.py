@@ -231,6 +231,77 @@ def _materialize_raw_fixture(tmp_path: Path, *, labels_variant: str = "positive"
     return output_dir
 
 
+def _write_single_loghub_raw_manifest(
+    tmp_path: Path,
+    *,
+    line: str,
+    source_key: str,
+    family: str = "deploy",
+    mapping_review_status: str = "reviewed_supported",
+) -> Path:
+    raw_dir = tmp_path / source_key.replace(":", "-")
+    raw_dir.mkdir(parents=True)
+    log_path = raw_dir / "source.log"
+    log_path.write_text(line + "\n", encoding="utf-8")
+    raw_manifest = {
+        "schema_version": "p105.p44_raw_source_manifest.v1",
+        "review_status": "reviewed-local",
+        "materialization_version": "p44-reviewed-local-raw-intake-v1",
+        "reviewer_id": "g006-local-test-reviewer",
+        "raw_sources": [
+            {
+                "source_key": source_key,
+                "source_type": "loghub_raw",
+                "source_system": "p44",
+                "source_dataset": source_key,
+                "source_manifest_key": f"{source_key}/source.log",
+                "path": str(log_path),
+                "parser_version": f"{source_key}-parser-v1",
+                "burst_predicate_version": "reviewed-error-burst-v1",
+                "expected_record_count": 1,
+                "expected_sha256": _sha256(log_path),
+                "family_proxy_mapping": {
+                    "family": family,
+                    "mapping_review_status": mapping_review_status,
+                    "evidence": "test-reviewed raw LogHub format mapping",
+                },
+                "license_name": "LogHub CC-BY-4.0",
+                "license_url": "https://github.com/logpai/loghub",
+                "citation_text": "LogHub public log dataset",
+                "redistribution_status": "local_reviewed_fixture",
+                "privacy_review_status": "reviewed_redacted",
+                "redaction_decisions": ["fixture contains no private values"],
+                "reviewer_id": "g006-local-test-reviewer",
+                "reviewed_at": "2026-07-10T00:00:00Z",
+            }
+        ],
+    }
+    manifest_path = raw_dir / "reviewed-p44-raw-source-manifest.json"
+    manifest_path.write_text(json.dumps(raw_manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return manifest_path
+
+
+def _materialize_single_loghub_raw_manifest(
+    tmp_path: Path,
+    *,
+    line: str,
+    source_key: str,
+    family: str = "deploy",
+    mapping_review_status: str = "reviewed_supported",
+) -> Path:
+    raw_manifest = _write_single_loghub_raw_manifest(
+        tmp_path,
+        line=line,
+        source_key=source_key,
+        family=family,
+        mapping_review_status=mapping_review_status,
+    )
+    output_dir = tmp_path / f"reviewed-{source_key.replace(':', '-')}"
+    completed = _run_raw_manifest_materializer(raw_manifest, output_dir)
+    assert completed.returncode == 0, completed.stderr
+    return output_dir
+
+
 def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -300,6 +371,88 @@ def test_raw_manifest_mode_parses_nab_csv_and_loghub_raw_log_with_source_hash_co
     assert loghub_source["record_count"] == 5
     assert nab_source["timestamp_min"] == "2013-12-10T06:20:00Z"
     assert nab_source["timestamp_max"] == "2013-12-10T06:35:00Z"
+
+
+def test_raw_manifest_parser_accepts_actual_loghub_apache_bracketed_timestamp_and_level(tmp_path: Path) -> None:
+    output_dir = _materialize_single_loghub_raw_manifest(
+        tmp_path,
+        line="[Sun Dec 04 04:47:44 2005] [error] client denied by server configuration",
+        source_key="loghub:apache:actual",
+        family="deploy",
+    )
+
+    records = _read_jsonl(output_dir / "p44-reviewed-local-public-records.jsonl")
+
+    assert len(records) == 1
+    assert records[0]["source_timestamp"] == "2005-12-04T04:47:44Z"
+    assert records[0]["public_features"]["log_level"] == "ERROR"
+    assert records[0]["family"] == "deploy"
+    assert records[0]["family_proxy_mapping"]["mapping_review_status"] == "reviewed_supported"
+    assert records[0]["countable_for_release_floors"] is True
+
+
+def test_raw_manifest_parser_accepts_actual_loghub_hadoop_millisecond_timestamp_deterministically(tmp_path: Path) -> None:
+    first_output = _materialize_single_loghub_raw_manifest(
+        tmp_path / "first",
+        line="2015-10-18 18:01:47,978 INFO org.apache.hadoop.hdfs.server.DataNode: PacketResponder started",
+        source_key="loghub:hadoop:actual",
+        family="unsupported_family",
+        mapping_review_status="unsupported",
+    )
+    second_output = _materialize_single_loghub_raw_manifest(
+        tmp_path / "second",
+        line="2015-10-18 18:01:47,978 INFO org.apache.hadoop.hdfs.server.DataNode: PacketResponder started",
+        source_key="loghub:hadoop:actual",
+        family="unsupported_family",
+        mapping_review_status="unsupported",
+    )
+
+    first_records = _read_jsonl(first_output / "p44-reviewed-local-public-records.jsonl")
+    second_records = _read_jsonl(second_output / "p44-reviewed-local-public-records.jsonl")
+
+    assert len(first_records) == 1
+    assert first_records[0]["source_timestamp"] == "2015-10-18T18:01:47Z"
+    assert first_records[0]["public_features"]["log_level"] == "INFO"
+    assert first_records[0]["family"] == "unsupported_family"
+    assert first_records[0]["family_proxy_mapping"]["mapping_review_status"] == "unsupported"
+    assert first_records[0]["countable_for_release_floors"] is False
+    assert [
+        {
+            "source_timestamp": record["source_timestamp"],
+            "public_features": record["public_features"],
+            "p24_input": record["p24_input"],
+            "family": record["family"],
+            "countable_for_release_floors": record["countable_for_release_floors"],
+        }
+        for record in second_records
+    ] == [
+        {
+            "source_timestamp": record["source_timestamp"],
+            "public_features": record["public_features"],
+            "p24_input": record["p24_input"],
+            "family": record["family"],
+            "countable_for_release_floors": record["countable_for_release_floors"],
+        }
+        for record in first_records
+    ]
+
+
+def test_raw_manifest_parser_accepts_actual_loghub_zookeeper_dash_level_format(tmp_path: Path) -> None:
+    output_dir = _materialize_single_loghub_raw_manifest(
+        tmp_path,
+        line="2015-07-29 17:41:44,747 - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793] - Connection request",
+        source_key="loghub:zookeeper:actual",
+        family="queue",
+    )
+
+    records = _read_jsonl(output_dir / "p44-reviewed-local-public-records.jsonl")
+
+    assert len(records) == 1
+    assert records[0]["source_timestamp"] == "2015-07-29T17:41:44Z"
+    assert records[0]["public_features"]["log_level"] == "WARN"
+    assert records[0]["family"] == "queue"
+    assert records[0]["family_proxy_mapping"]["mapping_review_status"] == "reviewed_supported"
+    assert records[0]["countable_for_release_floors"] is True
 
 
 def test_raw_manifest_sampling_and_pre_label_partitions_are_invariant_under_labels_json_changes(tmp_path: Path) -> None:

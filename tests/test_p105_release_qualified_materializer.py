@@ -293,6 +293,143 @@ def _write_honest_v3_p44_dataset(tmp_path: Path) -> Path:
     return manifest_path
 
 
+def _write_unsupported_v3_p44_dataset(tmp_path: Path, *, record_count: int = 2000) -> Path:
+    dataset_dir = tmp_path / "unsupported-reviewed-p44-v3"
+    dataset_dir.mkdir(parents=True)
+    records_path = dataset_dir / "p44-reviewed-local-public-records.jsonl"
+    ledger_path = dataset_dir / "p44-reviewed-local-private-ledger.json"
+    records: list[dict[str, Any]] = []
+    labels: list[dict[str, Any]] = []
+    for index in range(record_count):
+        window_id = f"p44-v3-unsupported-nab-{index:04d}"
+        timestamp = f"2026-06-{(index % 20) + 1:02d}T{(index % 24):02d}:00:00Z"
+        records.append(
+            {
+                "record_id": window_id,
+                "source_dataset": "p44-reviewed-local-v3",
+                "family": "unsupported_family",
+                "family_proxy_mapping": {
+                    "family": "unsupported_family",
+                    "mapping_review_status": "unsupported",
+                    "evidence": "NAB source has no reviewed P105 release family mapping",
+                },
+                "countable_for_release_floors": False,
+                "pre_label_partition": "real_derived_shadow",
+                "source_timestamp": timestamp,
+                "source_window_id": window_id,
+                "public_features": {
+                    "metric_name": "nab.unsupported_metric",
+                    "metric_value": float(index % 100),
+                    "source_window_id": window_id,
+                },
+                "p24_input": {
+                    "id": window_id,
+                    "window_id": window_id,
+                    "service": "unsupported-service",
+                    "metric": "nab.unsupported_metric",
+                    "risk_type": "unsupported_family",
+                    "window_minutes": 15,
+                    "baseline": 1.0,
+                    "threshold": 10.0,
+                    "values": [1.0, 1.1, 1.2, 1.3, 1.4],
+                },
+                "coverage_interval": {
+                    "timestamp_source": "raw_source_record",
+                    "split_id": "g006-real_derived_shadow",
+                    "family": "unsupported_family",
+                    "service": "unsupported-service",
+                    "source_system": "p44",
+                    "start": "2026-06-01T00:00:00Z",
+                    "end": "2026-06-21T00:00:00Z",
+                },
+                "reviewed_label_join": {
+                    "sampled_before_label_join": True,
+                    "label_source": "unsupported_family_diagnostic_only",
+                    "source_line_offset": index,
+                    "source_hash": "filled-by-manifest",
+                },
+            }
+        )
+        labels.append(
+            {
+                "record_id": window_id,
+                "source_window_id": window_id,
+                "label_positive": False,
+                "label_incident_id": None,
+                "incident_group_id": None,
+                "label_incident_start_timestamp": None,
+                "lead_time_label_minutes": None,
+                "label_source": "unsupported_family_diagnostic_only",
+            }
+        )
+    records_path.write_text("\n".join(json.dumps(record, sort_keys=True) for record in records) + "\n", encoding="utf-8")
+    source_hash = hashlib.sha256(records_path.read_bytes()).hexdigest()
+    for record in records:
+        record["reviewed_label_join"]["source_hash"] = source_hash
+    records_path.write_text("\n".join(json.dumps(record, sort_keys=True) for record in records) + "\n", encoding="utf-8")
+    source_hash = hashlib.sha256(records_path.read_bytes()).hexdigest()
+    ledger_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "p105.reviewed_p44_private_label_ledger.v1",
+                "join_timing": "after_sampling_and_pre_label_partition",
+                "public_artifact": False,
+                "records": labels,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    for filename, payload in {
+        "p105-privacy-redaction-manifest.json": {"schema_version": "p105.privacy_redaction.v1", "review_status": "reviewed_redacted", "raw_private_labels_embedded": False},
+        "p105-license-manifest.json": {"schema_version": "p105.license.v1", "sources": [{"source_id": "p44:v3:reviewed-local:unsupported", "license_id": "fixture-only-reviewed-local"}]},
+        "p105-citation-manifest.json": {"schema_version": "p105.citation.v1", "citations": [{"citation_id": "fixture:p44:v3:unsupported", "source_id": "p44:v3:reviewed-local:unsupported"}]},
+        "p105-provenance-hash-manifest.json": {
+            "schema_version": "p105.provenance_hash.v1",
+            "public_records_sha256": source_hash,
+            "private_ledger_sha256": hashlib.sha256(ledger_path.read_bytes()).hexdigest(),
+        },
+    }.items():
+        (dataset_dir / filename).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    manifest_path = dataset_dir / "p44-reviewed-local-manifest-v3.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "p105.reviewed_p44_local_manifest.v3",
+                "review_redaction_status": "reviewed_redacted",
+                "source_cap": record_count,
+                "private_label_ledger_path": str(ledger_path),
+                "privacy_manifest_path": str(dataset_dir / "p105-privacy-redaction-manifest.json"),
+                "license_manifest_path": str(dataset_dir / "p105-license-manifest.json"),
+                "citation_manifest_path": str(dataset_dir / "p105-citation-manifest.json"),
+                "provenance_hash_manifest_path": str(dataset_dir / "p105-provenance-hash-manifest.json"),
+                "family_mapping_review_status": {
+                    "unsupported_family_count": record_count,
+                    "reviewed_supported_count": 0,
+                },
+                "sources": [
+                    {
+                        "source_id": "p44:v3:reviewed-local:unsupported",
+                        "family": "multi",
+                        "local_materialized_path": str(records_path),
+                        "local_source_hash": source_hash,
+                        "record_count": len(records),
+                        "private_label_format": "separate_private_ledger",
+                        "partition_format": "pre_label_partition",
+                    }
+                ],
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    return manifest_path
+
+
 def _g006_row_for_regression(tmp_path: Path, record: dict[str, Any], *, sequence_index: int = 17) -> tuple[dict[str, Any], dict[str, Any]]:
     source_path = tmp_path / "public-source-record.json"
     public_record = copy.deepcopy(record)
@@ -756,6 +893,39 @@ def test_reviewed_local_p44_v3_end_to_end_materializes_and_unlocks_release_gate(
     cli_report = json.loads(cli_output.read_text(encoding="utf-8"))
     assert cli_report["release_gate"]["release_qualified"] is True
     assert cli_report["release_gate"]["p106_unlocked"] is True
+
+
+def test_unsupported_reviewed_local_p44_v3_records_are_diagnostic_only_and_do_not_count_for_p106(tmp_path: Path) -> None:
+    reviewed_manifest = _write_unsupported_v3_p44_dataset(tmp_path)
+    output_dir = tmp_path / "unsupported-output"
+
+    result = _materialize(
+        p32_replay=P32_REPLAY,
+        p41_sources=P41_SOURCES,
+        p44_reviewed_local_manifest=reviewed_manifest,
+        p44_mode="reviewed-local",
+        output_dir=output_dir,
+        mode="release_qualified",
+    )
+
+    p44_preflight = result["source_availability_preflight"]["sources"]["p44"]
+    p44_rows = [
+        row
+        for row in result["rows"]
+        if row["source_record_provenance"]["canonical_source_tuple"]["source_system"] == "p44"
+    ]
+    benchmark = _api().run_p105_benchmark(output_dir / REQUIRED_OUTPUTS["rows"])
+
+    assert p44_preflight["available_source_rows"] == 0
+    assert p44_preflight["positive_labels"] == 0
+    assert p44_preflight["incidents"] == 0
+    assert p44_preflight["incident_groups"] == 0
+    assert p44_preflight["distinct_canonical_source_tuples"] == 0
+    assert p44_rows == []
+    assert benchmark["release_metrics"]["global"]["evaluated_window_count"] == 0
+    assert benchmark["partitions"]["real_derived_shadow"]["global"]["evaluated_window_count"] == 0
+    assert benchmark["release_gate"]["release_qualified"] is False
+    assert benchmark["release_gate"]["p106_unlocked"] is False
 
 
 def test_legacy_floor_scale_p44_synthetic_fixture_remains_locked_and_cannot_unlock_p106(tmp_path: Path) -> None:

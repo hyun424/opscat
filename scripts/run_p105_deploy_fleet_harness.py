@@ -22,6 +22,7 @@ ADAPTER_VERSION = "p105.adapter.threading-http-deploy-fleet-harness.v1"
 PUBLIC_TELEMETRY = "p105-deploy-fleet-public-telemetry.jsonl"
 PRIVATE_LEDGER = "p105-deploy-fleet-private-injection-ledger.json"
 COVERAGE = "p105-deploy-fleet-coverage.json"
+PARTITIONS = "p105-deploy-fleet-pre-label-partitions.json"
 RAW_ATTESTATION = "p105-deploy-fleet-runtime-attestation.raw.json"
 MANIFEST = "p105-deploy-fleet-harness-manifest.json"
 PROVENANCE_HASHES = "p105-deploy-fleet-provenance-hashes.json"
@@ -65,6 +66,13 @@ def _write_json(path: Path, value: Any) -> None:
 
 def _write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
     path.write_text("".join(_stable_json(row) + "\n" for row in rows), encoding="utf-8")
+
+
+def _read_json(path: Path) -> dict[str, Any]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError(f"{path} must contain a JSON object")
+    return value
 
 
 def _service_id(index: int) -> str:
@@ -517,6 +525,63 @@ def _hash_written_artifacts(output_dir: Path, names: list[str]) -> dict[str, str
     return {name: _sha256_bytes((output_dir / name).read_bytes()) for name in names}
 
 
+def finalize_existing_output(output_dir: Path) -> dict[str, Any]:
+    """Bind an already completed deploy fleet run to the closed artifact contract."""
+
+    manifest_path = output_dir / MANIFEST
+    required_names = [PUBLIC_TELEMETRY, PRIVATE_LEDGER, COVERAGE, RAW_ATTESTATION, MANIFEST]
+    missing = [name for name in required_names if not (output_dir / name).is_file()]
+    if missing:
+        raise ValueError(f"deploy fleet output is incomplete: {','.join(missing)}")
+
+    manifest = _read_json(manifest_path)
+    if manifest.get("schema_version") != SCHEMA_VERSION:
+        raise ValueError("deploy fleet finalizer requires the closed fleet schema")
+    if manifest.get("adapter_key") != "deploy_fleet" or manifest.get("adapter_version") != ADAPTER_VERSION:
+        raise ValueError("deploy fleet finalizer requires the closed fleet adapter")
+    partitions = manifest.get("partitions")
+    if not isinstance(partitions, dict):
+        raise ValueError("deploy fleet finalizer requires embedded pre-label partitions")
+    held_out = partitions.get("held_out")
+    shadow = partitions.get("real_derived_shadow")
+    if not isinstance(held_out, list) or not isinstance(shadow, list) or not held_out or not shadow:
+        raise ValueError("deploy fleet finalizer requires both pre-label partitions")
+
+    _write_json(
+        output_dir / PARTITIONS,
+        {
+            "assigned_before_private_schedule_loading": True,
+            "held_out": held_out,
+            "real_derived_shadow": shadow,
+            "schema_version": "p105.deploy.fleet.pre_label_partition.v1",
+        },
+    )
+    provenance_path = output_dir / PROVENANCE_HASHES
+    existing_provenance = _read_json(provenance_path) if provenance_path.is_file() else {}
+    manifest["program_version"] = str(existing_provenance.get("program_version") or PROGRAM_VERSION)
+    manifest["artifact_paths"] = {
+        "coverage": COVERAGE,
+        "partitions": PARTITIONS,
+        "private_injection_ledger": PRIVATE_LEDGER,
+        "provenance_hashes": PROVENANCE_HASHES,
+        "public_telemetry": PUBLIC_TELEMETRY,
+        "raw_attestation": RAW_ATTESTATION,
+    }
+    canonical_payload_names = [PUBLIC_TELEMETRY, PRIVATE_LEDGER, COVERAGE, PARTITIONS]
+    manifest["artifact_hashes"] = _hash_written_artifacts(output_dir, canonical_payload_names)
+    _write_json(manifest_path, manifest)
+
+    all_payload_names = [*canonical_payload_names, RAW_ATTESTATION]
+    provenance = {
+        "artifact_hashes": _hash_written_artifacts(output_dir, [*all_payload_names, MANIFEST]),
+        "hash_algorithm": "sha256",
+        "program_version": str(existing_provenance.get("program_version") or PROGRAM_VERSION),
+        "script_hash": str(existing_provenance.get("script_hash") or _sha256_bytes(Path(__file__).read_bytes())),
+    }
+    _write_json(provenance_path, provenance)
+    return manifest
+
+
 def _command_argv(args: argparse.Namespace) -> list[str]:
     command = [
         "python",
@@ -705,6 +770,7 @@ def _write_artifacts(args: argparse.Namespace) -> None:
         "script_hash": _sha256_bytes(Path(__file__).read_bytes()),
     }
     _write_json(output_dir / PROVENANCE_HASHES, provenance)
+    finalize_existing_output(output_dir)
 
 
 def _parser() -> argparse.ArgumentParser:

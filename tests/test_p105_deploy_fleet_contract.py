@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import importlib
 import importlib.util
 import json
@@ -9,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 DEPLOY_FLEET_SCRIPT = Path("scripts/run_p105_deploy_fleet_harness.py")
+DEPLOY_FLEET_FINALIZER = Path("scripts/finalize_p105_deploy_fleet_output.py")
 REGISTRY_SCRIPT = Path("scripts/build_p105_source_registry.py")
 MATERIALIZER_SCRIPT = Path("scripts/materialize_p105_release_evidence.py")
 
@@ -251,6 +253,24 @@ def test_deploy_fleet_fast_diagnostic_is_short_actual_and_non_counting(tmp_path:
     partitions = manifest["partitions"]
     assert partitions["held_out"] == [f"p105.fleet.deploy.{index:03d}" for index in range(128)]
     assert partitions["real_derived_shadow"] == [f"p105.fleet.deploy.{index:03d}" for index in range(128, 256)]
+    artifact_paths = manifest["artifact_paths"]
+    assert artifact_paths == {
+        "coverage": "p105-deploy-fleet-coverage.json",
+        "partitions": "p105-deploy-fleet-pre-label-partitions.json",
+        "private_injection_ledger": "p105-deploy-fleet-private-injection-ledger.json",
+        "provenance_hashes": "p105-deploy-fleet-provenance-hashes.json",
+        "public_telemetry": "p105-deploy-fleet-public-telemetry.jsonl",
+        "raw_attestation": "p105-deploy-fleet-runtime-attestation.raw.json",
+    }
+    partition_artifact = _read_json(output / artifact_paths["partitions"])
+    assert partition_artifact["assigned_before_private_schedule_loading"] is True
+    assert partition_artifact["held_out"] == partitions["held_out"]
+    assert partition_artifact["real_derived_shadow"] == partitions["real_derived_shadow"]
+    for name, expected_hash in manifest["artifact_hashes"].items():
+        assert hashlib.sha256((output / name).read_bytes()).hexdigest() == expected_hash
+    assert "p105-deploy-fleet-runtime-attestation.raw.json" not in manifest["artifact_hashes"]
+    provenance = _read_json(output / artifact_paths["provenance_hashes"])
+    assert manifest["program_version"] == provenance["program_version"]
 
     public_keys = _flatten_keys(telemetry)
     assert public_keys.isdisjoint(
@@ -268,6 +288,53 @@ def test_deploy_fleet_fast_diagnostic_is_short_actual_and_non_counting(tmp_path:
             "p106_unlocked",
         }
     )
+
+
+def test_deploy_fleet_finalizer_repairs_pre_contract_output_without_rerunning_runtime(tmp_path: Path) -> None:
+    output = tmp_path / "deploy-fleet"
+    completed = _run_deploy_fleet(output)
+    assert completed.returncode == 0, completed.stderr
+
+    manifest_path = output / "p105-deploy-fleet-harness-manifest.json"
+    manifest = _read_json(manifest_path)
+    manifest.pop("artifact_paths", None)
+    manifest.pop("artifact_hashes", None)
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (output / "p105-deploy-fleet-pre-label-partitions.json").unlink(missing_ok=True)
+
+    repaired = subprocess.run(
+        [sys.executable, str(DEPLOY_FLEET_FINALIZER), "--output-dir", str(output)],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert repaired.returncode == 0, repaired.stderr
+    finalized = _read_json(manifest_path)
+    assert finalized["artifact_paths"]["partitions"] == "p105-deploy-fleet-pre-label-partitions.json"
+    assert finalized["artifact_hashes"]["p105-deploy-fleet-public-telemetry.jsonl"] == hashlib.sha256(
+        (output / "p105-deploy-fleet-public-telemetry.jsonl").read_bytes()
+    ).hexdigest()
+    provenance = _read_json(output / "p105-deploy-fleet-provenance-hashes.json")
+    assert provenance["artifact_hashes"]["p105-deploy-fleet-harness-manifest.json"] == hashlib.sha256(
+        manifest_path.read_bytes()
+    ).hexdigest()
+
+
+def test_deploy_fleet_canonical_manifest_excludes_run_specific_raw_attestation_hash(tmp_path: Path) -> None:
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    first_run = _run_deploy_fleet(first)
+    second_run = _run_deploy_fleet(second)
+    assert first_run.returncode == 0, first_run.stderr
+    assert second_run.returncode == 0, second_run.stderr
+
+    first_manifest = first / "p105-deploy-fleet-harness-manifest.json"
+    second_manifest = second / "p105-deploy-fleet-harness-manifest.json"
+    assert first_manifest.read_bytes() == second_manifest.read_bytes()
+    assert (first / "p105-deploy-fleet-runtime-attestation.raw.json").read_bytes() != (
+        second / "p105-deploy-fleet-runtime-attestation.raw.json"
+    ).read_bytes()
 
 
 def test_deploy_fleet_uses_actual_threading_http_server_loopback_caps_timeouts_body_memory_output_and_no_mutation(tmp_path: Path) -> None:

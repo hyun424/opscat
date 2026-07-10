@@ -11,6 +11,7 @@ plan-review approval before RED tests or implementation begin.
 - `docs/operations/p105-g006-source-expansion-test-spec-amendment.md`
 - future `p105-reviewed-source-registry.json`
 - future `p105-source-eligibility-manifest.json`
+- future `scripts/build_p105_source_registry.py`
 
 ## Tests First
 
@@ -26,6 +27,8 @@ plan-review approval before RED tests or implementation begin.
 
 - The registry records candidate sources.
 - The eligibility manifest is the only release-floor counting authority.
+- P105-023 owns the source-registry producer schema and command; P105-028 owns
+  invoking it during actual source runs and passing its root hashes downstream.
 - Family authority must come from reviewed parser/adapter/harness metadata, not
   heuristics, filenames, record ordinals, labels, scores, or floor deficits.
 - Do not change any P105 floor or P106 gate threshold.
@@ -53,7 +56,7 @@ Planning-only validation:
 
 ```bash
 git diff --check
-bash scripts/verify.sh --profile docs
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache bash scripts/verify.sh --profile docs
 ```
 
 ## Stop Condition

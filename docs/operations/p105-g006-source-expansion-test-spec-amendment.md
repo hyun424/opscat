@@ -99,12 +99,18 @@ Required assertions:
   offset delay, backlog or queue depth, and dead-letter telemetry.
 - The harness records producer and consumer timestamps, private injected event
   IDs, injected fault windows, and a private injection ledger.
+- The harness uses the fixed RabbitMQ component, seed, clock, schedule,
+  producer and consumer rates, pause windows, poison-message ticks, full-census
+  sampling, and partition rule from the amendment.
 - The harness reads no credentials, uses no production broker endpoint, and
   performs no production mutation.
 - If a Docker Compose RabbitMQ or Kafka service is used, it is harness-only and
   does not add an app runtime dependency.
 - Public queue telemetry joins to private labels only after label-blind
   partitioning.
+- Queue reruns are byte-identical across all canonical files, and tampering
+  with telemetry, private ledger, schedule arguments, or broker digest fails
+  closed.
 
 ## Deploy Harness Tests
 
@@ -114,12 +120,18 @@ Required assertions:
   cohorts, config or version change event, request count, error rate, latency
   distribution, rollback trigger, rollback-observed timestamp, and private
   injection ledger.
+- The harness uses the fixed loopback component, seed, clock, traffic schedule,
+  baseline/canary cohort split, fault tick, rollback oracle, full-census
+  sampling, and pre-ledger partition rule from the amendment.
 - The harness does not call cloud APIs, production deploy tooling, real PR
   creation, credentials, or production mutation.
 - Local rollback evidence is label evidence only and never creates P106, P107,
   or production execution authority.
 - Deploy rows count only when telemetry, private injection ledger, coverage,
   partition, and registry eligibility all bind to the same source-window ID.
+- Deploy reruns are byte-identical across all canonical files, and tampering
+  with telemetry, private ledger, config hash, rollback window, command
+  argument, or authority counter fails closed.
 
 ## Artifact and Reproducibility Tests
 
@@ -210,7 +222,65 @@ Documentation-only validation for this amendment:
 
 ```bash
 git diff --check
-bash scripts/verify.sh --profile docs
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache bash scripts/verify.sh --profile docs
+```
+
+Future final verification must run the exact full block, not a subset:
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache \
+uv run --no-sync --extra dev pytest -q \
+  tests/test_p105_source_registry_eligibility.py \
+  tests/test_p105_source_expansion_contract.py \
+  tests/test_p105_dejavu_a1_materializer.py \
+  tests/test_p105_log_parser_materializers.py \
+  tests/test_p105_queue_harness_materializer.py \
+  tests/test_p105_deploy_harness_materializer.py \
+  tests/test_p105_release_qualified_evidence_contract.py \
+  tests/test_p105_release_qualified_materializer.py \
+  tests/test_p105_release_qualified_artifacts.py \
+  tests/test_p105_release_qualified_reproducibility.py \
+  tests/test_p105_release_evidence.py \
+  tests/test_failure_forecast_engine.py
+```
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache uv run --no-sync --extra dev pytest -q
+```
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache \
+uv run --no-sync --extra dev python scripts/verify_p105_source_expansion_artifacts.py \
+  --registry /tmp/opscat-p105-source-expansion/p105-reviewed-source-registry.json \
+  --eligibility /tmp/opscat-p105-source-expansion/p105-source-eligibility-manifest.json \
+  --dejavu-manifest /tmp/opscat-p105-reviewed-dejavu-a1/p105-dejavu-a1-reviewed-local-manifest.json \
+  --queue-manifest /tmp/opscat-p105-queue-harness/p105-queue-harness-manifest.json \
+  --queue-rerun-manifest /tmp/opscat-p105-queue-harness-rerun/p105-queue-harness-manifest.json \
+  --deploy-manifest /tmp/opscat-p105-deploy-harness/p105-deploy-harness-manifest.json \
+  --deploy-rerun-manifest /tmp/opscat-p105-deploy-harness-rerun/p105-deploy-harness-manifest.json \
+  --release-dir /tmp/opscat-p105-release-qualified \
+  --expect-byte-identical-reruns \
+  --expect-tamper-fixtures-fail-closed \
+  --output-json /tmp/opscat-p105-release-qualified/p105-artifact-hash-verification.json
+```
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache \
+uv run --no-sync --extra dev python scripts/run_failure_forecast_benchmark.py \
+  --release-benchmark /tmp/opscat-p105-release-qualified/p105-release-qualified-rows.json \
+  --output-json /tmp/opscat-p105-release-qualified/p105-release-qualified-benchmark.json
+```
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache \
+uv run --no-sync --extra dev python scripts/coverage_gate.py \
+  --json-output /tmp/opscat-p105-release-qualified/p105-coverage-gate.json
+```
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache bash scripts/verify.sh --profile docs
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache bash scripts/verify.sh --profile fast
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache bash scripts/verify.sh --profile full
 ```
 
 ## Stop Conditions

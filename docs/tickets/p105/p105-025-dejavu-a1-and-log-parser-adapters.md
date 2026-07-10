@@ -27,6 +27,11 @@ actual Apache, Hadoop, and Zookeeper parser-backed deploy candidates.
   `metrics.csv` and `graph.yml` before labels join.
 - Only reviewed `db connection limit` A1 faults may be eligible for
   `database`.
+- A1 recognizes exactly seven eligible db-connection-limit faults. If reviewed
+  bytes do not reproduce four held-out incident groups and three real-derived
+  incident groups, the database source is `source_insufficient` until another
+  independently reviewed honest database source or isolated database harness is
+  approved. The adapter must not clone, split, retime, or multiply incidents.
 - Record supplied A1 license metadata as CC-BY-4.0 plus license URL, citation,
   reviewer, privacy, redaction, and redistribution fields.
 - Apache, Hadoop, and Zookeeper rows require actual parser output and reviewed
@@ -53,13 +58,23 @@ uv run --no-sync --extra dev pytest -q \
 ```
 
 ```bash
+SOURCE_DATE_EPOCH=1710000000 \
 uv run --no-sync --extra dev python scripts/materialize_p105_dejavu_a1_reviewed_local.py \
   --metrics-csv /private/tmp/opscat-dejavu-A1/A1/metrics.csv \
   --faults-csv /private/tmp/opscat-dejavu-A1/A1/faults.csv \
   --graph-yml /private/tmp/opscat-dejavu-A1/A1/graph.yml \
-  --license-name CC-BY-4.0 \
   --output-dir /tmp/opscat-p105-reviewed-dejavu-a1 \
+  --window-seconds 1800 \
+  --stride-seconds 300 \
+  --forecast-horizon-seconds 7200 \
+  --minimum-complete-triple-samples 24 \
+  --continuity-gap-limit-seconds 120 \
+  --partition-salt dejavu-a1-service-split-v1 \
+  --license-name CC-BY-4.0 \
+  --license-url https://creativecommons.org/licenses/by/4.0/ \
+  --created-at 2024-03-09T16:00:00Z \
   --review-status reviewed-local \
+  --expect-incident-groups held_out_test=4,real_derived_shadow=3 \
   --expect-source-hashes
 ```
 

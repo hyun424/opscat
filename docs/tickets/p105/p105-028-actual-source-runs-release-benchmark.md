@@ -25,6 +25,8 @@ the P105 release benchmark against only eligible rows.
 ## Implementation Notes
 
 - Source-availability preflight runs before scoring.
+- The source registry producer is invoked exactly once after reviewed manifests
+  exist and before materialization reads any row for floor credit.
 - Benchmark input excludes unsupported-family and unevaluable rows.
 - Coverage intervals use actual timestamps only.
 - If floors are missed, publish locked source-insufficiency artifacts instead
@@ -59,10 +61,29 @@ uv run --no-sync --extra dev pytest -q \
 ```
 
 ```bash
+SOURCE_DATE_EPOCH=1710002000 \
+uv run --no-sync --extra dev python scripts/build_p105_source_registry.py \
+  --candidate-manifest evals/telemetry/replay/p32_replay_pack.json \
+  --candidate-manifest evals/real_datasets/raw/p41_sources.json \
+  --candidate-manifest /tmp/opscat-p105-reviewed-p44/p44-reviewed-local-manifest.json \
+  --candidate-manifest /tmp/opscat-p105-reviewed-dejavu-a1/p105-dejavu-a1-reviewed-local-manifest.json \
+  --candidate-manifest /tmp/opscat-p105-queue-harness/p105-queue-harness-manifest.json \
+  --candidate-manifest /tmp/opscat-p105-deploy-harness/p105-deploy-harness-manifest.json \
+  --review-ledger /tmp/opscat-p105-source-expansion/p105-source-review-ledger.json \
+  --output-registry /tmp/opscat-p105-source-expansion/p105-reviewed-source-registry.json \
+  --output-eligibility /tmp/opscat-p105-source-expansion/p105-source-eligibility-manifest.json \
+  --created-at 2024-03-09T16:33:20Z \
+  --schema-version p105.source-registry.v1 \
+  --fail-on-unreviewed-counting-source
+```
+
+```bash
+SOURCE_DATE_EPOCH=1710002000 \
 uv run --no-sync --extra dev python scripts/materialize_p105_release_evidence.py \
   --p32-replay evals/telemetry/replay/p32_replay_pack.json \
   --p41-sources evals/real_datasets/raw/p41_sources.json \
   --p44-reviewed-local-manifest /tmp/opscat-p105-reviewed-p44/p44-reviewed-local-manifest.json \
+  --p44-mode reviewed-local \
   --dejavu-a1-reviewed-local-manifest /tmp/opscat-p105-reviewed-dejavu-a1/p105-dejavu-a1-reviewed-local-manifest.json \
   --queue-harness-manifest /tmp/opscat-p105-queue-harness/p105-queue-harness-manifest.json \
   --deploy-harness-manifest /tmp/opscat-p105-deploy-harness/p105-deploy-harness-manifest.json \

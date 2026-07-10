@@ -12,6 +12,7 @@ architecture review, full verification, and explicit P106 gate evaluation.
 - independent code review
 - independent architecture review
 - targeted tests, fast verification, docs verification, coverage gate
+- artifact hash verification, byte-identical rerun evidence, and tamper checks
 - P106 lock/unlock decision
 
 ## Tests First
@@ -47,6 +48,7 @@ architecture review, full verification, and explicit P106 gate evaluation.
 ## Acceptance Commands
 
 ```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache \
 uv run --no-sync --extra dev pytest -q \
   tests/test_p105_source_registry_eligibility.py \
   tests/test_p105_source_expansion_contract.py \
@@ -63,8 +65,42 @@ uv run --no-sync --extra dev pytest -q \
 ```
 
 ```bash
-bash scripts/verify.sh --profile docs
-bash scripts/verify.sh --profile fast
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache uv run --no-sync --extra dev pytest -q
+```
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache \
+uv run --no-sync --extra dev python scripts/verify_p105_source_expansion_artifacts.py \
+  --registry /tmp/opscat-p105-source-expansion/p105-reviewed-source-registry.json \
+  --eligibility /tmp/opscat-p105-source-expansion/p105-source-eligibility-manifest.json \
+  --dejavu-manifest /tmp/opscat-p105-reviewed-dejavu-a1/p105-dejavu-a1-reviewed-local-manifest.json \
+  --queue-manifest /tmp/opscat-p105-queue-harness/p105-queue-harness-manifest.json \
+  --queue-rerun-manifest /tmp/opscat-p105-queue-harness-rerun/p105-queue-harness-manifest.json \
+  --deploy-manifest /tmp/opscat-p105-deploy-harness/p105-deploy-harness-manifest.json \
+  --deploy-rerun-manifest /tmp/opscat-p105-deploy-harness-rerun/p105-deploy-harness-manifest.json \
+  --release-dir /tmp/opscat-p105-release-qualified \
+  --expect-byte-identical-reruns \
+  --expect-tamper-fixtures-fail-closed \
+  --output-json /tmp/opscat-p105-release-qualified/p105-artifact-hash-verification.json
+```
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache \
+uv run --no-sync --extra dev python scripts/run_failure_forecast_benchmark.py \
+  --release-benchmark /tmp/opscat-p105-release-qualified/p105-release-qualified-rows.json \
+  --output-json /tmp/opscat-p105-release-qualified/p105-release-qualified-benchmark.json
+```
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache \
+uv run --no-sync --extra dev python scripts/coverage_gate.py \
+  --json-output /tmp/opscat-p105-release-qualified/p105-coverage-gate.json
+```
+
+```bash
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache bash scripts/verify.sh --profile docs
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache bash scripts/verify.sh --profile fast
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache bash scripts/verify.sh --profile full
 ```
 
 ## Stop Condition

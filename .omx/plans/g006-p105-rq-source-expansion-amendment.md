@@ -24,6 +24,14 @@ changed by this planning artifact.
 - Unsupported-family rows are non-counting.
 - DejaVu A1, Apache/Hadoop/Zookeeper parsers, queue harness, and deploy harness
   have concrete command and artifact boundaries.
+- Source registry production has an exact owner, schema, output paths, command,
+  and downstream consumer boundary.
+- Queue and deploy harnesses have exact fixed seeds, clocks, schedules,
+  partition/sampling rules, output paths, byte-identical rerun checks, and
+  tamper checks.
+- A1 counts only seven relevant db-connection-limit incidents; if 4+3 incident
+  groups cannot be reproduced from reviewed bytes, the plan requires another
+  honest reviewed database source instead of cloning.
 - `command_argv`, `created_at`, reviewed registry, eligibility manifest,
   provenance, privacy, license, reproducibility, and stop conditions are
   specified.
@@ -37,5 +45,5 @@ Documentation-only validation:
 
 ```bash
 git diff --check
-bash scripts/verify.sh --profile docs
+UV_CACHE_DIR=/private/tmp/opscat-uv-cache bash scripts/verify.sh --profile docs
 ```

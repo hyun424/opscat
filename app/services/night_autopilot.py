@@ -15,6 +15,7 @@ from app.services.incident_memory import (
 from app.services.incident_service import create_mock_incident, get_incident
 from app.services.policy_engine import NightAutopilotConfig as PolicyNightAutopilotConfig
 from app.services.policy_engine import PolicyContext, PolicyEngine
+from app.services.preventive_safety_gate import evaluate_preventive_safety_gate
 from app.services.report_service import render_incident_report
 from app.services.state_machine import transition_incident
 from app.services.timeline_service import add_timeline_event
@@ -97,6 +98,11 @@ def simulate_night_autopilot(db: Session, config: NightAutopilotConfig) -> Night
         simulation=simulation,
         failed_memory=memory_failed_warning,
         memory_matches=summarize_matches(memory_matches),
+        action_type=config.action_type,
+        target=target,
+        environment=incident.environment,
+        service=incident.service,
+        severity=incident.severity,
     )
     add_timeline_event(
         db,
@@ -295,24 +301,34 @@ def _evaluate_v2_gates(
     simulation: SimulationResult,
     failed_memory: bool,
     memory_matches: list[dict[str, object]],
+    action_type: str = "mock.execute_restart_worker",
+    target: str = "worker:staging",
+    environment: str = "staging",
+    service: str = "worker",
+    severity: str = "medium",
 ) -> dict[str, object]:
-    high_confidence = confidence is not None and confidence >= 0.80
-    blast_radius_ok = blast_radius.scope in {"local", "service"} and blast_radius.allowed
-    reversible = blast_radius.rollback_available
-    simulation_ok = simulation.success
-    passed = all([high_confidence, policy_allowed, blast_radius_ok, reversible, simulation_ok, not failed_memory])
-    return {
-        "passed": passed,
-        "confidence": {"value": confidence, "ok": high_confidence, "threshold": 0.80},
-        "policy_allowed": policy_allowed,
-        "blast_radius": {"scope": blast_radius.scope, "ok": blast_radius_ok, "rollback_available": reversible},
-        "reversible": reversible,
-        "simulation": simulation.to_dict(),
-        "memory": {
-            "failed_remediation_warning": failed_memory,
-            "similar_incidents": memory_matches,
-        },
-    }
+    gate = evaluate_preventive_safety_gate(
+        {
+            "action_type": action_type,
+            "target": target,
+            "environment": environment,
+            "service": service,
+            "severity": severity,
+            "confidence": confidence,
+            "policy_allowed": policy_allowed,
+            "blast_radius": blast_radius,
+            "blast_radius_scope": blast_radius.scope,
+            "rollback_available": blast_radius.rollback_available,
+            "simulation": simulation,
+            "simulation_allowed": simulation.success,
+            "simulation_status": "passed" if simulation.success else "failed",
+            "failed_memory": failed_memory,
+            "memory_matches": memory_matches,
+            "mode": "night_autopilot",
+            "night_autopilot": True,
+        }
+    )
+    return gate.to_night_autopilot_v2_dict()
 
 
 def _v2_block_triggers(v2_gates: dict[str, object], *, policy_decision: str, max_attempts: int) -> list[str]:

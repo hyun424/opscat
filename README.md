@@ -4,7 +4,7 @@ OpsCat is a local **agentic AI on-call system** for human-on-exception operation
 
 This repository is intended as a portfolio-grade Agentic AI Engineer artifact and paid-beta design seed: it emphasizes state, tools, tenant boundaries, policy, approvals, verification, wake-up contracts, auditability, privacy, and safety boundaries rather than chatbot-style prompting.
 
-> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery; P104 adds network-free evidence-gap sufficiency checks before policy handoff; P105 adds a local calibrated failure-forecasting harness whose committed tiny fixture is `smoke_only_missing_mode` evidence and must keep P106 locked until release-qualified generated evidence exists. No production actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
+> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery; P104 adds network-free evidence-gap sufficiency checks before policy handoff; P105 adds a local calibrated failure-forecasting harness with strict release-qualified prerequisites; P106 has a documentation and release-verification lane for simulation-only preventive planning, with final implementation review still pending. No production actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
 
 ## Portfolio demo evidence
 
@@ -44,6 +44,9 @@ Reviewer links:
 - [`docs/operations/p104-final-summary.md`](docs/operations/p104-final-summary.md) — evidence-gap sufficiency, false-handoff, and safety-boundary evidence.
 - [`docs/operations/p105-model-card.md`](docs/operations/p105-model-card.md) — P105 forecast model card, mode semantics, metric formulas, provenance scope, and authority limits.
 - [`docs/operations/p105-final-summary.md`](docs/operations/p105-final-summary.md) — P105 release-integration summary and P106 lock status.
+- [`docs/operations/p106-ticket-roadmap.md`](docs/operations/p106-ticket-roadmap.md) — P106 simulation-only preventive planner roadmap and release gates.
+- [`docs/operations/p106-plan-review.md`](docs/operations/p106-plan-review.md) — P106 planning approval with final implementation review pending.
+- [`docs/operations/p106-final-summary.md`](docs/operations/p106-final-summary.md) — P106 documentation/release-verification summary without final review claims.
 - [`docs/architecture.md`](docs/architecture.md) — local/mock architecture and safety boundaries.
 
 Boundary: the portfolio demo is local/mock-only. It performs no auth work, live APIs, credentials, network, production mutation, real remediation/action execution, or external model/API calls; it is not production autonomy.
@@ -208,6 +211,44 @@ See
 [`docs/operations/p105-model-card.md`](docs/operations/p105-model-card.md),
 [`docs/operations/p105-final-summary.md`](docs/operations/p105-final-summary.md),
 and [`docs/tickets/p105/README.md`](docs/tickets/p105/README.md).
+
+## P106 preventive action planner verification lane
+
+P106 is a simulation-only preventive planning layer. It requires canonical P105
+release-qualified evidence and P104 sufficient evidence before candidate
+scoring, then composes the shared registry, policy engine, simulator,
+blast-radius service, and incident memory. It does not execute remediation,
+create auth scope, mutate production, or give optional LLM advisory packets any
+decision authority.
+
+Run the offline benchmark smoke with the SHA-pinned real-derived P105 fixture:
+
+```bash
+tmpdir="$(mktemp -d)"
+cleanup() { rm -rf -- "$tmpdir"; }
+trap cleanup EXIT INT TERM
+p105_artifact="$(uv run --no-sync --extra dev python \
+  scripts/extract_p105_release_fixture.py \
+  evals/prevention/p105_release_qualified_real_derived.tar.gz \
+  6aaf35285f03cc7fe68b036a8172dba1615d1e5131939b2d8ef26787dd5c7342 \
+  "$tmpdir/p105")"
+uv run --no-sync --extra dev python scripts/run_preventive_action_benchmark.py \
+  --cases evals/prevention/p106_benchmark_cases.json \
+  --p105-artifact "$p105_artifact" \
+  --output-json "$tmpdir/opscat-p106-preventive-action-benchmark.json" \
+  --output-md "$tmpdir/opscat-p106-preventive-action-benchmark.md"
+```
+
+The fresh run is scored with one eligible planner evaluation, zero regret and
+harm, safe-fallback and fail-closed rates of `1.0`, one mutation-shaped
+simulation-only plan, and zero authority. Prior verifier findings are fixed and
+covered by targeted tests. The evidence is eligible for the P107 conjunctive
+gate, but P106 itself keeps `p107_unlocked=false` and grants no execution
+authority. Final independent implementation code and architecture/safety review
+remain pending until the leader supplies results.
+
+See [`docs/operations/p106-ticket-roadmap.md`](docs/operations/p106-ticket-roadmap.md)
+and [`docs/tickets/p106/README.md`](docs/tickets/p106/README.md).
 
 ## Portfolio story
 

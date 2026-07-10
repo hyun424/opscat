@@ -1,0 +1,138 @@
+{
+  "schema_version": "p106.shared_fail_closed_cases.v1",
+  "required_result": {
+    "passed": false,
+    "allowed_routes": ["observe", "escalate", "blocked_fail_closed"],
+    "execution_enabled": false,
+    "simulation_only": true,
+    "p107_required_for_execution": true
+  },
+  "cases": [
+    {
+      "case_id": "production_environment",
+      "category": "production",
+      "action_type": "mock.execute_restart_worker",
+      "environment": "production",
+      "service": "worker",
+      "confidence": 0.91,
+      "expected_reason": "production"
+    },
+    {
+      "case_id": "critical_severity",
+      "category": "critical_severity",
+      "action_type": "timeline.add_note",
+      "environment": "staging",
+      "service": "worker",
+      "severity": "critical",
+      "confidence": 0.93,
+      "expected_reason": "critical"
+    },
+    {
+      "case_id": "low_confidence",
+      "category": "low_confidence",
+      "action_type": "timeline.add_note",
+      "environment": "staging",
+      "service": "worker",
+      "confidence": 0.51,
+      "expected_reason": "confidence"
+    },
+    {
+      "case_id": "conflicting_signals",
+      "category": "conflicting_evidence",
+      "action_type": "report.generate",
+      "environment": "staging",
+      "service": "payment-api",
+      "confidence": 0.88,
+      "conflicting_signals": true,
+      "expected_reason": "conflicting"
+    },
+    {
+      "case_id": "known_ambiguity",
+      "category": "ambiguity",
+      "action_type": "report.generate",
+      "environment": "staging",
+      "service": "payment-api",
+      "confidence": 0.86,
+      "known_ambiguity": true,
+      "expected_reason": "ambiguity"
+    },
+    {
+      "case_id": "failed_simulation",
+      "category": "failed_simulation",
+      "action_type": "mock.create_rollback_pr",
+      "environment": "staging",
+      "service": "payment-api",
+      "confidence": 0.89,
+      "simulation_status": "blocked",
+      "simulation_allowed": false,
+      "expected_reason": "simulation"
+    },
+    {
+      "case_id": "workspace_blast_radius",
+      "category": "non_local_blast_radius",
+      "action_type": "mock.create_rollback_pr",
+      "environment": "staging",
+      "service": "payment-api",
+      "confidence": 0.89,
+      "blast_radius_scope": "workspace",
+      "expected_reason": "blast_radius"
+    },
+    {
+      "case_id": "rollback_unavailable",
+      "category": "rollback",
+      "action_type": "mock.create_rollback_pr",
+      "environment": "staging",
+      "service": "payment-api",
+      "confidence": 0.89,
+      "rollback_available": false,
+      "expected_reason": "rollback"
+    },
+    {
+      "case_id": "unknown_action",
+      "category": "unknown_action",
+      "action_type": "unknown.provider.mutate",
+      "environment": "staging",
+      "service": "payment-api",
+      "confidence": 0.9,
+      "expected_reason": "unknown"
+    },
+    {
+      "case_id": "shell_action",
+      "category": "prohibited_action",
+      "action_type": "shell.execute",
+      "environment": "staging",
+      "service": "payment-api",
+      "confidence": 0.9,
+      "expected_reason": "shell"
+    },
+    {
+      "case_id": "secret_read",
+      "category": "secret",
+      "action_type": "secret.read",
+      "environment": "staging",
+      "service": "payment-api",
+      "confidence": 0.9,
+      "expected_reason": "secret"
+    },
+    {
+      "case_id": "missing_registry_hash_parity",
+      "category": "registry_hash",
+      "action_type": "timeline.add_note",
+      "environment": "staging",
+      "service": "worker",
+      "confidence": 0.91,
+      "registry_hash_parity": false,
+      "expected_reason": "registry"
+    },
+    {
+      "case_id": "prior_failed_remediation",
+      "category": "incident_memory",
+      "action_type": "mock.execute_restart_worker",
+      "environment": "staging",
+      "service": "worker",
+      "confidence": 0.91,
+      "prior_failed_remediation": true,
+      "expected_reason": "memory"
+    }
+  ]
+}

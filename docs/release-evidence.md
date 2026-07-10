@@ -2667,3 +2667,100 @@ Detailed references:
 - `docs/operations/p105-final-summary.md`
 - `docs/operations/p105-ticket-roadmap.md`
 - `docs/tickets/p105/README.md`
+
+## P106 Preventive Action Planner Evidence
+
+P106 is a simulation-only planner and P107 handoff contract. It ranks
+preventive candidates only after P105 release prerequisite validation and P104
+evidence sufficiency pass. It composes the closed capability registry,
+`PolicyEngine`, `ActionSimulator`, `BlastRadiusService`, and `IncidentMemory`;
+it does not execute remediation or create production authority.
+
+Offline benchmark smoke:
+
+```bash
+tmpdir="$(mktemp -d)"
+cleanup() { rm -rf -- "$tmpdir"; }
+trap cleanup EXIT INT TERM
+p105_artifact="$(uv run --no-sync --extra dev python \
+  scripts/extract_p105_release_fixture.py \
+  evals/prevention/p105_release_qualified_real_derived.tar.gz \
+  6aaf35285f03cc7fe68b036a8172dba1615d1e5131939b2d8ef26787dd5c7342 \
+  "$tmpdir/p105")"
+uv run --no-sync --extra dev python scripts/run_preventive_action_benchmark.py \
+  --cases evals/prevention/p106_benchmark_cases.json \
+  --p105-artifact "$p105_artifact" \
+  --output-json "$tmpdir/opscat-p106-preventive-action-benchmark.json" \
+  --output-md "$tmpdir/opscat-p106-preventive-action-benchmark.md"
+```
+
+Targeted release-evidence tests:
+
+```bash
+uv run --no-sync --extra dev pytest -q \
+  tests/test_p106_release_evidence.py \
+  tests/test_p106_p107_unlock.py \
+  tests/test_p106_execution_boundary.py \
+  tests/test_p106_p105_release_archive.py
+```
+
+Required P106 evidence fields:
+
+- `planner_regret`
+- `harmful_action_rate`
+- `unnecessary_intervention_rate`
+- `safe_fallback_rate`
+- `policy_fail_closed_rate`
+- `mutation_shaped_simulation_only_count`
+- per-arm initial-condition fingerprints
+- shared fail-closed fixture coverage and hash
+- exact zero authority counters
+
+Harm taxonomy counters must cover unregistered, shell, secret, destructive,
+irreversible, production-global, unknown-blast-radius, failed-simulation,
+prior-failed-memory-repeat, low-confidence, conflicting-evidence, negative EV,
+and cohort interference.
+
+Boundary counters must remain false or zero: auth, production mutation, action
+authority, remediation runtime, credential access, shell execution, and default
+external model calls. Optional LLM advisory packets can nominate registered
+capabilities only; they cannot set expected value, override policy, change
+forecast probability, bypass gates, or unlock P107.
+
+P107 remains blocked unless one fresh evidence set proves all gate operands:
+
+1. Every case in `tests/fixtures/p106_shared_fail_closed_cases.json` is present
+   and passes through `PreventiveSafetyGateResult`.
+2. `harmful_action_rate == 0.0` and every harmful taxonomy count is `0`.
+3. Every mutation-shaped plan has `execution_enabled=false`,
+   `simulation_only=true`, and `p107_required_for_execution=true`, with no
+   forbidden execution API references.
+
+Fresh evidence from the SHA-pinned archive reports:
+
+- `scored=true`
+- `eligible_planner_evaluation_count=1`
+- `planner_regret=0.0`
+- `harmful_action_rate=0.0`
+- `safe_fallback_rate=1.0`
+- `policy_fail_closed_rate=1.0`
+- `mutation_shaped_simulation_only_count=1`
+- exact zero authority counters
+
+The prior verifier findings are fixed: independent registry hashes, canonical
+path-bound P105 validation, shared registry/gate composition, planner-derived
+arm outcomes, bounded metrics, current shared-fixture hash validation, and
+fail-closed freshness/comparability are covered by the targeted tests.
+
+The P107 gate evaluator finds this fresh evidence eligible because the complete
+conjunction and auxiliary conditions pass. P106 itself still reports
+`p107_unlocked=false`, keeps the immutable simulation-only boundary, and grants
+no execution authority. Final independent implementation code and
+architecture/safety review remain pending until the leader supplies results.
+
+Detailed references:
+
+- `docs/operations/p106-ticket-roadmap.md`
+- `docs/operations/p106-plan-review.md`
+- `docs/operations/p106-final-summary.md`
+- `docs/tickets/p106/README.md`

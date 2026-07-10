@@ -1,0 +1,83 @@
+{
+  "schema_version": "p106.capability_registry.v1",
+  "registry_id": "p106-closed-preventive-capabilities",
+  "version": "2026-07-10.red",
+  "authority": {
+    "auth_enabled": false,
+    "production_mutation_enabled": false,
+    "action_authority": false,
+    "remediation_execution_enabled": false,
+    "default_external_model_calls": 0
+  },
+  "capabilities": [
+    {
+      "capability_id": "preventive.report.generate",
+      "family": "database",
+      "action_type": "report.generate",
+      "environment_allowlist": ["local", "test", "staging"],
+      "required_evidence": ["p104_policy_handoff", "p105_release_prerequisite", "forecast_probability"],
+      "preconditions": ["evidence_cited"],
+      "post_checks": ["report_contains_evidence"],
+      "canary_scope_template": null,
+      "rollback_trigger": null,
+      "reversible": true,
+      "intervention_cost": 0.2,
+      "mutation_shaped": false
+    },
+    {
+      "capability_id": "preventive.timeline.note",
+      "family": "queue",
+      "action_type": "timeline.add_note",
+      "environment_allowlist": ["local", "test", "staging"],
+      "required_evidence": ["p104_policy_handoff", "p105_release_prerequisite"],
+      "preconditions": ["operator_note_context_present"],
+      "post_checks": ["timeline_note_visible"],
+      "canary_scope_template": null,
+      "rollback_trigger": null,
+      "reversible": true,
+      "intervention_cost": 0.1,
+      "mutation_shaped": false
+    },
+    {
+      "capability_id": "preventive.mock.rollback_pr",
+      "family": "deploy",
+      "action_type": "mock.create_rollback_pr",
+      "environment_allowlist": ["local", "test", "staging"],
+      "required_evidence": ["p104_policy_handoff", "p105_release_prerequisite", "bad_deploy_identified"],
+      "preconditions": ["bad_deploy_identified", "rollback_plan_present"],
+      "post_checks": ["pr_url_recorded", "verify_recovery_after_merge"],
+      "canary_scope_template": {
+        "treatment_selector": "single non-production service canary",
+        "control_selector": "matched non-production service baseline",
+        "duration_minutes": 30,
+        "primary_metric": "error_rate",
+        "guardrail_metrics": ["latency_p95", "queue_depth"]
+      },
+      "rollback_trigger": "guardrail_regression_or_primary_metric_worse_than_control",
+      "reversible": true,
+      "intervention_cost": 2.0,
+      "mutation_shaped": true
+    },
+    {
+      "capability_id": "preventive.mock.restart_worker_simulation",
+      "family": "queue",
+      "action_type": "mock.execute_restart_worker",
+      "environment_allowlist": ["local", "test", "staging"],
+      "required_evidence": ["p104_policy_handoff", "p105_release_prerequisite", "worker_target_confirmed"],
+      "preconditions": ["worker_target_confirmed"],
+      "post_checks": ["mock.verify_recovery"],
+      "canary_scope_template": {
+        "treatment_selector": "single local worker fixture",
+        "control_selector": "matched local worker fixture",
+        "duration_minutes": 20,
+        "primary_metric": "queue_latency",
+        "guardrail_metrics": ["dropped_jobs", "retry_rate"]
+      },
+      "rollback_trigger": "queue_latency_or_retry_rate_worse_than_control",
+      "reversible": true,
+      "intervention_cost": 1.5,
+      "mutation_shaped": true
+    }
+  ],
+  "fixture_sha256": "computed_by_loader"
+}

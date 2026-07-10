@@ -94,6 +94,23 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 - Wired P105 benchmark smoke and release evidence anchors into verification
   documentation while preserving default offline, local/mock execution.
 
+### P106 documentation and release verification
+
+- Added P106 ticket docs, roadmap, planning-review ledger, and final-summary
+  structure for the simulation-only preventive action planner.
+- Documented canonical P105 prerequisite validation, P104 sufficiency,
+  shared registry/policy/simulator/blast/memory composition, optional advisory
+  LLM limits, and the P107 conjunctive gate.
+- Wired the local/offline P106 benchmark smoke into the eval/full verification
+  path with SHA-pinned extraction of the real-derived P105 fixture, and added
+  the P106 docs contract test to the docs profile.
+- Recorded fresh scored evidence: one eligible planner evaluation, zero regret
+  and harm, `1.0` safe-fallback and fail-closed rates, one mutation-shaped
+  simulation-only plan, and exact zero authority.
+- Recorded prior verifier findings as fixed. P107 gate evidence is eligible,
+  but P106 grants no execution authority; final independent implementation code
+  and architecture/safety review remain pending.
+
 ## Stable vs experimental
 
 Stable in local/mock mode: tests, evals, fixture ingestion, local-header demo identity, mock action policy gates, connector evals, docs, and verification profiles.

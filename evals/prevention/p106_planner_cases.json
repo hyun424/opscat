@@ -1,0 +1,768 @@
+{
+  "cases": [
+    {
+      "advisory_capabilities": [
+        "preventive.report.generate"
+      ],
+      "case_id": "qualified_database_prevents_bad_release",
+      "expected_route": "plan",
+      "family": "database",
+      "forecast": {
+        "avoided_impact": 18.0,
+        "false_alert_denominator": 42,
+        "probability": 0.82,
+        "uncertainty": 0.08
+      },
+      "p104_evidence": {
+        "boundary": {
+          "action_authority": false,
+          "production_mutation_enabled": false,
+          "read_only_tools_only": true
+        },
+        "budget_counters": {
+          "elapsed_step_count": 2,
+          "provider_model_call_count": 0,
+          "remaining_provider_budget": 0,
+          "remaining_tool_budget": 0
+        },
+        "conflicting_evidence": false,
+        "decision_id": "decision-qualified_database_prevents_bad_release",
+        "episode_id": "episode-qualified_database_prevents_bad_release",
+        "evidence_ids": [
+          "ev-database-1",
+          "ev-database-2"
+        ],
+        "evidence_states": [
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "ev-database-1",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-qualified_database_prevents_bad_release-support"
+            ],
+            "source_family": "metrics",
+            "state": "supporting",
+            "summary": "Fresh supporting operational evidence.",
+            "tool_id": "metrics.query",
+            "trace_id": "trace-qualified_database_prevents_bad_release-support-0"
+          },
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "ev-database-2",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-qualified_database_prevents_bad_release-support"
+            ],
+            "source_family": "metrics",
+            "state": "supporting",
+            "summary": "Fresh supporting operational evidence.",
+            "tool_id": "metrics.query",
+            "trace_id": "trace-qualified_database_prevents_bad_release-support-1"
+          },
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "qualified_database_prevents_bad_release-no-contradiction",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-qualified_database_prevents_bad_release-contradiction"
+            ],
+            "source_family": "deploy",
+            "state": "absent",
+            "summary": "No conflicting deployment evidence found.",
+            "tool_id": "deploy.read_metadata",
+            "trace_id": "trace-qualified_database_prevents_bad_release-contradiction"
+          }
+        ],
+        "fresh": true,
+        "hypothesis_id": "hypothesis-qualified_database_prevents_bad_release",
+        "requirement_set_id": "reqset-qualified_database_prevents_bad_release",
+        "requirements": [
+          {
+            "accepted_states": [
+              "supporting"
+            ],
+            "candidate_tools": [
+              "metrics.query"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "critical",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-qualified_database_prevents_bad_release",
+            "rationale": "Require fresh supporting operational evidence.",
+            "requirement_id": "req-qualified_database_prevents_bad_release-support",
+            "source_family": "metrics"
+          },
+          {
+            "accepted_states": [
+              "absent"
+            ],
+            "candidate_tools": [
+              "deploy.read_metadata"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "contradiction_check",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-qualified_database_prevents_bad_release",
+            "rationale": "Require an explicit contradiction check before policy handoff.",
+            "requirement_id": "req-qualified_database_prevents_bad_release-contradiction",
+            "source_family": "deploy"
+          }
+        ],
+        "route": "sufficient_for_policy_handoff",
+        "schema_version": "p104.evidence_gap.decision.v1",
+        "sufficiency_decision": {
+          "citation_evidence_ids": [
+            "ev-database-1",
+            "ev-database-2",
+            "qualified_database_prevents_bad_release-no-contradiction"
+          ],
+          "critical_requirement_ids": [
+            "req-qualified_database_prevents_bad_release-support",
+            "req-qualified_database_prevents_bad_release-contradiction"
+          ],
+          "hard_gates": [],
+          "missing_requirement_ids": [],
+          "satisfied_requirement_ids": [
+            "req-qualified_database_prevents_bad_release-support",
+            "req-qualified_database_prevents_bad_release-contradiction"
+          ],
+          "telemetry_coverage": 0.95
+        },
+        "sufficient_for_policy_handoff": true
+      },
+      "scorer_only_expected_capability": "preventive.report.generate"
+    },
+    {
+      "advisory_capabilities": [
+        "preventive.mock.rollback_pr"
+      ],
+      "case_id": "qualified_deploy_mock_rollback_pr_is_simulation_only",
+      "environment": "staging",
+      "expected_route": "blocked_fail_closed",
+      "family": "deploy",
+      "forecast": {
+        "avoided_impact": 32.0,
+        "false_alert_denominator": 80,
+        "probability": 0.91,
+        "uncertainty": 0.05
+      },
+      "p104_evidence": {
+        "boundary": {
+          "action_authority": false,
+          "production_mutation_enabled": false,
+          "read_only_tools_only": true
+        },
+        "budget_counters": {
+          "elapsed_step_count": 2,
+          "provider_model_call_count": 0,
+          "remaining_provider_budget": 0,
+          "remaining_tool_budget": 0
+        },
+        "conflicting_evidence": false,
+        "decision_id": "decision-qualified_deploy_mock_rollback_pr_is_simulation_only",
+        "episode_id": "episode-qualified_deploy_mock_rollback_pr_is_simulation_only",
+        "evidence_ids": [
+          "p104-handoff-deploy-rollback-001",
+          "p104-handoff-deploy-rollback-002"
+        ],
+        "evidence_states": [
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "p104-handoff-deploy-rollback-001",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-qualified_deploy_mock_rollback_pr_is_simulation_only-support"
+            ],
+            "source_family": "metrics",
+            "state": "supporting",
+            "summary": "Fresh supporting operational evidence.",
+            "tool_id": "metrics.query",
+            "trace_id": "trace-qualified_deploy_mock_rollback_pr_is_simulation_only-support-0"
+          },
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "p104-handoff-deploy-rollback-002",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-qualified_deploy_mock_rollback_pr_is_simulation_only-support"
+            ],
+            "source_family": "metrics",
+            "state": "supporting",
+            "summary": "Fresh supporting operational evidence.",
+            "tool_id": "metrics.query",
+            "trace_id": "trace-qualified_deploy_mock_rollback_pr_is_simulation_only-support-1"
+          },
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "qualified_deploy_mock_rollback_pr_is_simulation_only-no-contradiction",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-qualified_deploy_mock_rollback_pr_is_simulation_only-contradiction"
+            ],
+            "source_family": "deploy",
+            "state": "absent",
+            "summary": "No conflicting deployment evidence found.",
+            "tool_id": "deploy.read_metadata",
+            "trace_id": "trace-qualified_deploy_mock_rollback_pr_is_simulation_only-contradiction"
+          }
+        ],
+        "fresh": true,
+        "hypothesis_id": "hypothesis-qualified_deploy_mock_rollback_pr_is_simulation_only",
+        "requirement_set_id": "reqset-qualified_deploy_mock_rollback_pr_is_simulation_only",
+        "requirements": [
+          {
+            "accepted_states": [
+              "supporting"
+            ],
+            "candidate_tools": [
+              "metrics.query"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "critical",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-qualified_deploy_mock_rollback_pr_is_simulation_only",
+            "rationale": "Require fresh supporting operational evidence.",
+            "requirement_id": "req-qualified_deploy_mock_rollback_pr_is_simulation_only-support",
+            "source_family": "metrics"
+          },
+          {
+            "accepted_states": [
+              "absent"
+            ],
+            "candidate_tools": [
+              "deploy.read_metadata"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "contradiction_check",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-qualified_deploy_mock_rollback_pr_is_simulation_only",
+            "rationale": "Require an explicit contradiction check before policy handoff.",
+            "requirement_id": "req-qualified_deploy_mock_rollback_pr_is_simulation_only-contradiction",
+            "source_family": "deploy"
+          }
+        ],
+        "route": "sufficient_for_policy_handoff",
+        "schema_version": "p104.evidence_gap.decision.v1",
+        "sufficiency_decision": {
+          "citation_evidence_ids": [
+            "p104-handoff-deploy-rollback-001",
+            "p104-handoff-deploy-rollback-002",
+            "qualified_deploy_mock_rollback_pr_is_simulation_only-no-contradiction"
+          ],
+          "critical_requirement_ids": [
+            "req-qualified_deploy_mock_rollback_pr_is_simulation_only-support",
+            "req-qualified_deploy_mock_rollback_pr_is_simulation_only-contradiction"
+          ],
+          "hard_gates": [],
+          "missing_requirement_ids": [],
+          "satisfied_requirement_ids": [
+            "req-qualified_deploy_mock_rollback_pr_is_simulation_only-support",
+            "req-qualified_deploy_mock_rollback_pr_is_simulation_only-contradiction"
+          ],
+          "telemetry_coverage": 0.95
+        },
+        "sufficient_for_policy_handoff": true
+      },
+      "p105_artifact_path": "__P105_RELEASE_ARTIFACT_PATH__",
+      "scorer_only_expected_block_reason": "workspace blast radius is not local under current safety gate",
+      "scorer_only_expected_capability": "preventive.mock.rollback_pr",
+      "scorer_only_expected_mutation_shaped": true,
+      "service": "checkout-api"
+    },
+    {
+      "advisory_capabilities": [
+        "preventive.timeline.note"
+      ],
+      "case_id": "natural_recovery_observe",
+      "expected_route": "observe",
+      "family": "queue",
+      "forecast": {
+        "avoided_impact": 5.0,
+        "false_alert_denominator": 30,
+        "probability": 0.61,
+        "uncertainty": 0.1
+      },
+      "p104_evidence": {
+        "boundary": {
+          "action_authority": false,
+          "production_mutation_enabled": false,
+          "read_only_tools_only": true
+        },
+        "budget_counters": {
+          "elapsed_step_count": 2,
+          "provider_model_call_count": 0,
+          "remaining_provider_budget": 0,
+          "remaining_tool_budget": 0
+        },
+        "conflicting_evidence": false,
+        "decision_id": "decision-natural_recovery_observe",
+        "episode_id": "episode-natural_recovery_observe",
+        "evidence_ids": [
+          "ev-queue-natural"
+        ],
+        "evidence_states": [
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "ev-queue-natural",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-natural_recovery_observe-support"
+            ],
+            "source_family": "metrics",
+            "state": "supporting",
+            "summary": "Fresh supporting operational evidence.",
+            "tool_id": "metrics.query",
+            "trace_id": "trace-natural_recovery_observe-support-0"
+          },
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "natural_recovery_observe-no-contradiction",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-natural_recovery_observe-contradiction"
+            ],
+            "source_family": "deploy",
+            "state": "absent",
+            "summary": "No conflicting deployment evidence found.",
+            "tool_id": "deploy.read_metadata",
+            "trace_id": "trace-natural_recovery_observe-contradiction"
+          }
+        ],
+        "fresh": true,
+        "hypothesis_id": "hypothesis-natural_recovery_observe",
+        "natural_recovery": true,
+        "requirement_set_id": "reqset-natural_recovery_observe",
+        "requirements": [
+          {
+            "accepted_states": [
+              "supporting"
+            ],
+            "candidate_tools": [
+              "metrics.query"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "critical",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-natural_recovery_observe",
+            "rationale": "Require fresh supporting operational evidence.",
+            "requirement_id": "req-natural_recovery_observe-support",
+            "source_family": "metrics"
+          },
+          {
+            "accepted_states": [
+              "absent"
+            ],
+            "candidate_tools": [
+              "deploy.read_metadata"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "contradiction_check",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-natural_recovery_observe",
+            "rationale": "Require an explicit contradiction check before policy handoff.",
+            "requirement_id": "req-natural_recovery_observe-contradiction",
+            "source_family": "deploy"
+          }
+        ],
+        "route": "sufficient_for_policy_handoff",
+        "schema_version": "p104.evidence_gap.decision.v1",
+        "sufficiency_decision": {
+          "citation_evidence_ids": [
+            "ev-queue-natural",
+            "natural_recovery_observe-no-contradiction"
+          ],
+          "critical_requirement_ids": [
+            "req-natural_recovery_observe-support",
+            "req-natural_recovery_observe-contradiction"
+          ],
+          "hard_gates": [],
+          "missing_requirement_ids": [],
+          "satisfied_requirement_ids": [
+            "req-natural_recovery_observe-support",
+            "req-natural_recovery_observe-contradiction"
+          ],
+          "telemetry_coverage": 0.95
+        },
+        "sufficient_for_policy_handoff": true
+      }
+    },
+    {
+      "advisory_capabilities": [
+        "preventive.report.generate"
+      ],
+      "case_id": "contradicting_evidence_escalates",
+      "expected_route": "escalate",
+      "family": "database",
+      "forecast": {
+        "avoided_impact": 12.0,
+        "false_alert_denominator": 35,
+        "probability": 0.79,
+        "uncertainty": 0.12
+      },
+      "p104_evidence": {
+        "boundary": {
+          "action_authority": false,
+          "production_mutation_enabled": false,
+          "read_only_tools_only": true
+        },
+        "budget_counters": {
+          "elapsed_step_count": 2,
+          "provider_model_call_count": 0,
+          "remaining_provider_budget": 0,
+          "remaining_tool_budget": 0
+        },
+        "conflicting_evidence": true,
+        "decision_id": "decision-contradicting_evidence_escalates",
+        "episode_id": "episode-contradicting_evidence_escalates",
+        "evidence_ids": [
+          "ev-db-1",
+          "ev-db-2"
+        ],
+        "evidence_states": [
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "ev-db-1",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-contradicting_evidence_escalates-support"
+            ],
+            "source_family": "metrics",
+            "state": "supporting",
+            "summary": "Fresh supporting operational evidence.",
+            "tool_id": "metrics.query",
+            "trace_id": "trace-contradicting_evidence_escalates-support-0"
+          },
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "ev-db-2",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-contradicting_evidence_escalates-support"
+            ],
+            "source_family": "metrics",
+            "state": "supporting",
+            "summary": "Fresh supporting operational evidence.",
+            "tool_id": "metrics.query",
+            "trace_id": "trace-contradicting_evidence_escalates-support-1"
+          },
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "contradicting_evidence_escalates-no-contradiction",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-contradicting_evidence_escalates-contradiction"
+            ],
+            "source_family": "deploy",
+            "state": "absent",
+            "summary": "No conflicting deployment evidence found.",
+            "tool_id": "deploy.read_metadata",
+            "trace_id": "trace-contradicting_evidence_escalates-contradiction"
+          }
+        ],
+        "fresh": true,
+        "hypothesis_id": "hypothesis-contradicting_evidence_escalates",
+        "requirement_set_id": "reqset-contradicting_evidence_escalates",
+        "requirements": [
+          {
+            "accepted_states": [
+              "supporting"
+            ],
+            "candidate_tools": [
+              "metrics.query"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "critical",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-contradicting_evidence_escalates",
+            "rationale": "Require fresh supporting operational evidence.",
+            "requirement_id": "req-contradicting_evidence_escalates-support",
+            "source_family": "metrics"
+          },
+          {
+            "accepted_states": [
+              "absent"
+            ],
+            "candidate_tools": [
+              "deploy.read_metadata"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "contradiction_check",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-contradicting_evidence_escalates",
+            "rationale": "Require an explicit contradiction check before policy handoff.",
+            "requirement_id": "req-contradicting_evidence_escalates-contradiction",
+            "source_family": "deploy"
+          }
+        ],
+        "route": "sufficient_for_policy_handoff",
+        "schema_version": "p104.evidence_gap.decision.v1",
+        "sufficiency_decision": {
+          "citation_evidence_ids": [
+            "ev-db-1",
+            "ev-db-2",
+            "contradicting_evidence_escalates-no-contradiction"
+          ],
+          "critical_requirement_ids": [
+            "req-contradicting_evidence_escalates-support",
+            "req-contradicting_evidence_escalates-contradiction"
+          ],
+          "hard_gates": [],
+          "missing_requirement_ids": [],
+          "satisfied_requirement_ids": [
+            "req-contradicting_evidence_escalates-support",
+            "req-contradicting_evidence_escalates-contradiction"
+          ],
+          "telemetry_coverage": 0.95
+        },
+        "sufficient_for_policy_handoff": true
+      }
+    },
+    {
+      "advisory_capabilities": [
+        "preventive.timeline.note"
+      ],
+      "case_id": "missing_false_alert_denominator_observes",
+      "expected_route": "observe",
+      "family": "queue",
+      "forecast": {
+        "avoided_impact": 8.0,
+        "probability": 0.76,
+        "uncertainty": 0.12
+      },
+      "p104_evidence": {
+        "boundary": {
+          "action_authority": false,
+          "production_mutation_enabled": false,
+          "read_only_tools_only": true
+        },
+        "budget_counters": {
+          "elapsed_step_count": 2,
+          "provider_model_call_count": 0,
+          "remaining_provider_budget": 0,
+          "remaining_tool_budget": 0
+        },
+        "conflicting_evidence": false,
+        "decision_id": "decision-missing_false_alert_denominator_observes",
+        "episode_id": "episode-missing_false_alert_denominator_observes",
+        "evidence_ids": [
+          "ev-queue-2"
+        ],
+        "evidence_states": [
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "ev-queue-2",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-missing_false_alert_denominator_observes-support"
+            ],
+            "source_family": "metrics",
+            "state": "supporting",
+            "summary": "Fresh supporting operational evidence.",
+            "tool_id": "metrics.query",
+            "trace_id": "trace-missing_false_alert_denominator_observes-support-0"
+          },
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "missing_false_alert_denominator_observes-no-contradiction",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-missing_false_alert_denominator_observes-contradiction"
+            ],
+            "source_family": "deploy",
+            "state": "absent",
+            "summary": "No conflicting deployment evidence found.",
+            "tool_id": "deploy.read_metadata",
+            "trace_id": "trace-missing_false_alert_denominator_observes-contradiction"
+          }
+        ],
+        "fresh": true,
+        "hypothesis_id": "hypothesis-missing_false_alert_denominator_observes",
+        "requirement_set_id": "reqset-missing_false_alert_denominator_observes",
+        "requirements": [
+          {
+            "accepted_states": [
+              "supporting"
+            ],
+            "candidate_tools": [
+              "metrics.query"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "critical",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-missing_false_alert_denominator_observes",
+            "rationale": "Require fresh supporting operational evidence.",
+            "requirement_id": "req-missing_false_alert_denominator_observes-support",
+            "source_family": "metrics"
+          },
+          {
+            "accepted_states": [
+              "absent"
+            ],
+            "candidate_tools": [
+              "deploy.read_metadata"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "contradiction_check",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-missing_false_alert_denominator_observes",
+            "rationale": "Require an explicit contradiction check before policy handoff.",
+            "requirement_id": "req-missing_false_alert_denominator_observes-contradiction",
+            "source_family": "deploy"
+          }
+        ],
+        "route": "sufficient_for_policy_handoff",
+        "schema_version": "p104.evidence_gap.decision.v1",
+        "sufficiency_decision": {
+          "citation_evidence_ids": [
+            "ev-queue-2",
+            "missing_false_alert_denominator_observes-no-contradiction"
+          ],
+          "critical_requirement_ids": [
+            "req-missing_false_alert_denominator_observes-support",
+            "req-missing_false_alert_denominator_observes-contradiction"
+          ],
+          "hard_gates": [],
+          "missing_requirement_ids": [],
+          "satisfied_requirement_ids": [
+            "req-missing_false_alert_denominator_observes-support",
+            "req-missing_false_alert_denominator_observes-contradiction"
+          ],
+          "telemetry_coverage": 0.95
+        },
+        "sufficient_for_policy_handoff": true
+      }
+    },
+    {
+      "advisory_capabilities": [
+        "preventive.report.generate"
+      ],
+      "case_id": "unsupported_family_escalates",
+      "expected_route": "escalate",
+      "family": "cache",
+      "forecast": {
+        "avoided_impact": 14.0,
+        "false_alert_denominator": 40,
+        "probability": 0.88,
+        "uncertainty": 0.11
+      },
+      "p104_evidence": {
+        "boundary": {
+          "action_authority": false,
+          "production_mutation_enabled": false,
+          "read_only_tools_only": true
+        },
+        "budget_counters": {
+          "elapsed_step_count": 2,
+          "provider_model_call_count": 0,
+          "remaining_provider_budget": 0,
+          "remaining_tool_budget": 0
+        },
+        "conflicting_evidence": false,
+        "decision_id": "decision-unsupported_family_escalates",
+        "episode_id": "episode-unsupported_family_escalates",
+        "evidence_ids": [
+          "ev-cache-1"
+        ],
+        "evidence_states": [
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "ev-cache-1",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-unsupported_family_escalates-support"
+            ],
+            "source_family": "metrics",
+            "state": "supporting",
+            "summary": "Fresh supporting operational evidence.",
+            "tool_id": "metrics.query",
+            "trace_id": "trace-unsupported_family_escalates-support-0"
+          },
+          {
+            "collected_at_tick": 1,
+            "evidence_id": "unsupported_family_escalates-no-contradiction",
+            "freshness_seconds": 300,
+            "provenance": "p106.public.fixture",
+            "requirement_ids": [
+              "req-unsupported_family_escalates-contradiction"
+            ],
+            "source_family": "deploy",
+            "state": "absent",
+            "summary": "No conflicting deployment evidence found.",
+            "tool_id": "deploy.read_metadata",
+            "trace_id": "trace-unsupported_family_escalates-contradiction"
+          }
+        ],
+        "fresh": true,
+        "hypothesis_id": "hypothesis-unsupported_family_escalates",
+        "requirement_set_id": "reqset-unsupported_family_escalates",
+        "requirements": [
+          {
+            "accepted_states": [
+              "supporting"
+            ],
+            "candidate_tools": [
+              "metrics.query"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "critical",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-unsupported_family_escalates",
+            "rationale": "Require fresh supporting operational evidence.",
+            "requirement_id": "req-unsupported_family_escalates-support",
+            "source_family": "metrics"
+          },
+          {
+            "accepted_states": [
+              "absent"
+            ],
+            "candidate_tools": [
+              "deploy.read_metadata"
+            ],
+            "contradiction_policy": "block_on_unadjudicated",
+            "criticality": "contradiction_check",
+            "freshness_seconds": 300,
+            "hypothesis_id": "hypothesis-unsupported_family_escalates",
+            "rationale": "Require an explicit contradiction check before policy handoff.",
+            "requirement_id": "req-unsupported_family_escalates-contradiction",
+            "source_family": "deploy"
+          }
+        ],
+        "route": "sufficient_for_policy_handoff",
+        "schema_version": "p104.evidence_gap.decision.v1",
+        "sufficiency_decision": {
+          "citation_evidence_ids": [
+            "ev-cache-1",
+            "unsupported_family_escalates-no-contradiction"
+          ],
+          "critical_requirement_ids": [
+            "req-unsupported_family_escalates-support",
+            "req-unsupported_family_escalates-contradiction"
+          ],
+          "hard_gates": [],
+          "missing_requirement_ids": [],
+          "satisfied_requirement_ids": [
+            "req-unsupported_family_escalates-support",
+            "req-unsupported_family_escalates-contradiction"
+          ],
+          "telemetry_coverage": 0.95
+        },
+        "sufficient_for_policy_handoff": true
+      }
+    }
+  ],
+  "schema_version": "p106.planner_cases.v1"
+}

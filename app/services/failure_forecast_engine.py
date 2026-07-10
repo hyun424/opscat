@@ -17,7 +17,7 @@ import sys
 from collections import defaultdict
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, replace
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, Self
 
@@ -4145,8 +4145,11 @@ def _g006_payload_with_private_ledger(release_rows_path: str | Path, payload: Ma
 
 
 def validate_p105_release_qualified_artifact(path: str | Path) -> dict[str, Any]:
-    payload = _load_json(path)
-    report = run_p105_benchmark(path)
+    artifact_path = Path(path)
+    payload = _load_json(artifact_path)
+    validated_bytes = artifact_path.read_bytes()
+    validated_stat = artifact_path.stat()
+    report = run_p105_benchmark(artifact_path)
     codes = set(report.get("release_gate", {}).get("validation_error_codes", ()))
     if payload.get("authority") is not None and payload.get("authority") != G006_ZERO_AUTHORITY:
         codes.add("nonzero_authority_counter")
@@ -4154,15 +4157,27 @@ def validate_p105_release_qualified_artifact(path: str | Path) -> dict[str, Any]
         codes.add("scorer_label_leakage")
     if isinstance(payload.get("private_scorer_label_ledger"), Mapping):
         codes.update(_validate_g006_private_label_ledger(payload))
+    codes.update(_validate_g006_embedded_hashes(payload))
+    codes.update(_validate_g006_required_manifest_files(artifact_path, payload))
+    if artifact_path.read_bytes() != validated_bytes:
+        codes.add("artifact_changed_during_validation")
     parity, hashes = _g006_p24_parity_manifest(payload, codes)
     release_gate = copy.deepcopy(report["release_gate"])
     release_gate["validation_error_codes"] = sorted(codes)
     if codes:
         release_gate["release_qualified"] = False
         release_gate["p106_unlocked"] = False
+    artifact_sha256 = hashlib.sha256(validated_bytes).hexdigest()
     return {
         "schema_version": "p105.release_qualified_artifact_validation.v1",
-        "artifact_manifests": _g006_artifact_manifests(path),
+        "artifact_identity": {
+            "path": str(artifact_path),
+            "sha256": artifact_sha256,
+            "root_hash": artifact_sha256,
+            "size_bytes": len(validated_bytes),
+            "run_timestamp": (datetime.fromtimestamp(validated_stat.st_mtime, tz=UTC).isoformat().replace("+00:00", "Z")),
+        },
+        "artifact_manifests": _g006_artifact_manifests(artifact_path),
         "qualification_floors": _g006_floor_manifest(),
         "p106_gate_rows": {"required": list(G006_P106_GATE_ROWS)},
         "p24_parity_manifest": parity,

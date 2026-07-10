@@ -1,0 +1,73 @@
+{
+  "schema_version": "p106.treatment_control_cases.v1",
+  "cases": [
+    {
+      "case_id": "equivalent_initial_fingerprints",
+      "deterministic_seed": "p106-seed-001",
+      "public_initial_state": {
+        "forecast_id": "forecast-deploy-001",
+        "forecast_hash": "sha256:forecast001",
+        "evidence_ids": ["ev-deploy-1", "ev-deploy-2"],
+        "evidence_hash": "sha256:evidence001",
+        "service_universe": ["payment-api", "payment-api-control"],
+        "environment": "staging",
+        "telemetry_window": "2026-07-10T00:00:00Z/2026-07-10T02:00:00Z",
+        "registry_hash": "sha256:registry001",
+        "policy_profile": "p106-local-simulation-only",
+        "simulator_inputs_hash": "sha256:sim001",
+        "memory_snapshot_hash": "sha256:memory001"
+      },
+      "arms": [
+        {"arm": "treatment", "declared_initial_condition_fingerprint": "computed_by_lab", "selected_capability": "preventive.mock.rollback_pr"},
+        {"arm": "control", "declared_initial_condition_fingerprint": "computed_by_lab", "selected_capability": "observe"}
+      ],
+      "expected_comparable": true,
+      "scorer_only_expected_operator_choice": "treatment"
+    },
+    {
+      "case_id": "cohort_interference_rejected",
+      "deterministic_seed": "p106-seed-002",
+      "public_initial_state": {
+        "forecast_id": "forecast-queue-002",
+        "forecast_hash": "sha256:forecast002",
+        "evidence_ids": ["ev-queue-1"],
+        "evidence_hash": "sha256:evidence002",
+        "service_universe": ["worker-a", "worker-b"],
+        "environment": "staging",
+        "telemetry_window": "2026-07-10T00:00:00Z/2026-07-10T02:00:00Z",
+        "registry_hash": "sha256:registry001",
+        "policy_profile": "p106-local-simulation-only",
+        "simulator_inputs_hash": "sha256:sim002",
+        "memory_snapshot_hash": "sha256:memory002"
+      },
+      "arms": [
+        {"arm": "treatment", "declared_initial_condition_fingerprint": "computed_by_lab", "selected_capability": "preventive.mock.restart_worker_simulation"},
+        {"arm": "control", "declared_initial_condition_fingerprint": "computed_by_lab", "selected_capability": "observe"}
+      ],
+      "cohort_interference": true,
+      "expected_comparable": false
+    },
+    {
+      "case_id": "arm_specific_mutation_rejected",
+      "deterministic_seed": "p106-seed-003",
+      "public_initial_state": {
+        "forecast_id": "forecast-db-003",
+        "forecast_hash": "sha256:forecast003",
+        "evidence_ids": ["ev-db-1"],
+        "evidence_hash": "sha256:evidence003",
+        "service_universe": ["db-a", "db-b"],
+        "environment": "staging",
+        "telemetry_window": "2026-07-10T00:00:00Z/2026-07-10T02:00:00Z",
+        "registry_hash": "sha256:registry001",
+        "policy_profile": "p106-local-simulation-only",
+        "simulator_inputs_hash": "sha256:sim003",
+        "memory_snapshot_hash": "sha256:memory003"
+      },
+      "arms": [
+        {"arm": "treatment", "declared_initial_condition_fingerprint": "forged-same-fingerprint", "selected_capability": "preventive.report.generate", "arm_specific_public_state": {"telemetry_window": "mutated-before-treatment"}},
+        {"arm": "control", "declared_initial_condition_fingerprint": "forged-same-fingerprint", "selected_capability": "observe"}
+      ],
+      "expected_comparable": false
+    }
+  ]
+}

@@ -1215,6 +1215,27 @@ p105_release_benchmark_smoke() {
   cp "$VERIFY_TMPDIR/opscat-p105-release-benchmark-smoke.json" /tmp/opscat-p105-release-benchmark-smoke-latest.json
   printf 'Wrote /tmp/opscat-p105-release-benchmark-smoke-latest.json and %s/opscat-p105-release-benchmark-smoke.json\n' "$VERIFY_TMPDIR"
 }
+
+p106_preventive_action_benchmark_smoke() (
+  section "P106 preventive action benchmark smoke"
+  p106_fixture_dir="$(mktemp -d "$VERIFY_TMPDIR/p106-p105-release.XXXXXX")"
+  cleanup_p106_fixture() {
+    rm -rf -- "$p106_fixture_dir"
+  }
+  trap cleanup_p106_fixture EXIT INT TERM
+  p105_artifact="$("${UV_DEV[@]}" python scripts/extract_p105_release_fixture.py \
+    evals/prevention/p105_release_qualified_real_derived.tar.gz \
+    6aaf35285f03cc7fe68b036a8172dba1615d1e5131939b2d8ef26787dd5c7342 \
+    "$p106_fixture_dir")"
+  "${UV_DEV[@]}" python scripts/run_preventive_action_benchmark.py \
+    --cases evals/prevention/p106_benchmark_cases.json \
+    --p105-artifact "$p105_artifact" \
+    --output-json "$VERIFY_TMPDIR/opscat-p106-preventive-action-benchmark.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p106-preventive-action-benchmark.md" >/tmp/opscat-p106-preventive-action-benchmark-latest.json
+  python3 -c "import json, sys; p=json.load(open(sys.argv[1])); assert p['scored'] is True; assert p['eligible_planner_evaluation_count'] == 1; assert p['planner_regret'] == 0.0; assert p['harmful_action_rate'] == 0.0; assert p['safe_fallback_rate'] == 1.0; assert p['policy_fail_closed_rate'] == 1.0; assert p['mutation_shaped_simulation_only_count'] == 1; assert p['authority'] == {'auth_enabled': False, 'production_mutation_enabled': False, 'action_authority': False, 'remediation_execution_enabled': False, 'default_external_model_calls': 0}; assert p['execution_enabled'] is False; assert p['simulation_only'] is True; assert p['p107_required_for_execution'] is True" "$VERIFY_TMPDIR/opscat-p106-preventive-action-benchmark.json"
+  cp "$VERIFY_TMPDIR/opscat-p106-preventive-action-benchmark.md" /tmp/opscat-p106-preventive-action-benchmark-latest.md
+  printf 'Wrote /tmp/opscat-p106-preventive-action-benchmark-latest.md and %s/opscat-p106-preventive-action-benchmark.json\n' "$VERIFY_TMPDIR"
+)
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -1379,7 +1400,8 @@ docs_contract_tests() {
     tests/test_evidence_gap_investigator.py \
     tests/test_p104_release_evidence.py \
     tests/test_failure_forecast_engine.py \
-    tests/test_p105_release_evidence.py
+    tests/test_p105_release_evidence.py \
+    tests/test_p106_release_evidence.py
 }
 
 run_fast() {
@@ -1488,6 +1510,7 @@ run_eval() {
   llm_diagnostic_episode_smoke
   evidence_gap_investigator_smoke
   p105_release_benchmark_smoke
+  p106_preventive_action_benchmark_smoke
 }
 
 run_docs() {

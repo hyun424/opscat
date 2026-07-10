@@ -749,8 +749,17 @@ def evaluate_p106_release_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
-def run_p105_benchmark(curated_rows_path: str | Path, real_derived_rows_path: str | Path) -> dict[str, Any]:
+def run_p105_benchmark(curated_rows_path: str | Path, real_derived_rows_path: str | Path | None = None) -> dict[str, Any]:
     curated = _load_json(curated_rows_path)
+    if real_derived_rows_path is None and curated.get("schema_version") == "p105.forecast.release_benchmark.v1":
+        return _run_p105_release_benchmark(curated_rows_path, curated)
+    if real_derived_rows_path is None:
+        raise ValueError("real_derived_rows_path is required for legacy P105 benchmark inputs")
+    return _run_p105_legacy_benchmark(curated_rows_path, real_derived_rows_path, curated)
+
+
+def _run_p105_legacy_benchmark(curated_rows_path: str | Path, real_derived_rows_path: str | Path, curated: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    curated = curated or _load_json(curated_rows_path)
     shadow = _load_json(real_derived_rows_path)
     rows = _mapping_sequence(curated.get("rows", ()))
     forecasts = [forecast_row(row) for row in rows if str(row.get("split")) == "test"]
@@ -808,23 +817,353 @@ def run_p105_benchmark(curated_rows_path: str | Path, real_derived_rows_path: st
     }
 
 
+def _run_p105_release_benchmark(release_rows_path: str | Path, payload: Mapping[str, Any]) -> dict[str, Any]:
+    release_validation = _validate_release_benchmark_payload(payload)
+    rows = [_row_with_scorer_labels(row) for row in _mapping_sequence(payload.get("rows", ()))]
+    partitions = payload.get("partitions", {}) if isinstance(payload.get("partitions"), Mapping) else {}
+    eligible_partitions = [str(item) for item in _sequence(payload.get("release_gate_eligible_partitions", ()))]
+    supported_families = [str(item) for item in _sequence(payload.get("release_supported_families", ()))]
+    excluded_partitions = [
+        name
+        for name, spec in partitions.items()
+        if isinstance(spec, Mapping) and bool(spec.get("eligible_for_release_gate")) is not True
+    ]
+    calibration_rows = [row for row in rows if row.get("partition") == "calibration"]
+    calibrator = _fit_probability_calibrator(calibration_rows)
+    held_out_rows = _partition_rows(rows, "held_out")
+    real_rows = _partition_rows(rows, "real_derived_shadow")
+    diagnostic_rows = _partition_rows(rows, "diagnostic")
+    held_out_report = _score_release_partition(payload, held_out_rows, calibrator, partition="held_out")
+    real_report = _score_release_partition(payload, real_rows, calibrator, partition="real_derived_shadow")
+    eligible_rows = [row for row in rows if row.get("partition") in set(eligible_partitions)]
+    release_report = _score_release_partition(payload, eligible_rows, calibrator, partition="release_gate_eligible")
+    held_out_calibration = _compare_release_held_out_to_p24(payload, rows)
+    transfer_gate = _evaluate_release_manifest_transfer_gate(held_out_report, real_report, supported_families)
+    boundary = {
+        "network_call_count": 0,
+        "model_call_count": 0,
+        "auth_required": False,
+        "production_mutation_count": 0,
+        "remediation_execution_count": 0,
+        "executable_action_plan_count": 0,
+        "default_external_model_call_count": 0,
+    }
+    release_gate = evaluate_p106_release_payload(
+        {
+            "held_out_calibration": {"global": held_out_calibration["global"], "families": held_out_calibration["families"]},
+            "per_family": release_report["families"],
+            "global": release_report["global"],
+            "real_derived_transfer": transfer_gate,
+            "boundary": boundary,
+        }
+    )
+    release_gate.update(
+        {
+            "eligible_partitions": eligible_partitions,
+            "excluded_partitions": excluded_partitions,
+            "diagnostic_denominator_count": sum(1 for row in diagnostic_rows if row.get("partition") in set(eligible_partitions)),
+            "missing_denominators": release_validation["missing_denominators"],
+            "validation_errors": release_validation["validation_errors"],
+            "thresholds": {
+                "minimum_useful_lead_time_rate": 0.8,
+                "maximum_family_false_alerts_per_service_day": 0.5,
+                "maximum_global_false_alerts_per_service_day": 0.25,
+                "maximum_family_abstention_rate": 0.3,
+                "maximum_global_abstention_rate": 0.2,
+                "maximum_real_derived_useful_lead_time_drop": 0.1,
+                "maximum_real_derived_false_alert_increase": 0.1,
+            },
+        }
+    )
+    if release_validation["missing_denominators"] or release_validation["validation_errors"]:
+        release_gate["p106_unlocked"] = False
+    diagnostic_partition = _diagnostic_partition_report(diagnostic_rows, supported_families)
+    return {
+        "schema_version": "p105.release_benchmark.report.v1",
+        "source_path": str(release_rows_path),
+        "release_partitions": eligible_partitions,
+        "partitions": {
+            "held_out": held_out_report,
+            "real_derived_shadow": real_report,
+        },
+        "release_metrics": release_report,
+        "held_out_calibration": held_out_calibration,
+        "real_derived_transfer_gate": transfer_gate,
+        "diagnostic_partition": diagnostic_partition,
+        "release_gate": release_gate,
+        "boundary": boundary,
+    }
+
+
+def _partition_rows(rows: Sequence[Mapping[str, Any]], partition: str) -> list[Mapping[str, Any]]:
+    return [row for row in rows if row.get("partition") == partition]
+
+
+def _score_release_partition(
+    fixture: Mapping[str, Any],
+    rows: Sequence[Mapping[str, Any]],
+    calibrator: Mapping[str, Any],
+    *,
+    partition: str,
+) -> dict[str, Any]:
+    forecasts: list[dict[str, Any]] = []
+    actuals: list[dict[str, Any]] = []
+    for row in rows:
+        item = forecast_row(row)
+        forecast = item.to_dict()
+        if isinstance(item, CalibratedForecast):
+            probability = _apply_probability_calibrator(_raw_probability(item.family, row), calibrator)
+            forecast["probability"] = probability
+            forecast["probability_interval"] = list(_probability_interval(probability))
+        forecast["forecast_timestamp"] = row.get("forecast_timestamp")
+        forecast["partition"] = row.get("partition")
+        forecasts.append(forecast)
+        if row.get("label_positive") is True:
+            actuals.append(_actual_from_row(row))
+    split_id = str(fixture.get("partitions", {}).get(partition, {}).get("split_id", partition)) if isinstance(fixture.get("partitions"), Mapping) else partition
+    return score_forecasts(
+        forecasts,
+        actuals,
+        family_thresholds=_mapping_float(fixture.get("family_thresholds", {})),
+        family_min_response_minutes=_mapping_int(fixture.get("family_min_response_minutes", {})),
+        service_day_coverage=_mapping_coverage(fixture.get("service_day_coverage", {})),
+        split_id=split_id,
+    )
+
+
+def _compare_release_held_out_to_p24(fixture: Mapping[str, Any], rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    comparison_rows: list[dict[str, Any]] = []
+    for row in rows:
+        partition = str(row.get("partition", ""))
+        if partition not in {"train", "calibration", "held_out"}:
+            continue
+        copied = dict(row)
+        copied["split"] = "test" if partition == "held_out" else partition
+        comparison_rows.append(copied)
+    comparison = compare_engine_generated_held_out_to_p24_baseline(comparison_rows)
+    comparison["evaluation_split_id"] = "held_out"
+    comparison["release_supported_families"] = list(_sequence(fixture.get("release_supported_families", ())))
+    return comparison
+
+
+def _evaluate_release_manifest_transfer_gate(
+    held_out_report: Mapping[str, Any],
+    real_report: Mapping[str, Any],
+    supported_families: Sequence[str],
+) -> dict[str, Any]:
+    families: dict[str, Any] = {}
+    all_pass = True
+    held_families = held_out_report.get("families", {}) if isinstance(held_out_report.get("families"), Mapping) else {}
+    real_families = real_report.get("families", {}) if isinstance(real_report.get("families"), Mapping) else {}
+    for family in sorted(supported_families):
+        held = held_families.get(family, {}) if isinstance(held_families.get(family), Mapping) else {}
+        real = real_families.get(family, {}) if isinstance(real_families.get(family), Mapping) else {}
+        held_rate = _optional_float((held.get("useful_lead_time_rate") or {}).get("value") if isinstance(held.get("useful_lead_time_rate"), Mapping) else None)
+        real_rate = _optional_float((real.get("useful_lead_time_rate") or {}).get("value") if isinstance(real.get("useful_lead_time_rate"), Mapping) else None)
+        held_false = _optional_float((held.get("false_alerts_per_service_day") or {}).get("value") if isinstance(held.get("false_alerts_per_service_day"), Mapping) else None)
+        real_false = _optional_float((real.get("false_alerts_per_service_day") or {}).get("value") if isinstance(real.get("false_alerts_per_service_day"), Mapping) else None)
+        drop = None if held_rate is None or real_rate is None else round(held_rate - real_rate, 6)
+        false_increase = None if held_false is None or real_false is None else round(real_false - held_false, 6)
+        row = {
+            "held_out_useful_lead_time_rate": held_rate,
+            "real_derived_useful_lead_time_rate": real_rate,
+            "useful_lead_time_directional_drop": drop,
+            "held_out_false_alerts_per_service_day": held_false,
+            "real_derived_false_alerts_per_service_day": real_false,
+            "false_alert_increase": false_increase,
+            "held_out_split_id": held_out_report.get("split_id"),
+            "real_derived_split_id": real_report.get("split_id"),
+            "forecasted_row_count": real.get("evaluated_window_count", 0),
+        }
+        row["pass"] = (
+            drop is not None
+            and drop <= 0.1
+            and real_rate is not None
+            and real_rate >= 0.8
+            and false_increase is not None
+            and false_increase <= 0.1
+            and real_false is not None
+            and real_false <= 0.5
+        )
+        families[family] = row
+        all_pass = all_pass and row["pass"]
+    return {"pass": bool(families) and all_pass, "families": families}
+
+
+def _diagnostic_partition_report(rows: Sequence[Mapping[str, Any]], supported_families: Sequence[str]) -> dict[str, Any]:
+    supported = set(supported_families)
+    family_rows: dict[str, dict[str, Any]] = {}
+    row_reports: list[dict[str, Any]] = []
+    source_paths = sorted(
+        {
+            str(row.get("derivation", {}).get("source_path"))
+            for row in rows
+            if isinstance(row.get("derivation"), Mapping) and row.get("derivation", {}).get("source_path")
+        }
+    )
+    for row in rows:
+        forecast = forecast_row(row)
+        actual_disposition = "abstain" if isinstance(forecast, ForecastAbstention) else "fail_closed"
+        family = str(row.get("family", ""))
+        family_rows.setdefault(
+            family,
+            {
+                "release_supported": family in supported,
+                "counted_in_release_gate": False,
+                "row_count": 0,
+            },
+        )
+        family_rows[family]["row_count"] += 1
+        row_reports.append(
+            {
+                "row_id": row.get("row_id"),
+                "family": family,
+                "counted_in_release_gate": False,
+                "expected_disposition": row.get("expected_diagnostic_disposition", "abstain_fail_closed"),
+                "actual_disposition": actual_disposition,
+                "abstention_reason": forecast.abstention_reason if isinstance(forecast, ForecastAbstention) else None,
+            }
+        )
+    return {
+        "source_path": source_paths[0] if len(source_paths) == 1 else "evals/proactive/forecast/p105_curated_synthetic_rows.json",
+        "row_count": len(rows),
+        "families": family_rows,
+        "rows": row_reports,
+    }
+
+
+def _validate_release_benchmark_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
+    rows = _mapping_sequence(payload.get("rows", ()))
+    by_id = {str(row.get("row_id", "")): row for row in rows}
+    partitions = payload.get("partitions", {}) if isinstance(payload.get("partitions"), Mapping) else {}
+    eligible_partitions = [str(item) for item in _sequence(payload.get("release_gate_eligible_partitions", ()))]
+    supported_families = [str(item) for item in _sequence(payload.get("release_supported_families", ()))]
+    errors: list[str] = []
+    missing_denominators: list[dict[str, str]] = []
+    if payload.get("schema_version") != "p105.forecast.release_benchmark.v1":
+        errors.append("schema_version must be p105.forecast.release_benchmark.v1")
+    for partition, spec in partitions.items():
+        if not isinstance(spec, Mapping):
+            errors.append(f"{partition}: partition spec must be an object")
+            continue
+        for row_id in _sequence(spec.get("row_ids", ())):
+            row = by_id.get(str(row_id))
+            if row is None:
+                errors.append(f"{partition}: row_id {row_id} missing from rows")
+                continue
+            if row.get("partition") != partition:
+                errors.append(f"{row_id}: partition mismatch")
+            if row.get("split_id") != spec.get("split_id"):
+                errors.append(f"{row_id}: split_id mismatch")
+    for row in rows:
+        row_id = str(row.get("row_id", ""))
+        root_leaks = {key for key in row if str(key) in SCORER_ONLY_KEYS - {"scorer_labels"}}
+        if root_leaks:
+            errors.append(f"{row_id}: scorer labels leaked at row root")
+        public_features = row.get("public_features", {})
+        if not isinstance(public_features, Mapping):
+            errors.append(f"{row_id}: public_features must be an object")
+        else:
+            try:
+                _raise_if_leaky(public_features)
+            except ForecastLeakageError:
+                errors.append(f"{row_id}: scorer labels leaked in public_features")
+        labels = row.get("scorer_labels")
+        if not isinstance(labels, Mapping):
+            errors.append(f"{row_id}: scorer_labels missing")
+            continue
+        if not row.get("source_id"):
+            errors.append(f"{row_id}: source_id missing")
+        derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
+        if not derivation.get("derivation_id") or not derivation.get("source_event_id"):
+            errors.append(f"{row_id}: derivation provenance missing")
+        qualification = row.get("evidence_qualification", {}) if isinstance(row.get("evidence_qualification"), Mapping) else {}
+        if row.get("partition") in set(eligible_partitions) and qualification.get("status") != "qualified":
+            errors.append(f"{row_id}: release row evidence is not qualified")
+        if row.get("partition") in set(eligible_partitions) and not _sequence(qualification.get("evidence_ids", ())):
+            errors.append(f"{row_id}: release row evidence_ids missing")
+        if labels.get("label_positive") is True:
+            start = labels.get("label_incident_start_timestamp")
+            if not start or _parse_ts(str(row.get("forecast_timestamp"))) >= _parse_ts(str(start)):
+                errors.append(f"{row_id}: positive label is not after forecast timestamp")
+        elif labels.get("label_incident_start_timestamp") is not None:
+            errors.append(f"{row_id}: negative row has incident timestamp")
+    errors.extend(_validate_real_derived_source_provenance(rows))
+    for partition in eligible_partitions:
+        partition_rows = [row for row in rows if row.get("partition") == partition]
+        for family in supported_families:
+            family_rows = [row for row in partition_rows if row.get("family") == family]
+            positives = [row for row in family_rows if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("label_positive") is True]
+            negatives = [row for row in family_rows if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("label_positive") is False]
+            if not positives:
+                missing_denominators.append({"partition": partition, "family": family, "missing": "positive_evidence_denominator"})
+            if not negatives:
+                missing_denominators.append({"partition": partition, "family": family, "missing": "negative_evidence_denominator"})
+    return {"validation_errors": errors, "missing_denominators": missing_denominators}
+
+
+def _validate_real_derived_source_provenance(rows: Sequence[Mapping[str, Any]]) -> list[str]:
+    errors: list[str] = []
+    source_cache: dict[str, set[str]] = {}
+    for row in rows:
+        if row.get("partition") != "real_derived_shadow":
+            continue
+        row_id = str(row.get("row_id", ""))
+        derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
+        source_path = str(derivation.get("source_path", ""))
+        if not source_path:
+            errors.append(f"{row_id}: real-derived source_path missing")
+            continue
+        if source_path not in source_cache:
+            try:
+                source_payload = _load_json(source_path)
+            except FileNotFoundError:
+                errors.append(f"{row_id}: source_path not found")
+                source_cache[source_path] = set()
+                continue
+            source_cache[source_path] = {str(source.get("id")) for source in _mapping_sequence(source_payload.get("sources", ()))}
+        valid_ids = source_cache[source_path]
+        if str(row.get("source_id")) not in valid_ids:
+            errors.append(f"{row_id}: source_id not present in source manifest")
+        if str(derivation.get("source_event_id")) not in valid_ids:
+            errors.append(f"{row_id}: source_event_id not present in source manifest")
+    return errors
+
+
+def _row_with_scorer_labels(row: Mapping[str, Any]) -> dict[str, Any]:
+    copied = copy.deepcopy(dict(row))
+    labels = copied.get("scorer_labels", {}) if isinstance(copied.get("scorer_labels"), Mapping) else {}
+    for key in SCORER_ONLY_KEYS - {"scorer_labels"}:
+        if key in labels:
+            copied[key] = labels[key]
+    return copied
+
+
 def build_failure_forecast_cli_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run the offline P105 failure forecast benchmark.")
-    parser.add_argument("--curated", default="evals/proactive/forecast/p105_curated_synthetic_rows.json")
-    parser.add_argument("--real-derived", default="evals/proactive/forecast/p105_real_derived_shadow_rows.json")
+    parser.add_argument("--release-benchmark", default="evals/proactive/forecast/p105_release_benchmark_rows.json")
+    parser.add_argument("--curated", default=None)
+    parser.add_argument("--real-derived", default=None)
     parser.add_argument("--output-json", default=None)
     return parser
 
 
 def run_failure_forecast_cli(argv: Sequence[str] | None = None) -> int:
     args = build_failure_forecast_cli_parser().parse_args(argv)
-    report = run_p105_benchmark(args.curated, args.real_derived)
+    if args.curated is not None or args.real_derived is not None:
+        if args.curated is None or args.real_derived is None:
+            raise ValueError("--curated and --real-derived must be provided together for legacy benchmark mode")
+        report = run_p105_benchmark(args.curated, args.real_derived)
+    else:
+        report = run_p105_benchmark(args.release_benchmark)
     rendered = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if args.output_json:
         Path(args.output_json).parent.mkdir(parents=True, exist_ok=True)
         Path(args.output_json).write_text(rendered, encoding="utf-8")
     else:
         print(rendered, end="")
+    if report.get("schema_version") == "p105.release_benchmark.report.v1":
+        return 0 if report.get("release_gate", {}).get("p106_unlocked") is True else 1
     return 0
 
 

@@ -1,8 +1,9 @@
 # P105 Release-Qualified Evidence Plan Review
 
-Status: REVISE recorded. This document records the independent critic blockers
-reported for the initial G006 documentation-only planning commit and the repair
-items added afterward. It does not claim independent re-approval.
+Status: second REVISE recorded. This document records the independent critic
+blockers reported for the initial G006 documentation-only planning commit, the
+first repair items, and the second narrow command repair. It does not claim
+independent approval or re-approval.
 
 ## Review Scope
 
@@ -68,9 +69,31 @@ or non-reconstructable evidence appear stronger than it is.
 
 ## Current Review Status
 
+Second independent critic verdict: REVISE.
+
+The second review found stale command examples where `--p44-mode disabled`
+still wrote to release-qualified output paths with `--mode release_qualified`
+and no `--expect-locked`. That stale pattern contradicted the first repair:
+disabled P44 examples must be explicitly locked and non-qualified, while
+positive release-qualified and reproducibility examples must use reviewed-local
+P44.
+
+Second repair:
+
+- Removed the stale disabled-P44 release-qualified materializer example from
+  `docs/operations/p105-release-qualified-evidence-plan.md`.
+- Removed the same stale example from
+  `docs/operations/p105-release-qualified-evidence-test-spec.md`.
+- Updated `docs/tickets/p105/p105-021-reproducibility-and-tamper-tests.md` so
+  the release-qualified rerun uses `--p44-reviewed-local-manifest` and
+  `--p44-mode reviewed-local`.
+- Preserved the P44-disabled negative examples only where they use a locked
+  output path plus `--expect-locked`.
+
 The repair documentation is ready for another independent review. Until that
-review returns an explicit APPROVE verdict, G006 remains in REVISE-repaired
-status and must not be described as independently re-approved.
+review returns an explicit APPROVE verdict, G006 remains in second
+REVISE-repaired status and must not be described as independently approved or
+re-approved.
 
 ## Verification Required for Repair Commit
 
@@ -78,6 +101,7 @@ Run:
 
 ```bash
 git diff --check
+rg -- "--p44-mode disabled|--p44-mode reviewed-local|--expect-locked|--output-dir /tmp/opscat-p105-release-qualified" docs
 bash scripts/verify.sh --profile docs
 git show --check --stat HEAD
 ```

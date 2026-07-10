@@ -197,16 +197,6 @@ uv run --no-sync --extra dev pytest -q \
   tests/test_p105_release_qualified_reproducibility.py
 ```
 
-```bash
-uv run --no-sync --extra dev python scripts/materialize_p105_release_evidence.py \
-  --p32-replay evals/telemetry/replay/p32_replay_pack.json \
-  --p41-sources evals/real_datasets/raw/p41_sources.json \
-  --p44-manifest evals/real_datasets/external/p44_benchmark_matrix_manifest.json \
-  --p44-mode disabled \
-  --output-dir /tmp/opscat-p105-release-qualified \
-  --mode release_qualified
-```
-
 P44-disabled negative command:
 
 ```bash

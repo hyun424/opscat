@@ -89,10 +89,10 @@ def _collect_key_paths(value: Any, prefix: str = "") -> set[str]:
             paths.update(_collect_key_paths(child, path))
         return paths
     if isinstance(value, list):
-        paths: set[str] = set()
+        indexed_paths: set[str] = set()
         for index, child in enumerate(value):
-            paths.update(_collect_key_paths(child, f"{prefix}[{index}]"))
-        return paths
+            indexed_paths.update(_collect_key_paths(child, f"{prefix}[{index}]"))
+        return indexed_paths
     return set()
 
 

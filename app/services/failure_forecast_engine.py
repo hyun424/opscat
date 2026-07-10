@@ -1161,19 +1161,9 @@ def _evaluate_release_qualification_floors(
 
 
 def _floor_contract_for_partition(qualification: Mapping[str, Any], partition: str) -> Mapping[str, int | float]:
-    if qualification.get("floor_contract_version") == "p105-012":
-        positive_key = "real_derived_min_positive_per_family" if partition == "real_derived_shadow" else "held_out_min_positive_per_family"
-        negative_key = "real_derived_min_negative_per_family" if partition == "real_derived_shadow" else "held_out_min_negative_per_family"
-        return {
-            "evaluated": 0,
-            "non_abstained": 0,
-            "actual_positive": int(qualification.get(positive_key, 0) or 0),
-            "actual_negative": int(qualification.get(negative_key, 0) or 0),
-            "incident_groups": 0,
-            "service_days": 0.0,
-        }
     documented = dict(DOCUMENTED_RELEASE_FLOORS.get(partition, DOCUMENTED_RELEASE_FLOORS["held_out"]))
-    documented["actual_negative"] = 0
+    negative_key = "real_derived_min_negative_per_family" if partition == "real_derived_shadow" else "held_out_min_negative_per_family"
+    documented["actual_negative"] = int(qualification.get(negative_key, 0) or 0)
     return documented
 
 

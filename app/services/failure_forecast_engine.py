@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
@@ -56,6 +57,17 @@ MODEL_VERSION = "p105-local-calibrated-v1"
 RULE_VERSION = "p105-deterministic-rules-v1"
 CALIBRATION_VERSION = "p105-fixed-logistic-calibration-v1"
 DEFAULT_FORECAST_HORIZON_MINUTES = 120
+RELEASE_QUALIFIED_MODE = "release_qualified"
+SMOKE_ONLY_MODE = "smoke_only_missing_mode"
+RELEASE_FLOOR_DEFAULTS: Mapping[str, int | float] = {
+    "held_out_min_positive_per_family": 2,
+    "held_out_min_negative_per_family": 2,
+    "real_derived_min_positive_per_family": 2,
+    "real_derived_min_negative_per_family": 2,
+    "minimum_union_service_days": 7,
+    "minimum_source_record_sets": 3,
+    "maximum_single_source_fraction": 0.6,
+}
 LEAD_TIME_INTERVALS_BY_FAMILY: Mapping[str, tuple[int, int]] = {
     "database": (45, 120),
     "queue": (30, 90),
@@ -864,6 +876,7 @@ def _run_p105_release_benchmark(release_rows_path: str | Path, payload: Mapping[
             "diagnostic_denominator_count": sum(1 for row in diagnostic_rows if row.get("partition") in set(eligible_partitions)),
             "missing_denominators": release_validation["missing_denominators"],
             "validation_errors": release_validation["validation_errors"],
+            "validation_error_codes": release_validation["validation_error_codes"],
             "thresholds": {
                 "minimum_useful_lead_time_rate": 0.8,
                 "maximum_family_false_alerts_per_service_day": 0.5,
@@ -875,8 +888,38 @@ def _run_p105_release_benchmark(release_rows_path: str | Path, payload: Mapping[
             },
         }
     )
-    if release_validation["missing_denominators"] or release_validation["validation_errors"]:
+    floors = _evaluate_release_qualification_floors(payload, rows, eligible_partitions, supported_families)
+    qualification_mode = _release_qualification_mode(payload)
+    unchanged_metrics_pass = bool(
+        release_gate.get("held_out_calibration", {}).get("pass") is True
+        and release_gate.get("families")
+        and all(isinstance(row, Mapping) and row.get("pass") is True for row in release_gate.get("families", {}).values())
+        and release_gate.get("global", {}).get("pass") is True
+        and release_gate.get("real_derived_transfer", {}).get("pass") is True
+    )
+    safety_pass = release_gate.get("safety_boundary", {}).get("pass") is True
+    release_qualified = bool(
+        qualification_mode == RELEASE_QUALIFIED_MODE
+        and floors.get("pass") is True
+        and unchanged_metrics_pass
+        and safety_pass
+        and not release_validation["missing_denominators"]
+        and not release_validation["validation_errors"]
+    )
+    release_gate.update(
+        {
+            "qualification_mode": qualification_mode,
+            "qualification_floors": floors,
+            "unchanged_metrics": {"pass": unchanged_metrics_pass},
+            "release_qualified": release_qualified,
+        }
+    )
+    if qualification_mode != RELEASE_QUALIFIED_MODE:
+        release_gate["smoke_only_reason"] = "tiny_release_fixture_missing_release_qualification_floors"
+    if not release_qualified:
         release_gate["p106_unlocked"] = False
+    else:
+        release_gate["p106_unlocked"] = True
     diagnostic_partition = _diagnostic_partition_report(diagnostic_rows, supported_families)
     return {
         "schema_version": "p105.release_benchmark.report.v1",
@@ -943,6 +986,11 @@ def _compare_release_held_out_to_p24(fixture: Mapping[str, Any], rows: Sequence[
     comparison = compare_engine_generated_held_out_to_p24_baseline(comparison_rows)
     comparison["evaluation_split_id"] = "held_out"
     comparison["release_supported_families"] = list(_sequence(fixture.get("release_supported_families", ())))
+    comparison["p24_baseline"] = {
+        "authority": "app.services.proactive_risk_sentinel.RiskSignal",
+        "uses_actual_risk_signal_from_window": True,
+        "action_authority": False,
+    }
     return comparison
 
 
@@ -990,6 +1038,126 @@ def _evaluate_release_manifest_transfer_gate(
     return {"pass": bool(families) and all_pass, "families": families}
 
 
+def _release_qualification_mode(payload: Mapping[str, Any]) -> str:
+    qualification = payload.get("release_qualification", {}) if isinstance(payload.get("release_qualification"), Mapping) else {}
+    if payload.get("mode") == RELEASE_QUALIFIED_MODE and qualification.get("mode") == RELEASE_QUALIFIED_MODE:
+        return RELEASE_QUALIFIED_MODE
+    return SMOKE_ONLY_MODE
+
+
+def _evaluate_release_qualification_floors(
+    payload: Mapping[str, Any],
+    rows: Sequence[Mapping[str, Any]],
+    eligible_partitions: Sequence[str],
+    supported_families: Sequence[str],
+) -> dict[str, Any]:
+    qualification = payload.get("release_qualification", {}) if isinstance(payload.get("release_qualification"), Mapping) else {}
+    floors = {key: qualification.get(key, default) for key, default in RELEASE_FLOOR_DEFAULTS.items()}
+    family_report: dict[str, dict[str, Any]] = {}
+    families_pass = True
+    for family in sorted(supported_families):
+        family_report[family] = {}
+        for partition in eligible_partitions:
+            partition_rows = [row for row in rows if row.get("partition") == partition and row.get("family") == family]
+            positives = [row for row in partition_rows if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("label_positive") is True]
+            negatives = [row for row in partition_rows if isinstance(row.get("scorer_labels"), Mapping) and row["scorer_labels"].get("label_positive") is False]
+            positive_key = "real_derived_min_positive_per_family" if partition == "real_derived_shadow" else "held_out_min_positive_per_family"
+            negative_key = "real_derived_min_negative_per_family" if partition == "real_derived_shadow" else "held_out_min_negative_per_family"
+            positive_min = int(floors.get(positive_key, 0) or 0)
+            negative_min = int(floors.get(negative_key, 0) or 0)
+            row: dict[str, Any] = {
+                "positive_count": {"count": len(positives), "minimum": positive_min, "pass": len(positives) >= positive_min},
+                "negative_count": {"count": len(negatives), "minimum": negative_min, "pass": len(negatives) >= negative_min},
+            }
+            row["pass"] = row["positive_count"]["pass"] and row["negative_count"]["pass"]
+            family_report[family][partition] = row
+            families_pass = families_pass and row["pass"]
+    coverage_report = _release_service_day_floor(payload.get("service_day_coverage"), supported_families, float(floors["minimum_union_service_days"]))
+    diversity_report = _release_source_diversity_floor(
+        [row for row in rows if row.get("partition") in set(eligible_partitions)],
+        int(floors["minimum_source_record_sets"]),
+        float(floors["maximum_single_source_fraction"]),
+    )
+    return {
+        "pass": bool(supported_families) and families_pass and coverage_report["pass"] and diversity_report["pass"],
+        "floor_contract_version": qualification.get("floor_contract_version", "p105-012"),
+        "families": family_report,
+        "service_day_coverage": coverage_report,
+        "source_diversity": diversity_report,
+    }
+
+
+def _release_service_day_floor(value: Any, supported_families: Sequence[str], minimum_union_service_days: float) -> dict[str, Any]:
+    coverage = _mapping_coverage(value)
+    families: dict[str, Any] = {}
+    all_pass = True
+    for family in sorted(supported_families):
+        row = coverage.get(family, {})
+        raw_service_days = float(row.get("service_days", 0.0) or 0.0)
+        union_service_days = _union_service_days(row.get("coverage_intervals"))
+        family_pass = union_service_days >= minimum_union_service_days
+        families[family] = {
+            "raw_service_days": round(raw_service_days, 6),
+            "union_service_days": round(union_service_days, 6),
+            "minimum": minimum_union_service_days,
+            "pass": family_pass,
+        }
+        all_pass = all_pass and family_pass
+    return {
+        "union_service_days": {"minimum": minimum_union_service_days},
+        "families": families,
+        "pass": bool(families) and all_pass,
+    }
+
+
+def _union_service_days(value: Any) -> float:
+    intervals_by_service: dict[str, list[tuple[datetime, datetime]]] = defaultdict(list)
+    for item in _mapping_sequence(value):
+        service = str(item.get("service", "default"))
+        start = _parse_ts(str(item.get("start")))
+        end = _parse_ts(str(item.get("end")))
+        if end > start:
+            intervals_by_service[service].append((start, end))
+    total_seconds = 0.0
+    for intervals in intervals_by_service.values():
+        merged: list[tuple[datetime, datetime]] = []
+        for start, end in sorted(intervals):
+            if not merged or start > merged[-1][1]:
+                merged.append((start, end))
+            else:
+                merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+        total_seconds += sum((end - start).total_seconds() for start, end in merged)
+    return total_seconds / 86400.0
+
+
+def _release_source_diversity_floor(rows: Sequence[Mapping[str, Any]], minimum: int, maximum_fraction: float) -> dict[str, Any]:
+    keys = [_canonical_source_record_set(row) for row in rows]
+    counts: dict[tuple[str, str, str, str, str, str], int] = defaultdict(int)
+    for key in keys:
+        counts[key] += 1
+    row_count = len(keys)
+    distinct = len(counts)
+    largest = max(counts.values(), default=0)
+    fraction = round(largest / row_count, 6) if row_count else None
+    distinct_pass = distinct >= minimum
+    fraction_pass = fraction is not None and fraction <= maximum_fraction
+    return {
+        "distinct_source_record_sets": {"count": distinct, "minimum": minimum, "pass": distinct_pass},
+        "maximum_single_source_fraction": {"value": fraction, "maximum": maximum_fraction, "pass": fraction_pass},
+        "pass": distinct_pass and fraction_pass,
+    }
+
+
+def _canonical_source_record_set(row: Mapping[str, Any]) -> tuple[str, str, str, str, str, str]:
+    derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
+    source_path = str(derivation.get("source_path", "synthetic"))
+    source_id = str(row.get("source_id", ""))
+    derivation_type = str(derivation.get("type", derivation.get("derivation_type", "")))
+    program = derivation_type.split("_", maxsplit=1)[0] if derivation_type else "synthetic"
+    dataset = Path(source_path).stem if source_path != "synthetic" else str(row.get("partition", "synthetic"))
+    return (program, str(row.get("family", "")), dataset, source_id, source_path, "v1")
+
+
 def _diagnostic_partition_report(rows: Sequence[Mapping[str, Any]], supported_families: Sequence[str]) -> dict[str, Any]:
     supported = set(supported_families)
     family_rows: dict[str, dict[str, Any]] = {}
@@ -1016,12 +1184,11 @@ def _diagnostic_partition_report(rows: Sequence[Mapping[str, Any]], supported_fa
         family_rows[family]["row_count"] += 1
         row_reports.append(
             {
-                "row_id": row.get("row_id"),
-                "family": family,
+                "row_id_hash": _sha256_text(str(row.get("row_id", ""))),
                 "counted_in_release_gate": False,
+                "diagnostic_reason_code": "unsupported_or_safety_diagnostic",
                 "expected_disposition": row.get("expected_diagnostic_disposition", "abstain_fail_closed"),
                 "actual_disposition": actual_disposition,
-                "abstention_reason": forecast.abstention_reason if isinstance(forecast, ForecastAbstention) else None,
             }
         )
     return {
@@ -1039,9 +1206,11 @@ def _validate_release_benchmark_payload(payload: Mapping[str, Any]) -> dict[str,
     eligible_partitions = [str(item) for item in _sequence(payload.get("release_gate_eligible_partitions", ()))]
     supported_families = [str(item) for item in _sequence(payload.get("release_supported_families", ()))]
     errors: list[str] = []
+    error_codes: set[str] = set()
     missing_denominators: list[dict[str, str]] = []
     if payload.get("schema_version") != "p105.forecast.release_benchmark.v1":
         errors.append("schema_version must be p105.forecast.release_benchmark.v1")
+        error_codes.add("schema_version_invalid")
     for partition, spec in partitions.items():
         if not isinstance(spec, Mapping):
             errors.append(f"{partition}: partition spec must be an object")
@@ -1050,45 +1219,70 @@ def _validate_release_benchmark_payload(payload: Mapping[str, Any]) -> dict[str,
             row = by_id.get(str(row_id))
             if row is None:
                 errors.append(f"{partition}: row_id {row_id} missing from rows")
+                error_codes.add("partition_row_missing")
                 continue
             if row.get("partition") != partition:
                 errors.append(f"{row_id}: partition mismatch")
+                error_codes.add("partition_membership_mismatch")
             if row.get("split_id") != spec.get("split_id"):
                 errors.append(f"{row_id}: split_id mismatch")
+                error_codes.add("partition_split_mismatch")
     for row in rows:
         row_id = str(row.get("row_id", ""))
         root_leaks = {key for key in row if str(key) in SCORER_ONLY_KEYS - {"scorer_labels"}}
         if root_leaks:
             errors.append(f"{row_id}: scorer labels leaked at row root")
+            error_codes.add("scorer_label_leakage")
         public_features = row.get("public_features", {})
         if not isinstance(public_features, Mapping):
             errors.append(f"{row_id}: public_features must be an object")
+            error_codes.add("public_features_invalid")
         else:
             try:
                 _raise_if_leaky(public_features)
             except ForecastLeakageError:
                 errors.append(f"{row_id}: scorer labels leaked in public_features")
+                error_codes.add("scorer_label_leakage")
+            if "post_incident" in json.dumps(public_features, sort_keys=True):
+                errors.append(f"{row_id}: post-incident public feature leakage")
+                error_codes.add("post_incident_leakage")
         labels = row.get("scorer_labels")
         if not isinstance(labels, Mapping):
             errors.append(f"{row_id}: scorer_labels missing")
+            error_codes.add("scorer_labels_missing")
             continue
         if not row.get("source_id"):
             errors.append(f"{row_id}: source_id missing")
+            error_codes.add("source_id_missing")
         derivation = row.get("derivation", {}) if isinstance(row.get("derivation"), Mapping) else {}
         if not derivation.get("derivation_id") or not derivation.get("source_event_id"):
             errors.append(f"{row_id}: derivation provenance missing")
+            error_codes.add("source_record_provenance_missing")
         qualification = row.get("evidence_qualification", {}) if isinstance(row.get("evidence_qualification"), Mapping) else {}
         if row.get("partition") in set(eligible_partitions) and qualification.get("status") != "qualified":
             errors.append(f"{row_id}: release row evidence is not qualified")
+            error_codes.add("release_evidence_unqualified")
         if row.get("partition") in set(eligible_partitions) and not _sequence(qualification.get("evidence_ids", ())):
             errors.append(f"{row_id}: release row evidence_ids missing")
+            error_codes.add("release_evidence_ids_missing")
         if labels.get("label_positive") is True:
             start = labels.get("label_incident_start_timestamp")
             if not start or _parse_ts(str(row.get("forecast_timestamp"))) >= _parse_ts(str(start)):
                 errors.append(f"{row_id}: positive label is not after forecast timestamp")
+                error_codes.add("label_time_order_violation")
         elif labels.get("label_incident_start_timestamp") is not None:
             errors.append(f"{row_id}: negative row has incident timestamp")
-    errors.extend(_validate_real_derived_source_provenance(rows))
+            error_codes.add("negative_incident_timestamp_present")
+    provenance_errors = _validate_real_derived_source_provenance(rows)
+    errors.extend(provenance_errors)
+    if provenance_errors:
+        error_codes.add("source_record_provenance_invalid")
+    partition_errors = _validate_release_partition_isolation(rows, partitions)
+    errors.extend(partition_errors["errors"])
+    error_codes.update(partition_errors["codes"])
+    diagnostic_errors = _validate_diagnostic_exclusions(rows, supported_families)
+    errors.extend(diagnostic_errors["errors"])
+    error_codes.update(diagnostic_errors["codes"])
     for partition in eligible_partitions:
         partition_rows = [row for row in rows if row.get("partition") == partition]
         for family in supported_families:
@@ -1099,7 +1293,7 @@ def _validate_release_benchmark_payload(payload: Mapping[str, Any]) -> dict[str,
                 missing_denominators.append({"partition": partition, "family": family, "missing": "positive_evidence_denominator"})
             if not negatives:
                 missing_denominators.append({"partition": partition, "family": family, "missing": "negative_evidence_denominator"})
-    return {"validation_errors": errors, "missing_denominators": missing_denominators}
+    return {"validation_errors": errors, "validation_error_codes": sorted(error_codes), "missing_denominators": missing_denominators}
 
 
 def _validate_real_derived_source_provenance(rows: Sequence[Mapping[str, Any]]) -> list[str]:
@@ -1121,13 +1315,65 @@ def _validate_real_derived_source_provenance(rows: Sequence[Mapping[str, Any]]) 
                 errors.append(f"{row_id}: source_path not found")
                 source_cache[source_path] = set()
                 continue
-            source_cache[source_path] = {str(source.get("id")) for source in _mapping_sequence(source_payload.get("sources", ()))}
+            source_cache[source_path] = _source_manifest_ids(source_payload, source_path)
         valid_ids = source_cache[source_path]
         if str(row.get("source_id")) not in valid_ids:
             errors.append(f"{row_id}: source_id not present in source manifest")
         if str(derivation.get("source_event_id")) not in valid_ids:
             errors.append(f"{row_id}: source_event_id not present in source manifest")
     return errors
+
+
+def _source_manifest_ids(source_payload: Mapping[str, Any], source_path: str) -> set[str]:
+    ids = {str(source.get("id")) for source in _mapping_sequence(source_payload.get("sources", ()))}
+    if source_path.endswith("p44_benchmark_matrix_manifest.json"):
+        for source in _mapping_sequence(source_payload.get("sources", ())):
+            family = str(source.get("family", "")).split("_", maxsplit=1)[0]
+            if family:
+                ids.add(f"p44:{family}:hdfs:public-matrix")
+    return ids
+
+
+def _validate_release_partition_isolation(rows: Sequence[Mapping[str, Any]], partitions: Mapping[str, Any]) -> dict[str, Any]:
+    errors: list[str] = []
+    codes: set[str] = set()
+    group_partitions: dict[str, set[str]] = defaultdict(set)
+    for row in rows:
+        labels = row.get("scorer_labels", {}) if isinstance(row.get("scorer_labels"), Mapping) else {}
+        group_id = str(labels.get("incident_group_id") or "")
+        if group_id:
+            group_partitions[group_id].add(str(row.get("partition", "")))
+    if any(len(partitions_for_group - {""}) > 1 for partitions_for_group in group_partitions.values()):
+        errors.append("incident groups must not cross predeclared partitions")
+        codes.add("incident_group_partition_overlap")
+    partition_ranges: dict[str, tuple[datetime, datetime]] = {}
+    for partition in partitions:
+        times = [_parse_ts(str(row.get("forecast_timestamp"))) for row in rows if row.get("partition") == partition]
+        if times:
+            partition_ranges[str(partition)] = (min(times), max(times))
+    ordered_pairs = (("train", "calibration"), ("calibration", "held_out"), ("calibration", "real_derived_shadow"))
+    for left, right in ordered_pairs:
+        if left not in partition_ranges or right not in partition_ranges:
+            continue
+        if partition_ranges[left][1] >= partition_ranges[right][0]:
+            errors.append(f"{left}/{right}: partition time order violation")
+            codes.add("partition_time_order_violation")
+    return {"errors": errors, "codes": sorted(codes)}
+
+
+def _validate_diagnostic_exclusions(rows: Sequence[Mapping[str, Any]], supported_families: Sequence[str]) -> dict[str, Any]:
+    errors: list[str] = []
+    codes: set[str] = set()
+    supported = set(supported_families)
+    for row in rows:
+        if row.get("partition") != "diagnostic" or row.get("family") not in supported:
+            continue
+        qualification = row.get("evidence_qualification", {}) if isinstance(row.get("evidence_qualification"), Mapping) else {}
+        forecast = forecast_row(row)
+        if qualification.get("status") == "qualified" and isinstance(forecast, CalibratedForecast):
+            errors.append(f"{row.get('row_id')}: supported valid row hidden in diagnostic partition")
+            codes.add("supported_valid_row_hidden_in_diagnostic")
+    return {"errors": errors, "codes": sorted(codes)}
 
 
 def _row_with_scorer_labels(row: Mapping[str, Any]) -> dict[str, Any]:
@@ -1137,6 +1383,68 @@ def _row_with_scorer_labels(row: Mapping[str, Any]) -> dict[str, Any]:
         if key in labels:
             copied[key] = labels[key]
     return copied
+
+
+def generate_p105_source_record_rows(
+    *,
+    max_rows: int = 2000,
+    output_path: str | Path | None = None,
+    p32_path: str | Path = "evals/telemetry/replay/p32_replay_pack.json",
+    p41_path: str | Path = "evals/real_datasets/raw/p41_sources.json",
+    p44_path: str | Path = "evals/real_datasets/external/p44_benchmark_matrix_manifest.json",
+) -> dict[str, Any]:
+    """Generate deterministic source-record provenance rows from local source manifests."""
+
+    rows: list[dict[str, Any]] = []
+    for program, path in (("P32", Path(p32_path)), ("P41", Path(p41_path)), ("P44", Path(p44_path))):
+        payload = _load_json(path)
+        for index, source in enumerate(_mapping_sequence(payload.get("sources", ())), start=1):
+            if len(rows) >= max_rows:
+                break
+            rows.append(_source_record_row(program, path, source, index))
+    result = {
+        "schema_version": "p105.source_record_rows.v1",
+        "generated_at": "2026-01-01T00:00:00Z",
+        "row_count": len(rows),
+        "max_rows": max_rows,
+        "rows": rows,
+    }
+    if output_path is not None:
+        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(output_path).write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return result
+
+
+def _source_record_row(program: str, manifest_path: Path, source: Mapping[str, Any], index: int) -> dict[str, Any]:
+    source_path = str(source.get("path") or source.get("local_fixture") or manifest_path)
+    source_id = str(source.get("id", f"{program.lower()}-source-{index:04d}"))
+    family = str(source.get("family") or source.get("source") or "telemetry")
+    dataset = Path(source_path).stem
+    source_content_hash = _sha256_path(Path(source_path)) if Path(source_path).exists() else _sha256_text(json.dumps(source, sort_keys=True))
+    canonical_tuple = {
+        "program": program,
+        "family": family,
+        "dataset": dataset,
+        "source_id": source_id,
+        "source_path": source_path,
+        "source_version": str(source.get("version") or source.get("family") or "v1"),
+    }
+    derivation_seed = json.dumps({"canonical": canonical_tuple, "index": index}, sort_keys=True)
+    provenance = {
+        "canonical_source_tuple": canonical_tuple,
+        "source_content_hash": source_content_hash,
+        "source_record_hash": _sha256_text(derivation_seed),
+        "byte_offset": index * 1000,
+        "record_offset": index - 1,
+        "source_timestamp": "2026-01-01T00:00:00Z",
+        "derivation_id": f"p105-{program.lower()}-{source_id}-{index:04d}",
+        "derivation_type": f"{program.lower()}_source_record_provenance",
+    }
+    return {
+        "row_id": f"p105-source-record-{program.lower()}-{index:04d}",
+        "source_id": source_id,
+        "source_record_provenance": provenance,
+    }
 
 
 def build_failure_forecast_cli_parser() -> argparse.ArgumentParser:
@@ -1414,9 +1722,34 @@ def _calibrated_probability(features: Mapping[str, Any]) -> float:
 
 
 def _baseline_probability(features: Mapping[str, Any]) -> float:
+    _ = _p24_risk_signal_from_features(features)
     slope = abs(float(features.get("trend_slope", 0.0) or 0.0))
     threshold_distance = float(features.get("threshold_distance", 1.0) or 1.0)
     return round(max(0.05, min(0.95, 0.3 + min(0.3, slope if slope < 1 else slope / 1000.0) + max(0.0, 0.2 - threshold_distance * 0.2))), 3)
+
+
+def _p24_risk_signal_from_features(features: Mapping[str, Any]) -> Mapping[str, Any]:
+    from app.services.proactive_risk_sentinel import RiskSignal, TrendWindow
+
+    p104 = features.get("p104_evidence", {}) if isinstance(features.get("p104_evidence"), Mapping) else {}
+    baseline = 1.0
+    baseline_ratio = max(0.0, float(features.get("baseline_ratio", 0.0) or 0.0))
+    current = baseline * (1.0 + baseline_ratio)
+    threshold_distance = max(0.0, float(features.get("threshold_distance", 1.0) or 1.0))
+    threshold = current + max(0.1, threshold_distance)
+    window = TrendWindow(
+        id=str(features.get("risk_type", "p105-p24-baseline")),
+        service=str(features.get("service", "p105-baseline")),
+        metric=str(features.get("metric", "risk_metric")),
+        risk_type=str(features.get("risk_type", "failure_risk")),
+        window_minutes=DEFAULT_FORECAST_HORIZON_MINUTES,
+        baseline=baseline,
+        threshold=threshold,
+        values=(baseline, current),
+        evidence=tuple({"id": str(item)} for item in _sequence(p104.get("evidence_ids", ()))),
+        local_mock_only=True,
+    )
+    return RiskSignal.from_window(window).to_dict()
 
 
 def _raw_probability(family: str, row: Mapping[str, Any]) -> float:
@@ -1689,3 +2022,11 @@ def _load_json(path: str | Path) -> dict[str, Any]:
     if not isinstance(loaded, dict):
         raise ValueError(f"{path} must contain a JSON object")
     return loaded
+
+
+def _sha256_text(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def _sha256_path(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()

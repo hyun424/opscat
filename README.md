@@ -34,7 +34,7 @@ Reviewer links:
 - [`docs/portfolio-demo.md`](docs/portfolio-demo.md) — five-minute portfolio narrative and commands.
 - [`docs/operator-transcript-demo.md`](docs/operator-transcript-demo.md) — best quick transcript demo for reviewers.
 - [`docs/operator-walkthrough.md`](docs/operator-walkthrough.md) — operator walkthrough from observe to improve.
-- [`docs/release-evidence.md`](docs/release-evidence.md) — release gates, evidence commands, and P93 proof.
+- [`docs/release-evidence.md`](docs/release-evidence.md) — release gates, evidence commands, P93/P94 demo proof, and P95 clean-clone proof.
 - [`docs/architecture.md`](docs/architecture.md) — local/mock architecture and safety boundaries.
 
 Boundary: the portfolio demo is local/mock-only. It performs no auth work, live APIs, credentials, network, production mutation, real remediation/action execution, or external model/API calls; it is not production autonomy.
@@ -129,6 +129,8 @@ make run       # start FastAPI on http://127.0.0.1:8000
 ```
 
 Do not use production credentials, customer logs, or real provider tokens in the open-source quickstart. The demo path is local/mock-only and uses a local-header demo identity instead of production authentication.
+
+Clean-clone reproducibility: P95 verified the private GitHub repository from a fresh `/private/tmp` clone at commit `c5a187d7ef2b13e9ada0b336b8bdf6d38ed700e3`. The cloned tree had no `.env`, `.DS_Store`, `.venv`, or `opscat.db` before setup, then passed `cp .env.example .env`, `make install`, `make quickstart`, and `bash scripts/verify.sh --profile full` with coverage `80.71% >= 60.00%`.
 
 ## Local setup
 

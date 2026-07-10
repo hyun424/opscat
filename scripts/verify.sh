@@ -1266,7 +1266,8 @@ docs_contract_tests() {
     tests/test_p91_release_evidence.py \
     tests/test_p92_release_evidence.py \
     tests/test_p93_release_evidence.py \
-    tests/test_p94_release_evidence.py
+    tests/test_p94_release_evidence.py \
+    tests/test_p95_release_evidence.py
 }
 
 run_fast() {

@@ -800,3 +800,11 @@ P94 active scope: Operator Transcript Demo / Human-like Incident Response Walkth
 ## P94 implemented
 
 P94 implemented as Operator Transcript Demo evidence. P94 emits four deterministic transcripts for payment deploy regression, DB connection pool saturation, noisy metric spike with missing evidence, and prompt-injection-like log content; each transcript includes transcript_id, scenario_id, title, operator_goal, at least ten transcript steps, at least three hypotheses, selected and skipped tools, read-only tool plan, safe decision, verification, report summary, safety boundaries, forbidden claims, zero-side-effect counters, JSON/Markdown outputs, and count-style CLI smoke; and preserves no auth work, no live APIs, no credentials, no network, no production mutation, no real remediation/action execution, no external model/API calls, no production autonomy, no production operator replacement approval, and no unattended production approval.
+
+## P95 active
+
+P95 active scope: Clean-Clone Reproducibility Gate. P95 proves a reviewer can clone OpsCat from the private GitHub repository into a fresh directory, confirm local-only state is absent before setup, run the documented no-auth local/mock quickstart, and run the full verification profile without production credentials or hidden maintainer-machine state.
+
+## P95 implemented
+
+P95 implemented as Clean-Clone Reproducibility evidence. P95 cloned `https://github.com/hyun424/opscat` into `/private/tmp/opscat-clean-clone-p95-fixed.wX7zoU/opscat`, verified HEAD `c5a187d7ef2b13e9ada0b336b8bdf6d38ed700e3`, confirmed `.env`, `.DS_Store`, `.venv`, and `opscat.db` were absent before setup, ran `cp .env.example .env`, `make install`, `make quickstart`, and `bash scripts/verify.sh --profile full`, fixed the discovered `OPSCAT_MODE=local-mock` / `LocalEncryptedSecretProvider` quickstart mismatch, and recorded coverage `80.71% >= 60.00%`; it preserves no auth feature work, no live provider APIs, no production credential reads, no customer-log ingestion, no production mutation, no real remediation/action execution, no production autonomy, and no unattended production approval.

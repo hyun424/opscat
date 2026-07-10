@@ -2304,3 +2304,32 @@ UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile docs
 Verified result: P94 smoke writes `/tmp/opscat-operator-transcript-demo-latest.md` with scenarios=4, transcript_steps>=40, hypotheses>=12, executions=0, recovery_proven=1, blocked=2, human_gated=1, action_execution_count=0, live_api_call_count=0, credential_read_count=0, network_call_count=0, production_mutation_count=0, external_model_call_count=0, real_remediation_execution_count=0, and passed=true.
 
 Boundary: offline local/mock transcript evidence only. Transcript steps, hypotheses, tool plans, skipped tools, safe decisions, remediation drafts, handoff drafts, verification notes, report summaries, and improvement gaps are metadata only. P94 performs no auth work, live API calls, credential reads, network calls, production mutation, real remediation/action execution, external model/API calls, production autonomy, production operator replacement approval, or unattended production approval.
+
+## P95 Clean-Clone Reproducibility Gate
+
+P95 validates that OpsCat can be cloned fresh from the private GitHub repository and run by a reviewer without relying on the maintainer's local workspace. A clean clone from `https://github.com/hyun424/opscat` was created under `/private/tmp/opscat-clean-clone-p95-fixed.wX7zoU/opscat`, verified at HEAD `c5a187d7ef2b13e9ada0b336b8bdf6d38ed700e3`, and checked before setup for absence of `.env`, `.DS_Store`, `.venv`, and `opscat.db`.
+
+The clean-clone run exposed and fixed a real reproducibility bug: `.env.example` sets `OPSCAT_MODE=local-mock`, but `LocalEncryptedSecretProvider` previously allowed the safe default development secret key only for `local` and `test`. P95 changed the guard to allow `local-mock` while keeping production-like modes explicit-key-only.
+
+Artifacts:
+
+- `docs/operations/p95-ticket-roadmap.md`
+- `docs/operations/p95-final-summary.md`
+- `tests/test_p95_release_evidence.py`
+- `app/services/secret_service.py`
+- `tests/test_secret_service.py`
+
+Commands:
+
+```bash
+git clone https://github.com/hyun424/opscat /private/tmp/opscat-clean-clone-p95-fixed.wX7zoU/opscat
+cd /private/tmp/opscat-clean-clone-p95-fixed.wX7zoU/opscat
+cp .env.example .env
+UV_CACHE_DIR=/private/tmp/uv-cache make install
+UV_CACHE_DIR=/private/tmp/uv-cache make quickstart
+UV_CACHE_DIR=/private/tmp/uv-cache bash scripts/verify.sh --profile full
+```
+
+Verified result: the contributor quickstart completed with `No auth setup or production credentials were required`; the full clean-clone verification completed successfully across compile, lint, typecheck, pytest, smoke/eval checks, docs checks, and coverage; the coverage gate reported `80.71% >= 60.00%`.
+
+Boundary: P95 is clean-clone reproducibility evidence only. It performs no auth feature work, no live Sentry/GitHub/Slack/NVIDIA/provider API calls, no production credential reads, no customer-log ingestion, no production mutation, no real remediation/action execution, no production autonomy, no production operator replacement approval, and no unattended production approval.

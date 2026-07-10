@@ -1,9 +1,10 @@
 # P105 Release-Qualified Evidence Plan Review
 
-Status: third repair recorded after second REVISE. This document records the
-independent critic blockers reported for the initial G006 documentation-only
-planning commit, the first repair items, the second narrow command repair, and
-the third honest reviewed-local P44 pipeline repair. It does not claim
+Status: fourth repair recorded after independent REQUEST CHANGES against
+`f6214c2`. This document records the independent critic blockers reported for
+the initial G006 documentation-only planning commit, the first repair items, the
+second narrow command repair, the third honest reviewed-local P44 pipeline
+repair, and the fourth command/schema hardening repair. It does not claim
 independent approval or re-approval.
 
 ## Review Scope
@@ -135,6 +136,64 @@ review returns an explicit APPROVE verdict, G006 remains in
 third-repair-after-second-REVISE status and must not be described as
 independently approved or re-approved.
 
+## Fourth Repair: REQUEST CHANGES Against f6214c2
+
+Independent critic verdict against `f6214c2`: REQUEST CHANGES.
+
+The review found that the third repair still left execution handoff ambiguity:
+legacy synthetic `_write_floor_scale_p44_dataset` rows could be interpreted as
+unlock tests, P44 raw-source paths pointed at nonexistent nested locations
+instead of the actual flat `/private/tmp` artifacts, the reviewed-local and
+private-ledger schemas were not exact enough, and source-insufficiency could
+still be mistaken for something implementation should repair by fabricating
+labels, partitions, coverage, or floors.
+
+Fourth repair:
+
+- Updated `docs/operations/p105-release-qualified-evidence-plan.md` to name the
+  exact flat raw P44 paths:
+  `/private/tmp/opscat-p44-public-artifacts/apache.log`,
+  `/private/tmp/opscat-p44-public-artifacts/linux.log`,
+  `/private/tmp/opscat-p44-public-artifacts/machine.csv`,
+  `/private/tmp/opscat-p44-public-artifacts/ambient.csv`,
+  `/private/tmp/opscat-p44-public-artifacts/ec2.csv`, and
+  `/private/tmp/opscat-p44-public-artifacts/labels.json`.
+- Added the exact future `scripts/materialize_p44_reviewed_local.py` command
+  and the manifest-driven alternative, explicitly rejecting implicit nested
+  path discovery.
+- Defined the reviewed-local P44 manifest schema: `raw_sources[]`,
+  `sampling_policy`, `reviewed_records[]`, `pre_label_partitions[]`,
+  `private_ledger_ref`, privacy/license/citation fields, reviewer fields, and
+  provenance hashes.
+- Defined exact P44 private scorer-label ledger fields for NAB official-window
+  joins and LogHub reviewed error-burst ledgers, including post-sampling label
+  join, pre-label partition binding, label hashes, source hashes, and
+  unevaluable reasons.
+- Made `_write_floor_scale_p44_dataset` and any similar legacy synthetic data
+  explicit negative locked fixtures only. Embedded `private_label`,
+  `record_family`, or `record_partition` fields cannot satisfy rows,
+  positives, incident groups, partitions, source diversity, coverage, or floor
+  counts.
+- Reiterated no ordinal, floor-deficit, partition-position, max-value,
+  peak-value, threshold-created, or record-declared partition fallback.
+- Required public features and P24 `TrendWindow` inputs to come from the same
+  raw source time window; missing raw timestamps or missing reconstructable
+  window identity is `unevaluable_missing_raw_window`.
+- Required coverage floors and false-alert denominators to come from actual
+  source timestamps or reviewed timestamp bounds only, not synthetic broad
+  intervals or top-level constants.
+- Required privacy, license, citation, reviewer, redaction, redistribution,
+  source-hash, private-ledger, and provenance-hash artifacts before benchmark
+  scoring.
+- Clarified that source insufficiency stays locked. Expanding sources is a
+  separate reviewed input change with new privacy/license/citation/provenance
+  evidence, not an implementation loophole.
+
+The repair documentation is ready for another independent review. Until that
+review returns an explicit APPROVE verdict, G006 remains in
+fourth-repair-after-REQUEST-CHANGES status and must not be described as
+independently approved or re-approved.
+
 ## Verification Required for Repair Commit
 
 Run:
@@ -153,5 +212,12 @@ Additional third-repair checks:
 
 ```bash
 rg -- "label-blind|combined_windows|max-value|LogHub|error-burst|privacy/redaction/license/citation|provenance-hash|ordinal|partition-position" docs/operations/p105-release-qualified-evidence-plan.md docs/operations/p105-release-qualified-evidence-test-spec.md docs/operations/p105-ticket-roadmap.md
+git diff --name-only HEAD
+```
+
+Additional fourth-repair checks:
+
+```bash
+rg -- "apache.log|linux.log|machine.csv|ambient.csv|ec2.csv|labels.json|materialize_p44_reviewed_local|_write_floor_scale_p44_dataset|unevaluable_missing_raw_window|pre_label_partitions|private_ledger_ref|record_family|record_partition|source insufficiency|Source insufficiency" docs/operations/p105-release-qualified-evidence-plan.md docs/operations/p105-release-qualified-evidence-test-spec.md docs/operations/p105-ticket-roadmap.md docs/operations/p105-release-qualified-evidence-plan-review.md
 git diff --name-only HEAD
 ```

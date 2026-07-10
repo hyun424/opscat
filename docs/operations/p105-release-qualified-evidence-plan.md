@@ -25,25 +25,84 @@ The materializer must consume only local or explicitly materialized records:
   an explicit opt-in materialization run has produced reviewed and redacted
   local records.
 
-The current P44 reviewed-local candidate source set is the raw public artifact
-tree under `/private/tmp/opscat-p44-public-artifacts`:
+The current P44 reviewed-local candidate source set is the flat raw public
+artifact directory under `/private/tmp/opscat-p44-public-artifacts`:
 
-- LogHub raw logs:
-  `/private/tmp/opscat-p44-public-artifacts/loghub-apache-2k/data/Apache_2k.log`
-  and
-  `/private/tmp/opscat-p44-public-artifacts/loghub-linux-2k/data/Linux_2k.log`.
-- NAB raw data CSVs:
-  `/private/tmp/opscat-p44-public-artifacts/nab-machine-temperature/data/machine_temperature_system_failure.csv`,
-  `/private/tmp/opscat-p44-public-artifacts/nab-ambient-temperature/data/ambient_temperature_system_failure.csv`,
-  and
-  `/private/tmp/opscat-p44-public-artifacts/nab-ec2-cpu/data/ec2_cpu_utilization_24ae8d.csv`.
-- NAB official label windows:
-  `/private/tmp/opscat-p44-public-artifacts/*/labels/combined_windows.json`.
+- `/private/tmp/opscat-p44-public-artifacts/apache.log`
+- `/private/tmp/opscat-p44-public-artifacts/linux.log`
+- `/private/tmp/opscat-p44-public-artifacts/machine.csv`
+- `/private/tmp/opscat-p44-public-artifacts/ambient.csv`
+- `/private/tmp/opscat-p44-public-artifacts/ec2.csv`
+- `/private/tmp/opscat-p44-public-artifacts/labels.json`
+
+Those paths are the default reviewed-local intake paths. A future implementation
+may instead pass a reviewed raw-source manifest, but that manifest must list
+the exact local paths, source keys, source hashes, license/citation metadata,
+privacy review status, and reviewer identity for each raw source. Nested paths
+such as `loghub-apache-2k/data/Apache_2k.log` or
+`*/labels/combined_windows.json` are not part of this handoff unless they are
+explicitly named by the reviewed raw-source manifest.
 
 The raw P44 files above are source inputs only. They do not become
 release-qualified artifacts until a future reviewed-local manifest records
 license, citation, redaction, privacy review, local file hashes, derived
 artifact hashes, and reviewer status.
+
+Raw-P44-to-reviewed-local materialization is a separate command from P105
+release materialization. The exact future command is:
+
+```bash
+uv run --no-sync --extra dev python scripts/materialize_p44_reviewed_local.py \
+  --apache-log /private/tmp/opscat-p44-public-artifacts/apache.log \
+  --linux-log /private/tmp/opscat-p44-public-artifacts/linux.log \
+  --machine-csv /private/tmp/opscat-p44-public-artifacts/machine.csv \
+  --ambient-csv /private/tmp/opscat-p44-public-artifacts/ambient.csv \
+  --ec2-csv /private/tmp/opscat-p44-public-artifacts/ec2.csv \
+  --labels-json /private/tmp/opscat-p44-public-artifacts/labels.json \
+  --output-dir /tmp/opscat-p105-reviewed-p44 \
+  --review-status reviewed-local \
+  --expect-source-hashes
+```
+
+The command writes `/tmp/opscat-p105-reviewed-p44/p44-reviewed-local-manifest.json`.
+If a manifest-driven intake is needed, replace the six flat path arguments with
+`--raw-source-manifest /path/to/reviewed-p44-raw-source-manifest.json`; that
+manifest must resolve to the same schema fields and must not rely on implicit
+directory discovery.
+
+The reviewed-local manifest schema must include:
+
+- `schema_version`, `materialization_version`, `command_argv`, `created_at`,
+  and `review_status`.
+- `raw_sources[]` with `source_key`, `source_system`, `source_dataset`,
+  `source_manifest_key`, `local_path`, `source_content_hash`,
+  `source_content_hash_algorithm`, `source_byte_count`, `record_count`,
+  `timestamp_field`, `timestamp_min`, `timestamp_max`, `license_name`,
+  `license_url`, `citation_text`, `redistribution_status`,
+  `privacy_review_status`, `redaction_decisions`, `reviewer_id`, and
+  `reviewed_at`.
+- `sampling_policy` with `sampled_before_label_join=true`, sampler version,
+  salt ID, max records, and the exact allowed sampler inputs.
+- `reviewed_records[]` with `reviewed_record_id`, `source_key`,
+  `record_offset` or `row_index`, `source_timestamp`, `source_window_id`,
+  `window_start_timestamp`, `window_end_timestamp`, `public_feature_hash`,
+  `p24_input_hash`, `materialized_record_hash`, `coverage_interval_ids`,
+  and `pre_label_partition_id`.
+- `pre_label_partitions[]` with `partition_id`, `assignment_version`,
+  `assignment_inputs`, `source_window_id`, and timestamp or deterministic
+  sequence bounds. Partition assignment must happen before any label join.
+- `private_ledger_ref` with the private ledger path and hash, never embedded
+  private labels.
+- `provenance_hashes` binding raw sources, reviewed records, pre-label
+  partitions, private ledger, privacy/license/citation artifact, and command
+  arguments.
+
+The reviewed-local manifest must not embed `private_label`, `record_family`,
+`record_partition`, answer-key incident IDs, joined labels, max/peak values
+used as labels, release-floor deficits, P24/P105 scores, or gate outcomes in
+any field that can satisfy release floors. If those fields appear in public or
+reviewed-local rows, they are audit evidence only and cannot count rows,
+positives, incident groups, partitions, source diversity, or coverage.
 
 No ticket may download public data by default, call external providers by
 default, read credentials, use auth, mutate production, execute remediation, or
@@ -141,6 +200,34 @@ source tuple, record offset or row index, `incident_group_id`, and derivation
 ID. Public row hashes must not be recomputed from private labels, and private
 label hashes must not be exposed in a way that reconstructs answer keys.
 
+For P44, the private scorer-label ledger must be
+`p105-private-scorer-label-ledger.json` and must include:
+
+- ledger-level `schema_version`, `ledger_hash`, `reviewed_local_manifest_hash`,
+  `label_join_phase`, `label_join_completed_after_sampling=true`, and
+  `pre_label_partition_manifest_hash`;
+- NAB label records with `label_join_source=official_nab_windows`,
+  `nab_label_key`, `labels_json_hash`, `official_window_start`,
+  `official_window_end`, `source_window_id`, `source_timestamp`,
+  `matched_official_window`, `label_positive`, `incident_group_id`,
+  `label_hash`, and `unevaluable_reason` when no official window matches;
+- LogHub label records with
+  `label_join_source=deterministic_loghub_error_burst_ledger`,
+  `parser_version`, `burst_predicate_version`, `line_offset_start`,
+  `line_offset_end`, `window_start_timestamp`, `window_end_timestamp`,
+  `incident_group_id`, `label_positive`, `source_hash`, and `label_hash`;
+- per-record bindings to the canonical source tuple, record offset or row
+  index, source-window ID, derivation ID, materialized-record hash, and
+  pre-label partition ID.
+
+NAB labels join only after label-blind sampling and pre-label partitioning.
+LogHub incidents are created only from the reviewed error-burst ledger, also
+after label-blind sampling and pre-label partitioning. No embedded
+`private_label`, record-declared family, record-declared partition, row ordinal,
+floor deficit, max value, peak value, threshold-created label, or synthetic
+positive can count toward positives, incident groups, partitions, family
+floors, or source diversity.
+
 ## Materializer Rules
 
 The P32/P41/P44 materializer must be deterministic, local/offline by default,
@@ -169,6 +256,13 @@ implicit inputs.
   NAB `combined_windows.json`, LogHub incident heuristics, private labels,
   anomaly scores, max observed values, P24/P105 scores, partition outcomes, or
   any field derived from those values.
+- Legacy synthetic helpers or tests such as
+  `_write_floor_scale_p44_dataset` may exist only as negative locked fixtures.
+  They must assert `release_qualified=false`, `p106_unlocked=false`, and a
+  source-insufficiency or synthetic-source stop reason. They must not be
+  rewritten into unlock tests, and no embedded `private_label`,
+  `record_family`, or `record_partition` from such data can satisfy any
+  release floor.
 - For NAB, join official `combined_windows.json` windows only after sampling
   and only in the private scorer-label ledger. If a sampled NAB row does not
   match an official window, it is scorer-negative for that family. There is no
@@ -187,6 +281,11 @@ implicit inputs.
   private labels are joined. A row is unevaluable if its public features, P24
   input, scorer label, coverage interval, or source tuple cannot be traced to
   the same sampled record/window identity.
+- Public features and P24 inputs must come from the same raw time window. If a
+  raw source lacks actual timestamps or a reconstructable window identity for
+  either side, the row is `unevaluable_missing_raw_window` and cannot be
+  replaced with a synthetic broad interval, ordinal window, floor-sized window,
+  or unrelated P24 seed window.
 - Keep P44 explicit opt-in, capped at 2,000 records per public-source run.
 - Assign supported real-derived rows only to `real_derived_shadow`.
 - Mark unsupported mappings `unsupported_family`; they may support abstention
@@ -238,6 +337,12 @@ False-alert service-day denominators must be computed from the union of
 `coverage_intervals` per `split_id`/`family`/`service`/`source_system` scope.
 Overlapping intervals are merged before division by 86400. Row-level
 `covered_seconds` is audit evidence only and cannot be summed blindly.
+
+Coverage intervals must be derived from actual source timestamps or
+reviewed-source timestamp bounds. Synthetic broad intervals, guessed daily
+coverage, record-count-derived duration, floor-sized coverage, or top-level
+constants cannot satisfy held-out, real-derived, false-alert, or global
+service-day floors.
 
 ## P24 Parity
 

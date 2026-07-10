@@ -41,6 +41,10 @@ Before implementation, the tests must fail for the intended missing behavior:
   ledger generation;
 - no privacy/redaction/license/citation manifest or committed-derived-artifact
   boundary for reviewed-local public artifacts.
+- no negative locked tests proving legacy synthetic
+  `_write_floor_scale_p44_dataset` rows cannot unlock P106;
+- no exact raw-P44-to-reviewed-local command, flat path contract, or
+  reviewed-local manifest schema.
 
 ## Contract Tests
 
@@ -91,6 +95,26 @@ Required assertions:
   source tuples, or hashes.
 - A P44-positive materializer run can count P44 only from a reviewed, redacted,
   local manifest with stable local source and materialized hashes.
+- The raw-P44-to-reviewed-local command accepts exactly the flat default inputs
+  `/private/tmp/opscat-p44-public-artifacts/apache.log`,
+  `/private/tmp/opscat-p44-public-artifacts/linux.log`,
+  `/private/tmp/opscat-p44-public-artifacts/machine.csv`,
+  `/private/tmp/opscat-p44-public-artifacts/ambient.csv`,
+  `/private/tmp/opscat-p44-public-artifacts/ec2.csv`, and
+  `/private/tmp/opscat-p44-public-artifacts/labels.json`, or an explicit
+  `--raw-source-manifest` resolving to the same schema. Nonexistent nested
+  paths do not satisfy the contract unless the reviewed raw-source manifest
+  names them exactly.
+- The reviewed-local P44 manifest includes `raw_sources[]`,
+  `sampling_policy`, `reviewed_records[]`, `pre_label_partitions[]`,
+  `private_ledger_ref`, privacy/license/citation metadata, and
+  `provenance_hashes` with stable hashes for raw sources, reviewed records,
+  private ledger, public artifacts, benchmark, and command arguments.
+- Reviewed-local rows cannot embed `private_label`, `record_family`,
+  `record_partition`, answer-key incident IDs, joined labels, max/peak values,
+  release-floor deficits, P24/P105 scores, or gate outcomes in fields that
+  satisfy release floors. If present as diagnostic metadata, they contribute no
+  rows, positives, incident groups, partitions, source diversity, or coverage.
 - P44 sampling is deterministic and label-blind. The sampler may use canonical
   raw bytes, record offset or row index, source manifest key, source timestamp
   when present, and a versioned salt. It must not use NAB official labels,
@@ -111,10 +135,20 @@ Required assertions:
 - Public `public_features`, P24 `TrendWindow` inputs, coverage intervals, and
   private scorer labels all trace to the same sampled source record or sampled
   source window. Cross-record feature/label joins are unevaluable.
+- Public `public_features` and P24 `TrendWindow` inputs must come from the same
+  raw time window. Missing raw timestamp or missing reconstructable window
+  identity emits `unevaluable_missing_raw_window`; the implementation must not
+  substitute synthetic broad intervals, floor-sized windows, ordinal windows, or
+  unrelated P24 seed windows.
 - Source-to-family proxy mapping is explicit and limited: LogHub proxy rows may
   map to `deploy` only through the reviewed burst predicate, and NAB metric
   rows may map to `database` or `queue` only through committed service/metric
   mapping metadata. Unsupported mappings remain `unsupported_family`.
+- Legacy synthetic helper data from `_write_floor_scale_p44_dataset` is tested
+  only as a negative locked fixture. It must produce
+  `release_qualified=false`, `p106_unlocked=false`, and a source-insufficiency
+  or synthetic-source stop reason, even if embedded labels, families, or
+  partitions would otherwise appear to satisfy floor counts.
 
 ## Artifact Tests
 
@@ -137,6 +171,9 @@ Required assertions:
 - Raw public downloads under `/private/tmp/opscat-p44-public-artifacts` are not
   release artifacts and are not committed by G006. Only reviewed, redacted,
   derived artifacts or fixtures may be committed.
+- A missing privacy, license, citation, reviewer, source hash, raw-source path,
+  redaction, redistribution, or provenance-hash artifact locks the run before
+  benchmark scoring.
 - Every manifest has a stable content hash and the benchmark payload references
   those hashes.
 - The artifact records every authority counter and all counters are false or
@@ -160,9 +197,24 @@ Required assertions:
   `sampled_before_label_join=true`, `label_join_source=official_nab_windows`
   for NAB, or `label_join_source=deterministic_loghub_error_burst_ledger` for
   LogHub.
+- The private label ledger records `reviewed_local_manifest_hash`,
+  `pre_label_partition_manifest_hash`, `label_join_completed_after_sampling`,
+  and per-record bindings to canonical source tuple, record offset or row
+  index, source-window ID, derivation ID, materialized-record hash, and
+  pre-label partition ID.
+- NAB label records include `nab_label_key`, `labels_json_hash`, official
+  window start/end, source timestamp, match status, `label_positive`,
+  `incident_group_id`, `label_hash`, and `unevaluable_reason` when no official
+  window matches.
+- LogHub label records include parser version, burst predicate version, line
+  offsets, source-window boundaries, incident group ID, source hash,
+  `label_positive`, and `label_hash`.
 - The private label ledger rejects labels that are derived from partition ID,
   row ordinal, release-floor deficits, family balancing needs, or max observed
   source values.
+- Record-declared partition or family fields are rejected as authoritative
+  inputs. Partitions come only from the pre-label partition manifest; family
+  comes only from reviewed mapping metadata after source sampling.
 
 ## Partition and Coverage Tests
 
@@ -188,6 +240,10 @@ Required assertions:
 - Overlapping intervals are merged before seconds are divided by 86400.
 - Top-level constants and summed row `covered_seconds` cannot be used as
   false-alert denominators.
+- Coverage comes from actual timestamps in raw sources or reviewed-source
+  timestamp bounds. Synthetic broad intervals, guessed daily coverage,
+  record-count-derived duration, floor-sized coverage, or top-level constants
+  cannot satisfy coverage floors.
 
 ## P24 Parity Tests
 
@@ -275,6 +331,21 @@ uv run --no-sync --extra dev python scripts/materialize_p105_release_evidence.py
   --output-dir /tmp/opscat-p105-p44-disabled-negative \
   --mode release_qualified \
   --expect-locked
+```
+
+Raw-P44-to-reviewed-local command:
+
+```bash
+uv run --no-sync --extra dev python scripts/materialize_p44_reviewed_local.py \
+  --apache-log /private/tmp/opscat-p44-public-artifacts/apache.log \
+  --linux-log /private/tmp/opscat-p44-public-artifacts/linux.log \
+  --machine-csv /private/tmp/opscat-p44-public-artifacts/machine.csv \
+  --ambient-csv /private/tmp/opscat-p44-public-artifacts/ambient.csv \
+  --ec2-csv /private/tmp/opscat-p44-public-artifacts/ec2.csv \
+  --labels-json /private/tmp/opscat-p44-public-artifacts/labels.json \
+  --output-dir /tmp/opscat-p105-reviewed-p44 \
+  --review-status reviewed-local \
+  --expect-source-hashes
 ```
 
 Reviewed-local P44 positive command:

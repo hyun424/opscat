@@ -54,6 +54,11 @@ reproducibility checks, or independent review evidence exist.
   `tests/test_p105_release_qualified_materializer.py`,
   `tests/test_p105_release_qualified_artifacts.py`, and
   `tests/test_p105_release_qualified_reproducibility.py`.
+- P44 reviewed-local intake:
+  `scripts/materialize_p44_reviewed_local.py` must read either the exact flat
+  local raw paths under `/private/tmp/opscat-p44-public-artifacts` or an
+  explicit raw-source manifest. It writes
+  `/tmp/opscat-p105-reviewed-p44/p44-reviewed-local-manifest.json`.
 - Ticket sequence:
   - `docs/tickets/p105/p105-016-release-qualified-evidence-contract.md`
   - `docs/tickets/p105/p105-017-deterministic-local-materializer.md`
@@ -337,6 +342,58 @@ not from source ID claims alone. Public downloads remain explicit opt-in and
 generated artifacts remain outside the repository unless converted into
 reviewed, redacted fixtures.
 
+The exact flat P44 raw-source inputs for the reviewed-local handoff are:
+
+- `/private/tmp/opscat-p44-public-artifacts/apache.log`
+- `/private/tmp/opscat-p44-public-artifacts/linux.log`
+- `/private/tmp/opscat-p44-public-artifacts/machine.csv`
+- `/private/tmp/opscat-p44-public-artifacts/ambient.csv`
+- `/private/tmp/opscat-p44-public-artifacts/ec2.csv`
+- `/private/tmp/opscat-p44-public-artifacts/labels.json`
+
+The exact reviewed-local command is:
+
+```bash
+uv run --no-sync --extra dev python scripts/materialize_p44_reviewed_local.py \
+  --apache-log /private/tmp/opscat-p44-public-artifacts/apache.log \
+  --linux-log /private/tmp/opscat-p44-public-artifacts/linux.log \
+  --machine-csv /private/tmp/opscat-p44-public-artifacts/machine.csv \
+  --ambient-csv /private/tmp/opscat-p44-public-artifacts/ambient.csv \
+  --ec2-csv /private/tmp/opscat-p44-public-artifacts/ec2.csv \
+  --labels-json /private/tmp/opscat-p44-public-artifacts/labels.json \
+  --output-dir /tmp/opscat-p105-reviewed-p44 \
+  --review-status reviewed-local \
+  --expect-source-hashes
+```
+
+Manifest-driven intake is allowed only with
+`--raw-source-manifest /path/to/reviewed-p44-raw-source-manifest.json`; the
+manifest must list exact local paths, source keys, source hashes, license and
+citation metadata, privacy review status, reviewer identity, and timestamp
+bounds. Nonexistent nested paths are not part of the P105 handoff unless that
+reviewed manifest names them exactly.
+
+The reviewed-local manifest must contain `raw_sources[]`, `sampling_policy`,
+`reviewed_records[]`, `pre_label_partitions[]`, `private_ledger_ref`, and
+`provenance_hashes`. Required source fields include `source_key`,
+`source_system`, `source_dataset`, `source_manifest_key`, `local_path`,
+`source_content_hash`, `record_count`, `timestamp_min`, `timestamp_max`,
+`license_url`, `citation_text`, `redistribution_status`,
+`privacy_review_status`, `redaction_decisions`, `reviewer_id`, and
+`reviewed_at`. Required record fields include `reviewed_record_id`,
+`record_offset` or `row_index`, `source_timestamp`, `source_window_id`,
+`window_start_timestamp`, `window_end_timestamp`, `public_feature_hash`,
+`p24_input_hash`, `materialized_record_hash`, `coverage_interval_ids`, and
+`pre_label_partition_id`.
+
+The reviewed-local manifest cannot use embedded `private_label`,
+`record_family`, `record_partition`, answer-key incident IDs, max/peak values,
+release-floor deficits, P24/P105 scores, or gate outcomes to satisfy release
+floors. Family assignment comes from reviewed mapping metadata. Partition
+assignment comes only from the pre-label partition manifest. Private labels
+come only from the separate scorer-label ledger after sampling and pre-label
+partitioning.
+
 P44 sampling is label-blind. Reviewed-local P44 rows are sampled
 deterministically from canonical raw public source bytes, record offset or row
 index, source manifest key, source timestamp when present, and a versioned
@@ -347,11 +404,23 @@ ledger; missing official windows or missing `nab_label_key` makes the affected
 row unevaluable. NAB max-value fallback, peak-value positives, threshold-created
 positives, ordinal positives, and synthetic anomaly labels are forbidden.
 
+Public feature packets and P24 `TrendWindow` inputs must be reconstructed from
+the same raw time window before private labels join. Missing raw timestamps,
+missing window identity, synthetic broad intervals, record-count-derived
+coverage, floor-sized coverage, ordinal windows, or unrelated P24 seed windows
+make the row unevaluable.
+
 LogHub public logs may count incidents only through a deterministic private
 scorer ledger with a reviewed parser version, error-burst predicate, line
 offsets, source-window boundaries, incident group IDs, and source hashes.
 Every-Nth-row, partition-position, ordinal, or floor-driven incidents are not
 release-qualified evidence.
+
+Legacy synthetic helper data such as `_write_floor_scale_p44_dataset` is a
+negative locked fixture only. It can prove that synthetic rows remain locked,
+but it cannot be converted into an unlock test and cannot count embedded
+private labels, record families, record partitions, positives, incident groups,
+source diversity, or coverage.
 
 Canonical source tuple: every P32/P41/P44-derived row must publish
 `source_tuple=(source_system, source_dataset, source_manifest_key,
@@ -387,6 +456,13 @@ artifacts must publish `family_proxy_mapping`, `proxy_limitations`,
 floors are unchanged; if honest sampled public sources cannot satisfy them,
 G006 stays locked and adds reviewed sources instead of fabricating labels or
 lowering gates.
+
+Source insufficiency is a terminal locked result for the current reviewed input
+set. If actual reviewed sources cannot meet unchanged floors from real
+timestamps, reviewed labels, and source hashes, the implementation records the
+stop reason and leaves `release_qualified=false` and `p106_unlocked=false`.
+Adding more public or local source material is a separate reviewed input change
+with new privacy, license, citation, reviewer, and provenance-hash artifacts.
 
 ## Partition and Diagnostic Semantics
 
@@ -629,6 +705,12 @@ Acceptance:
 - P44 public-source materialization remains opt-in, capped at 2,000 records,
   and generated artifacts stay outside the repository unless separately
   reviewed and redacted as fixtures.
+- The raw-P44-to-reviewed-local command writes the exact reviewed-local
+  manifest schema, privacy/license/citation artifact, private ledger reference,
+  pre-label partition manifest, and provenance hashes.
+- Legacy `_write_floor_scale_p44_dataset` style rows are covered by explicit
+  negative locked tests; embedded labels, families, or partitions from those
+  rows cannot satisfy floors.
 
 ### P105-014 Partition, coverage, and safety-conformance hardening
 
@@ -645,6 +727,9 @@ Acceptance:
   union of intervals per `split_id`/`family`/`service`/`source_system` scope.
   False-alert/service-day metrics may not reuse a top-level constant denominator
   or double-count overlapping row coverage.
+- Coverage floors use actual source timestamps or reviewed-source timestamp
+  bounds only. Synthetic broad intervals, floor-sized intervals, row-count
+  duration, and top-level constants are rejected.
 - Safety-conformance diagnostic rows with expected precondition violations are
   private-harness only; public/release artifacts publish only violation
   metadata and hash-safe references. Unexpected successful forecasts,
@@ -715,6 +800,10 @@ Acceptance:
 - P44-disabled negative and reviewed-local P44 positive commands are separate.
 - Unique materialized hashes and one row per source-window-incident key prevent
   clone inflation.
+- The private ledger includes exact NAB official-window join fields and LogHub
+  reviewed error-burst fields after sampling and pre-label partitioning.
+- Public features and P24 inputs come from the same raw time window; missing
+  source-window identity is unevaluable.
 
 ### P105-018 Locked smoke artifact
 
@@ -737,6 +826,9 @@ Acceptance:
   source-availability preflight, private label, benchmark, review,
   privacy/redaction/license/citation, and provenance-hash manifests with stable
   content hashes.
+- Missing privacy, license, citation, source-hash, reviewer, redaction,
+  redistribution, private-ledger, or provenance-hash artifacts lock the release
+  before benchmark scoring.
 - Every supported family passes the exact existing held-out and real-derived
   floors.
 - Private label hashes bind labels to canonical tuple, offset, incident group,

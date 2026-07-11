@@ -1336,8 +1336,6 @@ def performance_semantic_projection(report: Mapping[str, object]) -> dict[str, o
             "crash_exit_code": point.get("crash_exit_code"),
             "recovery_exit_code": point.get("recovery_exit_code"),
             "adapter_invoked": point.get("adapter_invoked"),
-            "precommit_hash": point.get("precommit_hash"),
-            "output_hash": point.get("output_hash"),
             "post_restart_validation": point.get("post_restart_validation"),
             "restart_verified": point.get("restart_verified"),
         }

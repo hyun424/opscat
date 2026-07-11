@@ -2,7 +2,7 @@
   "archive_inventory": [
     {
       "format": "wheel",
-      "hash": "sha256:3158dadfcec91fbbb02dee48f140e0d554bbe1bff7e9d6fcc9e2a36bdc5d40d1",
+      "hash": "sha256:2dcc329e15beaf4b18e4fa101fed165bf88f53371ac43832f8b84c959a5e27c4",
       "members": [
         {
           "hash": "sha256:e3fe41ad519f10f0949b6e8f24cc7b7dbacea3dfb04f521f1c9e1b7772a1e69e",
@@ -1170,9 +1170,9 @@
           "size": 3980
         },
         {
-          "hash": "sha256:8e994281da9fb906e2f3c2634d2c6bd6ed63216a811088c18f3d21fa60cf7ae1",
+          "hash": "sha256:0ac590eb05d0563b603b6746b76d21a22ba598a202d291ede148af8c78a9ee16",
           "path": "app/services/p122_release_evidence.py",
-          "size": 70736
+          "size": 70624
         },
         {
           "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -1620,7 +1620,7 @@
           "size": 34734
         },
         {
-          "hash": "sha256:a3d4c2b686e2f742cc0da9ca7955afb520c45090997463da6d752caff17c5426",
+          "hash": "sha256:2e38f668aaee0ccb4cf670e7aa40a107dbc6687a02822ac74f9f749fe2fcd450",
           "path": "opscat-0.2.0.dist-info/RECORD",
           "size": 30241
         },
@@ -1647,11 +1647,11 @@
       ],
       "path": "dist/opscat-0.2.0-py3-none-any.whl",
       "readable": true,
-      "size": 1010453
+      "size": 1010438
     },
     {
       "format": "sdist",
-      "hash": "sha256:a971a8898c0834b526295e042b6f4b1af172752f8397967df40004e96d248c3d",
+      "hash": "sha256:af0cf4c65240aa996acf1e1d9658332dc0b052140076e21abeff14e58a905621",
       "members": [
         {
           "hash": "sha256:1dd5af95f40cc7099c794c8404211ff20bc2d2a650fd0f7a9c76309eeebad8a3",
@@ -2834,9 +2834,9 @@
           "size": 3980
         },
         {
-          "hash": "sha256:8e994281da9fb906e2f3c2634d2c6bd6ed63216a811088c18f3d21fa60cf7ae1",
+          "hash": "sha256:0ac590eb05d0563b603b6746b76d21a22ba598a202d291ede148af8c78a9ee16",
           "path": "opscat-0.2.0/app/services/p122_release_evidence.py",
-          "size": 70736
+          "size": 70624
         },
         {
           "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -4534,9 +4534,9 @@
           "size": 1502
         },
         {
-          "hash": "sha256:00d07cd26e19fab46c9da9fb94ce53a6cce6f7baa87582176d5feb5370b2e037",
+          "hash": "sha256:872b3c162a63e70da79460b79be3dcb1a347576294d419eb69bb478fba021c4f",
           "path": "opscat-0.2.0/tests/test_p122_performance_soak.py",
-          "size": 14886
+          "size": 15083
         },
         {
           "hash": "sha256:394e52f21e1ea4685f4dd4a7b7cce5a363acb2203eb2a6b0c2cd718c8fc7a5a6",
@@ -5631,10 +5631,10 @@
       ],
       "path": "dist/opscat-0.2.0.tar.gz",
       "readable": true,
-      "size": 1219164
+      "size": 1219171
     }
   ],
-  "archive_inventory_hash": "sha256:35a381283c3d52fb99147a9a19abdeca56179448ae16e69547b4d0ccf8f38812",
+  "archive_inventory_hash": "sha256:041f414f8b3932e2943aca5acefc72e8382bfd740bb2a108c4af6089d0df69b3",
   "artifacts": {
     "license_inventory": "evals/p122/license-inventory.json",
     "sbom": "evals/p122/sbom.json",
@@ -5650,9 +5650,9 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:0ea2e2a6bdac92cd15cbf04cd2302955c4153db825cf05154815ccbb039f1296",
+  "report_hash": "sha256:0904c6137c9d1ec46277defb53d010f6103eb948ce5c437e333629f3df5b406a",
   "root": ".",
-  "root_binding_hash": "sha256:8b90e49377a251cfa95bf24aa369a4455a4c4a010ff6b8a8f7b1f2657485b433",
+  "root_binding_hash": "sha256:0f92261412b74ea15d3811a7991d53911a6a0fa6424a612210a6ecaae4ef36c4",
   "scanned_file_count": 2208,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
@@ -6928,9 +6928,9 @@
       "size": 3980
     },
     {
-      "hash": "sha256:8e994281da9fb906e2f3c2634d2c6bd6ed63216a811088c18f3d21fa60cf7ae1",
+      "hash": "sha256:0ac590eb05d0563b603b6746b76d21a22ba598a202d291ede148af8c78a9ee16",
       "path": "app/services/p122_release_evidence.py",
-      "size": 70736
+      "size": 70624
     },
     {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -14028,9 +14028,9 @@
       "size": 1172
     },
     {
-      "hash": "sha256:46ee208f70a4f14eec8a0da271311012c8cbba6531c4f7a52e01baa248a1968b",
+      "hash": "sha256:559f309e39e90e387b2499c157e7e0e65c2b0ff2659447a0d80e1faf0be33738",
       "path": "scripts/run_p122_performance_soak.py",
-      "size": 79904
+      "size": 79792
     },
     {
       "hash": "sha256:9bf064ea34749e85200c20b04f68427f09407561250635fe65cb7fb2601acf02",
@@ -15598,9 +15598,9 @@
       "size": 1502
     },
     {
-      "hash": "sha256:00d07cd26e19fab46c9da9fb94ce53a6cce6f7baa87582176d5feb5370b2e037",
+      "hash": "sha256:872b3c162a63e70da79460b79be3dcb1a347576294d419eb69bb478fba021c4f",
       "path": "tests/test_p122_performance_soak.py",
-      "size": 14886
+      "size": 15083
     },
     {
       "hash": "sha256:394e52f21e1ea4685f4dd4a7b7cce5a363acb2203eb2a6b0c2cd718c8fc7a5a6",
@@ -16698,6 +16698,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:82a47609676ec83d638a972d6de77060570db5573e6440a3e32824a9484c3108",
+  "source_inventory_hash": "sha256:a5f70c6a6e6bc000a2fb4773835e3c6c2f77a1159237bb79bf178e7971053a8a",
   "status": "pass"
 }

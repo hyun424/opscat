@@ -143,6 +143,8 @@ def test_semantic_comparison_ignores_measurement_noise_but_rejects_record_loss(t
     candidate["elapsed_seconds"] = float(report["elapsed_seconds"]) + 100.0
     candidate["timings_seconds"]["cold_start"] = float(report["timings_seconds"]["cold_start"]) + 10.0
     candidate["report_hash"] = "sha256:different"
+    candidate["release_stage_crash_replay"]["points"][0]["precommit_hash"] = "sha256:" + ("1" * 64)
+    candidate["release_stage_crash_replay"]["points"][0]["output_hash"] = "sha256:" + ("2" * 64)
     assert compare_performance_reports(report, candidate)["matches"] is True
 
     candidate["lost_replay_records"] = 1

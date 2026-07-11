@@ -1,0 +1,20 @@
+{
+  "adapter_invoked": true,
+  "correlation_id": "p122-crash-07-rollback",
+  "durable_phase": "rollback_result_commit_pending",
+  "operation": "rollback_result_commit",
+  "operation_adapter": "p121_rollback_outcome_v1",
+  "ordinal": 7,
+  "output_ref": "committed/rollback.json",
+  "output_schema": "p121.validation_outcome.v1",
+  "parent_pid": 58352,
+  "precommit_hash": "sha256:b2eb2d8e2c7fc48e4e2486d7ba5a70430d82c9bd8174aca1c85d3a13a84dabcf",
+  "precommit_kind": "file",
+  "precommit_ref": "precommit/rollback.json",
+  "precommit_validation_hash": "sha256:4c779da3a1718e42f972a40014a54f9d9303b147e735961c8bcd753bbc76af90",
+  "record_hash": "sha256:9e385f2af858974553c3a1d6f61a5ca12ef6a86e4c4bec21063352998930c24f",
+  "schema_version": "p122.release_stage_pending.v1",
+  "stage": "rollback",
+  "status": "pending",
+  "worker_pid": 58368
+}

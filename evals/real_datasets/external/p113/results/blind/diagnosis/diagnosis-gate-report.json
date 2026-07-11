@@ -1,0 +1,29 @@
+{
+  "checks": {
+    "cpu_accuracy_min": false,
+    "delay_accuracy_min": false,
+    "diagnosis_action_authority_disabled": true,
+    "diagnosis_preservation": true,
+    "diagnosis_replay_hash_consistency": true,
+    "diagnostic_abstention_max": true,
+    "disk_accuracy_min": false,
+    "evidence_precision_min": true,
+    "fault_accuracy_min": false,
+    "loss_accuracy_min": false,
+    "mem_accuracy_min": false,
+    "nonnegative_fault_accuracy_delta_vs_p112": true,
+    "nonnegative_service_top1_delta_vs_p112": true,
+    "service_top1_min": false,
+    "service_top3_min": false,
+    "zero_executed_actions": true,
+    "zero_harmful_actions": true,
+    "zero_truth_leaks": true
+  },
+  "comparison_hash": "sha256:3ef49a005a87177075965e896be63f33e01ed1a367dca11f7b3cc4745ab857bf",
+  "contract_evaluation_hash": "sha256:43f56b0023d5e3a40dcb0f7c93c0ea05327cf4d7e186efe5a3a8159bc5f8f005",
+  "evaluation_hash": "sha256:33e21b238c221b5c334df70609dc310fa50b3edcf392800bae39adc08944c8e0",
+  "freeze_hash": "sha256:a98e2a469f06fb2e625ebc4f45b7c08278f43ed7d1d07572e382d827f9a7355d",
+  "gate_report_hash": "sha256:9371ab49387b1f9dcb07227c552af413edbfcd36121c7fbfe081c07b2fbd02ca",
+  "passed": false,
+  "schema_version": "p113.diagnosis_gate_report.v1"
+}

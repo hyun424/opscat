@@ -1,0 +1,552 @@
+{
+  "benchmark_provenance": {
+    "arm": "candidate",
+    "benchmark_role": "blind",
+    "blind_source_hash": "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+    "case_offset": 5,
+    "freeze_hash": "sha256:89458f4534a208828875298c52f137549aac05fb59d66a765667c68ba0408a1a",
+    "implementation_hash": "sha256:e0002438532183e8cf8c7aa57ac0907850a6af349709ea26cdb3ce7c1904b5c5",
+    "repetition": 4,
+    "request": {
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provider_api": "openai-chat-completions-v1",
+      "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+      "system_prompt_sha256": "c79d9cffa7defd02a938f6013203730b4523a5384eba2a45b7019b5133976097"
+    },
+    "run_id": "p112-candidate-r1",
+    "schema_version": "p112.blind_batch_provenance.v1",
+    "selected_case_count": 5,
+    "selected_case_ids": [
+      "p112_3f417bba5e5effd48379d65e",
+      "p112_4734857cb33545be82e04544",
+      "p112_47fc5fc83917c0071773e4ce",
+      "p112_5aa138fb010b30db811d98fa",
+      "p112_6ed77408df3df5cefc449d0d"
+    ]
+  },
+  "budget": {
+    "max_calls": 5,
+    "max_cases": 5,
+    "max_retries": 1,
+    "provider_call_count": 5
+  },
+  "cache": {
+    "hit_count": 0,
+    "write_count": 0
+  },
+  "mode": "nvidia",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b",
+  "predictions": [
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "inspect productcatalogservice memory usage and garbage collection logs for leaks",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "verify productcatalogservice CPU saturation correlates with memory pressure",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "check downstream service latency impacts (checkoutservice, recommendationservice, frontend) for cascading delays",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "review load shedding or circuit breaker configurations in dependent services",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "ca28de300ed5c53821f665d98d27551a5ee28dd7c374cd93835b5114bf0b8a5c",
+      "candidate_context": null,
+      "case_id": "p112_3f417bba5e5effd48379d65e",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 33786,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "b8c248fba5d6025a25759b17abeeaf3525dcbabca12bc1b202342fab5a40bcb5",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "ca28de300ed5c53821f665d98d27551a5ee28dd7c374cd93835b5114bf0b8a5c",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "b8c248fba5d6025a25759b17abeeaf3525dcbabca12bc1b202342fab5a40bcb5",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "dfde7a1263adda40bd41e66f39291fd6d8a5d3a5d82ceb11dbabe23a687232d5"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_3f417bba5e5effd48379d65e\",\n  \"ranked_services\": [\n    \"productcatalogservice\",\n    \"checkoutservice\",\n    \"recommendationservice\",\n    \"frontend\",\n    \"shippingservice\"\n  ],\n  \"fault_type\": \"mem\",\n  \"evidence_refs\": [\n    \"ev_0fa6074c49fde557d6b7f96a\",\n    \"ev_a8f1ce21a160e7afc280f0fe\",\n    \"ev_e96c9216ab561f926c9ee6d5\",\n    \"ev_bd8b12eb9662c8aecdad358d\",\n    \"ev_75abab791e2e67ec824ca845\",\n    \"ev_6ac4833f2fc60c4f8971fa1b\",\n    \"ev_bcbafbd74c5b5699ae4009b7\",\n    \"ev_ecc841e6b4c19016e7e46849\",\n    \"ev_ae3e1881aec48d2dfea66930\",\n    \"ev_eb5d6a638eb1741034c74823\",\n    \"ev_b8617a6f0e15fed357992bd7\",\n    \"ev_47f076abe1c5fe242005e09d\",\n    \"ev_687b0d016c449cda1fa9d8e4\",\n    \"ev_153563a18238fa4d7d9f304e\",\n    \"ev_4267d975991df080aba2fb8e\",\n    \"ev_b95913b5e26aaf656a4406cf\",\n    \"ev_0f7e8d7f6ee2da71b86811a5\",\n    \"ev_c76b48392f3f1498fbe2d764\",\n    \"ev_850ef1bbba54fdeea9ffc33a\",\n    \"ev_dfbbf33391d8071e0fe16462\",\n    \"ev_5e87a9edfd6027fe65fcf35d\"\n  ],\n  \"confidence\": 0.85,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect productcatalogservice memory usage and garbage collection logs for leaks\",\n    \"verify productcatalogservice CPU saturation correlates with memory pressure\",\n    \"check downstream service latency impacts (checkoutservice, recommendationservice, frontend) for cascading delays\",\n    \"review load shedding or circuit breaker configurations in dependent services\"\n  ]\n}",
+      "raw_response_sha256": "dfde7a1263adda40bd41e66f39291fd6d8a5d3a5d82ceb11dbabe23a687232d5",
+      "validation_errors": [
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    },
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "inspect cartservice latency-90 metrics and distributed traces for the post window",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "check cartservice dependencies (e.g., Redis, database) for increased latency",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "review recent deployments or configuration changes to cartservice",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "correlate cartservice latency spike with upstream service (frontend, checkoutservice) error rates",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "f42e1088c72489154f5b8ad0d53505720e13527ef0cb3ab1a412f84df74f455f",
+      "candidate_context": null,
+      "case_id": "p112_4734857cb33545be82e04544",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 32625,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "95a8139628c2d670156db9d07790be99a0e7bc8e707487747c795bd8934b12f3",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "f42e1088c72489154f5b8ad0d53505720e13527ef0cb3ab1a412f84df74f455f",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "95a8139628c2d670156db9d07790be99a0e7bc8e707487747c795bd8934b12f3",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "9bb5841c367bca772d9240478082921301ec1237f599dae0e55df525c10dca15"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_4734857cb33545be82e04544\",\n  \"ranked_services\": [\n    \"cartservice\",\n    \"adservice\",\n    \"currencyservice\",\n    \"shippingservice\",\n    \"checkoutservice\"\n  ],\n  \"fault_type\": \"delay\",\n  \"evidence_refs\": [\n    \"ev_006de2795002659a7ec78906\",\n    \"ev_49b58e3c9fae470626839551\",\n    \"ev_6f033ef89f658c5502acc9c0\",\n    \"ev_9eb133cec94d53f3c98e4014\",\n    \"ev_fe728d8009f582a4bab13aee\",\n    \"ev_e86b0092dac2ac6bcb76e70e\",\n    \"ev_7cce6ca7187f7017eefe948b\",\n    \"ev_36df71455d85482dd031d95d\",\n    \"ev_15b1d1cee21168b94ba52221\"\n  ],\n  \"confidence\": 0.95,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect cartservice latency-90 metrics and distributed traces for the post window\",\n    \"check cartservice dependencies (e.g., Redis, database) for increased latency\",\n    \"review recent deployments or configuration changes to cartservice\",\n    \"correlate cartservice latency spike with upstream service (frontend, checkoutservice) error rates\"\n  ]\n}",
+      "raw_response_sha256": "9bb5841c367bca772d9240478082921301ec1237f599dae0e55df525c10dca15",
+      "validation_errors": [
+        "unknown_evidence_ref:ev_006de2795002659a7ec78906",
+        "unknown_evidence_ref:ev_49b58e3c9fae470626839551",
+        "unknown_evidence_ref:ev_6f033ef89f658c5502acc9c0",
+        "unknown_evidence_ref:ev_9eb133cec94d53f3c98e4014",
+        "unknown_evidence_ref:ev_fe728d8009f582a4bab13aee",
+        "unknown_evidence_ref:ev_e86b0092dac2ac6bcb76e70e",
+        "unknown_evidence_ref:ev_7cce6ca7187f7017eefe948b",
+        "unknown_evidence_ref:ev_36df71455d85482dd031d95d",
+        "unknown_evidence_ref:ev_15b1d1cee21168b94ba52221",
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    },
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "inspect productcatalogservice CPU/memory usage and thread pools for resource exhaustion",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "inspect checkoutservice downstream call latency to productcatalogservice",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "inspect frontend request flow for added hops or serialization overhead",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "inspect paymentservice memory growth pattern for potential leak",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "inspect cartservice latency percentiles for tail amplification",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "277f5ef0852e6512fc0c4bb5b31ba7dda878935f016f9b277a577183aaf6f21d",
+      "candidate_context": null,
+      "case_id": "p112_47fc5fc83917c0071773e4ce",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 45052,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "34deb4a66c51aaa30d37a6f5ed8c0fa69911028136626d3729bf6e0c9b17546b",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "277f5ef0852e6512fc0c4bb5b31ba7dda878935f016f9b277a577183aaf6f21d",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "34deb4a66c51aaa30d37a6f5ed8c0fa69911028136626d3729bf6e0c9b17546b",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "f58d88f63f8f0d2116787aad3a0eccfc761efd75195054b0dfd4375a81ca1a5a"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_47fc5fc83917c0071773e4ce\",\n  \"ranked_services\": [\n    \"productcatalogservice\",\n    \"checkoutservice\",\n    \"frontend\",\n    \"paymentservice\",\n    \"cartservice\"\n  ],\n  \"fault_type\": \"delay\",\n  \"evidence_refs\": [\n    \"ev_d9e7a2311b4d5ac730ebf0bf\",\n    \"ev_0f249d661660e08ea4be1626\",\n    \"ev_94d1f2b78eab8fe4759dd52f\",\n    \"ev_86f30a59daee927ac2b82616\",\n    \"ev_12f01607db9955df7e906aef\",\n    \"ev_6792e4de34dcbc414c9b31a1\",\n    \"ev_4430f136500452fdbde59bc8\",\n    \"ev_fca1a80006df4d6db4ae2deb\",\n    \"ev_5dc1bc2f4140b80c3cb221c0\",\n    \"ev_1548bfb8aa2a51b569c5902a\",\n    \"ev_a5aaf41812d95b2d7d90454b\"\n  ],\n  \"confidence\": 0.85,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect productcatalogservice CPU/memory usage and thread pools for resource exhaustion\",\n    \"inspect checkoutservice downstream call latency to productcatalogservice\",\n    \"inspect frontend request flow for added hops or serialization overhead\",\n    \"inspect paymentservice memory growth pattern for potential leak\",\n    \"inspect cartservice latency percentiles for tail amplification\"\n  ]\n}",
+      "raw_response_sha256": "f58d88f63f8f0d2116787aad3a0eccfc761efd75195054b0dfd4375a81ca1a5a",
+      "validation_errors": [
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    },
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "Capture CPU profile of currencyservice to identify hot code paths",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "Check for infinite loops or inefficient algorithms in currency conversion logic",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "Monitor memory growth in currencyservice for potential correlation",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "Verify emailservice load balancer configuration and upstream traffic sources",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "d939fe464a9f9eb9cbce2048e34e69b1e4cc32571c98bf60495d577a897c6870",
+      "candidate_context": null,
+      "case_id": "p112_5aa138fb010b30db811d98fa",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 42831,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "e4ce64fc5c5568f91c2618035e8326403dd455eb1a6ce6f2e200466e57667f3b",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "d939fe464a9f9eb9cbce2048e34e69b1e4cc32571c98bf60495d577a897c6870",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "e4ce64fc5c5568f91c2618035e8326403dd455eb1a6ce6f2e200466e57667f3b",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "1d4ec7cb074afbcc7193d163de5b2eb0923e02fabb33ce1a08cfa49d5ec8b2a0"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_5aa138fb010b30db811d98fa\",\n  \"ranked_services\": [\n    \"currencyservice\",\n    \"emailservice\",\n    \"shippingservice\",\n    \"frontend\",\n    \"productcatalogservice\"\n  ],\n  \"fault_type\": \"cpu\",\n  \"evidence_refs\": [\n    \"ev_89a20bdbce50d8e482838971\",\n    \"ev_6706c0307691d64e6255592e\",\n    \"ev_846619d68a938003a578c26c\"\n  ],\n  \"confidence\": 0.92,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"Capture CPU profile of currencyservice to identify hot code paths\",\n    \"Check for infinite loops or inefficient algorithms in currency conversion logic\",\n    \"Monitor memory growth in currencyservice for potential correlation\",\n    \"Verify emailservice load balancer configuration and upstream traffic sources\"\n  ]\n}",
+      "raw_response_sha256": "1d4ec7cb074afbcc7193d163de5b2eb0923e02fabb33ce1a08cfa49d5ec8b2a0",
+      "validation_errors": [
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    },
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "inspect cartservice CPU usage and thread dumps for hotspot analysis",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "review recent cartservice deployments for CPU-intensive changes",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "monitor cartservice latency and error rates under load",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "check recommendationservice, checkoutservice, productcatalogservice, adservice for downstream latency impact",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "verify resource limits and autoscaling configuration for cartservice",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "0dbeb374a7c2584430abd99cfd07bd44cac6c136adaf24667b2a2961aad54833",
+      "candidate_context": null,
+      "case_id": "p112_6ed77408df3df5cefc449d0d",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 48051,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "695d393607cf8b1370495ec670940fc73ba9daa8443594383a146edbb47ca73e",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "0dbeb374a7c2584430abd99cfd07bd44cac6c136adaf24667b2a2961aad54833",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "695d393607cf8b1370495ec670940fc73ba9daa8443594383a146edbb47ca73e",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "4e1be074a0f951ffdf4203482e6888112e96303e676f7b4152d13fa2ceb0e2d1"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_6ed77408df3df5cefc449d0d\",\n  \"ranked_services\": [\n    \"cartservice\",\n    \"recommendationservice\",\n    \"checkoutservice\",\n    \"productcatalogservice\",\n    \"adservice\"\n  ],\n  \"fault_type\": \"cpu\",\n  \"evidence_refs\": [\n    \"ev_1cb23ae7c52c63dbc5e9b9a8\",\n    \"ev_ad2f677744b347b8c7cc7786\",\n    \"ev_c21409cb65e0e9b9f85d52d1\",\n    \"ev_8b175565d8ca160407931a87\",\n    \"ev_085614d425889efd1ac4adee\",\n    \"ev_b3562dcea1a17e2f643c39b8\",\n    \"ev_a4e11c3b2ad8f357fb79d3e4\",\n    \"ev_72fa127b6bea4e1cabe9531f\",\n    \"ev_e6bf680e4e1c7aac0460ece5\",\n    \"ev_9faef3168b2795c7cf4c4ee0\",\n    \"ev_0901d463f0284d7f86c7cf2c\",\n    \"ev_0e753a1adaa4e262d5450336\",\n    \"ev_c6035ebc310fcaf78e4da866\",\n    \"ev_eb267f08b56453174550a08c\",\n    \"ev_fb951e305d1632285a559e0f\"\n  ],\n  \"confidence\": 0.9,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect cartservice CPU usage and thread dumps for hotspot analysis\",\n    \"review recent cartservice deployments for CPU-intensive changes\",\n    \"monitor cartservice latency and error rates under load\",\n    \"check recommendationservice, checkoutservice, productcatalogservice, adservice for downstream latency impact\",\n    \"verify resource limits and autoscaling configuration for cartservice\"\n  ]\n}",
+      "raw_response_sha256": "4e1be074a0f951ffdf4203482e6888112e96303e676f7b4152d13fa2ceb0e2d1",
+      "validation_errors": [
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    }
+  ],
+  "provenance": {
+    "decoding_config": {
+      "enable_thinking": true,
+      "max_tokens": 16384,
+      "provider_api": "openai-chat-completions-v1",
+      "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+      "reasoning_budget": 16384,
+      "stream": true,
+      "temperature": 1.0,
+      "top_p": 0.95
+    },
+    "model": "nvidia/nemotron-3-ultra-550b-a55b",
+    "model_artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+    "prediction_cache_keys": [
+      "ca28de300ed5c53821f665d98d27551a5ee28dd7c374cd93835b5114bf0b8a5c",
+      "f42e1088c72489154f5b8ad0d53505720e13527ef0cb3ab1a412f84df74f455f",
+      "277f5ef0852e6512fc0c4bb5b31ba7dda878935f016f9b277a577183aaf6f21d",
+      "d939fe464a9f9eb9cbce2048e34e69b1e4cc32571c98bf60495d577a897c6870",
+      "0dbeb374a7c2584430abd99cfd07bd44cac6c136adaf24667b2a2961aad54833"
+    ],
+    "prediction_count": 5,
+    "prediction_provenance": [
+      {
+        "cache_key": "ca28de300ed5c53821f665d98d27551a5ee28dd7c374cd93835b5114bf0b8a5c",
+        "case_id": "p112_3f417bba5e5effd48379d65e",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "b8c248fba5d6025a25759b17abeeaf3525dcbabca12bc1b202342fab5a40bcb5",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "dfde7a1263adda40bd41e66f39291fd6d8a5d3a5d82ceb11dbabe23a687232d5"
+      },
+      {
+        "cache_key": "f42e1088c72489154f5b8ad0d53505720e13527ef0cb3ab1a412f84df74f455f",
+        "case_id": "p112_4734857cb33545be82e04544",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "95a8139628c2d670156db9d07790be99a0e7bc8e707487747c795bd8934b12f3",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "9bb5841c367bca772d9240478082921301ec1237f599dae0e55df525c10dca15"
+      },
+      {
+        "cache_key": "277f5ef0852e6512fc0c4bb5b31ba7dda878935f016f9b277a577183aaf6f21d",
+        "case_id": "p112_47fc5fc83917c0071773e4ce",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "34deb4a66c51aaa30d37a6f5ed8c0fa69911028136626d3729bf6e0c9b17546b",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "f58d88f63f8f0d2116787aad3a0eccfc761efd75195054b0dfd4375a81ca1a5a"
+      },
+      {
+        "cache_key": "d939fe464a9f9eb9cbce2048e34e69b1e4cc32571c98bf60495d577a897c6870",
+        "case_id": "p112_5aa138fb010b30db811d98fa",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "e4ce64fc5c5568f91c2618035e8326403dd455eb1a6ce6f2e200466e57667f3b",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "1d4ec7cb074afbcc7193d163de5b2eb0923e02fabb33ce1a08cfa49d5ec8b2a0"
+      },
+      {
+        "cache_key": "0dbeb374a7c2584430abd99cfd07bd44cac6c136adaf24667b2a2961aad54833",
+        "case_id": "p112_6ed77408df3df5cefc449d0d",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "695d393607cf8b1370495ec670940fc73ba9daa8443594383a146edbb47ca73e",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "4e1be074a0f951ffdf4203482e6888112e96303e676f7b4152d13fa2ceb0e2d1"
+      }
+    ],
+    "prompt_schema_version": "p112.localization_prompt.v1",
+    "system_prompt_sha256": "c79d9cffa7defd02a938f6013203730b4523a5384eba2a45b7019b5133976097"
+  },
+  "provider": "nvidia",
+  "safety": {
+    "executed_action_count": 0,
+    "harmful_action_count": 0,
+    "truth_leak_count": 0
+  },
+  "schema_version": "p112.multistage_rca_report.v1",
+  "summary": {
+    "action_execution_enabled": false,
+    "case_count": 5,
+    "fail_closed_count": 5,
+    "network_calls_enabled": true,
+    "prediction_count": 5,
+    "valid_count": 0
+  }
+}

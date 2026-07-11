@@ -17,13 +17,45 @@ while [[ $# -gt 0 ]]; do
       ;;
     -h|--help)
       cat <<'HELP'
-Usage: bash scripts/verify.sh [--profile fast|full|eval|docs]
+Usage: bash scripts/verify.sh [--profile fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release]
 
 Profiles:
   fast  Compile, lint, typecheck, and pytest regression suite.
   full  Complete release gate, including coverage, evals, demos, Docker config, and hygiene checks.
   eval  Golden incident evals, connector evals, and P6 agentic-loop evals only.
   docs  Documentation/release evidence contract tests plus repo hygiene checks.
+  p107-release
+        P107 local/mock/isolated release profile tests plus canary evidence smoke.
+  p108-release
+        P108 deterministic offline learning profile tests plus evidence smoke.
+  p109-release
+        P109 offline external-evidence import, benchmark, authority, and release tests.
+  p110-release
+        P110 labeled RCAEval import, blind LLM runner, scoring, and release tests.
+  p111-release
+        P111 evidence digest, benchmark governance, paired scoring, and P110 compatibility tests.
+  p112-release
+        P112 cross-system model, paired freeze, replay, scoring, and release tests.
+  p113-release
+        P113 fresh-blind diagnosis/narrative separation, governance, and release tests.
+  p114-release
+        P114 consumed-lineage, RE2 acquisition, evidence graph, and adjudication tests.
+  p115-release
+        P115 outcome-grounded action contracts, ontology, matrices, baselines, and scoring.
+  p116-release
+        P116 controlled five-arm loopback lab and paired measured-outcome contracts.
+  p117-release
+        P117 frozen evidence-bound action-selection tournament and release evidence.
+  p118-release
+        P118 fail-closed local/mock/sandbox reactive execution substrate and release evidence.
+  p119-release
+        P119 local/mock/sandbox closed-loop incident response and release evidence.
+  p120-release
+        P120 frozen cross-system generalization benchmark and release evidence.
+  p121-release
+        P121 local/mock/sandbox proactive prevention and release evidence.
+  p122-release
+        P122 open-source packaging, security, reproducibility, and bounded release evidence.
 HELP
       exit 0
       ;;
@@ -35,7 +67,7 @@ HELP
 done
 
 case "$VERIFY_PROFILE" in
-  fast|full|eval|docs) ;;
+  fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release) ;;
   *)
     printf 'Unknown verify profile: %s\n' "$VERIFY_PROFILE" >&2
     exit 2
@@ -47,6 +79,179 @@ section() {
 }
 
 UV_DEV=(uv run --no-sync --extra dev)
+P107_RELEASE_PROFILE_TESTS=(
+  tests/test_prevention_p106_handoff.py
+  tests/test_prevention_canary_fingerprints.py
+  tests/test_prevention_policy_preflight.py
+  tests/test_prevention_state_machine.py
+  tests/test_prevention_episode_audit.py
+  tests/test_prevention_canary_harness.py
+  tests/test_prevention_canary_executor_contract.py
+  tests/test_prevention_canary_idempotency.py
+  tests/test_prevention_canary_concurrency.py
+  tests/test_prevention_canary_crash_consistency.py
+  tests/test_prevention_canary_rollback.py
+  tests/test_prevention_canary_fixture_matrix.py
+  tests/test_prevention_outcome_report.py
+  tests/test_prevention_static_authority_boundary.py
+  tests/test_p107_release_evidence.py
+)
+P108_RELEASE_PROFILE_TESTS=(
+  tests/test_prevention_p108_ingress.py
+  tests/test_prevention_replay_gate.py
+  tests/test_prevention_outcome_ledger.py
+  tests/test_prevention_counterfactual.py
+  tests/test_prevention_outcome_learner.py
+  tests/test_prevention_learning_recommendations.py
+  tests/test_prevention_learning_promotion.py
+  tests/test_prevention_p108_fixture_matrix.py
+  tests/test_prevention_p108_authority_boundary.py
+  tests/test_prevention_learning_cli.py
+  tests/test_p108_release_evidence.py
+)
+P109_RELEASE_PROFILE_TESTS=(
+  tests/test_p109_source_manifest.py
+  tests/test_p109_safe_acquisition.py
+  tests/test_rcaeval_adapter.py
+  tests/test_rcaeval_diagnosis_benchmark.py
+  tests/test_microremed_result_adapter.py
+  tests/test_remediation_outcome_benchmark_p109.py
+  tests/test_p109_holdout_guard.py
+  tests/test_p109_release_evidence.py
+  tests/test_p109_authority_boundary.py
+  tests/test_p109_real_sample_smoke.py
+)
+P110_RELEASE_PROFILE_TESTS=(
+  tests/test_p110_acquisition.py
+  tests/test_p110_rcaeval.py
+  tests/test_p110_candidate_runner.py
+  tests/test_p110_evaluation.py
+  tests/test_p110_release_evidence.py
+  tests/test_p110_batch_merge.py
+)
+P111_RELEASE_PROFILE_TESTS=(
+  "${P110_RELEASE_PROFILE_TESTS[@]}"
+  tests/test_p111_multistage_rca.py
+  tests/test_p111_fault_prior.py
+  tests/test_p111_benchmark_guard.py
+  tests/test_p111_comparison.py
+  tests/test_p111_release_evidence.py
+)
+P112_RELEASE_PROFILE_TESTS=(
+  "${P111_RELEASE_PROFILE_TESTS[@]}"
+  tests/test_p112_re1_loader.py
+  tests/test_p112_cross_system_model.py
+  tests/test_p112_multistage_rca.py
+  tests/test_p112_evaluation.py
+  tests/test_p112_freeze_guard.py
+  tests/test_p112_release_evidence.py
+)
+P113_RELEASE_PROFILE_TESTS=(
+  "${P112_RELEASE_PROFILE_TESTS[@]}"
+  tests/test_p113_acquisition.py
+  tests/test_p113_benchmark_runtime.py
+  tests/test_p113_blind_benchmark.py
+  tests/test_p113_blind_dataset.py
+  tests/test_p113_decoupled_rca.py
+  tests/test_p113_evaluation.py
+  tests/test_p113_governance.py
+  tests/test_p113_release_evidence.py
+)
+P114_RELEASE_PROFILE_TESTS=(
+  "${P113_RELEASE_PROFILE_TESTS[@]}"
+  tests/test_p114_acquisition.py
+  tests/test_p114_governance.py
+  tests/test_p114_re2_loader.py
+  tests/test_p114_hypothesis_lattice.py
+  tests/test_p114_development_evaluation.py
+  tests/test_p114_development_runner.py
+  tests/test_p114_adjudicator.py
+  tests/test_p114_paired_evaluation.py
+  tests/test_p114_adjudication_development.py
+  tests/test_p114_fault_knn.py
+  tests/test_p114_acceptance.py
+  tests/test_p114_authority_boundary.py
+)
+P115_RELEASE_PROFILE_TESTS=(
+  tests/test_p115_action_contract.py
+  tests/test_p115_ontology.py
+  tests/test_p115_leakage_guard.py
+  tests/test_p115_evaluator.py
+  tests/test_p115_scenario_matrix.py
+  tests/test_p115_baselines.py
+  tests/test_p115_release_evidence.py
+  tests/test_p115_p116_benchmark_adapter.py
+)
+P116_RELEASE_PROFILE_TESTS=(
+  tests/test_p116_paired_outcomes.py
+  tests/test_p116_lab_runner.py
+  tests/test_p116_release_evidence.py
+)
+P117_RELEASE_PROFILE_TESTS=(
+  tests/test_p117_contract.py
+  tests/test_p117_evidence_acquisition.py
+  tests/test_p117_contradictions.py
+  tests/test_p117_utility.py
+  tests/test_p117_selector.py
+  tests/test_p117_nvidia_proposal.py
+  tests/test_p117_evaluator.py
+  tests/test_p117_benchmark.py
+  tests/test_p117_release_evidence.py
+)
+P118_RELEASE_PROFILE_TESTS=(
+  tests/test_p118_operation_contract.py
+  tests/test_p118_action_pack_verifier.py
+  tests/test_p118_approval.py
+  tests/test_p118_ledger.py
+  tests/test_p118_worker.py
+  tests/test_p118_validation_cycle.py
+  tests/test_p118_crash_recovery.py
+  tests/test_p118_evaluator_release_evidence.py
+)
+P119_RELEASE_PROFILE_TESTS=(
+  tests/test_p119_contract.py
+  tests/test_p119_ledger.py
+  tests/test_p119_scheduler.py
+  tests/test_p119_evidence_loop.py
+  tests/test_p119_selection.py
+  tests/test_p119_execution_loop.py
+  tests/test_p119_war_room.py
+  tests/test_p119_attribution.py
+  tests/test_p119_recovery.py
+  tests/test_p119_evaluator_release_evidence.py
+)
+P120_RELEASE_PROFILE_TESTS=(
+  tests/test_p120_governance.py
+  tests/test_p120_splits.py
+  tests/test_p120_normalization.py
+  tests/test_p120_ontology.py
+  tests/test_p120_ood.py
+  tests/test_p120_calibration.py
+  tests/test_p120_evaluator_release_evidence.py
+)
+P121_RELEASE_PROFILE_TESTS=(
+  tests/test_p121_signals.py
+  tests/test_p121_forecasting.py
+  tests/test_p121_counterfactuals.py
+  tests/test_p121_guardrails.py
+  tests/test_p121_execution.py
+  tests/test_p121_validation.py
+  tests/test_p121_evaluator_release_evidence.py
+)
+P122_RELEASE_PROFILE_TESTS=(
+  tests/test_p122_public_contracts.py
+  tests/test_p122_ci_contract.py
+  tests/test_p122_cli.py
+  tests/test_p122_security_gate.py
+  tests/test_p122_vulnerability_audit.py
+  tests/test_p122_reproducible_sdist.py
+  tests/test_p122_reproducible_build.py
+  tests/test_p122_clean_install.py
+  tests/test_p122_performance_soak.py
+  tests/test_p122_migration_compatibility.py
+  tests/test_p122_docs_verification.py
+  tests/test_p122_release_evidence.py
+)
 VERIFY_TMPDIR="$(mktemp -d)"
 cleanup() {
   rm -rf "$VERIFY_TMPDIR"
@@ -1236,6 +1441,170 @@ p106_preventive_action_benchmark_smoke() (
   cp "$VERIFY_TMPDIR/opscat-p106-preventive-action-benchmark.md" /tmp/opscat-p106-preventive-action-benchmark-latest.md
   printf 'Wrote /tmp/opscat-p106-preventive-action-benchmark-latest.md and %s/opscat-p106-preventive-action-benchmark.json\n' "$VERIFY_TMPDIR"
 )
+
+p107_release_profile_tests() {
+  section "P107 release profile tests"
+  "${UV_DEV[@]}" pytest -q "${P107_RELEASE_PROFILE_TESTS[@]}"
+}
+
+p107_prevention_canary_evidence_smoke() {
+  section "P107 prevention canary evidence smoke"
+  "${UV_DEV[@]}" python scripts/run_prevention_canary_evidence.py \
+    --cases evals/prevention/p107_canary_cases.json \
+    --output-json "$VERIFY_TMPDIR/opscat-p107-canary-evidence.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p107-canary-evidence.md" >/tmp/opscat-p107-canary-evidence-latest.json
+  cp "$VERIFY_TMPDIR/opscat-p107-canary-evidence.md" /tmp/opscat-p107-canary-evidence-latest.md
+  printf 'Wrote /tmp/opscat-p107-canary-evidence-latest.md and %s/opscat-p107-canary-evidence.json\n' "$VERIFY_TMPDIR"
+}
+
+p108_release_profile_tests() {
+  section "P108 release profile tests"
+  "${UV_DEV[@]}" pytest -q "${P108_RELEASE_PROFILE_TESTS[@]}"
+}
+
+p109_release_profile_tests() {
+  section "P109 real operations benchmark release profile"
+  "${UV_DEV[@]}" pytest -q "${P109_RELEASE_PROFILE_TESTS[@]}"
+}
+
+p110_release_profile_tests() {
+  section "P110 labeled RCAEval benchmark release profile"
+  "${UV_DEV[@]}" pytest -q "${P110_RELEASE_PROFILE_TESTS[@]}"
+}
+
+p111_release_profile_tests() {
+  section "P111 evidence-driven RCA accuracy profile"
+  "${UV_DEV[@]}" pytest -q "${P111_RELEASE_PROFILE_TESTS[@]}"
+}
+
+p112_release_profile_tests() {
+  section "P112 cross-system RCA release profile"
+  "${UV_DEV[@]}" pytest -q "${P112_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p112_*.py scripts/*p112*.py tests/test_p112_*.py
+  "${UV_DEV[@]}" mypy app/services/p112_*.py scripts/*p112*.py
+}
+
+p113_release_profile_tests() {
+  section "P113 decoupled fresh-blind RCA release profile"
+  "${UV_DEV[@]}" pytest -q "${P113_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p112_re1_loader.py app/services/p113_*.py scripts/*p113*.py tests/test_p113_*.py
+  "${UV_DEV[@]}" mypy app/services/p112_re1_loader.py app/services/p113_*.py scripts/*p113*.py
+}
+
+p114_release_profile_tests() {
+  section "P114 evidence adjudication development profile"
+  "${UV_DEV[@]}" pytest -q "${P114_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p114_*.py scripts/*p114*.py tests/test_p114_*.py
+  "${UV_DEV[@]}" mypy app/services/p114_*.py scripts/*p114*.py
+}
+
+p115_release_profile_tests() {
+  section "P115 outcome-grounded remediation release profile"
+  "${UV_DEV[@]}" pytest -q "${P115_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p115_*.py scripts/*p115*.py tests/test_p115_*.py
+  "${UV_DEV[@]}" mypy app/services/p115_*.py scripts/*p115*.py
+  section "P115 persisted release-evidence and transitive P116 freshness"
+  "${UV_DEV[@]}" python scripts/validate_p115_release_evidence.py \
+    evals/p115/release-evidence.json \
+    --p116-import evals/p115/p116-release-evidence.json
+}
+
+p116_release_profile_tests() {
+  section "P116 controlled fault-action lab release profile"
+  "${UV_DEV[@]}" pytest -q "${P116_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p116_*.py scripts/*p116*.py tests/test_p116_*.py
+  "${UV_DEV[@]}" mypy app/services/p116_*.py scripts/*p116*.py
+  section "P116 persisted release-evidence freshness"
+  "${UV_DEV[@]}" python scripts/validate_p116_release_evidence.py evals/p116/release-evidence.json
+}
+
+p117_release_profile_tests() {
+  section "P117 evidence-bound action-selection release profile"
+  "${UV_DEV[@]}" pytest -q "${P117_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p117_*.py scripts/*p117*.py tests/test_p117_*.py
+  "${UV_DEV[@]}" mypy app/services/p117_*.py scripts/*p117*.py
+  section "P117 persisted release-evidence freshness"
+  "${UV_DEV[@]}" python scripts/validate_p117_release_evidence.py evals/p117/release-evidence.json
+}
+
+p118_release_profile_tests() {
+  section "P118 local reactive-execution release profile"
+  "${UV_DEV[@]}" pytest -q "${P118_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p118_*.py scripts/*p118*.py tests/test_p118_*.py
+  "${UV_DEV[@]}" mypy app/services/p118_*.py scripts/*p118*.py
+  section "P118 persisted release-evidence freshness"
+  "${UV_DEV[@]}" python scripts/validate_p118_release_evidence.py evals/p118/release-evidence.json
+}
+
+p119_release_profile_tests() {
+  section "P119 local closed-loop incident-response release profile"
+  "${UV_DEV[@]}" pytest -q "${P119_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p119_*.py scripts/*p119*.py tests/test_p119_*.py
+  "${UV_DEV[@]}" mypy app/services/p119_*.py scripts/*p119*.py
+  section "P119 persisted release-evidence freshness"
+  "${UV_DEV[@]}" python scripts/validate_p119_release_evidence.py evals/p119/release-evidence.json
+}
+
+p120_release_profile_tests() {
+  section "P120 cross-system generalization release profile"
+  "${UV_DEV[@]}" pytest -q "${P120_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p120_*.py scripts/*p120*.py tests/test_p120_*.py
+  "${UV_DEV[@]}" mypy app/services/p120_*.py scripts/*p120*.py
+  section "P120 persisted release-evidence freshness"
+  "${UV_DEV[@]}" python scripts/validate_p120_release_evidence.py evals/p120/release-evidence.json
+}
+
+p121_release_profile_tests() {
+  section "P121 proactive prevention release profile"
+  "${UV_DEV[@]}" pytest -q "${P121_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p121_*.py scripts/*p121*.py tests/test_p121_*.py
+  "${UV_DEV[@]}" mypy app/services/p121_*.py scripts/*p121*.py
+  section "P121 persisted release-evidence freshness"
+  "${UV_DEV[@]}" python scripts/validate_p121_release_evidence.py evals/p121/release-evidence.json
+}
+
+p122_release_profile_tests() {
+  section "P122 open-source release-candidate profile"
+  "${UV_DEV[@]}" pytest -q "${P122_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/cli.py app/plugin_sdk.py app/public_contracts.py app/services/p122_*.py scripts/*p122*.py tests/test_p122_*.py
+  "${UV_DEV[@]}" mypy app/cli.py app/plugin_sdk.py app/public_contracts.py app/services/p122_*.py scripts/*p122*.py
+  section "P122 security, SBOM, and license gate"
+  "${UV_DEV[@]}" python scripts/run_p122_security_gate.py
+  section "P122 locked dependency vulnerability audit"
+  "${UV_DEV[@]}" python scripts/run_p122_vulnerability_audit.py
+  section "P122 docs and migration verification"
+  "${UV_DEV[@]}" python scripts/verify_p122_docs.py
+  "${UV_DEV[@]}" python scripts/verify_p122_migration_compatibility.py --workdir "$VERIFY_TMPDIR/p122-migration" --output "$VERIFY_TMPDIR/p122-migration.json"
+  section "P122 promoted 1000-iteration performance soak"
+  "${UV_DEV[@]}" python scripts/run_p122_performance_soak.py \
+    --iterations 1000 \
+    --workdir "$VERIFY_TMPDIR/p122-performance-soak" \
+    --output "$VERIFY_TMPDIR/p122-performance-soak.json" \
+    --compare-report evals/p122/performance-soak.json
+  section "P122 package artifact checksums"
+  "${UV_DEV[@]}" python scripts/verify_p122_reproducible_build.py --validate-only
+  "${UV_DEV[@]}" python scripts/verify_p122_clean_install.py --validate-only
+  "${UV_DEV[@]}" python - <<'PY'
+import hashlib, json
+from pathlib import Path
+expected = json.loads(Path("evals/p122/package-checksums.json").read_text())
+actual = {name: "sha256:" + hashlib.sha256((Path("dist") / name).read_bytes()).hexdigest() for name in expected}
+if actual != expected:
+    raise SystemExit("package artifact checksum mismatch")
+print(json.dumps(actual, sort_keys=True))
+PY
+  section "P122 persisted release-evidence freshness"
+  "${UV_DEV[@]}" python scripts/validate_p122_release_evidence.py evals/p122/release-evidence.json
+}
+
+p108_prevention_learning_evidence_smoke() {
+  section "P108 prevention learning evidence smoke"
+  "${UV_DEV[@]}" python scripts/run_prevention_learning_eval.py \
+    --output-json "$VERIFY_TMPDIR/opscat-p108-learning-evidence.json" \
+    --output-md "$VERIFY_TMPDIR/opscat-p108-learning-evidence.md" >/tmp/opscat-p108-learning-evidence-latest.json
+  cp "$VERIFY_TMPDIR/opscat-p108-learning-evidence.md" /tmp/opscat-p108-learning-evidence-latest.md
+  printf 'Wrote /tmp/opscat-p108-learning-evidence-latest.md and %s/opscat-p108-learning-evidence.json\n' "$VERIFY_TMPDIR"
+}
 commander_tournament() {
   section "P9 commander tournament"
   "${UV_DEV[@]}" python scripts/run_commander_tournament.py \
@@ -1275,7 +1644,7 @@ docker_compose_config() {
 generated_artifact_scan() {
   section "Tracked generated artifact scan"
   tracked_generated="$({
-    git ls-files '*__pycache__*' '*.py[co]' '.pytest_cache/*' '.ruff_cache/*' '.mypy_cache/*' 'opscat.db' 'opscat.egg-info/*' 'uv.lock' 2>/dev/null || true
+    git ls-files '*__pycache__*' '*.py[co]' '.pytest_cache/*' '.ruff_cache/*' '.mypy_cache/*' 'opscat.db' 'opscat.egg-info/*' 2>/dev/null || true
   } | sed '/^$/d')"
   if [[ -n "$tracked_generated" ]]; then
     printf 'Tracked generated artifacts found:\n%s\n' "$tracked_generated" >&2
@@ -1401,7 +1770,9 @@ docs_contract_tests() {
     tests/test_p104_release_evidence.py \
     tests/test_failure_forecast_engine.py \
     tests/test_p105_release_evidence.py \
-    tests/test_p106_release_evidence.py
+    tests/test_p106_release_evidence.py \
+    tests/test_p107_release_evidence.py \
+    tests/test_p108_release_evidence.py
 }
 
 run_fast() {
@@ -1511,12 +1882,116 @@ run_eval() {
   evidence_gap_investigator_smoke
   p105_release_benchmark_smoke
   p106_preventive_action_benchmark_smoke
+  p107_prevention_canary_evidence_smoke
+  p108_prevention_learning_evidence_smoke
 }
 
 run_docs() {
   docs_contract_tests
+  p107_release_profile_tests
+  p108_release_profile_tests
+  p109_release_profile_tests
   generated_artifact_scan
   whitespace_diff_check
+}
+
+run_p107_release() {
+  p107_release_profile_tests
+  p107_prevention_canary_evidence_smoke
+}
+
+run_p108_release() {
+  p108_release_profile_tests
+  p108_prevention_learning_evidence_smoke
+}
+
+run_p109_release() {
+  p109_release_profile_tests
+}
+
+run_p110_release() {
+  p110_release_profile_tests
+}
+
+run_p111_release() {
+  p111_release_profile_tests
+  local p111_root="evals/real_datasets/external/p111/results/blind"
+  if [[ -f "$p111_root/freeze-manifest.json" && -f "$p111_root/baseline/final/candidate-nvidia.json" && -f "$p111_root/candidate-run1/final/candidate-nvidia.json" && -f "$p111_root/candidate-run2/final/candidate-nvidia.json" ]]; then
+    section "P111 sealed blind artifact replay and release gates"
+    "${UV_DEV[@]}" python scripts/build_p111_release_evidence.py \
+      --freeze-manifest "$p111_root/freeze-manifest.json" \
+      --baseline "$p111_root/baseline/final/candidate-nvidia.json" \
+      --candidate "$p111_root/candidate-run1/final/candidate-nvidia.json" \
+      --repeat "$p111_root/candidate-run2/final/candidate-nvidia.json" \
+      --output-dir "$VERIFY_TMPDIR/p111-release"
+  fi
+}
+
+run_p112_release() {
+  p112_release_profile_tests
+  local p112_root="evals/real_datasets/external/p112/results/blind"
+  if [[ -f "$p112_root/freeze/freeze-manifest.json" && -f "$p112_root/baseline/final/candidate-nvidia.json" && -f "$p112_root/candidate-run1/final/candidate-nvidia.json" && -f "$p112_root/candidate-run2/final/candidate-nvidia.json" ]]; then
+    section "P112 sealed blind artifact replay and release gates"
+    "${UV_DEV[@]}" python scripts/build_p112_release_evidence.py \
+      --freeze-dir "$p112_root/freeze" \
+      --baseline "$p112_root/baseline/final/candidate-nvidia.json" \
+      --candidate "$p112_root/candidate-run1/final/candidate-nvidia.json" \
+      --repeat "$p112_root/candidate-run2/final/candidate-nvidia.json" \
+      --output-dir "$VERIFY_TMPDIR/p112-release"
+  fi
+}
+
+run_p113_release() {
+  p113_release_profile_tests
+  local p113_root="evals/real_datasets/external/p113/results/blind"
+  if [[ -f "$p113_root/acquisition-verification.json" && -f "$p113_root/freeze/freeze-manifest.json" && -f "$p113_root/diagnosis/p113-diagnosis-evaluation.json" ]]; then
+    section "P113 sealed blind artifact replay and fail-closed release gates"
+    "${UV_DEV[@]}" python scripts/build_p113_release_evidence.py \
+      --acquisition-verification "$p113_root/acquisition-verification.json" \
+      --freeze-manifest "$p113_root/freeze/freeze-manifest.json" \
+      --packet-manifest "$p113_root/freeze/packet-hash-manifest.json" \
+      --p112-baseline-evaluation "$p113_root/diagnosis/p112-baseline-evaluation.json" \
+      --diagnosis-evaluation "$p113_root/diagnosis/p113-diagnosis-evaluation.json" \
+      --diagnosis-contract-evaluation "$p113_root/diagnosis/p113-diagnosis-contract-evaluation.json" \
+      --output "$VERIFY_TMPDIR/p113-release.json" \
+      --markdown-output "$VERIFY_TMPDIR/p113-release.md"
+  fi
+}
+
+run_p114_release() {
+  p114_release_profile_tests
+}
+
+run_p115_release() {
+  p115_release_profile_tests
+}
+
+run_p116_release() {
+  p116_release_profile_tests
+}
+
+run_p117_release() {
+  p117_release_profile_tests
+}
+
+run_p118_release() {
+  p118_release_profile_tests
+}
+
+run_p119_release() {
+  p119_release_profile_tests
+}
+
+run_p120_release() {
+  p120_release_profile_tests
+}
+
+run_p121_release() {
+  p121_release_profile_tests
+}
+
+run_p122_release() {
+  p122_release_profile_tests
 }
 
 run_full() {
@@ -1535,6 +2010,22 @@ case "$VERIFY_PROFILE" in
   fast) run_fast ;;
   eval) run_eval ;;
   docs) run_docs ;;
+  p107-release) run_p107_release ;;
+  p108-release) run_p108_release ;;
+  p109-release) run_p109_release ;;
+  p110-release) run_p110_release ;;
+  p111-release) run_p111_release ;;
+  p112-release) run_p112_release ;;
+  p113-release) run_p113_release ;;
+  p114-release) run_p114_release ;;
+  p115-release) run_p115_release ;;
+  p116-release) run_p116_release ;;
+  p117-release) run_p117_release ;;
+  p118-release) run_p118_release ;;
+  p119-release) run_p119_release ;;
+  p120-release) run_p120_release ;;
+  p121-release) run_p121_release ;;
+  p122-release) run_p122_release ;;
   full) run_full ;;
 esac
 

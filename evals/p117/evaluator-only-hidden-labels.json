@@ -1,0 +1,6606 @@
+{
+  "labels": [
+    {
+      "decision_episode_id": "p117_episode_002e11c13b578cf286b87905",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_00b03a9a9e9ee91ce22a7ad9",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3694,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_014ac23c1809a2650178ff1c",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_016bd6b84b4c0ae5ab6d4d3e",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_020cf5b35b54c6947c1d2d96",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_02169082225f172ec260c130",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_022a0666a3d2f204f51f2065",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_02a3480e7c7acfaa2f4cae11",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_02e6f65b393958cd6a3598cb",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_032fd02c9c9f5df9ad524994",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0356ed1f4d30aa255651ed15",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3128,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_038e4369f909923ae37ff34d",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_04a7c4bb8419582fc3adf80b",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_04c22e90f541b77af636c56b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_052e3506a2d7617fda508e3d",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_05c42bc261cfcac01b865cd6",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_05e41e709b723ecae2f7193a",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_062e4e6891ef85b1c6a4e9c1",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_06f097fd9997548d99e74b7c",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3523,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_06f68c3ae21c715a40ce8d67",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_081b58e3614a5802b2cf54d4",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0875afcbd6fa8504b5583577",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0a70686d2af0efcca7dd71b6",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0b0cb531968d400de08d318f",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0b27137d8801af6d39068f73",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0bb671f7d62e5266142ad05b",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0c31e6d0a52d1e48bffa5313",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0d037bd00a473424dc8d2786",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0dca23223a6819d1697ac43a",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0e7bb62853cf0f74892572da",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.333,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0eb47efffaff2d2c335d00bf",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0ed23e7696c1b53bc05795be",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0ed437bd9b1b2ebab960dff1",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_0ed4bf86f552d258c7fc4837",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3453,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_10287f31692b67aa284d8916",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1131ea59ddb62b84644c4fc9",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3214,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_113622470c1adedf93a7fef6",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_116ceca9323eeaf96a75191c",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_118a1ad352e5dcc92e6f6f30",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_11d46d842855e82fdf2a2178",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_121986b94e103847b6cbe7dc",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_14844b6348cfa33fee23f554",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_153863560ae4bcf39315c6cc",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_155ecaca1fb5db403f5cffdc",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_15c5402ca0c863704a7f60c8",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_163b505b25cd098ea4b0bed0",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_164c52b255c65d6fb0acab9c",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_168a9821a1e315a3edb7f415",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_16938e40cb547b423fca50d6",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_16b300fd585fe072646ef1ec",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1736ee153ad962c5570e90ec",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_17e1d19c868c97211530ca26",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_181467c3fb85dfcc362b50cb",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_18b2f46e4e377f929f4f7b1b",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_190302dbc339464428d5c84c",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.2378,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_19af9553d20964db4ccc92d3",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1a77320962ce1049f79dc519",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1ab25289a1064cdfe6c07545",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1b7350ac9b9b9f002eb16eff",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3539,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1bff60b4f0d8b292c243cff6",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3011,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1c1da49d80971396f7988e70",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3234,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1d0ab3c98eb483bd7f5ffdad",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1d4ebe7f368ea2dee3f77be2",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3916,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1e1a64220d4124af9c3def40",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1f12869084a84e26d00c86f9",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1f1bcdb8ffc9a2ef96da53f2",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1f3cbaf68387e1a079755c4a",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1f9daa31e0ce34764ba025e6",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_1fe304f9d581e7b840ee0150",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_205010fbaf99dae0631870c1",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_20f20128bd54d14b60c61147",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3435,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_21415a4b83fc5eb6fd5615a6",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_21cb9f63d9944942bc0fe93b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_21d3e97db30b43654f9c2ae0",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_21e69f9dfd3f2812e616581c",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_21f0851394fbcadfd8c7d7eb",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3575,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2217687754f2db07d816b0f8",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_22951d155ac948e1ae55c751",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3731,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_229d2e2c9e407ebddde6bd5d",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_22b8ec073454e61a514db74f",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3305,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_22d6fbbfda13be7fbfe31573",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_22ee986ea9ac35ef4fa5c655",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3299,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_22ff355cbb65a8985cb31495",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_235a8675c80a2740a506e9ae",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2369708ed7ae1fd9c7bf545b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_23f4632d0ada7b6f493a0200",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2480e7aa7089dfd5d1b47fc0",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_24bbdf19018521c5d8c167f1",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2526d4a2dcb7a3fd5aaaca97",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_253b13b70df09ab5cdf6a868",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4002,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_25f7d3a445866ea3c6c68961",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_25fe62eb644aefd3c63b6d03",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.2791,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2631d7d9152777012525b5c2",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_265cc9b27b164254b46ef893",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3625,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_26679eaa46055abaaa80ff69",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_26cdb3d4132b6e6eeae8de45",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2717dc658c29034749d7783e",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_27ad33a7683d2fc0daa9893b",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_27fb6d59379bb6845e79232e",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3187,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_28a8a0c18a21f1dc60951cd6",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_28ea084dc949feb803fcec48",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_292c970afadd4d7412bf6876",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3456,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2944bbbcc75daed15fa5a83b",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.2534,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_29af5c9ee5e298c70e1fd820",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2ad8166365afe857a5414c37",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2ae1428e602ba332072746f5",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2ba3abfc37608dd1ca1bb268",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2c09e7af0013e4aedf8ceb48",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2c9a6a8c57bfcd81c9eebdce",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2d1a0d72b53d14b250c6cb0a",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2d6798d9dcc3525a7f98fb5e",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2d771cf433bd483b5e929228",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2e47e93064a95b6143b7c3c4",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2e57c4a9ace32f53a0f87ce2",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2e8d73abba452ee780e4a0a6",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2f271c87e27d13ba5d4fd7bc",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_2f41967543a5a0465800e4a2",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_30175fe08925678c3aef86ad",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_30b71aff734a318f13c33fe1",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_313981fdaa59aaeaea10a7f3",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3451,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3145694f58b54bf9edbc4e10",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_31c5d508fb27e594cfab72fb",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_31c74601f834c46ebc0ebed0",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_31cf2d3d7dd5c161bda26d25",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_321fd34ca47efe96a88d72a4",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_325d7d67a7f9594ee9040b00",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.333,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_32f19cd861e7e5d0d0919ab2",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3344409e25e5f8ef235dae32",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_34c0978de27a2576d32d148b",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3842,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_364260dfb4f1eb33b8523659",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3667ff595924a3ad47a18d0a",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_372348aca93bb9f8d6d1e6bf",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3794b94694b6ea8b7893ef3d",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_37db4a34c84dbecff3d4b278",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3834712f327bb6c7647399c4",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_38a558cac909e5aed7877ebb",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_38d19899da6415902f5c053b",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3234,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_394f6b9dc949a58ed422117e",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.392,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3b96adcf40915832423c2232",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3b9c25bc221f8adc1bb65d51",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3c3c351884b51690a7bb12b4",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3d080bb84dd1b83c39023d98",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3d6a7f02103d9f01297f90c9",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3d8632ed5611c60ea57f77bd",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3336,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3df88474729fdbd8dc0d4721",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3e24745ea5ce672b8e220b0d",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3ecda3e5c0f2214541692306",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3f56ef120c3d06ccb40f2f6f",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3f981efd7dc485ba920bae0b",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_3f98d215199c35b1f3b2e730",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3687,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_400b6f8e26a57e49896e363b",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_41349a8a44d4ade680919bcc",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_413d52048913a0927ee17d3f",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3525,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_41586620e4c9fd163ce57150",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_41b9c2c0ce6590734b53d37f",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_425dd54cff26303b5ce1a6c7",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4359f816050d838bf0aafa00",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3385,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_43a76195f6c331dc21a0e421",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_44a56f40ee73122a645147ab",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_45068372a31f40b229eb2143",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_459b006e47225de4e0da535e",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3904,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_459bf828e40423d95260baec",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.436,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4621629a749511de342dd18b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_46940e08e5536585d49058d5",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_478167a0426195f2fa43ad29",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_47dc400157d61d78b636f1f4",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_47dc594d0c099c115f28767c",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_47f20bfd4c8040bfd5de2446",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4808694ee68f166f47a8e376",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_485ea922ec1b92599d3a8fff",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.271,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_48740bf4f00eb8ea031ff683",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_49320ab26ff29621a051c37a",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_49585d720d7a9a86bb7df9ee",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_499700828e005d197e15f7a5",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4337,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_49ad460c2a516a51bb5c275b",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_49dc3c6601e930c3b6556740",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4ab2da12ab12d0137c2835be",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3217,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4c88985493ded2afd5f192a9",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4cbfdb85faef6c2fb4971c51",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4cd7ed08950b457baed73c5a",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4cecabc023806cdb48ef2666",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4dc62b3010ea261ad42aa788",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3429,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4de8a0c244626bf29730bf22",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4f73e34e7eed6c752cbc1d10",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4fd2287625d65843629c5266",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4fd4d21cd8dced9546e1be12",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_4fe00f5925624135f922e2e1",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_50c41c89539e43f4fcbd5d23",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_50fb7596b70703194735a396",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_511d2b4d0e5177834fcd67cf",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_513641484110a6bc93e2e8f8",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3248,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_51fa3d74d1a96bd097e751de",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_523eebba9a570949af09024b",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3572,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_551256c0b6c410d6e50b1aa7",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5553813f94831e72b8833841",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_55836b7d174e7c239a6aebfa",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4916,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5608a52fa99ea83e4ab6e10e",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3143,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_57359379d0a391fdefe380b6",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_574c945a5e125b135461962a",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5772f3f4045b1d7127fcce98",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_57f76820c22738fee4323077",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5809010cde0eb704f02179c5",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3644,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_58fd6670f4cc83fff8471200",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_59214d493ed9e24c5cca4596",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_597d220482f9371dbadd5153",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3442,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_59a173d65d64eb4ddabd8404",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_59d0fc527b92c9e2edf95baa",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5ad54f3d009ab8b42e65cdc5",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5ae94769a0b5cc0712ef2ab8",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4187,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5bdd391c8ebceb0e1d9d3acd",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5c2efa1eeb3638c66cd7e808",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5cdbb916787472d06bc70971",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5e2b573ea695ba2142e79801",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5f0b6ab2c4dc345cf4d20272",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5f1107ad0fd9fa99f9036a1e",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.331,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5f84fc7e96c20b6a39ce9f27",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5fab4444542ebd4d0697af45",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_5ff0d4bf884947d270ab17d8",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6008278bf054c5dacd1ba576",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_607a195eebb44790afa368ba",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_60dd9c745f7a03735ba41009",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_61242f711cb57e5fd2fbe60e",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4744,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6149e53656cc2e95a8838eda",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4289,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_619052ae7102d5120ff0bfb1",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6247ec6bb2cff80b73ad92ad",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_624c2c6184d92f89aa5f0afc",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_62ddc64e78115174829e6a8c",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6338f65e7551b20e77f98220",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_637e286ce65cea55985cebba",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_63b10006d08762f7d96f0d36",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3593,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_63d0ff5c574b6dc115e61e6f",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_63eb0cb59672cbeebdac5446",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.311,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_65a4ea9b01005857b650e014",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.2918,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_65fd0afaf623ddaf679bb9c4",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_664a8157ee7031e314e6e05d",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_665cad0888264cf5553c1b22",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_66a5d43a758c15d3a692a71f",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_66cfcab17c7c9ed6da0c0d76",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6701b15f8d2a75d961be37b1",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4124,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_676435010060fc2cb81603eb",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_67e25186fb54aac01f9e2a7c",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_683a49a38e13e17429fbceed",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_684376d8313468acb7fbfc0d",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_69225577a283ed6459bc4f50",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_693c09bb270421d8642419ee",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3244,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6971f583852357dcaa1ed482",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6984f34dae04c1ad252620cd",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6ad28c15837c7c5e742cbba2",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6b9fad9780205df85bc27b75",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6bb707d8a9ac583860a125e6",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6c31ae50b0a876e9dd56b408",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6c540f3fc0813147db8e17e6",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6cc45b27ef3255ab2b480ce1",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3776,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6d061ef140db91cc46bc16f1",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3591,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6e0a6de9c7afa50f1a65dc50",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3523,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6e7337d8b645b679ed65557a",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6ef4f548b55c448f06a0c28f",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_6faf13bc0b5005566aa0c518",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7088b4ed94569fb12b4a7eff",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_70e5d622dffd6d16941fc792",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7182ddab6a62590a70e4d4cd",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.37,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_72c14d78315050222beff9d7",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_72f6d4b212baf58aee5f3447",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7334a9f5fa45c817fae8dd28",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_734496d92812fe82ec3e8b7c",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7358eca4224cca9fadad8999",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_74a00aff75a4fe5d0b971577",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_74c6127b8728e9297f954bd4",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_75aacb3591b0dc22920e4355",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_75c985bd2f15c1db3932502e",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_76f389b7c754c2593ff6f800",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_773c26f13526ef668d6919cc",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7780245c7def9c53380797c0",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_77a6ae456117401a5a2a9a86",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_77e083e5ef2e2b7db76f8405",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_785c7342748162a0424e7d0f",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_787069f228d01d4fa8fcab3e",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3178,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7970a3d74a5dd17df991d538",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7b9162db7fb5b03606e08dc3",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7c3177a7f110336670101436",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7ccbc51535cc263522d18dce",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7d0f2f202427990d62121a27",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4253,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7d453c3f3a42bf2d30e3cc6d",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3538,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7d58830377188ec98876dcd1",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7da932637de24ba1af86eecf",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7e1ab8813510947a7bed677f",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7e59b4a0316aec4c2cc45861",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7e7b8de84b02d1cfc30e09ec",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7e88c6acbc4a7b24a0cb58ac",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7ecf9f761e4fa16f43eb3afe",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7ed0ff9f542fbf668b1d5c50",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_7fcf394ed34b62281cd16e51",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_80045894861e672d72b88bcd",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_80fde60e334854527b423213",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3705,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8133d55385d86f60b8ca53c8",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_81343244941f538758f45c66",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8141ce99e2f57a546e5480e9",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8153e7db436e5b0809547866",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_818ee0654a73c50cd21412dc",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_819d50341edc16ec63c3bd6b",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3377,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_81bfc07733aae2846c351d33",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_826419ecdfbb0040d18c7e84",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3846,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_83710a26b7bce57c4d618c8e",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_83ab42fdc7480afc5f3c9f0c",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_84a1107313a29cf1d53f406b",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_84a89db9e2930d757f595739",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_855399827ab47e70d52b6b14",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_856e1f5d44aa5b56829b84ee",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_85757810fb0a6bbc72a6a03f",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8579b92ed657f7c0df842333",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3641,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_85b3206db298792206b30a4d",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_860545f75aa71bf17e2a63c8",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_86d137d16c77b759909624d2",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8704234cde83546952d9d059",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_876f72bccf5ec79b906ed699",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_879e05a39a6c5ea039c6c77b",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_88b219878fa4b31f219555f6",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_891658ed5e5cb2d97febf089",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_892b83e74f35c871d1e52318",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_894a6c2de07124c8e8d10381",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8bf21d598df75a128b6b6d76",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8c680576ebb5d6ec94117fa9",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8cd533f467bc9b4a3ac975c4",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8d4eaac46cfe9cd8d19e9d41",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8dacf81b9f19b89d2a41ebfb",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8dd37ae4cb62fa334a5fa120",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8eb307700a68568a58813898",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3443,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8ef9f39fc749ac54f98d4d8f",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3112,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_8ffdcadc4d151f7c4e79c5c8",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_905beebdf9a0d57fe9c32099",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_916ea032a6a1a4c98c039584",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9299519bbc6f01d44c8e428d",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_931b0d610766492d8cdaf56c",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9344478b2f36384423553b9b",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_93833d1889a515a47bce5230",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_93b0763ca0eac2e95ea460d4",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_94424a1654ac5b0f862ecbce",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9549d205c20d64a1ccce9300",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_95655e77ae03e10e6f37e484",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3365,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_95afa19b148d9abe8201ec5d",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3976,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_95c5c6f41cc021b7f02e5242",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_95fc1bc5722b9c251096ecc6",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9731fc050ffa2ec3ffab5f54",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3636,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_979dbb2e354e86ef40fb58b9",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9911883c089e494bd142c0c5",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3627,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_99187c660c8084c062a62989",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_996247cffcd9c1a4131bfd44",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3446,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9990f4adf3d5c92f255a6b1b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9a3e8cef7c143e60db0bf90b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9a8811da017840b3340506ff",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9b95f1d2ffddd11ef5cae02b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9be537eb6a9a980e9afcc992",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9cb586953aedb6ce6a516b8b",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3734,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9cbb260535f36402c7653715",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3474,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9cf3e9550e3bddff17762ad6",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9d068873e893b716a1432896",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9d407b6f2c1d9eab42ac6c9e",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9d80d2c0e6677b27aade9fd7",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9e0bcc647de949c06734abcc",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_9f2fe4bb7f1e437010d9cb5b",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a030fac4762ba4b34b22794b",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a06eb470ed81ac3220aebdb2",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4157,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a0beecdfb2cd064f2ad82825",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a0dcde49504bf125fb37699a",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a1213b41428ff4c951126490",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a13afa8c3bf2d8bc5b40229b",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a1464d25dfefa058a3b59af1",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a16c9adfc170ace2adc92717",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a1e5f001cca26e438f34d9af",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a226ff9692cc1d9c6e3e4c1f",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a246cca1eab8e4b822bbf177",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3518,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a3b98778c984cd38bf95fd90",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a3c75af0532923e03163b241",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a3d818ae1c6bb512c93d7805",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a465fc705bdc27e90e72fc7e",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a4a2c38c25d82230746f48cc",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a4f83613b930f3e7c0a441c5",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4025,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a549ecacaea9a90cd6d31b2e",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a5543043ac240d3009d7b2da",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a554d406986ee91f41678904",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a5acdb7d0c7c79f2e1e42de2",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a5b4818eb56cb8c52d4ea637",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a60308ffb9b174f225a4c91b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a663e657f51eaf72c1c8ff8c",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4373,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a6a2848fa088cdd9bb3f272a",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a75e8897024444968d893b6c",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a7ca4a08546111981ea91ca5",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a80dd0c44863dc657db3070a",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a816b62cf79f707815396c95",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3437,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a817ccd744cda6d15c56a6b2",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4181,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a8fbc10fde6de4c52b74a46a",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4525,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a915b07e4b529e94f91d38af",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a939366d36995ef3d273220a",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a966ee52f530bbaed5ccda36",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3578,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a96df1bbf35f8fc4940b7d8f",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_a9e72eca46dfcd121b682294",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_aa3527b980f59b83eb38d349",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ad616fe589aa15aa8b8c07fc",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_addb0cac2d05ec23906ebab4",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ae11021c6e781b3bccc6aa3d",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_af373dc4c3228f634c94a29f",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_af5567a9e78ba21701f54711",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_af5f1b41d74c7ddcaed81b9b",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_af83adc2ac60c199b796c0a6",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4554,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b00a2a55a4ef6facb313b186",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b0f8f89bc2d63909aca2042d",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b1228b4d81782326601bc7bb",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.358,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b1e34ab64e876b0de5388f73",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3176,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b2027b2c812313a0a62cae87",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b2096ad73d4359ec7df5351d",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4047,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b2336f05983fd38216a99d33",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b4e6c464275972ead7e4d19b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b50b27f7af991b09e847e5b1",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b5881d54bdd6e9a4f3c13d11",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.351,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b690bae45c11149e44191d49",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b6aed281f42c1e1b8c19d928",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b6b097114ecc22719f2b4c7f",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3555,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b6d7f730c16afeaea6698bd8",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b6dc21760f7e60cf0af21c8f",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.2389,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b755b1a0fa15a9b898d4f7bf",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b780c3d2f02f6b461d317b85",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b799d9490d1ef3446c701a57",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b82eb8bc4fac932a42cbbc6e",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b83598ce175924d33b5555b2",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b857027adb9a2cd0d0735f3b",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b881147be5168c0db422b64d",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b8ea10cc028d1abddd1b1baf",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_b98243283ef96cbe6da06f23",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_baa206a31c505a08e95797c1",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_bbf3cf969ec09bdba84f1888",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_bc90e1b3851a4589c497e31f",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_bd4288568dcb6abde607a451",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_bdea855d612e98a4890d9f22",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_bdf4643e89d6b2816f85ac39",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_be61cf8ef5158908ea4cac56",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_bf4beb5a42af1205b03a2489",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_bf623d8f9885441e43faaaff",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_bfcc9739c93cacb61a26b073",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.2744,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_bfd264e04cc7391acf4e7659",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_bfe65aaf0bab5a19d56a36b6",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c048bacd74b63c18ac25887d",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c08421bf552aadc90e668910",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c112c08ed098822a1b9a5e08",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c122e6f4ed0801f7e4597ab4",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4058,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c126b78d10fe808512fb1634",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4246,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c127c5d18b790ee30085d8f8",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c12ad2eaf1d06e21ba82910a",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4618,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c1551cfe78d4c444e800b2b7",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c2222e1ef972dbdab6d93314",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c2e5d9d4110e344d9466453a",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3308,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c3ee9a10e6826a8c51486604",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c414f3388bc5867df4d07dc5",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.2398,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c4610aa2a645364bc1669429",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c49822011230f7decef1982e",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3969,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c5217fc9a6a322959149e0de",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c5e825c38a2de3a53461eefb",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3449,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c678c68f57cb6d147099f9e5",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3111,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c691f4c7b55aee58bb5bc4dd",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4491,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c6de13267d147882e6f53eba",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c6ecffde1b3bd581f38dac70",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c82182cfdaf4cb405a372901",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3565,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c8e3e5a31264ae90fced9269",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c8ef3aaadd5e4dfe5a150da4",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c8f177bc4d58214a19cb4035",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c8fad59b8c00ce0491d50364",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c8fd407121d9cae31bfb902e",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c90fb92c494b05b69a2e2c77",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_c9878ddb535260d34d356cce",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ca21192357c0e37fdfdddd56",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cb268a254b92b2309b14da5f",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cbd805a86320ffc8fead5cf9",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cc10532c6c00e1c1f46c7fc2",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cc7faa86c3dbeae53b896f71",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cd6af7842e3e77e67851277c",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cd719bfb1a9c789fcc8c9b4a",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cd8a0682aed60548f0193180",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3134,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cd99dda9cea95882fdfeb16c",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3624,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ce7ed6bdffad6f438a89b0d5",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ce81904f9a811798668acf6c",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cf360d61f5c57c3e9556395f",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cf3d462548e8d498912c9725",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cf4001153277adcc3295d9c8",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_cf71141bdd237d83892d8bbc",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d00a451d5ecce519e0f45d92",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d0292a08b627db4bf5660004",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d029300017ef443ac5ede1a6",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d0db28efa85764130d2f0c39",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3366,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d0ffb1f9d69b9c5a841432fa",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3512,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d2419d02dc460cfa4ec85bef",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d28f7f3d59466770820278e4",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d31d1d2b0f39b7d738fe26d3",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3566,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d5168ca4330d07295eb08ae8",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d52a6d6ca1d2e0b5fea3b476",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d530f99fe00be305b55bdcaa",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d550e9651c4e407db11b1d21",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d589b1de95988cf2078c5e05",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d5ed7fe97e6060aee3c80ff3",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d6587c48a460337e9070c7ac",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d7fe3e4e0444d2244d071910",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d7feaf0f3627313aeedd3806",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d890cef5aefa9d513a39ffe5",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d897926174386473eec10a2a",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d8ddbbd4d8589a1340e1b126",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4445,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d9602a15ee0a9f710592cfb3",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4043,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_d9e06ed63d27b1947a041592",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_da38bbf0fd5e2c27f283214b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_da48125ae1e3dd31285cae56",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_da78f88185c9974a9e1022ba",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_db0bd49996fadfbea5187a25",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3963,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_db161b6ee5568bd0610e7316",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_db3937e3ddc078165ab642cc",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_db4af4f8de20d76f2cb0e371",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_dbcb8f56c86dae7007670ed4",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_dc3010c3a7943c199161382e",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3901,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_dc5420b5cf581782ca8e827a",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_dd31eb8f16e7e3c6b75a1ac4",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_df0cf1c8e99c98b584b6bfe2",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4437,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_df7a0ec6e3536017da3e681b",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4845,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_dfc26f9eafd9c1c8b39deee9",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e051bc213b4aed66d0714631",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.331,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e1009a63c37dd5eab4c83ebc",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e103ed01edd2de1589faef1a",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e109611e92d7d3111f02e6ec",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e116bf784a31b83b9973f18d",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e11a895d191e7b303b631692",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e24f87cd7e39db19847fd610",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e2c20e88defa936e9f9d75e6",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e3261da1319f6f7e476840fc",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e345483882aa5d81896e6284",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e3c01d317de97cb40d5f5ee5",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e4923af6452cf97e4283291a",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e52ba5615e68c363ad465351",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3713,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e54eedd7e927184cfa795cdd",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e5ab16c891b0e5074eb08a5d",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3515,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e5acde5e9e916774c53ae162",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e68fbed726eacf2c43d7dd49",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e7081150b401b6753bd010e2",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e768ea3f53e0b438227fadcb",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e7f3991f23083cbf92768b54",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e80774bfd01a863937151165",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_e930091b2583bdf09b9f1555",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ea2f3927b447c9fcd82cc1e6",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_eac7fcb07b1c6d03a7df9de5",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_eb2b46573b4d66a3d07d2207",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3319,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_eb60e1041efcc839dd55d579",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ebd52d5a1027428d89f44746",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ec387bc4657ddb7d0b35c57b",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ed2f85e2c2c577073c87f18c",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ee11d2c48fb7f44aafd684c5",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ee1c87be5e5c7fd14e8c5543",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3482,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ee9c88b91238eca688b4f8b4",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ef23932054fc45e26079906e",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ef7447c64ffa4d326dcf8adb",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ef7e6fa8ad89a4676118b89b",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ef8f20558565738a0d92d22d",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_efd5ee59fe9981e169eb2d21",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_efdf580bd36832a81596c3e7",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_efeaf2785a824a8186cdf0b6",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3638,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_eff669f3e7d05ea1e1ee6b56",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.2794,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f0d053602ee4b69d87ef259f",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f1244e086870d17771a3a270",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f1850719a0ec6731ac2c8e02",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f217082cff216c2b406802a7",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f28a94ae1058491c22e42e7a",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4404,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f2e69ebae797c50092d89caa",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f3073b75e5ef1350891a3ec9",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f33445611c2c05c3d4d3920e",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f3ff077e1c9e637ec8aee578",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f488192dc423f3a457f1c3ed",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f4d0039b2339b57c6aca132d",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f576d4564f8a4d3d264ddb93",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f5ea5c5879a40494bc1c642a",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f74cf00ff4d97fb768d0b216",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f7647d4aebfa02f700fd757e",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f7c39b8179aafedff3f0906d",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f81a2fffa9a8bf5059aef778",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.3221,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f83a110b79105eb869742154",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f8fac5599d6a103837cc14a5",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f929841c533314081bb36bd4",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f9603940f5f9e14a50017dde",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f991a330a06e7e8a38538d5b",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_f9ee6c10e4d1600527faae80",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fa2cef0918e9d57d445a94e7",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fa8011f42eae829c58095056",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.2818,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fa855972e4216b12374e4668",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_faa432b3a9f31cf569545770",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fb0b3a7b1c053e52a6b8f938",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fb78b0c9fb943d22ca22ffc8",
+      "expected_label": "act",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": 0.4747,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fbf483b8ca52a89ddbacff44",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fbfdcde48d388b08d7a4b59f",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fc606a31071fa1cd9e7e7abb",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fc72406abcc1fad4f883cb06",
+      "expected_label": "investigate_more",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.3,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fce779aa49f0270c380464bb",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fd0eb3c41d7a845f26b1b2af",
+      "expected_label": "abstain",
+      "measured_utility_by_label": {
+        "abstain": 0.3,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fd4cc50f02f5f20cb271d8a7",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fd55a2fe364acc6fa4d1ac1a",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_fe4276cc9ff40fb287887035",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_feb5f46c444f8713bcd69194",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ff70560e8b11a154d9c82538",
+      "expected_label": "no_action",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.1,
+        "investigate_more": 0.1,
+        "no_action": 0.3
+      }
+    },
+    {
+      "decision_episode_id": "p117_episode_ffa48df700feed84d67556c1",
+      "expected_label": "escalate",
+      "measured_utility_by_label": {
+        "abstain": 0.1,
+        "act": -0.4,
+        "escalate": 0.3,
+        "investigate_more": 0.1,
+        "no_action": 0.1
+      }
+    }
+  ],
+  "labels_hash": "sha256:6b82c5377cc3ab86cfe27b94af057b73f1bdaf5045c35393f364d920c84e2374",
+  "schema_version": "p117.evaluator_labels.v1"
+}

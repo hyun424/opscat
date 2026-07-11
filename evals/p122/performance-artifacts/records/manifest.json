@@ -1,0 +1,54 @@
+{
+  "bundle": {
+    "hash": "sha256:fa975516c14da583d084fcd960d084a16776ef703881988b072b49de27eabf80",
+    "line_count": 1000,
+    "ref": "observed-records.jsonl"
+  },
+  "classes": {
+    "audit_records": {
+      "count": 4000,
+      "hash": "sha256:0a97fa82dc10c048b0c19747889d822d00c4982103db500a2c25483da96b5d10"
+    },
+    "authority_records": {
+      "count": 1000,
+      "hash": "sha256:1211f0e4b27f69aee705310a64bfd3daba82cc603f868cde996d4a9cd3611cef"
+    },
+    "incident_records": {
+      "count": 1000,
+      "hash": "sha256:308cad4b9d70ddec175ff223f712486afcf80abbd1b44afc2d875901f769786c"
+    },
+    "replay_records": {
+      "count": 1000,
+      "hash": "sha256:d34a0f1c9837a97e99426d34fba074ae317ab2ab053bfe54ede86fe9b689005e"
+    },
+    "timeline_records": {
+      "count": 4000,
+      "hash": "sha256:96b25af725359495acdee9c5fafa6d10b832bfb0f075f3ae0ace86fcf60bd9ad"
+    }
+  },
+  "expected_records": {
+    "audit_records": 4000,
+    "authority_records": 1000,
+    "incident_records": 1000,
+    "replay_records": 1000,
+    "timeline_records": 4000
+  },
+  "iterations": 1000,
+  "manifest_hash": "sha256:655266d3854549c11001a8bd5cf461a9f3733d206db9891d54213028834adff4",
+  "observed_records": {
+    "audit_records": 4000,
+    "authority_records": 1000,
+    "incident_records": 1000,
+    "replay_records": 1000,
+    "timeline_records": 4000
+  },
+  "record_loss": {
+    "lost_audit_records": 0,
+    "lost_authority_records": 0,
+    "lost_incident_records": 0,
+    "lost_replay_records": 0,
+    "lost_timeline_records": 0
+  },
+  "schema_version": "p122.performance_record_manifest.v2",
+  "semantic_binding": "sha256:7e1feebfa023a551c0600093dcea49bfb77c3da429f2965cf6dc49c555cef75a"
+}

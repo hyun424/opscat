@@ -1,0 +1,3184 @@
+{
+  "benchmark_provenance": {
+    "arm": "candidate",
+    "benchmark_role": "blind",
+    "blind_source_hash": "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+    "case_offset": 0,
+    "freeze_hash": "sha256:89458f4534a208828875298c52f137549aac05fb59d66a765667c68ba0408a1a",
+    "implementation_hash": "sha256:e0002438532183e8cf8c7aa57ac0907850a6af349709ea26cdb3ce7c1904b5c5",
+    "repetition": 4,
+    "request": {
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provider_api": "openai-chat-completions-v1",
+      "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+      "system_prompt_sha256": "c79d9cffa7defd02a938f6013203730b4523a5384eba2a45b7019b5133976097"
+    },
+    "run_id": "p112-candidate-r1",
+    "schema_version": "p112.blind_batch_provenance.v1",
+    "selected_case_count": 5,
+    "selected_case_ids": [
+      "p112_0c82745c2ceef833ac8edcc4",
+      "p112_10436656e8b525420f990bb9",
+      "p112_161d5b0a349ed1c3234e7d48",
+      "p112_1bf2f53a75919bf14a5e243f",
+      "p112_2fbd63f62a5d46284d0bd0a9"
+    ]
+  },
+  "budget": {
+    "max_calls": 5,
+    "max_cases": 5,
+    "max_retries": 1,
+    "provider_call_count": 5
+  },
+  "cache": {
+    "hit_count": 0,
+    "write_count": 0
+  },
+  "mode": "nvidia",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b",
+  "predictions": [
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "inspect currencyservice latency traces for external dependency delays",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "check checkoutservice downstream service calls and database queries",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "verify network latency and connection pool settings for adservice and cartservice",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "examine frontend request routing and backend service latencies",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "83a8491400e138cd183a47e4186a6b90299fac0069911d85cca489325ad518c7",
+      "candidate_context": null,
+      "case_id": "p112_0c82745c2ceef833ac8edcc4",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 129486,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "3d2661686ce30b4c607a042cba2aad24ca8cf0b4b6734a8f3bae4474f3ca455d",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "83a8491400e138cd183a47e4186a6b90299fac0069911d85cca489325ad518c7",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "3d2661686ce30b4c607a042cba2aad24ca8cf0b4b6734a8f3bae4474f3ca455d",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "90e2965dffcb924e9a7c32c64aec321206f1ceab279768d6838a59f26546dab5"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_0c82745c2ceef833ac8edcc4\",\n  \"ranked_services\": [\n    \"currencyservice\",\n    \"adservice\",\n    \"cartservice\",\n    \"checkoutservice\",\n    \"frontend\"\n  ],\n  \"fault_type\": \"delay\",\n  \"evidence_refs\": [\n    \"ev_d030236dad5b942f9ebfd522\",\n    \"ev_5c955dea17c5582b98cf578d\",\n    \"ev_f6b4b1067701a459e6532e02\",\n    \"ev_f33b55046d0bd26dcb7073fa\",\n    \"ev_45e5323d21ce6a9c76d22b8e\",\n    \"ev_8d731d69d3178b75f6a35b90\",\n    \"ev_4c682f9e189b3131d33aceb9\",\n    \"ev_89ea18e395563b9b0ca863dc\",\n    \"ev_06590a6d61ddf9d82039cee8\",\n    \"ev_5ea6a5f8b5fec01f03126a59\"\n  ],\n  \"confidence\": 0.75,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect currencyservice latency traces for external dependency delays\",\n    \"check checkoutservice downstream service calls and database queries\",\n    \"verify network latency and connection pool settings for adservice and cartservice\",\n    \"examine frontend request routing and backend service latencies\"\n  ]\n}",
+      "raw_response_sha256": "90e2965dffcb924e9a7c32c64aec321206f1ceab279768d6838a59f26546dab5",
+      "validation_errors": [
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    },
+    {
+      "abstain": false,
+      "advisory_action_risk": [
+        {
+          "action": "inspect adservice CPU usage and thread contention",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "check for infinite loops or heavy computations in adservice",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "review downstream service latency impacts",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "advisory_actions": [
+        "inspect adservice CPU usage and thread contention",
+        "check for infinite loops or heavy computations in adservice",
+        "review downstream service latency impacts"
+      ],
+      "cache_key": "134c101ad267b1740fe3f968a22788f423ee27129e282fc36d9484a9932ffc53",
+      "candidate_context": {
+        "case_id": "p112_10436656e8b525420f990bb9",
+        "diagnostic_evidence": [
+          {
+            "absolute_score": 100.0,
+            "evidence_id": "ev_d39fc666873e1b1698be9a7e",
+            "metric": "cpu",
+            "post_center": 96.780272214772,
+            "pre_center": 2.711941306528,
+            "sample_count": 4201,
+            "service": "adservice",
+            "signed_score": 100.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 5.215503113733,
+            "evidence_id": "ev_afe5e7e515209b4fafb9c0b5",
+            "metric": "mem",
+            "post_center": 105189376.0,
+            "pre_center": 99975168.0,
+            "sample_count": 4201,
+            "service": "adservice",
+            "signed_score": 5.215503113733,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 2.123426313817,
+            "evidence_id": "ev_405f50dbf150392159e94194",
+            "metric": "latency",
+            "post_center": 0.227449811794,
+            "pre_center": 0.198426797162,
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "signed_score": 2.123426313817,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 1.80457257599,
+            "evidence_id": "ev_71652003b87adc570d8d87fb",
+            "metric": "latency",
+            "post_center": 0.2625,
+            "pre_center": 0.226442819149,
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "signed_score": 1.80457257599,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 1.690073081166,
+            "evidence_id": "ev_a6f07d3673eff8de1c3b73bb",
+            "metric": "latency",
+            "post_center": 0.229842893679,
+            "pre_center": 0.198092722646,
+            "sample_count": 4201,
+            "service": "currencyservice",
+            "signed_score": 1.690073081166,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 1.636383558485,
+            "evidence_id": "ev_3097c2402e80bc092e203065",
+            "metric": "latency",
+            "post_center": 0.098939393939,
+            "pre_center": 0.080721951817,
+            "sample_count": 4201,
+            "service": "adservice",
+            "signed_score": 1.636383558485,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 1.624959734778,
+            "evidence_id": "ev_1e2568db9fecfe4152439e39",
+            "metric": "latency",
+            "post_center": 0.811538461538,
+            "pre_center": 0.484042553191,
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "signed_score": 1.624959734778,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.638139902353,
+            "evidence_id": "ev_0624bd72388b08ae04fce703",
+            "metric": "cpu",
+            "post_center": 1.069640169336,
+            "pre_center": 1.171658470852,
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "signed_score": -0.638139902353,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.548339233145,
+            "evidence_id": "ev_5bb2c574537eb0c56130cbff",
+            "metric": "cpu",
+            "post_center": 11.029907819917,
+            "pre_center": 12.135008122432,
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "signed_score": -0.548339233145,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.482368978017,
+            "evidence_id": "ev_3c3b85c02e0be9c5b2b1e856",
+            "metric": "cpu",
+            "post_center": 10.594533168891,
+            "pre_center": 11.184094384277,
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "signed_score": -0.482368978017,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.389129284313,
+            "evidence_id": "ev_6c2acaaac51bb05bc00f1cb5",
+            "metric": "load",
+            "post_center": 364.0,
+            "pre_center": 424.0,
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "signed_score": -0.389129284313,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.348874530764,
+            "evidence_id": "ev_5fb95b99f95036d41a586556",
+            "metric": "load",
+            "post_center": 204.0,
+            "pre_center": 234.0,
+            "sample_count": 4201,
+            "service": "currencyservice",
+            "signed_score": -0.348874530764,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.311303427451,
+            "evidence_id": "ev_dd30faff3f56b9358f46df33",
+            "metric": "mem",
+            "post_center": 9986048.0,
+            "pre_center": 9912320.0,
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "signed_score": 0.311303427451,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.299773670878,
+            "evidence_id": "ev_7456bfb9292ae785962088e2",
+            "metric": "load",
+            "post_center": 38.0,
+            "pre_center": 46.0,
+            "sample_count": 4201,
+            "service": "adservice",
+            "signed_score": -0.299773670878,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.269796303791,
+            "evidence_id": "ev_4b954ba03003f7d31220204a",
+            "metric": "load",
+            "post_center": 48.0,
+            "pre_center": 56.0,
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "signed_score": -0.269796303791,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.227750126577,
+            "evidence_id": "ev_ef4050191a44130512be91b0",
+            "metric": "mem",
+            "post_center": 11943936.0,
+            "pre_center": 11890688.0,
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "signed_score": 0.227750126577,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.095653098098,
+            "evidence_id": "ev_1cee5d91ef7a72c6ba1e717f",
+            "metric": "mem",
+            "post_center": 38502400.0,
+            "pre_center": 38539264.0,
+            "sample_count": 4201,
+            "service": "currencyservice",
+            "signed_score": -0.095653098098,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.092370184033,
+            "evidence_id": "ev_7732e14d60aab6ba87915dc2",
+            "metric": "cpu",
+            "post_center": 17.106503991538,
+            "pre_center": 17.428539267781,
+            "sample_count": 4201,
+            "service": "currencyservice",
+            "signed_score": -0.092370184033,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.03369556061,
+            "evidence_id": "ev_57e6db365f66840a876244e2",
+            "metric": "mem",
+            "post_center": 48640000.0,
+            "pre_center": 48623616.0,
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "signed_score": 0.03369556061,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.0,
+            "evidence_id": "ev_d644fa1f87be553f30b9cebe",
+            "metric": "load",
+            "post_center": 2.0,
+            "pre_center": 2.0,
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "signed_score": 0.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "robust_post_shift"
+          }
+        ],
+        "evidence": [
+          {
+            "id": "ev_a9617fac529d4b60271d3015",
+            "metric": "cpu",
+            "sample_count": 4201,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 91.271572,
+            "window": "delta"
+          },
+          {
+            "id": "ev_8b52091cc75dcf2d75459195",
+            "metric": "cpu",
+            "sample_count": 2101,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 93.942132,
+            "window": "post"
+          },
+          {
+            "id": "ev_f06de64d23bd7815f7730d6d",
+            "metric": "cpu",
+            "sample_count": 2100,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 2.67056,
+            "window": "pre"
+          },
+          {
+            "id": "ev_dfd5a5fc467ed7240ee91594",
+            "metric": "latency",
+            "sample_count": 4201,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.029294,
+            "window": "delta"
+          },
+          {
+            "id": "ev_1bcbd1a6a726c75e185a6a29",
+            "metric": "latency",
+            "sample_count": 2101,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 0.093695,
+            "window": "post"
+          },
+          {
+            "id": "ev_3868985832f1488fc929ba76",
+            "metric": "latency",
+            "sample_count": 2100,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 0.064401,
+            "window": "pre"
+          },
+          {
+            "id": "ev_9bb3e5706a37143bd7589b0c",
+            "metric": "load",
+            "sample_count": 4201,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -4.95693,
+            "window": "delta"
+          },
+          {
+            "id": "ev_c8cfeb32e56596d9107a4408",
+            "metric": "load",
+            "sample_count": 2101,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 40.080233,
+            "window": "post"
+          },
+          {
+            "id": "ev_117a9af03f077899308b162b",
+            "metric": "load",
+            "sample_count": 2100,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 45.037163,
+            "window": "pre"
+          },
+          {
+            "id": "ev_a38c82defca659b20f43f664",
+            "metric": "mem",
+            "sample_count": 4201,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 5318493.792978,
+            "window": "delta"
+          },
+          {
+            "id": "ev_1db4d39897080d196764bca5",
+            "metric": "mem",
+            "sample_count": 2101,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 105300634.745359,
+            "window": "post"
+          },
+          {
+            "id": "ev_571c971192ef92948b528b31",
+            "metric": "mem",
+            "sample_count": 2100,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 99982140.952381,
+            "window": "pre"
+          },
+          {
+            "id": "ev_3a88ca2a34842e9edb262522",
+            "metric": "cpu",
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -0.11531,
+            "window": "delta"
+          },
+          {
+            "id": "ev_4941298d1621a936d620260f",
+            "metric": "cpu",
+            "sample_count": 2101,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 1.125028,
+            "window": "post"
+          },
+          {
+            "id": "ev_2cb57eade4ec1d7a67669cb1",
+            "metric": "cpu",
+            "sample_count": 2100,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 1.240338,
+            "window": "pre"
+          },
+          {
+            "id": "ev_2f695c2f5fe5e8ccc893f6f0",
+            "metric": "latency",
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.216197,
+            "window": "delta"
+          },
+          {
+            "id": "ev_aa1dede32b29c6aee1dfe04d",
+            "metric": "latency",
+            "sample_count": 2101,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 0.721314,
+            "window": "post"
+          },
+          {
+            "id": "ev_bfd9e33f7ed40a36b2fc2fa2",
+            "metric": "latency",
+            "sample_count": 2100,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 0.505117,
+            "window": "pre"
+          },
+          {
+            "id": "ev_7720b676dff1f17c84c55cec",
+            "metric": "load",
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -0.300156,
+            "window": "delta"
+          },
+          {
+            "id": "ev_fc6b300011f28c0d640b6a37",
+            "metric": "load",
+            "sample_count": 2101,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 2.531765,
+            "window": "post"
+          },
+          {
+            "id": "ev_9e9129a55bc17f05a66fe037",
+            "metric": "load",
+            "sample_count": 2100,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 2.831921,
+            "window": "pre"
+          },
+          {
+            "id": "ev_3e447f6f2e2f71d21843893d",
+            "metric": "mem",
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 49803.265021,
+            "window": "delta"
+          },
+          {
+            "id": "ev_e0144f4324445b9a32cf7d11",
+            "metric": "mem",
+            "sample_count": 2101,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 11936151.455497,
+            "window": "post"
+          },
+          {
+            "id": "ev_0a981d6c8e9f1cac3284dce8",
+            "metric": "mem",
+            "sample_count": 2100,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 11886348.190476,
+            "window": "pre"
+          },
+          {
+            "id": "ev_4ec48bb05a005df73b454fda",
+            "metric": "cpu",
+            "sample_count": 4201,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -0.02311,
+            "window": "delta"
+          },
+          {
+            "id": "ev_549226bb27271f5625926697",
+            "metric": "cpu",
+            "sample_count": 2101,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 15.666416,
+            "window": "post"
+          },
+          {
+            "id": "ev_ceb1e702e8ebec552d43b4aa",
+            "metric": "cpu",
+            "sample_count": 2100,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 15.689526,
+            "window": "pre"
+          },
+          {
+            "id": "ev_af2d7f365faf13780ed3f63b",
+            "metric": "latency",
+            "sample_count": 4201,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.041246,
+            "window": "delta"
+          },
+          {
+            "id": "ev_a430b6495c67bf9b7c4e9e70",
+            "metric": "latency",
+            "sample_count": 2101,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 0.195645,
+            "window": "post"
+          },
+          {
+            "id": "ev_adc6f75efb4ee9774399c6c4",
+            "metric": "latency",
+            "sample_count": 2100,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 0.154399,
+            "window": "pre"
+          },
+          {
+            "id": "ev_8c692a8bddd4e2208fbb4b24",
+            "metric": "load",
+            "sample_count": 4201,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -26.178825,
+            "window": "delta"
+          },
+          {
+            "id": "ev_5ab3739b85922f0a421c93cb",
+            "metric": "load",
+            "sample_count": 2101,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 212.47671,
+            "window": "post"
+          },
+          {
+            "id": "ev_85abdcf08aa80b0a20d9f9b2",
+            "metric": "load",
+            "sample_count": 2100,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 238.655535,
+            "window": "pre"
+          },
+          {
+            "id": "ev_cc07615a99eb8c54e85ba848",
+            "metric": "mem",
+            "sample_count": 4201,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -5482.847057,
+            "window": "delta"
+          },
+          {
+            "id": "ev_e6c87868d8ab4471dbf017a9",
+            "metric": "mem",
+            "sample_count": 2101,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 38781050.821514,
+            "window": "post"
+          },
+          {
+            "id": "ev_257e2e6772faba3bf2d7b67a",
+            "metric": "mem",
+            "sample_count": 2100,
+            "service": "currencyservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 38786533.668571,
+            "window": "pre"
+          },
+          {
+            "id": "ev_6585337d3e671d9c75f7fe3d",
+            "metric": "cpu",
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -0.591236,
+            "window": "delta"
+          },
+          {
+            "id": "ev_2306b802d379a1833a70cfae",
+            "metric": "cpu",
+            "sample_count": 2101,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 10.576779,
+            "window": "post"
+          },
+          {
+            "id": "ev_6d0cb166a8cfa5a3b1afcb83",
+            "metric": "cpu",
+            "sample_count": 2100,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 11.168015,
+            "window": "pre"
+          },
+          {
+            "id": "ev_7a8b98894e2bf0833bd889ba",
+            "metric": "latency",
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.039979,
+            "window": "delta"
+          },
+          {
+            "id": "ev_858fa8ecc406ca3989357075",
+            "metric": "latency",
+            "sample_count": 2101,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 0.192555,
+            "window": "post"
+          },
+          {
+            "id": "ev_2bbcef8171c70cedee82e5b2",
+            "metric": "latency",
+            "sample_count": 2100,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 0.152576,
+            "window": "pre"
+          },
+          {
+            "id": "ev_e44e28ac9c3a6df08a1ecb78",
+            "metric": "load",
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -51.800403,
+            "window": "delta"
+          },
+          {
+            "id": "ev_ad2ab6f9dc7ec9057136c797",
+            "metric": "load",
+            "sample_count": 2101,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 379.968858,
+            "window": "post"
+          },
+          {
+            "id": "ev_aadb99d31f35ba25b4b724ed",
+            "metric": "load",
+            "sample_count": 2100,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 431.769261,
+            "window": "pre"
+          },
+          {
+            "id": "ev_265d0cf064ddd5dfec0af10a",
+            "metric": "mem",
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 76605.363642,
+            "window": "delta"
+          },
+          {
+            "id": "ev_cb0f37ee3a0fad1eb19b33ae",
+            "metric": "mem",
+            "sample_count": 2101,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 10042528.350309,
+            "window": "post"
+          },
+          {
+            "id": "ev_44c6a91edb1f386e28738d95",
+            "metric": "mem",
+            "sample_count": 2100,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 9965922.986667,
+            "window": "pre"
+          },
+          {
+            "id": "ev_b742728d1567339242e1ece3",
+            "metric": "cpu",
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -0.648828,
+            "window": "delta"
+          },
+          {
+            "id": "ev_fde84edb67ea24b7f5b6725f",
+            "metric": "cpu",
+            "sample_count": 2101,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 10.38255,
+            "window": "post"
+          },
+          {
+            "id": "ev_bfc77e1c2c0e54b49d34cb4e",
+            "metric": "cpu",
+            "sample_count": 2100,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 11.031378,
+            "window": "pre"
+          },
+          {
+            "id": "ev_766ae1727bcbe4ae64df7c1a",
+            "metric": "latency",
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.069762,
+            "window": "delta"
+          },
+          {
+            "id": "ev_345d08fa4199aa8b1cf9da58",
+            "metric": "latency",
+            "sample_count": 2101,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 0.2534,
+            "window": "post"
+          },
+          {
+            "id": "ev_ed756d45d9713b20b1b7e7c8",
+            "metric": "latency",
+            "sample_count": 2100,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 0.183638,
+            "window": "pre"
+          },
+          {
+            "id": "ev_621d64e2ff87f64477daa8af",
+            "metric": "load",
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -7.3007,
+            "window": "delta"
+          },
+          {
+            "id": "ev_8faf65d9d391fa77ca744756",
+            "metric": "load",
+            "sample_count": 2101,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 49.235256,
+            "window": "post"
+          },
+          {
+            "id": "ev_5ada9c8067a5adb3bf16176d",
+            "metric": "load",
+            "sample_count": 2100,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 56.535956,
+            "window": "pre"
+          },
+          {
+            "id": "ev_898cfa67c3f72149c0fe7974",
+            "metric": "mem",
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 53564.23894,
+            "window": "delta"
+          },
+          {
+            "id": "ev_af5720ec6d9baddeaac1087a",
+            "metric": "mem",
+            "sample_count": 2101,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 48725466.227511,
+            "window": "post"
+          },
+          {
+            "id": "ev_f5704bcdfcb3915c2f195400",
+            "metric": "mem",
+            "sample_count": 2100,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "eadb255014de4c7ac03b983968bc8eaae0715d917895d87a5f4dde9311541b49"
+            },
+            "statistic": "mean",
+            "value": 48671901.988571,
+            "window": "pre"
+          }
+        ],
+        "evidence_ids": [
+          "ev_a9617fac529d4b60271d3015",
+          "ev_8b52091cc75dcf2d75459195",
+          "ev_f06de64d23bd7815f7730d6d",
+          "ev_dfd5a5fc467ed7240ee91594",
+          "ev_1bcbd1a6a726c75e185a6a29",
+          "ev_3868985832f1488fc929ba76",
+          "ev_9bb3e5706a37143bd7589b0c",
+          "ev_c8cfeb32e56596d9107a4408",
+          "ev_117a9af03f077899308b162b",
+          "ev_a38c82defca659b20f43f664",
+          "ev_1db4d39897080d196764bca5",
+          "ev_571c971192ef92948b528b31",
+          "ev_3a88ca2a34842e9edb262522",
+          "ev_4941298d1621a936d620260f",
+          "ev_2cb57eade4ec1d7a67669cb1",
+          "ev_2f695c2f5fe5e8ccc893f6f0",
+          "ev_aa1dede32b29c6aee1dfe04d",
+          "ev_bfd9e33f7ed40a36b2fc2fa2",
+          "ev_7720b676dff1f17c84c55cec",
+          "ev_fc6b300011f28c0d640b6a37",
+          "ev_9e9129a55bc17f05a66fe037",
+          "ev_3e447f6f2e2f71d21843893d",
+          "ev_e0144f4324445b9a32cf7d11",
+          "ev_0a981d6c8e9f1cac3284dce8",
+          "ev_4ec48bb05a005df73b454fda",
+          "ev_549226bb27271f5625926697",
+          "ev_ceb1e702e8ebec552d43b4aa",
+          "ev_af2d7f365faf13780ed3f63b",
+          "ev_a430b6495c67bf9b7c4e9e70",
+          "ev_adc6f75efb4ee9774399c6c4",
+          "ev_8c692a8bddd4e2208fbb4b24",
+          "ev_5ab3739b85922f0a421c93cb",
+          "ev_85abdcf08aa80b0a20d9f9b2",
+          "ev_cc07615a99eb8c54e85ba848",
+          "ev_e6c87868d8ab4471dbf017a9",
+          "ev_257e2e6772faba3bf2d7b67a",
+          "ev_6585337d3e671d9c75f7fe3d",
+          "ev_2306b802d379a1833a70cfae",
+          "ev_6d0cb166a8cfa5a3b1afcb83",
+          "ev_7a8b98894e2bf0833bd889ba",
+          "ev_858fa8ecc406ca3989357075",
+          "ev_2bbcef8171c70cedee82e5b2",
+          "ev_e44e28ac9c3a6df08a1ecb78",
+          "ev_ad2ab6f9dc7ec9057136c797",
+          "ev_aadb99d31f35ba25b4b724ed",
+          "ev_265d0cf064ddd5dfec0af10a",
+          "ev_cb0f37ee3a0fad1eb19b33ae",
+          "ev_44c6a91edb1f386e28738d95",
+          "ev_b742728d1567339242e1ece3",
+          "ev_fde84edb67ea24b7f5b6725f",
+          "ev_bfc77e1c2c0e54b49d34cb4e",
+          "ev_766ae1727bcbe4ae64df7c1a",
+          "ev_345d08fa4199aa8b1cf9da58",
+          "ev_ed756d45d9713b20b1b7e7c8",
+          "ev_621d64e2ff87f64477daa8af",
+          "ev_8faf65d9d391fa77ca744756",
+          "ev_5ada9c8067a5adb3bf16176d",
+          "ev_898cfa67c3f72149c0fe7974",
+          "ev_af5720ec6d9baddeaac1087a",
+          "ev_f5704bcdfcb3915c2f195400"
+        ],
+        "fault_allowlist": [
+          "cpu",
+          "mem",
+          "disk",
+          "delay",
+          "loss"
+        ],
+        "hashes": {
+          "model_artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+          "source_packet_hash": "sha256:6f50e64e7005c654d79400b5389ee7f89d5dc9d4ec6920a28b8e28a96db9c43d"
+        },
+        "model_scores": {
+          "artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+          "ranked_faults": [
+            "cpu",
+            "mem",
+            "loss",
+            "disk",
+            "delay"
+          ],
+          "ranked_pairs": [
+            {
+              "fault": "cpu",
+              "score": 2.194195901862,
+              "service": "adservice"
+            },
+            {
+              "fault": "mem",
+              "score": 5.858599636163,
+              "service": "adservice"
+            },
+            {
+              "fault": "cpu",
+              "score": 11.186336619245,
+              "service": "recommendationservice"
+            },
+            {
+              "fault": "loss",
+              "score": 11.2605373373,
+              "service": "checkoutservice"
+            },
+            {
+              "fault": "disk",
+              "score": 12.095113884133,
+              "service": "adservice"
+            },
+            {
+              "fault": "cpu",
+              "score": 14.257837480089,
+              "service": "productcatalogservice"
+            },
+            {
+              "fault": "loss",
+              "score": 15.098891971711,
+              "service": "currencyservice"
+            },
+            {
+              "fault": "cpu",
+              "score": 15.153771892447,
+              "service": "shippingservice"
+            },
+            {
+              "fault": "cpu",
+              "score": 15.577755185981,
+              "service": "paymentservice"
+            },
+            {
+              "fault": "loss",
+              "score": 17.349964173677,
+              "service": "cartservice"
+            },
+            {
+              "fault": "loss",
+              "score": 18.276783413773,
+              "service": "frontend"
+            },
+            {
+              "fault": "cpu",
+              "score": 18.530756852733,
+              "service": "emailservice"
+            },
+            {
+              "fault": "loss",
+              "score": 18.980529661316,
+              "service": "shippingservice"
+            },
+            {
+              "fault": "loss",
+              "score": 19.154463912916,
+              "service": "recommendationservice"
+            },
+            {
+              "fault": "cpu",
+              "score": 20.994405972734,
+              "service": "frontend"
+            }
+          ],
+          "ranked_services": [
+            "adservice",
+            "recommendationservice",
+            "checkoutservice",
+            "productcatalogservice",
+            "currencyservice",
+            "shippingservice",
+            "paymentservice",
+            "cartservice",
+            "frontend",
+            "emailservice"
+          ],
+          "schema_version": "p112.cross_system_scores.v1"
+        },
+        "packet_hash": "sha256:932630af6308ed530721e531e06ba35fdb5d99f3a733da07e2fa90bba8bf5648",
+        "prompt_hash": "sha256:08c8f42221f21004fc8458c9f75fdced320c9c625ef4f9c224e4d50613627029",
+        "schema_version": "p112.multistage_rca_packet.v1",
+        "service_allowlist": [
+          "adservice",
+          "recommendationservice",
+          "checkoutservice",
+          "productcatalogservice",
+          "currencyservice",
+          "shippingservice",
+          "paymentservice",
+          "cartservice",
+          "frontend",
+          "emailservice"
+        ],
+        "system_id": "online_boutique"
+      },
+      "case_id": "p112_10436656e8b525420f990bb9",
+      "confidence": 0.9,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [
+        "ev_a9617fac529d4b60271d3015",
+        "ev_8b52091cc75dcf2d75459195",
+        "ev_f06de64d23bd7815f7730d6d",
+        "ev_2f695c2f5fe5e8ccc893f6f0",
+        "ev_7a8b98894e2bf0833bd889ba",
+        "ev_766ae1727bcbe4ae64df7c1a",
+        "ev_af2d7f365faf13780ed3f63b"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "latency_ms": 42046,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "291ef5948fab631fdfa3f0e97e9fc3754fe0b7ca8144dbc9436be15022c44e41",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "134c101ad267b1740fe3f968a22788f423ee27129e282fc36d9484a9932ffc53",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "291ef5948fab631fdfa3f0e97e9fc3754fe0b7ca8144dbc9436be15022c44e41",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "b6adc84124f1d6f446ef5bb2cea498544c877bc1257fcea1d56a5264c931a411"
+      },
+      "provider_stage": {
+        "parsed_fault_type": "cpu",
+        "parsed_ranked_services": [
+          "adservice",
+          "checkoutservice",
+          "productcatalogservice",
+          "recommendationservice",
+          "currencyservice"
+        ],
+        "raw_response": "{\n  \"case_id\": \"p112_10436656e8b525420f990bb9\",\n  \"ranked_services\": [\n    \"adservice\",\n    \"checkoutservice\",\n    \"productcatalogservice\",\n    \"recommendationservice\",\n    \"currencyservice\"\n  ],\n  \"fault_type\": \"cpu\",\n  \"evidence_refs\": [\n    \"ev_a9617fac529d4b60271d3015\",\n    \"ev_8b52091cc75dcf2d75459195\",\n    \"ev_f06de64d23bd7815f7730d6d\",\n    \"ev_2f695c2f5fe5e8ccc893f6f0\",\n    \"ev_7a8b98894e2bf0833bd889ba\",\n    \"ev_766ae1727bcbe4ae64df7c1a\",\n    \"ev_af2d7f365faf13780ed3f63b\"\n  ],\n  \"confidence\": 0.9,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect adservice CPU usage and thread contention\",\n    \"check for infinite loops or heavy computations in adservice\",\n    \"review downstream service latency impacts\"\n  ]\n}",
+        "raw_response_sha256": "878d1db89be441c24a7f484179894b9bf9151cfe323aae4f6eda16e500f508ea"
+      },
+      "ranked_services": [
+        "adservice",
+        "recommendationservice",
+        "checkoutservice",
+        "productcatalogservice",
+        "currencyservice"
+      ],
+      "raw_response": "{\"abstain\":false,\"advisory_actions\":[\"inspect adservice CPU usage and thread contention\",\"check for infinite loops or heavy computations in adservice\",\"review downstream service latency impacts\"],\"case_id\":\"p112_10436656e8b525420f990bb9\",\"confidence\":0.9,\"evidence_refs\":[\"ev_a9617fac529d4b60271d3015\",\"ev_8b52091cc75dcf2d75459195\",\"ev_f06de64d23bd7815f7730d6d\",\"ev_2f695c2f5fe5e8ccc893f6f0\",\"ev_7a8b98894e2bf0833bd889ba\",\"ev_766ae1727bcbe4ae64df7c1a\",\"ev_af2d7f365faf13780ed3f63b\"],\"fault_type\":\"cpu\",\"ranked_services\":[\"adservice\",\"recommendationservice\",\"checkoutservice\",\"productcatalogservice\",\"currencyservice\"]}",
+      "raw_response_sha256": "b6adc84124f1d6f446ef5bb2cea498544c877bc1257fcea1d56a5264c931a411",
+      "synthesis": {
+        "model_artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+        "ranked_faults": [
+          "cpu",
+          "mem",
+          "loss",
+          "disk",
+          "delay"
+        ],
+        "ranked_services": [
+          "adservice",
+          "recommendationservice",
+          "checkoutservice",
+          "productcatalogservice",
+          "currencyservice"
+        ],
+        "response_origin": "deterministic_synthesis",
+        "schema_version": "p112.deterministic_synthesis.v1",
+        "selected_fault": "cpu",
+        "selected_service": "adservice"
+      },
+      "validation_errors": [],
+      "validation_status": "valid"
+    },
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "inspect currencyservice memory usage and garbage collection logs",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "check for memory leaks in currencyservice",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "monitor currencyservice CPU and latency correlation",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "review currencyservice recent deployments or configuration changes",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "b8fbf244f8a2b4d76e2bba40fe29e8327ddeea7f79bf823d18956356d0f25765",
+      "candidate_context": null,
+      "case_id": "p112_161d5b0a349ed1c3234e7d48",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 54123,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "47b98405e74b3f303cb154c4383ba8189a5545cc20fe5f9786b1c45467340585",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "b8fbf244f8a2b4d76e2bba40fe29e8327ddeea7f79bf823d18956356d0f25765",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "47b98405e74b3f303cb154c4383ba8189a5545cc20fe5f9786b1c45467340585",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "4dd72314dad998f054d460c1140d48d240285b867ca27c5d07533e42ddead7fd"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_161d5b0a349ed1c3234e7d48\",\n  \"ranked_services\": [\n    \"currencyservice\",\n    \"checkoutservice\",\n    \"frontend\",\n    \"recommendationservice\",\n    \"productcatalogservice\",\n    \"paymentservice\",\n    \"shippingservice\",\n    \"cartservice\",\n    \"adservice\",\n    \"emailservice\"\n  ],\n  \"fault_type\": \"mem\",\n  \"evidence_refs\": [\n    \"ev_ff2c0792fb73fd5714972827\",\n    \"ev_c4924d2400d786e3a3f4f94a\",\n    \"ev_94bd7a78d39d704553f604cf\",\n    \"ev_bea9c8451b5c3ebb211d34df\",\n    \"ev_00d20108c7557f2cf36eb0e3\",\n    \"ev_839907ead722eb61cc7dd338\",\n    \"ev_133fb86f2a27393974b3aae0\",\n    \"ev_892d5d5884ea161a99fee0ac\",\n    \"ev_685d3859d34fa2f8eb447fb9\"\n  ],\n  \"confidence\": 0.92,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect currencyservice memory usage and garbage collection logs\",\n    \"check for memory leaks in currencyservice\",\n    \"monitor currencyservice CPU and latency correlation\",\n    \"review currencyservice recent deployments or configuration changes\"\n  ]\n}",
+      "raw_response_sha256": "4dd72314dad998f054d460c1140d48d240285b867ca27c5d07533e42ddead7fd",
+      "validation_errors": [
+        "too_many_ranked_services",
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    },
+    {
+      "abstain": false,
+      "advisory_action_risk": [
+        {
+          "action": "inspect cartservice memory usage for leaks or unbounded growth",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "profile cartservice CPU to determine if high CPU is a symptom of memory pressure (e.g., GC)",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "check downstream latency impact on checkoutservice and frontend",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "advisory_actions": [
+        "inspect cartservice memory usage for leaks or unbounded growth",
+        "profile cartservice CPU to determine if high CPU is a symptom of memory pressure (e.g., GC)",
+        "check downstream latency impact on checkoutservice and frontend"
+      ],
+      "cache_key": "2bc949af30de5c4a3205f44a9d9a73d9188326d94812aae78aaca91e08b27cf0",
+      "candidate_context": {
+        "case_id": "p112_1bf2f53a75919bf14a5e243f",
+        "diagnostic_evidence": [
+          {
+            "absolute_score": 100.0,
+            "evidence_id": "ev_dc36458e697d897bcbbbe8b0",
+            "metric": "cpu",
+            "post_center": 89.175885936972,
+            "pre_center": 6.056731796852,
+            "sample_count": 4201,
+            "service": "cartservice",
+            "signed_score": 100.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 100.0,
+            "evidence_id": "ev_4b517bf88d08fa339a57b5f1",
+            "metric": "mem",
+            "post_center": 524267520.0,
+            "pre_center": 58707968.0,
+            "sample_count": 4201,
+            "service": "cartservice",
+            "signed_score": 100.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 11.969300639154,
+            "evidence_id": "ev_a1399a91eb7a6df855a17aa2",
+            "metric": "latency",
+            "post_center": 0.400900900901,
+            "pre_center": 0.228768115942,
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "signed_score": 11.969300639154,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 10.798344701049,
+            "evidence_id": "ev_4ebf73cf8b64fdd919e28e63",
+            "metric": "latency",
+            "post_center": 0.800129198966,
+            "pre_center": 0.179900957892,
+            "sample_count": 4201,
+            "service": "cartservice",
+            "signed_score": 10.798344701049,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 4.493703278805,
+            "evidence_id": "ev_0a5c1385afa9d1fac8171795",
+            "metric": "latency",
+            "post_center": 1.784615384615,
+            "pre_center": 0.54375,
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "signed_score": 4.493703278805,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 4.438828981793,
+            "evidence_id": "ev_7c15b244a2f51c5b70a13911",
+            "metric": "cpu",
+            "post_center": 16.798632702772,
+            "pre_center": 18.566774155076,
+            "sample_count": 4201,
+            "service": "frontend",
+            "signed_score": -4.438828981793,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 1.723285946404,
+            "evidence_id": "ev_b8e0f376035cd099df5c7f17",
+            "metric": "latency",
+            "post_center": 0.232467268353,
+            "pre_center": 0.197118441838,
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "signed_score": 1.723285946404,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 1.614744185662,
+            "evidence_id": "ev_9ee87aee772243fd2f2b13f8",
+            "metric": "latency",
+            "post_center": 4.809350982067,
+            "pre_center": 3.959196138865,
+            "sample_count": 4201,
+            "service": "frontend",
+            "signed_score": 1.614744185662,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 1.39973880739,
+            "evidence_id": "ev_d411307e2d3693a50ad6abc4",
+            "metric": "cpu",
+            "post_center": 9.647537952298,
+            "pre_center": 11.041843790796,
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "signed_score": -1.39973880739,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 1.261177988134,
+            "evidence_id": "ev_8dbfde0ec265a62c0139444c",
+            "metric": "mem",
+            "post_center": 26718208.0,
+            "pre_center": 25423872.0,
+            "sample_count": 4201,
+            "service": "frontend",
+            "signed_score": 1.261177988134,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 1.017975833699,
+            "evidence_id": "ev_e1abef5cc40c637396706662",
+            "metric": "cpu",
+            "post_center": 10.523151456405,
+            "pre_center": 12.492839403837,
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "signed_score": -1.017975833699,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.776044536017,
+            "evidence_id": "ev_21eeca6d089c35491c448fd7",
+            "metric": "cpu",
+            "post_center": 1.00637291207,
+            "pre_center": 1.165997530232,
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "signed_score": -0.776044536017,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.651232457426,
+            "evidence_id": "ev_6322687bca26e384d5a66bee",
+            "metric": "mem",
+            "post_center": 9752576.0,
+            "pre_center": 9637888.0,
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "signed_score": 0.651232457426,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.562075632897,
+            "evidence_id": "ev_19c0a63ac6bc8f45e52c28c0",
+            "metric": "load",
+            "post_center": 30.0,
+            "pre_center": 40.0,
+            "sample_count": 4201,
+            "service": "frontend",
+            "signed_score": -0.562075632897,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.516631220025,
+            "evidence_id": "ev_179c472d18cd1ca9d055915c",
+            "metric": "load",
+            "post_center": 350.0,
+            "pre_center": 422.0,
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "signed_score": -0.516631220025,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.490538734165,
+            "evidence_id": "ev_df7069cf9be0d05c1d87d7ab",
+            "metric": "load",
+            "post_center": 60.0,
+            "pre_center": 76.0,
+            "sample_count": 4201,
+            "service": "cartservice",
+            "signed_score": -0.490538734165,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.374717088598,
+            "evidence_id": "ev_78dae1b2bb290a6d06bafcf5",
+            "metric": "load",
+            "post_center": 46.0,
+            "pre_center": 56.0,
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "signed_score": -0.374717088598,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.341292324295,
+            "evidence_id": "ev_7ec99779bcf0641cdeb4680a",
+            "metric": "load",
+            "post_center": 0.988,
+            "pre_center": 2.0,
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "signed_score": -0.341292324295,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.286147594929,
+            "evidence_id": "ev_c2e63120718fde223109bcd1",
+            "metric": "mem",
+            "post_center": 12263424.0,
+            "pre_center": 12206080.0,
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "signed_score": 0.286147594929,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.016010246558,
+            "evidence_id": "ev_802833c7e5cb8247bc563627",
+            "metric": "mem",
+            "post_center": 51175424.0,
+            "pre_center": 51167232.0,
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "signed_score": 0.016010246558,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.0,
+            "evidence_id": "ev_7afec878ae30b5d12b8d11d0",
+            "metric": "error",
+            "post_center": 0.0,
+            "pre_center": 0.0,
+            "sample_count": 4201,
+            "service": "frontend",
+            "signed_score": 0.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "robust_post_shift"
+          }
+        ],
+        "evidence": [
+          {
+            "id": "ev_0d06968b95e5d0a7faa9c886",
+            "metric": "cpu",
+            "sample_count": 4201,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 80.326337,
+            "window": "delta"
+          },
+          {
+            "id": "ev_39dacbdca233488ba33f1ed2",
+            "metric": "cpu",
+            "sample_count": 2101,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 86.428156,
+            "window": "post"
+          },
+          {
+            "id": "ev_4a4c8da1fcfeb6eef6eeea40",
+            "metric": "cpu",
+            "sample_count": 2100,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 6.101819,
+            "window": "pre"
+          },
+          {
+            "id": "ev_597e8721328fb4aaf0ec4387",
+            "metric": "latency",
+            "sample_count": 4201,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.746551,
+            "window": "delta"
+          },
+          {
+            "id": "ev_9d1c41d9cff314644ea45f9e",
+            "metric": "latency",
+            "sample_count": 2101,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 0.912014,
+            "window": "post"
+          },
+          {
+            "id": "ev_2ff3adfbc28f4ced029baa12",
+            "metric": "latency",
+            "sample_count": 2100,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 0.165463,
+            "window": "pre"
+          },
+          {
+            "id": "ev_f05ecce4a902f841d7a62317",
+            "metric": "load",
+            "sample_count": 4201,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -9.768409,
+            "window": "delta"
+          },
+          {
+            "id": "ev_1ec7286f0c24d3535658722e",
+            "metric": "load",
+            "sample_count": 2101,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 66.656414,
+            "window": "post"
+          },
+          {
+            "id": "ev_4d3e35d32995be22159c5de5",
+            "metric": "load",
+            "sample_count": 2100,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 76.424823,
+            "window": "pre"
+          },
+          {
+            "id": "ev_e4607b9028b71af40ab110f5",
+            "metric": "mem",
+            "sample_count": 4201,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 408212579.383307,
+            "window": "delta"
+          },
+          {
+            "id": "ev_fe5a62c31fafa0cfa2ee1c40",
+            "metric": "mem",
+            "sample_count": 2101,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 466829503.055688,
+            "window": "post"
+          },
+          {
+            "id": "ev_a0be1d6d498a7b314fca7479",
+            "metric": "mem",
+            "sample_count": 2100,
+            "service": "cartservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 58616923.672381,
+            "window": "pre"
+          },
+          {
+            "id": "ev_dad02b609226ae10d4287e90",
+            "metric": "cpu",
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -0.177068,
+            "window": "delta"
+          },
+          {
+            "id": "ev_852fe78b47691a90ff666fc8",
+            "metric": "cpu",
+            "sample_count": 2101,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 1.055558,
+            "window": "post"
+          },
+          {
+            "id": "ev_bab4b1e3f45684e284d5e335",
+            "metric": "cpu",
+            "sample_count": 2100,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 1.232626,
+            "window": "pre"
+          },
+          {
+            "id": "ev_7b43e28059ba5a3d6feb2202",
+            "metric": "latency",
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 1.057693,
+            "window": "delta"
+          },
+          {
+            "id": "ev_9a5b83a35d79b48b6aae2dab",
+            "metric": "latency",
+            "sample_count": 2101,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 1.602432,
+            "window": "post"
+          },
+          {
+            "id": "ev_3778b36ab7b20ec887a5adfb",
+            "metric": "latency",
+            "sample_count": 2100,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 0.544739,
+            "window": "pre"
+          },
+          {
+            "id": "ev_8ec8bd44b01eedb9037e011f",
+            "metric": "load",
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -0.43041,
+            "window": "delta"
+          },
+          {
+            "id": "ev_9000f78c469caf542a3f4f85",
+            "metric": "load",
+            "sample_count": 2101,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 2.439574,
+            "window": "post"
+          },
+          {
+            "id": "ev_ec7a8816663a9cc364b0422c",
+            "metric": "load",
+            "sample_count": 2100,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 2.869984,
+            "window": "pre"
+          },
+          {
+            "id": "ev_7432b03ba7dee1caf49fb72b",
+            "metric": "mem",
+            "sample_count": 4201,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 49482.752858,
+            "window": "delta"
+          },
+          {
+            "id": "ev_fd64cff3db0c02bb3445f1d9",
+            "metric": "mem",
+            "sample_count": 2101,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 12273354.996668,
+            "window": "post"
+          },
+          {
+            "id": "ev_d999ec8bf369f8dc120b46a4",
+            "metric": "mem",
+            "sample_count": 2100,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 12223872.24381,
+            "window": "pre"
+          },
+          {
+            "id": "ev_6830c4891ed57e67021829f8",
+            "metric": "cpu",
+            "sample_count": 4201,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -2.003353,
+            "window": "delta"
+          },
+          {
+            "id": "ev_7a168e6f5da7e84157a5cdc7",
+            "metric": "cpu",
+            "sample_count": 2101,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 16.274126,
+            "window": "post"
+          },
+          {
+            "id": "ev_e6a1a23c7e91015df18ac970",
+            "metric": "cpu",
+            "sample_count": 2100,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 18.277479,
+            "window": "pre"
+          },
+          {
+            "id": "ev_c691714b45e0e05f3843cece",
+            "metric": "latency",
+            "sample_count": 4201,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 1.076213,
+            "window": "delta"
+          },
+          {
+            "id": "ev_b5b0c4068231ac90e8216859",
+            "metric": "latency",
+            "sample_count": 2101,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 4.272713,
+            "window": "post"
+          },
+          {
+            "id": "ev_d70735aad0c66e761086e3a0",
+            "metric": "latency",
+            "sample_count": 2100,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 3.1965,
+            "window": "pre"
+          },
+          {
+            "id": "ev_75adfcf3ecd00cdc89888a67",
+            "metric": "load",
+            "sample_count": 4201,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -5.488438,
+            "window": "delta"
+          },
+          {
+            "id": "ev_16017e4893b84e1a929eb462",
+            "metric": "load",
+            "sample_count": 2101,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 33.966051,
+            "window": "post"
+          },
+          {
+            "id": "ev_346b7b80a72eb32a44269ebd",
+            "metric": "load",
+            "sample_count": 2100,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 39.454489,
+            "window": "pre"
+          },
+          {
+            "id": "ev_37542a923882cab416c1bb4f",
+            "metric": "mem",
+            "sample_count": 4201,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 1154386.345883,
+            "window": "delta"
+          },
+          {
+            "id": "ev_447f0c5f402539349c3a814d",
+            "metric": "mem",
+            "sample_count": 2101,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 26105985.644931,
+            "window": "post"
+          },
+          {
+            "id": "ev_0eb220a7241f250064c08e2b",
+            "metric": "mem",
+            "sample_count": 2100,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 24951599.299048,
+            "window": "pre"
+          },
+          {
+            "id": "ev_394f100880d2bda99173e562",
+            "metric": "cpu",
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -1.543404,
+            "window": "delta"
+          },
+          {
+            "id": "ev_c443bcec65d552d6034fcf71",
+            "metric": "cpu",
+            "sample_count": 2101,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 9.449277,
+            "window": "post"
+          },
+          {
+            "id": "ev_a94db8d5f89b9ac22608e08f",
+            "metric": "cpu",
+            "sample_count": 2100,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 10.992681,
+            "window": "pre"
+          },
+          {
+            "id": "ev_0b6633a15b6054faeaddb0fe",
+            "metric": "latency",
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.038455,
+            "window": "delta"
+          },
+          {
+            "id": "ev_071ebb33b0537215ceacbbda",
+            "metric": "latency",
+            "sample_count": 2101,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 0.191818,
+            "window": "post"
+          },
+          {
+            "id": "ev_684d7cd08cd2c5472ce87e16",
+            "metric": "latency",
+            "sample_count": 2100,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 0.153363,
+            "window": "pre"
+          },
+          {
+            "id": "ev_7c586c693a173465a98f4437",
+            "metric": "load",
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -58.558102,
+            "window": "delta"
+          },
+          {
+            "id": "ev_92aba9826ae45d36e0264528",
+            "metric": "load",
+            "sample_count": 2101,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 374.628268,
+            "window": "post"
+          },
+          {
+            "id": "ev_06e78c94c56557e6f11c7dd8",
+            "metric": "load",
+            "sample_count": 2100,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 433.18637,
+            "window": "pre"
+          },
+          {
+            "id": "ev_994a8d207ff72519c4c2166c",
+            "metric": "mem",
+            "sample_count": 4201,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 166186.926026,
+            "window": "delta"
+          },
+          {
+            "id": "ev_0f018869d8a69706a20b4808",
+            "metric": "mem",
+            "sample_count": 2101,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 9837535.345074,
+            "window": "post"
+          },
+          {
+            "id": "ev_7e3ff64cfa1a78b76cc19755",
+            "metric": "mem",
+            "sample_count": 2100,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 9671348.419048,
+            "window": "pre"
+          },
+          {
+            "id": "ev_5daa8d47f53ce956f01eb29b",
+            "metric": "cpu",
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -1.3643,
+            "window": "delta"
+          },
+          {
+            "id": "ev_9d71c94728cb0cfd0294e7ba",
+            "metric": "cpu",
+            "sample_count": 2101,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 9.870531,
+            "window": "post"
+          },
+          {
+            "id": "ev_04a3bdfb9ac36cc07a09c9dd",
+            "metric": "cpu",
+            "sample_count": 2100,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 11.234831,
+            "window": "pre"
+          },
+          {
+            "id": "ev_e95c23985380e4fa6da4f5e0",
+            "metric": "latency",
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.154216,
+            "window": "delta"
+          },
+          {
+            "id": "ev_1f4bf6fd0e605e6e80acb440",
+            "metric": "latency",
+            "sample_count": 2101,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 0.338893,
+            "window": "post"
+          },
+          {
+            "id": "ev_8418f83ba50d30d1c9858a12",
+            "metric": "latency",
+            "sample_count": 2100,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 0.184677,
+            "window": "pre"
+          },
+          {
+            "id": "ev_f64f411640a704e1f6bfa439",
+            "metric": "load",
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -6.997895,
+            "window": "delta"
+          },
+          {
+            "id": "ev_19ee4f1d4080a5260a71e3f3",
+            "metric": "load",
+            "sample_count": 2101,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 49.685366,
+            "window": "post"
+          },
+          {
+            "id": "ev_039f380e744ca178719c5422",
+            "metric": "load",
+            "sample_count": 2100,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 56.683261,
+            "window": "pre"
+          },
+          {
+            "id": "ev_a06a673fdd254f714583a8c1",
+            "metric": "mem",
+            "sample_count": 4201,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 67593.049616,
+            "window": "delta"
+          },
+          {
+            "id": "ev_dc4d781d4220e92c31144c1a",
+            "metric": "mem",
+            "sample_count": 2101,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 51287491.807711,
+            "window": "post"
+          },
+          {
+            "id": "ev_5d60df950cef27e4cf4c48f1",
+            "metric": "mem",
+            "sample_count": 2100,
+            "service": "recommendationservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "2e97e58631d87bfc032ac2aa6d6e017a800e42c298f325fa154c1541c8b46814"
+            },
+            "statistic": "mean",
+            "value": 51219898.758095,
+            "window": "pre"
+          }
+        ],
+        "evidence_ids": [
+          "ev_0d06968b95e5d0a7faa9c886",
+          "ev_39dacbdca233488ba33f1ed2",
+          "ev_4a4c8da1fcfeb6eef6eeea40",
+          "ev_597e8721328fb4aaf0ec4387",
+          "ev_9d1c41d9cff314644ea45f9e",
+          "ev_2ff3adfbc28f4ced029baa12",
+          "ev_f05ecce4a902f841d7a62317",
+          "ev_1ec7286f0c24d3535658722e",
+          "ev_4d3e35d32995be22159c5de5",
+          "ev_e4607b9028b71af40ab110f5",
+          "ev_fe5a62c31fafa0cfa2ee1c40",
+          "ev_a0be1d6d498a7b314fca7479",
+          "ev_dad02b609226ae10d4287e90",
+          "ev_852fe78b47691a90ff666fc8",
+          "ev_bab4b1e3f45684e284d5e335",
+          "ev_7b43e28059ba5a3d6feb2202",
+          "ev_9a5b83a35d79b48b6aae2dab",
+          "ev_3778b36ab7b20ec887a5adfb",
+          "ev_8ec8bd44b01eedb9037e011f",
+          "ev_9000f78c469caf542a3f4f85",
+          "ev_ec7a8816663a9cc364b0422c",
+          "ev_7432b03ba7dee1caf49fb72b",
+          "ev_fd64cff3db0c02bb3445f1d9",
+          "ev_d999ec8bf369f8dc120b46a4",
+          "ev_6830c4891ed57e67021829f8",
+          "ev_7a168e6f5da7e84157a5cdc7",
+          "ev_e6a1a23c7e91015df18ac970",
+          "ev_c691714b45e0e05f3843cece",
+          "ev_b5b0c4068231ac90e8216859",
+          "ev_d70735aad0c66e761086e3a0",
+          "ev_75adfcf3ecd00cdc89888a67",
+          "ev_16017e4893b84e1a929eb462",
+          "ev_346b7b80a72eb32a44269ebd",
+          "ev_37542a923882cab416c1bb4f",
+          "ev_447f0c5f402539349c3a814d",
+          "ev_0eb220a7241f250064c08e2b",
+          "ev_394f100880d2bda99173e562",
+          "ev_c443bcec65d552d6034fcf71",
+          "ev_a94db8d5f89b9ac22608e08f",
+          "ev_0b6633a15b6054faeaddb0fe",
+          "ev_071ebb33b0537215ceacbbda",
+          "ev_684d7cd08cd2c5472ce87e16",
+          "ev_7c586c693a173465a98f4437",
+          "ev_92aba9826ae45d36e0264528",
+          "ev_06e78c94c56557e6f11c7dd8",
+          "ev_994a8d207ff72519c4c2166c",
+          "ev_0f018869d8a69706a20b4808",
+          "ev_7e3ff64cfa1a78b76cc19755",
+          "ev_5daa8d47f53ce956f01eb29b",
+          "ev_9d71c94728cb0cfd0294e7ba",
+          "ev_04a3bdfb9ac36cc07a09c9dd",
+          "ev_e95c23985380e4fa6da4f5e0",
+          "ev_1f4bf6fd0e605e6e80acb440",
+          "ev_8418f83ba50d30d1c9858a12",
+          "ev_f64f411640a704e1f6bfa439",
+          "ev_19ee4f1d4080a5260a71e3f3",
+          "ev_039f380e744ca178719c5422",
+          "ev_a06a673fdd254f714583a8c1",
+          "ev_dc4d781d4220e92c31144c1a",
+          "ev_5d60df950cef27e4cf4c48f1"
+        ],
+        "fault_allowlist": [
+          "cpu",
+          "mem",
+          "disk",
+          "delay",
+          "loss"
+        ],
+        "hashes": {
+          "model_artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+          "source_packet_hash": "sha256:9a4c55d807b5078144a571baa602278f0f857da6e192750dec592a1d186c49ae"
+        },
+        "model_scores": {
+          "artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+          "ranked_faults": [
+            "mem",
+            "disk",
+            "loss",
+            "cpu",
+            "delay"
+          ],
+          "ranked_pairs": [
+            {
+              "fault": "mem",
+              "score": 0.037291868347,
+              "service": "cartservice"
+            },
+            {
+              "fault": "disk",
+              "score": 5.41139520535,
+              "service": "cartservice"
+            },
+            {
+              "fault": "loss",
+              "score": 6.67965321372,
+              "service": "checkoutservice"
+            },
+            {
+              "fault": "cpu",
+              "score": 8.097215355862,
+              "service": "cartservice"
+            },
+            {
+              "fault": "loss",
+              "score": 9.79445674046,
+              "service": "frontend"
+            },
+            {
+              "fault": "cpu",
+              "score": 11.360896858279,
+              "service": "productcatalogservice"
+            },
+            {
+              "fault": "loss",
+              "score": 11.536484634664,
+              "service": "productcatalogservice"
+            },
+            {
+              "fault": "loss",
+              "score": 13.222003576888,
+              "service": "recommendationservice"
+            },
+            {
+              "fault": "loss",
+              "score": 14.492108861106,
+              "service": "adservice"
+            },
+            {
+              "fault": "loss",
+              "score": 15.415374628793,
+              "service": "shippingservice"
+            },
+            {
+              "fault": "loss",
+              "score": 16.279151907431,
+              "service": "currencyservice"
+            },
+            {
+              "fault": "delay",
+              "score": 16.697009954962,
+              "service": "recommendationservice"
+            },
+            {
+              "fault": "cpu",
+              "score": 16.782216149379,
+              "service": "paymentservice"
+            },
+            {
+              "fault": "cpu",
+              "score": 19.799275812455,
+              "service": "shippingservice"
+            },
+            {
+              "fault": "cpu",
+              "score": 27.851016002002,
+              "service": "emailservice"
+            }
+          ],
+          "ranked_services": [
+            "cartservice",
+            "checkoutservice",
+            "frontend",
+            "productcatalogservice",
+            "recommendationservice",
+            "adservice",
+            "shippingservice",
+            "currencyservice",
+            "paymentservice",
+            "emailservice"
+          ],
+          "schema_version": "p112.cross_system_scores.v1"
+        },
+        "packet_hash": "sha256:0e8f1f8fc3fe38ec96c7cbca15ee248cca6b3aa4086d3bb7699eec3911a5902c",
+        "prompt_hash": "sha256:37152facde2a4d0c5247ee854e3ed4e41fdbee43fdf1c1ae7b741ad15ced5576",
+        "schema_version": "p112.multistage_rca_packet.v1",
+        "service_allowlist": [
+          "cartservice",
+          "checkoutservice",
+          "frontend",
+          "productcatalogservice",
+          "recommendationservice",
+          "adservice",
+          "shippingservice",
+          "currencyservice",
+          "paymentservice",
+          "emailservice"
+        ],
+        "system_id": "online_boutique"
+      },
+      "case_id": "p112_1bf2f53a75919bf14a5e243f",
+      "confidence": 0.9,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [
+        "ev_0d06968b95e5d0a7faa9c886",
+        "ev_e4607b9028b71af40ab110f5",
+        "ev_39dacbdca233488ba33f1ed2",
+        "ev_4a4c8da1fcfeb6eef6eeea40",
+        "ev_fe5a62c31fafa0cfa2ee1c40",
+        "ev_a0be1d6d498a7b314fca7479"
+      ],
+      "executed_actions": [],
+      "fault_type": "mem",
+      "latency_ms": 54733,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "72b08d77a177a2ae9e8ce1911a59d17500ab94485a1258d83f1676fe3679175a",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "2bc949af30de5c4a3205f44a9d9a73d9188326d94812aae78aaca91e08b27cf0",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "72b08d77a177a2ae9e8ce1911a59d17500ab94485a1258d83f1676fe3679175a",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "49f4986d46146745ecd23a65851baf7c51df44a1ea51ac0110f286c5fd11b254"
+      },
+      "provider_stage": {
+        "parsed_fault_type": "mem",
+        "parsed_ranked_services": [
+          "cartservice"
+        ],
+        "raw_response": "{\n  \"case_id\": \"p112_1bf2f53a75919bf14a5e243f\",\n  \"ranked_services\": [\"cartservice\"],\n  \"fault_type\": \"mem\",\n  \"evidence_refs\": [\n    \"ev_0d06968b95e5d0a7faa9c886\",\n    \"ev_e4607b9028b71af40ab110f5\",\n    \"ev_39dacbdca233488ba33f1ed2\",\n    \"ev_4a4c8da1fcfeb6eef6eeea40\",\n    \"ev_fe5a62c31fafa0cfa2ee1c40\",\n    \"ev_a0be1d6d498a7b314fca7479\"\n  ],\n  \"confidence\": 0.9,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect cartservice memory usage for leaks or unbounded growth\",\n    \"profile cartservice CPU to determine if high CPU is a symptom of memory pressure (e.g., GC)\",\n    \"check downstream latency impact on checkoutservice and frontend\"\n  ]\n}",
+        "raw_response_sha256": "383af70e62953804630cc21eb03c05b0e36f50ccbaac440caffc557871e5c38b"
+      },
+      "ranked_services": [
+        "cartservice",
+        "checkoutservice",
+        "frontend",
+        "productcatalogservice",
+        "recommendationservice"
+      ],
+      "raw_response": "{\"abstain\":false,\"advisory_actions\":[\"inspect cartservice memory usage for leaks or unbounded growth\",\"profile cartservice CPU to determine if high CPU is a symptom of memory pressure (e.g., GC)\",\"check downstream latency impact on checkoutservice and frontend\"],\"case_id\":\"p112_1bf2f53a75919bf14a5e243f\",\"confidence\":0.9,\"evidence_refs\":[\"ev_0d06968b95e5d0a7faa9c886\",\"ev_e4607b9028b71af40ab110f5\",\"ev_39dacbdca233488ba33f1ed2\",\"ev_4a4c8da1fcfeb6eef6eeea40\",\"ev_fe5a62c31fafa0cfa2ee1c40\",\"ev_a0be1d6d498a7b314fca7479\"],\"fault_type\":\"mem\",\"ranked_services\":[\"cartservice\",\"checkoutservice\",\"frontend\",\"productcatalogservice\",\"recommendationservice\"]}",
+      "raw_response_sha256": "49f4986d46146745ecd23a65851baf7c51df44a1ea51ac0110f286c5fd11b254",
+      "synthesis": {
+        "model_artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+        "ranked_faults": [
+          "mem",
+          "disk",
+          "loss",
+          "cpu",
+          "delay"
+        ],
+        "ranked_services": [
+          "cartservice",
+          "checkoutservice",
+          "frontend",
+          "productcatalogservice",
+          "recommendationservice"
+        ],
+        "response_origin": "deterministic_synthesis",
+        "schema_version": "p112.deterministic_synthesis.v1",
+        "selected_fault": "mem",
+        "selected_service": "cartservice"
+      },
+      "validation_errors": [],
+      "validation_status": "valid"
+    },
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "inspect productcatalogservice for database query latency, connection pool exhaustion, or GC pauses",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "inspect recommendationservice for external API call delays or thread pool saturation",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "inspect checkoutservice for downstream dependency timeouts cascading from productcatalogservice/recommendationservice",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "inspect frontend for increased backend call latency propagation",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "d6b8a70c3b4d9c77c511c4dcb79cf52d191c4ce49da69fdd1cdbb3828f7fe388",
+      "candidate_context": null,
+      "case_id": "p112_2fbd63f62a5d46284d0bd0a9",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 11810,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "c8c488d5d7e02b9b5f451bb7b524fca56bb54599faf73f9571f5c0a481c12ba5",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "d6b8a70c3b4d9c77c511c4dcb79cf52d191c4ce49da69fdd1cdbb3828f7fe388",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "c8c488d5d7e02b9b5f451bb7b524fca56bb54599faf73f9571f5c0a481c12ba5",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "90692b712fbb92a961e275d4eec3b417311f2298e9ca826379eb63fc457a60a9"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_2fbd63f62a5d46284d0bd0a9\",\n  \"ranked_services\": [\"productcatalogservice\", \"recommendationservice\", \"checkoutservice\", \"frontend\"],\n  \"fault_type\": \"delay\",\n  \"evidence_refs\": [\n    \"ev_f89c059dfa64def9afd8c96b\",\n    \"ev_cb2eb74563357c6fb79f6a66\",\n    \"ev_3e7d35547b8d38122fc6ff34\",\n    \"ev_b0a6f311c47af5d6b611963e\",\n    \"ev_d1ea3d6f9d92e8a471b1ea48\",\n    \"ev_de18ce25c49dbaf91ffb0f91\",\n    \"ev_79d0857c2f5a75a8e7ec98f4\",\n    \"ev_51c0c1f95f477d87eaa4e34c\",\n    \"ev_f244bacf1dafc74c6a73ec2b\",\n    \"ev_0be0277bec6f0e30fdf4382a\",\n    \"ev_b2afdba5b697766d9a3e8e62\",\n    \"ev_19244648ab161d7c251a2fa1\",\n    \"ev_8cc748aa6ec78a0a8abd7b18\",\n    \"ev_90b89f3684ea03d20f5bcbd6\",\n    \"ev_0e2ea01bdc7c447455ddc71b\",\n    \"ev_df3c1a6cef6bd1e940da981a\"\n  ],\n  \"confidence\": 0.9,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect productcatalogservice for database query latency, connection pool exhaustion, or GC pauses\",\n    \"inspect recommendationservice for external API call delays or thread pool saturation\",\n    \"inspect checkoutservice for downstream dependency timeouts cascading from productcatalogservice/recommendationservice\",\n    \"inspect frontend for increased backend call latency propagation\"\n  ]\n}",
+      "raw_response_sha256": "90692b712fbb92a961e275d4eec3b417311f2298e9ca826379eb63fc457a60a9",
+      "validation_errors": [
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    }
+  ],
+  "provenance": {
+    "decoding_config": {
+      "enable_thinking": true,
+      "max_tokens": 16384,
+      "provider_api": "openai-chat-completions-v1",
+      "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+      "reasoning_budget": 16384,
+      "stream": true,
+      "temperature": 1.0,
+      "top_p": 0.95
+    },
+    "model": "nvidia/nemotron-3-ultra-550b-a55b",
+    "model_artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+    "prediction_cache_keys": [
+      "83a8491400e138cd183a47e4186a6b90299fac0069911d85cca489325ad518c7",
+      "134c101ad267b1740fe3f968a22788f423ee27129e282fc36d9484a9932ffc53",
+      "b8fbf244f8a2b4d76e2bba40fe29e8327ddeea7f79bf823d18956356d0f25765",
+      "2bc949af30de5c4a3205f44a9d9a73d9188326d94812aae78aaca91e08b27cf0",
+      "d6b8a70c3b4d9c77c511c4dcb79cf52d191c4ce49da69fdd1cdbb3828f7fe388"
+    ],
+    "prediction_count": 5,
+    "prediction_provenance": [
+      {
+        "cache_key": "83a8491400e138cd183a47e4186a6b90299fac0069911d85cca489325ad518c7",
+        "case_id": "p112_0c82745c2ceef833ac8edcc4",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "3d2661686ce30b4c607a042cba2aad24ca8cf0b4b6734a8f3bae4474f3ca455d",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "90e2965dffcb924e9a7c32c64aec321206f1ceab279768d6838a59f26546dab5"
+      },
+      {
+        "cache_key": "134c101ad267b1740fe3f968a22788f423ee27129e282fc36d9484a9932ffc53",
+        "case_id": "p112_10436656e8b525420f990bb9",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "291ef5948fab631fdfa3f0e97e9fc3754fe0b7ca8144dbc9436be15022c44e41",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "878d1db89be441c24a7f484179894b9bf9151cfe323aae4f6eda16e500f508ea"
+      },
+      {
+        "cache_key": "b8fbf244f8a2b4d76e2bba40fe29e8327ddeea7f79bf823d18956356d0f25765",
+        "case_id": "p112_161d5b0a349ed1c3234e7d48",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "47b98405e74b3f303cb154c4383ba8189a5545cc20fe5f9786b1c45467340585",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "4dd72314dad998f054d460c1140d48d240285b867ca27c5d07533e42ddead7fd"
+      },
+      {
+        "cache_key": "2bc949af30de5c4a3205f44a9d9a73d9188326d94812aae78aaca91e08b27cf0",
+        "case_id": "p112_1bf2f53a75919bf14a5e243f",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "72b08d77a177a2ae9e8ce1911a59d17500ab94485a1258d83f1676fe3679175a",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "383af70e62953804630cc21eb03c05b0e36f50ccbaac440caffc557871e5c38b"
+      },
+      {
+        "cache_key": "d6b8a70c3b4d9c77c511c4dcb79cf52d191c4ce49da69fdd1cdbb3828f7fe388",
+        "case_id": "p112_2fbd63f62a5d46284d0bd0a9",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "c8c488d5d7e02b9b5f451bb7b524fca56bb54599faf73f9571f5c0a481c12ba5",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "90692b712fbb92a961e275d4eec3b417311f2298e9ca826379eb63fc457a60a9"
+      }
+    ],
+    "prompt_schema_version": "p112.localization_prompt.v1",
+    "system_prompt_sha256": "c79d9cffa7defd02a938f6013203730b4523a5384eba2a45b7019b5133976097"
+  },
+  "provider": "nvidia",
+  "safety": {
+    "executed_action_count": 0,
+    "harmful_action_count": 0,
+    "truth_leak_count": 0
+  },
+  "schema_version": "p112.multistage_rca_report.v1",
+  "summary": {
+    "action_execution_enabled": false,
+    "case_count": 5,
+    "fail_closed_count": 3,
+    "network_calls_enabled": true,
+    "prediction_count": 5,
+    "valid_count": 2
+  }
+}

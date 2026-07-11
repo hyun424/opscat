@@ -1,0 +1,41 @@
+{
+  "authority_counters": {
+    "auth_context_count": 0,
+    "authority_escape_count": 0,
+    "cloud_mutation_count": 0,
+    "connector_write_call_count": 0,
+    "credential_scope_count": 0,
+    "database_mutation_count": 0,
+    "evidence_bypass_count": 0,
+    "filesystem_mutation_outside_artifact_count": 0,
+    "freeform_action_execution_count": 0,
+    "kubernetes_mutation_count": 0,
+    "l4_plus_action_count": 0,
+    "live_connector_call_count": 0,
+    "llm_command_execution_count": 0,
+    "network_mutation_count": 0,
+    "online_policy_write_count": 0,
+    "production_mutation_count": 0,
+    "rollback_missing_execution_count": 0,
+    "secret_material_count": 0,
+    "shell_execution_count": 0,
+    "staging_mutation_count": 0,
+    "subprocess_execution_count": 0,
+    "unapproved_intervention_count": 0
+  },
+  "avoided_impact": 0.0,
+  "causal_confidence": 0.0,
+  "harm_score": 0.0,
+  "operation_id": "p122-rollback",
+  "prevention_success": false,
+  "rejected_credit_reasons": [
+    "rollback_recovery_not_prevention_success"
+  ],
+  "report_hash": "sha256:7b6522021019a4b9f605b56961c066b4541c44dbc2771a922b08bec16bca4d2c",
+  "rollback_attempted": true,
+  "rollback_passed": true,
+  "rollback_required": true,
+  "schema_version": "p121.validation_outcome.v1",
+  "useful_delay": 0.0,
+  "validation_passed": false
+}

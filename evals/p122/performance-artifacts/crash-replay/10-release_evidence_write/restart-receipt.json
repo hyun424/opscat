@@ -1,0 +1,28 @@
+{
+  "adapter_invoked": true,
+  "correlation_id": "p122-crash-10-release_evidence_write",
+  "durable_phase": "release_evidence_commit_recovered",
+  "operation": "release_evidence_commit",
+  "operation_adapter": "p122_release_evidence_snapshot_v1",
+  "ordinal": 10,
+  "output_hash": "sha256:97bd6f908fbbe9624a8ee13822ca76281b464ee64a053b7954d32192412a5bc0",
+  "output_schema": "p122.release_evidence.v1",
+  "output_validation": {
+    "artifact_hash": "sha256:f3a73ebe4a89b0d8692f438bcb224cb57096b4b492f269a2f3cfa5beb4545358",
+    "contract_manifest_hash": "sha256:3a742584db86212f7bf0c2c6b8001afc484372795033d666297181a08a311128",
+    "contract_validation_executed": true,
+    "release_status": "excluded_from_fixture_projection",
+    "schema_version": "p122.release_evidence.v1"
+  },
+  "pending_record_hash": "sha256:c02b788aed7f1e5cb16f1c7d5b29d0ee11934f361163d57c4cd950e4c4140964",
+  "pending_worker_pid": 58377,
+  "post_restart_validation": true,
+  "precommit_hash": "sha256:97bd6f908fbbe9624a8ee13822ca76281b464ee64a053b7954d32192412a5bc0",
+  "precommit_validation_hash": "sha256:f154dcdad9446966058117d9012dce27f086f18fe54ae8e7952c8c15ae4943e3",
+  "record_hash": "sha256:1b5e80df5a01b95c7db1b54fbc1368c7b0408f2317f68066bdf47a84d5fe818a",
+  "recovery_worker_pid": 58378,
+  "restart_count": 1,
+  "schema_version": "p122.release_stage_restart_receipt.v1",
+  "stage": "release_evidence_write",
+  "status": "recovered_after_restart"
+}

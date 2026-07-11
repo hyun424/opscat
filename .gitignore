@@ -10,6 +10,53 @@ opscat.db
 data/mock_reports/*.md
 *$py.class
 *.egg-info/
+build/
+dist/
 
-# Local uv lockfile is environment-generated for this prototype; verification forbids tracking it.
-uv.lock
+# The uv lockfile is tracked for reproducible open-source builds.
+
+# Downloaded public benchmark archives/expanded telemetry are reproducible but
+# too large to version. Keep only manifests and evaluation reports.
+evals/real_datasets/external/p110/raw/
+evals/real_datasets/external/p110/results/batch-*/
+evals/real_datasets/external/p110/results/candidate-*.json
+evals/real_datasets/external/p110/results/candidate-packets.json
+evals/real_datasets/external/p110/results/evaluation-*.json
+evals/real_datasets/external/p110/results/release-*.json
+evals/real_datasets/external/p110/results/summary-*.md
+
+# P111 provider batch/development artifacts are reproducible local working
+# data. Preserve only the frozen blind merged evidence used by release replay.
+evals/real_datasets/external/p111/results/development/
+evals/real_datasets/external/p111/results/validation/
+evals/real_datasets/external/p111/results/smoke/
+evals/real_datasets/external/p111/results/blind/baseline/batch-*/
+evals/real_datasets/external/p111/results/blind/candidate-run1/batch-*/
+evals/real_datasets/external/p111/results/blind/candidate-run2/batch-*/
+
+# P112 official archives and live provider working outputs are reproducible and
+# intentionally kept out of source control. Preserve manifests and merged
+# release evidence only.
+evals/real_datasets/external/p112/raw/
+evals/real_datasets/external/p112/results/development/
+evals/real_datasets/external/p112/results/validation/
+evals/real_datasets/external/p112/results/confirmation/batch-*/
+evals/real_datasets/external/p112/results/blind/baseline/batch-*/
+evals/real_datasets/external/p112/results/blind/candidate-run1/batch-*/
+evals/real_datasets/external/p112/results/blind/candidate-run2/batch-*/
+
+# P113 Train Ticket archive and provider batch outputs are reproducible local
+# artifacts. Track only the pinned source manifest and merged release evidence.
+evals/real_datasets/external/p113/raw/
+evals/real_datasets/external/p113/results/development/
+evals/real_datasets/external/p113/results/validation/
+evals/real_datasets/external/p113/results/blind/diagnosis/batch-*/
+evals/real_datasets/external/p113/results/blind/narrative-run1/batch-*/
+evals/real_datasets/external/p113/results/blind/narrative-run2/batch-*/
+
+# P114 RE2 source archives and provider working outputs are reproducible local
+# artifacts. Track only pinned source manifests and merged release evidence.
+evals/real_datasets/external/p114/raw/
+evals/real_datasets/external/p114/results/development/
+evals/real_datasets/external/p114/results/validation/
+evals/real_datasets/external/p114/results/blind/batch-*/

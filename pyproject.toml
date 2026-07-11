@@ -1,8 +1,16 @@
 [project]
 name = "opscat"
-version = "0.1.0"
-description = "Local OpsCat mock FastAPI/Postgres MVP"
+version = "0.2.0"
+description = "Evidence-bound, fail-closed agentic incident response for local and sandbox evaluation"
+readme = "README.md"
+license = "Apache-2.0"
+authors = [{name = "OpsCat contributors"}]
 requires-python = ">=3.12"
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: System :: Monitoring",
+]
 dependencies = [
   "fastapi>=0.116.0",
   "uvicorn[standard]>=0.35.0",
@@ -20,7 +28,19 @@ dev = [
   "httpx>=0.28.0",
   "ruff>=0.12.0",
   "mypy>=1.16.0",
+  "pip-audit==2.10.1",
 ]
+
+[project.urls]
+Repository = "https://github.com/gimdonghyeon/opscat"
+Documentation = "https://github.com/gimdonghyeon/opscat/tree/main/docs"
+
+[project.scripts]
+opscat = "app.cli:main"
+
+[build-system]
+requires = ["setuptools>=80,<82", "wheel>=0.45,<1"]
+build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,261 @@
+{
+  "benchmark_role": "fresh_case_multimodal_acceptance_consumed_after_score",
+  "by_fault": {
+    "cpu": {
+      "case_count": 15,
+      "evidence_precision": {
+        "denominator": 38,
+        "numerator": 38,
+        "value": 1.0
+      },
+      "fault_accuracy": {
+        "denominator": 15,
+        "numerator": 10,
+        "value": 0.666667
+      },
+      "joint_candidate_recall": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "joint_top1": {
+        "denominator": 15,
+        "numerator": 10,
+        "value": 0.666667
+      },
+      "service_top1": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "service_top3": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      }
+    },
+    "delay": {
+      "case_count": 15,
+      "evidence_precision": {
+        "denominator": 71,
+        "numerator": 71,
+        "value": 1.0
+      },
+      "fault_accuracy": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "joint_candidate_recall": {
+        "denominator": 15,
+        "numerator": 12,
+        "value": 0.8
+      },
+      "joint_top1": {
+        "denominator": 15,
+        "numerator": 4,
+        "value": 0.266667
+      },
+      "service_top1": {
+        "denominator": 15,
+        "numerator": 4,
+        "value": 0.266667
+      },
+      "service_top3": {
+        "denominator": 15,
+        "numerator": 10,
+        "value": 0.666667
+      }
+    },
+    "disk": {
+      "case_count": 15,
+      "evidence_precision": {
+        "denominator": 38,
+        "numerator": 38,
+        "value": 1.0
+      },
+      "fault_accuracy": {
+        "denominator": 15,
+        "numerator": 10,
+        "value": 0.666667
+      },
+      "joint_candidate_recall": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "joint_top1": {
+        "denominator": 15,
+        "numerator": 10,
+        "value": 0.666667
+      },
+      "service_top1": {
+        "denominator": 15,
+        "numerator": 14,
+        "value": 0.933333
+      },
+      "service_top3": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      }
+    },
+    "loss": {
+      "case_count": 15,
+      "evidence_precision": {
+        "denominator": 67,
+        "numerator": 67,
+        "value": 1.0
+      },
+      "fault_accuracy": {
+        "denominator": 15,
+        "numerator": 7,
+        "value": 0.466667
+      },
+      "joint_candidate_recall": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "joint_top1": {
+        "denominator": 15,
+        "numerator": 5,
+        "value": 0.333333
+      },
+      "service_top1": {
+        "denominator": 15,
+        "numerator": 10,
+        "value": 0.666667
+      },
+      "service_top3": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      }
+    },
+    "mem": {
+      "case_count": 15,
+      "evidence_precision": {
+        "denominator": 40,
+        "numerator": 40,
+        "value": 1.0
+      },
+      "fault_accuracy": {
+        "denominator": 15,
+        "numerator": 8,
+        "value": 0.533333
+      },
+      "joint_candidate_recall": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "joint_top1": {
+        "denominator": 15,
+        "numerator": 8,
+        "value": 0.533333
+      },
+      "service_top1": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "service_top3": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      }
+    },
+    "socket": {
+      "case_count": 15,
+      "evidence_precision": {
+        "denominator": 36,
+        "numerator": 36,
+        "value": 1.0
+      },
+      "fault_accuracy": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "joint_candidate_recall": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "joint_top1": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "service_top1": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      },
+      "service_top3": {
+        "denominator": 15,
+        "numerator": 15,
+        "value": 1.0
+      }
+    }
+  },
+  "evaluation_hash": "sha256:560921b8b723b29f320a5120586e1dcc087716b8bcacc61679ef1bb6b8d24778",
+  "freeze_hash": "sha256:23281d2f4797ac36b0b4b449f802af2c62257bd0ac17a2ff770502fe77500fd2",
+  "metrics": {
+    "case_count": 90,
+    "diagnosis_preservation": {
+      "denominator": 1,
+      "numerator": 1,
+      "value": 1.0
+    },
+    "evidence_precision": {
+      "denominator": 290,
+      "numerator": 290,
+      "value": 1.0
+    },
+    "fault_accuracy": {
+      "denominator": 90,
+      "numerator": 65,
+      "value": 0.722222
+    },
+    "joint_candidate_recall": {
+      "denominator": 90,
+      "numerator": 87,
+      "value": 0.966667
+    },
+    "joint_top1": {
+      "denominator": 90,
+      "numerator": 52,
+      "value": 0.577778
+    },
+    "replay_consistency": {
+      "denominator": 90,
+      "numerator": 90,
+      "value": 1.0
+    },
+    "service_top1": {
+      "denominator": 90,
+      "numerator": 73,
+      "value": 0.811111
+    },
+    "service_top3": {
+      "denominator": 90,
+      "numerator": 85,
+      "value": 0.944444
+    }
+  },
+  "safety": {
+    "artifact_authority_violation_count": 0,
+    "credential_access_count": 0,
+    "executed_action_count": 0,
+    "external_write_count": 0,
+    "llm_call_count": 0,
+    "remediation_adapter_call_count": 0,
+    "shell_execution_count": 0,
+    "source_mutation_count": 0,
+    "truth_leak_count": 0
+  },
+  "schema_version": "p114.re2_ob_blind_evaluation.v1",
+  "scored_at": "2026-07-11T13:39:02.190277+00:00"
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "p114.source_manifest.v1",
+  "source_id": "rcaeval-re2-ob",
+  "dataset": "RCAEval RE2-OB",
+  "system": "online_boutique",
+  "canonical_record": "https://zenodo.org/records/14590730",
+  "canonical_download_url": "https://zenodo.org/api/records/14590730/files/RE2-OB.zip/content",
+  "file_name": "RE2-OB.zip",
+  "compressed_bytes": 1191025569,
+  "expected_case_count": 90,
+  "upstream_md5": "b9e23f8842c404b396ffd2becff15de4",
+  "verified_sha256": "0605a36cdcad8a6ae0107f2357c9c91ecee2c4ab5d72579bffea0372d9747513",
+  "sha256_policy": "computed from the first successful pinned acquisition and frozen before blind scoring",
+  "label_convention": "RE2-OB/{case_group}/{repetition}",
+  "license_note": "Upstream RCAEval repository identifies its datasets as MIT; the Zenodo record displays CC BY 4.0. OpsCat does not redistribute the archive.",
+  "citation": "Pham et al., RCAEval: A Benchmark for Root Cause Analysis of Microservice Systems with Telemetry Data, WWW 2025"
+}

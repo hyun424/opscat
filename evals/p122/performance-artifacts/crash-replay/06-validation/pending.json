@@ -1,0 +1,20 @@
+{
+  "adapter_invoked": true,
+  "correlation_id": "p122-crash-06-validation",
+  "durable_phase": "validation_result_commit_pending",
+  "operation": "validation_result_commit",
+  "operation_adapter": "p121_validation_outcome_v1",
+  "ordinal": 6,
+  "output_ref": "committed/validation.json",
+  "output_schema": "p121.validation_outcome.v1",
+  "parent_pid": 58352,
+  "precommit_hash": "sha256:c17e04219b357e2b7e71328dd9f3ded60b69c77b65801b789e67491f34acb20d",
+  "precommit_kind": "file",
+  "precommit_ref": "precommit/validation.json",
+  "precommit_validation_hash": "sha256:4a7100032d1aead01da57ced14216f58c5a93bc9a027996e8636cbde500ea87e",
+  "record_hash": "sha256:14f5309af232435fb9eb95dc593afaa7d9be739d223a35928187a46c066710ed",
+  "schema_version": "p122.release_stage_pending.v1",
+  "stage": "validation",
+  "status": "pending",
+  "worker_pid": 58366
+}

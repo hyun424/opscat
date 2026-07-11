@@ -1,0 +1,1651 @@
+{
+  "console_entrypoint": "opscat=app.cli:main",
+  "entries": [
+    {
+      "hash": "sha256:71f34d576cb3ddb6563f17211381c5cf843b08251891f022eea2aeb3b30d95c3",
+      "path": "bin/opscat",
+      "size": 73
+    },
+    {
+      "hash": "sha256:e3fe41ad519f10f0949b6e8f24cc7b7dbacea3dfb04f521f1c9e1b7772a1e69e",
+      "path": "site-packages/app/__init__.py",
+      "size": 32
+    },
+    {
+      "hash": "sha256:027e5ffc916f4dc10aea13c2f408d27a173b040c8801734fcd779dcf0637e94d",
+      "path": "site-packages/app/agent/loop.py",
+      "size": 14770
+    },
+    {
+      "hash": "sha256:1f3bff6fb2890b79951cfca9a987b6d2522240c24469bf1c63b4e82c3eaf8129",
+      "path": "site-packages/app/agent/mock_agent.py",
+      "size": 10018
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "site-packages/app/api/__init__.py",
+      "size": 0
+    },
+    {
+      "hash": "sha256:daa2e1c2ff89a30e8babc00c35b2b0a6dbf6d22f21d9de779e8a50af9a97c26d",
+      "path": "site-packages/app/api/approvals.py",
+      "size": 3902
+    },
+    {
+      "hash": "sha256:6e6c9df65d6996fa28fc6d3b7e83b9593842123ad5f4bf3adf1992ccceb4b707",
+      "path": "site-packages/app/api/auth.py",
+      "size": 842
+    },
+    {
+      "hash": "sha256:b09a2d036c603360f5ab5c31ce98c36d4f6504ea52062a8fe46e9d1519579e6c",
+      "path": "site-packages/app/api/connectors.py",
+      "size": 2573
+    },
+    {
+      "hash": "sha256:4f671d5970512194323e3b3e32095507060b9d1bb8462604848a839a417772d1",
+      "path": "site-packages/app/api/health.py",
+      "size": 1881
+    },
+    {
+      "hash": "sha256:c9e862e5dcc78ec321b63a2b8257f52279821265bd0d97d7e73ecbd2fbc7f128",
+      "path": "site-packages/app/api/incidents.py",
+      "size": 9499
+    },
+    {
+      "hash": "sha256:0d38a123075944efeff096156e1660ff4df67461fcc2cc92e3a608839bbf146a",
+      "path": "site-packages/app/api/mock_alerts.py",
+      "size": 2711
+    },
+    {
+      "hash": "sha256:2a511b9835a4e90fbea92040926d365b2d108c052a2bd44a8641a5c855c36bb7",
+      "path": "site-packages/app/api/night_autopilot.py",
+      "size": 1473
+    },
+    {
+      "hash": "sha256:e2375cddcb52d3dd39d33c5462083159cfdf42894ad586fe026cae887c44f768",
+      "path": "site-packages/app/api/operator.py",
+      "size": 18799
+    },
+    {
+      "hash": "sha256:ab4570af18a720ceb2d8cfc7c481da43e73e6e7e6ec5d45fbbdb9b875b8ebaf5",
+      "path": "site-packages/app/api/secrets.py",
+      "size": 3111
+    },
+    {
+      "hash": "sha256:9082de4ba25ed322de673a0e804d8613e710d7876e87334a347775faed4da96f",
+      "path": "site-packages/app/api/workspace.py",
+      "size": 199
+    },
+    {
+      "hash": "sha256:c03b240cdbad8c0e479e908a5326551889f7cdbeb2136c7aed7ac0c2e96ccb6f",
+      "path": "site-packages/app/cli.py",
+      "size": 2557
+    },
+    {
+      "hash": "sha256:02a7dc5ed014ad17aec1a7efeefbc3fb854a5b75ecd1ebb9ecbfeffdb43165b2",
+      "path": "site-packages/app/config.py",
+      "size": 889
+    },
+    {
+      "hash": "sha256:fd2e02c25c1c74ea02d1a4425cc4ef5338d1e168f5b8e15d968142be878a5683",
+      "path": "site-packages/app/connectors/__init__.py",
+      "size": 54
+    },
+    {
+      "hash": "sha256:5349145c0e3d99758dd90004a7b20ddb8d452dd82615a6fbb00492a02168cf00",
+      "path": "site-packages/app/connectors/base.py",
+      "size": 1294
+    },
+    {
+      "hash": "sha256:65ac571ecffc1179536bf55e84360e503174f75d43786c9e8c9cb911d26aa541",
+      "path": "site-packages/app/connectors/fake.py",
+      "size": 1884
+    },
+    {
+      "hash": "sha256:c159b4791050433ecbdfe1f802d87067727d73fa8347fd3ced23cfdfc580b014",
+      "path": "site-packages/app/connectors/github.py",
+      "size": 4197
+    },
+    {
+      "hash": "sha256:e9f3cb5154a3b49d36b8c8395288c5a95382e5e3c48ae8a55003a3f816127903",
+      "path": "site-packages/app/connectors/prometheus.py",
+      "size": 21006
+    },
+    {
+      "hash": "sha256:1565ef386aa83256a8ffbd6543e98d87334e57ecedbc66bee58490c8c7cc9dd5",
+      "path": "site-packages/app/connectors/registry.py",
+      "size": 1259
+    },
+    {
+      "hash": "sha256:91763d05dec133dcfea051ca398a4dedb0c625aec931d09d9140cd9e9ce0a235",
+      "path": "site-packages/app/connectors/sentry.py",
+      "size": 28105
+    },
+    {
+      "hash": "sha256:bfff26adaf4e9531c4c8226343f3d87932f22b35a3fd752b0fb37230aa7b7007",
+      "path": "site-packages/app/connectors/slack.py",
+      "size": 3757
+    },
+    {
+      "hash": "sha256:f8cb5edaf226bf92e5950a203e20cecd4b07921e47d144b387336790c8dd4430",
+      "path": "site-packages/app/db.py",
+      "size": 845
+    },
+    {
+      "hash": "sha256:392d6a8825edc2629c6ad721956477cb0a435f2ca3b514d38c19ed19a3946ae3",
+      "path": "site-packages/app/main.py",
+      "size": 811
+    },
+    {
+      "hash": "sha256:483dece7c45203ba29aa5cccbd3b67d6f99c4447b393280258301f31ddc53edd",
+      "path": "site-packages/app/migrations/__init__.py",
+      "size": 46
+    },
+    {
+      "hash": "sha256:6b5e3c16095a312f107fa27a1329aeaf383914632b4603adf73ad589fb567365",
+      "path": "site-packages/app/migrations/runner.py",
+      "size": 4187
+    },
+    {
+      "hash": "sha256:81b089a2b5e212e2b4abbcabd3247ea6e8508c9b23d49f4391bf46a9ae033e65",
+      "path": "site-packages/app/migrations/versions/0001_initial.py",
+      "size": 634
+    },
+    {
+      "hash": "sha256:22167725241c93455f16aa51001d6dec1ebf6a82a9de8458ab17bc3c8a93620b",
+      "path": "site-packages/app/migrations/versions/0002_identity_memberships.py",
+      "size": 558
+    },
+    {
+      "hash": "sha256:4258c5dbf037efd765bd8d96eb33dfce4a515eeef94f02fdd75d69dc6acff57f",
+      "path": "site-packages/app/migrations/versions/0003_audit_events.py",
+      "size": 425
+    },
+    {
+      "hash": "sha256:3f7b9f9ef507ac1758cb8c0be5ee89dbc2d6b9cfe722e5fe982dbf9b8e377fde",
+      "path": "site-packages/app/migrations/versions/0004_secret_records.py",
+      "size": 432
+    },
+    {
+      "hash": "sha256:5651648a6ff75532682c540979ec284081090e7d9a0b4db278a0201e4c4c8d79",
+      "path": "site-packages/app/migrations/versions/0005_workflow_jobs.py",
+      "size": 441
+    },
+    {
+      "hash": "sha256:18896a9fc9002f88174053adb9e2e266c0ae1040ca148cb13e0f7e186fb4e9a2",
+      "path": "site-packages/app/migrations/versions/0006_action_execution_attempts.py",
+      "size": 477
+    },
+    {
+      "hash": "sha256:af7a2d70b9ad84ddab8ea759eee4654a8251f7f5ece9dd2e3d5c7cec2012acec",
+      "path": "site-packages/app/migrations/versions/0007_connector_call_records.py",
+      "size": 473
+    },
+    {
+      "hash": "sha256:d991f3a494cc38df6b23bde69fb70494fa1500debdfb26d3366d301f79a3ac4c",
+      "path": "site-packages/app/migrations/versions/__init__.py",
+      "size": 45
+    },
+    {
+      "hash": "sha256:6c57402bb358c547e613212b95de1343ad6619adf9ec7aaebc9f2efe7ee62276",
+      "path": "site-packages/app/models/__init__.py",
+      "size": 2871
+    },
+    {
+      "hash": "sha256:95419cea8f48f5ccbeb920a874ecf5e63f452e5e329e347d2e1214aaa4334acd",
+      "path": "site-packages/app/models/action.py",
+      "size": 8243
+    },
+    {
+      "hash": "sha256:6ee5d50992b76ef3ef337d6cc353f5f7a9023c3b5f13e71ad5e3cf2072a72c3e",
+      "path": "site-packages/app/models/audit.py",
+      "size": 1132
+    },
+    {
+      "hash": "sha256:c10a45482e9c11459fd44feb7b87572b685be15e8b08f16aa7beb02de36f025f",
+      "path": "site-packages/app/models/evidence.py",
+      "size": 1117
+    },
+    {
+      "hash": "sha256:867d132741b304a954cf2bd64d725e1d0366ef1eec1e40d062bd9f04d2bb1f01",
+      "path": "site-packages/app/models/identity.py",
+      "size": 1759
+    },
+    {
+      "hash": "sha256:781313085c8bbb087ad01300d640faabe7087450b895dfb3e38456c23f5dd476",
+      "path": "site-packages/app/models/incident.py",
+      "size": 1930
+    },
+    {
+      "hash": "sha256:b86371b4bacdcb9b88c6c8fd8daaa3b187e0164e36fb21ea671eb1ce8e4c42d9",
+      "path": "site-packages/app/models/policy.py",
+      "size": 1082
+    },
+    {
+      "hash": "sha256:f6952fa1d2447c95808f685c8d164877fc61377846f1823c8f3581b1da72e234",
+      "path": "site-packages/app/models/secret.py",
+      "size": 1365
+    },
+    {
+      "hash": "sha256:8ad520f92779db8d606ecf94a0fbe940304f560e6ae483aa2129bb11277a9962",
+      "path": "site-packages/app/models/timeline.py",
+      "size": 1071
+    },
+    {
+      "hash": "sha256:f70c46f1eaedc795dadb2cf682355c443bead6da883491770997f623861c12ba",
+      "path": "site-packages/app/models/workflow.py",
+      "size": 3350
+    },
+    {
+      "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
+      "path": "site-packages/app/plugin_sdk.py",
+      "size": 1022
+    },
+    {
+      "hash": "sha256:54646cdae058cd7f12c42d0bfa538b9b5f7e3994babec37b32575f797ec7e438",
+      "path": "site-packages/app/public_contracts.py",
+      "size": 9061
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "site-packages/app/schemas/__init__.py",
+      "size": 0
+    },
+    {
+      "hash": "sha256:a19064e12753b17cfb9d66eaea66074eb3e7b372a02ada1f8c83ddcd50f9c2d3",
+      "path": "site-packages/app/schemas/agent.py",
+      "size": 997
+    },
+    {
+      "hash": "sha256:c908783327d15d332c58263a0e4d98321665eb8828347e05ebd8bcca95f310a8",
+      "path": "site-packages/app/schemas/incidents.py",
+      "size": 4604
+    },
+    {
+      "hash": "sha256:dede3609fa60f4a66dfb95cb2da1b2c229e441d49ef74ed5f1045560cae2c864",
+      "path": "site-packages/app/security/__init__.py",
+      "size": 33
+    },
+    {
+      "hash": "sha256:f6e6e2589eca8f020ca43e5713091e42509d1ee6e975bf1f8f6b4211d73ed4f3",
+      "path": "site-packages/app/security/dependencies.py",
+      "size": 867
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "site-packages/app/services/__init__.py",
+      "size": 0
+    },
+    {
+      "hash": "sha256:aa62d8b95a1a258f9d6d668b7b1eabc534ce211c0dc7dff7b07e39906b97346b",
+      "path": "site-packages/app/services/action_sandbox_hardening.py",
+      "size": 12382
+    },
+    {
+      "hash": "sha256:161ff832744a3fa3d2d15f77ea08580a0f27ea23649d213018dc3d0844b0f229",
+      "path": "site-packages/app/services/action_service.py",
+      "size": 6890
+    },
+    {
+      "hash": "sha256:6439d8feb24eff7276eb71cea992cf651b7a62e753d68046dec1255c8a95c6c6",
+      "path": "site-packages/app/services/action_simulator.py",
+      "size": 7186
+    },
+    {
+      "hash": "sha256:380ded2101b780f81e2fd661bcb4f2c010f2cc0a87141c673e9aa9f54bb9a3fc",
+      "path": "site-packages/app/services/agent_evaluation_dashboard.py",
+      "size": 9467
+    },
+    {
+      "hash": "sha256:2480626342c727ee626b01cf27a12756db7341ef16af2358c88e26fb40e9a219",
+      "path": "site-packages/app/services/agent_reliability_score.py",
+      "size": 9110
+    },
+    {
+      "hash": "sha256:9fbd6b0c500d69393ecceb4a54edd969eab03ac8060d4d82f1ee9033e3e87640",
+      "path": "site-packages/app/services/approval_automation_policy_lab.py",
+      "size": 14129
+    },
+    {
+      "hash": "sha256:9d84a6ae34e834874ec11c2bbff91c5c9d363e9fe5d52e39de99fd4540030537",
+      "path": "site-packages/app/services/approval_control_plane.py",
+      "size": 14976
+    },
+    {
+      "hash": "sha256:cb41b36f4e293c2c17d9790635d6f1bc838c620c231533203e36af6f62fa9c50",
+      "path": "site-packages/app/services/audit_service.py",
+      "size": 837
+    },
+    {
+      "hash": "sha256:0442bf7221806991c75f4f16f6bceb0368d6ef9373cfc8de6027919b6edebb44",
+      "path": "site-packages/app/services/audited_staging_transport_gate.py",
+      "size": 19869
+    },
+    {
+      "hash": "sha256:bd40ff56299ca759568f1e06bf8bbed531dd341c0d7a1c4744f198d2e11668d2",
+      "path": "site-packages/app/services/authorization.py",
+      "size": 1661
+    },
+    {
+      "hash": "sha256:6a6be6e524bd5650e2bbce78b195511ba328ca598805724ec4cfd8815a5cacf1",
+      "path": "site-packages/app/services/autonomous_agent_dispatcher.py",
+      "size": 11903
+    },
+    {
+      "hash": "sha256:36037c61397d579926ac3fbde0ae4189884cbb47937ed099ec741c516fdcd3bf",
+      "path": "site-packages/app/services/autonomous_day_loop_backlog.py",
+      "size": 16451
+    },
+    {
+      "hash": "sha256:67fa01e210daa629600a698b10830c069d6b9a526e07b0bfab9ff3685bf74d81",
+      "path": "site-packages/app/services/autonomous_loop_executor.py",
+      "size": 12539
+    },
+    {
+      "hash": "sha256:aecd1d0f1e7fcf0070c714a5fe4e7ee402fb63b59020331309c5557246438bec",
+      "path": "site-packages/app/services/autonomous_worker_runner.py",
+      "size": 11094
+    },
+    {
+      "hash": "sha256:3ab173560db2bedb94f7e155751281b03dfdd57c8978bd4afde17cb8c35eac22",
+      "path": "site-packages/app/services/autonomy_readiness.py",
+      "size": 8013
+    },
+    {
+      "hash": "sha256:97c41c07c435b50aaa039eafd61cba45e79b66bc081e59cb83fcb7819f47c01e",
+      "path": "site-packages/app/services/blast_radius.py",
+      "size": 6054
+    },
+    {
+      "hash": "sha256:2a8747c108df71ab38a894c0c7ccc1ef57a6a3150a00d017621ad57da5d00f20",
+      "path": "site-packages/app/services/bounded_local_supervisor_scheduler.py",
+      "size": 22255
+    },
+    {
+      "hash": "sha256:44f31cc54d42fb1f3054efceead3874c760e391ef51f8691076f5b9163123c4f",
+      "path": "site-packages/app/services/candidate_benchmark_promotion_gate.py",
+      "size": 10843
+    },
+    {
+      "hash": "sha256:09e87dc7c90e681273314b4dbfc673f74b2591eb440ba866381bd4270e5b5b0a",
+      "path": "site-packages/app/services/candidate_benchmark_regression_runner.py",
+      "size": 8510
+    },
+    {
+      "hash": "sha256:098c5d5fea3a5f54d4a2fae2bfa709cb5fbf28a1d1ba2ab8cabf1d105ba1b583",
+      "path": "site-packages/app/services/causal_remediation_benchmark.py",
+      "size": 41181
+    },
+    {
+      "hash": "sha256:6940c3b41f7a6ccbc32e99dd0a8a0b6e1b59ba4bbf4df93d5d5e0bbf78f236b8",
+      "path": "site-packages/app/services/closed_loop_response.py",
+      "size": 14405
+    },
+    {
+      "hash": "sha256:1134b761dee5201ea4906102ec54030b3875f186167954207fa4da1fa4597b4e",
+      "path": "site-packages/app/services/commander_learning.py",
+      "size": 3222
+    },
+    {
+      "hash": "sha256:cf353aab9caf0ee1af00afe04c435c9df3ec311c2ad7423852e73e25bb5c6e9d",
+      "path": "site-packages/app/services/commander_tournament.py",
+      "size": 4635
+    },
+    {
+      "hash": "sha256:0c4df279c7bc6774590ae3420c1dee7dc31c1e740e1c6d495c7a355df4cdf01f",
+      "path": "site-packages/app/services/confidence_calibration.py",
+      "size": 5714
+    },
+    {
+      "hash": "sha256:9e59eb1c0a6abe240467fbb163f7a2f280417fd5b4da8afd1b8f1b5c3553f238",
+      "path": "site-packages/app/services/connector_readiness.py",
+      "size": 11917
+    },
+    {
+      "hash": "sha256:57cf89b3a97828a55d456139eda1274718f5bb57a8f0a4108530bc4c4f34ff17",
+      "path": "site-packages/app/services/connector_service.py",
+      "size": 19881
+    },
+    {
+      "hash": "sha256:de9c230b1ea3aa18ed2c125f0d13b3b92bc99fa40eb6a20c6a83306564b2622f",
+      "path": "site-packages/app/services/controlled_remediation.py",
+      "size": 12470
+    },
+    {
+      "hash": "sha256:69429b74fdabe575df736cde3ee3cece3b77f36f35802de8eaaef935680643c4",
+      "path": "site-packages/app/services/correlation_service.py",
+      "size": 8152
+    },
+    {
+      "hash": "sha256:ea0f6af7d8ced6795eb7a9f5ac63b366d0b35f876a81b3a9974d0976fee78a45",
+      "path": "site-packages/app/services/decision_trace_service.py",
+      "size": 18553
+    },
+    {
+      "hash": "sha256:8f3b404081067186a6d426f2b419befd9461a7783d9194ec60a585bbac9ef81b",
+      "path": "site-packages/app/services/escalation.py",
+      "size": 10561
+    },
+    {
+      "hash": "sha256:1afa30f520279c7505313464f31941444e33258730eb906094981978eae4ccb2",
+      "path": "site-packages/app/services/evidence_gap_investigator.py",
+      "size": 46693
+    },
+    {
+      "hash": "sha256:bcb9b538c0ede5512beb6163ebdfdcbeae996e20db53c85789e70004771ce154",
+      "path": "site-packages/app/services/evidence_graph.py",
+      "size": 6937
+    },
+    {
+      "hash": "sha256:4a07e96f75684158d8a22439c7b3e8aff74a2ed0581a4f1135ce197f5858b07c",
+      "path": "site-packages/app/services/evidence_grounded_judgment.py",
+      "size": 9225
+    },
+    {
+      "hash": "sha256:36d085c62cf6b2bfd8a442b20212f74ba813950be1f0580c5b43eda442efcb59",
+      "path": "site-packages/app/services/evidence_sufficiency_gate_v2.py",
+      "size": 9866
+    },
+    {
+      "hash": "sha256:d50b9dcf578bb22cd53f1748e9e7d5aee90949d04b98f66a6567482d49c17db3",
+      "path": "site-packages/app/services/execution_attempt_service.py",
+      "size": 3804
+    },
+    {
+      "hash": "sha256:75d7fd149cda8223ee97f521c9b0bf61f69e5149cf2a9b91d015e0b5aa358501",
+      "path": "site-packages/app/services/external_dataset_acquisition.py",
+      "size": 13267
+    },
+    {
+      "hash": "sha256:67785c96efa4a8c0cad8989094b754da22ee8b03214791fe5d65a1ff117afe9f",
+      "path": "site-packages/app/services/failure_driven_benchmark_improvement.py",
+      "size": 11102
+    },
+    {
+      "hash": "sha256:a2d43c4539cf79fc6f6974d24b7d77dd0b25aa73e16b7d138c807f87812d058e",
+      "path": "site-packages/app/services/failure_driven_improvement_pack.py",
+      "size": 11784
+    },
+    {
+      "hash": "sha256:2d9d7d48e5c3e26e9b0993c2468aae40ef75355e402b84b188ea884d574678d0",
+      "path": "site-packages/app/services/failure_forecast_engine.py",
+      "size": 273390
+    },
+    {
+      "hash": "sha256:43355595d6898a31abb3bb47d2283843a696af7b67350e1c8160feb5f80b2084",
+      "path": "site-packages/app/services/failure_mining_loop.py",
+      "size": 10871
+    },
+    {
+      "hash": "sha256:a8ad80b5d362380234a377695f2818f3d8bf7fc0f03ba98ac459b8a9e0e0e4c8",
+      "path": "site-packages/app/services/gated_worker_process_runner.py",
+      "size": 11909
+    },
+    {
+      "hash": "sha256:70ac24dbee82ddc8dfa626492d01fae069956797739e4a97460ce2a207083934",
+      "path": "site-packages/app/services/human_question_service.py",
+      "size": 6475
+    },
+    {
+      "hash": "sha256:72b5c84d9a4359373e817328bf0da956b7c4cf2c6c46b48acbb7da684b7bc3bb",
+      "path": "site-packages/app/services/hybrid_commander_comparator.py",
+      "size": 8389
+    },
+    {
+      "hash": "sha256:60eb7481eac2d53b768302de48a0951d55b8d5fb6d563fe67d70a882480d8881",
+      "path": "site-packages/app/services/hypothesis_reranker.py",
+      "size": 8042
+    },
+    {
+      "hash": "sha256:a5c7dc94b1f7bc5871e9d7e909163f104a6255a94b72cdc1b5279478b0dc8cbb",
+      "path": "site-packages/app/services/identity_service.py",
+      "size": 3024
+    },
+    {
+      "hash": "sha256:5769a4620b46fa4b0f48e4c964f9bed5533a7578ea4ee983dcf9b63764444592",
+      "path": "site-packages/app/services/incident_commander.py",
+      "size": 9996
+    },
+    {
+      "hash": "sha256:0f30a93eccc5f2edeae454035385cb77a295b7df65b12e461c40803d6f327bff",
+      "path": "site-packages/app/services/incident_memory.py",
+      "size": 8932
+    },
+    {
+      "hash": "sha256:f5b02151411bf22680cdee4bdc5659c29b6ee0b3b5b450b7bd2a096607adb305",
+      "path": "site-packages/app/services/incident_service.py",
+      "size": 12240
+    },
+    {
+      "hash": "sha256:196490b72cec55f5f97cfb198300be56a3707c0e8ff02bd84435e311c24e2552",
+      "path": "site-packages/app/services/incident_shadow_mode.py",
+      "size": 9888
+    },
+    {
+      "hash": "sha256:a46162635440c80eb754a5ba6d483604890eca49387240833a07e4e96c25420a",
+      "path": "site-packages/app/services/investigator_loop.py",
+      "size": 9796
+    },
+    {
+      "hash": "sha256:d8c50c8dcc45691535ac0f9c66abe5ad9bb2341127f5efbfd2b4dff4abbdb408",
+      "path": "site-packages/app/services/judgment_adapters.py",
+      "size": 9797
+    },
+    {
+      "hash": "sha256:1e47c1c2b9d597958a3418b82e36b46c93c16550b00c7622cff0821d87f584bf",
+      "path": "site-packages/app/services/judgment_benchmark.py",
+      "size": 8394
+    },
+    {
+      "hash": "sha256:2236f6d8a6a605d5d46e3b6418761e7926dc8231f1fce7c415d1cc028952bc79",
+      "path": "site-packages/app/services/judgment_corpus.py",
+      "size": 20835
+    },
+    {
+      "hash": "sha256:c9d8b285c95b39349835556aaa60a5af273c26a385f0489dbe19937b41d02664",
+      "path": "site-packages/app/services/judgment_dataset.py",
+      "size": 6244
+    },
+    {
+      "hash": "sha256:d55f0ae4cfdc387e2901e646864e343a9b05cde0ab13b00a0bc780e5e7a13e91",
+      "path": "site-packages/app/services/judgment_evaluator.py",
+      "size": 5605
+    },
+    {
+      "hash": "sha256:c62059778f50ecc5098845852856fdd0ca1dee6e5491f10a9d52468aad4ad721",
+      "path": "site-packages/app/services/live_connector_dry_run.py",
+      "size": 12866
+    },
+    {
+      "hash": "sha256:1c013b9f623f81eb4ca8d8a0d6e616bed364050c07e5b8240d75bca655c9479b",
+      "path": "site-packages/app/services/llm_context_builder.py",
+      "size": 14830
+    },
+    {
+      "hash": "sha256:f23c9e91d2ded9e7fbc15077c60f8480fcdcd17637f556d287a1ebce314b44ba",
+      "path": "site-packages/app/services/llm_diagnostic_episode.py",
+      "size": 16967
+    },
+    {
+      "hash": "sha256:a744eaac9c9e907808a099262dd7f224265b2e670d18591a8e485b3bb1359f1f",
+      "path": "site-packages/app/services/llm_judgment.py",
+      "size": 24884
+    },
+    {
+      "hash": "sha256:c39934672034ced69c25ae5bd5771df176af76cee5881fc4f0bd08ae156bf0a7",
+      "path": "site-packages/app/services/llm_judgment_candidate_harness.py",
+      "size": 7547
+    },
+    {
+      "hash": "sha256:09f5ca95ea5d434ed60efc6467e748fcc5b674ccb2af81767b58b0f694b17e7f",
+      "path": "site-packages/app/services/llm_provider_evaluation.py",
+      "size": 17732
+    },
+    {
+      "hash": "sha256:47571d6b7301ea013a129094172d4e26e09090e339e499d01d01c4822116989b",
+      "path": "site-packages/app/services/llm_tool_planner_evaluation.py",
+      "size": 11356
+    },
+    {
+      "hash": "sha256:5332e94c71f76bc9fbd9b57d3a268328fbe7b177c450ff87584de86574e2cd61",
+      "path": "site-packages/app/services/local_autonomous_supervisor_loop.py",
+      "size": 19859
+    },
+    {
+      "hash": "sha256:71e5cf7a5da78b26250f8ba54f0d3f6a7fd78abb05ea7a272b46fec7e65fb93e",
+      "path": "site-packages/app/services/local_safe_subprocess_runner.py",
+      "size": 18413
+    },
+    {
+      "hash": "sha256:e16e26d9b674fdd7fa50722257286e72319123427da6f3aacfad56ee9acd9420",
+      "path": "site-packages/app/services/local_shadow_connector_validation.py",
+      "size": 14394
+    },
+    {
+      "hash": "sha256:2eed653e8695242986c068c1b4d393a5ccbd99c2cbf93dc808eb4e39d173a072",
+      "path": "site-packages/app/services/long_run_loop_controller.py",
+      "size": 19426
+    },
+    {
+      "hash": "sha256:50777d674e942fa96267f8afd2b4856b038c53863f698f36dc113e53f963e922",
+      "path": "site-packages/app/services/microremed_result_adapter.py",
+      "size": 19318
+    },
+    {
+      "hash": "sha256:5515028ee1c1830e36a80f9c04564365a89fc327f8cf67db2cccc672defd33c8",
+      "path": "site-packages/app/services/model_quality_lab.py",
+      "size": 19937
+    },
+    {
+      "hash": "sha256:6e751d8c0a5be15780fa8ad16da75096b705bac56945aefc906cb6e14a80aede",
+      "path": "site-packages/app/services/night_autopilot.py",
+      "size": 15294
+    },
+    {
+      "hash": "sha256:73019f246e248ea38ce0e123dcf953916f40284fedc793ccb782004b7153d1a4",
+      "path": "site-packages/app/services/night_operator_drill_v2.py",
+      "size": 9481
+    },
+    {
+      "hash": "sha256:4d8595831f8fb64c44f3bd6687cc5ab8ade2085f44e1b537481eb6fc53afeaa8",
+      "path": "site-packages/app/services/night_shift_drill.py",
+      "size": 9672
+    },
+    {
+      "hash": "sha256:018a7901db05eb3b825938ff3f120d5243a05d76b39ec9427c1c6d957994fcc2",
+      "path": "site-packages/app/services/observability.py",
+      "size": 3343
+    },
+    {
+      "hash": "sha256:0506dabf6ffdfa7a202b5cb49134db4f8365670e2cd028c5684640270186086b",
+      "path": "site-packages/app/services/open_source_config_hardening.py",
+      "size": 10382
+    },
+    {
+      "hash": "sha256:e28b25257a29d5d92edbbe7bcfb0b19b282f3653525098bb64cc56fabbc611b7",
+      "path": "site-packages/app/services/operational_scenario_catalog.py",
+      "size": 18681
+    },
+    {
+      "hash": "sha256:7762b0c988bc77e7c48da7363944bbaf4d1e59dbcaf61d437d5c10634d6e2436",
+      "path": "site-packages/app/services/operator_improvement_loop.py",
+      "size": 20594
+    },
+    {
+      "hash": "sha256:fb4687ef2250ae3147cdc39480777cd47aa147154cbeff5bd9326d01ad3c9ab6",
+      "path": "site-packages/app/services/operator_judgment_benchmark_v2.py",
+      "size": 13225
+    },
+    {
+      "hash": "sha256:3fdbf9994827de6fda00a470953aaf0371365f2fa2fa856d5cbe174dc1849adc",
+      "path": "site-packages/app/services/operator_replacement_acceptance_drill_v3.py",
+      "size": 18636
+    },
+    {
+      "hash": "sha256:3bd146b54d63240a901408b5d06a848715b5fbf0dc2465f413d379c2149a2e17",
+      "path": "site-packages/app/services/operator_replacement_drill.py",
+      "size": 13447
+    },
+    {
+      "hash": "sha256:65e1357e542e22291f5d154b53b14377256c24a646ed5ef045754f52c16978f3",
+      "path": "site-packages/app/services/operator_replacement_readiness_gate_v2.py",
+      "size": 8187
+    },
+    {
+      "hash": "sha256:1b8f7ccc3959b8e9de96e1e76117740e2ea5fe9f4cbc3249b0b42d2e63ad619d",
+      "path": "site-packages/app/services/operator_transcript_demo.py",
+      "size": 24326
+    },
+    {
+      "hash": "sha256:5937f356a077cb8c0995e09337ebb1714dc943e6025998c856fa4f26db6a3694",
+      "path": "site-packages/app/services/outcome_driven_next_action_planner.py",
+      "size": 22005
+    },
+    {
+      "hash": "sha256:58502b1156c1bdc579d120eae3bd5d10770ce2e78b13866b146c6e640d4b800b",
+      "path": "site-packages/app/services/p105_release_prerequisite.py",
+      "size": 12321
+    },
+    {
+      "hash": "sha256:de9849ac512be44cafa22c7a6d807e67f5b46dbb3610cd2522fcdf49c8e92e0b",
+      "path": "site-packages/app/services/p107_release_evidence.py",
+      "size": 11417
+    },
+    {
+      "hash": "sha256:577c9a681fa56f1ccf5840ea9f16220ef16ea137b84307120a8bff3fa0769ad5",
+      "path": "site-packages/app/services/p108_release_evidence.py",
+      "size": 33751
+    },
+    {
+      "hash": "sha256:3209e379c72e13a50fea899d3a782acff2b3a1f2bb9657d0d414ba6b3e3ab7d4",
+      "path": "site-packages/app/services/p109_holdout_guard.py",
+      "size": 10598
+    },
+    {
+      "hash": "sha256:07ea9298b82071c7f6a456b0834d0b17f8763dd9ee616730646d8d3931db65fc",
+      "path": "site-packages/app/services/p109_release_evidence.py",
+      "size": 23474
+    },
+    {
+      "hash": "sha256:7b88d9cec34aa7e5ee29028c15fa9be29d88a2ce0cc9aba1316f4103356a0141",
+      "path": "site-packages/app/services/p109_safe_acquisition.py",
+      "size": 11601
+    },
+    {
+      "hash": "sha256:1e733d6172adc5e0b71f0768b8640df4be407035b02d49b3265b5f58fbeda3a8",
+      "path": "site-packages/app/services/p109_source_manifest.py",
+      "size": 18252
+    },
+    {
+      "hash": "sha256:d274000d41bcc91a694883fc99ed578dc4710c793fcfaa459d318a055aaf6c2a",
+      "path": "site-packages/app/services/p110_acquisition.py",
+      "size": 4372
+    },
+    {
+      "hash": "sha256:c8a44a3354f5714e25c207571d61e4baa7f5b53ea2a2a6af9d3df9d4282e96ea",
+      "path": "site-packages/app/services/p110_candidate_runner.py",
+      "size": 28587
+    },
+    {
+      "hash": "sha256:5c96ed8272f7abca0ad4180eab96d56fddaad3fb3375367a76d9f606c04360d9",
+      "path": "site-packages/app/services/p110_evaluation.py",
+      "size": 17339
+    },
+    {
+      "hash": "sha256:5338a901e71f94c7695ee19d6aedc337f1506556321ab0fb93b8b7375b454b48",
+      "path": "site-packages/app/services/p110_rcaeval.py",
+      "size": 17842
+    },
+    {
+      "hash": "sha256:6498e99d5ce88abbfdbaae277154cc5b8111660f7af1d1058cf871d15ba8c8a6",
+      "path": "site-packages/app/services/p110_release_evidence.py",
+      "size": 14284
+    },
+    {
+      "hash": "sha256:105620ad28784b3cec7a8a26cd3f44ef2732bee879c57897dfe4ba8af7f4e487",
+      "path": "site-packages/app/services/p111_benchmark_guard.py",
+      "size": 4172
+    },
+    {
+      "hash": "sha256:cca3bdee3f2546a61786f7d49c3e327c2168d71ed8fe36e4660cd2e78a4a22aa",
+      "path": "site-packages/app/services/p111_comparison.py",
+      "size": 6192
+    },
+    {
+      "hash": "sha256:423cb3fcf868e3f25ee93b0c1eebad2e1bcac3766af187bc6e439cdfb1bb2cd6",
+      "path": "site-packages/app/services/p111_fault_prior.py",
+      "size": 5391
+    },
+    {
+      "hash": "sha256:435552696139f255de1fe30f129a061886006c6f13f25800d8489895d5f2bfb1",
+      "path": "site-packages/app/services/p111_multistage_rca.py",
+      "size": 18549
+    },
+    {
+      "hash": "sha256:b94a600908b13be34554829ad731613f00799d9b6c53bca884f9c18d371f7c16",
+      "path": "site-packages/app/services/p111_release_evidence.py",
+      "size": 2789
+    },
+    {
+      "hash": "sha256:aeb487b7eedfd02da3cc169c3141ae634424a1334b941ecec424105ce620f390",
+      "path": "site-packages/app/services/p112_benchmark_runtime.py",
+      "size": 6769
+    },
+    {
+      "hash": "sha256:4c92e804cee13895011ee313ef9332f72c1d3e3f38a40d7feff34284e1acd72b",
+      "path": "site-packages/app/services/p112_comparison.py",
+      "size": 4266
+    },
+    {
+      "hash": "sha256:8eb3a88bf83862354df89f2d52b820f298cbe81e02ed8012613308475c4af390",
+      "path": "site-packages/app/services/p112_cross_system_model.py",
+      "size": 15011
+    },
+    {
+      "hash": "sha256:14b182b46abf46de64bf64a2799bc3b50499bfffa74c76dd8a6493b3f9c9f658",
+      "path": "site-packages/app/services/p112_evaluation.py",
+      "size": 7707
+    },
+    {
+      "hash": "sha256:e21f6d94ff3d8b1146c5cb01d688ccf5183196bebdca37901a56af3bd2fc4457",
+      "path": "site-packages/app/services/p112_freeze_guard.py",
+      "size": 3841
+    },
+    {
+      "hash": "sha256:f56a971ec0900c8bb4e91b7431eb7bdde6e786a4f4a1dab279f78a6c28e721ee",
+      "path": "site-packages/app/services/p112_multistage_rca.py",
+      "size": 9413
+    },
+    {
+      "hash": "sha256:745528836bfc31e88eaadd085d2f715bfcb0e67c48e7cbaf97e03d3bd8935add",
+      "path": "site-packages/app/services/p112_re1_loader.py",
+      "size": 13676
+    },
+    {
+      "hash": "sha256:6dbcc1f585bd1f30fad93921137a5c7cea2e77fe7fc1d6f9ef5305e0b902ca3b",
+      "path": "site-packages/app/services/p112_release_evidence.py",
+      "size": 3941
+    },
+    {
+      "hash": "sha256:cd42ccd7e85205b102924f577deb96009505f784492e5633ac5db2ace5524f16",
+      "path": "site-packages/app/services/p113_acquisition.py",
+      "size": 7965
+    },
+    {
+      "hash": "sha256:d761796311d85083da69aaf102a9204f78584b3dd8577751563650538162e90e",
+      "path": "site-packages/app/services/p113_benchmark_runtime.py",
+      "size": 11952
+    },
+    {
+      "hash": "sha256:7ea58351a2c2c4cbce070816145c1507dd9361c6892e2723eaea250e36720cf0",
+      "path": "site-packages/app/services/p113_blind_dataset.py",
+      "size": 7990
+    },
+    {
+      "hash": "sha256:a99f5eb4ddab873295c1cba46a6d7c733f62db5c0ea19423e6936a03dab16baf",
+      "path": "site-packages/app/services/p113_decoupled_rca.py",
+      "size": 22889
+    },
+    {
+      "hash": "sha256:969c8abd1ca2a737ca42cef52d2b1b355eae71dc4695838207172fac11013c5e",
+      "path": "site-packages/app/services/p113_evaluation.py",
+      "size": 12146
+    },
+    {
+      "hash": "sha256:dd844ffa6324c6f24066607b4201b64c5be2cd34784945fe6abcc2f87ae7943a",
+      "path": "site-packages/app/services/p113_governance.py",
+      "size": 13232
+    },
+    {
+      "hash": "sha256:025390c1206feaf2df9a7695d787a7091caa1944047984ae705700846938eb75",
+      "path": "site-packages/app/services/p113_release_evidence.py",
+      "size": 19366
+    },
+    {
+      "hash": "sha256:b3c415b9e20fa448bbeb726377917324e9c7347d731c8989f8eda0a829e7c4dd",
+      "path": "site-packages/app/services/p114_acceptance.py",
+      "size": 17259
+    },
+    {
+      "hash": "sha256:2b3972baa6f498faf436620fe6c6ed7b5b961df7d0ed381ca9b06a86bcc3d2e3",
+      "path": "site-packages/app/services/p114_acquisition.py",
+      "size": 9588
+    },
+    {
+      "hash": "sha256:8633805909a6fb0a01515b8b706d39317c72839c82d1adef62204b4a10636ae0",
+      "path": "site-packages/app/services/p114_adjudicator.py",
+      "size": 17088
+    },
+    {
+      "hash": "sha256:312a483b4c42465721d01cbb6bb35d80f0b5e6ba2f965e733229825996b6f0e1",
+      "path": "site-packages/app/services/p114_development_evaluation.py",
+      "size": 8459
+    },
+    {
+      "hash": "sha256:44d1e6e32047ab2f8b2922f6fe6be431dd449bde566542aa46d10d5f8737c82b",
+      "path": "site-packages/app/services/p114_fault_knn.py",
+      "size": 10168
+    },
+    {
+      "hash": "sha256:f570f255cbfff9f7bca0b092d708315974a9f43d47982cfa3d7245abe7ca592e",
+      "path": "site-packages/app/services/p114_governance.py",
+      "size": 3552
+    },
+    {
+      "hash": "sha256:21489964bc079ddab14c1f5598086e9e6e16744e50a4a1a6bec48b88281f9de8",
+      "path": "site-packages/app/services/p114_hypothesis_lattice.py",
+      "size": 9291
+    },
+    {
+      "hash": "sha256:458242ddfc3eae45a13a4af5f091d454805792e08ac8a0a6a1a3bda3d93ac567",
+      "path": "site-packages/app/services/p114_paired_evaluation.py",
+      "size": 10335
+    },
+    {
+      "hash": "sha256:c026faab520e9c199ef9b3f6167b94399c3becd12378b4ee44edb361eafc6537",
+      "path": "site-packages/app/services/p114_re2_loader.py",
+      "size": 21240
+    },
+    {
+      "hash": "sha256:9d3964a46c46044ea63deeea3d80cdf2852138145022182b0d10fd06e567d122",
+      "path": "site-packages/app/services/p115_action_contract.py",
+      "size": 10612
+    },
+    {
+      "hash": "sha256:2d5b799f0837e590c7c6be081abfce15a851c491848b72a016af7ad2c5528ab2",
+      "path": "site-packages/app/services/p115_baselines.py",
+      "size": 14407
+    },
+    {
+      "hash": "sha256:0a6a5881c0acb600be245b65ed4e9163fca185a0874fd356abb6a599229d4d67",
+      "path": "site-packages/app/services/p115_evaluator.py",
+      "size": 9534
+    },
+    {
+      "hash": "sha256:b6c18ee57d8cd959f550aaa4190af01c3b477b9b17c9f750e567efcafdad0e7c",
+      "path": "site-packages/app/services/p115_leakage_guard.py",
+      "size": 4457
+    },
+    {
+      "hash": "sha256:46c857de8b94b632e5c8f61d70e6427cd82ef85df3459d439fe83c30a0cf6717",
+      "path": "site-packages/app/services/p115_ontology.py",
+      "size": 11668
+    },
+    {
+      "hash": "sha256:44126cd4a27e08cc865de1cd29c3b125a3e3ef6a8ee9d4bbdf30578df484223f",
+      "path": "site-packages/app/services/p115_outcome_benchmark.py",
+      "size": 6372
+    },
+    {
+      "hash": "sha256:0ececd6fcb23ef64376c2528137fd60c7a0a74c1ac67f4d8209eda921544b8de",
+      "path": "site-packages/app/services/p115_p116_benchmark_adapter.py",
+      "size": 7655
+    },
+    {
+      "hash": "sha256:9562bd95b8fc7b06935df186ed9d9490dd74cf4a390b7d66d032326b99938c82",
+      "path": "site-packages/app/services/p115_release_evidence.py",
+      "size": 21337
+    },
+    {
+      "hash": "sha256:7b68e5f548dfd1929ae2c9b064055b8ea1809f89b9d5b9d3051623c4a56647c4",
+      "path": "site-packages/app/services/p115_scenario_matrix.py",
+      "size": 24627
+    },
+    {
+      "hash": "sha256:a4685eeb0a6b9585870e9d156bac5189fd00ae09a69b7832c3a765a4330d84ea",
+      "path": "site-packages/app/services/p116_lab_runner.py",
+      "size": 10703
+    },
+    {
+      "hash": "sha256:cd3328d10d9172d4d96fed1ef0feba97bd2ccd472f8a8e74822ed9f2df9ff233",
+      "path": "site-packages/app/services/p116_paired_outcomes.py",
+      "size": 14690
+    },
+    {
+      "hash": "sha256:5e8c520946040faa9086d3d4a6a2f55b8e6b182f582e6d89378533c743daa634",
+      "path": "site-packages/app/services/p116_release_evidence.py",
+      "size": 20701
+    },
+    {
+      "hash": "sha256:b6a64fd909d0b3897534479935abb88121f4503c00a1f05ce8eebb28c769e9ba",
+      "path": "site-packages/app/services/p117_benchmark.py",
+      "size": 11260
+    },
+    {
+      "hash": "sha256:b9663d7af95b6fd6cb1d16be224fbdbc547d606d2b428069f7d0e31e4891ea04",
+      "path": "site-packages/app/services/p117_contract.py",
+      "size": 18373
+    },
+    {
+      "hash": "sha256:280bc6e4a62821de40e2a817493e47c54cd5ca8e2fa04f740e9fc2c618aed87f",
+      "path": "site-packages/app/services/p117_contradictions.py",
+      "size": 5963
+    },
+    {
+      "hash": "sha256:3a25e774c2fcc42372a550a818c060096d47e255c8ab65c2a9af04a0d0b482d2",
+      "path": "site-packages/app/services/p117_evaluator.py",
+      "size": 10030
+    },
+    {
+      "hash": "sha256:bd654b3e7683473ec89bda319bb87ddbf5f6e8263d353edb40bd96912aff1738",
+      "path": "site-packages/app/services/p117_evidence_acquisition.py",
+      "size": 6452
+    },
+    {
+      "hash": "sha256:0ec652cb792514aa61d80791a36a41c66df51939394a2d28eef6bda8df9534b8",
+      "path": "site-packages/app/services/p117_nvidia_proposal.py",
+      "size": 10266
+    },
+    {
+      "hash": "sha256:5c80ac3f16a8e09d8a710879ab33237f09ae5f81e34b56868fdfdc924d2c25f4",
+      "path": "site-packages/app/services/p117_release_evidence.py",
+      "size": 10530
+    },
+    {
+      "hash": "sha256:5cd37a6c4d8b12149d0f77a7149ee71d129c348a1f6b5ec9072b56d0b695a817",
+      "path": "site-packages/app/services/p117_selector.py",
+      "size": 21270
+    },
+    {
+      "hash": "sha256:8395a83b9b98ac0a3203920758e0396a9a391167fe13b1f917300d905553de9f",
+      "path": "site-packages/app/services/p117_utility.py",
+      "size": 10354
+    },
+    {
+      "hash": "sha256:2470c69da60f2564eeae47924b27c75e89047652e14c7afd7904cc3996dce3de",
+      "path": "site-packages/app/services/p118_action_pack_verifier.py",
+      "size": 9151
+    },
+    {
+      "hash": "sha256:550137b94e7fc03c8bc333631c18c64b78941b1f2b3c26a127b417798fdb5387",
+      "path": "site-packages/app/services/p118_approval.py",
+      "size": 14203
+    },
+    {
+      "hash": "sha256:048ef1673556fee54b00481b3ff82aa5cc46965faa7d4603b9c183220897ba50",
+      "path": "site-packages/app/services/p118_crash_recovery.py",
+      "size": 4645
+    },
+    {
+      "hash": "sha256:3486e3688fea6eecd15f3ac9748cc5de7f337f9ce1e4fa95cbfcbeaf6146b587",
+      "path": "site-packages/app/services/p118_evaluator.py",
+      "size": 25128
+    },
+    {
+      "hash": "sha256:f64fe1317feba591cfa4823b3906a2cde495eb3b1052d9dc35ccd281e1180e20",
+      "path": "site-packages/app/services/p118_ledger.py",
+      "size": 15127
+    },
+    {
+      "hash": "sha256:8d023ad0208094f1a128630753206805afb07a069785b04c6c3b75130ca2b1df",
+      "path": "site-packages/app/services/p118_operation_contract.py",
+      "size": 11074
+    },
+    {
+      "hash": "sha256:d2d4bfb5f57ec07c89d1d9d4bb47afbcc16785e781800f1e415ace31919394c8",
+      "path": "site-packages/app/services/p118_release_evidence.py",
+      "size": 6347
+    },
+    {
+      "hash": "sha256:95078d027b83e5881b6647be826fa58982f0c6891bce8546ac0f80cb0fcbfa8d",
+      "path": "site-packages/app/services/p118_validation_cycle.py",
+      "size": 7423
+    },
+    {
+      "hash": "sha256:4e1fb4e2f9f538c2b7d99abf74f471ceab42b75ae2b95cf2f5071f6ac2d75568",
+      "path": "site-packages/app/services/p118_worker.py",
+      "size": 7492
+    },
+    {
+      "hash": "sha256:042dc453c4b05b6eb496103ad4e0cd5e7c2dcf91219581108dcf8fb0d4d11383",
+      "path": "site-packages/app/services/p119_attribution.py",
+      "size": 4088
+    },
+    {
+      "hash": "sha256:4fb0013bd348d5757189f6e898640b2ffbcdcd74cc32bf6e41071a09ab7bb30e",
+      "path": "site-packages/app/services/p119_contract.py",
+      "size": 14866
+    },
+    {
+      "hash": "sha256:da72b463768613ce833279322d9c4025c3707c3a9e1b72ec3e411c8b5b9a38ba",
+      "path": "site-packages/app/services/p119_evaluator.py",
+      "size": 16223
+    },
+    {
+      "hash": "sha256:82f038afab98bebd2ad2b236ef07899189dfad97e4626e45d41d8600d057e7b8",
+      "path": "site-packages/app/services/p119_evidence_loop.py",
+      "size": 7166
+    },
+    {
+      "hash": "sha256:f57392327653936bddf8c8a05faf0660239f771b4de6754362c1a2d183e3d865",
+      "path": "site-packages/app/services/p119_execution_loop.py",
+      "size": 5014
+    },
+    {
+      "hash": "sha256:ae2e2c286f69fc75708ca803ce8805bc643c961895dec6c0b642040e43a4e947",
+      "path": "site-packages/app/services/p119_ledger.py",
+      "size": 16598
+    },
+    {
+      "hash": "sha256:d5d573c565dffbf6c1dc633698f90a2a715525d18abefea35ce51f8c6f37a451",
+      "path": "site-packages/app/services/p119_recovery.py",
+      "size": 4159
+    },
+    {
+      "hash": "sha256:bf3c02c7df6617eecc45d9f87cb9fb512003f23f2176a083285fb07b41a72940",
+      "path": "site-packages/app/services/p119_release_evidence.py",
+      "size": 6802
+    },
+    {
+      "hash": "sha256:4fa3f08854dc01814acf74746656affd6842ad54ab84c5520a82693af5a02b62",
+      "path": "site-packages/app/services/p119_scheduler.py",
+      "size": 5920
+    },
+    {
+      "hash": "sha256:5070b1701bde914816ceccedbaa23dae91d61c9d052188e671f9d8f89e2a3870",
+      "path": "site-packages/app/services/p119_selection.py",
+      "size": 11325
+    },
+    {
+      "hash": "sha256:15b0d1cb42af814e11c9a7696ecdc734b7d21af5b32694f9abc8a90a90f35408",
+      "path": "site-packages/app/services/p119_war_room.py",
+      "size": 4758
+    },
+    {
+      "hash": "sha256:ef73f80782fb78bbc1d8e113f110f19fc37cbc05e8a32b550780c448286a264e",
+      "path": "site-packages/app/services/p120_calibration.py",
+      "size": 2651
+    },
+    {
+      "hash": "sha256:8eea20783172811683c35e09fba3abf114d501a89cdbd179fa150b51d0fd7d04",
+      "path": "site-packages/app/services/p120_evaluator.py",
+      "size": 3585
+    },
+    {
+      "hash": "sha256:72e87ae4b01fa7b1615d5ad170a8a0e2bb3ac27b751a98738b0c93d8278aebfa",
+      "path": "site-packages/app/services/p120_governance.py",
+      "size": 12111
+    },
+    {
+      "hash": "sha256:d40a735ea0656001c4b84538d3701a78e59639f33e55bce1f59b2583dd8897be",
+      "path": "site-packages/app/services/p120_normalization.py",
+      "size": 17478
+    },
+    {
+      "hash": "sha256:3e9ace4ed451f65884129d6c94832c2bdced0f8964d66c4383ec2d6a8c077049",
+      "path": "site-packages/app/services/p120_ontology.py",
+      "size": 10207
+    },
+    {
+      "hash": "sha256:d5b68c90b2cd137c2ae6c5b421e59a2d5ff29762b9be70718d3a6516c7a7d323",
+      "path": "site-packages/app/services/p120_ood.py",
+      "size": 2470
+    },
+    {
+      "hash": "sha256:1392d8f2897beb0746b0577bf1f21537285df3b886404a458ef85f9e31b491dd",
+      "path": "site-packages/app/services/p120_release_evidence.py",
+      "size": 5795
+    },
+    {
+      "hash": "sha256:5dfd4013fafdf6a9d544ba896857790ab04b4291964bbd86c113abb3b37d4249",
+      "path": "site-packages/app/services/p120_splits.py",
+      "size": 12846
+    },
+    {
+      "hash": "sha256:3bc2b3d5ba09c8e7edb89bfd070fa1668063da2937dabf96a9659a4180212e9a",
+      "path": "site-packages/app/services/p121_counterfactuals.py",
+      "size": 8671
+    },
+    {
+      "hash": "sha256:c2040b9ec7fdf89e26c954353e205e895db2d4c5f6f9bbe03377a55e423988eb",
+      "path": "site-packages/app/services/p121_evaluator.py",
+      "size": 11215
+    },
+    {
+      "hash": "sha256:fd2ff8ba251f49f5c3295ea169327b7271b50304946f2364827e2a60f9d6ae28",
+      "path": "site-packages/app/services/p121_execution.py",
+      "size": 15994
+    },
+    {
+      "hash": "sha256:0764d25fcacb2358cdfee6371fcdd5e1c4004f80c4401c0534d18e4407877391",
+      "path": "site-packages/app/services/p121_forecasting.py",
+      "size": 10240
+    },
+    {
+      "hash": "sha256:411ac1792b58582864f7356c178bb39a489c693a7344f5f6d62b56a12cee026e",
+      "path": "site-packages/app/services/p121_guardrails.py",
+      "size": 13207
+    },
+    {
+      "hash": "sha256:c8a6663f4b8d35aee236da3f9ada74ff1cc3fcfb41ebc518bad7538aa08c1bac",
+      "path": "site-packages/app/services/p121_release_evidence.py",
+      "size": 6492
+    },
+    {
+      "hash": "sha256:64556bdbf6506cc6a96c6b90f35b2864e7cec7854da78c704a78b9e587875857",
+      "path": "site-packages/app/services/p121_signals.py",
+      "size": 15853
+    },
+    {
+      "hash": "sha256:50bea27efb173ff7787c2fd24e786539343c6d0e430978f6f14111cd2e7616ae",
+      "path": "site-packages/app/services/p121_validation.py",
+      "size": 3980
+    },
+    {
+      "hash": "sha256:c595a341173bb9aa1430bb031067aa4d5b328566966e04b628560dcf419d2658",
+      "path": "site-packages/app/services/p122_release_evidence.py",
+      "size": 70742
+    },
+    {
+      "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
+      "path": "site-packages/app/services/policy_calibrator.py",
+      "size": 11458
+    },
+    {
+      "hash": "sha256:200a1d84abb116ed30347b772f5e9d353ee913a082fc4972fba2236fa23d48de",
+      "path": "site-packages/app/services/policy_engine.py",
+      "size": 15775
+    },
+    {
+      "hash": "sha256:60bc53adb9e9d3b113b2d89b57e17514c3b7261440f42be4fd20a2e9f99dbe2b",
+      "path": "site-packages/app/services/portfolio_demo_pack.py",
+      "size": 7495
+    },
+    {
+      "hash": "sha256:229240ebfcd1aee15bf1fe486602a1b3878a25b3c717674b9442b390e4eb3987",
+      "path": "site-packages/app/services/post_action_outcome_monitor.py",
+      "size": 21737
+    },
+    {
+      "hash": "sha256:9b82679645a482719f29a5bdb845ed8c0ca81d327d69c7c9ffe5b317c6a003a4",
+      "path": "site-packages/app/services/prevention_authority_sentinel.py",
+      "size": 2420
+    },
+    {
+      "hash": "sha256:fb7a34dc4d2d80de2fd3f2e58f28a5c563356ba5dc59adb484614f1b63054304",
+      "path": "site-packages/app/services/prevention_canary_executor.py",
+      "size": 7423
+    },
+    {
+      "hash": "sha256:dd57c20ff12365e9eb56ffca0301b541a1780fbbc44dbe454eea22181344bff8",
+      "path": "site-packages/app/services/prevention_canary_fixture_matrix.py",
+      "size": 10636
+    },
+    {
+      "hash": "sha256:262eeea2808f6e7ce652b8fd5b3943458ea1adb49f14e1aa10cd06596d359cef",
+      "path": "site-packages/app/services/prevention_canary_harness.py",
+      "size": 4911
+    },
+    {
+      "hash": "sha256:8da4bf4c94b74bb60a7323ddc71aaa9031eda90faaf229f815dc89f5f2c2526c",
+      "path": "site-packages/app/services/prevention_cohort_fingerprints.py",
+      "size": 4960
+    },
+    {
+      "hash": "sha256:35d6d1029153a14ef961d11a89ed43bd844bf370406aba2a5b0c53bbf2992231",
+      "path": "site-packages/app/services/prevention_counterfactual.py",
+      "size": 4836
+    },
+    {
+      "hash": "sha256:69862380c7fa0349df1218f9947cd757f006fd4f33ed6d465b621786bf3793e2",
+      "path": "site-packages/app/services/prevention_durable_idempotency.py",
+      "size": 11546
+    },
+    {
+      "hash": "sha256:23cbb0e212fe01dfc71aa0793296aafd13a48fd131bed69f5e2f94bddeeed694",
+      "path": "site-packages/app/services/prevention_episode_audit.py",
+      "size": 10600
+    },
+    {
+      "hash": "sha256:f5d6b8fc999e3e54134dcaeb635f51c368af5824a15fe4c09417338335691f00",
+      "path": "site-packages/app/services/prevention_guardrail_rollback.py",
+      "size": 5223
+    },
+    {
+      "hash": "sha256:e36b24d2186b705024719a18852f1ba1cdf0d05715226ce3f17a87317acccf5a",
+      "path": "site-packages/app/services/prevention_learning_promotion.py",
+      "size": 24562
+    },
+    {
+      "hash": "sha256:170d5744014b29eeb8bb22cfb1ff1228e944dfd8eed4b6220edf2688eef8edc1",
+      "path": "site-packages/app/services/prevention_learning_recommendations.py",
+      "size": 6913
+    },
+    {
+      "hash": "sha256:cd344b36d0b349bf268713c9274a8b1a3b3a6748c0114b7ed5edd48d04171b46",
+      "path": "site-packages/app/services/prevention_outcome_learner.py",
+      "size": 7449
+    },
+    {
+      "hash": "sha256:bbfc2dab34e32079e2181d43d05d4552bacba87169a543ae81adbe17cd5aa6bd",
+      "path": "site-packages/app/services/prevention_outcome_ledger.py",
+      "size": 12456
+    },
+    {
+      "hash": "sha256:fd49b283e013e3027f021e40ccf66336ecbf8fcf44036f1e35fbfc1fd14196ac",
+      "path": "site-packages/app/services/prevention_outcome_report.py",
+      "size": 13615
+    },
+    {
+      "hash": "sha256:c1dcba68573ea58d13a6e1eee60f60a4ab92385e78c6ebac99b7d5971b6e611a",
+      "path": "site-packages/app/services/prevention_p106_handoff.py",
+      "size": 8974
+    },
+    {
+      "hash": "sha256:97f57a0f32a2edac27ab07e729ae115849f6ce5fc4a3bfa804badde12198caf3",
+      "path": "site-packages/app/services/prevention_p108_ingress.py",
+      "size": 17766
+    },
+    {
+      "hash": "sha256:e0f91a7c0f326b750ee7d4a3118ac37d324462862347deeb07bc8f5b032a9dde",
+      "path": "site-packages/app/services/prevention_planning_lab.py",
+      "size": 4525
+    },
+    {
+      "hash": "sha256:dbe1b3b4344e7de371cf64230848c9bd0fd20f7f23fd84414c37585c6624fbc1",
+      "path": "site-packages/app/services/prevention_policy_preflight.py",
+      "size": 5633
+    },
+    {
+      "hash": "sha256:2614479b807714800e5b53056006ecfb2ea47ac37f2c35d43d90868a1e95e284",
+      "path": "site-packages/app/services/prevention_replay_gate.py",
+      "size": 9859
+    },
+    {
+      "hash": "sha256:c9a92b63279b4e4cfdcf5f40a82bd1e05107132a34d10dd1cf5e425d92c74418",
+      "path": "site-packages/app/services/prevention_state_machine.py",
+      "size": 2721
+    },
+    {
+      "hash": "sha256:02c6f20b494b879f63c17483055d19424db807f9df5dad7e219c423b738a4083",
+      "path": "site-packages/app/services/preventive_action_benchmark.py",
+      "size": 44560
+    },
+    {
+      "hash": "sha256:3a7e5b0c4c6c48e6b5694603e93268707d606bf8dca180d2b8ace19f9f8142f7",
+      "path": "site-packages/app/services/preventive_action_llm_adapter.py",
+      "size": 3404
+    },
+    {
+      "hash": "sha256:ba68c6a2d69c8fc94c7ebc086652da6e18e7396dcdc84f6d30ab2a3b1eafe68a",
+      "path": "site-packages/app/services/preventive_action_planner.py",
+      "size": 24125
+    },
+    {
+      "hash": "sha256:c0124761153ff0045e6d0c8c5e7fd8271626f1417ca7b7d99d8f916ee56e0002",
+      "path": "site-packages/app/services/preventive_capability_registry.py",
+      "size": 14698
+    },
+    {
+      "hash": "sha256:eca665ae05c938eec3707ef916c47ad8659a496fc7a613de23db595071235481",
+      "path": "site-packages/app/services/preventive_expected_value.py",
+      "size": 2698
+    },
+    {
+      "hash": "sha256:4c95241767a4d910944d581c75516041614f9184012efbdfa6cee7ce14f59ec2",
+      "path": "site-packages/app/services/preventive_safety_gate.py",
+      "size": 13730
+    },
+    {
+      "hash": "sha256:6482ad45c4a6f4eec1e4ad746c35165cfb9431e9fa15b113c4cfb3b2c29b4add",
+      "path": "site-packages/app/services/proactive_risk_sentinel.py",
+      "size": 27950
+    },
+    {
+      "hash": "sha256:c77c1038b3d2ed25020f2f80d3025dff64a41e032ea35fb007183f8f47cf079b",
+      "path": "site-packages/app/services/production_readiness_milestone.py",
+      "size": 10316
+    },
+    {
+      "hash": "sha256:bf93ead0a2f919dbb4eb8cd3ed28325138aceee6ed309b8c9d5af0b28913981e",
+      "path": "site-packages/app/services/public_dataset_benchmark.py",
+      "size": 21049
+    },
+    {
+      "hash": "sha256:e324b4ebb8d1f6b4849c2335460bd4ca31b65bbd9ee3a2ce5f39d1b9daefc93a",
+      "path": "site-packages/app/services/public_dataset_matrix.py",
+      "size": 11271
+    },
+    {
+      "hash": "sha256:8e3540cb38e5a6f255e11090dfb4bc5bf79aa1c59c406c655cd5c0e228a5426a",
+      "path": "site-packages/app/services/raw_real_dataset_replay.py",
+      "size": 12747
+    },
+    {
+      "hash": "sha256:8c3e05675f33020c8792fcffc9662c95d7530e7c2a2c8f343e6003b4724ca525",
+      "path": "site-packages/app/services/rcaeval_adapter.py",
+      "size": 27291
+    },
+    {
+      "hash": "sha256:3667f4eebf4a3da2ae25b32ec7dfdd08be46fa3cef266701e9afdc9dd013939f",
+      "path": "site-packages/app/services/rcaeval_diagnosis_benchmark.py",
+      "size": 15031
+    },
+    {
+      "hash": "sha256:611d07134f848a01238617ef778f4753a0827dd246c04a1c4c720846d29c73f9",
+      "path": "site-packages/app/services/read_only_polling_runtime.py",
+      "size": 10709
+    },
+    {
+      "hash": "sha256:5295eb08ebedf625314435d35c1770b06d583f728635a39d9cc8023b43c3568e",
+      "path": "site-packages/app/services/read_only_polling_v2.py",
+      "size": 10112
+    },
+    {
+      "hash": "sha256:d65e4658d66c967429c2eabd2752e76fdb314002962ca85df71a8d19c1eecf79",
+      "path": "site-packages/app/services/readiness_gap_remediation_planner.py",
+      "size": 17467
+    },
+    {
+      "hash": "sha256:20352fe20b2b4aa63c3f759964cb9c4721450bfc3f91618babef1c23cd0d4fcc",
+      "path": "site-packages/app/services/real_dataset_candidate_regression_bridge.py",
+      "size": 7570
+    },
+    {
+      "hash": "sha256:0236cedd2238821e16e3f1be098d90fdfb4e750932187aea122631d85f24c25d",
+      "path": "site-packages/app/services/real_dataset_evaluation.py",
+      "size": 22669
+    },
+    {
+      "hash": "sha256:684269a0c6d6011ff811628c2cc4014d86f2b68e5d51cd2d65f3d92d741fd159",
+      "path": "site-packages/app/services/real_staging_dry_attach.py",
+      "size": 16480
+    },
+    {
+      "hash": "sha256:e32231b55dce1e50585daa00b70e46092d85650913b7aa29905ae42a8f7686f2",
+      "path": "site-packages/app/services/real_subprocess_execution_dry_run_gate.py",
+      "size": 15717
+    },
+    {
+      "hash": "sha256:cf39a6d0be89d243397ae8c2f85143d889a1e76b720bbb5035b2d10cf8b2a2b1",
+      "path": "site-packages/app/services/real_telemetry_replay_benchmark.py",
+      "size": 16610
+    },
+    {
+      "hash": "sha256:d2b8c5cacd681428598e3f58252720ae8ad3f7925e54621c2fbded3f097eecf6",
+      "path": "site-packages/app/services/realtime_source_reader.py",
+      "size": 20558
+    },
+    {
+      "hash": "sha256:22633b626e1963fa63dab6423e1476e2979af3671cda6d8e7e0d8d3898208896",
+      "path": "site-packages/app/services/recovery_proof_engine.py",
+      "size": 10665
+    },
+    {
+      "hash": "sha256:ab9fc7173b786b53b3a2852087206fc19872d9e06527aa9579ed0c6cbc11eeb8",
+      "path": "site-packages/app/services/recovery_verifier.py",
+      "size": 4201
+    },
+    {
+      "hash": "sha256:5719ab0d0cf34a32e2145e04bbff55cd100f544781879efafa7724f8752781bc",
+      "path": "site-packages/app/services/redaction.py",
+      "size": 1835
+    },
+    {
+      "hash": "sha256:e8ac110cc9e3992689fccb04c51ec556bdccb84d5ec488b1b8dcdefc635394c3",
+      "path": "site-packages/app/services/reliability_dashboard.py",
+      "size": 5642
+    },
+    {
+      "hash": "sha256:a187db70bdfa9b9f01fa93571d5cd9917460bcd31b9f1ba291aadf1eb35e0b44",
+      "path": "site-packages/app/services/remediation_outcome_benchmark_p109.py",
+      "size": 4500
+    },
+    {
+      "hash": "sha256:8947d94a6d6081880dde6043626b2de8126500077235b2535aa1a2d5f430fe5f",
+      "path": "site-packages/app/services/remediation_verification_loop.py",
+      "size": 8308
+    },
+    {
+      "hash": "sha256:f280013c72e2930aa56e70dd53d46ceaa18dc2597bd49629d58255cfdffa9407",
+      "path": "site-packages/app/services/replay_service.py",
+      "size": 27056
+    },
+    {
+      "hash": "sha256:2b6a2ab096f4bcf1a9da9cfd334371c1466e86fbd81709ba223fe922677a3ade",
+      "path": "site-packages/app/services/report_service.py",
+      "size": 10177
+    },
+    {
+      "hash": "sha256:7af5d153d90d83364bec2f5fe2dd8a50826c416cb756c324de9bb8fd7dd1c8a5",
+      "path": "site-packages/app/services/response_planner.py",
+      "size": 10827
+    },
+    {
+      "hash": "sha256:9f25418d0a8bc023804fd7f32caa24f3e17ca1cf3c7a311221ce329b7d2c6eb5",
+      "path": "site-packages/app/services/resumable_local_supervisor_runner.py",
+      "size": 21224
+    },
+    {
+      "hash": "sha256:98d5df46fce29ba887b7a4dbda48ac3dcf313e03abc02165c8dc3d30e8f21c0f",
+      "path": "site-packages/app/services/risk_engine.py",
+      "size": 7267
+    },
+    {
+      "hash": "sha256:50fafac1e44be4b672292fc2fa32aff3c5955b32da3a7872fb9e148d56a72337",
+      "path": "site-packages/app/services/rollback_pr_draft_automation.py",
+      "size": 17014
+    },
+    {
+      "hash": "sha256:d138d92293660fed2bf6e64a1acf99735b37e1e78d8ce62a66081ca09905399c",
+      "path": "site-packages/app/services/root_cause_service.py",
+      "size": 3591
+    },
+    {
+      "hash": "sha256:203e05263df578b25d049768bcad084619aab5539aadbffbe8a5df14afeccf41",
+      "path": "site-packages/app/services/runbook_critic.py",
+      "size": 5818
+    },
+    {
+      "hash": "sha256:0b6daca199f2012630d05f72fc153ad93f860109de052ffdec57c946dc51e8bc",
+      "path": "site-packages/app/services/runbook_learning_loop.py",
+      "size": 12290
+    },
+    {
+      "hash": "sha256:2df2150afa90d5df827bc97ea250260d391127bf39d21aa6d54fdbd060455407",
+      "path": "site-packages/app/services/runbook_service.py",
+      "size": 5377
+    },
+    {
+      "hash": "sha256:ae897c1ef988590be41915d19c478be348d955c19df0cecdb9d3e45411c3356d",
+      "path": "site-packages/app/services/runbook_simulation_tournament.py",
+      "size": 12361
+    },
+    {
+      "hash": "sha256:2aaa7f62ea163ded1d60b7597a933ae122f6e93f94df6ed5925b725bcb0f9370",
+      "path": "site-packages/app/services/runtime_loop_control.py",
+      "size": 8657
+    },
+    {
+      "hash": "sha256:8209b0dc47f5d8a0012f22cd58bda96e1f95ce4b5115492ca20747a106e69a50",
+      "path": "site-packages/app/services/safe_auto_run_readiness_gate.py",
+      "size": 16968
+    },
+    {
+      "hash": "sha256:541bf3d52ec2634757985240226ca1d36bf5a35ed464823933b9db96ca0fb54c",
+      "path": "site-packages/app/services/safe_local_auto_run_entrypoint.py",
+      "size": 19326
+    },
+    {
+      "hash": "sha256:db10ee9502294b3d96ea144e9b4d17be1a8cbb46b012f10004b5a7d41dee178e",
+      "path": "site-packages/app/services/secret_service.py",
+      "size": 9144
+    },
+    {
+      "hash": "sha256:111c47f9889c1534d47e5ca412ca692c92c55cb8156dec19f3db1450b1c3a420",
+      "path": "site-packages/app/services/selector_comparison.py",
+      "size": 12522
+    },
+    {
+      "hash": "sha256:65e6ac91775d4f708f7b5cd29995832568e2437bbf481e1724a40dd277699a52",
+      "path": "site-packages/app/services/self_critique_service.py",
+      "size": 3926
+    },
+    {
+      "hash": "sha256:5cab24ce6535eb4a0aa3d4396155d1cef809d0f4cb06e7ff2cde6e0bc6bd2560",
+      "path": "site-packages/app/services/signal_normalizer.py",
+      "size": 2438
+    },
+    {
+      "hash": "sha256:175c472c7b881735c69dcd02baf41fa5cf8fdfc4d805df11ab6a4ecb025126bb",
+      "path": "site-packages/app/services/slack_ticket_draft_automation.py",
+      "size": 20046
+    },
+    {
+      "hash": "sha256:8e92dfd9e2355931a220d50a3eb14e5c1a67eab02fdc471518a0d32cb6ff51fc",
+      "path": "site-packages/app/services/staging_live_read_only_preflight.py",
+      "size": 17197
+    },
+    {
+      "hash": "sha256:c2e7e2ef301f9dd7606deff863d24ab46f2d9f9fdc3fe5ba4ef600f11064509b",
+      "path": "site-packages/app/services/staging_read_only_connector_contract.py",
+      "size": 16477
+    },
+    {
+      "hash": "sha256:4b36d4b4776334fc3fa3b2abdfdeb5e5357db519e0158f74551628e5625f486d",
+      "path": "site-packages/app/services/state_machine.py",
+      "size": 1847
+    },
+    {
+      "hash": "sha256:4160684dcd094b707f928e479244cdb13b38387545a443c5d92feeb8f1d4e8f3",
+      "path": "site-packages/app/services/stateful_all_day_loop_orchestrator.py",
+      "size": 15857
+    },
+    {
+      "hash": "sha256:b3d3f465694303288899c7eeb577244736b3486324cb5dc030b703443ed28133",
+      "path": "site-packages/app/services/stateful_incident_investigator.py",
+      "size": 25214
+    },
+    {
+      "hash": "sha256:aa7715ed3a4f51b15b9e1a6fc722d64e0e4c7c3fdf024bfdb439a8dfc6348624",
+      "path": "site-packages/app/services/supervised_worker_execution_harness.py",
+      "size": 14172
+    },
+    {
+      "hash": "sha256:1e63312b711541c71d7e44735d64b0be2b38d610210959bb72ab0b1d59dbb8e2",
+      "path": "site-packages/app/services/supervisor_run_report_artifact.py",
+      "size": 15413
+    },
+    {
+      "hash": "sha256:ed4e6c73643f6f16d1a78c8fa50e8fe056e8bedef04945fc23d7e5675f5a90ff",
+      "path": "site-packages/app/services/telemetry_adapter.py",
+      "size": 21629
+    },
+    {
+      "hash": "sha256:7916fa77d6fb7649635d3ef7c3385928299f6c5849e611537ea8bfc419535363",
+      "path": "site-packages/app/services/telemetry_judgment_quality.py",
+      "size": 15654
+    },
+    {
+      "hash": "sha256:a16aeadf6d6297dd9ce594d2117d1323170fb7215876bfba6c57b423c69c6d9a",
+      "path": "site-packages/app/services/timeline_service.py",
+      "size": 848
+    },
+    {
+      "hash": "sha256:4e2593fa2b0104b7d56b4c5d94a3a24a51f8c756445a919159d448be813c5f55",
+      "path": "site-packages/app/services/tool_selection_planner.py",
+      "size": 7290
+    },
+    {
+      "hash": "sha256:bec971a1a83aa1365d5bd43f0def794a0d9a77bd3172d5a5f5d1f443fbab8848",
+      "path": "site-packages/app/services/tool_using_hypothesis_investigator.py",
+      "size": 27339
+    },
+    {
+      "hash": "sha256:0dc225b6838965dd64d57765ced6528f49b8de8caa2fcadb95c59fdc46f846fd",
+      "path": "site-packages/app/services/war_room_service.py",
+      "size": 14242
+    },
+    {
+      "hash": "sha256:7a3f9b014d03b4d8378a011c4d89f04b14cf4ba6bd1fbc95252513f2adbce128",
+      "path": "site-packages/app/services/workflow_service.py",
+      "size": 5372
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "site-packages/app/tools/__init__.py",
+      "size": 0
+    },
+    {
+      "hash": "sha256:14d16426fb08ae35904d8af68d646de1555f449bca91904d51acac12aa08481a",
+      "path": "site-packages/app/tools/mock_actions.py",
+      "size": 7312
+    },
+    {
+      "hash": "sha256:f2c89a6e521848c57ac6767ea17d2b831263964ff8e13063d54fb866333569f0",
+      "path": "site-packages/app/tools/mock_context.py",
+      "size": 10004
+    },
+    {
+      "hash": "sha256:b29aa033866fee8f04345bcaee577994b6dc10229b6cbe94ae4bd356f998634b",
+      "path": "site-packages/opscat-0.2.0.dist-info/METADATA",
+      "size": 34734
+    },
+    {
+      "hash": "sha256:60b2577585d0d8543452a9f627eea21080bede239ecbc947df10adbc52e477c4",
+      "path": "site-packages/opscat-0.2.0.dist-info/WHEEL",
+      "size": 91
+    },
+    {
+      "hash": "sha256:6119b8a438db038f84523fc5530148d7bf629a16332391efedd8816755042f10",
+      "path": "site-packages/opscat-0.2.0.dist-info/entry_points.txt",
+      "size": 40
+    },
+    {
+      "hash": "sha256:1dd5af95f40cc7099c794c8404211ff20bc2d2a650fd0f7a9c76309eeebad8a3",
+      "path": "site-packages/opscat-0.2.0.dist-info/licenses/LICENSE",
+      "size": 11394
+    },
+    {
+      "hash": "sha256:8a8f60ecb09b7e64c6d5214a8043865e608507db8c3f61f995eae6d078875901",
+      "path": "site-packages/opscat-0.2.0.dist-info/top_level.txt",
+      "size": 4
+    }
+  ],
+  "installed_package": "opscat",
+  "manifest_hash": "sha256:3680c498d5caef06599b3980a106d7ae9380765b57f4ca1741f831bc20273621",
+  "operation": "package_install",
+  "record_entries_verified": 327,
+  "schema_version": "p122.canonical_wheel_install.v1",
+  "wheel_checksum": "sha256:1ce0eda6d8e4f0ca3214198be8eeefb9438dfb9ff58709cbb7f8f4e692925cc7"
+}

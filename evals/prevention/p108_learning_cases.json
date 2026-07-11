@@ -1,0 +1,1165 @@
+{
+  "family_results": {
+    "latency": {
+      "calibration_drift_delta": 0.004,
+      "effect_delta": 0.036,
+      "episode_count": 6,
+      "evaluated_rows": 12
+    },
+    "safety": {
+      "calibration_drift_delta": 0.005,
+      "effect_delta": 0.033,
+      "episode_count": 6,
+      "evaluated_rows": 12
+    }
+  },
+  "fixtures": [
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l01",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "identified",
+          "reason": ""
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l01",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "prevented",
+          "control_available": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l01",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "prevented",
+        "ledger_admitted": true
+      },
+      "expected_label": "prevented",
+      "fixture_id": "L01",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "valid_prevented",
+      "seed": 101,
+      "time_split": "pre"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l02",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "identified",
+          "reason": ""
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l02",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "delayed",
+          "control_available": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l02",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "delayed",
+        "ledger_admitted": true
+      },
+      "expected_label": "delayed",
+      "fixture_id": "L02",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "valid_delayed",
+      "seed": 202,
+      "time_split": "post"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l03",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "identified",
+          "reason": ""
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l03",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "unaffected",
+          "control_available": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l03",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "unaffected",
+        "ledger_admitted": true
+      },
+      "expected_label": "unaffected",
+      "fixture_id": "L03",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "unaffected",
+      "seed": 303,
+      "time_split": "pre"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l04",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "identified",
+          "reason": ""
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l04",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "prevented",
+          "control_available": true,
+          "natural_recovery": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l04",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "naturally_recovered",
+        "ledger_admitted": true
+      },
+      "expected_label": "naturally_recovered",
+      "fixture_id": "L04",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "natural_recovery",
+      "seed": 101,
+      "time_split": "post"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l05",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "identified",
+          "reason": ""
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l05",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "harmful",
+          "control_available": true,
+          "intervention_harm": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l05",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "harmful",
+        "ledger_admitted": true
+      },
+      "expected_label": "harmful",
+      "fixture_id": "L05",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "conservative",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "harmful_guardrail_breach",
+      "seed": 202,
+      "time_split": "pre"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l06",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "abstained",
+          "reason": "insufficient_control"
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l06",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "unknown",
+          "control_available": false
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l06",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "inconclusive",
+        "ledger_admitted": true
+      },
+      "expected_label": "inconclusive",
+      "fixture_id": "L06",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "inconclusive_missing_control",
+      "seed": 303,
+      "time_split": "post"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l07",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "abstained",
+          "reason": "censored_horizon"
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l07",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "unknown",
+          "control_available": true,
+          "horizon_censored": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l07",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "censored",
+        "ledger_admitted": true
+      },
+      "expected_label": "censored",
+      "fixture_id": "L07",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "censored_horizon",
+      "seed": 101,
+      "time_split": "pre"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l08",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "identified",
+          "reason": ""
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l08",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "unaffected",
+          "control_available": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l08",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "unaffected",
+        "ledger_admitted": true
+      },
+      "expected_label": "unaffected",
+      "fixture_id": "L08",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "conservative",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "false_positive_intervention",
+      "seed": 202,
+      "time_split": "post"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l09",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "identified",
+          "reason": ""
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l09",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "unaffected",
+          "control_available": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l09",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "unaffected",
+        "ledger_admitted": true
+      },
+      "expected_label": "unaffected",
+      "fixture_id": "L09",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "near_miss_abstention",
+      "seed": 303,
+      "time_split": "pre"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l10",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "abstained",
+          "reason": "insufficient_control"
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l10",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "unknown",
+          "control_available": false
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l10",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "inconclusive",
+        "ledger_admitted": true
+      },
+      "expected_label": "inconclusive",
+      "fixture_id": "L10",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "conflicting_evidence",
+      "seed": 101,
+      "time_split": "post"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l11",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "abstained",
+          "reason": "insufficient_control"
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l11",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "unknown",
+          "control_available": false
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l11",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "inconclusive",
+        "ledger_admitted": true
+      },
+      "expected_label": "inconclusive",
+      "fixture_id": "L11",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "telemetry_loss",
+      "seed": 202,
+      "time_split": "pre"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l12",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "identified",
+          "reason": ""
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l12",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "delayed",
+          "control_available": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l12",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "delayed",
+        "ledger_admitted": true
+      },
+      "expected_label": "delayed",
+      "fixture_id": "L12",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "family_level_drift",
+      "seed": 303,
+      "time_split": "post"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l13",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "identified",
+          "reason": ""
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l13",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "harmful",
+          "control_available": true,
+          "intervention_harm": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l13",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "harmful",
+        "ledger_admitted": true
+      },
+      "expected_label": "harmful",
+      "fixture_id": "L13",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "conservative",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "candidate_safety_regression",
+      "seed": 101,
+      "time_split": "pre"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l14",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "identified",
+          "reason": ""
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l14",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "prevented",
+          "control_available": true
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l14",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": false,
+        "label": "prevented",
+        "ledger_admitted": true
+      },
+      "expected_label": "prevented",
+      "fixture_id": "L14",
+      "p107_handoff_valid": true,
+      "recommendation": {
+        "applied": false,
+        "direction": "conservative",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "valid_conservative_recommendation",
+      "seed": 202,
+      "time_split": "post"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l15",
+      "episode_input": {
+        "authority_requests": [],
+        "counterfactual": {
+          "mode": "abstained",
+          "reason": "insufficient_control"
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l15",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "unknown",
+          "control_available": false
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l15",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": true,
+        "label": "rejected",
+        "ledger_admitted": false
+      },
+      "expected_label": "rejected",
+      "fixture_id": "L15",
+      "p107_handoff_valid": false,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "forged_p107_handoff",
+      "seed": 303,
+      "time_split": "pre"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_access": 0,
+        "executor_calls": 0,
+        "live_calls": 0,
+        "network_calls": 0,
+        "online_policy_writes": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0,
+        "subprocess_calls": 0
+      },
+      "episode_group": "group-l16",
+      "episode_input": {
+        "authority_requests": [
+          {
+            "kind": "db_session_query",
+            "target": "production"
+          },
+          {
+            "kind": "online_policy_mutation",
+            "target": "production"
+          }
+        ],
+        "counterfactual": {
+          "mode": "abstained",
+          "reason": "insufficient_control"
+        },
+        "ledger_candidate": {
+          "episode_id": "episode-l16",
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "outcome": {
+          "actual_outcome": "unknown",
+          "control_available": false
+        },
+        "p107_ingress": {
+          "episode_id": "episode-l16",
+          "offline_authority": true,
+          "payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "schema_version": "p107.prevention_handoff.v1",
+          "signed_payload_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "training_episode_groups": [
+          "group-training-a",
+          "group-training-b"
+        ]
+      },
+      "evidence_gates": {
+        "authority_zero": true,
+        "counterfactual_identifiable_or_abstained": true,
+        "holdout_disjoint": true,
+        "ingress_recomputed": true,
+        "ledger_content_bound": true,
+        "recommendation_unapplied": true,
+        "temporal_cutoff_enforced": true
+      },
+      "expected_evaluation": {
+        "failed_before_ledger": true,
+        "label": "rejected",
+        "ledger_admitted": false
+      },
+      "expected_label": "rejected",
+      "fixture_id": "L16",
+      "p107_handoff_valid": false,
+      "recommendation": {
+        "applied": false,
+        "direction": "none",
+        "rollback_to_version": "p108-baseline-v1"
+      },
+      "scenario": "online_mutation_attempt",
+      "seed": 101,
+      "time_split": "post"
+    }
+  ],
+  "metrics": {
+    "censored_rate": 0.0625,
+    "forecast_calibration_drift": 0.006,
+    "harmful_intervention_rate": 0.0,
+    "inconclusive_rate": 0.1875,
+    "median_learning_utility_delta": 0.0415,
+    "natural_recovery_miscredit_rate": 0.0,
+    "net_avoided_impact": 4.2,
+    "one_sided_exact_sign_probability": "1/64",
+    "prevented_precision": 0.82,
+    "unnecessary_intervention_rate": 0.08
+  },
+  "paired_learning_utility_deltas": [
+    {
+      "delta": 0.031,
+      "seed": 101,
+      "time_split": "early"
+    },
+    {
+      "delta": 0.037,
+      "seed": 101,
+      "time_split": "late"
+    },
+    {
+      "delta": 0.044,
+      "seed": 202,
+      "time_split": "early"
+    },
+    {
+      "delta": 0.052,
+      "seed": 202,
+      "time_split": "late"
+    },
+    {
+      "delta": 0.039,
+      "seed": 303,
+      "time_split": "early"
+    },
+    {
+      "delta": 0.048,
+      "seed": 303,
+      "time_split": "late"
+    }
+  ],
+  "schema_version": "p108.learning_fixture_matrix.v1",
+  "source_path": "evals/prevention/p108_learning_cases.json"
+}

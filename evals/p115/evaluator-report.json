@@ -1,0 +1,292 @@
+{
+  "authority": {
+    "action_execution_count": 0,
+    "credential_access_count": 0,
+    "production_mutation_count": 0
+  },
+  "case_count": 600,
+  "metrics": {
+    "contraindication_avoidance": {
+      "denominator": 240,
+      "numerator": 240,
+      "value": 1.0
+    },
+    "correct_escalation_rate": {
+      "denominator": 120,
+      "numerator": 120,
+      "value": 1.0
+    },
+    "correct_investigate_more_rate": {
+      "denominator": 120,
+      "numerator": 120,
+      "value": 1.0
+    },
+    "correct_no_action_rate": {
+      "denominator": 120,
+      "numerator": 120,
+      "value": 1.0
+    },
+    "evidence_citation_validity": {
+      "denominator": 600,
+      "numerator": 600,
+      "value": 1.0
+    },
+    "harmful_action_selection_rate": {
+      "denominator": 600,
+      "numerator": 0,
+      "value": 0.0
+    },
+    "optimal_action_top1": {
+      "denominator": 600,
+      "numerator": 600,
+      "value": 1.0
+    },
+    "optimal_action_top3": {
+      "denominator": 600,
+      "numerator": 600,
+      "value": 1.0
+    },
+    "outcome_weighted_utility": {
+      "denominator": 600,
+      "numerator": 87.1583,
+      "value": 0.145264
+    },
+    "prerequisite_compliance": {
+      "denominator": 240,
+      "numerator": 240,
+      "value": 1.0
+    },
+    "rollback_completeness": {
+      "denominator": 600,
+      "numerator": 600,
+      "value": 1.0
+    },
+    "unnecessary_action_selection_rate": {
+      "denominator": 600,
+      "numerator": 0,
+      "value": 0.0
+    },
+    "validation_completeness": {
+      "denominator": 600,
+      "numerator": 600,
+      "value": 1.0
+    }
+  },
+  "missing_p116_record_count": 0,
+  "outcome_qualified": true,
+  "partitions": [
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "cache",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "certificate",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "cpu",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "database_pool",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "dependency",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "deploy",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "disk",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "dns",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "memory",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "network_delay",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "network_loss",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "queue",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "quota",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "socket",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "traffic",
+      "partition": "development",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "cache",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "certificate",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "cpu",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "database_pool",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "dependency",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "deploy",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "disk",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "dns",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "memory",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "network_delay",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "network_loss",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "queue",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "quota",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "socket",
+      "partition": "holdout",
+      "value": 1.0
+    },
+    {
+      "correct": 20,
+      "denominator": 20,
+      "family": "traffic",
+      "partition": "holdout",
+      "value": 1.0
+    }
+  ],
+  "release_status": "p115_outcome_qualified",
+  "report_hash": "sha256:f0a52f00c95b47bf1e6b3723c378649afe095171f2d74e46385d11ebedafbb07",
+  "schema_version": "p115.paired_score.v1"
+}

@@ -5,14 +5,14 @@ Thanks for helping make OpsCat a useful open-source agentic operations project. 
 ## Start locally
 
 ```bash
-cp .env.example .env
-make install
-make quickstart
+uv sync --frozen --extra dev
+uv run --no-sync opscat demo --output /tmp/opscat-demo-replay.json
 ```
 
 Useful checks:
 
 ```bash
+make quickstart
 make demo
 make test
 make verify
@@ -56,6 +56,9 @@ Before opening a PR that touches actions, connectors, incident import, approvals
 5. Re-run the targeted tests.
 6. Run `make verify` before claiming a release-ready change.
 7. Update docs and release evidence when behavior or commands change.
+8. Run the P122 security, SBOM, license, packaging, and frozen-evidence profile for release changes.
+
+Capability claims must link to a frozen evidence artifact or an explicit limitation. Do not describe local qualification as production autonomy or operator replacement.
 
 ## Test commands
 
@@ -66,6 +69,9 @@ Before opening a PR that touches actions, connectors, incident import, approvals
 - `python scripts/run_connector_evals.py ...` — connector eval report.
 
 ## Lore commit protocol
+
+The project follows the Lore commit protocol for decision-oriented commit
+messages.
 
 Commit messages should explain why the change was made and include useful trailers when they add context:
 

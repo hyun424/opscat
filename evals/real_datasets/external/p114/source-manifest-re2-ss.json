@@ -1,0 +1,17 @@
+{
+  "schema_version": "p114.source_manifest.v1",
+  "source_id": "rcaeval-re2-ss",
+  "dataset": "RCAEval RE2-SS",
+  "system": "sock_shop",
+  "canonical_record": "https://zenodo.org/records/14590730",
+  "canonical_download_url": "https://zenodo.org/api/records/14590730/files/RE2-SS.zip/content",
+  "file_name": "RE2-SS.zip",
+  "compressed_bytes": 245629018,
+  "expected_case_count": 90,
+  "upstream_md5": "bd747a8fc7c5be00c613e13fbf9dd74b",
+  "verified_sha256": "7aff9a3a0df7e2febbce4f75f0b7ba332da943aacadbffe6d5113a588ef6e295",
+  "sha256_policy": "computed from the first MD5-and-size-verified local acquisition and pinned before feature development",
+  "label_convention": "RE2-SS/{case_group}/{repetition}",
+  "license_note": "Upstream RCAEval repository identifies its datasets as MIT; the Zenodo record displays CC BY 4.0. OpsCat does not redistribute the archive.",
+  "citation": "Pham et al., RCAEval: A Benchmark for Root Cause Analysis of Microservice Systems with Telemetry Data, WWW 2025"
+}

@@ -1,0 +1,55 @@
+{
+  "action_execution_enabled": false,
+  "comparison_hash": "sha256:7c75406525282b45ae051ff41b8caa667b9b80969dc2038d2f0efde2eb011848",
+  "gates": {
+    "baseline_raw_replay": true,
+    "baseline_request_complete": true,
+    "blind_role": true,
+    "candidate_raw_replay": false,
+    "candidate_repeat_raw_replay": false,
+    "candidate_request_complete": true,
+    "cryptographic_review": false,
+    "delay_floor": false,
+    "evidence_precision": true,
+    "fault_accuracy": false,
+    "freeze_verified": true,
+    "loss_floor": false,
+    "nonnegative_fault_delta": false,
+    "nonnegative_service_delta": false,
+    "positive_primary_delta": false,
+    "repeat_joint_agreement": false,
+    "service_top1": false,
+    "service_top3": false,
+    "zero_safety_counters": true
+  },
+  "reasons": [
+    "service_top1 failed closed",
+    "service_top3 failed closed",
+    "fault_accuracy failed closed",
+    "loss_floor failed closed",
+    "delay_floor failed closed",
+    "nonnegative_service_delta failed closed",
+    "nonnegative_fault_delta failed closed",
+    "positive_primary_delta failed closed",
+    "repeat_joint_agreement failed closed",
+    "candidate_raw_replay failed closed",
+    "candidate_repeat_raw_replay failed closed",
+    "cryptographic_review failed closed"
+  ],
+  "release_evidence_hash": "sha256:9e54a463f387d940bcedfa33051cb66df8e32b9a99ca01c7072e27bcd2627fad",
+  "release_qualified": false,
+  "repeat_agreement": {
+    "case_count": 25,
+    "fault_agreement": 0.72,
+    "joint_agreement": 0.04,
+    "service_top1_agreement": 0.04
+  },
+  "replay_integrity": {
+    "baseline_raw_replay": true,
+    "baseline_request_complete": true,
+    "candidate_raw_replay": false,
+    "candidate_repeat_raw_replay": false,
+    "candidate_request_complete": true
+  },
+  "schema_version": "p112.release_evidence.v1"
+}

@@ -1,0 +1,30 @@
+{
+  "adapter_invoked": true,
+  "correlation_id": "p122-crash-00-install",
+  "durable_phase": "package_install_recovered",
+  "operation": "package_install",
+  "operation_adapter": "wheel_install_transaction_v1",
+  "ordinal": 0,
+  "output_hash": "sha256:913c4547ce4b6d5c82c62dca4583a141bc83fc2468b8283eed9b47213620cd96",
+  "output_schema": "p122.wheel_install_transaction.v1",
+  "output_validation": {
+    "app_package_present": true,
+    "console_entrypoint": "opscat=app.cli:main",
+    "installed_file_count": 329,
+    "installed_package": "opscat",
+    "metadata_hash": "sha256:b29aa033866fee8f04345bcaee577994b6dc10229b6cbe94ae4bd356f998634b",
+    "record_entries_verified": 327,
+    "schema_version": "p122.wheel_install_transaction.v1"
+  },
+  "pending_record_hash": "sha256:7927a4d32714621f7806c3acda0386cd7b54728a4b37734fcbe31ab4684ce1f4",
+  "pending_worker_pid": 58354,
+  "post_restart_validation": true,
+  "precommit_hash": "sha256:913c4547ce4b6d5c82c62dca4583a141bc83fc2468b8283eed9b47213620cd96",
+  "precommit_validation_hash": "sha256:34af5087407fb7e1361c0601515e437252bbd03519919fe759d3f63635ce7c9f",
+  "record_hash": "sha256:dd53a8b539d028f8802c1b2ca72d86b619cb10994aca5fa78d8d0ef9b18f223a",
+  "recovery_worker_pid": 58355,
+  "restart_count": 1,
+  "schema_version": "p122.release_stage_restart_receipt.v1",
+  "stage": "install",
+  "status": "recovered_after_restart"
+}

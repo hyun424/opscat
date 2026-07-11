@@ -1,0 +1,17 @@
+{
+  "baseline_evaluation_hash": "sha256:e2a7d00b758d38d3eba11c33e5c8ac2d1ba936bc20d7d720aef505713f2391eb",
+  "comparison_hash": "sha256:3ef49a005a87177075965e896be63f33e01ed1a367dca11f7b3cc4745ab857bf",
+  "diagnosis_evaluation_hash": "sha256:33e21b238c221b5c334df70609dc310fa50b3edcf392800bae39adc08944c8e0",
+  "freeze_hash": "sha256:a98e2a469f06fb2e625ebc4f45b7c08278f43ed7d1d07572e382d827f9a7355d",
+  "metric_deltas": {
+    "abstention_rate": 0.0,
+    "evidence_precision": 0.0,
+    "fault_accuracy": 0.0,
+    "harmful_action_rate": 0.0,
+    "mean_latency_ms": 0.0,
+    "service_top1": 0.0,
+    "service_top3": 0.0,
+    "unsupported_rate": 0.0
+  },
+  "schema_version": "p113.diagnosis_comparison.v1"
+}

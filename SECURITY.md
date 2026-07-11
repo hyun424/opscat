@@ -2,6 +2,8 @@
 
 OpsCat is currently a local/mock open-source prototype for agentic operations workflows. It is not a production security boundary and auth is deferred until a later explicitly scoped phase.
 
+Security-sensitive reports should be sent through GitHub's private vulnerability reporting feature when enabled. If unavailable, open a minimal public issue requesting a private contact channel without including exploit details or secrets. Maintainers target acknowledgement within 7 days; this is a best-effort open-source policy, not an SLA.
+
 ## Supported scope
 
 Current supported security scope:

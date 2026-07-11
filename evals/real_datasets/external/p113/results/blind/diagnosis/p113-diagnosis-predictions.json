@@ -1,0 +1,3254 @@
+{
+  "predictions": [
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_0126f24c4f2589238b93a514",
+      "confidence": 0.60097,
+      "evidence_refs": [
+        "ev_3a0d9e2dd50dbe0234ec1fed",
+        "ev_fe9a0cdd31348602949591c0",
+        "ev_f4d83eb6c26c6a5708483c49",
+        "ev_79b5306c9cdee6fd9203b343",
+        "ev_8ea8a95df1f12e04efd5cbf8"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:72d52692f680fe4341aabd21320a19d0a17ec0e853e9bc3fff0f6d47701de749",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-preserve-service",
+        "ts-seat-service",
+        "ts-basic-service",
+        "ts-config-service"
+      ],
+      "result_hash": "sha256:ae61efcdf3b3f35199ace92cd43f76ba8a0974e0030505eaee7b0e9aed9c7736",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_02eaf3d82de08940f79ae04b",
+      "confidence": 0.515808,
+      "evidence_refs": [
+        "ev_90ae38f8e4e066d7cc53b60e",
+        "ev_a21439c35ef522d99ec74131",
+        "ev_c86b5719ebef8d4840afe23d",
+        "ev_97b78a1e8f40e6043a168269",
+        "ev_668021570708c798ad2d7296"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:1ccb745544baa5105ca9038ec56a0f20548075f5743d1b65480de8117d815c86",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-other-service",
+        "ts-route-service",
+        "ts-food-map-service",
+        "ts-food-service",
+        "ts-consign-service"
+      ],
+      "result_hash": "sha256:5758b49efe737a25c2128f924332caa887086185dfec65e67321008e6f7fb042",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_049b8199aa0039ab768aca35",
+      "confidence": 0.563303,
+      "evidence_refs": [
+        "ev_ed2dba8715df4aad509cf3c9",
+        "ev_d0f2482a0db54eb4985a8145",
+        "ev_a7347b87b4a72f60f5c25024",
+        "ev_d5d837aee9da87fa514cf33c",
+        "ev_98638edd7e0d66dd8a7510ab"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:5ea04b1fa12159906f93a1d27471a0ab1206416394c872ed560916d8e013c709",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel-service",
+        "ts-price-service",
+        "ts-order-other-service",
+        "ts-seat-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:8ce0088239bd479f67da05dc0d6d362517810b3a358618671fcb0a7cd9cc298b",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_0580b1b4a95391ffd5eb1abc",
+      "confidence": 0.682129,
+      "evidence_refs": [
+        "ev_2a48e94fe0bda23119c7b568",
+        "ev_430b4a544a822896a83aeb7a",
+        "ev_9508f3e35397fb448b8f88a1",
+        "ev_006fddfc22c2087e882b5dea",
+        "ev_408c994efb7032789b5aa6dd"
+      ],
+      "executed_actions": [],
+      "fault_type": "disk",
+      "packet_hash": "sha256:91cd3376bc6d4d9addb73aa3039b3563f1573987963e40267c5b6c777744d0f8",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-price-service",
+        "ts-contacts-service",
+        "ts-preserve-service",
+        "ts-travel2-service"
+      ],
+      "result_hash": "sha256:b87c583561c85b7433d7e215bf7461622597373f67a203596151c75eb77f5a99",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_09b4205dc7d74f9eb5944826",
+      "confidence": 0.878959,
+      "evidence_refs": [
+        "ev_8f4ee12f51f3e2f434a4cccd",
+        "ev_8917a12c9aeffb2052128b05",
+        "ev_9dbd94d44bb15653ab09179a",
+        "ev_1b1eadc744e51b21499cc7c4",
+        "ev_327d6d6681800d72427c778f"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:2b4d642d6612e761e3b319dad7f2764f934c5bb27ae244cd05e9832fa4ae8d7d",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel-service",
+        "ts-payment-service",
+        "ts-consign-service",
+        "ts-food-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:0991856f01abea93c550cf67f7acee429714489f5fe365c80362a61af1b10a8c",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_0ce2184300113ced7915478c",
+      "confidence": 0.711473,
+      "evidence_refs": [
+        "ev_df2062b1e8f79c32b71c29ab",
+        "ev_2afd3c12064ed1919736d3d6",
+        "ev_225d2c6bebea57dbfa8ab31f",
+        "ev_f65d518ecb5d6f64d3dbed5c",
+        "ev_b6eb522f62347d7993b7a15f"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:28cbf139ca199484c74151649accc9d0dd4033438560fff7b97676d2e9c45c8f",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-inside-payment-service",
+        "ts-preserve-other-service",
+        "ts-train-service",
+        "ts-payment-service",
+        "ts-user-service"
+      ],
+      "result_hash": "sha256:33d7412508db100f054c58bed3f29db63ea5f668db6c7efe78e397bb3606e39b",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_0e3aef7f5f9d4f1906aba45a",
+      "confidence": 0.590653,
+      "evidence_refs": [
+        "ev_eb0d349652fa44c03af2f897",
+        "ev_5da586224833a25eb7c54de4",
+        "ev_40ecd254408dc7c7d733feb8",
+        "ev_3a7d88a7601eabe6552c53fd",
+        "ev_43cf589ba1024687220e8d1f"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:b082bd55587908704f689293cc2f8a313b805cd273865f03a1fdffef1178185b",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-payment-service",
+        "ts-admin-travel-service",
+        "ts-price-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:ecf157c5ebc2b63f51a4dbb8b540561647caa49ecee1b4ec6a13c2536b0fca6b",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_0eca3246d597995bf9c7d797",
+      "confidence": 0.650559,
+      "evidence_refs": [
+        "ev_86b356bc0e65acc761cef932",
+        "ev_96370a1d78129db9a909b1b0",
+        "ev_b154d0b81ea9e19a76b79bd6",
+        "ev_332ee56a215a3b5288d5f929",
+        "ev_432fdd2b04c72d566595120b"
+      ],
+      "executed_actions": [],
+      "fault_type": "disk",
+      "packet_hash": "sha256:dbfd88a0290702639748db4ba0977b663b4cf45f31995ac1ef93b79b3501b291",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-train-service",
+        "ts-preserve-service",
+        "ts-order-other-service",
+        "ts-security-service",
+        "ts-preserve-other-service"
+      ],
+      "result_hash": "sha256:7e4c7443dcf1ecaa8ae7a5e9100103b6796cc5252cdb452b89cbfb4768240321",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_1103af705b40723f90922f75",
+      "confidence": 0.728068,
+      "evidence_refs": [
+        "ev_9616e5bd30fe2bd72d656aa7",
+        "ev_5d903dfe9a02df08f6a52cfc",
+        "ev_d04705fd54430c81ef6e2003",
+        "ev_fee8c6714315d35509c34c95",
+        "ev_e5063b727c1b8d70a9bcb7f4"
+      ],
+      "executed_actions": [],
+      "fault_type": "disk",
+      "packet_hash": "sha256:7dc43434384be6e3229e354bcca41ef6f7aa574f33ef2fcaf8cf5a61aed79246",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-payment-service",
+        "ts-price-service",
+        "ts-admin-travel-service",
+        "ts-train-service"
+      ],
+      "result_hash": "sha256:33e3ab189994c0731c89398ff29a8a9644835e05cf75fb508d05f4faaa2caeb9",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_16781ba7c3e2a9ce6d871fc2",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev_1cd0c20897d92f45bbd5e47f",
+        "ev_b187748b5a3ba1467d341c11",
+        "ev_1b87cbd54b74089d5f86b1ed",
+        "ev_83a843b8ac9b9d911ea41e89",
+        "ev_ff38aed7c26df8c1d4114143"
+      ],
+      "executed_actions": [],
+      "fault_type": "disk",
+      "packet_hash": "sha256:c5caedb1ad5e617092fa0672ce5aaf208d56ec3e8f71910eb89c6cbd44b02e1a",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-train-service",
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-food-map-service",
+        "ts-user-service"
+      ],
+      "result_hash": "sha256:fd03abf3677e50522b89a0e59106567ca5027eeafdb99bc569fe7ce51d6edea2",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_172a682b9cf327b932d78ace",
+      "confidence": 0.620493,
+      "evidence_refs": [
+        "ev_d5359239d2364bf6a248600e",
+        "ev_804694267f1bcaf46b275870",
+        "ev_a6af841701c3195a92dff387",
+        "ev_26552f1a475cea613bfef8e3",
+        "ev_4d9857ba1367fb1eb87ffc45"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:bfc640104df3ca24abaa654bcb350861a4d1a8c34543ecc2af73abf436f23408",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-train-service",
+        "ts-food-map-service",
+        "ts-preserve-service",
+        "ts-config-service"
+      ],
+      "result_hash": "sha256:5a1993b34c7d179240deda8bc8772544e83ac4c33f0dd7e11150ceab13306443",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_1763613f76b2179c6dc34e2a",
+      "confidence": 0.532241,
+      "evidence_refs": [
+        "ev_1bd546f20ff4bfd56bf58ac5",
+        "ev_efe734a44a5b847e3243e0c3",
+        "ev_6532d0f9015d08a07c3947df",
+        "ev_e1edde61078c6ba178b4880e",
+        "ev_a562bf685543240e554f366c"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:c580f5e34ffdbd900842e8e72daf3fc49357619718cea96cbf241d0e37d8d9ce",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-inside-payment-service",
+        "ts-assurance-service",
+        "ts-order-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:574c5e8341088a0cfb62c7b021fc563c0f66873fafda3bf04f05bab315e323ac",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_1a0ac70fca0ede1f38baa334",
+      "confidence": 0.785697,
+      "evidence_refs": [
+        "ev_22a8b548eec91d6e92d607e7",
+        "ev_db44d559a6e627571e59eb03",
+        "ev_ac9abb0e2e7a5d7668ffb87b",
+        "ev_49d24396fa838f2bc9c591f6",
+        "ev_67cc58a894f536273c105169"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:65c0dfa0a9ac1157234a246040170797ea6f52a5a93fc2cd11a34a2a57e77cb9",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-train-service",
+        "ts-preserve-other-service",
+        "ts-notification-service",
+        "ts-consign-price-service",
+        "ts-preserve-service"
+      ],
+      "result_hash": "sha256:1b7790141c2b81074ce3665b5c47434e18c0b09c9739e59e84df0f14cadbb4ea",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_1d96b69679b748589033c895",
+      "confidence": 0.513022,
+      "evidence_refs": [
+        "ev_0b0a44ddbf1cdf28de056a2a",
+        "ev_8e18c4ffc1dc17e41b337e2c",
+        "ev_8f5f6d4ca9fc8d35818f219f",
+        "ev_956e00f8ef9dc33120beef88",
+        "ev_83fb0384672782d70c354dda"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:556c2599ce6d53dd712e6364f472a835943a07aff56dad6e366d66a37f0c46ab",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-payment-service",
+        "ts-train-service",
+        "ts-seat-service",
+        "ts-user-service"
+      ],
+      "result_hash": "sha256:83e5917d5cfe8b779a813636fe042b562532b6b9069bb1c2922b3cf24b9c47ef",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_24f8832d51bf6eaa016181d9",
+      "confidence": 0.500906,
+      "evidence_refs": [
+        "ev_1a819dd05d5047a1c6d44949",
+        "ev_d02e82e924a96465c283b9b3",
+        "ev_5ae3f036eae8a02bff257749",
+        "ev_8ef72841e4d4d615b42b5a84",
+        "ev_0f644b0a47d3baeae210f552"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:61cef7c5bfb67b2c45a6442f1ea3029c9b8e563857e5be46f5cd351c4c06e3f4",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-payment-service",
+        "ts-admin-travel-service",
+        "ts-assurance-service",
+        "ts-travel-service"
+      ],
+      "result_hash": "sha256:c39b08b6ff86dc4483c60e194611dee1ef87f0983ee819dc19d96033f6a3fd11",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_257648100eeac9578154c273",
+      "confidence": 0.676121,
+      "evidence_refs": [
+        "ev_56018114958e005c3b0eaaae",
+        "ev_d81851dcaba44b86b13ab499",
+        "ev_e69825e6678ac2154667a998",
+        "ev_dcdb5539e7042426a6c1410b",
+        "ev_28fb6e7cf7bbb803e55e3a2d"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:51a8475eb37e06dc24887148b5644bad7e35b08621ecda566bcba675019d7b38",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-payment-service",
+        "ts-inside-payment-service",
+        "ts-ticketinfo-service",
+        "ts-price-service"
+      ],
+      "result_hash": "sha256:5097ec0fea65bbd2a8a1f3180dce098099ce0834aca2e199d206cc711705dffe",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_272ff79a8be366bb6adeac96",
+      "confidence": 0.641135,
+      "evidence_refs": [
+        "ev_6aea577c34a196dd1c618380",
+        "ev_c43cda2033759a862225254a",
+        "ev_47d82f4aa85165b2d38c35ab",
+        "ev_86b994ccb258fc59ed3f3c77",
+        "ev_50980558193c325f2110fbec"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:7daf2646940ca3aa8997a556fb380fd6c41349a802eca88dc269222b6bb09358",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-preserve-service",
+        "ts-consign-service",
+        "ts-user-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:f8dbc6271f97777d6ce14614128bac737afdcb0b856a5f7701211b3e2d888e82",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_2738b84f33f6b1faf096ea4c",
+      "confidence": 0.507772,
+      "evidence_refs": [
+        "ev_9311aba5bea1d7e543acd5a0",
+        "ev_06dc49c5439e082db49d28ce",
+        "ev_77a5438e2a19d2f99da589db",
+        "ev_a7347c58454486abefdaa420",
+        "ev_072e891a6e141a1b155ac0da"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:c9051dc28212d41e50f78f7fcc8749211addfc654d377714bad0f01059fcc81b",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-consign-price-service",
+        "ts-food-map-service",
+        "ts-notification-service"
+      ],
+      "result_hash": "sha256:60d483d7adb67617ed36d3a8f6f077ac00949f0812c6a29518e177e9fc5de7da",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_289bb76feb52941015dd7984",
+      "confidence": 0.595351,
+      "evidence_refs": [
+        "ev_056f9c02cd52c2fe09609e2a",
+        "ev_3a4f9dd6cc832a7fef42eda5",
+        "ev_5f8c4dcb102f06c2a120138a",
+        "ev_55c0c80b0de0e7569e778b55",
+        "ev_762d6d6e5290f4f7453ff2f1"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:2ef0304fef3f1ad06527e7ec62f0ae9a68bbd04e1ba6c1f67d29fa1fd6722630",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel-service",
+        "ts-consign-price-service",
+        "ts-consign-service",
+        "ts-food-service",
+        "ts-price-service"
+      ],
+      "result_hash": "sha256:c8137893f55d8195314e86a32b13a7d8019ef5421a304e3a1a861ff7a88bc529",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_2aa678146fb6f66e9109f759",
+      "confidence": 0.500853,
+      "evidence_refs": [
+        "ev_9ccc6defc18e1c82ade88aa7",
+        "ev_175c49112e00e3af60394ba5",
+        "ev_52466aec47abdc0db943d7b3",
+        "ev_cebf3921bc2c20e474380c11",
+        "ev_f18beab10d81654d57867090"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:e027a01974a7c4fae167334f6f26de06694130b9335b373fee9c4c6bec8d7165",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel2-service",
+        "ts-inside-payment-service",
+        "ts-food-service",
+        "ts-payment-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:08f9dfed112d7cf7d9898dc78e7528fe84912828a26407988d008ae8b7e28874",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_2ae43eac6b6fd4d82cedbd2f",
+      "confidence": 0.705901,
+      "evidence_refs": [
+        "ev_5af0e62e0de5c763971019cc",
+        "ev_7961096d19b78adbb449a825",
+        "ev_553e5eb1e14551d31e832d8e",
+        "ev_92f17f530e93d9ea746b749b",
+        "ev_933e7456e9ae9123098c98f1"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:22d029d68921ccae7f8c61e39f5c01d43812b48e36364fc732e7026546bff2d3",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-admin-travel-service",
+        "ts-ui-dashboard"
+      ],
+      "result_hash": "sha256:715c2755b7069da84cb653c5b530be24a7e30b1a3240966316426c61ec11635d",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_2d07aed1d1250a6dd2a86459",
+      "confidence": 0.525673,
+      "evidence_refs": [
+        "ev_a30c7f374195b4ba8969e433",
+        "ev_8f4c037d1a40a9d99181d432",
+        "ev_bba4113daffd316d6485a757",
+        "ev_73072b4047d9b647ffc0cccf",
+        "ev_3a2b6e15a483efb0bc7e0f17"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:0b1e6816ab512d637284363ab2b1fb7bd28b3d739f4b9e2e4712698a2d94f07e",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-order-service",
+        "ts-consign-price-service",
+        "ts-user-service",
+        "ts-route-service"
+      ],
+      "result_hash": "sha256:7b83dac8828bb67def8d977e8f2f714a2d6a1f110fe5bd08e309e682f1474a18",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_2d865137a77c73662d0db842",
+      "confidence": 0.69439,
+      "evidence_refs": [
+        "ev_75c8ce0a231d84877b4d6ff5",
+        "ev_d8a9abf3129f7be4d6d9cbb1",
+        "ev_745208ba7fc80b36b79e81dd",
+        "ev_3f1f121321b8b15c5663f212",
+        "ev_a4be225afe1334742844ab0c"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:79e72560fd21068b84eb8f7d8e6a99c4d0e6ad4fb81d6d6bba1ef0e552afee13",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-security-service",
+        "ts-preserve-other-service",
+        "ts-preserve-service",
+        "ts-seat-service",
+        "ts-ui-dashboard"
+      ],
+      "result_hash": "sha256:af93c44bea0359c99ad2aa33b62954f3fa50af6f6a85b2089ecb39440280d12e",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_308f3e6a4a027866a2a6f360",
+      "confidence": 0.505256,
+      "evidence_refs": [
+        "ev_05f193556ec7242ac061d283",
+        "ev_ece1425a15716231433b5ba9",
+        "ev_cf3477c8bd8e8d7ffbc64e22",
+        "ev_c8d0a3e4eeee1480dc0a26cd",
+        "ev_d52ca21db0588e61f8992cdd"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:9a47baf322eb20c762d5addb8ba98bd4a8e9d8cdd5ab18ce5205445036b3d18f",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-payment-service",
+        "ts-inside-payment-service",
+        "ts-order-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:97c62538062c6abc29cfe70d965a2bf945d5899d95e714d5957b25ea00c1be44",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_30dc87254f80999b086a76ad",
+      "confidence": 0.604219,
+      "evidence_refs": [
+        "ev_1bc349978ef93652018a7658",
+        "ev_e552326c7780fdae918c0ac0",
+        "ev_cc2116daeaefe734e05d8903",
+        "ev_b62cc356baef3d3d40bcf343",
+        "ev_001bc720191bde2187ae7fd0"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:04c642a66c436157590e4dbe6b40fb51c879ecee4bb9258f468df5572a2dbfab",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-consign-service",
+        "ts-train-service",
+        "ts-security-service",
+        "ts-notification-service"
+      ],
+      "result_hash": "sha256:e9bffbab01df19d11b1c703eb95ffab21fbdb01368adf22f66924bff8761a1e5",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_321acb0aab38ea0d234ffcf0",
+      "confidence": 0.580652,
+      "evidence_refs": [
+        "ev_24d828e139c5616c05f6818a",
+        "ev_92110b67f34107b70f03754d",
+        "ev_9cdcba689b8133e4fc332352",
+        "ev_20e4d8219cc59b31fbbea7fe",
+        "ev_ac09c397950368763804d560"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:eebf4cb5130e173254b6c514dbddd1526df6fa6f9f91c0db1a98fe870b35447c",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-travel-service",
+        "ts-food-service",
+        "ts-assurance-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:ee8d843aad42d82c25b749861e272618348d05f30809b832b4fe4f42743fa5e7",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_364c99d5d8aedb5f565d9291",
+      "confidence": 0.904115,
+      "evidence_refs": [
+        "ev_1e24bc984b526988a2280290",
+        "ev_f17dc322a456175b5cec4264",
+        "ev_e4fac87eec262d923592642f",
+        "ev_f935b1d2dbe1ba100e91c479",
+        "ev_0884e97433eac3d13856e767"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:45c29b0eec0f6d8beca211c5c2dc803b3ede1a2dea74db00a404d22f50463530",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-admin-travel-service",
+        "ts-auth-service",
+        "ts-preserve-service",
+        "ts-ui-dashboard"
+      ],
+      "result_hash": "sha256:7ad20b5ab71e18ebadd82074ca5c6b3b1b185ed5c5a77bb1fdb6bc84e574cf90",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_3c7868044bd8886ce328f251",
+      "confidence": 0.633246,
+      "evidence_refs": [
+        "ev_ab4fd0a522c5e13db94ec157",
+        "ev_96f66a3afac58a323d0a360d",
+        "ev_dff317b21d54bca0f76c24ca",
+        "ev_437ec67438ac72ada5b5a490",
+        "ev_562e42a976f3c631c8ce74f0"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:74f4179591dca193a33e103baf434697c241c83cd23bb43793555fb6645584f1",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-preserve-service",
+        "ts-payment-service",
+        "ts-user-service",
+        "ts-notification-service"
+      ],
+      "result_hash": "sha256:9598c45f777ab592406e7d22ce44be327b29ce9952ddf1e1af2f6877aa0653a7",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_3e87c7afb4774ba1c2727aeb",
+      "confidence": 0.572257,
+      "evidence_refs": [
+        "ev_a967b1f3a152c6c65d0634c2",
+        "ev_968bab8b33b7b5468af4cbf5",
+        "ev_3e833d2af7fd8b8bdca856dc",
+        "ev_9d8fa1be0006e6f064cb6869",
+        "ev_3664802c3a09ceade4a980c2"
+      ],
+      "executed_actions": [],
+      "fault_type": "mem",
+      "packet_hash": "sha256:cecc73edc08258142947625e81981b71662da8cfb73474039aece261942bfd8e",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-food-service",
+        "ts-config-service",
+        "ts-travel-service",
+        "ts-route-service"
+      ],
+      "result_hash": "sha256:c643899d1cbdd041d86f3e74477b78d15f819f86a2939396256f6c757fbfa0a4",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_3ee88678790457f974b32782",
+      "confidence": 0.535794,
+      "evidence_refs": [
+        "ev_b7dcbe61ac1742a1156bba0a",
+        "ev_d26e1f9dab4ab4c4d4368ce7",
+        "ev_93e52b048c9d2ebc14ab579f",
+        "ev_5bf96a1c94628b2e7ed33a5e",
+        "ev_62d9e1679fca147c41ff92c0"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:cb5a910b9e8864c01846e6d5910b25a15abeb3fb5c440cc553f564b89ca9f569",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-food-map-service",
+        "ts-order-other-service",
+        "ts-inside-payment-service",
+        "ts-travel-service"
+      ],
+      "result_hash": "sha256:752c51b69683666b4ecd786d3020231e697e12879de9768962f5cd80d2995951",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_3f418a1303452f6c54237a52",
+      "confidence": 0.738677,
+      "evidence_refs": [
+        "ev_521d07718cdc26c58a113296",
+        "ev_5ccdfac5b920c15c13ab36c0",
+        "ev_5b44d0e984127d67902fb888",
+        "ev_3cb46d24afcb97c0f9b034d9",
+        "ev_07eac51819eb7197902eab35"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:f3d63a2144eac0227e68c38c4831935cbab1686d43fab95b0fb328618084ac9e",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-security-service",
+        "ts-food-map-service",
+        "ts-price-service",
+        "ts-train-service",
+        "ts-order-other-service"
+      ],
+      "result_hash": "sha256:464f6a9fe76ab6873da06f0b3f5bdcda96e1b0a7b7225bd95f07f8528684ced2",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_4037d3aa17a4d3eb805aff8c",
+      "confidence": 0.935214,
+      "evidence_refs": [
+        "ev_332ec66a4d3377d1af182137",
+        "ev_1951e7fead841212d0467987",
+        "ev_201e6ee48e075e75463fdbce",
+        "ev_bc154954426a086c3ee7f3c0",
+        "ev_4ab3d47821130c290a8ea297"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:e9e54f3dd25b9ca34ffd05ebd5d1cde9d460b74a396739d68c766708be22f915",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-travel-service",
+        "ts-preserve-other-service",
+        "ts-admin-travel-service",
+        "ts-order-service"
+      ],
+      "result_hash": "sha256:6823c66c84f81f43dfaed04a4189268f78b4c570ccb1c0b79bb880554761c474",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_404c82114b0c36f1a4eb96c3",
+      "confidence": 0.698199,
+      "evidence_refs": [
+        "ev_a86dec7651ecaa2073e05bc3",
+        "ev_45e65bc75fb29b52ce787b68",
+        "ev_664d1e84a77ba294e4eb3da6",
+        "ev_9a5a787a975baf71ce626890",
+        "ev_90cd213df9b013aad7602c61"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:c64e9a193e558777fe94ddca525b0ddeb0d2b30fac09d56a9734d6d291c0b4d4",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-security-service",
+        "ts-food-map-service",
+        "ts-preserve-other-service",
+        "ts-auth-service",
+        "ts-user-service"
+      ],
+      "result_hash": "sha256:3f38e7e8bd3a5d4b0434d621d3ee7a9aaa8d763d53e94fa62bbaac8aaee64e12",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_43493fa55e5fc6f29a4e9263",
+      "confidence": 0.66193,
+      "evidence_refs": [
+        "ev_09ba5d9dcb68c1ff6d4fa22e",
+        "ev_1e760182edf2a884a8a1905f",
+        "ev_3c9a924b7d80344e6ab8ec99",
+        "ev_f2bdff01db110dfb32293b26",
+        "ev_2c2025536f91de3f323131ee"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:9ecf0de3d02581ef6b5aefdb080918b0f808932dc4e77850cda212744678fd2c",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-inside-payment-service",
+        "ts-payment-service",
+        "ts-admin-travel-service",
+        "ts-assurance-service"
+      ],
+      "result_hash": "sha256:08d662e8aa0ca9d0316a4bf9b3414b5495d216c30aa8ad6c34ca9249901f31d0",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_4816182c5040acb467a1b0c3",
+      "confidence": 0.788208,
+      "evidence_refs": [
+        "ev_2eb4c33be4153fb2f63d15a9",
+        "ev_48e46bdfd846266a56541249",
+        "ev_7815f588b624033f286adea3",
+        "ev_77cfa6c9cb1a96fb922cdb95",
+        "ev_174da0ed15efb770e7f6340b"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:ccfb65d15bd20490286efe01908869c64b05ba774245d81e22cd4b964fc737e3",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-preserve-service",
+        "ts-payment-service",
+        "ts-user-service",
+        "ts-seat-service"
+      ],
+      "result_hash": "sha256:39de0651ff9cac7b1972ce4675014e274174a39a865881f227af872c93b35f39",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_4969a01f6e143b258f444ba3",
+      "confidence": 0.636572,
+      "evidence_refs": [
+        "ev_c100ea1a01f48659e62652a9",
+        "ev_9c04223382d27113224d1d27",
+        "ev_8039ee39e760abbaf17da26f",
+        "ev_4128e2bffa1f90533cff81b9",
+        "ev_13b5dc1d930e0fcf8cc289be"
+      ],
+      "executed_actions": [],
+      "fault_type": "disk",
+      "packet_hash": "sha256:b732e7a02d0900ff0ae72d38dd25d56be317e46e43500fb51761ed0b96b50165",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-payment-service",
+        "ts-assurance-service",
+        "ts-ticketinfo-service",
+        "ts-admin-basic-info-service"
+      ],
+      "result_hash": "sha256:d4b6f3526db41abb1e180e3543763a93f1db451c1320b29fbbe9637978fc5614",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_49a6a064cae20c48157aaf27",
+      "confidence": 0.772518,
+      "evidence_refs": [
+        "ev_cad46121b6fcc3f9d291e356",
+        "ev_b171353ee052addc28f6fdfb",
+        "ev_c039449d3c73de16c4e8bfaf",
+        "ev_444ced9476a9746a5feb9f9a",
+        "ev_5f992ac42164c1bfa07916eb"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:7382a9984bc1317b571392988affb54d0ad5d9c7f012ac98f1d301f853c26980",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-train-service",
+        "ts-payment-service",
+        "ts-ticketinfo-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:60cdf4cd21dae4ce641ed749ac74cb1d84e96fd8a0e98e11ca5935ff22121b16",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_4cccd7d34ce8cb22bcb0b851",
+      "confidence": 0.685641,
+      "evidence_refs": [
+        "ev_73c96186223a68ccf514b651",
+        "ev_35e5aa021d0c283818300fcb",
+        "ev_25efb684845127c093a17356",
+        "ev_6ed7dc420e32967d1cce7da1",
+        "ev_a61a11e6d7d4dcc9f8d0865e"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:c1bc86825e251308b078b555ddabf564ae3e08c1b403158f588df43b67b20e1e",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-train-service",
+        "ts-order-service",
+        "ts-route-service",
+        "ts-preserve-other-service"
+      ],
+      "result_hash": "sha256:c078e635a004548d67b9b539a61c863fea9d2ab132cc6891a48ef39900d2eae1",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_4d6c624bb325f38f66454735",
+      "confidence": 0.545701,
+      "evidence_refs": [
+        "ev_e74c54bf38978d521f086b5b",
+        "ev_45cae36cc24aa9369331eb2a",
+        "ev_753210628f47f417a2699402",
+        "ev_4c854c69ce42eb2e11ee256c",
+        "ev_da680f53cbd51800d3d59587"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:4d59c860b649f80d2e958cf50fda9ee959ea8ed3077fd44cae63c168289fe427",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-travel-service",
+        "ts-admin-travel-service",
+        "ts-admin-basic-info-service",
+        "ts-station-service"
+      ],
+      "result_hash": "sha256:d30fb99f7005b0401d99ff282a5e251d3656dbda0c4e4de2f4f32ef1c14b4ec7",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_4e60c17f91260ba6a8039c8e",
+      "confidence": 0.64765,
+      "evidence_refs": [
+        "ev_844e9e1f509890e76536bc6a",
+        "ev_077a8bf109049a57ca4aa9ae",
+        "ev_431fe6578331405dd65c8793",
+        "ev_06be5ab4088b83ff2633911d",
+        "ev_dab758e6eb4ac33021f45c0e"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:39ccfbdabfb06d371e4d36bc5efba21f07d831b8fbc156bf603cee672916aa02",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-ticketinfo-service",
+        "ts-price-service",
+        "ts-admin-basic-info-service",
+        "ts-train-service"
+      ],
+      "result_hash": "sha256:c06d7aa54f11f15ad0ded0dbb3cd1787e40c5786cfb02d6a24646533302fa054",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_4eda600007677018d451ece5",
+      "confidence": 0.644579,
+      "evidence_refs": [
+        "ev_357b3441a36c62567fc89ce4",
+        "ev_0fc13ba902bfda90aa347b8d",
+        "ev_91bd9f1d812d6f4cac42077a",
+        "ev_c36b1358275816c1a3e68f39",
+        "ev_be2a3f0659d8c75d6c61b4cf"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:8ff3c91f6c75a7f08e6dbff20a902185a6d1fafecaf2e12d50525be0c97f89ff",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-food-service",
+        "ts-train-service",
+        "ts-consign-service",
+        "ts-config-service"
+      ],
+      "result_hash": "sha256:b2ba94120b656e079aeae301ec969e2fec74066d5be7e2c9bc4f5e35e8fdf0fd",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_510e5bd7efb6c8d9ef970974",
+      "confidence": 0.526768,
+      "evidence_refs": [
+        "ev_329531e2f7cbeaf6dfcbcbc9",
+        "ev_a01fab6baeb2d9b3c6e37d55",
+        "ev_0f121060f9af4c196f42ad48",
+        "ev_10247cd61846821b94ca71df",
+        "ev_19b1c465a3fbddacb1587338"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:00363f1e8484a40d4f65a11e007b6c104c19297ba48638ee8116c3be7e7d9af4",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-other-service",
+        "ts-train-service",
+        "ts-admin-travel-service",
+        "ts-notification-service",
+        "ts-basic-service"
+      ],
+      "result_hash": "sha256:e5b7510639c7fba6d1e9fe650c94c23da50da4a7f622a9f6750a85ce9ec7b634",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_57ea1dea9e7888efd81e5c2d",
+      "confidence": 0.547014,
+      "evidence_refs": [
+        "ev_4d9a04e836320e48ee584015",
+        "ev_f13aedc9d42d3458be3c642a",
+        "ev_018c623f10eeccbf39999821",
+        "ev_2cf7f8c2a664fc7647a5ceec",
+        "ev_8e1396b0c0c4d8d4b5b706f2"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:639b5146cbb709c3e90ddb871d706558c328f9386a41acbee0c43b81e37ad90d",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-consign-service",
+        "ts-inside-payment-service",
+        "ts-consign-price-service",
+        "ts-order-other-service",
+        "ts-order-service"
+      ],
+      "result_hash": "sha256:bccc5adfd7b8c7840ed6f14c440bb09a78e3644a7d48bfcaf7775867afcac3e1",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_5c002a7aa5ee08ebe7436f94",
+      "confidence": 0.554234,
+      "evidence_refs": [
+        "ev_9c1a4468c2fe1533fec34bd3",
+        "ev_321156c638844b9eb95a3897",
+        "ev_70284755ee16f4126b63140d",
+        "ev_50dc998e846508167a8d46d1",
+        "ev_e0933557c4da47854ba223b9"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:ba605dd099878f8b6eb7a47bcef204d66b27e00d71a36dd7b74aece1a47e7013",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-inside-payment-service",
+        "ts-consign-service",
+        "ts-consign-price-service",
+        "ts-order-service"
+      ],
+      "result_hash": "sha256:fdc6dbe33da50b19016d3a33d55fcd5a6ea8c050c90b8aadc88cace99057a26d",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_5c253932c54f1934171bb699",
+      "confidence": 0.515765,
+      "evidence_refs": [
+        "ev_c426ad89710eaaf291d62440",
+        "ev_c6c138b15e1889f1a9bbb738",
+        "ev_a4b655d39cce26e72bdffec6",
+        "ev_c189564f77d834b487c283c4",
+        "ev_34ce530ca2441c2202dd4610"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:3d90bba48a217ef8b0e4f5d7ee4e99a813a48a3d715e73a98b760f6b32641d43",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-contacts-service",
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:b8195e1f654e3e1e2917137cadb9a32e91f5fc2e2f1f98f56aa4e617f40bd895",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_5cc32aacca7e2ef07df7bb15",
+      "confidence": 0.535462,
+      "evidence_refs": [
+        "ev_7c6e803f7bd73ee538762a0d",
+        "ev_5b22b7ce07cfa7b910b6dd8b",
+        "ev_2d92377185a46e184630f8d9",
+        "ev_f19de80bb9b4200d7581aa44",
+        "ev_97e6e77f686e2716c9bf5cf4"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:be8a92ffd51f0f6fa10652ebaff32c05429a59d361b92a2898327c0f3afd8a1d",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-payment-service",
+        "ts-price-service",
+        "ts-train-service",
+        "ts-consign-service"
+      ],
+      "result_hash": "sha256:ea60660d341d68c963437248cf71d6a97c2af20ff1d2f7795442c27344dcf5fe",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_5d8654ee75f2c8e99b0d0eaa",
+      "confidence": 0.681643,
+      "evidence_refs": [
+        "ev_50b44160d30ac94c7c0cd8db",
+        "ev_cb41ff1d05172a09971d1354",
+        "ev_f5ac42d4a1d91a02dea527c3",
+        "ev_5b9d2fec7bb387447e553c81",
+        "ev_8e52483b3e63daf146b940b4"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:f8a267dbd44d5a0ea1aa9a59e448e196b2489e7937f0c730e769c715fc20bc95",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-auth-service",
+        "ts-preserve-service",
+        "ts-seat-service",
+        "ts-preserve-other-service"
+      ],
+      "result_hash": "sha256:321070a256603e255bf96154a672749b70c3bfffddfec61ce6fd0c76c37aff76",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_60326dde7b460be6e0f042de",
+      "confidence": 0.695744,
+      "evidence_refs": [
+        "ev_19cb41c21c5691d0113a8977",
+        "ev_29ba5c5cab092a0990f22ae5",
+        "ev_4963c8a3ace7360c8b0be919",
+        "ev_f2e37950927024eb7b90bf76",
+        "ev_4a8b586665518b6d1598e037"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:c4d60bae7c541502d0276c6b9c0d69d0b5cf70ba6404ff7ffbcebf9b8a9c5bab",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-other-service",
+        "ts-station-service",
+        "ts-travel-service",
+        "ts-train-service",
+        "ts-basic-service"
+      ],
+      "result_hash": "sha256:32136a471e794701a73dfd19ed83626d9510bdd796d5f39e9b45f82b5e6a7e8e",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_6145c951f998fe557a06fbc1",
+      "confidence": 0.700254,
+      "evidence_refs": [
+        "ev_16d4228f1b0a80d81b7a998f",
+        "ev_ea3a94b516a181ce512ae968",
+        "ev_5e09649c38a8cf379bcd75fd",
+        "ev_d03eb6f814c4181c2a5fa368",
+        "ev_528caef51a3eb8d87f74dfb5"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:381eb6aa07cee8ffc8e75f870d03bc44db80ca3f153074b52e045ad552220584",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-consign-service",
+        "ts-auth-service",
+        "ts-notification-service"
+      ],
+      "result_hash": "sha256:cc19bbaf026af26c811c1d45785f33cfdba2ec37888fe6798bbbc033b51f1802",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_62fd5322330de5421b2f129f",
+      "confidence": 0.646082,
+      "evidence_refs": [
+        "ev_002c4610254a167025d342ac",
+        "ev_50f2183e20f9bd92ff9211d9",
+        "ev_76707f79eb4fa95532c819f0",
+        "ev_c4b09e3d6069cec8c1ca1194",
+        "ev_9c09431b429af0ac4c01f39c"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:ab1e43b22cccf7c2e498474d386cf7f98b5ede32f09dcda3547713e2f0933145",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-other-service",
+        "ts-route-service",
+        "ts-food-service",
+        "ts-consign-price-service",
+        "ts-basic-service"
+      ],
+      "result_hash": "sha256:03b3aa4ed7c5ca8a969ecc1d27fd038abe8af782e900264183a050f474f3dabd",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_646c47cd15acf7352e01aab0",
+      "confidence": 0.697386,
+      "evidence_refs": [
+        "ev_ae789625051ac64d93da7797",
+        "ev_fc9dfd31b68ab09a5f8b159d",
+        "ev_4b6e3e34901bf7dc414afb01",
+        "ev_c60991b7edfccf75616bc2c9",
+        "ev_0bcd9dda97410027b37a6f6c"
+      ],
+      "executed_actions": [],
+      "fault_type": "disk",
+      "packet_hash": "sha256:5d8ff16d896ab730d4d8d95ae0df89b13a7ded621a7177725197feada1980791",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-config-service",
+        "ts-food-map-service"
+      ],
+      "result_hash": "sha256:07fbfeb1356b94c927b1d91a2657463ab3fd6d7e6b28dc5427cee18481aaf33f",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_647908168322c830466edf7c",
+      "confidence": 0.820654,
+      "evidence_refs": [
+        "ev_484b6f3962c4e144ca27543e",
+        "ev_c72b06d44de07d62fe56f0fd",
+        "ev_37da72843cdedf3ee797239e",
+        "ev_2d4319cdb61af6702c5c6cf9",
+        "ev_c3edd3073fa9afd5f62477cf"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:e4aa620472cab2e82094a503a9f87a1ecae557065121bac6c5ea74df922c5caa",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-contacts-service",
+        "ts-user-service"
+      ],
+      "result_hash": "sha256:c9d18ba204ae2ac4d7b2e5703f374af525030fc2d125259c23effff76a533144",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_65e8f5ff253c4a80858da37c",
+      "confidence": 0.727254,
+      "evidence_refs": [
+        "ev_a0a1e995362dff984e15033a",
+        "ev_23cd4ae2ad9ab345f3060633",
+        "ev_021185919681268f74da85bb",
+        "ev_aedf43256064b79bff789522",
+        "ev_86d876591f7137b1705978c3"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:5cda661a82d39a3cc289803d8e063f70f89edbbf21b4cd1218ee631966d127ed",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel-service",
+        "ts-seat-service",
+        "ts-preserve-other-service",
+        "ts-preserve-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:978dad7a63f88ccce813555d7a3f732308b88b2b25bc1e51d53d13dc3fa605c3",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_6e2bfb222ef1c7aa6ed4b182",
+      "confidence": 0.555228,
+      "evidence_refs": [
+        "ev_9abdfbf8dc41aabd272c5706",
+        "ev_b7989506395f09a137de77de",
+        "ev_50116b26e0d09dfb725ade36",
+        "ev_152a7b7ba970556c8dcb0fa8",
+        "ev_019cc1c85e5a969dacd74f18"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:570ec99b4e0c9dac1f9e13c83475cd0cbb3074559a9fc381e105156ee427c93a",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-security-service",
+        "ts-preserve-service",
+        "ts-inside-payment-service",
+        "ts-order-service"
+      ],
+      "result_hash": "sha256:1b1bb91088d193d3f3c8f2baf3e3884d98ed4e89c30fc51a7ab1e0d7b0b671f6",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_6e84a0be966ea20b120f105b",
+      "confidence": 0.694326,
+      "evidence_refs": [
+        "ev_4c363a3e72fd6dfde4fffda9",
+        "ev_83bb035358650c7a4eeb53b3",
+        "ev_f7a35b6c8e1bdeb0a6fb118d",
+        "ev_5b46ae01fbc9d3d749255cb2",
+        "ev_6af9a7239ceaf1e9fa8d8bba"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:0d1aa6fab74368d1da2e48f3aaefc810731bfe5436aff756aeaeae5d5752a63f",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-ui-dashboard",
+        "ts-basic-service"
+      ],
+      "result_hash": "sha256:c6fcf8e30b982193d0b5882f2b9b5a7de3ce33e3759823f296123d623c5b3fa2",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_6ee6f4ad50a61a4f0c9d7d7b",
+      "confidence": 0.577627,
+      "evidence_refs": [
+        "ev_964bdec2348c12c06c9ed58d",
+        "ev_2805e55c8734ae10ad4316c1",
+        "ev_6980ecc72b03504f23a0a77f",
+        "ev_83e42e5c7d0a204e87daf9f8",
+        "ev_f555537bdf2a1715890440be"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:99ba8bb9b1b20f02ecdb93647575123305cf015ceab125b886139054b4f9f78b",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-food-map-service",
+        "ts-food-service",
+        "ts-assurance-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:3c9fb2fc3ab40a1fc06516e95946419b87a259638ca69d8178a446ab34be8487",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_7181795768dafe558cbb1319",
+      "confidence": 0.556196,
+      "evidence_refs": [
+        "ev_e879c8792d9761f0d4aee3cf",
+        "ev_a45045d0c247d1341c3e4a36",
+        "ev_5312fc225b7b65ee080b5db5",
+        "ev_e724ddcf12f191edf802f262",
+        "ev_8445c8b0164667410d88c776"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:ba39d26d494ca38c1692c6dd41a0a861169c517240e0a96b0b10b25341095f8c",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-price-service",
+        "ts-ticketinfo-service",
+        "ts-payment-service",
+        "ts-assurance-service"
+      ],
+      "result_hash": "sha256:2f1f08291a0713bb9833ed4c41f589cea536f600f0ad4f8590cb1f3f71cabf0b",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_721a13317a52d8a798fb3b6f",
+      "confidence": 0.672319,
+      "evidence_refs": [
+        "ev_2bae8fca50d818169f330009",
+        "ev_3c49f093e8b1b142abf14806",
+        "ev_5df2ad23af607bc56ee6c9d4",
+        "ev_d1b3f503ada264fe27db96b0",
+        "ev_e8733917ae0f2a5bbfe3a32e"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:0defc440806966630f87da661f7ccc9e1cc28243955c709ac6acc6882e5defc7",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-consign-service",
+        "ts-contacts-service",
+        "ts-preserve-other-service",
+        "ts-preserve-service",
+        "ts-assurance-service"
+      ],
+      "result_hash": "sha256:2fdcde658c6fd2b77788a81d6c956390e6bc89fa9b865385238ad312ee3531d5",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_756ec3dbb0dc2d4b178bf235",
+      "confidence": 0.518979,
+      "evidence_refs": [
+        "ev_59d12e20089d52885e4601c7",
+        "ev_36df37f1a1d0aef8c6a71e9c",
+        "ev_9eda7cfd6d0c2099ba8ca7e1",
+        "ev_f685e824483ba9e5514f7848",
+        "ev_e80a4ed2231fc77dc9fef15d"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:82a1a80bf7a6dfb972562c8a28a3b779fb8d94ab8841874b193f0fe725fed3f6",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-security-service",
+        "ts-contacts-service",
+        "ts-price-service",
+        "ts-food-service",
+        "ts-preserve-other-service"
+      ],
+      "result_hash": "sha256:321f7ef5e6cf4d1c404b517a6c45019b904924619685a91392443ecccbda2db4",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_797a53623e4b8f8deae3a474",
+      "confidence": 0.51416,
+      "evidence_refs": [
+        "ev_6fadc99712236a8f1cc09051",
+        "ev_bd59761e46cf20fe32241d83",
+        "ev_08120269dd430e8ad0868128",
+        "ev_e358d64a6c6e5e10ef7913c3",
+        "ev_6ed7e83cfbd331de5c271735"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:860d65d1f5396562abb04c780276f923f9d711021addf188fba08a7fb5c9d621",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-train-service",
+        "ts-payment-service",
+        "ts-travel-service",
+        "ts-admin-travel-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:7a550445eb494a44b9b0a52888a11154ec43ca00d6fb7c7ac6fcc77706e9a5e4",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_799c8d695d27ff9070826e51",
+      "confidence": 0.540789,
+      "evidence_refs": [
+        "ev_60431226da265d482f73f5b8",
+        "ev_350425bd461dd2aef12d2023",
+        "ev_41f2047c847f4829394e4f01",
+        "ev_376eeedd4751013167055f11",
+        "ev_f05c994d63b76ce23b739507"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:d04512bce07036edd20a0008131809ff0307402cdfb9fe72829116d01fff111c",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-admin-travel-service",
+        "ts-payment-service",
+        "ts-food-service",
+        "ts-assurance-service",
+        "ts-ui-dashboard"
+      ],
+      "result_hash": "sha256:dbceb43dc87e8fa7c897b443690dce5dd6234c1d81060a73995532e7f7bde444",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_7c4676222973ae03259358a9",
+      "confidence": 0.6199,
+      "evidence_refs": [
+        "ev_95081f23bc68ad671e3a965f",
+        "ev_842b27c6688f698cd6094b1d",
+        "ev_45a813a5a8cf5a1eda5b2447",
+        "ev_d6dc8f55f74a0f6c06055d04",
+        "ev_fb43aa13c8a08d439e445a7b"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:09753b1cbbcacb0dfbec7f4e65eccd12ce6412c0a2417df03d9f07654a9f2856",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-food-map-service",
+        "ts-payment-service",
+        "ts-preserve-service",
+        "ts-seat-service"
+      ],
+      "result_hash": "sha256:dffe680439dddf369dff963ba4b6bc7bbeefcabf880f0046d5168be98be88a67",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_7daf50c662dedb36d3d985dd",
+      "confidence": 0.594121,
+      "evidence_refs": [
+        "ev_76b5dc04a3da7369c5e435c0",
+        "ev_cafa4a09f4e68eca2ebaf500",
+        "ev_ff38be4df4852c2e18f89226",
+        "ev_a47941aee0010808c793ea08",
+        "ev_400b278f446a34ba4cd8e1ed"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:56589237fe320aec935bdc607538e29347c885ca680e80874c7ed800e52a0c37",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-travel-service",
+        "ts-preserve-service",
+        "ts-seat-service",
+        "ts-payment-service"
+      ],
+      "result_hash": "sha256:0736e3ca85b42c19bfff0ff87751aa51873fdaee6e612cf1acf62874c88d7eb8",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_818c229dcb76239ec0af66a7",
+      "confidence": 0.610744,
+      "evidence_refs": [
+        "ev_2a046fe2f5566bdc0823bc63",
+        "ev_d81f079fa0679aff1e1dff26",
+        "ev_703ee9523462996fb7f26b94",
+        "ev_1d28366b290705df90312f51",
+        "ev_b6666ca5bbfe2b5267931247"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:81dad73bd4a8b7af9f378e3c4946f63b66678f6a1f6947b71cf2516067050915",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel-service",
+        "ts-food-service",
+        "ts-payment-service",
+        "ts-ticketinfo-service",
+        "ts-assurance-service"
+      ],
+      "result_hash": "sha256:a1b7c05430049f46eda44ffbdf3ba0b159077b473780ef2755a49f8c1675725a",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_81cc2a0dd09aa9b58e342ba3",
+      "confidence": 0.64046,
+      "evidence_refs": [
+        "ev_bc95b3cd1b2fc2d7d0093f93",
+        "ev_a9bb8be0d20221bae81b3fd6",
+        "ev_e131213df3e3528d346b82b1",
+        "ev_50391bc1c57203c28fc98227",
+        "ev_60abf254749ceceff1d9482b"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:f152f500b2baff1456b9a360c6ef023cf913b6b0d3bdbb3f94cab02046773dfd",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-payment-service",
+        "ts-contacts-service",
+        "ts-user-service",
+        "ts-notification-service"
+      ],
+      "result_hash": "sha256:b46978cd729c2d0efaf4af7967a5ba694b294705d4a36c3d58e98c414a9384bf",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_83d17462a44a762f1d4c0a95",
+      "confidence": 0.909074,
+      "evidence_refs": [
+        "ev_21598a41a36dc17c35d87025",
+        "ev_cc9642be699900e15fa3b084",
+        "ev_adb3fe7b4cb4b6f8d4200913",
+        "ev_d738b35fcd96ea0cb61f3aee",
+        "ev_c1a94c9ed66b37032a8a1558"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:e3c2b7f6f3aa85cdba5aec5e2a6b43cfe49cdd1233c3b1fe068041f463c339ba",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-route-service",
+        "ts-payment-service",
+        "ts-food-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:62d657cb26a9838bc5d2911eb1a03cdb1194302b323317457ab1ad28893dbadd",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_870b2b138af1104f9effe58e",
+      "confidence": 0.563551,
+      "evidence_refs": [
+        "ev_6da0c9401ac45c6d43e59995",
+        "ev_f09f10d10ab9fd830b1549b8",
+        "ev_3cebed46501cc77cb7262e14",
+        "ev_07122d5a955f49f3baab6fe6",
+        "ev_a29b18b866c18bcad410cf18"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:8f5d217f2ddae48b00fce704d4aff150eaa7094ebaac0bbbd854d41b4ff8799f",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-consign-price-service",
+        "ts-payment-service",
+        "ts-consign-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:472b04a78bf5bc55c46010a7b152e29b8d3a084c3a495eccfda9824d46284030",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_87c65963fdc1b07ef6b9ab2f",
+      "confidence": 0.657655,
+      "evidence_refs": [
+        "ev_7560e253a7ab3ac3cc6d78ce",
+        "ev_96237dae7a7b8f50938e6f17",
+        "ev_4f9c23decc57b61fce0ecbf3",
+        "ev_5723f550c032b5f0616caf35",
+        "ev_5ec91509f98f48a10257728d"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:7f5ac4659ce37c193508d03b7896deea53d52ab3ab65f8569456ef16494f2f8d",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-payment-service",
+        "ts-food-service",
+        "ts-admin-travel-service",
+        "ts-price-service"
+      ],
+      "result_hash": "sha256:adde62ec3647d922341f163a6587986bb770eda04c4ca68e7192480377cd8ec3",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_87f256c792e4161c1f6ce4ad",
+      "confidence": 0.560105,
+      "evidence_refs": [
+        "ev_7e611b36025d9e110906378f",
+        "ev_57bd67a56ef3c6d02fc71055",
+        "ev_269e1f938290be62c25e64e9",
+        "ev_80e151ec1b8f53d1e058912d",
+        "ev_44b69704e4a42ad0e538f914"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:e02741359a2f94def861e24896f7192c595cfdc8ec6721b4d641fadb72b9a707",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-inside-payment-service",
+        "ts-order-service",
+        "ts-ticketinfo-service",
+        "ts-payment-service",
+        "ts-admin-basic-info-service"
+      ],
+      "result_hash": "sha256:12c7545ad4d9d960a2764ae6c92c8b70d9417f3589c5ca89aefa2f144026e28b",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_883f3875f557df89e8f5fa45",
+      "confidence": 0.613219,
+      "evidence_refs": [
+        "ev_8ff8ec40ee4d8c7111f99eac",
+        "ev_504509fe1c43647f6cca2e56",
+        "ev_14a9d6e4ee4a1cad8e618c78",
+        "ev_0268b9acab74e4444375fe81",
+        "ev_8cbdc10d293bf7c2d19c8c9f"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:ff85559cf91049a66a4b7d893f9019c66b41b20f85e6c728991721e75a2f6e2f",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel-service",
+        "ts-order-service",
+        "ts-food-map-service",
+        "ts-preserve-other-service",
+        "ts-payment-service"
+      ],
+      "result_hash": "sha256:49f188142a8853d33090de3e61744b5653d5f4235986df3ef2be8135ac37c428",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_884ef92f42377df7ea171c42",
+      "confidence": 0.655256,
+      "evidence_refs": [
+        "ev_3447ddaa13022888cf6f25af",
+        "ev_4094bf9ec877ef3bba2eb3f1",
+        "ev_1041f8deadb1ce9a5d3c2218",
+        "ev_7338bf097f6c3a748a528f3d",
+        "ev_d11fcce95bb40b21e7ca78a6"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:3d4ce5c7eb2509b4480b8a0106c4fe6814cd3f9272962e6a750a5a0746bbcca0",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-other-service",
+        "ts-food-service",
+        "ts-preserve-service",
+        "ts-assurance-service",
+        "ts-security-service"
+      ],
+      "result_hash": "sha256:05a1288afc07d5c656806fad5237344fa14d4469e0ec6cbf29643cb8aa793b7e",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_8c2cdee3b07967fcd0dc598f",
+      "confidence": 0.593328,
+      "evidence_refs": [
+        "ev_78aedf604e9380fa786915e3",
+        "ev_51e21502122072c66fc93455",
+        "ev_81a7cd9b35441536cdc1bc7b",
+        "ev_3ec2f52ffa7f2fb167496405",
+        "ev_a326fc65ef157db1647dee3c"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:b4684aa39c6e3b6ed7f5b03a3aa857560d4910d1d61576fff34c50a22fea6b17",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-assurance-service",
+        "ts-ticketinfo-service",
+        "ts-price-service",
+        "ts-auth-service"
+      ],
+      "result_hash": "sha256:7cc484790d6ffbd9bbe60832eec9215e9aaae06a83146719b8e092edb67cd6de",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_907f686e83d29d2ed34537a2",
+      "confidence": 0.781071,
+      "evidence_refs": [
+        "ev_77a5eb7184fad4f564b1cbd5",
+        "ev_0de91b0ff726c44173fbd2d5",
+        "ev_a629f5ab8b2fdd4ec9acc78f",
+        "ev_1994cb30419925706389965e",
+        "ev_87ad8a5a9502230f42ec5226"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:ce90c6f1430c9637a91cc3fa3270bba7d301ec3af321f57d813864b897a23e14",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-auth-service",
+        "ts-config-service",
+        "ts-admin-travel-service",
+        "ts-food-map-service"
+      ],
+      "result_hash": "sha256:0d8c39d043ba71db6875f0c12be41f409ed33932a83bd9b71b25318c1949e615",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_9559760ee1374ba3670ec4ce",
+      "confidence": 0.597182,
+      "evidence_refs": [
+        "ev_51daa3c1f1d36cada6b28ace",
+        "ev_c7fb6cba76fb52e1be55c3db",
+        "ev_df0fbaef6640df7e9e801211",
+        "ev_022fb32cb755a071bad07e53",
+        "ev_c058bd62cb189bce40ad0e2e"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:c8258c3e81feb4adb71ac1d0f8b7ce66d5a2d371d03cf935514211c0ca1f49d0",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-food-service",
+        "ts-preserve-other-service",
+        "ts-admin-travel-service",
+        "ts-order-service"
+      ],
+      "result_hash": "sha256:999d2d898392aaa3250887bc397bfda62557be8138043ef29b7bd16a5bea51b3",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_95cc4fb39d1ea1699730ba97",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev_07e8951c8dc55c41aaae8a9c",
+        "ev_dd594210486d40a6ae503461",
+        "ev_0ed4a973670959073b3066bf",
+        "ev_f28d21358891322e1589ec47",
+        "ev_2255611816824dff75f855c9"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:b25fe460f231e8deb7324cd75bea81ae0da91706af10bd1ec7ff2fe2f0c51d48",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-inside-payment-service",
+        "ts-payment-service",
+        "ts-ticketinfo-service",
+        "ts-assurance-service"
+      ],
+      "result_hash": "sha256:a16eeb662ae61f70f29c661040c58c71958cf0e935d621a247a1f152b964b237",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_97d66de4dfd3ea3d6ec8eb78",
+      "confidence": 0.536413,
+      "evidence_refs": [
+        "ev_116c58766c46c54cfc945359",
+        "ev_6527532f665d0e6568c04f24",
+        "ev_1da593e7d144274cb430b5eb",
+        "ev_c40b5a1f77a889ed6df1cb44",
+        "ev_50f60eb6cdd802b7ec0ff4f4"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:1d736dbba393ac0af56099bdc356b3f4fbb0b68f2deb0090fb0b8f93ea949a7f",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-other-service",
+        "ts-price-service",
+        "ts-travel-service",
+        "ts-assurance-service",
+        "ts-admin-basic-info-service"
+      ],
+      "result_hash": "sha256:e2e5cc38fdc54bc411ef1f7d26183d5e5609393a4e147b612b9bce04b13716f2",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_9846016d0efbe2552c8b9341",
+      "confidence": 0.701915,
+      "evidence_refs": [
+        "ev_05cccc8fce03a503d8df09eb",
+        "ev_b999014d7446cedd79e73925",
+        "ev_274783a313430192146a0aa5",
+        "ev_83bc881a3c6621f9d09c40e1",
+        "ev_730d4e1d75b619827dfa50d1"
+      ],
+      "executed_actions": [],
+      "fault_type": "disk",
+      "packet_hash": "sha256:c481710807466f4c0a55781433ec094b4e72b27b05c2afcda342ad7e22d41795",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-route-service",
+        "ts-notification-service",
+        "ts-food-service",
+        "ts-preserve-service",
+        "ts-basic-service"
+      ],
+      "result_hash": "sha256:8dd6afd597d4d5564360134ef71bad8c53772e8477e2be05bdcdaa48bffd3d29",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_99570256c1e3e3001bf19de0",
+      "confidence": 0.581694,
+      "evidence_refs": [
+        "ev_bde13509cca5e3800ea23280",
+        "ev_c8a237898c06081a291686df",
+        "ev_724eceba9dd3a933a8b9320b",
+        "ev_a9d4d0048032b99c5de76ebd",
+        "ev_ea290b2d4de4c40d303f8079"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:171695ed376cb7ec3d8c3dad8b710e1bff7a27a8edc1411ac9bfdc9789aeefd4",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-security-service",
+        "ts-user-service",
+        "ts-train-service",
+        "ts-ui-dashboard",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:69e621876f72660681a1ac0cf1cf1dc1fb42cb2e6d5c33896777768a03090d1b",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_9fa1f3f715deb4bbc3224443",
+      "confidence": 0.684811,
+      "evidence_refs": [
+        "ev_cb2d1e9815978ad8b22f948a",
+        "ev_13458245a45a3c49349d1629",
+        "ev_1ab5a93aa85115a2ca80c7bf",
+        "ev_3d8c28f8236595cb4a8e8db6",
+        "ev_119d65c8a57358567b06e5f2"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:68d00c972ea6ebf98d7c82a3ca39f0414703f244106b6813b6f78f00ea5f5f52",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-security-service",
+        "ts-notification-service"
+      ],
+      "result_hash": "sha256:fc61b5a6e887a7759e97827f43054d15e50c60aa8661cb727810fcdf3c0e776a",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_a057c9ddb20e2a462326211f",
+      "confidence": 0.695309,
+      "evidence_refs": [
+        "ev_4411bc71d06fb12e8f3f5fc0",
+        "ev_07ac956050b298f9bf5eee11",
+        "ev_5941a9195e52b5f831ae69f0",
+        "ev_a74a45fc870c92e8169c492d",
+        "ev_e831341c576f07b5a871f205"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:93a6d7493f136da6e2c74dc3d79c29de81a5e0e10d750c382e990bce5b673421",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-other-service",
+        "ts-contacts-service",
+        "ts-preserve-service",
+        "ts-food-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:e37f653728ec97fdf9b8a701b158f80c89070399143f47bc653484d2e56d2318",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_a0ff8d389832a10df0928320",
+      "confidence": 0.687456,
+      "evidence_refs": [
+        "ev_43d8f27d9f288730799c0c25",
+        "ev_6cdcf2faad61823265043e3c",
+        "ev_ed45f3bc3ccce07ebeba65c2",
+        "ev_a9fa8167e2b413a60de73098",
+        "ev_fa7e2057eeff1689d3432c57"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:3b6b9e386b3dc223c94e2e9c56f0076b8e1133ff27c54b5f9de8b37bf40501ee",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-admin-travel-service",
+        "ts-payment-service",
+        "ts-train-service",
+        "ts-travel-service",
+        "ts-travel2-service"
+      ],
+      "result_hash": "sha256:06b410d68857a31fae3d15da18741a2adee0f64f674c8408d6209031fed0b08b",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_a1c4520aced8baf1ecf6cc86",
+      "confidence": 0.663391,
+      "evidence_refs": [
+        "ev_9df4d4cb9bf92b3eaf0c8ca2",
+        "ev_688173c53a034bec6ed7598a",
+        "ev_043e29a82436ae790c873432",
+        "ev_a77b8e7df03a5887a60ab942",
+        "ev_832dd2946c48cee1b0402351"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:8c32759c2d35d6de7faae56a4df10cdf4b11ae3ee30c15d1196d2da5a6aabea2",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-train-service",
+        "ts-payment-service",
+        "ts-ticketinfo-service",
+        "ts-price-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:e1dd14a00472fb677ba2a20d827a6f87af556fd5a4b6ccf5fa8d354ca3ff9251",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_aa359e69148c26cbf381ea60",
+      "confidence": 0.780956,
+      "evidence_refs": [
+        "ev_2875a69fc1b23571e53bcf5a",
+        "ev_d72d8763f76355b8cb09aad3",
+        "ev_a286ff80ffcdf33c5e6387d5",
+        "ev_7e38b20449153b7e19d67482",
+        "ev_0fbc94ab87aed64bc4736477"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:ddd7a85820a31547dec32fab877acbf1f699eb99d48f2f1b4026e2cc5e418012",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-auth-service",
+        "ts-security-service",
+        "ts-user-service",
+        "ts-admin-basic-info-service"
+      ],
+      "result_hash": "sha256:a6b746b7079ab808ac2c8ad65a8dfc8d2c008760935ec268c1c2bb491aeb3f09",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_aa7d9e3f5545ba70769d8305",
+      "confidence": 0.774908,
+      "evidence_refs": [
+        "ev_31fc3f2356cb2e21a8f881bf",
+        "ev_19a596bd2b0dbdeea6303425",
+        "ev_c755d16211077dcfb5c38c7c",
+        "ev_00bba413689bfa4bbaa5897e",
+        "ev_c782d2852d3d489924a43a8f"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:2e5d73a7b0f83eeb95a8c7e3dfae9d51466e1f061f949534a5c5cc8096f1e0d1",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-security-service",
+        "ts-payment-service",
+        "ts-preserve-other-service",
+        "ts-preserve-service",
+        "ts-inside-payment-service"
+      ],
+      "result_hash": "sha256:3d0f27448ac5109662a74e196b7fa8a374fa916deededfe8911ceadc8252656d",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_ad599e9e8fb7e9f7b5df6a1c",
+      "confidence": 0.514628,
+      "evidence_refs": [
+        "ev_e2e79a600b9589403c03df43",
+        "ev_213975301ce7d2f244800729",
+        "ev_c03a48f0211e418ec471f9ba",
+        "ev_89ef3dba6a21f68ad98231e0",
+        "ev_d28b44996f6a63a9261ef301"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:ebf6e8f0ce00475536e5f27117b0d1b9b0ffddbd559faa0a98ebd98bbc8711a0",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-consign-service",
+        "ts-auth-service",
+        "ts-consign-price-service",
+        "ts-inside-payment-service",
+        "ts-assurance-service"
+      ],
+      "result_hash": "sha256:85fa1790d1686f89302c1b4b2033bf3aa68fb3dcd70500970cf3fbe0d0ab47ad",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_b2a41054cd809c03e57f0ea0",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "ev_9ade4a61ca128c47a7a51127",
+        "ev_5d14f50a7ee5904018684b15",
+        "ev_4a5b96390af1b7b71a99f74d",
+        "ev_c599913a23200effcb0ef9fd",
+        "ev_c6863f4723fe515111fdcce9"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:3d710128bcde7fc98dac38a80447271dde7999e84869b64e8fa996dbd5e74738",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-other-service",
+        "ts-payment-service",
+        "ts-food-service",
+        "ts-travel2-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:c4d2840da568bb5775773ebe0461687b08ff5f718f3846f44c1f4db0f73b98e0",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_b3470fa9bc37918f5e3cb599",
+      "confidence": 0.607305,
+      "evidence_refs": [
+        "ev_2d6fa1aa60c723ec139c057c",
+        "ev_eeb18e16d4a811f398f54548",
+        "ev_c902b09a46e29bfbf5d4685e",
+        "ev_0265168fdf86eb848715a025",
+        "ev_4e477ed93341130869d59e6f"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:8f1e6ee0d44a00d36481b666d0788bc02307415bd44d0257a5d46a221146c9ab",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-other-service",
+        "ts-food-service",
+        "ts-order-service",
+        "ts-consign-service",
+        "ts-food-map-service"
+      ],
+      "result_hash": "sha256:d5fac4c0c4fbb0ee26101acf6f3cfa0968fee290ff44b2b92330317128c87df3",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_b9c66d2f1872d415e1f4fc0f",
+      "confidence": 0.662072,
+      "evidence_refs": [
+        "ev_2ee276ba8ed8e973d4b0af66",
+        "ev_7100d9d552215bdde3b71cd7",
+        "ev_5b0fbb48802c089f2e6dfd6c",
+        "ev_21d9be3943686d2721e999c9",
+        "ev_0d9c490f113ea0e965e76be8"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:c7ea2345cb3e81391dbc8fca4d2a9703ddf1760a9130ec3c7165bf1a0287a97e",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel-service",
+        "ts-food-service",
+        "ts-seat-service",
+        "ts-preserve-service",
+        "ts-user-service"
+      ],
+      "result_hash": "sha256:734c43a2b4c45291dafd2c51f078d4093555bb87bcaaa3ccf7f43f9db3f3ec2b",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_bb2ccc78e9807e1e77a30727",
+      "confidence": 0.706121,
+      "evidence_refs": [
+        "ev_3cdc435ceb0dfc86bc93df76",
+        "ev_bc055f87bc5c3ae117d96697",
+        "ev_3cc3795669e6e287d650e5dc",
+        "ev_e50ac3b3f391a9df0bf6f9bb",
+        "ev_63664b663b13fbb183c7ab78"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:224b0f957da60e08dc92a8bae9a57d796b59da49f0c472cb27d046fa336e407c",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-other-service",
+        "ts-food-service",
+        "ts-notification-service",
+        "ts-route-service",
+        "ts-preserve-service"
+      ],
+      "result_hash": "sha256:5c122b96141492b9f879addc10013958451d1420cb3856c8b22f766f16fa92a7",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_bbd4bf7b0961595daef5ab11",
+      "confidence": 0.799546,
+      "evidence_refs": [
+        "ev_976071aae27d7e252bd70292",
+        "ev_0e5c8cd904c555e31b07482b",
+        "ev_d5a927baa28fcea8bd81c30a",
+        "ev_a03fce069ff15412a874b56f",
+        "ev_02882ee455d9365ea1fc13bd"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:1c647f92e0656bdce820af1a358c84adf0ea599c6d6c5bbe1b21295a4cf814a7",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-order-service",
+        "ts-admin-travel-service",
+        "ts-user-service",
+        "ts-security-service"
+      ],
+      "result_hash": "sha256:67f53261b26a0f38aaa06d11da701dc40f8940421abd0873924c142d4207feb0",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_bbd8fd82099582d5f166e8b2",
+      "confidence": 0.599858,
+      "evidence_refs": [
+        "ev_bc98b908da17f236708e9ccc",
+        "ev_4adfb50ab1f5e4996e732cd4",
+        "ev_154aa7010893371d84fd12f4",
+        "ev_c66329728ddf91963e509058",
+        "ev_ea17bc400efe3a498df52169"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:541cffe53e74abbdcc73ef2c5df1b33c7f92bdb26c237a5068a9e13ac90bd7fa",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-inside-payment-service",
+        "ts-payment-service",
+        "ts-admin-travel-service",
+        "ts-travel-service",
+        "ts-ui-dashboard"
+      ],
+      "result_hash": "sha256:8a4c025a232e088f4a2f078d36bfd0c15de5baca7a2fa3cdea33468111393dab",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_bdb5b3a697b86de2d15310b2",
+      "confidence": 0.583842,
+      "evidence_refs": [
+        "ev_b10f29b45b0ce682d01f2bd2",
+        "ev_32f09a49efe1e6ad526de656",
+        "ev_750948711d10f1945885b503",
+        "ev_87ce7cf8f71372ec86ccdb88",
+        "ev_52a2b970d0ba881d3ec9a155"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:1f3f7e9c01886890364e2f336943a5eca96ed625ed389f6d13d6ff274f9fb38a",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-food-service",
+        "ts-admin-travel-service",
+        "ts-assurance-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:64b4fa47ef62358cd4f1bb0adaec4decfffdc43f72ad7c53c2a200e1d536be87",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_bed7ea3e84f7cb91d1841d6e",
+      "confidence": 0.859985,
+      "evidence_refs": [
+        "ev_5e13a82be49dcadbc87bbb5b",
+        "ev_9c68952ded184eb32346d8e0",
+        "ev_10442a0bcdf90f542be20ed8",
+        "ev_3db57c0e0f824d1619dfae33",
+        "ev_0c1300299fa7e701bebc395e"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:685fbe602ffbe008f0c8a00c6adc5ea04fcc7e9250323c377e2dadb1682bce79",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-basic-service",
+        "ts-food-map-service",
+        "ts-food-service",
+        "ts-auth-service"
+      ],
+      "result_hash": "sha256:45f74b1246fec8d2a662ed3fd64962bc5e32206a6df32c628789c1fd15c3190d",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_bf49557b3f6b5f624710ab2d",
+      "confidence": 0.748301,
+      "evidence_refs": [
+        "ev_17c42c3b1190b29c49bf7e90",
+        "ev_3228e5a0060b593f7bc1a84f",
+        "ev_1922a64d0056609d0fe78181",
+        "ev_a3922395d2a77f62654de259",
+        "ev_887b92052d0c126ee85d3f65"
+      ],
+      "executed_actions": [],
+      "fault_type": "disk",
+      "packet_hash": "sha256:68e10b8f88255006fe21fca697c96df8ca0fc1fa153d32c1500e62ce3917255d",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-security-service",
+        "ts-config-service"
+      ],
+      "result_hash": "sha256:8d261420a8730abef596e2050d8ee423b4e64fb00b437720925ff6e64cd33ef3",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_c0d3640da22facb10430bce2",
+      "confidence": 0.756952,
+      "evidence_refs": [
+        "ev_8aa8c072a0ce124e2b9cd7db",
+        "ev_131926dcc942043e3d334325",
+        "ev_2cec4865fcffdad2649f69f2",
+        "ev_096381a941f577f833e80b90",
+        "ev_b11e5ca30d6b7dd077f0c488"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:cf33f52d8ce2057c1663d588086d0d526b437f204ad4f465ecd915f3abdd0812",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-food-service",
+        "ts-station-service",
+        "ts-travel-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:307c3f830b92cf59d2af1d0b43520c413b0dacbd4ad541c010c7079d7e40ad75",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_c31523b4fec578ae99845133",
+      "confidence": 0.712545,
+      "evidence_refs": [
+        "ev_971e6dc7be7b45a9a12ddcce",
+        "ev_440fd04038eada11196097b2",
+        "ev_3aaa0661a2438c94a75ffa00",
+        "ev_afa6773c6c5de2667a1011f1",
+        "ev_bfbb7cc0dabc136aa194e702"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:94cbaa18ce5008ecde0ca13c8e7f78e4222be92cbc29082b5e7280e5e88dd531",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-config-service",
+        "ts-inside-payment-service",
+        "ts-payment-service",
+        "ts-order-other-service"
+      ],
+      "result_hash": "sha256:c23ad90caf3f4cac5be96b217b28220e7b1b8d75103d54a93716f80b6d2f4a65",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_c34e071719883d20a1e78a2a",
+      "confidence": 0.668248,
+      "evidence_refs": [
+        "ev_0970c1b601f538c603ad3d60",
+        "ev_2345525d42ae5ffbcee436f2",
+        "ev_6d2024b189315dc8b4aa602c",
+        "ev_f2fd3371704e7a48759e37af",
+        "ev_aae5db2ea4481c2f126f146b"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:2e94584d67fe38dfcdbcdfdda1791b3af253ea24f93cd820a3fa532c96ff2971",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-notification-service",
+        "ts-price-service",
+        "ts-basic-service",
+        "ts-preserve-other-service"
+      ],
+      "result_hash": "sha256:99182bb001c4799e200d6fabbc135d82b8133a2d2e9d4232e59af96a72fac83d",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_c5347140060bbde50df13e36",
+      "confidence": 0.622125,
+      "evidence_refs": [
+        "ev_d4e4800fa416c1a2ff925884",
+        "ev_e066f579de2a91ee342e4c17",
+        "ev_ed068079c0b8e57cc2668246",
+        "ev_14f54c46cb2b62245714ea02",
+        "ev_7fa45357523961cb458392dc"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:713428b72c2380168befd5743703344c43e25df9797ea87596be0a7a4fb080c7",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-travel-service",
+        "ts-payment-service",
+        "ts-assurance-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:03e17837e6ed468097af24853d676f2f1864f29ea6415bfcb73cba99f4723ba9",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_c961a0b9e7fabfb31bc16c1f",
+      "confidence": 0.688017,
+      "evidence_refs": [
+        "ev_1c4a57d820ef86d918d6089c",
+        "ev_d5c24997727b2b09cd3e4909",
+        "ev_1b42523ef0de3ddf8d35042f",
+        "ev_a31997dec1224c62d3bf3613",
+        "ev_821ee7481513b296b340f17e"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:76b9afc1c5d2cf30149260eb026c4cc6d8e2267e71afd49ec2df6846fc6640e9",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-security-service",
+        "ts-food-service",
+        "ts-order-service",
+        "ts-consign-price-service",
+        "ts-travel-service"
+      ],
+      "result_hash": "sha256:96c3d9992a7c0e62ed0ba02719f4290a2788a20ab2b170e35afa6828ea181813",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_caf53c5167efb4f70eaf656f",
+      "confidence": 0.664856,
+      "evidence_refs": [
+        "ev_c018ac66a4362feb71938fc5",
+        "ev_78fb050342330c919a611c00",
+        "ev_e0e566c73e153465ea26f30d",
+        "ev_769d55000d2a1b4440a3365e",
+        "ev_52d0f5d8795b6101e64f82e3"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:48a60de42cfce49295ab663241c46e00c195e0858065052a0061f49f6fd5aecf",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-order-service",
+        "ts-payment-service",
+        "ts-admin-travel-service",
+        "ts-seat-service"
+      ],
+      "result_hash": "sha256:b7b54aca38c918e2dc0b1546a8102493c595103ad99274bba2546a3f0b2c957c",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_ccfa695cd3a82ec579a5541d",
+      "confidence": 0.529633,
+      "evidence_refs": [
+        "ev_1d3e6200a3f0c590761a74ed",
+        "ev_23871d30fee0d921f8c05ebf",
+        "ev_b760bdb837fe96342bdfaf4f",
+        "ev_ebecda08f32eaa3f1b3d6d96",
+        "ev_ab9c5c0a96af9d0b5ed621c8"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:ddbfd096000af261172e01f236b11b5d99f2937aa19720e71ef843286a14285d",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-config-service",
+        "ts-user-service",
+        "ts-preserve-other-service",
+        "ts-preserve-service",
+        "ts-assurance-service"
+      ],
+      "result_hash": "sha256:54e5d34eab2bb18ad1245469eb255b8b7676b7e87be713a1c668095101bff511",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_cd84025a1ab879c26130db69",
+      "confidence": 0.59955,
+      "evidence_refs": [
+        "ev_d51b5ba3729640d46a4385c0",
+        "ev_0c674eda45037ba79c9de139",
+        "ev_3ac18e595edc9ae9fe7c94d2",
+        "ev_3b7b0f88a98bb71da21dffd0",
+        "ev_9ed9e506cff1e5242ef937fc"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:b3452fe3470fa4003e7e080d3df1299de0c690da88e48de736c723648df228de",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-order-service",
+        "ts-preserve-other-service",
+        "ts-preserve-service",
+        "ts-user-service"
+      ],
+      "result_hash": "sha256:ad61fb1d4cce645a6531aac56026412e1068075763f31de0284b98d6ec84444a",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_cf02bffa88d28153f09737ed",
+      "confidence": 0.501767,
+      "evidence_refs": [
+        "ev_6851762e8699e6284a2fa4b9",
+        "ev_2b69bfb1f5e244d50696fc02",
+        "ev_546d096bcbf3d11b003a91cd",
+        "ev_2917240065efd3c98cb45db0",
+        "ev_96ff12a83a9ed27cb046d25c"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:753ec6d6b9f927e85c41e515d0202652678c33fef50130ee5acd08aaead69e69",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-route-service",
+        "ts-inside-payment-service",
+        "ts-food-service",
+        "ts-preserve-other-service"
+      ],
+      "result_hash": "sha256:a24e8b79a48656ab5738340d5c94ad1cd197577bf731c5377feb224228bb91c4",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_cff172d8974083f70f496f86",
+      "confidence": 0.527272,
+      "evidence_refs": [
+        "ev_e37d3132366f3871917fd7de",
+        "ev_0798082cd926d177e253669d",
+        "ev_6dcbaaf6de26705458449941",
+        "ev_321e791dbb2d6f1232eb8d5c",
+        "ev_4679fd40a79dfebd7d64a36f"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:6e670496e0810f360952b35e725f93f9c4921e114359843713bec72570922397",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-order-other-service",
+        "ts-inside-payment-service",
+        "ts-food-service",
+        "ts-consign-service"
+      ],
+      "result_hash": "sha256:b2be5bff9b2b2a7dcf9d222d0340ae0773ce7760573b68e004a14de149eb9918",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_d1940db8454d9c24712ed162",
+      "confidence": 0.644922,
+      "evidence_refs": [
+        "ev_f35c8a4ff1eb6670e9da10f9",
+        "ev_d2ae01b0a57ad140079c7763",
+        "ev_4e06359276dae8d96ddb839d",
+        "ev_05f1ba2777e5cbb5c23e220c",
+        "ev_d8dcbd95d7b4864fba2179bd"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:9b9c75bfe4c60807bf125659b22c159ed56d7a06cba8ebb2b63b0965df7340fb",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-auth-service",
+        "ts-preserve-service",
+        "ts-preserve-other-service",
+        "ts-user-service",
+        "ts-notification-service"
+      ],
+      "result_hash": "sha256:f0b222b4da0ae8e5c64ff5962f94818dfbc31e8d48db47177c13b47d7ec50f6c",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_d22ded8265a388d2dc3d6521",
+      "confidence": 0.566857,
+      "evidence_refs": [
+        "ev_a9a04f79d252a09a271fc1f4",
+        "ev_ab0c2957927f397b21b75655",
+        "ev_37d114b9c105474e44abbec9",
+        "ev_bb4b14a1fdc30dd8f8744917",
+        "ev_725144003563d3f73a3c6b5c"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:9393b52e5340f72b5f78d6cb6c0ccf1f102d4002551200fe5173ef49ad1438c1",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-inside-payment-service",
+        "ts-payment-service",
+        "ts-assurance-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:e6127dd28c6aca9ccb61324b228a457a7716266b105c2823d6ea662e8a095acd",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_d5d2eaaa1b9c24457449c78b",
+      "confidence": 0.641111,
+      "evidence_refs": [
+        "ev_39ea7fd6da1a66d4a29fc7a5",
+        "ev_e40269c081762a30332ca9b4",
+        "ev_925bdc6d7629f932c1681471",
+        "ev_59669143575e46cf9d6308c6",
+        "ev_ddedaad04392105173242773"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:2584df05d4d9804623d6a7658adffdbfd8e159ff2e955c1e7fd0e19104f53d08",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel-service",
+        "ts-preserve-service",
+        "ts-security-service",
+        "ts-notification-service",
+        "ts-admin-travel-service"
+      ],
+      "result_hash": "sha256:2a4f167ddd0734ca66d8a81fedf42ef2d6acbee100bd504875931a00ae169934",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_d5d71476143d2d29146f14e9",
+      "confidence": 0.632439,
+      "evidence_refs": [
+        "ev_ceacd5d12fc62190c9be7ce9",
+        "ev_97ebf4dfca8d02e3c4f14151",
+        "ev_98ddb369a864c2e40eabfdde",
+        "ev_4efbf11106ad0ef6f88b1ded",
+        "ev_42b10da06f38de34051877ce"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:83c048cf0a092c0eca6a1e368a43f6af1741b51e653fe4439ebdeabf4fcd830b",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-food-service",
+        "ts-ui-dashboard",
+        "ts-assurance-service",
+        "ts-station-service"
+      ],
+      "result_hash": "sha256:d0d8e79b8fc9b010c33c8dbcda5b43d566baab2893f99b8fece89497417844ec",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_dba7fbafee8167ee7da47179",
+      "confidence": 0.607614,
+      "evidence_refs": [
+        "ev_c5e1a7c48c5209c0ab576db6",
+        "ev_d0bc93d2e4f6946d363f0a69",
+        "ev_a234aef9184466c8a43976ab",
+        "ev_e92bcf02991e03b2d2f833c2",
+        "ev_8a7d27887dac05e32c43d586"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:03507967f108f690c22d3d6456a1ce864e73c785b2e5ce97b33c1e6333f2e5b2",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-security-service",
+        "ts-user-service",
+        "ts-seat-service",
+        "ts-preserve-service",
+        "ts-food-service"
+      ],
+      "result_hash": "sha256:377bd303b7adc56939f6677d6bd359a46d41ef9fff8e9f83db534220450eb4de",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_dc2763f6f44eef6c5d415e3e",
+      "confidence": 0.735159,
+      "evidence_refs": [
+        "ev_bda3b5e3c09d3b8c22f2fb01",
+        "ev_498b87f57cf3db1259856261",
+        "ev_b20cb08dabc3ccb7174f72f1",
+        "ev_9795b277148641261fb63efc",
+        "ev_2765c3810ae4506ad3af7f91"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:23a050d200f06f89805ee7c6b996daf14b6687259ea5335648d3d6beb16dd581",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-preserve-service",
+        "ts-admin-travel-service",
+        "ts-notification-service",
+        "ts-user-service"
+      ],
+      "result_hash": "sha256:0b7b5b7d7aab751cb62289877f29af05d8450ef121d8117b38bbc8ad10f839c7",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_dd30b5dc80bd0d62b9875bff",
+      "confidence": 0.882526,
+      "evidence_refs": [
+        "ev_1f6072f97a2fd60daf816c86",
+        "ev_18aa926300b2a9ccf8b26e05",
+        "ev_2b0538b7d9011a0217cd96a8",
+        "ev_a88c4c67340455fe3676f04e",
+        "ev_26d5f9fba76162ec4d9eff2a"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:b9946ff154eae23482dc6dfb57ffdd37bbe315d0a47c2d7d280ff73a4f0e57ba",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-food-service",
+        "ts-route-service",
+        "ts-basic-service",
+        "ts-admin-basic-info-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:52ebcdc2053c0ad8cd52f7412d30122f530dd7fa2b52fbac9e2211858c2a4c1c",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_dd5eadeca8d956707d9b217e",
+      "confidence": 0.656752,
+      "evidence_refs": [
+        "ev_cfd01a87060c2ea40e3bdad8",
+        "ev_9867af9e41be66c205ed6329",
+        "ev_fc9c5dd4ad14dec08f217fbb",
+        "ev_91df1eaadc072be6971aa965",
+        "ev_7eeda89604238a0718951eff"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:ca9c015d4ee8c15112f7715ea75ce1ff14a7d57f8422aee11c55bd2cdbc954e6",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-inside-payment-service",
+        "ts-payment-service",
+        "ts-ticketinfo-service",
+        "ts-assurance-service"
+      ],
+      "result_hash": "sha256:6fd42acf3028975369eafd98c99bc225d6c9515e4ff036bbf1cfa53e7291c0b1",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_e3fd2b73650ba94ecf299a25",
+      "confidence": 0.659203,
+      "evidence_refs": [
+        "ev_3d3d68bff9096cc8492994a8",
+        "ev_41ad70c7f82d91576a34c7ed",
+        "ev_90473756a8cb25eba9eb3ca1",
+        "ev_7b247dc437634ea843e64d1d",
+        "ev_b63ee6d753a37c355cb3badd"
+      ],
+      "executed_actions": [],
+      "fault_type": "mem",
+      "packet_hash": "sha256:006846ff2298c711f2cf44d5188641ae0fe00621f878de787a5c6de09d83c879",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel-service",
+        "ts-consign-service",
+        "ts-consign-price-service",
+        "ts-food-service",
+        "ts-food-map-service"
+      ],
+      "result_hash": "sha256:2472486f70028544f1b0ccda94d8f5f1ef8d18af1483cefb9f8603e73b47a587",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_e5dd69be9ec83da3479accce",
+      "confidence": 0.527445,
+      "evidence_refs": [
+        "ev_57a01f7d63a2cf9ef8552851",
+        "ev_cb824951470c12558406068c",
+        "ev_5786c242bc8a712822a3e174",
+        "ev_38f3f1aeaabda5405a3f5597",
+        "ev_b04bd674e449cff9f21088a3"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:aa4ac20b20e63495ae2bd1caca093cd2083506113e8e1599973de309d273deb6",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-security-service",
+        "ts-payment-service",
+        "ts-seat-service",
+        "ts-config-service",
+        "ts-order-service"
+      ],
+      "result_hash": "sha256:f660ba142f64563faccdf17320662df2014d919146cbcf0eab97a987599bc458",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_e699d7f8065a3ee49284268c",
+      "confidence": 0.539421,
+      "evidence_refs": [
+        "ev_8f515d41fdd4d1051bee2f9b",
+        "ev_11490d32ffcb58254295dec2",
+        "ev_68f1c848a64dff933fcf9e7f",
+        "ev_df234d4f8a893343491a7f4c",
+        "ev_a5885183ded508cce7a779c2"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:97fd3c0e09f7ddf36a5844ca3c82f9e0b2095bdf05e061b5f8b70cd562b29a92",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-admin-travel-service",
+        "ts-payment-service",
+        "ts-food-service",
+        "ts-route-service",
+        "ts-price-service"
+      ],
+      "result_hash": "sha256:363cc81759232251d0dc5e38b01fb7ba94bd798dfd93a92808d9b28ff41bd572",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_eab88b25d9131bf9dfaddde1",
+      "confidence": 0.678042,
+      "evidence_refs": [
+        "ev_0847d60171b34186db32fe7f",
+        "ev_656842ee480a3325ccdca213",
+        "ev_edd6582f102ee6c18258d249",
+        "ev_30265d9dcfdf31c56ffb796e",
+        "ev_594a4c3fe7431580c285985c"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:b10e92232e5c91b51159b9b07845383990fb5973c175dcf13188ddfe6cb89f27",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-assurance-service",
+        "ts-price-service",
+        "ts-station-service",
+        "ts-ticketinfo-service"
+      ],
+      "result_hash": "sha256:6de7f0f9ad2f566a3a79b68a57ee546c1d8cb354d67ff86273f718f864aca13f",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_ed6a329ae04b2a2a05698639",
+      "confidence": 0.689247,
+      "evidence_refs": [
+        "ev_074998b040250594f4f7c994",
+        "ev_f7b3a81c6b77a61369398fce",
+        "ev_d2f2427091fe520abf90e16a",
+        "ev_20d6b616e5b38efd4adb858d",
+        "ev_e80b0c742739afbf40c4da41"
+      ],
+      "executed_actions": [],
+      "fault_type": "disk",
+      "packet_hash": "sha256:0fef11f72d77086e631c46d67e7ede7fd53f39baf27cd3e90c752abf07ad9184",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-contacts-service",
+        "ts-preserve-other-service",
+        "ts-config-service",
+        "ts-preserve-service"
+      ],
+      "result_hash": "sha256:f6792d5d564d3a9ed71516bb71ff7a45667c98b4eb2912de0794141a157b7361",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_f050ddbdae5dab69c82e7955",
+      "confidence": 0.512366,
+      "evidence_refs": [
+        "ev_17c4dcbe87d74698d286a49a",
+        "ev_85af3556c281e2c67c9238bc",
+        "ev_05b80615afe6e654bde42163",
+        "ev_a818dec2788ac429921b1618",
+        "ev_7543e6d0b1b3515cb80d8d20"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "packet_hash": "sha256:31fa611d8ac972e5bbd6ed2e8782f6037cb0d6320961b6db2f319c5c596a4c75",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-other-service",
+        "ts-food-map-service",
+        "ts-food-service",
+        "ts-preserve-service",
+        "ts-user-service"
+      ],
+      "result_hash": "sha256:f1b5da8613c936dcfbfd19ebac32af987099aec51742c4f5c88680f5f271c275",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_f0f7a89bfbd6d4089e769f86",
+      "confidence": 0.820298,
+      "evidence_refs": [
+        "ev_ba44ffb426aa5acbebc187fb",
+        "ev_eb65e5d2e55fcd88da7004e3",
+        "ev_4d29b12f8ca3de2778f8df3d",
+        "ev_85f5a75829eb61c909ec0ebb",
+        "ev_a7dbba1d4bdc30bd8096ae34"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:21d69ae5ac62f7305ef880f93cc75c62617d45c940a5b4c4406a97f45bc7b1af",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-travel-service",
+        "ts-food-map-service",
+        "ts-seat-service",
+        "ts-preserve-other-service",
+        "ts-config-service"
+      ],
+      "result_hash": "sha256:e53c6ededce218957d93a20cb874dd7163b9e40f9673da4281b04470d9c1e275",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_f3d1e2991822d84d759b052d",
+      "confidence": 0.917811,
+      "evidence_refs": [
+        "ev_8ee5a7b1aa973e758e0e5e7e",
+        "ev_e116a24708e8976ce3bfd848",
+        "ev_4a64aeb101aaeb400f9c02f4",
+        "ev_75d0f9b06a1fc3fc86f05960",
+        "ev_4dfaa8bf10e204eefa463fed"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:2c3be146a13a6f0c1bd20cadb02f453ea65df0bf8ed4c14893b490d91b3e6ee7",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-other-service",
+        "ts-preserve-service",
+        "ts-payment-service",
+        "ts-security-service",
+        "ts-inside-payment-service"
+      ],
+      "result_hash": "sha256:e13d232948dbd2a7c46e857f237b2d357cf5c1d9b3bcd546feb3ad2fb32ebdb2",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_f5bd8cd53a08b6b829bb517c",
+      "confidence": 0.504939,
+      "evidence_refs": [
+        "ev_b7de906cb7326c8fea130b5f",
+        "ev_8707990441d5f5b925f97dd7",
+        "ev_7bd1808d9075f0d11886528c",
+        "ev_cc1c43a2dbe793599a991cf5",
+        "ev_50ed706521d9d2242a87f4b1"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:4c8d2f1eea0fa6e8426745d82c8e94e5bbc7bf0fb83a45784be8888f069d3bf6",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-food-service",
+        "ts-basic-service",
+        "ts-admin-travel-service",
+        "ts-route-service"
+      ],
+      "result_hash": "sha256:9966412705e11d6c1c24395977341ab772c93333142310d686b76a82cf843c98",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_f917f740de005afe6328be2c",
+      "confidence": 0.581556,
+      "evidence_refs": [
+        "ev_a830a29d44f225cab72b1c70",
+        "ev_d4abed3273397e94f50873fb",
+        "ev_81da8e6b6e1b5cbb24981314",
+        "ev_76feaf80aba312fb5aedc9b2",
+        "ev_07027a8d5782f60070ee24e1"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:aeb494a783b1d0598441dd21e0cd37dd1c4f5d21488385fe52b52cbbab4b3f96",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-order-service",
+        "ts-food-service",
+        "ts-inside-payment-service",
+        "ts-station-service",
+        "ts-basic-service"
+      ],
+      "result_hash": "sha256:e9c1780f74de7058b19b378be3470754beb55aab55ffdb0e348cf683023f07d6",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_f9593e24b34ddabad51f9ae8",
+      "confidence": 0.56788,
+      "evidence_refs": [
+        "ev_89fc8e82220c18a00d00ad73",
+        "ev_bc9da42c3b2cb4e06be1ff9a",
+        "ev_f2e6fa6625ec5b47742e7b93",
+        "ev_aa81c3dc3da93fb587e84a19",
+        "ev_2afe56e4327e1692b2759227"
+      ],
+      "executed_actions": [],
+      "fault_type": "cpu",
+      "packet_hash": "sha256:1c5a7ddd432a056ca37fd72bb0406ac4dd345b943153a366097a81373dc1e5e6",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-payment-service",
+        "ts-admin-travel-service",
+        "ts-travel-service",
+        "ts-ticketinfo-service",
+        "ts-ui-dashboard"
+      ],
+      "result_hash": "sha256:fd06261e28bd86ad21a0784679e623e3d0ac80cae5d9240b595d426f19668867",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_f9a9fda1654ed5330040bd6e",
+      "confidence": 0.600258,
+      "evidence_refs": [
+        "ev_4957958920f4ce470e5073ab",
+        "ev_dfc80d02c4cc0471ec18839f",
+        "ev_6aff1d9014702f5fc8172a6a",
+        "ev_08feaacb283dfe29e4a0b530",
+        "ev_e9a0d1558052e35403b893a3"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:f396c66f2a8cc19f150019028700a82ae41e0baf174131e58377b4310dfda93b",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-order-other-service",
+        "ts-inside-payment-service",
+        "ts-train-service",
+        "ts-order-service"
+      ],
+      "result_hash": "sha256:2000839bd9bd10a6aec55892876c622700dda04d934ce55a3ef1f836132680ae",
+      "validation_errors": []
+    },
+    {
+      "abstain": false,
+      "advisory_actions": [],
+      "case_id": "p112_fad6feaa3bf1462fb2c5ee40",
+      "confidence": 0.512956,
+      "evidence_refs": [
+        "ev_488359771605d9bc9045ab84",
+        "ev_c730da0ae2e287a59fb29015",
+        "ev_76f23ed6723340949d1efccb",
+        "ev_e0a3c8cb03110a3d7ff93d0d",
+        "ev_312ce0e0203a8f09f867ff56"
+      ],
+      "executed_actions": [],
+      "fault_type": "delay",
+      "packet_hash": "sha256:d4e17126637f616360b7a91ac8eb98ba6e47b9c2ee9f87b1176b8340624aace3",
+      "prediction_origin": "p113_frozen_deterministic_diagnosis",
+      "ranked_services": [
+        "ts-preserve-service",
+        "ts-inside-payment-service",
+        "ts-security-service",
+        "ts-order-service",
+        "ts-user-service"
+      ],
+      "result_hash": "sha256:b6d0a0c973e6e66cd348591a89b378c5ac52db79055a4075c8e852f168b1b782",
+      "validation_errors": []
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "artifact_hash": "sha256:2d1cbc88233f2edeb296993b15fa94dac3dc4c469c862c3d64d0714aad144a1e",
+  "case_id": "p122-crash-incident",
+  "diagnosis_handle": "fixture:diagnosis:p122",
+  "eligible_action_pack_ids": [
+    "p122-local-noop"
+  ],
+  "partition_group": "p122-release-stage",
+  "release_role": "development",
+  "required_evidence_classes": [
+    "metric",
+    "log"
+  ],
+  "scenario_family": "release_stage_crash_recovery",
+  "schema_version": "p115.incident_case.v1",
+  "source_family": "controlled_local_fixture",
+  "time_window": {
+    "end": "2026-07-12T00:05:00Z",
+    "start": "2026-07-12T00:00:00Z"
+  },
+  "topology_handle": "fixture:topology:p122",
+  "visible_evidence_handle": "fixture:evidence:p122"
+}

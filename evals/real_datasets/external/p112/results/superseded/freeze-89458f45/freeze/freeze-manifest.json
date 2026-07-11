@@ -1,0 +1,65 @@
+{
+  "acceptance_gates": {
+    "cryptographic_review_required": true,
+    "delay_accuracy_min": 0.6,
+    "evidence_precision_min": 0.95,
+    "fault_accuracy_min": 0.84,
+    "joint_repeat_agreement_min": 0.9,
+    "loss_accuracy_min": 0.6,
+    "nonnegative_fault_accuracy_delta": true,
+    "nonnegative_service_top1_delta": true,
+    "one_strictly_positive_primary_delta": true,
+    "service_top1_min": 0.84,
+    "service_top3_min": 0.92,
+    "zero_safety_counters": true
+  },
+  "baseline_packets_hash": "sha256:ffcb4004393a296206b760fede7783aeebb6298e35b2a67e68d36c1806c5cbab",
+  "baseline_request": {
+    "decoding_config": {
+      "enable_thinking": true,
+      "max_tokens": 16384,
+      "provider_api": "openai-chat-completions-v1",
+      "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+      "reasoning_budget": 16384,
+      "stream": true,
+      "temperature": 1.0,
+      "top_p": 0.95
+    },
+    "model": "nvidia/nemotron-3-ultra-550b-a55b",
+    "prompt_schema_version": "p111.localization_prompt.v1",
+    "provider_api": "openai-chat-completions-v1",
+    "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+    "system_prompt_sha256": "02a2842922d31fa85badcd8f3389c5d3e83b245c12af6a9f41bfa4fb94bc55e3"
+  },
+  "benchmark_role": "blind",
+  "blind_case_ids_hash": "sha256:2bd8c0dc21e52a60de8037526acad1761447f64d4486e522a0148928c7515742",
+  "blind_repetition": 4,
+  "blind_source_hash": "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+  "candidate_packets_hash": "sha256:03e88aaa18083e55fb842ab1cae2bc6cec3d6b999135e9ee56b97958ff4038ca",
+  "candidate_request": {
+    "decoding_config": {
+      "enable_thinking": true,
+      "max_tokens": 16384,
+      "provider_api": "openai-chat-completions-v1",
+      "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+      "reasoning_budget": 16384,
+      "stream": true,
+      "temperature": 1.0,
+      "top_p": 0.95
+    },
+    "model": "nvidia/nemotron-3-ultra-550b-a55b",
+    "prompt_schema_version": "p112.localization_prompt.v1",
+    "provider_api": "openai-chat-completions-v1",
+    "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+    "system_prompt_sha256": "c79d9cffa7defd02a938f6013203730b4523a5384eba2a45b7019b5133976097"
+  },
+  "freeze_hash": "sha256:89458f4534a208828875298c52f137549aac05fb59d66a765667c68ba0408a1a",
+  "implementation_hash": "sha256:e0002438532183e8cf8c7aa57ac0907850a6af349709ea26cdb3ce7c1904b5c5",
+  "model_artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+  "schema_version": "p112.paired_freeze.v1",
+  "status": "frozen",
+  "training_source_hashes": [
+    "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+    "sha256:b4424b0b3863b7397712caa0f305ef59964b03784dfcb23e23e0a95a2e746f99"
+  ]
+}

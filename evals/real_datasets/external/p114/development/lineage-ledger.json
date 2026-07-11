@@ -1,0 +1,31 @@
+{
+  "acceptance_claim": "fresh_case_and_modality_only",
+  "action_contract_status": "disabled",
+  "allowed_case_level_purposes": [
+    "development_evaluation",
+    "failure_analysis",
+    "model_development"
+  ],
+  "consumed_sources": {
+    "sha256:2b33b7ab07198e0d69f229e697bfcef794a656e8db73a1d732142effde17c595": "RCAEval RE1-TT",
+    "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4": "RCAEval RE1-OB",
+    "sha256:b4424b0b3863b7397712caa0f305ef59964b03784dfcb23e23e0a95a2e746f99": "RCAEval RE1-SS"
+  },
+  "fresh_system_claim_allowed": false,
+  "ledger_hash": "sha256:91aa898bda44dc9d3929ea9ac1d2683ae3d24870d10be1969a9ce37a31a89f07",
+  "p113_negative_facts": {
+    "cpu_accuracy": "0.56",
+    "delay_accuracy": "0.20",
+    "diagnosis_preservation": "1.0",
+    "disk_accuracy": "0.28",
+    "evidence_precision": "1.0",
+    "fault_accuracy": "0.32",
+    "loss_accuracy": "0.48",
+    "mem_accuracy": "0.08",
+    "release_qualified": "false",
+    "replay_consistency": "1.0",
+    "service_top1": "0.312",
+    "service_top3": "0.496"
+  },
+  "schema_version": "p114.lineage_ledger.v1"
+}

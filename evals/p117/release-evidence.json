@@ -1,0 +1,84 @@
+{
+  "authority": {
+    "counters": {
+      "auth_grant_count": 0,
+      "cloud_mutation_count": 0,
+      "credential_access_count": 0,
+      "database_mutation_count": 0,
+      "executor_call_count": 0,
+      "kubernetes_mutation_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_adapter_call_count": 0,
+      "production_mutation_count": 0,
+      "shell_execution_count": 0,
+      "subprocess_execution_count": 0
+    },
+    "exact_zero_authority": true
+  },
+  "contract_ready": true,
+  "deterministic_decision_fingerprint": "sha256:0335c85577ab9173cc0fc5a5386ec74f8f3fafc376d7a863e429db6b65f25b4c",
+  "episode_manifest": {
+    "episode_count": 600,
+    "family_count": 15,
+    "manifest_hash": "sha256:838f75e73e70469ae202672a97463a7c46218345306c874e0ea76c08fa8078d3"
+  },
+  "frozen_configuration_hash": "sha256:c11e5ad9e92e40844b73ca4e244269a2316ee33b8948c2cb8499f9260aa12f01",
+  "gates": {
+    "deterministic_replay_match": true,
+    "episode_manifest_hash_current": true,
+    "exact_zero_authority": true,
+    "fifteen_families_present": true,
+    "frozen_configuration_bound": true,
+    "frozen_unseen_at_least_300": true,
+    "identical_denominators": true,
+    "source_hashes_present": true,
+    "thresholds_passed": true,
+    "upstream_hashes_present": true
+  },
+  "outcome_qualified": true,
+  "reasons": [],
+  "release_evidence_hash": "sha256:d78464fc832618e0178923122c65f8a51a60a846da066389780084562026f3f4",
+  "release_id": "P117-008",
+  "release_status": "p117_outcome_qualified",
+  "replay_report_hash": "sha256:74350be0e3772adec48faf009519f0177ecb9f8af9d6ba1990c061161c5c72bb",
+  "review": {
+    "builder": {
+      "id": "autonomous-builder"
+    },
+    "reviewer": {
+      "id": "independent-verifier"
+    }
+  },
+  "schema_version": "p117.release_evidence.v1",
+  "source_hashes": {
+    "app/services/p117_benchmark.py": "sha256:b6a64fd909d0b3897534479935abb88121f4503c00a1f05ce8eebb28c769e9ba",
+    "app/services/p117_contract.py": "sha256:b9663d7af95b6fd6cb1d16be224fbdbc547d606d2b428069f7d0e31e4891ea04",
+    "app/services/p117_contradictions.py": "sha256:280bc6e4a62821de40e2a817493e47c54cd5ca8e2fa04f740e9fc2c618aed87f",
+    "app/services/p117_evaluator.py": "sha256:3a25e774c2fcc42372a550a818c060096d47e255c8ab65c2a9af04a0d0b482d2",
+    "app/services/p117_evidence_acquisition.py": "sha256:bd654b3e7683473ec89bda319bb87ddbf5f6e8263d353edb40bd96912aff1738",
+    "app/services/p117_nvidia_proposal.py": "sha256:0ec652cb792514aa61d80791a36a41c66df51939394a2d28eef6bda8df9534b8",
+    "app/services/p117_release_evidence.py": "sha256:5c80ac3f16a8e09d8a710879ab33237f09ae5f81e34b56868fdfdc924d2c25f4",
+    "app/services/p117_selector.py": "sha256:5cd37a6c4d8b12149d0f77a7149ee71d129c348a1f6b5ec9072b56d0b695a817",
+    "app/services/p117_utility.py": "sha256:8395a83b9b98ac0a3203920758e0396a9a391167fe13b1f917300d905553de9f",
+    "scripts/run_p117_tournament.py": "sha256:a811e5cee462313b85ab244a54622a687d157c3fa3db55e6e87e4250cca137ff"
+  },
+  "thresholds": {
+    "authority_violations_zero": true,
+    "calibration_ece": true,
+    "contract_validity": true,
+    "denominator_complete": true,
+    "evidence_citation_validity": true,
+    "harmful_action_rate": true,
+    "per_family_gates": true,
+    "unnecessary_action_rate": true,
+    "utility_uplift_over_safe_null": true
+  },
+  "tournament_report_hash": "sha256:74350be0e3772adec48faf009519f0177ecb9f8af9d6ba1990c061161c5c72bb",
+  "upstream_manifest": {
+    "p114": "sha256:68741fa469cbbfc4394874626525cd386eada4d835721f9aa07862cc3fd2a284",
+    "p115": "sha256:6651251c77265c4dca675f8aa7ce6ad077c477d1fc809e1d0a6aa9e47144419d",
+    "p116": "sha256:9ce24fad9d1eba34da373efb058e9f13cfa7213cbc104e86f2a25ad4b4b2b3fb",
+    "p116_outcomes": "sha256:69651955d5e09e140367eaa7423720736af65c5dac52f860e91c6ca00169ff0b"
+  }
+}

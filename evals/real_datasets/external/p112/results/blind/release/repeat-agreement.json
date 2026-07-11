@@ -1,0 +1,6 @@
+{
+  "case_count": 25,
+  "fault_agreement": 0.72,
+  "joint_agreement": 0.04,
+  "service_top1_agreement": 0.04
+}

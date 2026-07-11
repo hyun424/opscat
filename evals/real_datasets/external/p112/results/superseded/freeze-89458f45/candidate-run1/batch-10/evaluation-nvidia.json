@@ -1,0 +1,382 @@
+{
+  "by_fault": {
+    "cpu": {
+      "case_count": 1,
+      "metrics": {
+        "abstention_rate": {
+          "denominator": 1,
+          "numerator": 1,
+          "value": 1.0
+        },
+        "evidence_precision": {
+          "denominator": 0,
+          "numerator": 0,
+          "value": null
+        },
+        "fault_accuracy": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "harmful_action_rate": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "denominator": 1,
+          "numerator": 37280,
+          "value": 37280.0
+        },
+        "service_top1": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "service_top3": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "unsupported_rate": {
+          "denominator": 0,
+          "numerator": 0,
+          "value": null
+        }
+      }
+    },
+    "delay": {
+      "case_count": 2,
+      "metrics": {
+        "abstention_rate": {
+          "denominator": 2,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "evidence_precision": {
+          "denominator": 10,
+          "numerator": 10,
+          "value": 1.0
+        },
+        "fault_accuracy": {
+          "denominator": 2,
+          "numerator": 2,
+          "value": 1.0
+        },
+        "harmful_action_rate": {
+          "denominator": 2,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "denominator": 2,
+          "numerator": 51074,
+          "value": 25537.0
+        },
+        "service_top1": {
+          "denominator": 2,
+          "numerator": 2,
+          "value": 1.0
+        },
+        "service_top3": {
+          "denominator": 2,
+          "numerator": 2,
+          "value": 1.0
+        },
+        "unsupported_rate": {
+          "denominator": 10,
+          "numerator": 0,
+          "value": 0.0
+        }
+      }
+    },
+    "loss": {
+      "case_count": 1,
+      "metrics": {
+        "abstention_rate": {
+          "denominator": 1,
+          "numerator": 1,
+          "value": 1.0
+        },
+        "evidence_precision": {
+          "denominator": 0,
+          "numerator": 0,
+          "value": null
+        },
+        "fault_accuracy": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "harmful_action_rate": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "denominator": 1,
+          "numerator": 96647,
+          "value": 96647.0
+        },
+        "service_top1": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "service_top3": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "unsupported_rate": {
+          "denominator": 0,
+          "numerator": 0,
+          "value": null
+        }
+      }
+    },
+    "mem": {
+      "case_count": 1,
+      "metrics": {
+        "abstention_rate": {
+          "denominator": 1,
+          "numerator": 1,
+          "value": 1.0
+        },
+        "evidence_precision": {
+          "denominator": 0,
+          "numerator": 0,
+          "value": null
+        },
+        "fault_accuracy": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "harmful_action_rate": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "denominator": 1,
+          "numerator": 49117,
+          "value": 49117.0
+        },
+        "service_top1": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "service_top3": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "unsupported_rate": {
+          "denominator": 0,
+          "numerator": 0,
+          "value": null
+        }
+      }
+    }
+  },
+  "by_service": {
+    "adservice": {
+      "case_count": 1,
+      "metrics": {
+        "abstention_rate": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "evidence_precision": {
+          "denominator": 4,
+          "numerator": 4,
+          "value": 1.0
+        },
+        "fault_accuracy": {
+          "denominator": 1,
+          "numerator": 1,
+          "value": 1.0
+        },
+        "harmful_action_rate": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "denominator": 1,
+          "numerator": 32988,
+          "value": 32988.0
+        },
+        "service_top1": {
+          "denominator": 1,
+          "numerator": 1,
+          "value": 1.0
+        },
+        "service_top3": {
+          "denominator": 1,
+          "numerator": 1,
+          "value": 1.0
+        },
+        "unsupported_rate": {
+          "denominator": 4,
+          "numerator": 0,
+          "value": 0.0
+        }
+      }
+    },
+    "checkoutservice": {
+      "case_count": 3,
+      "metrics": {
+        "abstention_rate": {
+          "denominator": 3,
+          "numerator": 2,
+          "value": 0.666667
+        },
+        "evidence_precision": {
+          "denominator": 6,
+          "numerator": 6,
+          "value": 1.0
+        },
+        "fault_accuracy": {
+          "denominator": 3,
+          "numerator": 1,
+          "value": 0.333333
+        },
+        "harmful_action_rate": {
+          "denominator": 3,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "denominator": 3,
+          "numerator": 163850,
+          "value": 54616.666667
+        },
+        "service_top1": {
+          "denominator": 3,
+          "numerator": 1,
+          "value": 0.333333
+        },
+        "service_top3": {
+          "denominator": 3,
+          "numerator": 1,
+          "value": 0.333333
+        },
+        "unsupported_rate": {
+          "denominator": 6,
+          "numerator": 0,
+          "value": 0.0
+        }
+      }
+    },
+    "productcatalogservice": {
+      "case_count": 1,
+      "metrics": {
+        "abstention_rate": {
+          "denominator": 1,
+          "numerator": 1,
+          "value": 1.0
+        },
+        "evidence_precision": {
+          "denominator": 0,
+          "numerator": 0,
+          "value": null
+        },
+        "fault_accuracy": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "harmful_action_rate": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "denominator": 1,
+          "numerator": 37280,
+          "value": 37280.0
+        },
+        "service_top1": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "service_top3": {
+          "denominator": 1,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "unsupported_rate": {
+          "denominator": 0,
+          "numerator": 0,
+          "value": null
+        }
+      }
+    }
+  },
+  "evaluation_hash": "sha256:35d106ec841fbc2988aa803e010d6926a4f8bf2fb82cb732decdffeccf414aaa",
+  "metrics": {
+    "abstention_rate": {
+      "denominator": 5,
+      "numerator": 3,
+      "value": 0.6
+    },
+    "evidence_precision": {
+      "denominator": 10,
+      "numerator": 10,
+      "value": 1.0
+    },
+    "fault_accuracy": {
+      "denominator": 5,
+      "numerator": 2,
+      "value": 0.4
+    },
+    "harmful_action_rate": {
+      "denominator": 5,
+      "numerator": 0,
+      "value": 0.0
+    },
+    "mean_latency_ms": {
+      "denominator": 5,
+      "numerator": 234118,
+      "value": 46823.6
+    },
+    "service_top1": {
+      "denominator": 5,
+      "numerator": 2,
+      "value": 0.4
+    },
+    "service_top3": {
+      "denominator": 5,
+      "numerator": 2,
+      "value": 0.4
+    },
+    "unsupported_rate": {
+      "denominator": 10,
+      "numerator": 0,
+      "value": 0.0
+    }
+  },
+  "official_source_hash": "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+  "safety": {
+    "duplicate_output_count": 0,
+    "executed_action_count": 0,
+    "harmful_action_count": 0,
+    "invalid_citation_count": 0,
+    "missing_output_count": 0,
+    "provider_error_count": 0,
+    "truth_leak_count": 0,
+    "unknown_output_count": 0
+  },
+  "schema_version": "p112.evaluation_report.v1",
+  "scorer_truth_hash": "sha256:3900d661252aba6f9418dd110480aded16fc6846194b66dda6ffd37133e60c48",
+  "summary": {
+    "case_count": 5,
+    "distinct_fault_count": 4,
+    "distinct_service_count": 3
+  }
+}

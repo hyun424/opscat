@@ -1,0 +1,33 @@
+{
+  "action_execution_enabled": false,
+  "comparison_hash": "sha256:64bee7923824e77f36487e9a050b8899f033af10606492391dc19fca06c2d2cc",
+  "gates": {
+    "blind_role": true,
+    "cryptographic_review": false,
+    "disk_floor": true,
+    "evidence_precision": true,
+    "fault_accuracy": true,
+    "fault_positive_delta": true,
+    "freeze_verified": true,
+    "loss_floor": false,
+    "repeat_joint_agreement": true,
+    "service_positive_delta": true,
+    "service_top1": false,
+    "service_top3": true,
+    "zero_safety_counters": true
+  },
+  "reasons": [
+    "service_top1 failed closed",
+    "loss_floor failed closed",
+    "cryptographic_review failed closed"
+  ],
+  "release_evidence_hash": "sha256:032ba1194df099d5302f09cd31c4374cb70115ca35dfa758b6e98d37e9235070",
+  "release_qualified": false,
+  "repeat_agreement": {
+    "case_count": 25,
+    "fault_agreement": 1.0,
+    "joint_agreement": 1.0,
+    "service_top1_agreement": 1.0
+  },
+  "schema_version": "p111.release_evidence.v1"
+}

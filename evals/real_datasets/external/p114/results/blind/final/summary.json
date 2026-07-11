@@ -1,0 +1,9 @@
+{
+  "acceptance_passed": true,
+  "case_count": 90,
+  "consumed_receipt_hash": "sha256:96bd2976e78f45bc9ac64e5dd879f2e266008d35eb38d8d7ef5ebbdfcb28e1c6",
+  "evaluation_hash": "sha256:560921b8b723b29f320a5120586e1dcc087716b8bcacc61679ef1bb6b8d24778",
+  "freeze_hash": "sha256:23281d2f4797ac36b0b4b449f802af2c62257bd0ac17a2ff770502fe77500fd2",
+  "gate_hash": "sha256:5425f5be4ce84867d6e444a431d9b497965b88bdafe195bf2cb81cbed75c18b0",
+  "replay_hash": "sha256:43ccb18bde3a00a2368556dfa377497192df6f5ec3bccbf8706785850b10169b"
+}

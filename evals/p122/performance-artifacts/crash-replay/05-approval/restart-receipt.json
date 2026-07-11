@@ -1,0 +1,27 @@
+{
+  "adapter_invoked": true,
+  "correlation_id": "p122-crash-05-approval",
+  "durable_phase": "approval_receipt_commit_recovered",
+  "operation": "approval_receipt_commit",
+  "operation_adapter": "p121_local_approval_v1",
+  "ordinal": 5,
+  "output_hash": "sha256:620d4b0d3507513d3ddb36c538a822b831025368cbb600b5952fba5dce6827a1",
+  "output_schema": "p121.approval.v1",
+  "output_validation": {
+    "approved": true,
+    "artifact_hash": "sha256:4b9aed10bba28289babe305323fbcdcc9f16cde276c2d88e3fafc402cd660593",
+    "exact_nonlocal_authority_zero": true,
+    "schema_version": "p121.approval.v1"
+  },
+  "pending_record_hash": "sha256:a8295fdf80658021d576f0138915f00e96502564c25ac43ce399f10623f9355b",
+  "pending_worker_pid": 58364,
+  "post_restart_validation": true,
+  "precommit_hash": "sha256:620d4b0d3507513d3ddb36c538a822b831025368cbb600b5952fba5dce6827a1",
+  "precommit_validation_hash": "sha256:b357aa0c3c1a29d33a03baecc006826ec68edce462c9fa4e21ae4b82bb1b2fbe",
+  "record_hash": "sha256:5147cba8919c3f09c645dd27b5ddf1ec62b1fcbc5520e1451ce04cf285170586",
+  "recovery_worker_pid": 58365,
+  "restart_count": 1,
+  "schema_version": "p122.release_stage_restart_receipt.v1",
+  "stage": "approval",
+  "status": "recovered_after_restart"
+}

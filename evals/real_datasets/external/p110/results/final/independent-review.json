@@ -1,0 +1,129 @@
+{
+  "freshness": {
+    "evidence_generated_at": "2026-07-11T06:27:23Z",
+    "fresh": true,
+    "max_age_seconds": 86400
+  },
+  "producer_id": "opscat-p110-cli",
+  "review_id": "p110-independent-review-20260711T062723Z",
+  "review_tamper_evident_hash": "sha256:06d0967786b48325e8f8c4348371cd16efb27dadcb5d305ecdac08278205e5ad",
+  "reviewed_artifact_hashes": {
+    "candidate_outputs": "sha256:e874355db16ddcc639085c2fafd050edc6a60e28f514c5531c9ee4ecd55a2880",
+    "evaluation_report": "sha256:1895226dae16718dba48a13a29e440e3028d588d6ac4ef93369921830e6e6953",
+    "implementation_revision": "sha256:49b4e919ce41d71389063a4f06c579e81791d679c60c381853880c5866f2ddf6",
+    "labeled_cases": "sha256:5b01a428928f5b52a0c39ae22f462a19cbabc98c7829dec1aa9b352a3ec00b36",
+    "official_source": "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+    "release_evidence": "sha256:e025dcb5fa8d5d913f785352a77d9a119bf5a62b4a04fc077399b52c5f23814f",
+    "scorer_truth": "sha256:dc419bf0b66f9bcba0b7d600d02b94610a04c42896715a231d276d08a8024f75"
+  },
+  "reviewed_at": "2026-07-11T06:27:23Z",
+  "reviewer": {
+    "id": "codex-verifier-p110-20260711T062723Z",
+    "identity": "Verifier",
+    "role": "verifier",
+    "session_id": "local-codex-session-20260711T062723Z"
+  },
+  "reviewer_evidence": {
+    "checks": [
+      {
+        "evidence": "Local RE1-OB.zip exactly matches pinned manifest and p110_rcaeval constants by byte count, MD5, and SHA-256",
+        "name": "official_archive_verified",
+        "passed": true
+      },
+      {
+        "evidence": "Every one of 25 fresh NVIDIA predictions contains raw_response; canonical byte hash matches raw_response_sha256; replay_p110_raw_response reproduces prediction fields",
+        "name": "raw_responses_sealed_and_replayable",
+        "passed": true
+      },
+      {
+        "evidence": "Fresh /tmp merge regenerated final candidate, evaluation, and artifact-hashes files byte-identically",
+        "name": "deterministic_final_merge",
+        "passed": true
+      },
+      {
+        "evidence": "service_top1=0.8, service_top3=0.92, fault_accuracy=0.52, evidence_precision=1.0, 25 cases, five official services, five official faults, all service/fault cells nonzero",
+        "name": "release_metrics_pass_local_thresholds",
+        "passed": true
+      },
+      {
+        "evidence": "summary.action_execution_enabled=false, safety.executed_action_count=0, and all prediction executed_actions arrays are empty",
+        "name": "zero_execution_authority",
+        "passed": true
+      },
+      {
+        "evidence": "A locally consistent forged review remains accepted=false and cannot make release_qualified true without cryptographically authenticated reviewer signature",
+        "name": "cryptographic_fail_closed_review_gate",
+        "passed": true
+      },
+      {
+        "evidence": "{\"candidate_outputs\": \"sha256:e874355db16ddcc639085c2fafd050edc6a60e28f514c5531c9ee4ecd55a2880\", \"evaluation_report\": \"sha256:1895226dae16718dba48a13a29e440e3028d588d6ac4ef93369921830e6e6953\", \"implementation_revision\": \"sha256:49b4e919ce41d71389063a4f06c579e81791d679c60c381853880c5866f2ddf6\", \"labeled_cases\": \"sha256:5b01a428928f5b52a0c39ae22f462a19cbabc98c7829dec1aa9b352a3ec00b36\", \"official_source\": \"sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4\", \"release_evidence\": \"sha256:e025dcb5fa8d5d913f785352a77d9a119bf5a62b4a04fc077399b52c5f23814f\", \"scorer_truth\": \"sha256:dc419bf0b66f9bcba0b7d600d02b94610a04c42896715a231d276d08a8024f75\"}",
+        "name": "current_artifact_hashes_bound",
+        "passed": true
+      }
+    ],
+    "commands": [
+      {
+        "command": ".venv/bin/python scripts/acquire_p110_rcaeval.py",
+        "evidence": "verified=true; bytes=30966778; md5=47cce26ed24140e8974e68f9db2a5e9c; sha256=4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+        "exit_code": 0,
+        "observed_at": "2026-07-11T06:27:23Z"
+      },
+      {
+        "command": ".venv/bin/python - <<PY raw-response hash and replay inspection PY",
+        "evidence": "25 unique NVIDIA predictions; 25 raw_response fields present; zero raw hash or replay mismatches; zero executed actions",
+        "exit_code": 0,
+        "observed_at": "2026-07-11T06:27:23Z"
+      },
+      {
+        "command": ".venv/bin/python scripts/merge_p110_labeled_batches.py --output-dir /tmp/p110-final-verify-merge",
+        "evidence": "service_top1=20/25, service_top3=23/25, fault_accuracy=13/25, evidence_precision=140/140; all safety counters zero; release_qualified=false",
+        "exit_code": 0,
+        "observed_at": "2026-07-11T06:27:23Z"
+      },
+      {
+        "command": ".venv/bin/python - <<PY compare final candidate/evaluation/artifact hashes PY",
+        "evidence": "candidate-nvidia.json, evaluation-nvidia.json, and artifact-hashes.json matched regenerated /tmp outputs byte-for-byte",
+        "exit_code": 0,
+        "observed_at": "2026-07-11T06:27:23Z"
+      },
+      {
+        "command": "bash scripts/verify.sh --profile p110-release",
+        "evidence": "59 P110 tests passed; warnings only",
+        "exit_code": 0,
+        "observed_at": "2026-07-11T06:27:23Z"
+      },
+      {
+        "command": ".venv/bin/ruff check app tests scripts",
+        "evidence": "All checks passed",
+        "exit_code": 0,
+        "observed_at": "2026-07-11T06:27:23Z"
+      },
+      {
+        "command": ".venv/bin/mypy app tests scripts",
+        "evidence": "Success: no issues found in 732 source files",
+        "exit_code": 0,
+        "observed_at": "2026-07-11T06:27:23Z"
+      },
+      {
+        "command": ".venv/bin/python scripts/merge_p110_labeled_batches.py --output-dir /tmp/p110-forged-verify --review-json /tmp/p110-forged-local-review.json",
+        "evidence": "fully bound local review kept release_qualified=false",
+        "exit_code": 0,
+        "observed_at": "2026-07-11T06:27:23Z"
+      },
+      {
+        "command": ".venv/bin/python - <<PY forged local review fail-closed assertion PY",
+        "evidence": "locally_consistent=true, accepted=false, independent_review_ready=false, release_qualified=false, cryptographic signature reason present",
+        "exit_code": 0,
+        "observed_at": "2026-07-11T06:27:23Z"
+      }
+    ],
+    "identity_scope": "not-cryptographic-authentication",
+    "verifier_identity": {
+      "attestation": "pure-local-reviewer-evidence",
+      "id": "codex-verifier-p110-20260711T062723Z",
+      "session_id": "local-codex-session-20260711T062723Z"
+    }
+  },
+  "schema_version": "p110.independent_review.v1",
+  "verdict": "pass"
+}

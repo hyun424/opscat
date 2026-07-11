@@ -1,0 +1,54 @@
+{
+  "schema_version": "p109.source_manifest.v1",
+  "manifest_id": "opscat-p109-public-samples-1",
+  "generated_at": "2026-07-11T00:00:00Z",
+  "allowed_signers": [
+    {
+      "signer_id": "release-qualification-not-configured",
+      "key_id": "none"
+    }
+  ],
+  "artifacts": [
+    {
+      "schema_version": "p109.source_artifact.v1",
+      "source_id": "rcaeval-baro-simple-data",
+      "canonical_url": "https://github.com/phamquiluan/baro/releases/download/0.0.4/simple_data.csv",
+      "revision": "5e96b700445bfb5c599e505ecf37d53bf847bbeb",
+      "revision_kind": "commit",
+      "license": "MIT",
+      "citation": "RCAEval: A Benchmark for Root Cause Analysis of Microservice Systems with Telemetry Data",
+      "expected_paths": [
+        "simple_data.csv"
+      ],
+      "dataset_schema": "p109.rcaeval_case.v1",
+      "max_compressed_bytes": 600000,
+      "max_decompressed_bytes": 600000,
+      "max_file_count": 1,
+      "redirect_allowlist": [
+        {
+          "host": "github.com",
+          "path_prefix": "/phamquiluan/baro/releases/download/0.0.4/"
+        },
+        {
+          "host": "objects.githubusercontent.com",
+          "path_prefix": "/github-production-release-asset/"
+        },
+        {
+          "host": "release-assets.githubusercontent.com",
+          "path_prefix": "/github-production-release-asset/"
+        }
+      ],
+      "sha256": "3eb6169a63f86c5878c277434936e1f4bbbd7f30dcf7f87dc3496bea8cae7f1a",
+      "provenance_hashes": {
+        "schema_version": "p109.provenance_hashes.v1",
+        "canonical_manifest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "downloaded_bytes": "3eb6169a63f86c5878c277434936e1f4bbbd7f30dcf7f87dc3496bea8cae7f1a",
+        "extracted_tree": "3eb6169a63f86c5878c277434936e1f4bbbd7f30dcf7f87dc3496bea8cae7f1a",
+        "normalized_corpus": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "qualification": "real_telemetry_parser_smoke_only",
+      "ground_truth": "not_present",
+      "release_qualified": false
+    }
+  ]
+}

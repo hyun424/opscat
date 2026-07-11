@@ -89,6 +89,19 @@ Connector evals:
 python scripts/run_connector_evals.py --output-json /tmp/opscat-connector-evals.json --output-md /tmp/opscat-connector-evals.md
 ```
 
+## P121 proactive prevention evidence
+
+P121 release evidence is local/mock/sandbox-only. It uses raw frozen inputs
+with scorer-only hidden truth, derives predictions/outcomes in the evaluator,
+and proves durable restart recovery across 15 crash/replay points including
+partial L3 and rollback recovery.
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/run_p121_frozen_evaluation.py --output evals/p121/frozen-evaluation.json
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/build_p121_release_evidence.py --evaluation evals/p121/frozen-evaluation.json --output evals/p121/release-evidence.json
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync --extra dev python scripts/validate_p121_release_evidence.py evals/p121/release-evidence.json
+```
+
 Dashboard browser-contract E2E:
 
 ```bash
@@ -2764,3 +2777,255 @@ Detailed references:
 - `docs/operations/p106-plan-review.md`
 - `docs/operations/p106-final-summary.md`
 - `docs/tickets/p106/README.md`
+
+## P107 Canary Prevention Executor Evidence
+
+P107 is a local/mock or isolated test-harness canary executor release lane. It
+does not turn P106 into an executor. P106 eligibility is evidence only: P107
+must recompute the canonical P106 gate from complete release evidence, reject
+caller-supplied or copied `p107_gate_eligible` values, and require P106 to keep
+`p107_unlocked=false`.
+
+Canonical release profile:
+
+```bash
+bash scripts/verify.sh --profile p107-release
+```
+
+Targeted test command:
+
+```bash
+uv run --no-sync --extra dev pytest -q \
+  tests/test_prevention_p106_handoff.py \
+  tests/test_prevention_canary_fingerprints.py \
+  tests/test_prevention_policy_preflight.py \
+  tests/test_prevention_state_machine.py \
+  tests/test_prevention_episode_audit.py \
+  tests/test_prevention_canary_harness.py \
+  tests/test_prevention_canary_executor_contract.py \
+  tests/test_prevention_canary_idempotency.py \
+  tests/test_prevention_canary_concurrency.py \
+  tests/test_prevention_canary_crash_consistency.py \
+  tests/test_prevention_canary_rollback.py \
+  tests/test_prevention_canary_fixture_matrix.py \
+  tests/test_prevention_outcome_report.py \
+  tests/test_prevention_static_authority_boundary.py \
+  tests/test_p107_release_evidence.py
+```
+
+Evidence CLI smoke:
+
+```bash
+uv run --no-sync --extra dev python scripts/run_prevention_canary_evidence.py \
+  --cases evals/prevention/p107_canary_cases.json \
+  --output-json /tmp/opscat-p107-canary-evidence.json \
+  --output-md /tmp/opscat-p107-canary-evidence.md
+```
+
+Required release evidence:
+
+- all A01-A14 canary fixture cases are present and scored;
+- duplicate, crash-resume, concurrent duplicate, stale/forged eligibility,
+  policy-flip, cohort-escape, telemetry-loss, guardrail-breach,
+  non-improvement, rollback-failure, repeat-after-rollback, audit-tamper, and
+  replay-determinism gates are top-level evidence fields;
+- static authority boundary and runtime sentinel checks pass;
+- authority counters for auth, credential reads, production adapters,
+  production mutation, shell execution, network calls, cloud mutation, and
+  database mutation are exactly false or zero;
+- P107 release evidence reports `canonical_p106_gate_recomputed=true`,
+  `caller_supplied_p107_gate_eligible_used=false`, and P106
+  `p107_unlocked=false`.
+
+Boundary: P107 release evidence is local/mock or isolated only. It does not
+claim hosted auth, production rollout, live connector mutation, credential
+handling, shell execution, cloud/database authority, production remediation, or
+unattended production operation.
+
+P108 handoff: P108 may start only from deterministic offline replay evidence
+with a complete terminal audit chain, stable audit/report/replay hashes,
+matching expected terminal head hash, exact zero authority counters, and fresh
+matching independent review JSON with
+`schema_version=p107.independent_review.v1`. Missing, stale, mismatched, or
+failing review evidence keeps `p108_replay_gate_ready=false`.
+
+Detailed references:
+
+- `docs/operations/p107-ticket-roadmap.md`
+- `docs/tickets/p107/README.md`
+
+## P108 Prevention Outcome Learner Evidence
+
+P108 is an offline-only learner over immutable P107 evidence. It recomputes the
+raw P107 ingress contract, refuses caller-supplied readiness, records a
+content-bound outcome ledger, separates natural recovery from intervention
+benefit, and emits only unapplied, review-bound, rollbackable recommendations.
+
+Canonical release profile:
+
+```bash
+bash scripts/verify.sh --profile p108-release
+```
+
+Release qualification requires the exact L01-L16 fixture identity, all six
+seed/time holdout deltas positive, median utility delta at least `0.03`,
+per-family non-inferiority at least `-0.01`, calibration-drift increase no more
+than `0.01`, exact-zero harmful and authority counters, and a fresh passing
+non-self review using `schema_version=p108.independent_review.v1` with matching
+artifact hashes.
+
+Boundary: P108 performs no database access, auth, credential reads, network or
+shell calls, cloud/production adapter calls, executor calls, live calls, or
+online policy, prompt, runbook, registry, or threshold mutation. Recommendations
+remain `applied=false`; this evidence is not a production-autonomy claim.
+
+Detailed references:
+
+- `docs/operations/p108-ticket-roadmap.md`
+- `docs/operations/p108-test-spec.md`
+- `docs/operations/p108-plan-review.md`
+- `docs/tickets/p108/README.md`
+
+## P109 Real Operations Benchmark Evidence
+
+P109 evaluates immutable external telemetry and result artifacts without
+acquiring execution authority. The checked-in Baro/RCAEval CSV is a real,
+unmodified upstream metric sample pinned by URL, revision, and SHA-256. Because
+it contains no official incident truth, it is parser smoke evidence only and
+must produce `unevaluable_real_data_missing` for diagnosis release mode.
+
+MicroRemed-compatible artifacts are import-only. A submitted `success=true` or
+upstream `final_status` is ignored: recovery is recomputed from raw before/after
+observations and evidence from a verifier independent of the actor. Auth,
+credentials, shell/subprocess, Kubernetes, Ansible, cloud, database,
+production-adapter, executor, and mutation counters must remain exactly zero.
+
+Release qualification additionally requires nonzero reported denominators for
+every required dataset/system/fault-family cell, no hidden-label leakage or
+holdout contamination, all safety numerators zero, and an independent review
+whose hashes bind every source, normalized corpus, report, authority scan, and
+profile artifact. Authored fixtures can validate behavior but never satisfy the
+real-data gate.
+
+Detailed references:
+
+- `docs/operations/p109-real-ops-benchmark-roadmap.md`
+- `docs/operations/p109-test-spec.md`
+- `docs/operations/p109-plan-review.md`
+- `docs/tickets/p109/README.md`
+
+## P111 Frozen RCA Accuracy Evidence
+
+P111 binds the official RCAEval source, repetition-3 blind case set, candidate
+packets, NVIDIA request envelope, prompt, decoding settings, implementation,
+and model into one freeze manifest before scoring. The paired blind result
+improves P110 from 68% to 80% service Top-1 and from 40% to 84% fault accuracy;
+service Top-3 is 96%, evidence validity is 100%, and all unsafe-action counters
+are zero. A second candidate run has 100% agreement on the scored service and
+fault labels.
+
+The hard release gate remains closed. Service Top-1 is below 84%, loss-fault
+accuracy is below 60%, and local evidence cannot prove an out-of-band
+cryptographic reviewer identity. Repetition 4 remains unscored reserve data.
+
+Canonical release profile:
+
+```bash
+bash scripts/verify.sh --profile p111-release
+```
+
+Detailed references:
+
+- `docs/operations/p111-accuracy-plan.md`
+- `docs/operations/p111-test-spec.md`
+- `docs/operations/p111-plan-review.md`
+- `docs/operations/p111-final-summary.md`
+- `docs/tickets/p111/README.md`
+
+## P112 Cross-system RCA Blind Evidence
+
+P112 froze a generalized RE1 loader, service-name-independent model, P111
+paired baseline, candidate packets, full NVIDIA request envelopes, acceptance
+gates, and implementation hashes before revealing RE1-OB repetition 4.
+
+The release decision is false. The baseline reached 88% service Top-1 and 100%
+fault accuracy; candidate run 1 reached 12% and 12%, with 88% abstention caused
+primarily by strict output-contract violations. Candidate run 2 reached 24%
+and 24%, and joint run agreement was 4%. The deterministic model alone reached
+76% Top-1, 92% Top-3, and 68% fault accuracy, so it also missed the declared
+quality gates. Evidence precision remained 100% and all action/safety counters
+were zero.
+
+Canonical release profile:
+
+```bash
+bash scripts/verify.sh --profile p112-release
+```
+
+Detailed references:
+
+- `docs/operations/p112-cross-system-accuracy-plan.md`
+- `docs/operations/p112-test-spec.md`
+- `docs/operations/p112-plan-review.md`
+- `docs/operations/p112-final-summary.md`
+- `docs/tickets/p112/README.md`
+
+## P113 Decoupled Fresh-Blind RCA Evidence
+
+P113 pinned the official RCAEval RE1-TT archive at SHA-256
+`2b33b7ab07198e0d69f229e697bfcef794a656e8db73a1d732142effde17c595`
+and froze the deterministic model, packet set, prompt, NVIDIA request envelope,
+implementation, acceptance gates, and 25-case narrative subset before scoring.
+
+The 125-case hidden-truth diagnosis reached 31.2% service Top-1, 49.6% Top-3,
+and 32.0% fault accuracy. Evidence precision was 100%; deterministic diagnosis
+preservation and replay consistency were 100%; all action, credential, shell,
+provider-write, production-adapter, mutation, and truth-leak counters were zero.
+Accuracy gates failed for every fault family, so the governed stop rule prevented
+the NVIDIA narrative benchmark from running. Release qualification is false.
+
+Canonical release profile:
+
+```bash
+bash scripts/verify.sh --profile p113-release
+```
+
+Detailed references:
+
+- `docs/operations/p113-decoupled-rca-plan.md`
+- `docs/operations/p113-test-spec.md`
+- `docs/operations/p113-plan-review.md`
+- `docs/operations/p113-model-selection-report.md`
+- `docs/operations/p113-final-summary.md`
+- `docs/tickets/p113/README.md`
+
+## P114 RE2 deterministic acceptance evidence
+
+P114 uses the official 90-case RE2-SS archive only as consumed development
+data. Its deterministic evidence lattice reached 85.56% service Top-1, 63.33%
+fault accuracy, 56.67% joint Top-1, 100% joint candidate recall, and 100%
+evidence precision. Three bounded NVIDIA adjudicators failed the required
+nonnegative accuracy delta and/or repeatability gates and were excluded from
+the authoritative path. The pinned RE2-OB archive was frozen at SHA-256
+`0605a36cdcad8a6ae0107f2357c9c91ecee2c4ab5d72579bffea0372d9747513`
+and consumed exactly once. The deterministic result passed every predeclared
+gate: service Top-1 81.11%, service Top-3 94.44%, fault accuracy 72.22%, joint
+Top-1 57.78%, joint candidate recall 96.67%, and evidence precision 100%.
+Independent replay and diagnosis preservation were 100%; every required safety
+counter was present and zero. The bounded diagnosis benchmark is qualified;
+remediation execution remains disabled.
+
+Canonical development profile:
+
+```bash
+bash scripts/verify.sh --profile p114-release
+```
+
+Detailed references:
+
+- `docs/operations/p114-evidence-adjudication-plan.md`
+- `docs/operations/p114-test-spec.md`
+- `docs/operations/p114-development-results.md`
+- `docs/operations/p114-deterministic-acceptance-amendment.md`
+- `docs/operations/p114-final-summary.md`
+- `docs/tickets/p114/README.md`

@@ -1,0 +1,2 @@
+{"timestamp":"2024-03-09T16:30:02Z","service":"checkout","message":"request timeout waiting for downstream response","severity":"error"}
+{"timestamp":"2024-03-09T16:30:04Z","service":"payments","message":"retry budget healthy","severity":"info"}

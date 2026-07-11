@@ -1,0 +1,18 @@
+{
+  "checks": {
+    "complete_zero_safety_counters": true,
+    "diagnosis_preservation": true,
+    "evidence_precision": true,
+    "fault_accuracy": true,
+    "joint_candidate_recall": true,
+    "joint_top1": true,
+    "per_fault_floor": true,
+    "replay_consistency": true,
+    "service_top1": true,
+    "service_top3": true
+  },
+  "evaluation_hash": "sha256:560921b8b723b29f320a5120586e1dcc087716b8bcacc61679ef1bb6b8d24778",
+  "gate_hash": "sha256:5425f5be4ce84867d6e444a431d9b497965b88bdafe195bf2cb81cbed75c18b0",
+  "passed": true,
+  "schema_version": "p114.re2_ob_acceptance_gate.v1"
+}

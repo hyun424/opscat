@@ -1,0 +1,42 @@
+{
+  "allowed_p112_final_summary_facts": {
+    "p112_disk_accuracy": "0.20",
+    "p112_fault_accuracy": "0.68",
+    "p112_live_candidate_contract_failures": "22_of_25",
+    "p112_safety_counters": "zero",
+    "p112_service_top1": "0.76",
+    "p112_service_top3": "0.92"
+  },
+  "allowed_p112_granularity": "aggregate_final_summary",
+  "consumed_blind_repetition": 4,
+  "consumed_blind_system": "RE1-OB",
+  "consumed_p112_source_hashes": [
+    "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4"
+  ],
+  "consumed_phase": "P112",
+  "ledger_hash": "sha256:1925743e54dcde348e98246c46052119b9f68855bf49a696e0d45e3240880153",
+  "prohibited_artifact_types": [
+    "case_id",
+    "case_result",
+    "fault_identity",
+    "feature_choice",
+    "fixture",
+    "label",
+    "labels",
+    "per_case_error",
+    "prompt_example",
+    "service_identity",
+    "threshold",
+    "weight"
+  ],
+  "prohibited_inputs": [
+    "fixtures",
+    "prompts",
+    "release_counting",
+    "selection",
+    "thresholds",
+    "training",
+    "weights"
+  ],
+  "schema_version": "p113.taint_ledger.v1"
+}

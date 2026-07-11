@@ -1,0 +1,2 @@
+{"timestamp":"2024-03-09T16:30:03Z","service":"checkout","trace_id":"trace-001","span_id":"span-001","parent_span_id":null,"operation":"POST /checkout","attributes":{"http.status_code":504,"peer.service":"payments"}}
+{"timestamp":"2024-03-09T16:30:03Z","service":"payments","trace_id":"trace-001","span_id":"span-002","parent_span_id":"span-001","operation":"POST /charge","attributes":{"http.status_code":200}}

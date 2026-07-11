@@ -1,0 +1,445 @@
+{
+  "components": [
+    {
+      "license": "MIT",
+      "name": "annotated-doc",
+      "status": "allowed",
+      "version": "0.0.4"
+    },
+    {
+      "license": "MIT",
+      "name": "annotated-types",
+      "status": "allowed",
+      "version": "0.7.0"
+    },
+    {
+      "license": "MIT",
+      "name": "anyio",
+      "status": "allowed",
+      "version": "4.14.1"
+    },
+    {
+      "license": "MIT",
+      "name": "ast-serialize",
+      "status": "allowed",
+      "version": "0.6.0"
+    },
+    {
+      "license": "BSD-2-Clause",
+      "name": "boolean-py",
+      "status": "allowed",
+      "version": "5.0"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "cachecontrol",
+      "status": "allowed",
+      "version": "0.14.4"
+    },
+    {
+      "license": "MPL-2.0",
+      "name": "certifi",
+      "status": "allowed",
+      "version": "2026.6.17"
+    },
+    {
+      "license": "MIT",
+      "name": "charset-normalizer",
+      "status": "allowed",
+      "version": "3.4.9"
+    },
+    {
+      "license": "BSD-3-Clause",
+      "name": "click",
+      "status": "allowed",
+      "version": "8.4.2"
+    },
+    {
+      "license": "BSD-3-Clause",
+      "name": "colorama",
+      "status": "allowed",
+      "version": "0.4.6"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "cyclonedx-python-lib",
+      "status": "allowed",
+      "version": "11.11.0"
+    },
+    {
+      "license": "PSF-2.0",
+      "name": "defusedxml",
+      "status": "allowed",
+      "version": "0.7.1"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "distro",
+      "status": "allowed",
+      "version": "1.9.0"
+    },
+    {
+      "license": "MIT",
+      "name": "fastapi",
+      "status": "allowed",
+      "version": "0.139.0"
+    },
+    {
+      "license": "MIT",
+      "name": "filelock",
+      "status": "allowed",
+      "version": "3.29.7"
+    },
+    {
+      "license": "MIT",
+      "name": "greenlet",
+      "status": "allowed",
+      "version": "3.5.3"
+    },
+    {
+      "license": "MIT",
+      "name": "h11",
+      "status": "allowed",
+      "version": "0.16.0"
+    },
+    {
+      "license": "BSD-3-Clause",
+      "name": "httpcore",
+      "status": "allowed",
+      "version": "1.0.9"
+    },
+    {
+      "license": "MIT",
+      "name": "httptools",
+      "status": "allowed",
+      "version": "0.8.0"
+    },
+    {
+      "license": "BSD-3-Clause",
+      "name": "httpx",
+      "status": "allowed",
+      "version": "0.28.1"
+    },
+    {
+      "license": "BSD-3-Clause",
+      "name": "idna",
+      "status": "allowed",
+      "version": "3.18"
+    },
+    {
+      "license": "MIT",
+      "name": "iniconfig",
+      "status": "allowed",
+      "version": "2.3.0"
+    },
+    {
+      "license": "MIT",
+      "name": "jiter",
+      "status": "allowed",
+      "version": "0.16.0"
+    },
+    {
+      "license": "MIT",
+      "name": "librt",
+      "status": "allowed",
+      "version": "0.13.0"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "license-expression",
+      "status": "allowed",
+      "version": "30.4.4"
+    },
+    {
+      "license": "MIT",
+      "name": "markdown-it-py",
+      "status": "allowed",
+      "version": "4.2.0"
+    },
+    {
+      "license": "MIT",
+      "name": "mdurl",
+      "status": "allowed",
+      "version": "0.1.2"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "msgpack",
+      "status": "allowed",
+      "version": "1.2.1"
+    },
+    {
+      "license": "MIT",
+      "name": "mypy",
+      "status": "allowed",
+      "version": "2.2.0"
+    },
+    {
+      "license": "MIT",
+      "name": "mypy-extensions",
+      "status": "allowed",
+      "version": "1.1.0"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "openai",
+      "status": "allowed",
+      "version": "2.44.0"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "opscat",
+      "status": "allowed",
+      "version": "0.2.0"
+    },
+    {
+      "license": "MIT",
+      "name": "packageurl-python",
+      "status": "allowed",
+      "version": "0.17.6"
+    },
+    {
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "name": "packaging",
+      "status": "allowed",
+      "version": "26.2"
+    },
+    {
+      "license": "MPL-2.0",
+      "name": "pathspec",
+      "status": "allowed",
+      "version": "1.1.1"
+    },
+    {
+      "license": "MIT",
+      "name": "pip",
+      "status": "allowed",
+      "version": "26.1.2"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "pip-api",
+      "status": "allowed",
+      "version": "0.0.34"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "pip-audit",
+      "status": "allowed",
+      "version": "2.10.1"
+    },
+    {
+      "license": "MIT",
+      "name": "pip-requirements-parser",
+      "status": "allowed",
+      "version": "32.0.1"
+    },
+    {
+      "license": "MIT",
+      "name": "platformdirs",
+      "status": "allowed",
+      "version": "4.10.0"
+    },
+    {
+      "license": "MIT",
+      "name": "pluggy",
+      "status": "allowed",
+      "version": "1.6.0"
+    },
+    {
+      "license": "LGPL-3.0-only",
+      "name": "psycopg",
+      "status": "allowed",
+      "version": "3.3.4"
+    },
+    {
+      "license": "LGPL-3.0-only",
+      "name": "psycopg-binary",
+      "status": "allowed",
+      "version": "3.3.4"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "py-serializable",
+      "status": "allowed",
+      "version": "2.1.0"
+    },
+    {
+      "license": "MIT",
+      "name": "pydantic",
+      "status": "allowed",
+      "version": "2.13.4"
+    },
+    {
+      "license": "MIT",
+      "name": "pydantic-core",
+      "status": "allowed",
+      "version": "2.46.4"
+    },
+    {
+      "license": "MIT",
+      "name": "pydantic-settings",
+      "status": "allowed",
+      "version": "2.14.2"
+    },
+    {
+      "license": "BSD-2-Clause",
+      "name": "pygments",
+      "status": "allowed",
+      "version": "2.20.0"
+    },
+    {
+      "license": "MIT",
+      "name": "pyparsing",
+      "status": "allowed",
+      "version": "3.3.2"
+    },
+    {
+      "license": "MIT",
+      "name": "pytest",
+      "status": "allowed",
+      "version": "9.1.1"
+    },
+    {
+      "license": "BSD-3-Clause",
+      "name": "python-dotenv",
+      "status": "allowed",
+      "version": "1.2.2"
+    },
+    {
+      "license": "MIT",
+      "name": "pyyaml",
+      "status": "allowed",
+      "version": "6.0.3"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "requests",
+      "status": "allowed",
+      "version": "2.34.2"
+    },
+    {
+      "license": "MIT",
+      "name": "rich",
+      "status": "allowed",
+      "version": "15.0.0"
+    },
+    {
+      "license": "MIT",
+      "name": "ruff",
+      "status": "allowed",
+      "version": "0.15.21"
+    },
+    {
+      "license": "MIT",
+      "name": "sniffio",
+      "status": "allowed",
+      "version": "1.3.1"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "sortedcontainers",
+      "status": "allowed",
+      "version": "2.4.0"
+    },
+    {
+      "license": "MIT",
+      "name": "sqlalchemy",
+      "status": "allowed",
+      "version": "2.0.51"
+    },
+    {
+      "license": "BSD-3-Clause",
+      "name": "starlette",
+      "status": "allowed",
+      "version": "1.3.1"
+    },
+    {
+      "license": "MIT",
+      "name": "tomli",
+      "status": "allowed",
+      "version": "2.4.1"
+    },
+    {
+      "license": "MIT",
+      "name": "tomli-w",
+      "status": "allowed",
+      "version": "1.2.0"
+    },
+    {
+      "license": "MPL-2.0 AND MIT",
+      "name": "tqdm",
+      "status": "allowed",
+      "version": "4.68.4"
+    },
+    {
+      "license": "PSF-2.0",
+      "name": "typing-extensions",
+      "status": "allowed",
+      "version": "4.16.0"
+    },
+    {
+      "license": "MIT",
+      "name": "typing-inspection",
+      "status": "allowed",
+      "version": "0.4.2"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "tzdata",
+      "status": "allowed",
+      "version": "2026.2"
+    },
+    {
+      "license": "MIT",
+      "name": "urllib3",
+      "status": "allowed",
+      "version": "2.7.0"
+    },
+    {
+      "license": "BSD-3-Clause",
+      "name": "uvicorn",
+      "status": "allowed",
+      "version": "0.50.2"
+    },
+    {
+      "license": "Apache-2.0",
+      "name": "uvloop",
+      "status": "allowed",
+      "version": "0.22.1"
+    },
+    {
+      "license": "MIT",
+      "name": "watchfiles",
+      "status": "allowed",
+      "version": "1.2.0"
+    },
+    {
+      "license": "BSD-3-Clause",
+      "name": "websockets",
+      "status": "allowed",
+      "version": "16.0"
+    }
+  ],
+  "findings": [],
+  "policy": {
+    "allowed": [
+      "0BSD",
+      "Apache-2.0",
+      "BSD-2-Clause",
+      "BSD-3-Clause",
+      "ISC",
+      "LGPL-3.0-only",
+      "LGPL-3.0-or-later",
+      "MIT",
+      "MPL-2.0",
+      "PSF-2.0",
+      "Python-2.0"
+    ],
+    "incompatible_tokens": [
+      "AGPL",
+      "GPL-2",
+      "GPL-3"
+    ]
+  }
+}

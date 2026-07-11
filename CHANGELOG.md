@@ -1,8 +1,65 @@
 # Changelog
 
+### P111 evidence-grounded RCA accuracy
+
+- Added a frozen multi-stage diagnosis pipeline that combines NVIDIA evidence
+  analysis with a deterministic fault prior trained only on earlier repetitions.
+- On the 25-case repetition-3 blind split, improved the paired P110 baseline
+  from 68% to 80% service Top-1, 88% to 96% Top-3, and 40% to 84% fault
+  accuracy, with 100% evidence validity and zero unsafe-action counters.
+- Added configuration/source/request hashing, blind-role guards, preserved raw
+  response replay, paired comparison, calibration, and repeat-agreement gates.
+- Kept release qualification closed: service Top-1 was below 84%, loss-fault
+  accuracy was below 60%, and no cryptographic independent reviewer exists.
+
+### P110 labeled real-data LLM diagnosis
+
+- Added safe import and hidden-truth isolation for the official 125-case
+  RCAEval RE1-OB dataset, with a balanced 25-case holdout.
+- Added strict mock/replay/NVIDIA candidate execution, source-bound evidence
+  citations, budgets, response hashing, and zero action authority.
+- Recorded a provenance-hardened Nemotron rerun of 80% service Top-1, 92%
+  Top-3, 52% fault accuracy, and 100% citation validity on the holdout;
+  disk/loss classification remains weak.
+- Added bootstrap intervals, per-service/per-fault cells, fail-closed release
+  evidence, independent-review requirements, and a `p110-release` profile.
+- Added sealed scorer-truth/source bindings, cache-keyed replay, strict batch
+  provenance, evaluator-owned action-risk scoring, and adversarial regressions
+  after the first independent implementation review rejected the release path.
+- Preserved and replayed raw provider responses during merge, and kept hard
+  release qualification closed because local JSON review is not cryptographic
+  proof of reviewer identity or live provider execution.
+- Added sealed scorer-truth/source bindings, cache-keyed replay, strict batch
+  provenance, evaluator-owned action-risk scoring, and adversarial regressions
+  after the first independent implementation review rejected the release path.
+
+### P109 real operations evidence benchmark
+
+- Added versioned, fail-closed contracts for immutable external source
+  provenance, RCAEval normalization, and externally executed
+  MicroRemed-compatible result bundles.
+- Added a pinned, checksummed public Baro/RCAEval metric sample for real-source
+  parser validation. It has no authoritative root-cause labels and therefore
+  cannot qualify diagnosis accuracy or a real-data release.
+- Added diagnosis and remediation metrics with explicit numerator/denominator
+  semantics, hidden scorer truth, independent verifier requirements,
+  contamination gates, deterministic reports, and a zero-execution-authority
+  boundary.
+
 All notable OpsCat local/mock release evidence changes are tracked here.
 
 ## Unreleased
+
+### P121 proactive prevention readiness
+
+- Added durable local-sandbox L3 execution with WAL/hash-chain recovery,
+  `flock`, CAS/idempotency, leases, partial-L3 replay, rollback recovery, and
+  tamper detection while preserving exact-zero production authority.
+- Replaced pre-scored frozen rows with raw visible inputs and scorer-only
+  hidden truth; the evaluator now derives predictions/outcomes and enforces
+  system, temporal, and near-duplicate leakage checks.
+- Regenerated P121 frozen evaluation and release evidence for 360 cases with
+  15 crash/replay recovery points.
 
 ### P5 OSS productization
 
@@ -110,6 +167,32 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 - Recorded prior verifier findings as fixed. P107 gate evidence is eligible,
   but P106 grants no execution authority; final independent implementation code
   and architecture/safety review remain pending.
+
+### P107 docs and verification integration
+
+- Added P107 roadmap and ticket index for the local/mock or isolated canary
+  prevention executor release lane.
+- Documented exact zero authority: no auth, production adapters, credentials,
+  network calls, shell execution, cloud mutation, database mutation, or
+  production mutation.
+- Documented P106 eligibility as evidence only: P107 recomputes the canonical
+  P106 gate, while P106 keeps `p107_unlocked=false`.
+- Added the `p107-release` verification profile with all 15 P107 release test
+  files and the canary evidence CLI smoke, without removing P105/P106 gates.
+- Documented the P108 deterministic replay handoff and the requirement for
+  matching fresh independent review JSON before `p108_replay_gate_ready=true`.
+
+### P108 deterministic prevention outcome learning
+
+- Added raw P107 ingress recomputation, an immutable content-linked outcome
+  ledger, seven conservative outcome labels, counterfactual scoring, and
+  phase-bounded credit assignment.
+- Added data-only recommendations with `applied=false`, rollback/version
+  bindings, six-cell holdout promotion gates, per-family drift/safety checks,
+  and exact-zero offline authority enforcement.
+- Added the L01-L16 learning fixture matrix, deterministic JSON/Markdown CLI,
+  `p108-release` verification profile, and fresh non-self independent-review
+  hash contract.
 
 ## Stable vs experimental
 

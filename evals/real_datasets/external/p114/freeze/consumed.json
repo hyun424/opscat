@@ -1,0 +1,9 @@
+{
+  "consumed_at": "2026-07-11T13:39:02.190277+00:00",
+  "freeze_hash": "sha256:23281d2f4797ac36b0b4b449f802af2c62257bd0ac17a2ff770502fe77500fd2",
+  "implementation_hash": "sha256:ac1f8440278b8497aeeeed2a57ec94df38c55c3e01876c0ec78b1e5193d13366",
+  "receipt_hash": "sha256:96bd2976e78f45bc9ac64e5dd879f2e266008d35eb38d8d7ef5ebbdfcb28e1c6",
+  "replay_hash": "sha256:43ccb18bde3a00a2368556dfa377497192df6f5ec3bccbf8706785850b10169b",
+  "schema_version": "p114.re2_ob_consumed_receipt.v1",
+  "status": "score_started"
+}

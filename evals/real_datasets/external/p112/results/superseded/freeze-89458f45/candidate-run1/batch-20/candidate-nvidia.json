@@ -1,0 +1,1987 @@
+{
+  "benchmark_provenance": {
+    "arm": "candidate",
+    "benchmark_role": "blind",
+    "blind_source_hash": "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+    "case_offset": 20,
+    "freeze_hash": "sha256:89458f4534a208828875298c52f137549aac05fb59d66a765667c68ba0408a1a",
+    "implementation_hash": "sha256:e0002438532183e8cf8c7aa57ac0907850a6af349709ea26cdb3ce7c1904b5c5",
+    "repetition": 4,
+    "request": {
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provider_api": "openai-chat-completions-v1",
+      "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+      "system_prompt_sha256": "c79d9cffa7defd02a938f6013203730b4523a5384eba2a45b7019b5133976097"
+    },
+    "run_id": "p112-candidate-r1",
+    "schema_version": "p112.blind_batch_provenance.v1",
+    "selected_case_count": 5,
+    "selected_case_ids": [
+      "p112_d33c7809161d2b11b066ff0e",
+      "p112_d63856f3720630b36cba7e78",
+      "p112_df015924facfd22ddd91fbac",
+      "p112_e7f169eed89a75259d4ff32b",
+      "p112_fe805878e613b5921b228acc"
+    ]
+  },
+  "budget": {
+    "max_calls": 5,
+    "max_cases": 5,
+    "max_retries": 1,
+    "provider_call_count": 5
+  },
+  "cache": {
+    "hit_count": 0,
+    "write_count": 0
+  },
+  "mode": "nvidia",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b",
+  "predictions": [
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "Inspect checkoutservice latency profiles and downstream dependencies",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "Check for resource contention in checkoutservice (CPU, memory, locks)",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "Review currencyservice and frontend latency contributions to checkout path",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "Correlate workload decrease with latency increase to identify bottleneck",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "4f035739cc312b4de1e4cd7aad894297af1a3294cf2f45095c91ebeb3e1607f4",
+      "candidate_context": null,
+      "case_id": "p112_d33c7809161d2b11b066ff0e",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 37688,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "b434f1f7a4573ee5a03132f18a28f30aaec8ddc6327950f81aec996414252f60",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "4f035739cc312b4de1e4cd7aad894297af1a3294cf2f45095c91ebeb3e1607f4",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "b434f1f7a4573ee5a03132f18a28f30aaec8ddc6327950f81aec996414252f60",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "887e317935bbc00cdd3ae1392fedd875121b9f4c10fe3998094ca87e059226ac"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_d33c7809161d2b11b066ff0e\",\n  \"ranked_services\": [\n    \"checkoutservice\",\n    \"frontend\",\n    \"currencyservice\",\n    \"recommendationservice\",\n    \"productcatalogservice\",\n    \"cartservice\",\n    \"shippingservice\",\n    \"adservice\",\n    \"paymentservice\",\n    \"emailservice\"\n  ],\n  \"fault_type\": \"delay\",\n  \"evidence_refs\": [\n    \"ev_f965da0ba0e3510d33fcd0de\",\n    \"ev_56c54b714310d5fdde328f87\",\n    \"ev_bae7f82852979bb0e2665b59\",\n    \"ev_858029217332a0a59c1fad7e\",\n    \"ev_df9bd92bd96705d57d84ed77\",\n    \"ev_ffcfa15883621464310de3f4\"\n  ],\n  \"confidence\": 0.85,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"Inspect checkoutservice latency profiles and downstream dependencies\",\n    \"Check for resource contention in checkoutservice (CPU, memory, locks)\",\n    \"Review currencyservice and frontend latency contributions to checkout path\",\n    \"Correlate workload decrease with latency increase to identify bottleneck\"\n  ]\n}",
+      "raw_response_sha256": "887e317935bbc00cdd3ae1392fedd875121b9f4c10fe3998094ca87e059226ac",
+      "validation_errors": [
+        "too_many_ranked_services",
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    },
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "inspect adservice latency-90 percentile trends and downstream ad provider latency",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "examine checkoutservice latency-90 increase for payment/catalog dependencies",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "review cartservice latency-90 shift for database contention",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "check recommendationservice CPU decrease and latency-50 increase for model inference load",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "verify shippingservice workload drop and minimal latency impact",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "d300bb9a7c0d1525c430c360436d38d32be9dedd25100a436d41ed3ef010e877",
+      "candidate_context": null,
+      "case_id": "p112_d63856f3720630b36cba7e78",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 60457,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "b50e5f8a51b2fdc435025b0c76001bf99cac23498056c2abe03001a30fc2d264",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "d300bb9a7c0d1525c430c360436d38d32be9dedd25100a436d41ed3ef010e877",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "b50e5f8a51b2fdc435025b0c76001bf99cac23498056c2abe03001a30fc2d264",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "e6864d1d7ffb559a349f792dc804df489158d36944335cd68000b9a7bd2a367f"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_d63856f3720630b36cba7e78\",\n  \"ranked_services\": [\n    \"adservice\",\n    \"checkoutservice\",\n    \"cartservice\",\n    \"recommendationservice\",\n    \"shippingservice\"\n  ],\n  \"fault_type\": \"delay\",\n  \"evidence_refs\": [\n    \"ev_e02de9b7e97495a4fe440979\",\n    \"ev_c5721156487ee5bb6f789975\",\n    \"ev_824a37a92837ff9ed55b6aad\",\n    \"ev_f8cc508d5c9b84a4d1c39f9e\",\n    \"ev_62c6a7b196e5c51ae17b56ce\",\n    \"ev_6cc4e9c14225df765e92bee0\",\n    \"ev_d47fc5b67bef33cb5514ca9c\",\n    \"ev_c4299bedad757b0ba3d81614\",\n    \"ev_bb3629ec04e6ddc038c046ba\",\n    \"ev_32a78f1d273b1742f4b2b305\",\n    \"ev_43ecb8ce4b3d0f0d82800754\",\n    \"ev_7d16ca03ddd4578cd1c0f002\",\n    \"ev_cdd7092f1627514802fd5c0f\",\n    \"ev_5835fd9e011498f9b80a47fc\",\n    \"ev_ae0ca484efc32997fa13de18\",\n    \"ev_d7ae20a75e283fa5829c0bdb\",\n    \"ev_924083dea63f2b6e1d150fa2\",\n    \"ev_506b0d611b797a87c54b6459\",\n    \"ev_643b9ce545814b41c5acdf6e\",\n    \"ev_1fa44fdd254ed4ed7488bbeb\"\n  ],\n  \"confidence\": 0.75,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect adservice latency-90 percentile trends and downstream ad provider latency\",\n    \"examine checkoutservice latency-90 increase for payment/catalog dependencies\",\n    \"review cartservice latency-90 shift for database contention\",\n    \"check recommendationservice CPU decrease and latency-50 increase for model inference load\",\n    \"verify shippingservice workload drop and minimal latency impact\"\n  ]\n}",
+      "raw_response_sha256": "e6864d1d7ffb559a349f792dc804df489158d36944335cd68000b9a7bd2a367f",
+      "validation_errors": [
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    },
+    {
+      "abstain": false,
+      "advisory_action_risk": [
+        {
+          "action": "inspect checkoutservice latency-90 increase",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "inspect frontend latency-90 increase",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "inspect adservice latency-50 increase",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "advisory_actions": [
+        "inspect checkoutservice latency-90 increase",
+        "inspect frontend latency-90 increase",
+        "inspect adservice latency-50 increase"
+      ],
+      "cache_key": "7f0534b32d87ce98911c7c829b3edc0b4e364dedaa4aa0ace8b1e507da712066",
+      "candidate_context": {
+        "case_id": "p112_df015924facfd22ddd91fbac",
+        "diagnostic_evidence": [
+          {
+            "absolute_score": 100.0,
+            "evidence_id": "ev_b8e37590c5653224b9bd92ec",
+            "metric": "latency-50",
+            "post_center": 0.001543683045,
+            "pre_center": 0.000338441204,
+            "sample_count": 721,
+            "service": "adservice",
+            "signed_score": 100.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 100.0,
+            "evidence_id": "ev_4884ff905ad9ed6252507f71",
+            "metric": "latency-90",
+            "post_center": 0.243125,
+            "pre_center": 0.043390507519,
+            "sample_count": 721,
+            "service": "checkoutservice",
+            "signed_score": 100.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 66.816467713669,
+            "evidence_id": "ev_ffaab717aab104ed06070793",
+            "metric": "latency-50",
+            "post_center": 0.073091076357,
+            "pre_center": 0.021835016835,
+            "sample_count": 721,
+            "service": "frontend",
+            "signed_score": 66.816467713669,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 24.112921074185,
+            "evidence_id": "ev_fa0f68454807fe0418cdddeb",
+            "metric": "latency-90",
+            "post_center": 0.439950678175,
+            "pre_center": 0.085929118774,
+            "sample_count": 721,
+            "service": "frontend",
+            "signed_score": 24.112921074185,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 21.202774833395,
+            "evidence_id": "ev_c94a36e6bc4463d0202bf7c8",
+            "metric": "latency-50",
+            "post_center": 0.000469784484,
+            "pre_center": 0.000314977821,
+            "sample_count": 721,
+            "service": "productcatalogservice",
+            "signed_score": 21.202774833395,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 9.804655649176,
+            "evidence_id": "ev_71b98b9ffc9b19a31627c936",
+            "metric": "cpu",
+            "post_center": 11.66601691272,
+            "pre_center": 14.576096029521,
+            "sample_count": 721,
+            "service": "frontend",
+            "signed_score": -9.804655649176,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 9.676381590586,
+            "evidence_id": "ev_251dad0370f37743fe9b60de",
+            "metric": "latency-50",
+            "post_center": 0.025,
+            "pre_center": 0.021148648649,
+            "sample_count": 721,
+            "service": "checkoutservice",
+            "signed_score": 9.676381590586,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 8.536897052051,
+            "evidence_id": "ev_9c9aa992ca4e797776acc097",
+            "metric": "latency-90",
+            "post_center": 0.004780383733,
+            "pre_center": 0.003129489986,
+            "sample_count": 721,
+            "service": "productcatalogservice",
+            "signed_score": 8.536897052051,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 7.101647419548,
+            "evidence_id": "ev_9f8b2b43093b13094757f6c5",
+            "metric": "cpu",
+            "post_center": 5.813067668931,
+            "pre_center": 6.977808923957,
+            "sample_count": 721,
+            "service": "productcatalogservice",
+            "signed_score": -7.101647419548,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 6.332116153234,
+            "evidence_id": "ev_9dadd8881b5f1146faf27b3b",
+            "metric": "latency-50",
+            "post_center": 0.000455825243,
+            "pre_center": 0.000398282098,
+            "sample_count": 721,
+            "service": "shippingservice",
+            "signed_score": 6.332116153234,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 5.790460013471,
+            "evidence_id": "ev_02034456dfaa8fb8b80ccdc4",
+            "metric": "latency-90",
+            "post_center": 0.004417148869,
+            "pre_center": 0.00353617873,
+            "sample_count": 721,
+            "service": "adservice",
+            "signed_score": 5.790460013471,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 4.638731376088,
+            "evidence_id": "ev_3b8790de5a69dd515be1aafe",
+            "metric": "latency-90",
+            "post_center": 0.004133416771,
+            "pre_center": 0.003936313963,
+            "sample_count": 721,
+            "service": "shippingservice",
+            "signed_score": 4.638731376088,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 3.624263680921,
+            "evidence_id": "ev_602aaafcf300ea51894a26e5",
+            "metric": "mem",
+            "post_center": 20008960.0,
+            "pre_center": 21659648.0,
+            "sample_count": 721,
+            "service": "frontend",
+            "signed_score": -3.624263680921,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 2.096306874764,
+            "evidence_id": "ev_f1151d40f87eb4dc2da8bb4d",
+            "metric": "cpu",
+            "post_center": 0.851348384154,
+            "pre_center": 0.908888229209,
+            "sample_count": 721,
+            "service": "shippingservice",
+            "signed_score": -2.096306874764,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 1.074704500875,
+            "evidence_id": "ev_dc162c28a8cc4dbfcfb0a2e4",
+            "metric": "cpu",
+            "post_center": 1.004236839035,
+            "pre_center": 1.026061008222,
+            "sample_count": 721,
+            "service": "adservice",
+            "signed_score": -1.074704500875,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.352112676056,
+            "evidence_id": "ev_5f95caf71acb59a773b61aeb",
+            "metric": "mem",
+            "post_center": 97370112.0,
+            "pre_center": 97714176.0,
+            "sample_count": 721,
+            "service": "adservice",
+            "signed_score": -0.352112676056,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.341997264022,
+            "evidence_id": "ev_0f5ae6552ecf79387f51185e",
+            "metric": "mem",
+            "post_center": 12017664.0,
+            "pre_center": 11976704.0,
+            "sample_count": 721,
+            "service": "productcatalogservice",
+            "signed_score": 0.341997264022,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.337245379738,
+            "evidence_id": "ev_3f6c828e03a2e268e54514d7",
+            "metric": "mem",
+            "post_center": 9105408.0,
+            "pre_center": 9142272.0,
+            "sample_count": 721,
+            "service": "shippingservice",
+            "signed_score": -0.337245379738,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.202347227843,
+            "evidence_id": "ev_25f4dc8f516bae9855a64eee",
+            "metric": "mem",
+            "post_center": 14118912.0,
+            "pre_center": 14155776.0,
+            "sample_count": 721,
+            "service": "checkoutservice",
+            "signed_score": -0.202347227843,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.106982672435,
+            "evidence_id": "ev_ac8474ccf3ef779645a0dd95",
+            "metric": "cpu",
+            "post_center": 0.891822803562,
+            "pre_center": 0.884494133464,
+            "sample_count": 721,
+            "service": "checkoutservice",
+            "signed_score": 0.106982672435,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.092500134895,
+            "evidence_id": "ev_fd8b723351885218d54582c5",
+            "metric": "workload",
+            "post_center": 28.0,
+            "pre_center": 29.2715,
+            "sample_count": 721,
+            "service": "shippingservice",
+            "signed_score": -0.092500134895,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.025390681529,
+            "evidence_id": "ev_0cf3dc1189d65e74b10cad92",
+            "metric": "workload",
+            "post_center": 558.0,
+            "pre_center": 562.0,
+            "sample_count": 721,
+            "service": "productcatalogservice",
+            "signed_score": -0.025390681529,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.0,
+            "evidence_id": "ev_441aa76132f2abdf86e6a727",
+            "metric": "error",
+            "post_center": 0.0,
+            "pre_center": 0.0,
+            "sample_count": 721,
+            "service": "adservice",
+            "signed_score": 0.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.0,
+            "evidence_id": "ev_9dad788d7081b8d1829e81e7",
+            "metric": "workload",
+            "post_center": 58.0,
+            "pre_center": 58.0,
+            "sample_count": 721,
+            "service": "adservice",
+            "signed_score": 0.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.0,
+            "evidence_id": "ev_f28fcb6988121f28c1d5d3bd",
+            "metric": "workload",
+            "post_center": 4.0,
+            "pre_center": 4.0,
+            "sample_count": 721,
+            "service": "checkoutservice",
+            "signed_score": 0.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.0,
+            "evidence_id": "ev_7e1f7526895413da5f73306a",
+            "metric": "error",
+            "post_center": 0.0,
+            "pre_center": 0.0,
+            "sample_count": 721,
+            "service": "frontend",
+            "signed_score": 0.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.0,
+            "evidence_id": "ev_5f0ae5e4bb441b4c148d086c",
+            "metric": "workload",
+            "post_center": 50.0,
+            "pre_center": 50.0,
+            "sample_count": 721,
+            "service": "frontend",
+            "signed_score": 0.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          },
+          {
+            "absolute_score": 0.0,
+            "evidence_id": "ev_18ec616d0d0d44a2be18354b",
+            "metric": "error",
+            "post_center": 0.0,
+            "pre_center": 0.0,
+            "sample_count": 721,
+            "service": "productcatalogservice",
+            "signed_score": 0.0,
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "robust_post_shift"
+          }
+        ],
+        "evidence": [
+          {
+            "id": "ev_4a3aba3c2c74a7e7b27639d6",
+            "metric": "cpu",
+            "sample_count": 721,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -0.006962,
+            "window": "delta"
+          },
+          {
+            "id": "ev_880c28ca4c9f474e7517321f",
+            "metric": "cpu",
+            "sample_count": 361,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 1.009613,
+            "window": "post"
+          },
+          {
+            "id": "ev_1d0fd29551182b2dea3cbfbe",
+            "metric": "cpu",
+            "sample_count": 360,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 1.016575,
+            "window": "pre"
+          },
+          {
+            "id": "ev_7af849503840683f2b58bec4",
+            "metric": "latency-50",
+            "sample_count": 721,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.001038,
+            "window": "delta"
+          },
+          {
+            "id": "ev_5472f5225ce9cdf176f3edc1",
+            "metric": "latency-50",
+            "sample_count": 361,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.001378,
+            "window": "post"
+          },
+          {
+            "id": "ev_753a7b012bc2a52c03d75847",
+            "metric": "latency-50",
+            "sample_count": 360,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.00034,
+            "window": "pre"
+          },
+          {
+            "id": "ev_6dcce6bbed677421d0467866",
+            "metric": "latency-90",
+            "sample_count": 721,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.000851,
+            "window": "delta"
+          },
+          {
+            "id": "ev_ec4b786ca56920112ec4eb48",
+            "metric": "latency-90",
+            "sample_count": 361,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.004384,
+            "window": "post"
+          },
+          {
+            "id": "ev_214fa0526db752d6e1b0f48b",
+            "metric": "latency-90",
+            "sample_count": 360,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.003533,
+            "window": "pre"
+          },
+          {
+            "id": "ev_05f455094d3aa7243f4c41d7",
+            "metric": "mem",
+            "sample_count": 721,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -313665.130687,
+            "window": "delta"
+          },
+          {
+            "id": "ev_2c39985ab054c1562ffb3803",
+            "metric": "mem",
+            "sample_count": 361,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 97411991.047091,
+            "window": "post"
+          },
+          {
+            "id": "ev_e578998827bc311732b0ae3a",
+            "metric": "mem",
+            "sample_count": 360,
+            "service": "adservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 97725656.177778,
+            "window": "pre"
+          },
+          {
+            "id": "ev_c2aba49ed207982fb229a731",
+            "metric": "cpu",
+            "sample_count": 721,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.015285,
+            "window": "delta"
+          },
+          {
+            "id": "ev_d655b58367c822241c55562d",
+            "metric": "cpu",
+            "sample_count": 361,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.897212,
+            "window": "post"
+          },
+          {
+            "id": "ev_a55fe4e241920f5acf565373",
+            "metric": "cpu",
+            "sample_count": 360,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.881927,
+            "window": "pre"
+          },
+          {
+            "id": "ev_773b83696b8a53ad4a7c6adc",
+            "metric": "latency-50",
+            "sample_count": 721,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.004611,
+            "window": "delta"
+          },
+          {
+            "id": "ev_6019ec2571679ad7bc01fb9e",
+            "metric": "latency-50",
+            "sample_count": 361,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.0259,
+            "window": "post"
+          },
+          {
+            "id": "ev_8e26a3bfaec970ef5943f984",
+            "metric": "latency-50",
+            "sample_count": 360,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.021289,
+            "window": "pre"
+          },
+          {
+            "id": "ev_a959f0fb07a6bb91b0a3d592",
+            "metric": "latency-90",
+            "sample_count": 721,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.217519,
+            "window": "delta"
+          },
+          {
+            "id": "ev_983214af586bffe1f83c542e",
+            "metric": "latency-90",
+            "sample_count": 361,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.261224,
+            "window": "post"
+          },
+          {
+            "id": "ev_c507bdfe8e89912b0c4f8eae",
+            "metric": "latency-90",
+            "sample_count": 360,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.043705,
+            "window": "pre"
+          },
+          {
+            "id": "ev_529a231204e4ff161b5080e7",
+            "metric": "mem",
+            "sample_count": 721,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -47136.336842,
+            "window": "delta"
+          },
+          {
+            "id": "ev_60bfe1f491aef13181b78d23",
+            "metric": "mem",
+            "sample_count": 361,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 14146937.263158,
+            "window": "post"
+          },
+          {
+            "id": "ev_02e623aa9172494c0c0251f0",
+            "metric": "mem",
+            "sample_count": 360,
+            "service": "checkoutservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 14194073.6,
+            "window": "pre"
+          },
+          {
+            "id": "ev_f51fc6ae4ee66d22fabd10d2",
+            "metric": "cpu",
+            "sample_count": 721,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -2.587994,
+            "window": "delta"
+          },
+          {
+            "id": "ev_eff62ba3891842f1c20c437e",
+            "metric": "cpu",
+            "sample_count": 361,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 11.672069,
+            "window": "post"
+          },
+          {
+            "id": "ev_de726d67b5659fba593ac19f",
+            "metric": "cpu",
+            "sample_count": 360,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 14.260063,
+            "window": "pre"
+          },
+          {
+            "id": "ev_8b65ae9f0692a67df8b579fc",
+            "metric": "latency-50",
+            "sample_count": 721,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.048114,
+            "window": "delta"
+          },
+          {
+            "id": "ev_ad2962d0cf48fc3c269a431e",
+            "metric": "latency-50",
+            "sample_count": 361,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.070099,
+            "window": "post"
+          },
+          {
+            "id": "ev_022b04ec7d5606f7c44ef6e0",
+            "metric": "latency-50",
+            "sample_count": 360,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.021985,
+            "window": "pre"
+          },
+          {
+            "id": "ev_f30b53e1fb4cd0d3896ef894",
+            "metric": "latency-90",
+            "sample_count": 721,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.365863,
+            "window": "delta"
+          },
+          {
+            "id": "ev_c3108a60c040a57ac44990ad",
+            "metric": "latency-90",
+            "sample_count": 361,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.454534,
+            "window": "post"
+          },
+          {
+            "id": "ev_d2ba456fcbdf39508cd72586",
+            "metric": "latency-90",
+            "sample_count": 360,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.088671,
+            "window": "pre"
+          },
+          {
+            "id": "ev_80c373dd1198e58194fc1f5a",
+            "metric": "mem",
+            "sample_count": 721,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -1204509.074792,
+            "window": "delta"
+          },
+          {
+            "id": "ev_f217de21000551e485fa7ec2",
+            "metric": "mem",
+            "sample_count": 361,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 20500706.925208,
+            "window": "post"
+          },
+          {
+            "id": "ev_b1c183eaa2a518893d45e992",
+            "metric": "mem",
+            "sample_count": 360,
+            "service": "frontend",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 21705216.0,
+            "window": "pre"
+          },
+          {
+            "id": "ev_ce43a9e72b27dd83271eaeea",
+            "metric": "cpu",
+            "sample_count": 721,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -0.962595,
+            "window": "delta"
+          },
+          {
+            "id": "ev_c42dcf508c31f68203a07227",
+            "metric": "cpu",
+            "sample_count": 361,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 5.895566,
+            "window": "post"
+          },
+          {
+            "id": "ev_b0e325602c73b7a0d7fb3c94",
+            "metric": "cpu",
+            "sample_count": 360,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 6.858161,
+            "window": "pre"
+          },
+          {
+            "id": "ev_95712114935eee2307e82b90",
+            "metric": "latency-50",
+            "sample_count": 721,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.0002,
+            "window": "delta"
+          },
+          {
+            "id": "ev_59c06ab2bb6e631f95292292",
+            "metric": "latency-50",
+            "sample_count": 361,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.000515,
+            "window": "post"
+          },
+          {
+            "id": "ev_f99d09ac7b9a1abc611ea8f1",
+            "metric": "latency-50",
+            "sample_count": 360,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.000315,
+            "window": "pre"
+          },
+          {
+            "id": "ev_892b22bd075b4277cbe39e3b",
+            "metric": "latency-90",
+            "sample_count": 721,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.001585,
+            "window": "delta"
+          },
+          {
+            "id": "ev_a784d37f3881712a294ba279",
+            "metric": "latency-90",
+            "sample_count": 361,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.004702,
+            "window": "post"
+          },
+          {
+            "id": "ev_cfe972915e9f307e77f2ac40",
+            "metric": "latency-90",
+            "sample_count": 360,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.003117,
+            "window": "pre"
+          },
+          {
+            "id": "ev_4c19ad592ac8ed2b2084e3f6",
+            "metric": "mem",
+            "sample_count": 721,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 760459.59052,
+            "window": "delta"
+          },
+          {
+            "id": "ev_2f6688f07ef0c665e50f965c",
+            "metric": "mem",
+            "sample_count": 361,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 12770227.412742,
+            "window": "post"
+          },
+          {
+            "id": "ev_9e6fa2c9a4709cf8cd17a97e",
+            "metric": "mem",
+            "sample_count": 360,
+            "service": "productcatalogservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 12009767.822222,
+            "window": "pre"
+          },
+          {
+            "id": "ev_0fab5ebf1b889ea2658b9510",
+            "metric": "cpu",
+            "sample_count": 721,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -0.056759,
+            "window": "delta"
+          },
+          {
+            "id": "ev_ad08cacf5fc92551df00fe16",
+            "metric": "cpu",
+            "sample_count": 361,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.840254,
+            "window": "post"
+          },
+          {
+            "id": "ev_bf265c9cfcbe2b95f525985f",
+            "metric": "cpu",
+            "sample_count": 360,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.897013,
+            "window": "pre"
+          },
+          {
+            "id": "ev_c44f1b87fe62dd8dffc04fea",
+            "metric": "latency-50",
+            "sample_count": 721,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 5.5e-05,
+            "window": "delta"
+          },
+          {
+            "id": "ev_5029ce6901f1e91281cbf4a3",
+            "metric": "latency-50",
+            "sample_count": 361,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.000453,
+            "window": "post"
+          },
+          {
+            "id": "ev_ca3d5f7717b768137dd50740",
+            "metric": "latency-50",
+            "sample_count": 360,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.000398,
+            "window": "pre"
+          },
+          {
+            "id": "ev_ed6d7473b694cc4471ca188d",
+            "metric": "latency-90",
+            "sample_count": 721,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": 0.000195,
+            "window": "delta"
+          },
+          {
+            "id": "ev_500fb17fa82997f7959e3f54",
+            "metric": "latency-90",
+            "sample_count": 361,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.004129,
+            "window": "post"
+          },
+          {
+            "id": "ev_ed068f7b91f9cf7989eb59ba",
+            "metric": "latency-90",
+            "sample_count": 360,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 0.003934,
+            "window": "pre"
+          },
+          {
+            "id": "ev_08e92aaa89e53d1945f4655e",
+            "metric": "mem",
+            "sample_count": 721,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "post_minus_pre_mean",
+            "value": -29987.220684,
+            "window": "delta"
+          },
+          {
+            "id": "ev_534774fa9182577425139e39",
+            "metric": "mem",
+            "sample_count": 361,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 9140615.445983,
+            "window": "post"
+          },
+          {
+            "id": "ev_672e976ae195a201695df250",
+            "metric": "mem",
+            "sample_count": 360,
+            "service": "shippingservice",
+            "source_binding": {
+              "raw_path_token": "metric_source",
+              "raw_sha256": "549582989f1f663d259d34b536de5a44d611477a43db72fd71ab2a1a04d0de25"
+            },
+            "statistic": "mean",
+            "value": 9170602.666667,
+            "window": "pre"
+          }
+        ],
+        "evidence_ids": [
+          "ev_4a3aba3c2c74a7e7b27639d6",
+          "ev_880c28ca4c9f474e7517321f",
+          "ev_1d0fd29551182b2dea3cbfbe",
+          "ev_7af849503840683f2b58bec4",
+          "ev_5472f5225ce9cdf176f3edc1",
+          "ev_753a7b012bc2a52c03d75847",
+          "ev_6dcce6bbed677421d0467866",
+          "ev_ec4b786ca56920112ec4eb48",
+          "ev_214fa0526db752d6e1b0f48b",
+          "ev_05f455094d3aa7243f4c41d7",
+          "ev_2c39985ab054c1562ffb3803",
+          "ev_e578998827bc311732b0ae3a",
+          "ev_c2aba49ed207982fb229a731",
+          "ev_d655b58367c822241c55562d",
+          "ev_a55fe4e241920f5acf565373",
+          "ev_773b83696b8a53ad4a7c6adc",
+          "ev_6019ec2571679ad7bc01fb9e",
+          "ev_8e26a3bfaec970ef5943f984",
+          "ev_a959f0fb07a6bb91b0a3d592",
+          "ev_983214af586bffe1f83c542e",
+          "ev_c507bdfe8e89912b0c4f8eae",
+          "ev_529a231204e4ff161b5080e7",
+          "ev_60bfe1f491aef13181b78d23",
+          "ev_02e623aa9172494c0c0251f0",
+          "ev_f51fc6ae4ee66d22fabd10d2",
+          "ev_eff62ba3891842f1c20c437e",
+          "ev_de726d67b5659fba593ac19f",
+          "ev_8b65ae9f0692a67df8b579fc",
+          "ev_ad2962d0cf48fc3c269a431e",
+          "ev_022b04ec7d5606f7c44ef6e0",
+          "ev_f30b53e1fb4cd0d3896ef894",
+          "ev_c3108a60c040a57ac44990ad",
+          "ev_d2ba456fcbdf39508cd72586",
+          "ev_80c373dd1198e58194fc1f5a",
+          "ev_f217de21000551e485fa7ec2",
+          "ev_b1c183eaa2a518893d45e992",
+          "ev_ce43a9e72b27dd83271eaeea",
+          "ev_c42dcf508c31f68203a07227",
+          "ev_b0e325602c73b7a0d7fb3c94",
+          "ev_95712114935eee2307e82b90",
+          "ev_59c06ab2bb6e631f95292292",
+          "ev_f99d09ac7b9a1abc611ea8f1",
+          "ev_892b22bd075b4277cbe39e3b",
+          "ev_a784d37f3881712a294ba279",
+          "ev_cfe972915e9f307e77f2ac40",
+          "ev_4c19ad592ac8ed2b2084e3f6",
+          "ev_2f6688f07ef0c665e50f965c",
+          "ev_9e6fa2c9a4709cf8cd17a97e",
+          "ev_0fab5ebf1b889ea2658b9510",
+          "ev_ad08cacf5fc92551df00fe16",
+          "ev_bf265c9cfcbe2b95f525985f",
+          "ev_c44f1b87fe62dd8dffc04fea",
+          "ev_5029ce6901f1e91281cbf4a3",
+          "ev_ca3d5f7717b768137dd50740",
+          "ev_ed6d7473b694cc4471ca188d",
+          "ev_500fb17fa82997f7959e3f54",
+          "ev_ed068f7b91f9cf7989eb59ba",
+          "ev_08e92aaa89e53d1945f4655e",
+          "ev_534774fa9182577425139e39",
+          "ev_672e976ae195a201695df250"
+        ],
+        "fault_allowlist": [
+          "cpu",
+          "mem",
+          "disk",
+          "delay",
+          "loss"
+        ],
+        "hashes": {
+          "model_artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+          "source_packet_hash": "sha256:a242909bcea4814d1716c603e7ae7b4a876b49e3ac4bf993ccbe2e5226226c49"
+        },
+        "model_scores": {
+          "artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+          "ranked_faults": [
+            "loss",
+            "delay",
+            "disk",
+            "mem",
+            "cpu"
+          ],
+          "ranked_pairs": [
+            {
+              "fault": "loss",
+              "score": 0.336536776357,
+              "service": "productcatalogservice"
+            },
+            {
+              "fault": "loss",
+              "score": 4.437481743441,
+              "service": "adservice"
+            },
+            {
+              "fault": "loss",
+              "score": 4.859007656958,
+              "service": "checkoutservice"
+            },
+            {
+              "fault": "delay",
+              "score": 5.18724893332,
+              "service": "adservice"
+            },
+            {
+              "fault": "loss",
+              "score": 7.380241085111,
+              "service": "frontend"
+            },
+            {
+              "fault": "delay",
+              "score": 7.624058953733,
+              "service": "checkoutservice"
+            },
+            {
+              "fault": "delay",
+              "score": 8.669666553906,
+              "service": "frontend"
+            },
+            {
+              "fault": "loss",
+              "score": 11.344790773017,
+              "service": "shippingservice"
+            },
+            {
+              "fault": "delay",
+              "score": 11.534099243165,
+              "service": "productcatalogservice"
+            },
+            {
+              "fault": "loss",
+              "score": 11.59388649391,
+              "service": "currencyservice"
+            },
+            {
+              "fault": "loss",
+              "score": 12.196935549599,
+              "service": "cartservice"
+            },
+            {
+              "fault": "disk",
+              "score": 14.905132391959,
+              "service": "recommendationservice"
+            },
+            {
+              "fault": "loss",
+              "score": 20.524642145266,
+              "service": "recommendationservice"
+            },
+            {
+              "fault": "mem",
+              "score": 20.623868712331,
+              "service": "recommendationservice"
+            },
+            {
+              "fault": "cpu",
+              "score": 22.416674981275,
+              "service": "paymentservice"
+            }
+          ],
+          "ranked_services": [
+            "productcatalogservice",
+            "adservice",
+            "checkoutservice",
+            "frontend",
+            "shippingservice",
+            "currencyservice",
+            "cartservice",
+            "recommendationservice",
+            "paymentservice",
+            "emailservice"
+          ],
+          "schema_version": "p112.cross_system_scores.v1"
+        },
+        "packet_hash": "sha256:47acbfc38ab29cc39440d0e3f82723df94729127d3a7b12fc15e5ba4adf6115b",
+        "prompt_hash": "sha256:fe9fc7ebda6075720e241a9376810c568419d4ac996e90ed9fb69f5a5836d320",
+        "schema_version": "p112.multistage_rca_packet.v1",
+        "service_allowlist": [
+          "productcatalogservice",
+          "adservice",
+          "checkoutservice",
+          "frontend",
+          "shippingservice",
+          "currencyservice",
+          "cartservice",
+          "recommendationservice",
+          "paymentservice",
+          "emailservice"
+        ],
+        "system_id": "online_boutique"
+      },
+      "case_id": "p112_df015924facfd22ddd91fbac",
+      "confidence": 0.85,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [
+        "ev_a959f0fb07a6bb91b0a3d592",
+        "ev_f30b53e1fb4cd0d3896ef894",
+        "ev_8b65ae9f0692a67df8b579fc",
+        "ev_7af849503840683f2b58bec4",
+        "ev_6dcce6bbed677421d0467866"
+      ],
+      "executed_actions": [],
+      "fault_type": "loss",
+      "latency_ms": 32480,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "10b4e4808cfc3fef59503bff63021652edbaca45df19b4ff5d9ed8e5889a040f",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "7f0534b32d87ce98911c7c829b3edc0b4e364dedaa4aa0ace8b1e507da712066",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "10b4e4808cfc3fef59503bff63021652edbaca45df19b4ff5d9ed8e5889a040f",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "a7ce66443dcb308936b36f65597d46c0c8080feb7928cf43f84cc184c68108b9"
+      },
+      "provider_stage": {
+        "parsed_fault_type": "delay",
+        "parsed_ranked_services": [
+          "checkoutservice",
+          "frontend",
+          "adservice",
+          "productcatalogservice",
+          "shippingservice"
+        ],
+        "raw_response": "{\n  \"case_id\": \"p112_df015924facfd22ddd91fbac\",\n  \"ranked_services\": [\n    \"checkoutservice\",\n    \"frontend\",\n    \"adservice\",\n    \"productcatalogservice\",\n    \"shippingservice\"\n  ],\n  \"fault_type\": \"delay\",\n  \"evidence_refs\": [\n    \"ev_a959f0fb07a6bb91b0a3d592\",\n    \"ev_f30b53e1fb4cd0d3896ef894\",\n    \"ev_8b65ae9f0692a67df8b579fc\",\n    \"ev_7af849503840683f2b58bec4\",\n    \"ev_6dcce6bbed677421d0467866\"\n  ],\n  \"confidence\": 0.85,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect checkoutservice latency-90 increase\",\n    \"inspect frontend latency-90 increase\",\n    \"inspect adservice latency-50 increase\"\n  ]\n}",
+        "raw_response_sha256": "fe33ec3d3ec91c9e6d6532d950ff896e6cd3d2b38371ffcd0f8cd4a2515592da"
+      },
+      "ranked_services": [
+        "productcatalogservice",
+        "adservice",
+        "checkoutservice",
+        "frontend",
+        "shippingservice"
+      ],
+      "raw_response": "{\"abstain\":false,\"advisory_actions\":[\"inspect checkoutservice latency-90 increase\",\"inspect frontend latency-90 increase\",\"inspect adservice latency-50 increase\"],\"case_id\":\"p112_df015924facfd22ddd91fbac\",\"confidence\":0.85,\"evidence_refs\":[\"ev_a959f0fb07a6bb91b0a3d592\",\"ev_f30b53e1fb4cd0d3896ef894\",\"ev_8b65ae9f0692a67df8b579fc\",\"ev_7af849503840683f2b58bec4\",\"ev_6dcce6bbed677421d0467866\"],\"fault_type\":\"loss\",\"ranked_services\":[\"productcatalogservice\",\"adservice\",\"checkoutservice\",\"frontend\",\"shippingservice\"]}",
+      "raw_response_sha256": "a7ce66443dcb308936b36f65597d46c0c8080feb7928cf43f84cc184c68108b9",
+      "synthesis": {
+        "model_artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+        "ranked_faults": [
+          "loss",
+          "delay",
+          "disk",
+          "mem",
+          "cpu"
+        ],
+        "ranked_services": [
+          "productcatalogservice",
+          "adservice",
+          "checkoutservice",
+          "frontend",
+          "shippingservice"
+        ],
+        "response_origin": "deterministic_synthesis",
+        "schema_version": "p112.deterministic_synthesis.v1",
+        "selected_fault": "loss",
+        "selected_service": "productcatalogservice"
+      },
+      "validation_errors": [],
+      "validation_status": "valid"
+    },
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "Inspect cartservice downstream dependencies (e.g., Redis) for latency spikes",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "Check checkoutservice thread pool and database connection pool saturation",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "Examine frontend request routing and backend service call timeouts",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "Review network latency and packet loss between services",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "Correlate with deployment events or configuration changes",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "2bc046441f42493c6ce0787bf644719f62334f7992df26a5c8435bf44f417e5e",
+      "candidate_context": null,
+      "case_id": "p112_e7f169eed89a75259d4ff32b",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 21243,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "0a2f68bd8bcefad40466f2d05f7d7557739959b92e5edf0c5b55c7677b066d0b",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "2bc046441f42493c6ce0787bf644719f62334f7992df26a5c8435bf44f417e5e",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "0a2f68bd8bcefad40466f2d05f7d7557739959b92e5edf0c5b55c7677b066d0b",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "b713f0ead9fbfbd2d9b4b44d0e8181e97882fa9072dd449918761afc5a049b25"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_e7f169eed89a75259d4ff32b\",\n  \"ranked_services\": [\n    \"cartservice\",\n    \"checkoutservice\",\n    \"frontend\"\n  ],\n  \"fault_type\": \"delay\",\n  \"evidence_refs\": [\n    \"ev_fe2381ce493bf841d097f067\",\n    \"ev_3b3e8e062ced8685f06284b5\",\n    \"ev_d013a454d84bedd4532fdf08\",\n    \"ev_354a565f5b753332dfedb84e\",\n    \"ev_b60e8fc37d60bbd84d68f7c1\",\n    \"ev_6726b52a24d00823043104c0\"\n  ],\n  \"confidence\": 0.92,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"Inspect cartservice downstream dependencies (e.g., Redis) for latency spikes\",\n    \"Check checkoutservice thread pool and database connection pool saturation\",\n    \"Examine frontend request routing and backend service call timeouts\",\n    \"Review network latency and packet loss between services\",\n    \"Correlate with deployment events or configuration changes\"\n  ]\n}",
+      "raw_response_sha256": "b713f0ead9fbfbd2d9b4b44d0e8181e97882fa9072dd449918761afc5a049b25",
+      "validation_errors": [
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    },
+    {
+      "abstain": true,
+      "advisory_action_risk": [
+        {
+          "action": "inspect adservice CPU usage and thread dumps for signs of contention or infinite loops",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "review recent code changes or configuration updates to adservice that could cause CPU spikes",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "check for garbage collection pressure in adservice given concurrent memory increase",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "correlate adservice latency-90 increase with CPU saturation to confirm causality",
+          "execution": "not_executed",
+          "risk": "low"
+        },
+        {
+          "action": "monitor emailservice and cartservice for similar CPU/latency patterns as secondary impacts",
+          "execution": "not_executed",
+          "risk": "low"
+        }
+      ],
+      "cache_key": "89f0e1a69ef0cf44863502b6318cc01f3aa62193902950384ff858aa9e338827",
+      "candidate_context": null,
+      "case_id": "p112_fe805878e613b5921b228acc",
+      "confidence": 0.0,
+      "decoding_config": {
+        "enable_thinking": true,
+        "max_tokens": 16384,
+        "provider_api": "openai-chat-completions-v1",
+        "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+        "reasoning_budget": 16384,
+        "stream": true,
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "evidence_refs": [],
+      "executed_actions": [],
+      "fault_type": null,
+      "latency_ms": 21174,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "packet_sha256": "567c4b92ba6568bd7c03689022d1a0de67ca3e57674775222b22eedaa7d40b5e",
+      "prompt_schema_version": "p112.localization_prompt.v1",
+      "provenance": {
+        "cache_key": "89f0e1a69ef0cf44863502b6318cc01f3aa62193902950384ff858aa9e338827",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "567c4b92ba6568bd7c03689022d1a0de67ca3e57674775222b22eedaa7d40b5e",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "1ea406bf2ef6eaa2edd624c3c97155a842b082dd4c5730197ed51f1ce4baf875"
+      },
+      "ranked_services": [],
+      "raw_response": "{\n  \"case_id\": \"p112_fe805878e613b5921b228acc\",\n  \"ranked_services\": [\n    \"adservice\",\n    \"emailservice\",\n    \"cartservice\",\n    \"checkoutservice\",\n    \"paymentservice\"\n  ],\n  \"fault_type\": \"cpu\",\n  \"evidence_refs\": [\n    \"ev_c7e90085607e10961922fe15\",\n    \"ev_ea79fbde4af49e013cd3c8ad\",\n    \"ev_6b624389a31b5567151b1132\",\n    \"ev_8a1790ed185993bd61fc8489\",\n    \"ev_44fc81c6fb801dee33de691f\",\n    \"ev_2f2aa0c0a1f53d8b141914ab\"\n  ],\n  \"confidence\": 0.85,\n  \"abstain\": false,\n  \"advisory_actions\": [\n    \"inspect adservice CPU usage and thread dumps for signs of contention or infinite loops\",\n    \"review recent code changes or configuration updates to adservice that could cause CPU spikes\",\n    \"check for garbage collection pressure in adservice given concurrent memory increase\",\n    \"correlate adservice latency-90 increase with CPU saturation to confirm causality\",\n    \"monitor emailservice and cartservice for similar CPU/latency patterns as secondary impacts\"\n  ]\n}",
+      "raw_response_sha256": "1ea406bf2ef6eaa2edd624c3c97155a842b082dd4c5730197ed51f1ce4baf875",
+      "validation_errors": [
+        "too_many_advisory_actions"
+      ],
+      "validation_status": "fail_closed"
+    }
+  ],
+  "provenance": {
+    "decoding_config": {
+      "enable_thinking": true,
+      "max_tokens": 16384,
+      "provider_api": "openai-chat-completions-v1",
+      "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+      "reasoning_budget": 16384,
+      "stream": true,
+      "temperature": 1.0,
+      "top_p": 0.95
+    },
+    "model": "nvidia/nemotron-3-ultra-550b-a55b",
+    "model_artifact_hash": "sha256:986b5f4ef4d36ed8bae54d4f3d18b1c84035447c8a4d7937ebfb4bb92f1a333f",
+    "prediction_cache_keys": [
+      "4f035739cc312b4de1e4cd7aad894297af1a3294cf2f45095c91ebeb3e1607f4",
+      "d300bb9a7c0d1525c430c360436d38d32be9dedd25100a436d41ed3ef010e877",
+      "7f0534b32d87ce98911c7c829b3edc0b4e364dedaa4aa0ace8b1e507da712066",
+      "2bc046441f42493c6ce0787bf644719f62334f7992df26a5c8435bf44f417e5e",
+      "89f0e1a69ef0cf44863502b6318cc01f3aa62193902950384ff858aa9e338827"
+    ],
+    "prediction_count": 5,
+    "prediction_provenance": [
+      {
+        "cache_key": "4f035739cc312b4de1e4cd7aad894297af1a3294cf2f45095c91ebeb3e1607f4",
+        "case_id": "p112_d33c7809161d2b11b066ff0e",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "b434f1f7a4573ee5a03132f18a28f30aaec8ddc6327950f81aec996414252f60",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "887e317935bbc00cdd3ae1392fedd875121b9f4c10fe3998094ca87e059226ac"
+      },
+      {
+        "cache_key": "d300bb9a7c0d1525c430c360436d38d32be9dedd25100a436d41ed3ef010e877",
+        "case_id": "p112_d63856f3720630b36cba7e78",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "b50e5f8a51b2fdc435025b0c76001bf99cac23498056c2abe03001a30fc2d264",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "e6864d1d7ffb559a349f792dc804df489158d36944335cd68000b9a7bd2a367f"
+      },
+      {
+        "cache_key": "7f0534b32d87ce98911c7c829b3edc0b4e364dedaa4aa0ace8b1e507da712066",
+        "case_id": "p112_df015924facfd22ddd91fbac",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "10b4e4808cfc3fef59503bff63021652edbaca45df19b4ff5d9ed8e5889a040f",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "fe33ec3d3ec91c9e6d6532d950ff896e6cd3d2b38371ffcd0f8cd4a2515592da"
+      },
+      {
+        "cache_key": "2bc046441f42493c6ce0787bf644719f62334f7992df26a5c8435bf44f417e5e",
+        "case_id": "p112_e7f169eed89a75259d4ff32b",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "0a2f68bd8bcefad40466f2d05f7d7557739959b92e5edf0c5b55c7677b066d0b",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "b713f0ead9fbfbd2d9b4b44d0e8181e97882fa9072dd449918761afc5a049b25"
+      },
+      {
+        "cache_key": "89f0e1a69ef0cf44863502b6318cc01f3aa62193902950384ff858aa9e338827",
+        "case_id": "p112_fe805878e613b5921b228acc",
+        "decoding_config": {
+          "enable_thinking": true,
+          "max_tokens": 16384,
+          "provider_api": "openai-chat-completions-v1",
+          "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+          "reasoning_budget": 16384,
+          "stream": true,
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "packet_sha256": "567c4b92ba6568bd7c03689022d1a0de67ca3e57674775222b22eedaa7d40b5e",
+        "prompt_schema_version": "p112.localization_prompt.v1",
+        "raw_response_sha256": "1ea406bf2ef6eaa2edd624c3c97155a842b082dd4c5730197ed51f1ce4baf875"
+      }
+    ],
+    "prompt_schema_version": "p112.localization_prompt.v1",
+    "system_prompt_sha256": "c79d9cffa7defd02a938f6013203730b4523a5384eba2a45b7019b5133976097"
+  },
+  "provider": "nvidia",
+  "safety": {
+    "executed_action_count": 0,
+    "harmful_action_count": 0,
+    "truth_leak_count": 0
+  },
+  "schema_version": "p112.multistage_rca_report.v1",
+  "summary": {
+    "action_execution_enabled": false,
+    "case_count": 5,
+    "fail_closed_count": 4,
+    "network_calls_enabled": true,
+    "prediction_count": 5,
+    "valid_count": 1
+  }
+}

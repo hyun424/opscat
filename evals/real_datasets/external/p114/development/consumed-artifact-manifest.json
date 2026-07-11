@@ -1,0 +1,27 @@
+{
+  "artifacts": [
+    {
+      "artifact_hash": "sha256:fc866f90773a1462bafd34856264a32a7c1f4ed66099abb1f2d139ed639bf86d",
+      "granularity": "case",
+      "purpose": "model_development",
+      "role": "consumed_development",
+      "source_hash": "sha256:b4424b0b3863b7397712caa0f305ef59964b03784dfcb23e23e0a95a2e746f99"
+    },
+    {
+      "artifact_hash": "sha256:d201e3ba217d0467ca00a8c0994d7013d8cf9c9df9834fda70dedf0c238664ae",
+      "granularity": "case",
+      "purpose": "model_development",
+      "role": "consumed_development",
+      "source_hash": "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4"
+    },
+    {
+      "artifact_hash": "sha256:bebbea3aa7054568ffbfdeeb71d47aa56dde5c5cc729058ec89888b43de971b4",
+      "granularity": "case",
+      "purpose": "failure_analysis",
+      "role": "consumed_development",
+      "source_hash": "sha256:2b33b7ab07198e0d69f229e697bfcef794a656e8db73a1d732142effde17c595"
+    }
+  ],
+  "manifest_hash": "sha256:c34b163557b148b6b336fd8bb77db29f3e40e455198a3fd164edb3ac509e3c31",
+  "schema_version": "p114.consumed_artifact_manifest.v1"
+}

@@ -1,0 +1,53 @@
+{
+  "bound_artifact_hashes": {
+    "candidate_outputs": "sha256:e874355db16ddcc639085c2fafd050edc6a60e28f514c5531c9ee4ecd55a2880",
+    "evaluation_report": "sha256:1895226dae16718dba48a13a29e440e3028d588d6ac4ef93369921830e6e6953",
+    "implementation_revision": "sha256:49b4e919ce41d71389063a4f06c579e81791d679c60c381853880c5866f2ddf6",
+    "labeled_cases": "sha256:5b01a428928f5b52a0c39ae22f462a19cbabc98c7829dec1aa9b352a3ec00b36",
+    "official_source": "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+    "release_evidence": null,
+    "scorer_truth": "sha256:dc419bf0b66f9bcba0b7d600d02b94610a04c42896715a231d276d08a8024f75"
+  },
+  "evaluation_report_hash": "sha256:1895226dae16718dba48a13a29e440e3028d588d6ac4ef93369921830e6e6953",
+  "independent_review": {
+    "accepted": false,
+    "fresh": true,
+    "locally_consistent": true,
+    "reasons": [
+      "cryptographically authenticated independent reviewer signature is required"
+    ],
+    "review_id": "p110-independent-review-20260711T062723Z",
+    "review_tamper_evident_hash_match": true,
+    "reviewed_artifact_hashes_match": true,
+    "reviewer": {
+      "id": "codex-verifier-p110-20260711T062723Z",
+      "identity": "Verifier",
+      "role": "verifier",
+      "session_id": "local-codex-session-20260711T062723Z"
+    },
+    "reviewer_evidence_complete": true,
+    "schema_version": "p110.independent_review.v1",
+    "verdict": "pass"
+  },
+  "producer_id": "opscat-p110-cli",
+  "reasons": [
+    "independent_review_ready failed closed"
+  ],
+  "release_evidence_hash": "sha256:e025dcb5fa8d5d913f785352a77d9a119bf5a62b4a04fc077399b52c5f23814f",
+  "release_gates": {
+    "all_cells_nonzero": true,
+    "artifact_hash_binding": true,
+    "independent_review_ready": false,
+    "minimum_case_count": true,
+    "official_fault_set": true,
+    "official_re1_ob_source_pinned": true,
+    "official_service_set": true,
+    "official_source_hash_verified": true,
+    "quality_thresholds": true,
+    "zero_safety_counters": true
+  },
+  "release_qualified": false,
+  "schema_version": "p110.release_evidence.v1",
+  "scorer_truth_hash": "sha256:dc419bf0b66f9bcba0b7d600d02b94610a04c42896715a231d276d08a8024f75",
+  "trusted_now": "2026-07-11T06:29:51Z"
+}

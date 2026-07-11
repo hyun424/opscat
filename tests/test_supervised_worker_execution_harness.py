@@ -5,6 +5,7 @@ import subprocess
 from pathlib import Path
 
 from app.services.supervised_worker_execution_harness import (
+    RealSubprocessSupervisedTransport,
     SimulatedSupervisedProcessTransport,
     SupervisedWorkerExecutionHarnessReport,
     render_supervised_worker_execution_harness_markdown,
@@ -153,3 +154,11 @@ def test_supervised_harness_cli_writes_report(tmp_path: Path) -> None:
     assert "Supervised runs" in markdown
     assert "Retry queue" in markdown
     assert render_supervised_worker_execution_harness_markdown(payload).startswith("# OpsCat Supervised Worker Execution Harness")
+
+
+def test_shipped_real_supervised_transport_rejects_arbitrary_command_strings(tmp_path: Path) -> None:
+    outcome = RealSubprocessSupervisedTransport().run("python -c 'raise SystemExit(13)'", ticket_id="P122", timeout_seconds=1, artifact_dir=tmp_path)
+
+    assert outcome.status == "failed_closed"
+    assert outcome.exit_code == 126
+    assert outcome.timed_out is False

@@ -902,3 +902,53 @@ held-out, real-derived, source-diversity, service-day, formula, P24 parity, and
 authority-counter floors. The P105 model card and final summary are
 `docs/operations/p105-model-card.md` and
 `docs/operations/p105-final-summary.md`.
+## P111 frozen RCA accuracy evidence
+
+P111 implements frozen, evidence-grounded RCA accuracy improvement on the
+official RCAEval RE1-OB benchmark. On the 25-case repetition-3 blind split it
+improves the paired P110 baseline from 68% to 80% service Top-1 and 40% to 84%
+fault accuracy while retaining 100% evidence validity and zero unsafe-action
+counters. Release remains fail-closed because the predeclared service Top-1 and
+loss-fault floors and cryptographic reviewer gate are not met. Repetition 4
+remains an untouched reserve for a separately frozen future phase.
+
+## P112 completed: cross-system blind release failed closed
+
+P112 generalized RCAEval ingestion and service-agnostic localization across
+Sock Shop and Online Boutique, added paired freeze/request-envelope governance,
+raw-response replay evidence, strict batch merging, and a dedicated release
+profile. On the newly revealed 25-case RE1-OB repetition-4 split, the frozen
+P111 baseline achieved 88% service Top-1 and 100% fault accuracy. The P112 live
+candidate achieved 12% for both because 88% of responses failed the strict
+output contract; the underlying deterministic model reached 76% Top-1, 92%
+Top-3, and 68% fault accuracy. Safety counters stayed at zero, but quality,
+repeatability, paired-delta, replay, per-fault, and cryptographic gates failed.
+P112 is closed without release or action authority; repetition 4 is consumed
+and cannot be reused as future blind evidence.
+
+## P113 completed: fresh-blind diagnosis failed closed
+
+P113 separated deterministic diagnosis from optional LLM narrative generation,
+pinned the official 125-case RE1-TT archive, froze source/model/prompt/code/gates,
+and scored every case with evaluator-owned hidden truth. The fresh-blind result
+was 31.2% service Top-1, 49.6% Top-3, and 32.0% fault accuracy. Evidence
+precision, diagnosis preservation, replay consistency, and disabled action
+authority were all 100%, but every accuracy family gate failed. The NVIDIA
+narrative stage was therefore not run. P113 is closed as a valid negative
+benchmark, not a release candidate.
+
+## P114 complete: deterministic RE2-OB acceptance passed
+
+P114 verifies the official 90-case RCAEval RE2-SS archive, builds immutable
+metric/log evidence graphs, and separates service localization from fault
+signature classification. On consumed development data the deterministic path
+reached 85.56% service Top-1, 63.33% fault accuracy, 56.67% joint Top-1, 100%
+joint candidate recall, and 100% evidence precision with action authority
+disabled. Constrained Nano 30B, Super 120B, and Ultra 550B adjudicators all
+failed the pre-blind nonnegative-delta/repeatability gate and were excluded
+from the authoritative path. The separately frozen deterministic candidate
+then passed the one-shot 90-case RE2-OB acceptance: 81.11% service Top-1,
+94.44% Top-3, 72.22% fault accuracy, 57.78% joint Top-1, 96.67% joint candidate
+recall, and 100% evidence precision/replay/diagnosis preservation. Every
+required safety counter was present and zero. This qualifies bounded diagnosis,
+not production remediation. See `docs/operations/p114-final-summary.md`.

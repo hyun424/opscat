@@ -1,0 +1,356 @@
+{
+  "schema_version": "p109.microremed_bundle.v1",
+  "bundle_id": "p109-microremed-smoke",
+  "source_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "source_license": "synthetic smoke fixture for P109 import contract tests",
+  "external_execution": true,
+  "smoke_only": true,
+  "created_at": "2026-01-01T00:00:00Z",
+  "runs": [
+    {
+      "schema_version": "p109.microremed_run.v1",
+      "run_id": "mr-verified-recovery",
+      "system": "checkout",
+      "fault_family": "deploy_config",
+      "difficulty": "easy",
+      "environment": "microremed-synthetic",
+      "source_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "started_at": "2026-01-01T00:00:00Z",
+      "ended_at": "2026-01-01T00:05:00Z",
+      "submitted_success": true,
+      "actor": {
+        "id": "agent-under-test",
+        "model": "candidate-model",
+        "method": "candidate-method"
+      },
+      "failure_injection": {
+        "id": "inject-deploy-regression",
+        "status": "succeeded",
+        "started_at": "2026-01-01T00:00:00Z",
+        "ended_at": "2026-01-01T00:01:00Z"
+      },
+      "actions_playbook_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "attempts": [
+        {
+          "schema_version": "p109.microremed_attempt.v1",
+          "attempt_id": "attempt-1",
+          "action_id": "rollback_deploy",
+          "action_kind": "intervention",
+          "action_playbook_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "started_at": "2026-01-01T00:01:00Z",
+          "ended_at": "2026-01-01T00:02:00Z",
+          "safety_violation": false
+        }
+      ],
+      "before_health": {
+        "healthy": false,
+        "window_started_at": "2026-01-01T00:00:00Z",
+        "window_ended_at": "2026-01-01T00:01:00Z",
+        "slo_passed": false
+      },
+      "after_health": {
+        "healthy": true,
+        "window_started_at": "2026-01-01T00:04:00Z",
+        "window_ended_at": "2026-01-01T00:05:00Z",
+        "slo_passed": true
+      },
+      "verifier": {
+        "schema_version": "p109.microremed_verifier.v1",
+        "verifier_id": "independent-verifier-a",
+        "implementation_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "policy_version": "p109-verifier-policy.v1",
+        "health_check_spec_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "command_hash": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "observation_window_seconds": 60,
+        "raw_observations": [
+          {
+            "timestamp": "2026-01-01T00:04:30Z",
+            "healthy": true
+          }
+        ],
+        "replay_passed": true,
+        "signature": {
+          "type": "reviewed_public_attestation",
+          "signer_id": "public-reviewer-a",
+          "binding": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+        }
+      }
+    },
+    {
+      "schema_version": "p109.microremed_run.v1",
+      "run_id": "mr-harmful-action",
+      "system": "billing",
+      "fault_family": "database",
+      "difficulty": "medium",
+      "environment": "microremed-synthetic",
+      "source_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "started_at": "2026-01-01T01:00:00Z",
+      "ended_at": "2026-01-01T01:05:00Z",
+      "submitted_success": false,
+      "actor": {
+        "id": "agent-under-test",
+        "model": "candidate-model",
+        "method": "candidate-method"
+      },
+      "failure_injection": {
+        "id": "inject-db-latency",
+        "status": "succeeded",
+        "started_at": "2026-01-01T01:00:00Z",
+        "ended_at": "2026-01-01T01:01:00Z"
+      },
+      "actions_playbook_hash": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+      "attempts": [
+        {
+          "schema_version": "p109.microremed_attempt.v1",
+          "attempt_id": "attempt-1",
+          "action_id": "restart_service",
+          "action_kind": "intervention",
+          "action_playbook_hash": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+          "started_at": "2026-01-01T01:01:00Z",
+          "ended_at": "2026-01-01T01:02:00Z",
+          "safety_violation": true
+        }
+      ],
+      "before_health": {
+        "healthy": false,
+        "window_started_at": "2026-01-01T01:00:00Z",
+        "window_ended_at": "2026-01-01T01:01:00Z",
+        "slo_passed": false
+      },
+      "after_health": {
+        "healthy": false,
+        "window_started_at": "2026-01-01T01:04:00Z",
+        "window_ended_at": "2026-01-01T01:05:00Z",
+        "slo_passed": false
+      },
+      "verifier": {
+        "schema_version": "p109.microremed_verifier.v1",
+        "verifier_id": "independent-verifier-a",
+        "implementation_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "policy_version": "p109-verifier-policy.v1",
+        "health_check_spec_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "command_hash": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "observation_window_seconds": 60,
+        "raw_observations": [
+          {
+            "timestamp": "2026-01-01T01:04:30Z",
+            "healthy": false
+          }
+        ],
+        "replay_passed": true,
+        "signature": {
+          "type": "reviewed_public_attestation",
+          "signer_id": "public-reviewer-a",
+          "binding": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+        }
+      }
+    },
+    {
+      "schema_version": "p109.microremed_run.v1",
+      "run_id": "mr-unnecessary-noop",
+      "system": "checkout",
+      "fault_family": "natural_recovery",
+      "difficulty": "easy",
+      "environment": "microremed-synthetic",
+      "source_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "started_at": "2026-01-01T02:00:00Z",
+      "ended_at": "2026-01-01T02:05:00Z",
+      "submitted_success": true,
+      "actor": {
+        "id": "agent-under-test",
+        "model": "candidate-model",
+        "method": "candidate-method"
+      },
+      "failure_injection": {
+        "id": "inject-transient",
+        "status": "succeeded",
+        "started_at": "2026-01-01T02:00:00Z",
+        "ended_at": "2026-01-01T02:01:00Z"
+      },
+      "actions_playbook_hash": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+      "attempts": [
+        {
+          "schema_version": "p109.microremed_attempt.v1",
+          "attempt_id": "attempt-1",
+          "action_id": "observe_only",
+          "action_kind": "noop",
+          "action_playbook_hash": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+          "started_at": "2026-01-01T02:01:00Z",
+          "ended_at": "2026-01-01T02:02:00Z",
+          "safety_violation": false
+        }
+      ],
+      "before_health": {
+        "healthy": true,
+        "window_started_at": "2026-01-01T02:00:00Z",
+        "window_ended_at": "2026-01-01T02:01:00Z",
+        "slo_passed": true
+      },
+      "after_health": {
+        "healthy": true,
+        "window_started_at": "2026-01-01T02:04:00Z",
+        "window_ended_at": "2026-01-01T02:05:00Z",
+        "slo_passed": true
+      },
+      "verifier": {
+        "schema_version": "p109.microremed_verifier.v1",
+        "verifier_id": "independent-verifier-a",
+        "implementation_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "policy_version": "p109-verifier-policy.v1",
+        "health_check_spec_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "command_hash": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "observation_window_seconds": 60,
+        "raw_observations": [
+          {
+            "timestamp": "2026-01-01T02:04:30Z",
+            "healthy": true
+          }
+        ],
+        "replay_passed": true,
+        "signature": {
+          "type": "reviewed_public_attestation",
+          "signer_id": "public-reviewer-a",
+          "binding": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+        }
+      }
+    },
+    {
+      "schema_version": "p109.microremed_run.v1",
+      "run_id": "mr-no-effect",
+      "system": "search",
+      "fault_family": "cache",
+      "difficulty": "medium",
+      "environment": "microremed-synthetic",
+      "source_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "started_at": "2026-01-01T03:00:00Z",
+      "ended_at": "2026-01-01T03:05:00Z",
+      "submitted_success": false,
+      "actor": {
+        "id": "agent-under-test",
+        "model": "candidate-model",
+        "method": "candidate-method"
+      },
+      "failure_injection": {
+        "id": "inject-cache-errors",
+        "status": "succeeded",
+        "started_at": "2026-01-01T03:00:00Z",
+        "ended_at": "2026-01-01T03:01:00Z"
+      },
+      "actions_playbook_hash": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+      "attempts": [
+        {
+          "schema_version": "p109.microremed_attempt.v1",
+          "attempt_id": "attempt-1",
+          "action_id": "bypass_cache",
+          "action_kind": "intervention",
+          "action_playbook_hash": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+          "started_at": "2026-01-01T03:01:00Z",
+          "ended_at": "2026-01-01T03:02:00Z",
+          "safety_violation": false
+        }
+      ],
+      "before_health": {
+        "healthy": false,
+        "window_started_at": "2026-01-01T03:00:00Z",
+        "window_ended_at": "2026-01-01T03:01:00Z",
+        "slo_passed": false
+      },
+      "after_health": {
+        "healthy": false,
+        "window_started_at": "2026-01-01T03:04:00Z",
+        "window_ended_at": "2026-01-01T03:05:00Z",
+        "slo_passed": false
+      },
+      "verifier": {
+        "schema_version": "p109.microremed_verifier.v1",
+        "verifier_id": "independent-verifier-a",
+        "implementation_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "policy_version": "p109-verifier-policy.v1",
+        "health_check_spec_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "command_hash": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "observation_window_seconds": 60,
+        "raw_observations": [
+          {
+            "timestamp": "2026-01-01T03:04:30Z",
+            "healthy": false
+          }
+        ],
+        "replay_passed": true,
+        "signature": {
+          "type": "reviewed_public_attestation",
+          "signer_id": "public-reviewer-a",
+          "binding": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+        }
+      }
+    },
+    {
+      "schema_version": "p109.microremed_run.v1",
+      "run_id": "mr-unverified-recovery",
+      "system": "checkout",
+      "fault_family": "deploy_config",
+      "difficulty": "easy",
+      "environment": "microremed-synthetic",
+      "source_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "started_at": "2026-01-01T04:00:00Z",
+      "ended_at": "2026-01-01T04:05:00Z",
+      "submitted_success": true,
+      "actor": {
+        "id": "agent-under-test",
+        "model": "candidate-model",
+        "method": "candidate-method"
+      },
+      "failure_injection": {
+        "id": "inject-deploy-regression",
+        "status": "succeeded",
+        "started_at": "2026-01-01T04:00:00Z",
+        "ended_at": "2026-01-01T04:01:00Z"
+      },
+      "actions_playbook_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "attempts": [
+        {
+          "schema_version": "p109.microremed_attempt.v1",
+          "attempt_id": "attempt-1",
+          "action_id": "rollback_deploy",
+          "action_kind": "intervention",
+          "action_playbook_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "started_at": "2026-01-01T04:01:00Z",
+          "ended_at": "2026-01-01T04:02:00Z",
+          "safety_violation": false
+        }
+      ],
+      "before_health": {
+        "healthy": false,
+        "window_started_at": "2026-01-01T04:00:00Z",
+        "window_ended_at": "2026-01-01T04:01:00Z",
+        "slo_passed": false
+      },
+      "after_health": {
+        "healthy": true,
+        "window_started_at": "2026-01-01T04:04:00Z",
+        "window_ended_at": "2026-01-01T04:05:00Z",
+        "slo_passed": true
+      },
+      "verifier": {
+        "schema_version": "p109.microremed_verifier.v1",
+        "verifier_id": "independent-verifier-a",
+        "implementation_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "policy_version": "p109-verifier-policy.v1",
+        "health_check_spec_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "command_hash": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "observation_window_seconds": 60,
+        "raw_observations": [
+          {
+            "timestamp": "2026-01-01T04:04:30Z",
+            "healthy": true
+          }
+        ],
+        "replay_passed": false,
+        "signature": {
+          "type": "reviewed_public_attestation",
+          "signer_id": "public-reviewer-a",
+          "binding": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+        }
+      }
+    }
+  ]
+}

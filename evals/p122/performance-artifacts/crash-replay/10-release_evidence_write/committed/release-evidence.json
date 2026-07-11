@@ -1,0 +1,81 @@
+{
+  "excluded_mutable_fields": [
+    "current_release_evidence_hash",
+    "current_release_status",
+    "gate_values",
+    "reasons",
+    "review_artifact",
+    "reviewer_id"
+  ],
+  "fixture_id": "p122-release-evidence-contract-fixture-v1",
+  "operation": "release_evidence_commit",
+  "producer_contract": {
+    "gate_names": [
+      "clean_install_demo_uninstall_passed",
+      "crash_replay_inventory_complete",
+      "distinct_reviewer",
+      "docs_verification_passed",
+      "exact_nonlocal_authority_zero",
+      "independent_review_passed",
+      "known_vulnerability_audit_passed",
+      "licenses_compatible",
+      "migration_compatibility_passed",
+      "package_artifacts_current",
+      "package_build_byte_reproducible",
+      "performance_soak_complete",
+      "sbom_complete",
+      "security_gate_passed",
+      "source_manifest_complete",
+      "upstream_p115_p121_ready"
+    ],
+    "product_claim": "production-grade packaging practices with local/mock/sandbox qualification",
+    "public_limitation": "Production autonomy, auth completion, credentials, live connector writes, production/staging mutation, and operator replacement are not proven or enabled.",
+    "release_id": "P122-008",
+    "stable_field_names": [
+      "authority",
+      "clean_install_hash",
+      "docs_verification_hash",
+      "license_inventory_hash",
+      "migration_report_hash",
+      "package_checksums",
+      "performance_crash_receipts",
+      "performance_report_hash",
+      "product_claim",
+      "public_limitation",
+      "release_id",
+      "reproducible_build_hash",
+      "sbom_hash",
+      "schema_version",
+      "security_report_hash",
+      "source_hashes",
+      "unresolved_risks",
+      "upstream_release_hashes",
+      "vulnerability_audit_hash"
+    ]
+  },
+  "public_contract": {
+    "interface_ref": "p122.release_evidence.v1",
+    "name": "release-evidence"
+  },
+  "release_evidence_hash": "sha256:f3a73ebe4a89b0d8692f438bcb224cb57096b4b492f269a2f3cfa5beb4545358",
+  "schema_version": "p122.release_evidence.v1",
+  "validator_contract": {
+    "check_names": [
+      "all_fields_current",
+      "gates_current",
+      "independent_review_current",
+      "package_checksums_current",
+      "release_qualified",
+      "schema_current",
+      "self_hash_current",
+      "source_hashes_current",
+      "upstream_hashes_current"
+    ],
+    "core_round_trip_checks": [
+      "schema_current",
+      "self_hash_current",
+      "all_fields_current"
+    ],
+    "core_round_trip_passed": true
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "adapter_invoked": true,
+  "correlation_id": "p122-crash-08-replay_write",
+  "durable_phase": "replay_artifact_commit_pending",
+  "operation": "replay_artifact_commit",
+  "operation_adapter": "p121_restart_recovery_bundle_v1",
+  "ordinal": 8,
+  "output_ref": "committed/replay-bundle",
+  "output_schema": "p121.restart_recovery_proof.v1",
+  "parent_pid": 58352,
+  "precommit_hash": "sha256:da74b8328f54be9f74cea2d55b2b396170a5eb35fd49a1914fa2d9bfec38bd63",
+  "precommit_kind": "directory",
+  "precommit_ref": "precommit/replay-bundle",
+  "precommit_validation_hash": "sha256:630801e638ca32a04b675b201d6b06b17f85fb6632515aa92ee4cede6dcac68b",
+  "record_hash": "sha256:5dd8b76a784286c8403cf68e4c298adcb70bf84a3b7b2ec40da6edd8d8cf0c71",
+  "schema_version": "p122.release_stage_pending.v1",
+  "stage": "replay_write",
+  "status": "pending",
+  "worker_pid": 58370
+}

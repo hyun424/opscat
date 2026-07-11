@@ -1,0 +1,29 @@
+{
+  "adapter_invoked": true,
+  "correlation_id": "p122-crash-07-rollback",
+  "durable_phase": "rollback_result_commit_recovered",
+  "operation": "rollback_result_commit",
+  "operation_adapter": "p121_rollback_outcome_v1",
+  "ordinal": 7,
+  "output_hash": "sha256:b2eb2d8e2c7fc48e4e2486d7ba5a70430d82c9bd8174aca1c85d3a13a84dabcf",
+  "output_schema": "p121.validation_outcome.v1",
+  "output_validation": {
+    "artifact_hash": "sha256:7b6522021019a4b9f605b56961c066b4541c44dbc2771a922b08bec16bca4d2c",
+    "exact_nonlocal_authority_zero": true,
+    "rollback_attempted": true,
+    "rollback_passed": true,
+    "schema_version": "p121.validation_outcome.v1",
+    "validation_passed": false
+  },
+  "pending_record_hash": "sha256:9e385f2af858974553c3a1d6f61a5ca12ef6a86e4c4bec21063352998930c24f",
+  "pending_worker_pid": 58368,
+  "post_restart_validation": true,
+  "precommit_hash": "sha256:b2eb2d8e2c7fc48e4e2486d7ba5a70430d82c9bd8174aca1c85d3a13a84dabcf",
+  "precommit_validation_hash": "sha256:4c779da3a1718e42f972a40014a54f9d9303b147e735961c8bcd753bbc76af90",
+  "record_hash": "sha256:8d71cfc43446d4292631f04015a1861709fcce02aea8c2fa3bd3a47bb0f98562",
+  "recovery_worker_pid": 58369,
+  "restart_count": 1,
+  "schema_version": "p122.release_stage_restart_receipt.v1",
+  "stage": "rollback",
+  "status": "recovered_after_restart"
+}

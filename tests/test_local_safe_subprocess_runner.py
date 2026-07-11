@@ -5,6 +5,7 @@ import subprocess
 from pathlib import Path
 
 from app.services.local_safe_subprocess_runner import (
+    ActualLocalSubprocessTransport,
     LocalSafeSubprocessRunnerReport,
     SimulatedLocalSubprocessTransport,
     StaticGitWorktreeStatusProvider,
@@ -187,3 +188,13 @@ def test_local_safe_subprocess_runner_cli_writes_report(tmp_path: Path) -> None:
     assert "Local runs" in markdown
     assert "Retry queue" in markdown
     assert render_local_safe_subprocess_runner_markdown(payload).startswith("# OpsCat Local Safe Subprocess Runner")
+
+
+def test_shipped_actual_local_transport_rejects_arbitrary_command_strings(tmp_path: Path) -> None:
+    transport = ActualLocalSubprocessTransport()
+    record = transport.run("python -c 'raise SystemExit(13)'", ticket_id="P122", timeout_seconds=1, artifact_dir=tmp_path)
+
+    assert record.status == "failed_closed"
+    assert record.exit_code == 126
+    assert record.actual_spawned is False
+    assert transport.actual_spawn_count == 0

@@ -1,0 +1,43 @@
+{
+  "allowed_signers": [
+    {
+      "key_id": "fixture-key",
+      "signer_id": "fixture-reviewer"
+    }
+  ],
+  "artifacts": [
+    {
+      "canonical_url": "https://fixtures.example.org/rcaeval/source.zip",
+      "citation": "OpsCat P109 authored source fixture",
+      "dataset_schema": "p109.rcaeval_case.v1",
+      "expected_paths": [
+        "cases/case-001/metrics.jsonl"
+      ],
+      "license": "fixture-only",
+      "max_compressed_bytes": 4096,
+      "max_decompressed_bytes": 8192,
+      "max_file_count": 8,
+      "provenance_hashes": {
+        "canonical_manifest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "downloaded_bytes": "2222222222222222222222222222222222222222222222222222222222222222",
+        "extracted_tree": "3333333333333333333333333333333333333333333333333333333333333333",
+        "normalized_corpus": "4444444444444444444444444444444444444444444444444444444444444444",
+        "schema_version": "p109.provenance_hashes.v1"
+      },
+      "redirect_allowlist": [
+        {
+          "host": "fixtures.example.org",
+          "path_prefix": "/rcaeval/"
+        }
+      ],
+      "revision": "0123456789abcdef0123456789abcdef01234567",
+      "revision_kind": "commit",
+      "schema_version": "p109.source_artifact.v1",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_id": "rcaeval-fixture"
+    }
+  ],
+  "generated_at": "2024-03-09T16:33:20Z",
+  "manifest_id": "p109-authored-source-fixture",
+  "schema_version": "p109.source_manifest.v1"
+}

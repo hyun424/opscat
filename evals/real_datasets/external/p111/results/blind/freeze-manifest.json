@@ -1,0 +1,24 @@
+{
+  "candidate_packet_hash": "sha256:ce5de9c56be64fa29ac9f93777127bd8f08da141c553ad8428bd41ef8e95dcc9",
+  "case_ids_hash": "sha256:10f2f06b5d6f23db0ae9c4d0d8dd378dd90c8417b426fb10cf316d6fe9aea0a3",
+  "decoding_config": {
+    "enable_thinking": true,
+    "max_tokens": 16384,
+    "provider_api": "openai-chat-completions-v1",
+    "provider_endpoint": "https://integrate.api.nvidia.com/v1",
+    "reasoning_budget": 16384,
+    "stream": true,
+    "system_prompt_sha256": "02a2842922d31fa85badcd8f3389c5d3e83b245c12af6a9f41bfa4fb94bc55e3",
+    "temperature": 1.0,
+    "top_p": 0.95
+  },
+  "freeze_hash": "sha256:3bdb09f53128cd9d14e872e89b6e5fb4b336966cf68b0a10257e80a79c91c7d2",
+  "implementation_hash": "sha256:d994ef6631978b5f1dc89b2115673618434b94ce6d8c8d85d519da0f5596c835",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b",
+  "official_source_hash": "sha256:4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+  "prompt_schema_version": "p111.localization_prompt.v1",
+  "schema_version": "p111.benchmark_freeze.v1",
+  "selected_on_repetition": 2,
+  "selected_on_role": "validation",
+  "status": "frozen"
+}

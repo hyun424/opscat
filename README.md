@@ -1,14 +1,28 @@
 # OpsCat
 
-OpsCat is a local **agentic AI on-call system** for human-on-exception operations. It receives a mock alert, builds incident state, gathers sanitized operational context with tools, produces evidence-backed hypotheses, proposes remediation, runs the action through deterministic policy/risk gates, requires approval for unsafe writes, executes only local/mock actions, verifies recovery, wakes humans only on exception, and writes an auditable incident report.
+OpsCat is an open-source **agentic incident-response laboratory** for human-on-exception operations. It receives fixture or explicitly enabled read-only telemetry, builds incident state, gathers sanitized evidence with bounded tools, produces evidence-backed hypotheses, proposes remediation, runs the proposal through deterministic policy/risk gates, executes only registered disposable local/mock/sandbox actions, verifies outcomes, and writes an auditable replay record.
 
-This repository is intended as a portfolio-grade Agentic AI Engineer artifact and paid-beta design seed: it emphasizes state, tools, tenant boundaries, policy, approvals, verification, wake-up contracts, auditability, privacy, and safety boundaries rather than chatbot-style prompting.
+This repository is intended as a portfolio-grade Agentic AI Engineer artifact and open-source research/development seed for **agentic AI incident-response/operator-replacement** research. It emphasizes state, tools, policy, approvals, verification, evaluation, auditability, privacy, and safety boundaries rather than chatbot-style prompting; the phrase describes the research target, not a production-readiness claim.
 
-> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery; P104 adds network-free evidence-gap sufficiency checks before policy handoff; P105 adds a local calibrated failure-forecasting harness with strict release-qualified prerequisites; P106 has a documentation and release-verification lane for simulation-only preventive planning, with final implementation review still pending. No production actions are enabled. See [`docs/integration-verification.md`](docs/integration-verification.md).
+> **Public limitation:** OpsCat applies production-grade packaging and evidence practices, but its autonomous behavior is qualified only in deterministic local/mock/sandbox environments. Auth remains deferred. Production/staging mutations, credentialed execution, live connector writes, and operator-replacement claims are prohibited.
+
+## Install and local demo
+
+Supported: Python 3.12+ on macOS and Linux. The default demo is network-free and requires no secrets.
+
+```bash
+uv sync --frozen --extra dev
+uv run --no-sync opscat demo --output /tmp/opscat-demo-replay.json
+uv run --no-sync opscat contracts
+```
+
+See [`docs/install.md`](docs/install.md), [`docs/quickstart.md`](docs/quickstart.md), [`docs/public-contracts.md`](docs/public-contracts.md), and [`docs/limitations.md`](docs/limitations.md).
+
+> Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery; P104 adds network-free evidence-gap sufficiency checks before policy handoff; P105 adds a local calibrated failure-forecasting harness with strict release-qualified prerequisites; P106 is simulation-only preventive planning with `p107_unlocked=false`; P107 adds a local/mock or isolated canary executor; P108 adds deterministic offline outcome learning and unapplied recommendations; P109 imports real public telemetry. On the frozen 25-case RCAEval blind split, P111 improves the paired P110 baseline from 68% to 80% service Top-1 and from 40% to 84% fault accuracy while preserving 100% evidence validity and zero unsafe-action counters. Release remains fail-closed because the 84% Top-1 target, loss-fault floor, and cryptographic reviewer gate were not met. No production actions are enabled. See [`docs/operations/p111-final-summary.md`](docs/operations/p111-final-summary.md).
 
 ## Portfolio demo evidence
 
-OpsCat is designed to be read as an agentic AI incident-response/operator-replacement portfolio project. It proves the shape of an operator loop: tool use, evidence-grounded reasoning, policy and safety gates, autonomous observe-to-report flow, evaluation/benchmarking, human approval handoff, and a local/mock-only dry-run boundary.
+OpsCat is designed to demonstrate the architecture of an agentic incident-response loop: tool use, evidence-grounded reasoning, policy and safety gates, autonomous observe-to-report flow, evaluation/benchmarking, human approval handoff, and a local/mock/sandbox-only mutation boundary. It does not prove operator replacement.
 
 Run the one-command portfolio pack:
 
@@ -47,6 +61,11 @@ Reviewer links:
 - [`docs/operations/p106-ticket-roadmap.md`](docs/operations/p106-ticket-roadmap.md) — P106 simulation-only preventive planner roadmap and release gates.
 - [`docs/operations/p106-plan-review.md`](docs/operations/p106-plan-review.md) — P106 planning approval with final implementation review pending.
 - [`docs/operations/p106-final-summary.md`](docs/operations/p106-final-summary.md) — P106 documentation/release-verification summary without final review claims.
+- [`docs/operations/p107-ticket-roadmap.md`](docs/operations/p107-ticket-roadmap.md) — P107 local/mock or isolated canary executor roadmap, release profile, and P108 replay handoff.
+- [`docs/operations/p108-ticket-roadmap.md`](docs/operations/p108-ticket-roadmap.md) — P108 immutable offline outcome-learning and promotion roadmap.
+- [`docs/operations/p109-real-ops-benchmark-roadmap.md`](docs/operations/p109-real-ops-benchmark-roadmap.md) — P109 real telemetry and independently verified remediation benchmark roadmap.
+- [`docs/operations/p111-final-summary.md`](docs/operations/p111-final-summary.md) — frozen blind RCA accuracy results, paired deltas, calibration, and remaining release gates.
+- [`docs/operations/p110-final-summary.md`](docs/operations/p110-final-summary.md) — official labeled RCAEval holdout, real NVIDIA metrics, safety counters, and honest limitations.
 - [`docs/architecture.md`](docs/architecture.md) — local/mock architecture and safety boundaries.
 
 Boundary: the portfolio demo is local/mock-only. It performs no auth work, live APIs, credentials, network, production mutation, real remediation/action execution, or external model/API calls; it is not production autonomy.
@@ -249,6 +268,88 @@ remain pending until the leader supplies results.
 
 See [`docs/operations/p106-ticket-roadmap.md`](docs/operations/p106-ticket-roadmap.md)
 and [`docs/tickets/p106/README.md`](docs/tickets/p106/README.md).
+
+## P107 canary prevention executor verification lane
+
+P107 is scoped to local/mock or isolated test-harness canary execution. It
+consumes P106 gate-eligible evidence only after recomputing the canonical P106
+gate, while P106 itself continues to report `p107_unlocked=false`. P107 does
+not create auth scope, read credentials, call networks, run shell commands,
+mutate cloud or databases, use production adapters, or perform production
+mutation.
+
+Run the canonical release profile:
+
+```bash
+bash scripts/verify.sh --profile p107-release
+```
+
+That profile includes all 15 targeted P107 release test files and the
+`scripts/run_prevention_canary_evidence.py` smoke against
+`evals/prevention/p107_canary_cases.json`. The evidence is valid only for
+local/mock or isolated behavior. P108 receives a handoff only from deterministic
+terminal replay evidence with matching independent review JSON; missing review
+evidence keeps `p108_replay_gate_ready=false`.
+
+See [`docs/operations/p107-ticket-roadmap.md`](docs/operations/p107-ticket-roadmap.md)
+and [`docs/tickets/p107/README.md`](docs/tickets/p107/README.md).
+
+## P108 prevention outcome learner verification lane
+
+P108 consumes raw P107 evidence, recomputes its trust boundary, records a
+content-bound outcome ledger, assigns conservative counterfactual labels and
+credit, and emits versioned recommendations that always remain `applied=false`.
+It cannot access databases, credentials, networks, shells, executors, live
+adapters, or online policy/runbook/prompt mutation.
+
+```bash
+bash scripts/verify.sh --profile p108-release
+```
+
+The profile validates the exact L01-L16 fixture matrix, six paired holdout
+cells, per-family safety and drift gates, exact-zero authority, deterministic
+CLI output, and fresh non-self independent-review bindings. See
+[`docs/operations/p108-ticket-roadmap.md`](docs/operations/p108-ticket-roadmap.md)
+and [`docs/tickets/p108/README.md`](docs/tickets/p108/README.md).
+
+## P109 real operations benchmark lane
+
+P109 adds fail-closed import and evaluation for public RCA telemetry and
+externally executed remediation results. The pinned Baro/RCAEval sample is real
+upstream telemetry; it contains no official root-cause truth, so OpsCat reports
+it as parser smoke evidence rather than inventing an accuracy score.
+
+```bash
+uv run --no-sync python scripts/run_rcaeval_real_sample.py
+bash scripts/verify.sh --profile p109-release
+```
+
+The sample currently yields 41,097 metric observations across 13 services and
+status `unevaluable_real_data_missing`. A real release additionally requires
+official diagnosis labels, independently verified external remediation runs,
+nonzero per-system/fault-family denominators, complete artifact hashes, and a
+non-self review. P109 has no Kubernetes, Ansible, shell, credential, database,
+cloud, production-mutation, or remediation-execution authority.
+
+See [`docs/operations/p109-real-ops-benchmark-roadmap.md`](docs/operations/p109-real-ops-benchmark-roadmap.md)
+and [`docs/tickets/p109/README.md`](docs/tickets/p109/README.md).
+
+## P114 RE2 acquisition metadata lane
+
+P114 pins official Zenodo record 14590730 metadata for RCAEval `RE2-SS.zip`
+and `RE2-OB.zip`. Normal verification does not download external archives; the
+local validator checks the exact file name, compressed byte size, upstream MD5,
+computes SHA-256 for the acquired bytes, and rejects unsafe zip metadata
+including traversal, symlinks, duplicate entries, and decompression budget
+excess before case-layout parsing.
+
+```bash
+python scripts/acquire_p114_rcaeval.py --source re2-ss
+python scripts/acquire_p114_rcaeval.py --source re2-ob
+```
+
+Downloads are opt-in only via `--allow-network`; OpsCat does not redistribute
+the RE2 archives.
 
 ## Portfolio story
 

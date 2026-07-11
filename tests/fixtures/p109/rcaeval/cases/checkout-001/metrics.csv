@@ -1,0 +1,3 @@
+timestamp,service,metric,value,unit
+2024-03-09T16:30:00Z,checkout,p95_latency_ms,920,ms
+2024-03-09T16:30:05Z,payments,error_rate,0.02,ratio

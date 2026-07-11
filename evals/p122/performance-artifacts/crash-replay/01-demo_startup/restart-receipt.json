@@ -1,0 +1,27 @@
+{
+  "adapter_invoked": true,
+  "correlation_id": "p122-crash-01-demo_startup",
+  "durable_phase": "demo_bootstrap_recovered",
+  "operation": "demo_bootstrap",
+  "operation_adapter": "local_cli_demo_start_v1",
+  "ordinal": 1,
+  "output_hash": "sha256:3338526aab8369329749d96195eeb7f2b8409d1faf43be013b36ce286b316604",
+  "output_schema": "opscat.local_demo.v1",
+  "output_validation": {
+    "artifact_hash": "sha256:5e08357c3021bad6b6df6994f56216d9b587a448c22f8bb8eb84c20e7d60dbc5",
+    "event_count": 4,
+    "exact_nonlocal_authority_zero": true,
+    "schema_version": "opscat.local_demo.v1"
+  },
+  "pending_record_hash": "sha256:d4bae739b45f35e3512f2a6f20f13441dd2444f0ff2cc44f8c7ce7873ad4929a",
+  "pending_worker_pid": 58356,
+  "post_restart_validation": true,
+  "precommit_hash": "sha256:3338526aab8369329749d96195eeb7f2b8409d1faf43be013b36ce286b316604",
+  "precommit_validation_hash": "sha256:6e8a1c2653f76eb77258d7ef5d8d61cedbd561f4a6bcbe3423583df1e52804c9",
+  "record_hash": "sha256:b219a0b477852fbb1f6f5021d280e9835d74695ab4e9831b2aa8af68a6eb0d15",
+  "recovery_worker_pid": 58357,
+  "restart_count": 1,
+  "schema_version": "p122.release_stage_restart_receipt.v1",
+  "stage": "demo_startup",
+  "status": "recovered_after_restart"
+}

@@ -1,0 +1,2035 @@
+{
+  "cases": [
+    {
+      "case_id": "p119-11901-contract-000",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-contract-001",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-contract-002",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-contract-003",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-contract-004",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-contract-005",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-contract-006",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-contract-007",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-contract-008",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-contract-009",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-contract-010",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-contract-011",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-contract-012",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-contract-013",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-contract-014",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-contract-015",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-contract-016",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-contract-017",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-contract-018",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-contract-019",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-contract-020",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-contract-021",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-contract-022",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-contract-023",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-contract-024",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-contract-025",
+      "family": "contract",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-ledger-000",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-ledger-001",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-ledger-002",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-ledger-003",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-ledger-004",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-ledger-005",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-ledger-006",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-ledger-007",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-ledger-008",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-ledger-009",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-ledger-010",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-ledger-011",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-ledger-012",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-ledger-013",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-ledger-014",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-ledger-015",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-ledger-016",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-ledger-017",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-ledger-018",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-ledger-019",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-ledger-020",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-ledger-021",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-ledger-022",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-ledger-023",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-ledger-024",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-ledger-025",
+      "family": "ledger",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-scheduler-000",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-scheduler-001",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-scheduler-002",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-scheduler-003",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-scheduler-004",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-scheduler-005",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-scheduler-006",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-scheduler-007",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-scheduler-008",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-scheduler-009",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-scheduler-010",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-scheduler-011",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-scheduler-012",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-scheduler-013",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-scheduler-014",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-scheduler-015",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-scheduler-016",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-scheduler-017",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-scheduler-018",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-scheduler-019",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-scheduler-020",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-scheduler-021",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-scheduler-022",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-scheduler-023",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-scheduler-024",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-scheduler-025",
+      "family": "scheduler",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-evidence-000",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-evidence-001",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-evidence-002",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-evidence-003",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-evidence-004",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-evidence-005",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-evidence-006",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-evidence-007",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-evidence-008",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-evidence-009",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-evidence-010",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-evidence-011",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-evidence-012",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-evidence-013",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-evidence-014",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-evidence-015",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-evidence-016",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-evidence-017",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-evidence-018",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-evidence-019",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-evidence-020",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-evidence-021",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-evidence-022",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-evidence-023",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-evidence-024",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-evidence-025",
+      "family": "evidence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-selection-000",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-selection-001",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-selection-002",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-selection-003",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-selection-004",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-selection-005",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-selection-006",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-selection-007",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-selection-008",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-selection-009",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-selection-010",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-selection-011",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-selection-012",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-selection-013",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-selection-014",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-selection-015",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-selection-016",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-selection-017",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-selection-018",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-selection-019",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-selection-020",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-selection-021",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-selection-022",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-selection-023",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-selection-024",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-selection-025",
+      "family": "selection",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-execution-000",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-execution-001",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-execution-002",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-execution-003",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-execution-004",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-execution-005",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-execution-006",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-execution-007",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-execution-008",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-execution-009",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-execution-010",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-execution-011",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-execution-012",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-execution-013",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-execution-014",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-execution-015",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-execution-016",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-execution-017",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-execution-018",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-execution-019",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-execution-020",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-execution-021",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-execution-022",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-execution-023",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-execution-024",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-execution-025",
+      "family": "execution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-validation-000",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-validation-001",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-validation-002",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-validation-003",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-validation-004",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-validation-005",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-validation-006",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-validation-007",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-validation-008",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-validation-009",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-validation-010",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-validation-011",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-validation-012",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-validation-013",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-validation-014",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-validation-015",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-validation-016",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-validation-017",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-validation-018",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-validation-019",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-validation-020",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-validation-021",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-validation-022",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-validation-023",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-validation-024",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-validation-025",
+      "family": "validation",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-rollback-000",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-rollback-001",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-rollback-002",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-rollback-003",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-rollback-004",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-rollback-005",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-rollback-006",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-rollback-007",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-rollback-008",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-rollback-009",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-rollback-010",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-rollback-011",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-rollback-012",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-rollback-013",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-rollback-014",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-rollback-015",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-rollback-016",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-rollback-017",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-rollback-018",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-rollback-019",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-rollback-020",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-rollback-021",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-rollback-022",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-rollback-023",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-rollback-024",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-rollback-025",
+      "family": "rollback",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-war_room-000",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-war_room-001",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-war_room-002",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-war_room-003",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-war_room-004",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-war_room-005",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-war_room-006",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-war_room-007",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-war_room-008",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-war_room-009",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-war_room-010",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-war_room-011",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-war_room-012",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-war_room-013",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-war_room-014",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-war_room-015",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-war_room-016",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-war_room-017",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-war_room-018",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-war_room-019",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-war_room-020",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-war_room-021",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-war_room-022",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-war_room-023",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-war_room-024",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-war_room-025",
+      "family": "war_room",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-attribution-000",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-attribution-001",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-attribution-002",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-attribution-003",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-attribution-004",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-attribution-005",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-attribution-006",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-attribution-007",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-attribution-008",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-attribution-009",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-attribution-010",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-attribution-011",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-attribution-012",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-attribution-013",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-attribution-014",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-attribution-015",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-attribution-016",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-attribution-017",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-attribution-018",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-attribution-019",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-attribution-020",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-attribution-021",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-attribution-022",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-attribution-023",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-attribution-024",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-attribution-025",
+      "family": "attribution",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-recurrence-000",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-recurrence-001",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-recurrence-002",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-recurrence-003",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-recurrence-004",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-recurrence-005",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-recurrence-006",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-recurrence-007",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-recurrence-008",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-recurrence-009",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-recurrence-010",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-recurrence-011",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-recurrence-012",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-recurrence-013",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-recurrence-014",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-recurrence-015",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-recurrence-016",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-recurrence-017",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-recurrence-018",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-recurrence-019",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-recurrence-020",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-recurrence-021",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-recurrence-022",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-recurrence-023",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-recurrence-024",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-recurrence-025",
+      "family": "recurrence",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-000",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-001",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-002",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-003",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-004",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-005",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-006",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-007",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-008",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-009",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-010",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-011",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-012",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-013",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-014",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-015",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-016",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-017",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-018",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-019",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-020",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-021",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-022",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-023",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-024",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-crash_recovery-025",
+      "family": "crash_recovery",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-authority-000",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-authority-001",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-authority-002",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-authority-003",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-authority-004",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-authority-005",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-authority-006",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-authority-007",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-authority-008",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-authority-009",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-authority-010",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-authority-011",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-authority-012",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    },
+    {
+      "case_id": "p119-11901-authority-013",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 0
+    },
+    {
+      "case_id": "p119-11901-authority-014",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 1
+    },
+    {
+      "case_id": "p119-11901-authority-015",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 2
+    },
+    {
+      "case_id": "p119-11901-authority-016",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 3
+    },
+    {
+      "case_id": "p119-11901-authority-017",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 4
+    },
+    {
+      "case_id": "p119-11901-authority-018",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 5
+    },
+    {
+      "case_id": "p119-11901-authority-019",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 6
+    },
+    {
+      "case_id": "p119-11901-authority-020",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 7
+    },
+    {
+      "case_id": "p119-11901-authority-021",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 8
+    },
+    {
+      "case_id": "p119-11901-authority-022",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 9
+    },
+    {
+      "case_id": "p119-11901-authority-023",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 10
+    },
+    {
+      "case_id": "p119-11901-authority-024",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 11
+    },
+    {
+      "case_id": "p119-11901-authority-025",
+      "family": "authority",
+      "fixture_scope": "local/mock/sandbox",
+      "variant": 12
+    }
+  ],
+  "manifest_hash": "sha256:0c385dae953fe8e9eccf43619d4d82e9802ac0548978d4332d0a3e5745084fdf",
+  "schema_version": "p119.frozen_case_manifest.v1",
+  "seed": 11901
+}

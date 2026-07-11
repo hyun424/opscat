@@ -1,0 +1,6 @@
+{
+  "edges": [
+    {"from": "checkout", "to": "payments"}
+  ],
+  "services": ["checkout", "payments"]
+}

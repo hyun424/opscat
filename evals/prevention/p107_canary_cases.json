@@ -1,0 +1,508 @@
+{
+  "metric_gates": {
+    "append_after_terminal_rejected": true,
+    "auth_enabled": false,
+    "breach_without_rollback_or_escalation_count": 0,
+    "caller_supplied_p107_gate_eligible_used": false,
+    "canonical_p106_gate_recomputed": true,
+    "cloud_mutation_count": 0,
+    "cohort_escape_accepted_count": 0,
+    "concurrent_duplicate_action_count": 0,
+    "crash_resume_duplicate_count": 0,
+    "credential_read_count": 0,
+    "database_mutation_count": 0,
+    "deterministic_replay": true,
+    "duplicate_attempt_count": 0,
+    "duplicate_parent_fork_rejected": true,
+    "expected_terminal_head_hash_matched": true,
+    "impossible_transition_rejected": true,
+    "network_call_count": 0,
+    "non_improvement_success_claim_count": 0,
+    "non_terminal_episode_rejected": true,
+    "p106_unlocked": false,
+    "partial_record_rejected": true,
+    "policy_flip_executed_count": 0,
+    "production_adapter_call_count": 0,
+    "production_mutation_count": 0,
+    "recovery_replay_duplicate_effect_count": 0,
+    "recovery_replay_valid_prefix_resumable": true,
+    "release_replay_gate_rejects_non_terminal": true,
+    "reorder_rejected": true,
+    "repeat_after_rollback_execution_count": 0,
+    "rollback_success_rate": 1.0,
+    "runtime_authority_sentinel_passed": true,
+    "sequence_gap_rejected": true,
+    "shell_execution_count": 0,
+    "stale_or_forged_executed_count": 0,
+    "static_authority_boundary_passed": true,
+    "tail_truncation_rejected": true,
+    "tamper_rejected": true,
+    "telemetry_loss_success_claim_count": 0
+  },
+  "schema_version": "p107.canary_fixture_matrix.v1",
+  "source_path": "evals/prevention/p107_canary_cases.json",
+  "fixtures": [
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A01"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "succeeded",
+      "fixture_id": "A01",
+      "recovery_replay_hash": "sha256:p107-recovery-a01",
+      "release_replay_hash": "sha256:p107-release-a01",
+      "scenario": "duplicate delivery"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A02"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "succeeded",
+      "fixture_id": "A02",
+      "recovery_replay_hash": "sha256:p107-recovery-a02",
+      "release_replay_hash": "sha256:p107-release-a02",
+      "scenario": "crash restart"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A03"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "succeeded",
+      "fixture_id": "A03",
+      "recovery_replay_hash": "sha256:p107-recovery-a03",
+      "release_replay_hash": "sha256:p107-release-a03",
+      "scenario": "concurrent duplicate"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A04"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "blocked_fail_closed",
+      "fixture_id": "A04",
+      "recovery_replay_hash": "sha256:p107-recovery-a04",
+      "release_replay_hash": "sha256:p107-release-a04",
+      "scenario": "stale P106 eligibility"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A05"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "blocked_fail_closed",
+      "fixture_id": "A05",
+      "recovery_replay_hash": "sha256:p107-recovery-a05",
+      "release_replay_hash": "sha256:p107-release-a05",
+      "scenario": "forged P106 P105 eligibility"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A06"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "blocked_fail_closed",
+      "fixture_id": "A06",
+      "recovery_replay_hash": "sha256:p107-recovery-a06",
+      "release_replay_hash": "sha256:p107-release-a06",
+      "scenario": "policy flip at preflight"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A07"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "blocked_fail_closed",
+      "fixture_id": "A07",
+      "recovery_replay_hash": "sha256:p107-recovery-a07",
+      "release_replay_hash": "sha256:p107-release-a07",
+      "scenario": "cohort escape"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A08"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "rolled_back",
+      "fixture_id": "A08",
+      "recovery_replay_hash": "sha256:p107-recovery-a08",
+      "release_replay_hash": "sha256:p107-release-a08",
+      "scenario": "telemetry loss"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A09"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "rolled_back",
+      "fixture_id": "A09",
+      "recovery_replay_hash": "sha256:p107-recovery-a09",
+      "release_replay_hash": "sha256:p107-release-a09",
+      "scenario": "guardrail breach"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A10"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "rolled_back",
+      "fixture_id": "A10",
+      "recovery_replay_hash": "sha256:p107-recovery-a10",
+      "release_replay_hash": "sha256:p107-release-a10",
+      "scenario": "non-improvement"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A11"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "escalated",
+      "fixture_id": "A11",
+      "recovery_replay_hash": "sha256:p107-recovery-a11",
+      "release_replay_hash": "sha256:p107-release-a11",
+      "scenario": "rollback failure"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A12"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "blocked_fail_closed",
+      "fixture_id": "A12",
+      "recovery_replay_hash": "sha256:p107-recovery-a12",
+      "release_replay_hash": "sha256:p107-release-a12",
+      "scenario": "repeat after rollback"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A13"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "succeeded",
+      "fixture_id": "A13",
+      "recovery_replay_hash": "sha256:p107-recovery-a13",
+      "release_replay_hash": "sha256:p107-release-a13",
+      "scenario": "audit tamper reorder replay determinism"
+    },
+    {
+      "authority_counters": {
+        "auth": 0,
+        "cloud_calls": 0,
+        "credential_reads": 0,
+        "db_mutation": 0,
+        "network_calls": 0,
+        "production_adapter_calls": 0,
+        "production_mutation": 0,
+        "shell_calls": 0
+      },
+      "command": {
+        "adapter": "local_mock",
+        "fixture_id": "A14"
+      },
+      "evidence_gates": {
+        "cohort_fingerprints_equalized": true,
+        "guardrail_window_met": true,
+        "idempotency_replay_verified": true,
+        "local_mock_adapter_only": true,
+        "no_release_replay_as_recovery": true,
+        "p106_gate_recomputed": true,
+        "policy_preflight_passed": true,
+        "primary_metric_window_met": true,
+        "rollback_or_escalation_verified": true,
+        "zero_authority_counters": true
+      },
+      "expected_terminal_state": "succeeded",
+      "fixture_id": "A14",
+      "recovery_replay_hash": "sha256:p107-recovery-a14",
+      "release_replay_hash": "sha256:p107-release-a14",
+      "scenario": "exact zero production authority"
+    }
+  ]
+}

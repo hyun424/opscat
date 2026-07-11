@@ -1,0 +1,7 @@
+{
+  "case_id": "checkout-001",
+  "root_service": "checkout",
+  "fault_type": "timeout",
+  "acceptable_service_aliases": ["checkout-api"],
+  "evidence_refs": ["logs.jsonl:1", "traces.jsonl:1"]
+}

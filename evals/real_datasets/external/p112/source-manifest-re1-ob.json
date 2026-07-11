@@ -1,0 +1,18 @@
+{
+  "schema_version": "p112.source_manifest.v1",
+  "source_id": "rcaeval-re1-ob",
+  "dataset": "RCAEval RE1-OB",
+  "system": "online_boutique",
+  "canonical_record": "https://zenodo.org/records/14590730",
+  "canonical_download_url": "https://zenodo.org/api/records/14590730/files/RE1-OB.zip/content",
+  "file_name": "RE1-OB.zip",
+  "compressed_bytes": 30966778,
+  "expected_case_count": 125,
+  "upstream_md5": "47cce26ed24140e8974e68f9db2a5e9c",
+  "verified_sha256": "4a709297e0a829f0f2ee8a7792a6d74da32d663c600565b7fffc860963b840c4",
+  "fault_families": ["cpu", "delay", "disk", "loss", "mem"],
+  "root_services": ["adservice", "cartservice", "checkoutservice", "currencyservice", "productcatalogservice"],
+  "label_convention": "RE1-OB/{root_service}_{fault_family}/{repetition}",
+  "license_note": "Upstream RCAEval repository identifies its datasets as MIT; the Zenodo record displays CC BY 4.0. OpsCat does not redistribute the archive.",
+  "citation": "Pham et al., RCAEval: A Benchmark for Root Cause Analysis of Microservice Systems with Telemetry Data, WWW 2025"
+}

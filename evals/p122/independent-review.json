@@ -1,0 +1,31 @@
+{
+  "evidence": {
+    "cached_performance_files": 368,
+    "crash_points_executed": 12,
+    "exact_zero_authority": true,
+    "fresh_1000_comparisons_passed": 2,
+    "record_losses": 0,
+    "security_archive_inventory_count": 2,
+    "security_source_inventory_count": 2208,
+    "semantic_binding": "sha256:f3d8be3fd8148b7b1bc0c06d2eab29ff9fcc16e1302d5e9ce0000e1033f82be9"
+  },
+  "native_agent_id": "019f5239-4dc3-7e51-bd5e-b8e8238c9d45",
+  "residual_risks": [
+    "hosted_ci_matrix_not_observed_on_remote_runners",
+    "local_fixture_evidence_does_not_establish_production_effectiveness"
+  ],
+  "reviewer_id": "independent-p122-verifier",
+  "schema_version": "p122.independent_review.v1",
+  "self_hash": "sha256:722e83a6d3e2b358e7caaad0f87d2725dfb0ef8da86328575390eed7ab17c204",
+  "ticket_matrix": {
+    "P122-001": "PASS",
+    "P122-002": "PASS",
+    "P122-003": "PASS",
+    "P122-004": "PASS",
+    "P122-005": "PASS",
+    "P122-006": "PASS",
+    "P122-007": "PASS",
+    "P122-008": "PASS"
+  },
+  "verdict": "PASS"
+}

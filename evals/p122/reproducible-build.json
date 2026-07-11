@@ -1,0 +1,12 @@
+{
+  "byte_reproducible": true,
+  "checksums": {
+    "opscat-0.2.0-py3-none-any.whl": "sha256:1ce0eda6d8e4f0ca3214198be8eeefb9438dfb9ff58709cbb7f8f4e692925cc7",
+    "opscat-0.2.0.tar.gz": "sha256:d8a2ae1bdc7911128b23f8e76a2efd1719f89634e959c794ca0831d47b1fbf0d"
+  },
+  "clean_build_count": 2,
+  "report_hash": "sha256:5bed8941775f8f79ec863b5364e70e170f107afadf3913bd08c281e70a413382",
+  "schema_version": "p122.reproducible_build.v1",
+  "source_date_epoch": 1767225600,
+  "source_tree_hash": "sha256:1c5e3a4a94a3e99d509920c42541fe9ac8b38c37f8a41b863c271d22aaf05d8c"
+}

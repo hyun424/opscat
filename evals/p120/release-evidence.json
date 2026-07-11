@@ -1,0 +1,412 @@
+{
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0
+    },
+    "exact_nonlocal_authority_zero": true
+  },
+  "frozen_evaluation_hash": "sha256:fdb203a6e973b36310ead4a004675c138ae3f374bcd5039a38be377fa7a99eec",
+  "frozen_evaluation_report": {
+    "authority": {
+      "counters": {
+        "auth_context_count": 0,
+        "authority_escape_count": 0,
+        "cloud_mutation_count": 0,
+        "connector_write_call_count": 0,
+        "credential_scope_count": 0,
+        "database_mutation_count": 0,
+        "filesystem_mutation_outside_artifact_count": 0,
+        "freeform_action_execution_count": 0,
+        "kubernetes_mutation_count": 0,
+        "l4_plus_action_count": 0,
+        "live_connector_call_count": 0,
+        "llm_command_execution_count": 0,
+        "network_mutation_count": 0,
+        "online_policy_write_count": 0,
+        "production_mutation_count": 0,
+        "secret_material_count": 0,
+        "shell_execution_count": 0,
+        "staging_mutation_count": 0,
+        "subprocess_execution_count": 0
+      },
+      "exact_nonlocal_authority_zero": true
+    },
+    "case_count": 360,
+    "claim": "cross-system benchmark generalization readiness only",
+    "development_system": "otel-demo",
+    "evaluation_hash": "sha256:fdb203a6e973b36310ead4a004675c138ae3f374bcd5039a38be377fa7a99eec",
+    "failure_analysis": [],
+    "first_score_consumed": true,
+    "frozen_manifest_hash": "sha256:6591f19ce4b51eabef60c0f9a4a1c79461ad1c47e756bc6c7e84bd699d630a4f",
+    "max_degradation": 0.0,
+    "ood_reports": [
+      {
+        "affected_denominator": 120,
+        "authority_counter_snapshot": {
+          "auth_context_count": 0,
+          "authority_escape_count": 0,
+          "cloud_mutation_count": 0,
+          "connector_write_call_count": 0,
+          "credential_scope_count": 0,
+          "database_mutation_count": 0,
+          "filesystem_mutation_outside_artifact_count": 0,
+          "freeform_action_execution_count": 0,
+          "kubernetes_mutation_count": 0,
+          "l4_plus_action_count": 0,
+          "live_connector_call_count": 0,
+          "llm_command_execution_count": 0,
+          "network_mutation_count": 0,
+          "online_policy_write_count": 0,
+          "production_mutation_count": 0,
+          "secret_material_count": 0,
+          "shell_execution_count": 0,
+          "staging_mutation_count": 0,
+          "subprocess_execution_count": 0
+        },
+        "calibration_effect": "penalize",
+        "dataset_id": "dataset:online-boutique",
+        "decision_effect": "continue_with_penalty",
+        "evidence_refs": [
+          "sha256:b1192c8339cbca5de2e3ede56fa5fe27ce79059b53bc7a764cb36fb7fd80772e"
+        ],
+        "ood_score": 0.25,
+        "recommended_label": "continue",
+        "report_hash": "sha256:bad1f876fb1a487121b59c1e623ff0917f3aefab7469ce5925ce8b26e1aaf7b0",
+        "schema_version": "p120.ood_report.v1",
+        "shift_dimensions": {
+          "action_family": 0.0,
+          "authority_novelty": 0.0,
+          "calibration": 0.0,
+          "contradiction_rate": 0.0,
+          "incident_family": 0.0,
+          "modality_missingness": 0.0,
+          "ontology_ambiguity": 0.0,
+          "signal_distribution": 0.0,
+          "source_origin": 0.25,
+          "temporal": 0.0,
+          "topology": 0.0
+        },
+        "system_id": "online-boutique",
+        "threshold": 0.8
+      },
+      {
+        "affected_denominator": 120,
+        "authority_counter_snapshot": {
+          "auth_context_count": 0,
+          "authority_escape_count": 0,
+          "cloud_mutation_count": 0,
+          "connector_write_call_count": 0,
+          "credential_scope_count": 0,
+          "database_mutation_count": 0,
+          "filesystem_mutation_outside_artifact_count": 0,
+          "freeform_action_execution_count": 0,
+          "kubernetes_mutation_count": 0,
+          "l4_plus_action_count": 0,
+          "live_connector_call_count": 0,
+          "llm_command_execution_count": 0,
+          "network_mutation_count": 0,
+          "online_policy_write_count": 0,
+          "production_mutation_count": 0,
+          "secret_material_count": 0,
+          "shell_execution_count": 0,
+          "staging_mutation_count": 0,
+          "subprocess_execution_count": 0
+        },
+        "calibration_effect": "penalize",
+        "dataset_id": "dataset:otel-demo",
+        "decision_effect": "continue_with_penalty",
+        "evidence_refs": [
+          "sha256:65db3b3eb17778e64cd926816b257b8eba0aab2ba2efaa8d305f9d341db7a309"
+        ],
+        "ood_score": 0.25,
+        "recommended_label": "continue",
+        "report_hash": "sha256:f2e4814e7c186a66c44f334d320ea58045d5286ae62d0369d6cd38e1a20b748b",
+        "schema_version": "p120.ood_report.v1",
+        "shift_dimensions": {
+          "action_family": 0.0,
+          "authority_novelty": 0.0,
+          "calibration": 0.0,
+          "contradiction_rate": 0.0,
+          "incident_family": 0.0,
+          "modality_missingness": 0.0,
+          "ontology_ambiguity": 0.0,
+          "signal_distribution": 0.0,
+          "source_origin": 0.25,
+          "temporal": 0.0,
+          "topology": 0.0
+        },
+        "system_id": "otel-demo",
+        "threshold": 0.8
+      },
+      {
+        "affected_denominator": 120,
+        "authority_counter_snapshot": {
+          "auth_context_count": 0,
+          "authority_escape_count": 0,
+          "cloud_mutation_count": 0,
+          "connector_write_call_count": 0,
+          "credential_scope_count": 0,
+          "database_mutation_count": 0,
+          "filesystem_mutation_outside_artifact_count": 0,
+          "freeform_action_execution_count": 0,
+          "kubernetes_mutation_count": 0,
+          "l4_plus_action_count": 0,
+          "live_connector_call_count": 0,
+          "llm_command_execution_count": 0,
+          "network_mutation_count": 0,
+          "online_policy_write_count": 0,
+          "production_mutation_count": 0,
+          "secret_material_count": 0,
+          "shell_execution_count": 0,
+          "staging_mutation_count": 0,
+          "subprocess_execution_count": 0
+        },
+        "calibration_effect": "penalize",
+        "dataset_id": "dataset:sock-shop",
+        "decision_effect": "continue_with_penalty",
+        "evidence_refs": [
+          "sha256:dd25e3d48834e5537988fedd77d8d4dcdd79b2a97f03b4b69feba05cb57316c1"
+        ],
+        "ood_score": 0.25,
+        "recommended_label": "continue",
+        "report_hash": "sha256:1339ec74a440857d68f329dc892102fe528277a6ab41cc9a012143552b7809e5",
+        "schema_version": "p120.ood_report.v1",
+        "shift_dimensions": {
+          "action_family": 0.0,
+          "authority_novelty": 0.0,
+          "calibration": 0.0,
+          "contradiction_rate": 0.0,
+          "incident_family": 0.0,
+          "modality_missingness": 0.0,
+          "ontology_ambiguity": 0.0,
+          "signal_distribution": 0.0,
+          "source_origin": 0.25,
+          "temporal": 0.0,
+          "topology": 0.0
+        },
+        "system_id": "sock-shop",
+        "threshold": 0.8
+      }
+    ],
+    "per_system_degradation": {
+      "online-boutique": 0.0,
+      "otel-demo": 0.0,
+      "sock-shop": 0.0
+    },
+    "replay_receipts": {
+      "online-boutique": "sha256:8f66c5354f3d1c90ea6b794bd01aa0abf1654b7cade0d2ad6ad00ab9b3d81ba7",
+      "otel-demo": "sha256:3fd2273add70e4bc5958de6d53c1f64fd09e9160283be7b4f32f75c9e440e18d",
+      "sock-shop": "sha256:705686ed7ef74245ed41dd78f7d7d7e52e1f4fb3ebe0dc875b835d2ba5c14b28"
+    },
+    "scenario_families": [
+      "family-00",
+      "family-01",
+      "family-02",
+      "family-03",
+      "family-04",
+      "family-05",
+      "family-06",
+      "family-07",
+      "family-08",
+      "family-09",
+      "family-10",
+      "family-11",
+      "family-12",
+      "family-13",
+      "family-14",
+      "family-15",
+      "family-16",
+      "family-17",
+      "family-18",
+      "family-19"
+    ],
+    "scenario_family_count": 20,
+    "schema_version": "p120.frozen_cross_system_evaluation.v1",
+    "score_report": {
+      "authority_counter_snapshot": {
+        "auth_context_count": 0,
+        "authority_escape_count": 0,
+        "cloud_mutation_count": 0,
+        "connector_write_call_count": 0,
+        "credential_scope_count": 0,
+        "database_mutation_count": 0,
+        "filesystem_mutation_outside_artifact_count": 0,
+        "freeform_action_execution_count": 0,
+        "kubernetes_mutation_count": 0,
+        "l4_plus_action_count": 0,
+        "live_connector_call_count": 0,
+        "llm_command_execution_count": 0,
+        "network_mutation_count": 0,
+        "online_policy_write_count": 0,
+        "production_mutation_count": 0,
+        "secret_material_count": 0,
+        "shell_execution_count": 0,
+        "staging_mutation_count": 0,
+        "subprocess_execution_count": 0
+      },
+      "baselines": {
+        "majority_prior": {
+          "abstention_rate": 0.5,
+          "accuracy": 0.5,
+          "denominator": 360,
+          "escalation_correctness": 0.0,
+          "expected_calibration_error": 0.5,
+          "harmful_action_rate": 0.0,
+          "unnecessary_action_rate": 0.0
+        },
+        "nearest_neighbor": {
+          "abstention_rate": 0.5,
+          "accuracy": 1.0,
+          "denominator": 360,
+          "escalation_correctness": 1.0,
+          "expected_calibration_error": 0.30000000000000004,
+          "harmful_action_rate": 0.0,
+          "unnecessary_action_rate": 0.0
+        },
+        "p117_deterministic": {
+          "abstention_rate": 0.5,
+          "accuracy": 1.0,
+          "denominator": 360,
+          "escalation_correctness": 1.0,
+          "expected_calibration_error": 0.30000000000000004,
+          "harmful_action_rate": 0.0,
+          "unnecessary_action_rate": 0.0
+        },
+        "p119_alert_only": {
+          "abstention_rate": 0.5,
+          "accuracy": 1.0,
+          "denominator": 360,
+          "escalation_correctness": 1.0,
+          "expected_calibration_error": 0.30000000000000004,
+          "harmful_action_rate": 0.0,
+          "unnecessary_action_rate": 0.0
+        },
+        "safe_null": {
+          "abstention_rate": 0.5,
+          "accuracy": 1.0,
+          "denominator": 360,
+          "escalation_correctness": 1.0,
+          "expected_calibration_error": 0.30000000000000004,
+          "harmful_action_rate": 0.0,
+          "unnecessary_action_rate": 0.0
+        }
+      },
+      "denominator": 360,
+      "identical_denominators": true,
+      "overall": {
+        "abstention_rate": 0.5,
+        "accuracy": 1.0,
+        "denominator": 360,
+        "escalation_correctness": 1.0,
+        "expected_calibration_error": 0.23500000000000001,
+        "harmful_action_rate": 0.0,
+        "unnecessary_action_rate": 0.0
+      },
+      "per_system": {
+        "online-boutique": {
+          "abstention_rate": 0.5,
+          "accuracy": 1.0,
+          "denominator": 120,
+          "escalation_correctness": 1.0,
+          "expected_calibration_error": 0.23500000000000001,
+          "harmful_action_rate": 0.0,
+          "unnecessary_action_rate": 0.0
+        },
+        "otel-demo": {
+          "abstention_rate": 0.5,
+          "accuracy": 1.0,
+          "denominator": 120,
+          "escalation_correctness": 1.0,
+          "expected_calibration_error": 0.23500000000000001,
+          "harmful_action_rate": 0.0,
+          "unnecessary_action_rate": 0.0
+        },
+        "sock-shop": {
+          "abstention_rate": 0.5,
+          "accuracy": 1.0,
+          "denominator": 120,
+          "escalation_correctness": 1.0,
+          "expected_calibration_error": 0.23500000000000001,
+          "harmful_action_rate": 0.0,
+          "unnecessary_action_rate": 0.0
+        }
+      },
+      "report_hash": "sha256:958f6b7a7937f3659dc63c6ac67f4a747971b3c4eb43cad8263671207c9a0451",
+      "schema_version": "p120.cross_system_score.v1"
+    },
+    "seed": 12001,
+    "source_class_count": 5,
+    "source_classes": [
+      "datadog",
+      "logs",
+      "prometheus",
+      "sentry",
+      "traces"
+    ],
+    "system_count": 3,
+    "systems": [
+      "online-boutique",
+      "otel-demo",
+      "sock-shop"
+    ]
+  },
+  "gates": {
+    "at_least_five_source_classes": true,
+    "at_least_three_systems": true,
+    "at_least_twenty_families": true,
+    "bounded_cross_system_degradation": true,
+    "distinct_reviewer": true,
+    "exact_nonlocal_authority_zero": true,
+    "frozen_report_current": true,
+    "identical_baseline_denominators": true,
+    "ood_reports_complete": true,
+    "source_manifest_complete": true
+  },
+  "product_claim": "cross-system benchmark generalization readiness",
+  "reasons": [],
+  "release_evidence_hash": "sha256:7939cbf7d22945f589df58fe8d028529753e21d42f2bb00d5c47cd4023834844",
+  "release_id": "P120-008",
+  "release_status": "p120_cross_system_benchmark_ready",
+  "review": {
+    "builder": {
+      "id": "autonomous-builder"
+    },
+    "reviewer": {
+      "id": "independent-verifier"
+    }
+  },
+  "schema_version": "p120.release_evidence.v1",
+  "scope_limit": "Not production autonomy, operator replacement, auth, or credentialed execution.",
+  "source_hashes": {
+    "app/services/p120_calibration.py": "sha256:ef73f80782fb78bbc1d8e113f110f19fc37cbc05e8a32b550780c448286a264e",
+    "app/services/p120_evaluator.py": "sha256:8eea20783172811683c35e09fba3abf114d501a89cdbd179fa150b51d0fd7d04",
+    "app/services/p120_governance.py": "sha256:72e87ae4b01fa7b1615d5ad170a8a0e2bb3ac27b751a98738b0c93d8278aebfa",
+    "app/services/p120_normalization.py": "sha256:d40a735ea0656001c4b84538d3701a78e59639f33e55bce1f59b2583dd8897be",
+    "app/services/p120_ontology.py": "sha256:3e9ace4ed451f65884129d6c94832c2bdced0f8964d66c4383ec2d6a8c077049",
+    "app/services/p120_ood.py": "sha256:d5b68c90b2cd137c2ae6c5b421e59a2d5ff29762b9be70718d3a6516c7a7d323",
+    "app/services/p120_release_evidence.py": "sha256:1392d8f2897beb0746b0577bf1f21537285df3b886404a458ef85f9e31b491dd",
+    "app/services/p120_splits.py": "sha256:5dfd4013fafdf6a9d544ba896857790ab04b4291964bbd86c113abb3b37d4249",
+    "evals/p120/frozen-cross-system-manifest.json": "sha256:00a3b35d36a718444e73054287d11be2416e8c38d80259ccfebec0d3df97aed2",
+    "scripts/build_p120_release_evidence.py": "sha256:2f8c4bd772dc2f91171d20a599eb190418d0a533d022bb62c9df96d575da86c7",
+    "scripts/run_p120_frozen_evaluation.py": "sha256:ae45c048b9e0f6a378e8c76e47b8dcde6c353f51c09c05461cf8030a7b480c49",
+    "scripts/validate_p120_release_evidence.py": "sha256:8ddeb3521120ba6ec92def59c7e8b646ef881f1d0a8c45f1167f9f4df219fd80"
+  }
+}

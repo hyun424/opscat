@@ -1,0 +1,7 @@
+{
+  "baseline_raw_replay": true,
+  "baseline_request_complete": true,
+  "candidate_raw_replay": false,
+  "candidate_repeat_raw_replay": false,
+  "candidate_request_complete": true
+}

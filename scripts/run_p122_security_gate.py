@@ -676,12 +676,14 @@ def build_security_report(root: Path, output_dir: Path) -> dict[str, Any]:
         "schema_version": "p122.security_report.v2",
         "gate": "p122_security_supply_chain",
         "status": "fail" if blocking else "pass",
-        "root": str(root),
+        # Bind the report to repository contents, not the creator's checkout
+        # path.  Release evidence must remain valid in clean CI checkouts.
+        "root": ".",
         "root_binding_hash": "sha256:"
         + sha256_text(
             json.dumps(
                 {
-                    "root": str(root),
+                    "root": ".",
                     "source_inventory_hash": source_inventory_digest,
                     "archive_inventory_hash": archive_inventory_digest,
                 },
@@ -727,7 +729,7 @@ def security_report_current(report: Mapping[str, Any], *, root: Path) -> bool:
         archive_digest = inventory_hash(archive_inventory)
         root_binding_hash = "sha256:" + sha256_text(
             json.dumps(
-                {"root": str(resolved_root), "source_inventory_hash": source_digest, "archive_inventory_hash": archive_digest},
+                {"root": ".", "source_inventory_hash": source_digest, "archive_inventory_hash": archive_digest},
                 sort_keys=True,
                 separators=(",", ":"),
             )
@@ -747,7 +749,7 @@ def security_report_current(report: Mapping[str, Any], *, root: Path) -> bool:
         expected_hash = "sha256:" + sha256_text(json.dumps(payload, sort_keys=True, separators=(",", ":")))
         return (
             report.get("schema_version") == "p122.security_report.v2"
-            and report.get("root") == str(resolved_root)
+            and report.get("root") == "."
             and report.get("root_binding_hash") == root_binding_hash
             and report.get("source_inventory") == source_inventory
             and report.get("source_inventory_hash") == source_digest

@@ -7,14 +7,14 @@
   "ordinal": 8,
   "output_ref": "committed/replay-bundle",
   "output_schema": "p121.restart_recovery_proof.v1",
-  "parent_pid": 58352,
+  "parent_pid": 64689,
   "precommit_hash": "sha256:da74b8328f54be9f74cea2d55b2b396170a5eb35fd49a1914fa2d9bfec38bd63",
   "precommit_kind": "directory",
   "precommit_ref": "precommit/replay-bundle",
   "precommit_validation_hash": "sha256:630801e638ca32a04b675b201d6b06b17f85fb6632515aa92ee4cede6dcac68b",
-  "record_hash": "sha256:5dd8b76a784286c8403cf68e4c298adcb70bf84a3b7b2ec40da6edd8d8cf0c71",
+  "record_hash": "sha256:d6be2748135b0f66f755fbd95a882261ecec2e697f11c66910fc1f68619c4561",
   "schema_version": "p122.release_stage_pending.v1",
   "stage": "replay_write",
   "status": "pending",
-  "worker_pid": 58370
+  "worker_pid": 64731
 }

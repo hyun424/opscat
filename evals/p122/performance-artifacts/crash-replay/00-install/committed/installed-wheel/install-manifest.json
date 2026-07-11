@@ -1172,9 +1172,9 @@
       "size": 3980
     },
     {
-      "hash": "sha256:c595a341173bb9aa1430bb031067aa4d5b328566966e04b628560dcf419d2658",
+      "hash": "sha256:8e994281da9fb906e2f3c2634d2c6bd6ed63216a811088c18f3d21fa60cf7ae1",
       "path": "site-packages/app/services/p122_release_evidence.py",
-      "size": 70742
+      "size": 70736
     },
     {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -1643,9 +1643,9 @@
     }
   ],
   "installed_package": "opscat",
-  "manifest_hash": "sha256:3680c498d5caef06599b3980a106d7ae9380765b57f4ca1741f831bc20273621",
+  "manifest_hash": "sha256:a0ba649e8a2af407bfb63587edcb532b7ce7ef7191da39df33083212c576d052",
   "operation": "package_install",
   "record_entries_verified": 327,
   "schema_version": "p122.canonical_wheel_install.v1",
-  "wheel_checksum": "sha256:1ce0eda6d8e4f0ca3214198be8eeefb9438dfb9ff58709cbb7f8f4e692925cc7"
+  "wheel_checksum": "sha256:3158dadfcec91fbbb02dee48f140e0d554bbe1bff7e9d6fcc9e2a36bdc5d40d1"
 }

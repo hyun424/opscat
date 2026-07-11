@@ -34,7 +34,7 @@
     "timeline_records": 4000
   },
   "iterations": 1000,
-  "manifest_hash": "sha256:655266d3854549c11001a8bd5cf461a9f3733d206db9891d54213028834adff4",
+  "manifest_hash": "sha256:422511931659e0ef0936e6eefe44e6f8cc9728bc6fb16bae5522790aa38696d6",
   "observed_records": {
     "audit_records": 4000,
     "authority_records": 1000,
@@ -50,5 +50,5 @@
     "lost_timeline_records": 0
   },
   "schema_version": "p122.performance_record_manifest.v2",
-  "semantic_binding": "sha256:7e1feebfa023a551c0600093dcea49bfb77c3da429f2965cf6dc49c555cef75a"
+  "semantic_binding": "sha256:466c1bfe3102b01b4b9e479a61568bdc8b3cf49c6f50696d8fac37d9826a6e71"
 }

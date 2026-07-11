@@ -490,7 +490,7 @@ def _security_report_valid(
         and report.get("schema_version") == "p122.security_report.v2"
         and report.get("gate") == "p122_security_supply_chain"
         and report.get("status") == ("fail" if blocking else "pass") == "pass"
-        and report.get("root") == str(root)
+        and report.get("root") == "."
         and _positive_int(report.get("scanned_file_count"))
         and _exact_int(report.get("dependency_count"), len(_locked_packages(root)))
         and _exact_int(report.get("generated_artifact_scan_count"), artifact_count)

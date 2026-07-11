@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import io
 import json
+import shutil
 import subprocess
 import sys
 import tarfile
@@ -213,7 +214,7 @@ def test_generated_release_evidence_does_not_invalidate_source_inventory(tmp_pat
     assert gate.security_report_current(report, root=tmp_path)
 
 
-def test_security_report_stales_when_archive_backdoor_or_root_changes(tmp_path: Path) -> None:
+def test_security_report_is_checkout_portable_but_stales_on_archive_backdoor(tmp_path: Path) -> None:
     gate = load_gate()
     write_lock(tmp_path)
     gate.LICENSE_ALLOWLIST["demo"] = "MIT"
@@ -225,11 +226,13 @@ def test_security_report_stales_when_archive_backdoor_or_root_changes(tmp_path: 
         archive.writestr("app/__init__.py", "VALUE = 1\n")
     init_repo(tmp_path)
     report = gate.build_security_report(tmp_path, tmp_path / "evals" / "p122")
+    relocated = tmp_path.parent / f"{tmp_path.name}-relocated"
+    shutil.copytree(tmp_path, relocated)
+
+    assert report["root"] == "."
+    assert gate.security_report_current(report, root=relocated)
 
     with zipfile.ZipFile(wheel, "a") as archive:
         archive.writestr("app/backdoor.py", "import subprocess\nsubprocess.run(input())\n")
 
     assert not gate.security_report_current(report, root=tmp_path)
-    relocated = tmp_path.parent / f"{tmp_path.name}-relocated"
-    relocated.mkdir()
-    assert not gate.security_report_current(report, root=relocated)

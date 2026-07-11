@@ -16,6 +16,20 @@ def test_ci_runs_full_release_sequence_on_supported_os_python_matrix() -> None:
     assert "upload-artifact" in release_job
 
 
+def test_ci_prepares_environment_bound_release_evidence_before_portable_verification() -> None:
+    workflow = Path(".github/workflows/ci.yml").read_text(encoding="utf-8")
+    verify_job = workflow.split("verify:", 1)[1].split("release-sequence:", 1)[0]
+    portable_index = verify_job.index("bash scripts/verify.sh --profile fast")
+    for command in (
+        "scripts/verify_p122_reproducible_build.py",
+        "scripts/verify_p122_clean_install.py",
+        "scripts/run_p122_security_gate.py",
+        "scripts/run_p122_vulnerability_audit.py",
+        "scripts/build_p122_release_evidence.py",
+    ):
+        assert verify_job.index(command) < portable_index
+
+
 def test_ci_container_job_validates_package_and_local_config_without_credentials() -> None:
     workflow = Path(".github/workflows/ci.yml").read_text(encoding="utf-8")
     container_job = workflow.split("container-package-config:", 1)[1]

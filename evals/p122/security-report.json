@@ -1651,7 +1651,7 @@
     },
     {
       "format": "sdist",
-      "hash": "sha256:af0cf4c65240aa996acf1e1d9658332dc0b052140076e21abeff14e58a905621",
+      "hash": "sha256:9d4ca9f2e61516d85fc9bf65f6efda7ae792f84759481a0a08e139accad7a549",
       "members": [
         {
           "hash": "sha256:1dd5af95f40cc7099c794c8404211ff20bc2d2a650fd0f7a9c76309eeebad8a3",
@@ -4154,9 +4154,9 @@
           "size": 12142
         },
         {
-          "hash": "sha256:5aebddd52ecea3de9c5312b72e10fbdffcd1994eaec5c65e7a12646d2189b5eb",
+          "hash": "sha256:b2b7bb4e69157db99ffd78dd467a3bdfcd30d57fe6631aae14070de2ed7c83de",
           "path": "opscat-0.2.0/tests/test_p113_blind_benchmark.py",
-          "size": 13535
+          "size": 14428
         },
         {
           "hash": "sha256:c1c0eb21e201cb75d511eb931d55e161ab1965e9d215fb34a410ca48f9a6065f",
@@ -4509,9 +4509,9 @@
           "size": 2118
         },
         {
-          "hash": "sha256:bcbffee11bcf9766693d4455acfb60be47ee3acc3606fd03a554555c63e200c3",
+          "hash": "sha256:4facacfd1c6e8321b31d446c8632e993e692e78b273ee174f42e27c8e5897815",
           "path": "opscat-0.2.0/tests/test_p122_ci_contract.py",
-          "size": 1557
+          "size": 2225
         },
         {
           "hash": "sha256:107ab96d519f001cb15edd10af093dddfc5607c5b94d28e1b306662e4ad7be50",
@@ -5631,10 +5631,10 @@
       ],
       "path": "dist/opscat-0.2.0.tar.gz",
       "readable": true,
-      "size": 1219171
+      "size": 1219415
     }
   ],
-  "archive_inventory_hash": "sha256:041f414f8b3932e2943aca5acefc72e8382bfd740bb2a108c4af6089d0df69b3",
+  "archive_inventory_hash": "sha256:68e668b367fd1e44323f83d8ef51e427b5c6736c9ecf6a4a118a0526dacf8644",
   "artifacts": {
     "license_inventory": "evals/p122/license-inventory.json",
     "sbom": "evals/p122/sbom.json",
@@ -5650,9 +5650,9 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:0904c6137c9d1ec46277defb53d010f6103eb948ce5c437e333629f3df5b406a",
+  "report_hash": "sha256:8c81e5456118b0c20ebc5341032f5180f6bce8fed7be01e28f9779aa6dc9bf26",
   "root": ".",
-  "root_binding_hash": "sha256:0f92261412b74ea15d3811a7991d53911a6a0fa6424a612210a6ecaae4ef36c4",
+  "root_binding_hash": "sha256:20fee802f01760a54de70f36a695451d30bf8a71a340c62f5c34bc90dfb4446d",
   "scanned_file_count": 2208,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
@@ -5678,9 +5678,9 @@
       "size": 403
     },
     {
-      "hash": "sha256:2c04c342ca3d190187e36fb1a7997803d4a0c49086b02c32ee35a9568b9deaf7",
+      "hash": "sha256:c4abc2e5f7d1f01ce1ba4ada1f2d1fc8a1e9a032528701fb0a88c940f385d5d6",
       "path": ".github/workflows/ci.yml",
-      "size": 5006
+      "size": 5550
     },
     {
       "hash": "sha256:3c84e8a159c5e8276627ad97eb4a7521e1f3841b1ff295a09206f7a4c270e0c4",
@@ -13943,9 +13943,9 @@
       "size": 50979
     },
     {
-      "hash": "sha256:d9f2274033e8c20b10cf13b4bd3d663dad49c8a15dfbeb648708c481dcfc56f5",
+      "hash": "sha256:3f1bd637ce0b3a741a6b5c261dccd53370c56525f807c981e271a0c68cd70410",
       "path": "scripts/run_p105_queue_harness.py",
-      "size": 33436
+      "size": 34967
     },
     {
       "hash": "sha256:bd8fb8ade45830bcdaa4d162399d53d14fb94590456fc73d0c0e3c6c7f1d8895",
@@ -15218,9 +15218,9 @@
       "size": 12142
     },
     {
-      "hash": "sha256:5aebddd52ecea3de9c5312b72e10fbdffcd1994eaec5c65e7a12646d2189b5eb",
+      "hash": "sha256:b2b7bb4e69157db99ffd78dd467a3bdfcd30d57fe6631aae14070de2ed7c83de",
       "path": "tests/test_p113_blind_benchmark.py",
-      "size": 13535
+      "size": 14428
     },
     {
       "hash": "sha256:c1c0eb21e201cb75d511eb931d55e161ab1965e9d215fb34a410ca48f9a6065f",
@@ -15573,9 +15573,9 @@
       "size": 2118
     },
     {
-      "hash": "sha256:bcbffee11bcf9766693d4455acfb60be47ee3acc3606fd03a554555c63e200c3",
+      "hash": "sha256:4facacfd1c6e8321b31d446c8632e993e692e78b273ee174f42e27c8e5897815",
       "path": "tests/test_p122_ci_contract.py",
-      "size": 1557
+      "size": 2225
     },
     {
       "hash": "sha256:107ab96d519f001cb15edd10af093dddfc5607c5b94d28e1b306662e4ad7be50",
@@ -16698,6 +16698,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:a5f70c6a6e6bc000a2fb4773835e3c6c2f77a1159237bb79bf178e7971053a8a",
+  "source_inventory_hash": "sha256:1322fc40806528eed6ac00fff38aa5f9c3bb0bfcc1a7688dcca9c08c7ad0805f",
   "status": "pass"
 }

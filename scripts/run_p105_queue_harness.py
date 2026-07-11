@@ -359,7 +359,23 @@ def _consume_expected_messages(
 
 def _observe_queues(args: argparse.Namespace, project_name: str, attestations: list[CommandAttestation]) -> dict[str, dict[str, int]]:
     completed = _run_command(
-        _rabbitmqadmin_command(args, project_name, ["list", "queues", "name", "messages", "messages_ready", "messages_unacknowledged"]),
+        _compose_command(
+            args,
+            project_name,
+            [
+                "exec",
+                "-T",
+                "rabbitmq",
+                "rabbitmqctl",
+                "list_queues",
+                "--formatter",
+                "json",
+                "name",
+                "messages",
+                "messages_ready",
+                "messages_unacknowledged",
+            ],
+        ),
         step="rabbitmq.observe.queues",
         attestations=attestations,
         timeout=120,
@@ -376,6 +392,35 @@ def _observe_queues(args: argparse.Namespace, project_name: str, attestations: l
                 "messages_unacknowledged": int(row.get("messages_unacknowledged", 0)),
             }
     return observations
+
+
+def _expected_queue_counts(states: dict[str, QueueRuntimeState]) -> dict[str, dict[str, int]]:
+    expected: dict[str, dict[str, int]] = {}
+    for queue_name, state in states.items():
+        ready = len(state.expected_ready())
+        expected[queue_name] = {"messages": ready, "messages_ready": ready, "messages_unacknowledged": 0}
+        rejected = state.rejected_count
+        expected[DLQ_NAMES[queue_name]] = {"messages": rejected, "messages_ready": rejected, "messages_unacknowledged": 0}
+    return expected
+
+
+def _observe_queues_until_settled(
+    args: argparse.Namespace,
+    project_name: str,
+    attestations: list[CommandAttestation],
+    states: dict[str, QueueRuntimeState],
+) -> dict[str, dict[str, int]]:
+    expected = _expected_queue_counts(states)
+    observed: dict[str, dict[str, int]] = {}
+    for _attempt in range(20):
+        observed = _observe_queues(args, project_name, attestations)
+        if all(observed.get(queue_name) == counts for queue_name, counts in expected.items()):
+            return observed
+        time.sleep(0.05)
+    raise RuntimeError(
+        "rabbitmq_queue_observation_not_settled:"
+        + _stable_json({"expected": expected, "observed": observed})
+    )
 
 
 def _run_raw_reject_dlq_probe(args: argparse.Namespace, project_name: str, attestations: list[CommandAttestation]) -> dict[str, Any]:
@@ -511,7 +556,7 @@ def _materialize_with_rabbitmq(args: argparse.Namespace) -> tuple[list[dict[str,
                         ack_lags.append(tick - int(payload["producer_tick"]))
                     else:
                         state.rejected_count += 1
-                queue_observations = _observe_queues(args, project_name, attestations)
+                queue_observations = _observe_queues_until_settled(args, project_name, attestations, states)
                 state.dlq_count = queue_observations.get(DLQ_NAMES[queue_name], {}).get("messages_ready", state.dlq_count)
                 for record in ledger_records:
                     if record["queue_name"] == queue_name and record["observed_transition_tick"] is None and state.dlq_count >= len(record["injected_message_ids"]):

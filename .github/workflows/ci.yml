@@ -33,6 +33,13 @@ jobs:
           cache-dependency-glob: uv.lock
       - name: Install project dependencies
         run: uv sync --frozen --extra dev
+      - name: Prepare current environment-bound release evidence
+        run: |
+          uv run --no-sync --extra dev python scripts/verify_p122_reproducible_build.py
+          uv run --no-sync --extra dev python scripts/verify_p122_clean_install.py
+          uv run --no-sync --extra dev python scripts/run_p122_security_gate.py
+          uv run --no-sync --extra dev python scripts/run_p122_vulnerability_audit.py
+          uv run --no-sync --extra dev python scripts/build_p122_release_evidence.py --output evals/p122/release-evidence.json
       - name: Run portable verification
         run: bash scripts/verify.sh --profile fast
       - name: Run complete verification profile

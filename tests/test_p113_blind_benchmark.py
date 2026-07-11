@@ -135,6 +135,11 @@ def _write_freeze_dir(path: Path, frozen: Mapping[str, Any]) -> None:
     path.mkdir(parents=True)
     (path / "freeze-manifest.json").write_text(json.dumps(frozen), encoding="utf-8")
     (path / "p113-model.json").write_text(json.dumps({"artifact_hash": MODEL_HASH}), encoding="utf-8")
+    (path / "case-id-key").write_bytes(b"p113-test-case-id-key")
+
+
+def _hmac_args(freeze_dir: Path) -> list[str]:
+    return ["--hmac-key", str(freeze_dir / "case-id-key")]
 
 
 def _patch_common(monkeypatch: pytest.MonkeyPatch, script: Any, packet_build: Any) -> list[Sequence[Mapping[str, Any]]]:
@@ -186,7 +191,18 @@ def test_diagnosis_mode_rebuilds_validates_scores_and_uses_no_provider(tmp_path:
     monkeypatch.setenv("NVIDIA_API_KEY", "super-secret")
     monkeypatch.setattr(script, "NvidiaP110CandidateProvider", lambda *args, **kwargs: pytest.fail("diagnosis must not construct provider"))
 
-    assert script.main(["diagnosis", "--freeze-dir", str(freeze_dir), "--output-dir", str(output_dir), "--scoring-started-at", "2026-07-11T00:00:01+00:00"]) == 0
+    assert script.main(
+        [
+            "diagnosis",
+            "--freeze-dir",
+            str(freeze_dir),
+            "--output-dir",
+            str(output_dir),
+            "--scoring-started-at",
+            "2026-07-11T00:00:01+00:00",
+            *_hmac_args(freeze_dir),
+        ]
+    ) == 0
 
     assert len(captured_predictions) == 2
     assert len(captured_predictions[0]) == 125
@@ -212,7 +228,18 @@ def test_narrative_requires_passed_diagnosis_gate(tmp_path: Path, monkeypatch: p
     _patch_common(monkeypatch, script, packet_build)
 
     with pytest.raises(SystemExit) as exc:
-        script.main(["narrative", "--freeze-dir", str(freeze_dir), "--diagnosis-gate-report", str(gate_path), "--output-dir", str(tmp_path / "out")])
+        script.main(
+            [
+                "narrative",
+                "--freeze-dir",
+                str(freeze_dir),
+                "--diagnosis-gate-report",
+                str(gate_path),
+                "--output-dir",
+                str(tmp_path / "out"),
+                *_hmac_args(freeze_dir),
+            ]
+        )
 
     assert exc.value.code == 2
 
@@ -254,7 +281,22 @@ def test_narrative_mode_uses_exact_frozen_subset_and_batches_with_explicit_nvidi
 
     monkeypatch.setattr(script, "NvidiaP110CandidateProvider", FakeProvider)
 
-    assert script.main(["narrative", "--freeze-dir", str(freeze_dir), "--diagnosis-gate-report", str(gate_path), "--output-dir", str(output_dir), "--case-offset", "5", "--max-cases", "4"]) == 0
+    assert script.main(
+        [
+            "narrative",
+            "--freeze-dir",
+            str(freeze_dir),
+            "--diagnosis-gate-report",
+            str(gate_path),
+            "--output-dir",
+            str(output_dir),
+            "--case-offset",
+            "5",
+            "--max-cases",
+            "4",
+            *_hmac_args(freeze_dir),
+        ]
+    ) == 0
 
     assert calls == subset[5:9]
     assert provider_init == [{"model": script.runtime.MODEL, "system_prompt": script.P113_SYSTEM_PROMPT}]
@@ -278,7 +320,18 @@ def test_narrative_rejects_duplicate_or_drifted_frozen_subset(tmp_path: Path, mo
     _patch_common(monkeypatch, script, packet_build)
 
     with pytest.raises(SystemExit) as exc:
-        script.main(["narrative", "--freeze-dir", str(freeze_dir), "--diagnosis-gate-report", str(gate_path), "--output-dir", str(tmp_path / "out")])
+        script.main(
+            [
+                "narrative",
+                "--freeze-dir",
+                str(freeze_dir),
+                "--diagnosis-gate-report",
+                str(gate_path),
+                "--output-dir",
+                str(tmp_path / "out"),
+                *_hmac_args(freeze_dir),
+            ]
+        )
 
     assert exc.value.code == 2
 

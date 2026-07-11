@@ -1651,7 +1651,7 @@
     },
     {
       "format": "sdist",
-      "hash": "sha256:b12c4c435a9f006d1fb9c9e27384dbf9ede367eee39c68b686d27afead7a3024",
+      "hash": "sha256:a971a8898c0834b526295e042b6f4b1af172752f8397967df40004e96d248c3d",
       "members": [
         {
           "hash": "sha256:1dd5af95f40cc7099c794c8404211ff20bc2d2a650fd0f7a9c76309eeebad8a3",
@@ -4509,9 +4509,9 @@
           "size": 2118
         },
         {
-          "hash": "sha256:9087f61d65d95fbb9c7edd9d6df9eed814e33527a278fd2fe6df2f5c38941254",
+          "hash": "sha256:bcbffee11bcf9766693d4455acfb60be47ee3acc3606fd03a554555c63e200c3",
           "path": "opscat-0.2.0/tests/test_p122_ci_contract.py",
-          "size": 1144
+          "size": 1557
         },
         {
           "hash": "sha256:107ab96d519f001cb15edd10af093dddfc5607c5b94d28e1b306662e4ad7be50",
@@ -5631,10 +5631,10 @@
       ],
       "path": "dist/opscat-0.2.0.tar.gz",
       "readable": true,
-      "size": 1219102
+      "size": 1219164
     }
   ],
-  "archive_inventory_hash": "sha256:25777f98f652430b0f2ff9523da4f37fb77a88a2d704b5b48552631b58cf987f",
+  "archive_inventory_hash": "sha256:35a381283c3d52fb99147a9a19abdeca56179448ae16e69547b4d0ccf8f38812",
   "artifacts": {
     "license_inventory": "evals/p122/license-inventory.json",
     "sbom": "evals/p122/sbom.json",
@@ -5650,9 +5650,9 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:cac5d61537b41aef80b6996b1b71fbb75eb6dca2e6808882dd328ba6d04e3b6a",
+  "report_hash": "sha256:0ea2e2a6bdac92cd15cbf04cd2302955c4153db825cf05154815ccbb039f1296",
   "root": ".",
-  "root_binding_hash": "sha256:918a67a9d2c39cbf2423d6253706bbb8f3fb06871dcb56a3b7040ec3ca866828",
+  "root_binding_hash": "sha256:8b90e49377a251cfa95bf24aa369a4455a4c4a010ff6b8a8f7b1f2657485b433",
   "scanned_file_count": 2208,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
@@ -5678,9 +5678,9 @@
       "size": 403
     },
     {
-      "hash": "sha256:c4db802debb7c672700dd0402f0548992138861840e458c4afb23bd4c4203348",
+      "hash": "sha256:2c04c342ca3d190187e36fb1a7997803d4a0c49086b02c32ee35a9568b9deaf7",
       "path": ".github/workflows/ci.yml",
-      "size": 4628
+      "size": 5006
     },
     {
       "hash": "sha256:3c84e8a159c5e8276627ad97eb4a7521e1f3841b1ff295a09206f7a4c270e0c4",
@@ -15573,9 +15573,9 @@
       "size": 2118
     },
     {
-      "hash": "sha256:9087f61d65d95fbb9c7edd9d6df9eed814e33527a278fd2fe6df2f5c38941254",
+      "hash": "sha256:bcbffee11bcf9766693d4455acfb60be47ee3acc3606fd03a554555c63e200c3",
       "path": "tests/test_p122_ci_contract.py",
-      "size": 1144
+      "size": 1557
     },
     {
       "hash": "sha256:107ab96d519f001cb15edd10af093dddfc5607c5b94d28e1b306662e4ad7be50",
@@ -16698,6 +16698,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:16642ec55d1ae2e06d8439cc8efc63d7c29288cbdf5aafc3605a2e59a86692b2",
+  "source_inventory_hash": "sha256:82a47609676ec83d638a972d6de77060570db5573e6440a3e32824a9484c3108",
   "status": "pass"
 }

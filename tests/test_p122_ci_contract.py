@@ -9,6 +9,9 @@ def test_ci_runs_full_release_sequence_on_supported_os_python_matrix() -> None:
     assert "os: [ubuntu-latest, macos-latest]" in release_job
     assert "python-version: ['3.12', '3.13', '3.14']" in release_job
     assert "for phase in 115 116 117 118 119 120 121 122" in release_job
+    assert release_job.index("scripts/run_p122_security_gate.py") < release_job.index("for phase in 115 116 117 118 119 120 121 122")
+    assert release_job.index("scripts/run_p122_vulnerability_audit.py") < release_job.index("for phase in 115 116 117 118 119 120 121 122")
+    assert release_job.index("scripts/build_p122_release_evidence.py") < release_job.index("for phase in 115 116 117 118 119 120 121 122")
     assert "setup-uv" in release_job and "enable-cache: true" in release_job
     assert "upload-artifact" in release_job
 

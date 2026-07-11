@@ -63,6 +63,11 @@ jobs:
         run: uv run --no-sync --extra dev python scripts/verify_p122_reproducible_build.py
       - name: Verify current clean install and uninstall
         run: uv run --no-sync --extra dev python scripts/verify_p122_clean_install.py
+      - name: Refresh environment-bound security and release evidence
+        run: |
+          uv run --no-sync --extra dev python scripts/run_p122_security_gate.py
+          uv run --no-sync --extra dev python scripts/run_p122_vulnerability_audit.py
+          uv run --no-sync --extra dev python scripts/build_p122_release_evidence.py --output evals/p122/release-evidence.json
       - name: Verify full P115-P122 release sequence
         run: |
           for phase in 115 116 117 118 119 120 121 122; do

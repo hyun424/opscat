@@ -7,14 +7,14 @@
   "ordinal": 1,
   "output_ref": "committed/local-demo.json",
   "output_schema": "opscat.local_demo.v1",
-  "parent_pid": 64689,
+  "parent_pid": 70093,
   "precommit_hash": "sha256:3338526aab8369329749d96195eeb7f2b8409d1faf43be013b36ce286b316604",
   "precommit_kind": "file",
   "precommit_ref": "precommit/local-demo.json",
   "precommit_validation_hash": "sha256:6e8a1c2653f76eb77258d7ef5d8d61cedbd561f4a6bcbe3423583df1e52804c9",
-  "record_hash": "sha256:008d51805b3f8fbd907ba91bc8e7b55a3dbc3d425868e23761f14e52473b9f04",
+  "record_hash": "sha256:26bdb9159377c7a72cf8f4a24aca2a93d0dfc6b8a64b822d80daa088a7ee8394",
   "schema_version": "p122.release_stage_pending.v1",
   "stage": "demo_startup",
   "status": "pending",
-  "worker_pid": 64716
+  "worker_pid": 70097
 }

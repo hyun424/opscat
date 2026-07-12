@@ -1,0 +1,38 @@
+{
+  "schema_version": "p125.soak_profile.v1",
+  "profile_id": "p125-promoted-local-shadow-soak",
+  "event_count": 10000,
+  "replay_source": "deterministic-local-shadow-generator",
+  "hardware_context": {
+    "scope": "local sandbox",
+    "cpu": "measured at runtime",
+    "memory": "tracemalloc peak"
+  },
+  "resource_limits": {
+    "max_pending_queue_depth": 1000,
+    "p95_event_latency_ms": 250,
+    "p99_event_latency_ms": 1000,
+    "peak_memory_mib": 256,
+    "artifact_storage_mib": 50,
+    "max_retry_per_interruption": 3
+  },
+  "quality_gate": {
+    "p124_preserved": true,
+    "baseline_score": 1.0,
+    "observed_score": 1.0
+  },
+  "interruption_points": [
+    "clean_stop",
+    "process_crash",
+    "partial_event_write",
+    "partial_observation_write",
+    "partial_judgment_write",
+    "partial_receipt_write",
+    "partial_audit_write",
+    "partial_report_write",
+    "stale_checkpoint",
+    "duplicated_resume_request",
+    "corrupted_checkpoint",
+    "exhausted_retry_budget"
+  ]
+}

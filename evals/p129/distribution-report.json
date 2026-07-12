@@ -1,0 +1,213 @@
+{
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_nonlocal_authority_zero": true,
+    "nonzero_authority_counters": {},
+    "source": "evals/p122/release-evidence.json"
+  },
+  "compatibility": {
+    "migration_policy_ref": "docs/compatibility.md",
+    "policy_hash": "sha256:38da7c3253ff32b2eded55f856d9391566d4235f089d752529c134445694b37d",
+    "python_versions": {
+      "3.12": {
+        "declared": true,
+        "executable": null,
+        "status": "pending_unavailable"
+      },
+      "3.13": {
+        "declared": true,
+        "executable": null,
+        "status": "pending_unavailable"
+      },
+      "3.14": {
+        "declared": true,
+        "executable": "python3.14",
+        "status": "available"
+      }
+    }
+  },
+  "gates": {
+    "claim_language_bounded": true,
+    "contract_refs_resolvable": true,
+    "distinct_reviewer": true,
+    "exact_nonlocal_authority_zero": true,
+    "governed_docs_valid": true,
+    "p122_release_evidence_ready": true,
+    "packaging_reproducibility_evidence": true,
+    "python_312_314_declared_or_pending": true,
+    "sbom_license_complete": true,
+    "security_intake_defined": true,
+    "security_release_blockers_zero": true,
+    "stable_internal_imports_declared": true,
+    "version_compatibility_defined": true
+  },
+  "governed_docs": [
+    {
+      "hash": "sha256:bc20a2f3413608fe8f2226dd2b9c865225d1219a1462f8db56e568408e98a7a2",
+      "missing_terms": [],
+      "path": "README.md",
+      "prohibited_claim_detected": false,
+      "status": "valid"
+    },
+    {
+      "hash": "sha256:3d6e9eec25759bf1c54bbeb42f16674071cf095caf0e7b0c78a9ad23ee0378df",
+      "missing_terms": [],
+      "path": "SECURITY.md",
+      "prohibited_claim_detected": false,
+      "status": "valid"
+    },
+    {
+      "hash": "sha256:7882e0de102de42df04a6cdb6505138731e280d8a678f3d4b43b33192393583e",
+      "missing_terms": [],
+      "path": "CONTRIBUTING.md",
+      "prohibited_claim_detected": false,
+      "status": "valid"
+    },
+    {
+      "hash": "sha256:868ed8852568bf29f4bb7943c2f6085df4b4218c9e0fa068ee358b92f2456504",
+      "missing_terms": [],
+      "path": "docs/installation.md",
+      "prohibited_claim_detected": false,
+      "status": "valid"
+    },
+    {
+      "hash": "sha256:38da7c3253ff32b2eded55f856d9391566d4235f089d752529c134445694b37d",
+      "missing_terms": [],
+      "path": "docs/compatibility.md",
+      "prohibited_claim_detected": false,
+      "status": "valid"
+    },
+    {
+      "hash": "sha256:4d0fc5bf902ef25ba6afd3197fe13966f7db2473d6955f87dc34262d00e89766",
+      "missing_terms": [],
+      "path": "docs/limitations.md",
+      "prohibited_claim_detected": false,
+      "status": "valid"
+    }
+  ],
+  "imports": {
+    "manifest_hash": "sha256:3a742584db86212f7bf0c2c6b8001afc484372795033d666297181a08a311128",
+    "stable_contract_count": 15,
+    "stable_internal_boundary_declared": true,
+    "unresolved_contract_refs": []
+  },
+  "p122_evidence": {
+    "gates": {
+      "clean_install_demo_uninstall_passed": true,
+      "crash_replay_inventory_complete": true,
+      "distinct_reviewer": true,
+      "docs_verification_passed": true,
+      "exact_nonlocal_authority_zero": true,
+      "independent_review_passed": true,
+      "known_vulnerability_audit_passed": true,
+      "licenses_compatible": true,
+      "migration_compatibility_passed": true,
+      "package_artifacts_current": true,
+      "package_build_byte_reproducible": true,
+      "performance_soak_complete": true,
+      "sbom_complete": true,
+      "security_gate_passed": true,
+      "source_manifest_complete": true,
+      "upstream_p115_p121_ready": true
+    },
+    "product_claim": "production-grade packaging practices with local/mock/sandbox qualification",
+    "public_limitation": "Production autonomy, auth completion, credentials, live connector writes, production/staging mutation, and operator replacement are not proven or enabled.",
+    "release_evidence_hash": "sha256:47cfd0c2107ddb564680e81831e4650111e2be792aff934a475e9c6c3a171fae",
+    "release_status": "p122_open_source_local_rc"
+  },
+  "packaging": {
+    "clean_install_contract_demo_uninstall": true,
+    "clean_install_hash": "sha256:a2fa26ff946e229bff5ebc27bce2ef941ea6357ea1bb15bf7f94e972aa8e7cce",
+    "package_checksum_count": 2,
+    "reproducible_build_hash": "sha256:101877df7719ba80419e9143c9b72f5fb8f3f82aec1773f6b00199bd0f9db2ba",
+    "reproducible_wheel_and_sdist": true,
+    "sdist_hash": "sha256:fdb99eed4a3b089e1375ac07fc9d2608870e2d7de53558ef834c2358ea4da424",
+    "wheel_hash": "sha256:a3d5327c07c0ba1fa1a12156807677c356c99b8f41bb67bb6851fcd7ed02521a"
+  },
+  "phase": "P129",
+  "planning_docs": [
+    {
+      "hash": "sha256:523b85d04c70b03c714ddb2a40ed33fa630a76e353fd136bf64747965fc7550a",
+      "path": "docs/operations/p129-oss-distribution-maturity-roadmap.md",
+      "present": true
+    },
+    {
+      "hash": "sha256:6dd4c15748b056f7ecd2a92a6a3d47073982c717c1e2f9cc2da9701e966c2ebb",
+      "path": "docs/operations/p129-test-spec.md",
+      "present": true
+    },
+    {
+      "hash": "sha256:b715c39287cedd17d18af92fdba68131b9216efa92e7a556eb36346fea09ca0c",
+      "path": "docs/operations/p129-plan-review.md",
+      "present": true
+    },
+    {
+      "hash": "sha256:7b301c5bf9a68eede14d0094c4d39ca72acd361d4cd2957f5e70737a21bb1edd",
+      "path": "docs/operations/p129-verification-handoff.md",
+      "present": true
+    },
+    {
+      "hash": "sha256:b4acd8b1211f2f0e3395aac976ae0f70bb689fcf46c44ebc1d06e65360826df9",
+      "path": "docs/tickets/p129/README.md",
+      "present": true
+    }
+  ],
+  "product_claim": "OSS distribution maturity with local/mock/sandbox qualification",
+  "public_limitation": "Production autonomy, auth completion, credentials, live connector writes, production/staging mutation, operator replacement, and enterprise support readiness are not proven or enabled.",
+  "reasons": [],
+  "report_hash": "sha256:10627f29e7684e7b5cd19b32aa6e2477d35dcd564f13cf73d2817075bfe9d24d",
+  "review": {
+    "builder_id": "autonomous-builder",
+    "reviewer_id": "independent-p129-verifier"
+  },
+  "schema_version": "p129.distribution_report.v1",
+  "security": {
+    "detected_secrets": 0,
+    "high_or_critical_security_findings": 0,
+    "high_or_critical_vulnerabilities": 0,
+    "production_enabled_defaults": 0,
+    "security_report_hash": "sha256:f88da17247430f2365f31a4ddfd08c59f9e83fd6a2abcc9a6b7c81b31f22711d",
+    "unpinned_runtime_dependencies": 0,
+    "vulnerability_audit_hash": "sha256:0c1a8673f421828951f47d6d48e0c9e1703eed28d28fb38bd668b683f5fda19c"
+  },
+  "status": "p129_distribution_maturity_ready",
+  "supply_chain": {
+    "incompatible_license_count": 0,
+    "license_completeness": 1.0,
+    "license_component_count": 70,
+    "license_inventory_hash": "sha256:1a01c3efb7e16f197bf22f1ceee3064abc362f690c7bdb96c2471e61bcb4f7c3",
+    "missing_license_components": [],
+    "sbom_completeness": 1.0,
+    "sbom_component_count": 70,
+    "sbom_hash": "sha256:c0eee3fdf933880009310d4e5c1f0b3e78551d6a95c5eb33dc3f1d7880a827f8",
+    "sbom_hash_coverage": 0.985714,
+    "unknown_license_count": 0
+  },
+  "unresolved_risks": [
+    "P129 aggregates local OSS distribution evidence only; it does not prove production operation.",
+    "Unavailable declared Python interpreters remain pending_unavailable until executed on that interpreter."
+  ]
+}

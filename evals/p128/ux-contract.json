@@ -1,0 +1,184 @@
+{
+  "authority_counters": {
+    "authority_escape": 0,
+    "credential_authority": 0,
+    "live_connector_call": 0,
+    "non_lab_mutation": 0,
+    "production_mutation": 0,
+    "real_staging_mutation": 0
+  },
+  "contract_hash": "sha256:f10f8d6bc8f79193b04c5b17b80a5717145abd93e876023d452e647176ec37cd",
+  "coverage": {
+    "surfaces": [
+      "approval_status",
+      "authority_counters",
+      "evidence_ids",
+      "fail_closed_reasons",
+      "hypotheses",
+      "limitations",
+      "policy_risk",
+      "pre_post_state",
+      "replay_links",
+      "uncertainty"
+    ]
+  },
+  "limitation": "P128 is a local/sandbox/replay evidence inspection beta only. Auth is deferred, credentials are out of scope, and staging or production mutation authority remains zero.",
+  "required_surfaces": [
+    "evidence_ids",
+    "hypotheses",
+    "uncertainty",
+    "policy_risk",
+    "pre_post_state",
+    "approval_status",
+    "replay_links",
+    "authority_counters",
+    "fail_closed_reasons",
+    "limitations"
+  ],
+  "scenarios": [
+    {
+      "approval_status": "not_required_read_only",
+      "blocked_action": "continue without replay receipt",
+      "evidence_ids": [
+        "ev-replay-001",
+        "receipt-p127-001"
+      ],
+      "fail_closed_reason": "Replay corruption would block continuation until receipt hash is valid.",
+      "hypotheses": [
+        "deploy drift caused elevated errors",
+        "cache saturation remains possible"
+      ],
+      "limitation": "Local replay evidence only; no live connector or production operation.",
+      "policy": "read_only_inspection",
+      "post_state": "no state changed; receipt inspected",
+      "pre_state": "incident observed in recorded replay",
+      "redaction_status": "redacted",
+      "replay_href": "/operator/beta#p128-replay-browser",
+      "report_href": "/operator/beta#authority-counters",
+      "risk": "low",
+      "scenario_id": "p128-replay-browser",
+      "schema_version": "p128.operator_scenario.v1",
+      "title": "Replay browser receipt",
+      "uncertainty": "medium: replay is local and fixture-backed",
+      "untrusted_note": "<img src=x onerror=alert(1)> api_key=[REDACTED] [REDACTED]",
+      "workflow_link_count": 3
+    },
+    {
+      "approval_status": "not_required_read_only",
+      "blocked_action": "promote quality claim",
+      "evidence_ids": [
+        "ev-quality-denominator",
+        "ev-quality-failure-slice"
+      ],
+      "fail_closed_reason": "Untraced claim is blocked until a report manifest is linked.",
+      "hypotheses": [
+        "quality denominator gap explains low confidence"
+      ],
+      "limitation": "Quality report is fixture-backed and does not prove production accuracy.",
+      "policy": "limitation_required",
+      "post_state": "claim constrained to available slices",
+      "pre_state": "quality report loaded",
+      "redaction_status": "not_sensitive",
+      "replay_href": "/operator/beta#p128-quality-report",
+      "report_href": "/operator/beta#p128-quality-report",
+      "risk": "medium",
+      "scenario_id": "p128-quality-report",
+      "schema_version": "p128.operator_scenario.v1",
+      "title": "Quality report slices",
+      "uncertainty": "high: missing denominator requires limitation",
+      "untrusted_note": "operator claim blocked is not a permitted claim",
+      "workflow_link_count": 4
+    },
+    {
+      "approval_status": "not_required_read_only",
+      "blocked_action": "claim resilience with missing ledger",
+      "evidence_ids": [
+        "ev-restart-ledger",
+        "ev-cost-envelope"
+      ],
+      "fail_closed_reason": "Lost records would block beta evidence qualification.",
+      "hypotheses": [
+        "restart recovery preserved receipts"
+      ],
+      "limitation": "Local resilience evidence does not assert production recovery.",
+      "policy": "read_only_inspection",
+      "post_state": "zero lost or duplicate records displayed",
+      "pre_state": "restart interruption recorded",
+      "redaction_status": "not_sensitive",
+      "replay_href": "/operator/beta#p128-resilience",
+      "report_href": "/operator/beta#p128-resilience",
+      "risk": "low",
+      "scenario_id": "p128-resilience",
+      "schema_version": "p128.operator_scenario.v1",
+      "title": "Restart and data-loss evidence",
+      "uncertainty": "low: local ledger hashes match",
+      "untrusted_note": "restart receipt inspected",
+      "workflow_link_count": 2
+    },
+    {
+      "approval_status": "blocked_auth_deferred",
+      "blocked_action": "trigger remediation from browser",
+      "evidence_ids": [
+        "ev-lab-dry-run",
+        "ev-approval-state"
+      ],
+      "fail_closed_reason": "Mutation controls are hidden while auth is deferred.",
+      "hypotheses": [
+        "lab-only dry run remained contained"
+      ],
+      "limitation": "Disposable-lab receipt only; no staging or production mutation.",
+      "policy": "no_non_lab_mutation",
+      "post_state": "no browser mutation control rendered",
+      "pre_state": "lab receipt available",
+      "redaction_status": "redacted",
+      "replay_href": "/operator/beta#p128-lab-receipt",
+      "report_href": "/operator/beta#p128-lab-receipt",
+      "risk": "medium",
+      "scenario_id": "p128-lab-receipt",
+      "schema_version": "p128.operator_scenario.v1",
+      "title": "Disposable-lab action receipt",
+      "uncertainty": "medium: disposable-lab scope only",
+      "untrusted_note": "Bearer [REDACTED]",
+      "workflow_link_count": 5
+    },
+    {
+      "approval_status": "blocked_fail_closed",
+      "blocked_action": "expand authority beyond sandbox",
+      "evidence_ids": [
+        "ev-chaos-authority",
+        "ev-chaos-reason"
+      ],
+      "fail_closed_reason": "Authority drift blocks continuation and keeps all mutation counters at zero.",
+      "hypotheses": [
+        "authority drift was correctly refused"
+      ],
+      "limitation": "P127 evidence is local/sandbox/replay only.",
+      "policy": "fail_closed_required",
+      "post_state": "action blocked and reason displayed",
+      "pre_state": "authority drift detected",
+      "redaction_status": "not_sensitive",
+      "replay_href": "/operator/beta#p128-chaos-fail-closed",
+      "report_href": "/operator/beta#authority-counters",
+      "risk": "high_if_unblocked",
+      "scenario_id": "p128-chaos-fail-closed",
+      "schema_version": "p128.operator_scenario.v1",
+      "title": "Chaos fail-closed reason",
+      "uncertainty": "low: exact-zero counters visible",
+      "untrusted_note": "counter panel reviewed",
+      "workflow_link_count": 3
+    }
+  ],
+  "schema_version": "p128.ux_contract.v1",
+  "summary": {
+    "local_sandbox_beta_banner": true,
+    "max_evidence_workflow_links": 5,
+    "no_inline_script": true,
+    "no_mutation_form": true,
+    "passed": true,
+    "read_only": true,
+    "scenario_count": 5,
+    "secret_display_count": 0,
+    "server_rendered": true,
+    "untrusted_data_escaped": true
+  }
+}

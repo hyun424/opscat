@@ -1,0 +1,302 @@
+{
+  "atomic_evidence_hash": "sha256:16d0cf20e5174c1ae3d0fdc78ea47cb1e26f127ebd31517a3d6a50d3078914ea",
+  "authority_counters": {
+    "auth_context_count": 0,
+    "authority_escape_count": 0,
+    "cloud_mutation_count": 0,
+    "connector_write_call_count": 0,
+    "credential_scope_count": 0,
+    "database_mutation_count": 0,
+    "filesystem_mutation_outside_artifact_count": 0,
+    "freeform_action_execution_count": 0,
+    "kubernetes_mutation_count": 0,
+    "l4_plus_action_count": 0,
+    "live_connector_call_count": 0,
+    "llm_command_execution_count": 0,
+    "network_mutation_count": 0,
+    "online_policy_write_count": 0,
+    "production_mutation_count": 0,
+    "secret_material_count": 0,
+    "shell_execution_count": 0,
+    "staging_mutation_count": 0,
+    "subprocess_execution_count": 0
+  },
+  "cpu_count": 12,
+  "cpu_seconds": 1.8332709999999999,
+  "deterministic_resume_rate": 1.0,
+  "durable_record_families": {
+    "audits": {
+      "committed": 10000,
+      "duplicated": 0,
+      "expected": 10000,
+      "family_hash": "sha256:3823dd98d6064d2697910d65f8d19d3e564c9816b766028d358a6ca76b5b5a00",
+      "lost": 0,
+      "recovered": 10000
+    },
+    "counters": {
+      "committed": 10000,
+      "duplicated": 0,
+      "expected": 10000,
+      "family_hash": "sha256:dd73d540590c39b89cf0db7ac45ed5f6761265a34b46eb18e8a914e1d6799b76",
+      "lost": 0,
+      "recovered": 10000
+    },
+    "events": {
+      "committed": 10000,
+      "duplicated": 0,
+      "expected": 10000,
+      "family_hash": "sha256:d29acf29dddbf46e0bdfc4f4117e000c78327eb9b7527b428d280818ac3f4478",
+      "lost": 0,
+      "recovered": 10000
+    },
+    "judgments": {
+      "committed": 10000,
+      "duplicated": 0,
+      "expected": 10000,
+      "family_hash": "sha256:afe2598057c0e59e8cb23d0785d6dd9128abf765923387bfa42b269f585f8b71",
+      "lost": 0,
+      "recovered": 10000
+    },
+    "observations": {
+      "committed": 10000,
+      "duplicated": 0,
+      "expected": 10000,
+      "family_hash": "sha256:b261da60d79ccff2c0ff447504654979418db1dd5c62fa626eeb633ae0c998de",
+      "lost": 0,
+      "recovered": 10000
+    },
+    "receipts": {
+      "committed": 10000,
+      "duplicated": 0,
+      "expected": 10000,
+      "family_hash": "sha256:087268089d68c5731617481b5939fd6c361c51ac0fa6b63b884f83c615c09649",
+      "lost": 0,
+      "recovered": 10000
+    },
+    "reports": {
+      "committed": 10000,
+      "duplicated": 0,
+      "expected": 10000,
+      "family_hash": "sha256:9f8c3cca57b92a840f21137b9379e3ef4d1e7c4f73752ad8d5033d1d86c2a319",
+      "lost": 0,
+      "recovered": 10000
+    }
+  },
+  "duration_seconds": 1.841725458005385,
+  "latency_ms": {
+    "p95": 40.0,
+    "p99": 41.0,
+    "samples": 10000
+  },
+  "ledger_hash": "sha256:0b7693076bcb76319d44a9aeaaa3639c6f70182e3cfb4b314c2a087459e53951",
+  "loss_duplicate_summary": {
+    "total_duplicated": 0,
+    "total_lost": 0
+  },
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "profile": {
+    "event_count": 10000,
+    "profile_hash": "sha256:094c3e99354083f24bbfecb21b520be3fe5e14d4d533de3eb1a19d9155c80ef8",
+    "profile_id": "p125-promoted-local-shadow-soak",
+    "replay_source": "deterministic-local-shadow-generator",
+    "schema_version": "p125.soak_profile.v1"
+  },
+  "python_version": "3.14.3",
+  "quality_gate": {
+    "baseline_score": 1.0,
+    "observed_score": 1.0,
+    "p124_preserved": true
+  },
+  "report_hash": "sha256:59f3a71f7aa1fb2dbf63a88218f4e99d3441b13b5c92c5ccf0f0da771877a3d1",
+  "resource_gates": {
+    "gates": {
+      "artifact_storage_mib": {
+        "actual": 9.611978530883789,
+        "limit": 50.0,
+        "passed": true
+      },
+      "max_pending_queue_depth": {
+        "actual": 1,
+        "limit": 1000,
+        "passed": true
+      },
+      "max_retry_per_interruption": {
+        "actual": 3,
+        "limit": 3,
+        "passed": true
+      },
+      "p95_event_latency_ms": {
+        "actual": 40.0,
+        "limit": 250.0,
+        "passed": true
+      },
+      "p99_event_latency_ms": {
+        "actual": 41.0,
+        "limit": 1000.0,
+        "passed": true
+      },
+      "peak_memory_mib": {
+        "actual": 33.9749174118042,
+        "limit": 256.0,
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "restart_matrix": {
+    "all_recovered": true,
+    "point_count": 12,
+    "points": [
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "clean_stop",
+        "ordinal": 0,
+        "pending_hash": "sha256:6e1ea465d2ea96d8d0af87482ef5c3613e14e87fdd63dede7eb2381a538d71d8",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:39fe1d3266ac564be2e044c7337c310c06545f2e4a60a1bf0dac9d787ee5f55c",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "process_crash",
+        "ordinal": 1,
+        "pending_hash": "sha256:87692e4ce95cd1b08d10f68d7188e01df3ee6ef576ff1fa4d635fba8381e4cf3",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:360dc03b26b897fa081851c847a8c9679fa4ed788db3e4aa059b431de7032971",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "partial_event_write",
+        "ordinal": 2,
+        "pending_hash": "sha256:ac2b5b15c1fe6ce126f9968e84712df908d873f8c433cd9afc108282518827a9",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:293095f0400e6defad10dfb3a14964e51c083544cf0f3930f09fb7a59163e865",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "partial_observation_write",
+        "ordinal": 3,
+        "pending_hash": "sha256:b78397be3c1d7b50a0f7312c1437fd870e5cf02547f1965e817b33f0e59f0557",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:8f4d88000d91185063280bf07de27cf798d5c1a1c076a98c4675dd20cc0141a2",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "partial_judgment_write",
+        "ordinal": 4,
+        "pending_hash": "sha256:fb97ae158da5a1cdd2f8219bd6696ad2feef38ba8e6f7138543f679a85ba887e",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:73b35179cc4a85115039200e98db005cacecd8878f8febeb50a97b31d5bd9265",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "partial_receipt_write",
+        "ordinal": 5,
+        "pending_hash": "sha256:b637537aef20dc4af9d4987f9842b7fc51bec9f26ccda7db0e5e1714a948cb0d",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:6b72d8472fe37e7d18c2d1b6d77d0c7212fa347d254fbf974a08d2ab0d654c2c",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "partial_audit_write",
+        "ordinal": 6,
+        "pending_hash": "sha256:dc31f7f508dbef31021ef3798b92e38aa374f4a7c693388e215baae83126fb51",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:37f7cb4365b40fe7931a19e8808d96f7b32493f9eb7bacc1446602b63bf4d923",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "partial_report_write",
+        "ordinal": 7,
+        "pending_hash": "sha256:67739631e2d63c85acc11bae4e3af19b2370033cbd02e33aad2f43124ecce63c",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:b071c5f0145dc0abd9682a335698e587ca54b5164bc2e7ebe6e8c804976d533f",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "stale_checkpoint",
+        "ordinal": 8,
+        "pending_hash": "sha256:9c8a322fa7e915ad85477723ecd76f0d9a1ccd483740d94d2cc8789e6e1e2753",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:797d760c66f197bb022b622e8cbeccec5185d6aeadcd00cb85d8dfe87f10237e",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "duplicated_resume_request",
+        "ordinal": 9,
+        "pending_hash": "sha256:4023460d6ef58d21fbfe74c77fc766beaac1ad72677acde3d66c25b8c16fe9da",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:af3e3c18866c2e97e8159f9c002f5a4bc46f7be100ef4f2af8cf53407cca525a",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "corrupted_checkpoint",
+        "ordinal": 10,
+        "pending_hash": "sha256:d9de3d3dcf3b933b7fb5e8bf1983cad0865551f6e3aef46ca0af4531764c8d7f",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:d5514253d6e9fdfde894d0b6101168bc4b79a9dde859b1e69afd85c04b633cc4",
+        "retry_count": 1
+      },
+      {
+        "duplicated_records": 0,
+        "injected": true,
+        "lost_records": 0,
+        "name": "exhausted_retry_budget",
+        "ordinal": 11,
+        "pending_hash": "sha256:a6b30bf563df62bd25c8b0f39a76a1f0e9b8fa4a1526377ac51a5762cf89804c",
+        "recovered": true,
+        "replayed": true,
+        "restart_receipt_hash": "sha256:fa87d9fb827e90196a97ef8144482361980573443873030fbd846b7ac0e36baf",
+        "retry_count": 3
+      }
+    ],
+    "schema_version": "p125.restart_matrix.v1"
+  },
+  "schema_version": "p125.resilience_report.v1",
+  "scope_limit": "P125 local/sandbox/shadow resilience only; not production SLO evidence.",
+  "storage": {
+    "promoted_artifact_bytes": 10078890
+  }
+}

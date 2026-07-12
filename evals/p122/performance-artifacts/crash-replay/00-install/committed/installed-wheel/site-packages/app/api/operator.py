@@ -18,6 +18,7 @@ from app.services.authorization import AuthorizationError, require_same_scope
 from app.services.decision_trace_service import DecisionTraceEntry, build_decision_trace
 from app.services.identity_service import Principal
 from app.services.incident_service import get_incident
+from app.services.p128_operator_beta import build_operator_beta_html, build_p128_operator_beta_contract
 from app.services.reliability_dashboard import build_reliability_dashboard
 from app.services.replay_service import ReplayService, load_replay_scenarios
 from app.services.war_room_service import build_war_room
@@ -94,7 +95,10 @@ def operator_inbox(principal: Principal = Depends(get_current_principal), db: Se
     except Exception:
         reliability_html = '<section data-testid="reliability-dashboard"><h2>P7 Reliability dashboard</h2><p>Replay metrics unavailable.</p></section>'
     body = (
-        f"<p>Workspace: <code>{escape(principal.tenant_id)}/{escape(principal.workspace_id)}</code></p>" + reliability_html + '<section data-testid="pending-approvals">'
+        f"<p>Workspace: <code>{escape(principal.tenant_id)}/{escape(principal.workspace_id)}</code></p>"
+        '<p><a href="/operator/beta">Open local/sandbox evidence replay beta</a></p>'
+        + reliability_html
+        + '<section data-testid="pending-approvals">'
         "<h2>Pending approvals</h2>"
         "<p>Review proposed actions here, then approve/reject through the local API instructions on each action page.</p>"
         '<table data-testid="pending-approval-table"><thead><tr>'
@@ -109,6 +113,16 @@ def operator_inbox(principal: Principal = Depends(get_current_principal), db: Se
         "</section>"
     )
     return _page("OpsCat Operator", body)
+
+
+@router.get("/beta", response_class=HTMLResponse)
+def operator_beta(principal: Principal = Depends(get_current_principal)) -> HTMLResponse:
+    contract = build_p128_operator_beta_contract()
+    scoped_contract = {
+        **contract,
+        "workspace": {"tenant_id": principal.tenant_id, "workspace_id": principal.workspace_id},
+    }
+    return HTMLResponse(build_operator_beta_html(scoped_contract))
 
 
 @router.get("/reliability")

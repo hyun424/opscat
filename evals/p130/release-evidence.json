@@ -1,0 +1,164 @@
+{
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero_runtime_authority": true,
+    "nonzero_phases": []
+  },
+  "beta_evidence_hash": "sha256:9830dbcc4277243792669e57797f638f191db9577ddf4ce77ec3dc2a9beba3f9",
+  "claim_ledger_hash": "sha256:2efff80913417c1f8d2bd2aa653ab97fb790e34f0e6142baf4f47543efa52c8a",
+  "claim_summary": {
+    "claim_count": 2,
+    "prohibited_claims": [],
+    "traceability_ratio": 1.0,
+    "undocumented_claim_count": 0,
+    "untraced_claim_count": 0
+  },
+  "gates": {
+    "current_upstream_evidence_hashes": true,
+    "distinct_reviewer": true,
+    "exact_zero_runtime_authority": true,
+    "feedback_requires_no_credentials_or_production_access": true,
+    "independent_review_passed": true,
+    "risk_register_complete": true,
+    "traceability_1_0": true,
+    "upstream_p123_p129_ready": true,
+    "visible_withdrawal_paths": true,
+    "zero_high_critical_blockers": true,
+    "zero_prohibited_claims": true,
+    "zero_undocumented_or_untraced_claims": true
+  },
+  "input_hashes": {
+    "evals/p130/input/claims.json": "sha256:524d8964b42b4e659afdda12f98ae53902885db9a3973c63bc337754c0eb95ee",
+    "evals/p130/input/exit-policy.json": "sha256:91c68a184733af1416167214da1838d92cc644a4d2ccff2fed695d0e4742b0f7",
+    "evals/p130/input/feedback.json": "sha256:dd2732d5e952dd98ec49b68181434445e655550afcf3137927541072b4e283bb",
+    "evals/p130/input/risks.json": "sha256:c9aaae64b65d2ea0b6aa47067d6a9d224be4fb44464f09e27f9167f4cb3b5046"
+  },
+  "product_claim": "Evidence-qualified public beta readiness framework for local, sandbox, replay, and disposable-lab evidence.",
+  "public_limitation": "Non-production public beta framework only; auth, credentials, live connectors, staging/production mutation, production autonomy, and operator replacement are forbidden and unproven. Reviewer independence is process-asserted, not cryptographically proven.",
+  "reasons": [],
+  "release_evidence_hash": "sha256:eb576df0a06eb23c0f4ab3d9b8a9ceab776939ebb19cef6093ff7ec70017a9b1",
+  "release_id": "P130-public-beta",
+  "release_status": "p130_public_beta_qualified",
+  "review": {
+    "artifact": {
+      "authority_counters": {
+        "auth_context_count": 0,
+        "authority_escape_count": 0,
+        "cloud_mutation_count": 0,
+        "connector_write_call_count": 0,
+        "credential_scope_count": 0,
+        "database_mutation_count": 0,
+        "evidence_bypass_count": 0,
+        "filesystem_mutation_outside_artifact_count": 0,
+        "freeform_action_execution_count": 0,
+        "kubernetes_mutation_count": 0,
+        "l4_plus_action_count": 0,
+        "live_connector_call_count": 0,
+        "llm_command_execution_count": 0,
+        "network_mutation_count": 0,
+        "online_policy_write_count": 0,
+        "production_mutation_count": 0,
+        "rollback_missing_execution_count": 0,
+        "secret_material_count": 0,
+        "shell_execution_count": 0,
+        "staging_mutation_count": 0,
+        "subprocess_execution_count": 0,
+        "unapproved_intervention_count": 0
+      },
+      "builder_id": "autonomous-builder",
+      "findings": [],
+      "limitations": [
+        "This PASS is limited to evidence-qualified non-production public beta readiness over local, sandbox, replay, disposable-lab, and OSS distribution artifacts.",
+        "Process separation is evidenced by distinct reviewer/builder identifiers and an independently generated hash-bound artifact, but reviewer identity is not cryptographically proven.",
+        "P130 release-evidence.json was not modified in this review per scope; it must be rebuilt separately to incorporate this current independent-review artifact.",
+        "No live production, credentialed, staging mutation, production mutation, live connector write, production autonomy, or operator replacement behavior was proven."
+      ],
+      "review_date": "2026-07-12",
+      "review_method": "codex_native_subagent",
+      "reviewed_checks": {
+        "canonical_p121_authority_counters": "PASS: authority.counters in all seven P123-P129 release artifacts exactly match app.services.p121_signals.zero_authority_counters(): no missing keys, no extra keys, and no nonzero values.",
+        "p122_package_boundary": "PASS: P122 release_status is p122_open_source_local_rc; package gates include clean install/demo/uninstall, byte reproducible build, current package artifacts, security gate, vulnerability audit, SBOM/license, docs, migration compatibility, and exact nonlocal authority zero. Wheel hash sha256:a3d5327c07c0ba1fa1a12156807677c356c99b8f41bb67bb6851fcd7ed02521a and sdist hash sha256:fdb99eed4a3b089e1375ac07fc9d2608870e2d7de53558ef834c2358ea4da424 are current evidence inputs.",
+        "p122_validator": "PASS: .venv/bin/python scripts/validate_p122_release_evidence.py evals/p122/release-evidence.json returned valid=true with schema_current, self_hash_current, all_fields_current, source_hashes_current, package_checksums_current, upstream_hashes_current, gates_current, independent_review_current, and release_qualified all true.",
+        "p123_p129_file_hashes_recorded": "PASS: current file SHA-256 values for evals/p123..p129/release-evidence.json are recorded in reviewed_file_sha256.",
+        "p123_p129_readiness": "PASS: release statuses are {'p123': 'p123_read_only_shadow_replay_promoted', 'p124': 'p124_judgment_quality_promoted', 'p125': 'ready', 'p126': 'ready', 'p127': 'p127_ready', 'p128': 'p128_ready', 'p129': 'p129_distribution_maturity_ready'}; every boolean release gate in P123-P129 is true.",
+        "p123_p129_release_hashes_current": "PASS: each evals/p123..p129/release-evidence.json release_evidence_hash equals stable_hash(payload excluding release_evidence_hash).",
+        "p129_validator": "PASS: validate_p129_release_evidence(evals/p129/release-evidence.json) returned valid=true with schema_current, self_hash_current, all_fields_current, distribution_report_hash_current, and release_qualified all true.",
+        "p130_validator_context": "PASS: pre-review P130 validation failed only because existing P130 artifacts were bound to stale upstream hashes after P123-P129 regeneration; this replacement review binds the current P123-P129 release_evidence_hash values required by build_p130_public_beta._review_current.",
+        "process_separation": "PASS: review artifact uses reviewer_id independent-p130-verifier, builder_id autonomous-builder, and review_method codex_native_subagent; process separation is evidenced by distinct ids and this independently generated artifact, but identity is not cryptographically proven.",
+        "safety_boundaries": "PASS: reviewed release evidence is limited to local, read-only, sandbox, recorded replay, disposable lab, OSS distribution, and evidence-qualified beta claims; auth completion, credentials, live connector proof/writes, real staging mutation, production mutation, production autonomy, and operator replacement remain forbidden, unproven, or out of scope.",
+        "targeted_tests": "PASS: PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest tests/test_p123_shadow_attachment.py tests/test_p124_judgment_quality.py tests/test_p125_shadow_resilience.py tests/test_p126_lab_remediation.py tests/test_p127_chaos_validation.py tests/test_p128_operator_beta.py tests/test_p129_distribution_maturity.py tests/test_p130_public_beta.py -q passed 58 tests with one StarletteDeprecationWarning."
+      },
+      "reviewed_file_sha256": {
+        "p123": "sha256:09adc8df6ae7322a1c47d179764b808bb04db9afc18df3011c47988d0497d70c",
+        "p124": "sha256:a57c549a8c1b7d1c6350dafbf88474a4dd790baab74ec0bc3e13f0a0cba3d31a",
+        "p125": "sha256:b5c2b9afe63e26ef9305a2741a1cfa61681bcd1f857f1b0ab543b8e9b5d50bdc",
+        "p126": "sha256:2b224ee2fa978df15788263e8277257cee165aab58f999ce792fa3c5e66184c2",
+        "p127": "sha256:de3571d118ebe5a31d25458f13ff43f9802868640078775aaea1e64561ace4e2",
+        "p128": "sha256:6aac8667c4dd8b1920ed65bc8ab9959ad23ab3cd2eabe352f8781dce05d8aa94",
+        "p129": "sha256:ed3e4aaf6007519dcb850cc2437bfe6c71a9dfbbdf311c5392e51926ea358192"
+      },
+      "reviewed_release_hashes": {
+        "p123": "sha256:fd96356d165bd5535989f1bb19719be8e00be464e09ae7eec644e212a9ae6151",
+        "p124": "sha256:08df2446737c2f55785b7be02b13271d19b7808ed73d0cf5a572c8bb90e42191",
+        "p125": "sha256:1cdd5001e5e68882cb070d246d7164122030278ce5eaddb74de0b2789643acdd",
+        "p126": "sha256:2fd4c009af349c8cdde465098e80600eeb7683407301e1025ac754fd2e49e021",
+        "p127": "sha256:909248bac9eb54042602e7b04172dc9c6fe322ef52606eca80691f44a7c35e3f",
+        "p128": "sha256:105bca44eca51d206dbba6601cf6cf6ad6f0743c1f56e1840bae70dd463b476b",
+        "p129": "sha256:0d075fc50e50df51d3a69eda1fd8aaf7cb4c1e0fa8065c7462a5f254b9f8c2e4"
+      },
+      "reviewer_id": "independent-p130-verifier",
+      "schema_version": "p130.independent_review.v1",
+      "scope": "Final distinct-process P130 gate review of current P123-P129 release evidence for evidence-qualified non-production public beta readiness.",
+      "self_hash": "sha256:ca5f3d9a7f2d36fdfea350e30d57ef7d2051aab05e9831dac0a60e958f0c22a8",
+      "verdict": "PASS"
+    },
+    "builder_id": "autonomous-builder",
+    "reviewer_id": "independent-p130-verifier"
+  },
+  "risk_register_hash": "sha256:47220358478e0e7fa120e22a94c1651af11122bc58d982d75aa9e96fb708a358",
+  "risk_summary": {
+    "high_critical_open_blockers": [],
+    "incomplete_risk_count": 0,
+    "risk_count": 2
+  },
+  "schema_version": "p130.release_evidence.v1",
+  "upstream_release_hashes": {
+    "p123": "sha256:fd96356d165bd5535989f1bb19719be8e00be464e09ae7eec644e212a9ae6151",
+    "p124": "sha256:08df2446737c2f55785b7be02b13271d19b7808ed73d0cf5a572c8bb90e42191",
+    "p125": "sha256:1cdd5001e5e68882cb070d246d7164122030278ce5eaddb74de0b2789643acdd",
+    "p126": "sha256:2fd4c009af349c8cdde465098e80600eeb7683407301e1025ac754fd2e49e021",
+    "p127": "sha256:909248bac9eb54042602e7b04172dc9c6fe322ef52606eca80691f44a7c35e3f",
+    "p128": "sha256:105bca44eca51d206dbba6601cf6cf6ad6f0743c1f56e1840bae70dd463b476b",
+    "p129": "sha256:0d075fc50e50df51d3a69eda1fd8aaf7cb4c1e0fa8065c7462a5f254b9f8c2e4"
+  },
+  "withdrawal_paths": [
+    "Disable or relabel feedback intake if secret-free handling cannot be maintained.",
+    "Withdraw this claim if any bound upstream release evidence is missing, stale, blocked, or no longer independently reviewed.",
+    "freeze feedback intake until limitations and evidence are restored",
+    "publish failed-gate correction with affected claim ids",
+    "unpublish public beta readiness language"
+  ]
+}

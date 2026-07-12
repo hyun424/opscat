@@ -1,0 +1,27 @@
+{
+  "risks": [
+    {
+      "description": "Local, replay, and disposable-lab evidence can be mistaken for live environment proof if public language is not bounded.",
+      "mitigation": "Keep every public claim tied to limitations, evidence references, review status, and withdrawal paths.",
+      "owner": "ops-beta",
+      "residual_risk": "Readers may still overgeneralize beta evidence outside the documented scope.",
+      "review_date": "2026-07-12",
+      "risk_id": "p130-non-production-evidence-overread",
+      "severity": "medium",
+      "status": "open",
+      "stop_or_rollback_condition": "Withdraw beta language if limitations are removed, contradicted, or hidden."
+    },
+    {
+      "description": "Future upstream evidence may change after review.",
+      "mitigation": "Bind independent review to exact P123-P129 release evidence hashes and fail closed on drift.",
+      "owner": "ops-release",
+      "residual_risk": "A stale public page could remain visible after local gate failure.",
+      "review_date": "2026-07-12",
+      "risk_id": "p130-upstream-hash-drift",
+      "severity": "medium",
+      "status": "open",
+      "stop_or_rollback_condition": "Unpublish promoted beta materials when any upstream hash no longer matches review evidence."
+    }
+  ],
+  "schema_version": "p130.risk_input.v1"
+}

@@ -1,0 +1,69 @@
+{
+  "artifact_hashes": {
+    "atomic_evidence_hash": "sha256:16d0cf20e5174c1ae3d0fdc78ea47cb1e26f127ebd31517a3d6a50d3078914ea",
+    "ledger_hash": "sha256:906ff5541c46b1e64c55a72ae0a28d6af4327c19fd16200442f407c401910545",
+    "report_file_hash": "sha256:a013eaf0ee53092fd9e30061f7bfe737c7b49f90706cb59d4002a9c68c0472e4",
+    "report_hash": "sha256:59f3a71f7aa1fb2dbf63a88218f4e99d3441b13b5c92c5ccf0f0da771877a3d1"
+  },
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero_runtime_authority": true,
+    "p125_report_counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0
+    }
+  },
+  "gates": {
+    "authority_counters_zero": true,
+    "duplicated_records": 0,
+    "event_volume": 10000,
+    "lost_records": 0,
+    "ready": true,
+    "resource_gates_passed": true,
+    "restart_point_count": 12
+  },
+  "limitation": "Local deterministic shadow replay only; no production, staging, credential, live-call, or mutation authority.",
+  "release_evidence_hash": "sha256:1cdd5001e5e68882cb070d246d7164122030278ce5eaddb74de0b2789643acdd",
+  "release_status": "ready",
+  "schema_version": "p125.release_evidence.v1"
+}

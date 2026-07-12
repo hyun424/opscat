@@ -1,0 +1,1737 @@
+{
+  "authority_counters": {
+    "authority_escape": 0,
+    "credential_authority": 0,
+    "free_form_action": 0,
+    "l4_or_higher_action": 0,
+    "live_customer_connector": 0,
+    "llm_command": 0,
+    "non_lab_mutation": 0,
+    "production_mutation": 0,
+    "real_staging_mutation": 0
+  },
+  "containment": {
+    "authority_escape_count": 0,
+    "claim_promotion_after_failure_count": 0,
+    "duplicate_effect_count": 0,
+    "fail_open_count": 0,
+    "lost_record_count": 0
+  },
+  "fault_classes": [
+    "missing_evidence",
+    "stale_evidence",
+    "malformed_telemetry",
+    "clock_skew",
+    "replay_corruption",
+    "restart_interruption",
+    "validation_failure",
+    "rollback_failure",
+    "cleanup_failure",
+    "target_ambiguity",
+    "policy_conflict",
+    "duplicate_delivery",
+    "retry_exhaustion",
+    "malformed_configuration",
+    "prompt_injection",
+    "authority_drift"
+  ],
+  "limitation": "P127 qualifies only local, sandbox, recorded-replay, and disposable-lab fail-closed chaos behavior; it does not run chaos against real staging or production.",
+  "receipts": [
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for missing_evidence primary",
+      "case_id": "missing_evidence_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-missing_evidence-primary-primary",
+        "ev-missing_evidence-primary-receipt"
+      ],
+      "fault_class": "missing_evidence",
+      "operator_reason": "Fail closed because missing evidence primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:500e266a2b121677a55cd15f3deca5dd0270c001352e2285396f79b3ab884ec1",
+      "replay_seed": "p127:missing_evidence:primary",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 1
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for missing_evidence secondary",
+      "case_id": "missing_evidence_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-missing_evidence-secondary-primary",
+        "ev-missing_evidence-secondary-receipt"
+      ],
+      "fault_class": "missing_evidence",
+      "operator_reason": "Fail closed because missing evidence secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:fe031831ba06f3cfd9f639073cdfcaf01da3aaf903fc13924fc9712ec0e2b217",
+      "replay_seed": "p127:missing_evidence:secondary",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 2
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for missing_evidence receipt",
+      "case_id": "missing_evidence_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-missing_evidence-receipt-primary",
+        "ev-missing_evidence-receipt-receipt"
+      ],
+      "fault_class": "missing_evidence",
+      "operator_reason": "Fail closed because missing evidence receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:28ebbf9e741c213ee092cb1b213f8bd06df7f6e399f4441de18efce354b3412a",
+      "replay_seed": "p127:missing_evidence:receipt",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 3
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for stale_evidence primary",
+      "case_id": "stale_evidence_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-stale_evidence-primary-primary",
+        "ev-stale_evidence-primary-receipt"
+      ],
+      "fault_class": "stale_evidence",
+      "operator_reason": "Fail closed because stale evidence primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:ba4f24dbc9a92b702853df7fe566c8404aa6ef08b28e3af4931076645575a90c",
+      "replay_seed": "p127:stale_evidence:primary",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 4
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for stale_evidence secondary",
+      "case_id": "stale_evidence_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-stale_evidence-secondary-primary",
+        "ev-stale_evidence-secondary-receipt"
+      ],
+      "fault_class": "stale_evidence",
+      "operator_reason": "Fail closed because stale evidence secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:83e1830785893d8a224800d87a536d7838cf0a24a6eb5774b6689c56d4e645e6",
+      "replay_seed": "p127:stale_evidence:secondary",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 5
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for stale_evidence receipt",
+      "case_id": "stale_evidence_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-stale_evidence-receipt-primary",
+        "ev-stale_evidence-receipt-receipt"
+      ],
+      "fault_class": "stale_evidence",
+      "operator_reason": "Fail closed because stale evidence receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:dfe043060f659f47b040cada7273554cf308c4b682dfe04db3a2dad780802401",
+      "replay_seed": "p127:stale_evidence:receipt",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 6
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for malformed_telemetry primary",
+      "case_id": "malformed_telemetry_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-malformed_telemetry-primary-primary",
+        "ev-malformed_telemetry-primary-receipt"
+      ],
+      "fault_class": "malformed_telemetry",
+      "operator_reason": "Fail closed because malformed telemetry primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:3a965e3c9701c5bb5b093d573a3b7d63608ecae542fd3ea7a540d85f5c1a17e4",
+      "replay_seed": "p127:malformed_telemetry:primary",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 7
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for malformed_telemetry secondary",
+      "case_id": "malformed_telemetry_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-malformed_telemetry-secondary-primary",
+        "ev-malformed_telemetry-secondary-receipt"
+      ],
+      "fault_class": "malformed_telemetry",
+      "operator_reason": "Fail closed because malformed telemetry secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:bb07cb86557a904a5ae8a5f762f30782b7279c7a05fdf5ca4e718ea7da161846",
+      "replay_seed": "p127:malformed_telemetry:secondary",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 8
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for malformed_telemetry receipt",
+      "case_id": "malformed_telemetry_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-malformed_telemetry-receipt-primary",
+        "ev-malformed_telemetry-receipt-receipt"
+      ],
+      "fault_class": "malformed_telemetry",
+      "operator_reason": "Fail closed because malformed telemetry receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:9ee1b0c3741a9c0ef9f271bab0a6e7e705a76b07ed0516f1bfa3a64dc5c37c8c",
+      "replay_seed": "p127:malformed_telemetry:receipt",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 9
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for clock_skew primary",
+      "case_id": "clock_skew_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-clock_skew-primary-primary",
+        "ev-clock_skew-primary-receipt"
+      ],
+      "fault_class": "clock_skew",
+      "operator_reason": "Fail closed because clock skew primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:2e2b77989c7d73d4a1b1490912222b47921e260777c2e43c62f2860f8996de95",
+      "replay_seed": "p127:clock_skew:primary",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 10
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for clock_skew secondary",
+      "case_id": "clock_skew_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-clock_skew-secondary-primary",
+        "ev-clock_skew-secondary-receipt"
+      ],
+      "fault_class": "clock_skew",
+      "operator_reason": "Fail closed because clock skew secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:2ecd0c0b06db0b4cbfb9df63de04b29d07a0d241e93f8cc3060d923643d76570",
+      "replay_seed": "p127:clock_skew:secondary",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 11
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for clock_skew receipt",
+      "case_id": "clock_skew_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-clock_skew-receipt-primary",
+        "ev-clock_skew-receipt-receipt"
+      ],
+      "fault_class": "clock_skew",
+      "operator_reason": "Fail closed because clock skew receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:14a1ea73c0d8acbbd3724670432fe43fb0f910550993943b102908ef3afb5e4d",
+      "replay_seed": "p127:clock_skew:receipt",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 12
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for replay_corruption primary",
+      "case_id": "replay_corruption_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-replay_corruption-primary-primary",
+        "ev-replay_corruption-primary-receipt"
+      ],
+      "fault_class": "replay_corruption",
+      "operator_reason": "Fail closed because replay corruption primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:8a2bb18d2283fdf886a3599328d1afae6933fc12f97a78ce23944c88d242cb57",
+      "replay_seed": "p127:replay_corruption:primary",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 13
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for replay_corruption secondary",
+      "case_id": "replay_corruption_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-replay_corruption-secondary-primary",
+        "ev-replay_corruption-secondary-receipt"
+      ],
+      "fault_class": "replay_corruption",
+      "operator_reason": "Fail closed because replay corruption secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:9d15b30ec69f628214ec56e704e1c9b14ff109f93818a850d90425378900175b",
+      "replay_seed": "p127:replay_corruption:secondary",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 14
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for replay_corruption receipt",
+      "case_id": "replay_corruption_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-replay_corruption-receipt-primary",
+        "ev-replay_corruption-receipt-receipt"
+      ],
+      "fault_class": "replay_corruption",
+      "operator_reason": "Fail closed because replay corruption receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:4ab6eefcba7e97deb00b785e7be139ac6ad63644e6a0954dd51dc54c97278a43",
+      "replay_seed": "p127:replay_corruption:receipt",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 15
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for restart_interruption primary",
+      "case_id": "restart_interruption_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-restart_interruption-primary-primary",
+        "ev-restart_interruption-primary-receipt"
+      ],
+      "fault_class": "restart_interruption",
+      "operator_reason": "Fail closed because restart interruption primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:3517c3d8c02d4727275bf9f19d03c5862cab108c7437ed994c26b21639215a8c",
+      "replay_seed": "p127:restart_interruption:primary",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": true,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 16
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for restart_interruption secondary",
+      "case_id": "restart_interruption_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-restart_interruption-secondary-primary",
+        "ev-restart_interruption-secondary-receipt"
+      ],
+      "fault_class": "restart_interruption",
+      "operator_reason": "Fail closed because restart interruption secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:2d0bb1e405e52df684789c5ce88e3b64c6a2a2ba81a0cc65cab810948523b4db",
+      "replay_seed": "p127:restart_interruption:secondary",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": true,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 17
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for restart_interruption receipt",
+      "case_id": "restart_interruption_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-restart_interruption-receipt-primary",
+        "ev-restart_interruption-receipt-receipt"
+      ],
+      "fault_class": "restart_interruption",
+      "operator_reason": "Fail closed because restart interruption receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:2374beee8ac9b476d3297d46c66a9dc8319353f10f7d25b0c908aefea55e05dd",
+      "replay_seed": "p127:restart_interruption:receipt",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": true,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 18
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for validation_failure primary",
+      "case_id": "validation_failure_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-validation_failure-primary-primary",
+        "ev-validation_failure-primary-receipt"
+      ],
+      "fault_class": "validation_failure",
+      "operator_reason": "Fail closed because validation failure primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:2f9676f6f019b78411c4378c96a74ebe113da534d8b3311dc3469cf8986c96a8",
+      "replay_seed": "p127:validation_failure:primary",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 19
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for validation_failure secondary",
+      "case_id": "validation_failure_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-validation_failure-secondary-primary",
+        "ev-validation_failure-secondary-receipt"
+      ],
+      "fault_class": "validation_failure",
+      "operator_reason": "Fail closed because validation failure secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:629f40eb26147ee8e6f70ca0fb1b95934adacda9a2d948638fb37c161ebf7a3b",
+      "replay_seed": "p127:validation_failure:secondary",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 20
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for validation_failure receipt",
+      "case_id": "validation_failure_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-validation_failure-receipt-primary",
+        "ev-validation_failure-receipt-receipt"
+      ],
+      "fault_class": "validation_failure",
+      "operator_reason": "Fail closed because validation failure receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:475fceed5b026438bc6bdb20654ae4503b5158bea62cdcfbe836aa249cfed41c",
+      "replay_seed": "p127:validation_failure:receipt",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 21
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for rollback_failure primary",
+      "case_id": "rollback_failure_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-rollback_failure-primary-primary",
+        "ev-rollback_failure-primary-receipt"
+      ],
+      "fault_class": "rollback_failure",
+      "operator_reason": "Fail closed because rollback failure primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:7cb9ae76ad48057665d16504e11494ea740d86dbdac11270348bf017ef51d84b",
+      "replay_seed": "p127:rollback_failure:primary",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 22
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for rollback_failure secondary",
+      "case_id": "rollback_failure_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-rollback_failure-secondary-primary",
+        "ev-rollback_failure-secondary-receipt"
+      ],
+      "fault_class": "rollback_failure",
+      "operator_reason": "Fail closed because rollback failure secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:0beec2ad7f1319e390982eaa8ab55f99d97b7482798f6c1cb6e608b93e9efa47",
+      "replay_seed": "p127:rollback_failure:secondary",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 23
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for rollback_failure receipt",
+      "case_id": "rollback_failure_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-rollback_failure-receipt-primary",
+        "ev-rollback_failure-receipt-receipt"
+      ],
+      "fault_class": "rollback_failure",
+      "operator_reason": "Fail closed because rollback failure receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:ea19d1bcb02154743d5779dd4fdbafae583a7b963b0b06c14efe0d8485c8a314",
+      "replay_seed": "p127:rollback_failure:receipt",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 24
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for cleanup_failure primary",
+      "case_id": "cleanup_failure_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-cleanup_failure-primary-primary",
+        "ev-cleanup_failure-primary-receipt"
+      ],
+      "fault_class": "cleanup_failure",
+      "operator_reason": "Fail closed because cleanup failure primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:32f5382637a3d032768c5202716e214355a7ad2479144254fd74345340da3494",
+      "replay_seed": "p127:cleanup_failure:primary",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 25
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for cleanup_failure secondary",
+      "case_id": "cleanup_failure_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-cleanup_failure-secondary-primary",
+        "ev-cleanup_failure-secondary-receipt"
+      ],
+      "fault_class": "cleanup_failure",
+      "operator_reason": "Fail closed because cleanup failure secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:6f1fb6e32afd496d9e626458185fc7a6398377bc07817f36d65659f09e8324e6",
+      "replay_seed": "p127:cleanup_failure:secondary",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 26
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for cleanup_failure receipt",
+      "case_id": "cleanup_failure_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-cleanup_failure-receipt-primary",
+        "ev-cleanup_failure-receipt-receipt"
+      ],
+      "fault_class": "cleanup_failure",
+      "operator_reason": "Fail closed because cleanup failure receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:27f31fd069b5b374901d58644ec615f0d09b6664ec70e57946a2bdc310e1bfba",
+      "replay_seed": "p127:cleanup_failure:receipt",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 27
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for target_ambiguity primary",
+      "case_id": "target_ambiguity_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-target_ambiguity-primary-primary",
+        "ev-target_ambiguity-primary-receipt"
+      ],
+      "fault_class": "target_ambiguity",
+      "operator_reason": "Fail closed because target ambiguity primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:b265975fd82c7d38fc3bf1cf781d32463cb3744a01257e611cc335f27c7fccba",
+      "replay_seed": "p127:target_ambiguity:primary",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 28
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for target_ambiguity secondary",
+      "case_id": "target_ambiguity_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-target_ambiguity-secondary-primary",
+        "ev-target_ambiguity-secondary-receipt"
+      ],
+      "fault_class": "target_ambiguity",
+      "operator_reason": "Fail closed because target ambiguity secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:7cb8e79c6b8adcc263a7de5928b4501725bdc9508601f79378718b034ccbcbcc",
+      "replay_seed": "p127:target_ambiguity:secondary",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 29
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for target_ambiguity receipt",
+      "case_id": "target_ambiguity_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-target_ambiguity-receipt-primary",
+        "ev-target_ambiguity-receipt-receipt"
+      ],
+      "fault_class": "target_ambiguity",
+      "operator_reason": "Fail closed because target ambiguity receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:a08c238beb587f9855bf5d5d9e0affcb1f2e20a62d6c4f122e0f9f3d7a8d56b1",
+      "replay_seed": "p127:target_ambiguity:receipt",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 30
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for policy_conflict primary",
+      "case_id": "policy_conflict_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-policy_conflict-primary-primary",
+        "ev-policy_conflict-primary-receipt"
+      ],
+      "fault_class": "policy_conflict",
+      "operator_reason": "Fail closed because policy conflict primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:b95222217bcb096b123c810cebfbe673d8c7a11487e8bbf6840e4066a8620a34",
+      "replay_seed": "p127:policy_conflict:primary",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 31
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for policy_conflict secondary",
+      "case_id": "policy_conflict_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-policy_conflict-secondary-primary",
+        "ev-policy_conflict-secondary-receipt"
+      ],
+      "fault_class": "policy_conflict",
+      "operator_reason": "Fail closed because policy conflict secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:d0757069805a49ab5403aaecb03b046019b1bc1b1bcb39f14f04b40ea439343e",
+      "replay_seed": "p127:policy_conflict:secondary",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 32
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for policy_conflict receipt",
+      "case_id": "policy_conflict_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-policy_conflict-receipt-primary",
+        "ev-policy_conflict-receipt-receipt"
+      ],
+      "fault_class": "policy_conflict",
+      "operator_reason": "Fail closed because policy conflict receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:6310988fb499317e490d486fca385007b3a959fc566962ecdeafc59c7d7aa3e7",
+      "replay_seed": "p127:policy_conflict:receipt",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 33
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for duplicate_delivery primary",
+      "case_id": "duplicate_delivery_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-duplicate_delivery-primary-primary",
+        "ev-duplicate_delivery-primary-receipt"
+      ],
+      "fault_class": "duplicate_delivery",
+      "operator_reason": "Fail closed because duplicate delivery primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:644997d64fc774ec16aa10cc47c6a732a96b8d09c22b234b2f694e392bd78f63",
+      "replay_seed": "p127:duplicate_delivery:primary",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 34
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for duplicate_delivery secondary",
+      "case_id": "duplicate_delivery_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-duplicate_delivery-secondary-primary",
+        "ev-duplicate_delivery-secondary-receipt"
+      ],
+      "fault_class": "duplicate_delivery",
+      "operator_reason": "Fail closed because duplicate delivery secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:a55ebb082d0b00d7a6ea35345c0d353a28ef2d51769f4e58ac192b54961b170c",
+      "replay_seed": "p127:duplicate_delivery:secondary",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 35
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for duplicate_delivery receipt",
+      "case_id": "duplicate_delivery_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-duplicate_delivery-receipt-primary",
+        "ev-duplicate_delivery-receipt-receipt"
+      ],
+      "fault_class": "duplicate_delivery",
+      "operator_reason": "Fail closed because duplicate delivery receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:81d1e7653ba9947095dfd7dbb065be0d531d2b619472f05a00503208cc017306",
+      "replay_seed": "p127:duplicate_delivery:receipt",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 36
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for retry_exhaustion primary",
+      "case_id": "retry_exhaustion_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-retry_exhaustion-primary-primary",
+        "ev-retry_exhaustion-primary-receipt"
+      ],
+      "fault_class": "retry_exhaustion",
+      "operator_reason": "Fail closed because retry exhaustion primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:837b8ab84afd2f7cd47a085be024465a5424780f0ba61401f9cd719837290fd6",
+      "replay_seed": "p127:retry_exhaustion:primary",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": true,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 37
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for retry_exhaustion secondary",
+      "case_id": "retry_exhaustion_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-retry_exhaustion-secondary-primary",
+        "ev-retry_exhaustion-secondary-receipt"
+      ],
+      "fault_class": "retry_exhaustion",
+      "operator_reason": "Fail closed because retry exhaustion secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:3d968f12b5db51a8aa888ad5312119daecf742bef43b4ee519b292ea47b22eed",
+      "replay_seed": "p127:retry_exhaustion:secondary",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": true,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 38
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for retry_exhaustion receipt",
+      "case_id": "retry_exhaustion_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-retry_exhaustion-receipt-primary",
+        "ev-retry_exhaustion-receipt-receipt"
+      ],
+      "fault_class": "retry_exhaustion",
+      "operator_reason": "Fail closed because retry exhaustion receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:685e8c65080e025bef4da1cc991c34a8d780d7c60238682ea3bea1245054fa36",
+      "replay_seed": "p127:retry_exhaustion:receipt",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": true,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 39
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for malformed_configuration primary",
+      "case_id": "malformed_configuration_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-malformed_configuration-primary-primary",
+        "ev-malformed_configuration-primary-receipt"
+      ],
+      "fault_class": "malformed_configuration",
+      "operator_reason": "Fail closed because malformed configuration primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:da648902c17cf7f36c4ba96ffb8d559b7788053bb87522d793146afa570dbebf",
+      "replay_seed": "p127:malformed_configuration:primary",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 40
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for malformed_configuration secondary",
+      "case_id": "malformed_configuration_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-malformed_configuration-secondary-primary",
+        "ev-malformed_configuration-secondary-receipt"
+      ],
+      "fault_class": "malformed_configuration",
+      "operator_reason": "Fail closed because malformed configuration secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:0c28ac5aa17b4e108a54d8e3398c7225fefb7d287f5106bb116eedce56af7e4a",
+      "replay_seed": "p127:malformed_configuration:secondary",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 41
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for malformed_configuration receipt",
+      "case_id": "malformed_configuration_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-malformed_configuration-receipt-primary",
+        "ev-malformed_configuration-receipt-receipt"
+      ],
+      "fault_class": "malformed_configuration",
+      "operator_reason": "Fail closed because malformed configuration receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:a7d614325bae64085d3970bd4b0bd1c885c05a28ca4667d3e40c7b79d81b3f74",
+      "replay_seed": "p127:malformed_configuration:receipt",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 42
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for prompt_injection primary",
+      "case_id": "prompt_injection_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-prompt_injection-primary-primary",
+        "ev-prompt_injection-primary-receipt"
+      ],
+      "fault_class": "prompt_injection",
+      "operator_reason": "Fail closed because prompt injection primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:451450ee6d9ec95702d6654433891058e6f6ae68207f96273b748249b419f5c1",
+      "replay_seed": "p127:prompt_injection:primary",
+      "retry_attempts": 2,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "recorded-replay",
+      "sequence": 43
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for prompt_injection secondary",
+      "case_id": "prompt_injection_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-prompt_injection-secondary-primary",
+        "ev-prompt_injection-secondary-receipt"
+      ],
+      "fault_class": "prompt_injection",
+      "operator_reason": "Fail closed because prompt injection secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:645ca92e8b500428f969bdd4995ac2fdcbaa0bcfe164df7f6e87d698698ab07c",
+      "replay_seed": "p127:prompt_injection:secondary",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 44
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for prompt_injection receipt",
+      "case_id": "prompt_injection_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-prompt_injection-receipt-primary",
+        "ev-prompt_injection-receipt-receipt"
+      ],
+      "fault_class": "prompt_injection",
+      "operator_reason": "Fail closed because prompt injection receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:83997608d8ad4fe07dc15cc94add23b2da5a1efae91d122e3fa99bcf11d19f94",
+      "replay_seed": "p127:prompt_injection:receipt",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 45
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for authority_drift primary",
+      "case_id": "authority_drift_primary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-authority_drift-primary-primary",
+        "ev-authority_drift-primary-receipt"
+      ],
+      "fault_class": "authority_drift",
+      "operator_reason": "Fail closed because authority drift primary is unsafe or uncertain.",
+      "receipt_hash": "sha256:3906eee8c399bbec49354867187c3c4d31b987a81f2718e26783974a6cbe9127",
+      "replay_seed": "p127:authority_drift:primary",
+      "retry_attempts": 3,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "disposable-lab",
+      "sequence": 46
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for authority_drift secondary",
+      "case_id": "authority_drift_secondary",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-authority_drift-secondary-primary",
+        "ev-authority_drift-secondary-receipt"
+      ],
+      "fault_class": "authority_drift",
+      "operator_reason": "Fail closed because authority drift secondary is unsafe or uncertain.",
+      "receipt_hash": "sha256:c14ff9e6155e30caa1d3ad3e469d4c4a848eab19421b1ef1d881ceeb1eeebf36",
+      "replay_seed": "p127:authority_drift:secondary",
+      "retry_attempts": 0,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "local",
+      "sequence": 47
+    },
+    {
+      "authority_counters": {
+        "authority_escape": 0,
+        "credential_authority": 0,
+        "free_form_action": 0,
+        "l4_or_higher_action": 0,
+        "live_customer_connector": 0,
+        "llm_command": 0,
+        "non_lab_mutation": 0,
+        "production_mutation": 0,
+        "real_staging_mutation": 0
+      },
+      "blocked_action": "blocked local continuation for authority_drift receipt",
+      "case_id": "authority_drift_receipt",
+      "containment": {
+        "action_executed": false,
+        "claim_promoted": false,
+        "duplicate_effect": false,
+        "record_lost": false
+      },
+      "decision": "fail_closed",
+      "evidence_ids": [
+        "ev-authority_drift-receipt-primary",
+        "ev-authority_drift-receipt-receipt"
+      ],
+      "fault_class": "authority_drift",
+      "operator_reason": "Fail closed because authority drift receipt is unsafe or uncertain.",
+      "receipt_hash": "sha256:5c6f01add26844100cd57a3ce3790ceb29832adf1f0d686090000cbaae7060be",
+      "replay_seed": "p127:authority_drift:receipt",
+      "retry_attempts": 1,
+      "retry_budget_exhausted": false,
+      "schema_version": "p127.failure_receipt.v1",
+      "scope": "sandbox",
+      "sequence": 48
+    }
+  ],
+  "report_hash": "sha256:b30b4f947197c1408f8a4199f683b6c8a0bee13c1774ea10048163335345baa5",
+  "schema_version": "p127.chaos_report.v1",
+  "summary": {
+    "allowed_scopes": [
+      "local",
+      "sandbox",
+      "recorded-replay",
+      "disposable-lab"
+    ],
+    "case_count": 48,
+    "deterministic_replay_rate": 1.0,
+    "fault_class_count": 16,
+    "max_retry_attempts": 3,
+    "passed": true,
+    "visible_fail_closed_reason_rate": 1.0
+  }
+}

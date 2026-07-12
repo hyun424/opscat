@@ -1,0 +1,15 @@
+{
+  "exit_criteria": [
+    "P123-P129 release evidence exists and remains hash-current",
+    "Independent reviewer PASS is distinct from builder identity",
+    "Claim ledger traceability remains 1.0",
+    "No high or critical open blockers exist"
+  ],
+  "rollback_paths": [
+    "unpublish public beta readiness language",
+    "publish failed-gate correction with affected claim ids",
+    "freeze feedback intake until limitations and evidence are restored"
+  ],
+  "schema_version": "p130.exit_policy_input.v1",
+  "withdrawal_paths_visible": true
+}

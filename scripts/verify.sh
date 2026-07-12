@@ -17,7 +17,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     -h|--help)
       cat <<'HELP'
-Usage: bash scripts/verify.sh [--profile fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release]
+Usage: bash scripts/verify.sh [--profile fast|full|eval|docs|p107-release|...|p130-release]
 
 Profiles:
   fast  Compile, lint, typecheck, and pytest regression suite.
@@ -56,6 +56,9 @@ Profiles:
         P121 local/mock/sandbox proactive prevention and release evidence.
   p122-release
         P122 open-source packaging, security, reproducibility, and bounded release evidence.
+  p123-release..p130-release
+        Evidence-qualified shadow attachment, judgment, resilience, local lab,
+        chaos, operator UX, distribution, and public-beta release profiles.
 HELP
       exit 0
       ;;
@@ -67,7 +70,7 @@ HELP
 done
 
 case "$VERIFY_PROFILE" in
-  fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release) ;;
+  fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release|p123-release|p124-release|p125-release|p126-release|p127-release|p128-release|p129-release|p130-release) ;;
   *)
     printf 'Unknown verify profile: %s\n' "$VERIFY_PROFILE" >&2
     exit 2
@@ -252,12 +255,21 @@ P122_RELEASE_PROFILE_TESTS=(
   tests/test_p122_docs_verification.py
   tests/test_p122_release_evidence.py
 )
+P123_RELEASE_PROFILE_TESTS=(tests/test_p123_shadow_attachment.py)
+P124_RELEASE_PROFILE_TESTS=(tests/test_p124_judgment_quality.py)
+P125_RELEASE_PROFILE_TESTS=(tests/test_p125_shadow_resilience.py)
+P126_RELEASE_PROFILE_TESTS=(tests/test_p126_lab_remediation.py)
+P127_RELEASE_PROFILE_TESTS=(tests/test_p127_chaos_validation.py)
+P128_RELEASE_PROFILE_TESTS=(tests/test_p128_operator_beta.py tests/test_operator_dashboard_e2e.py)
+P129_RELEASE_PROFILE_TESTS=(tests/test_p129_distribution_maturity.py)
+P130_RELEASE_PROFILE_TESTS=(tests/test_p130_public_beta.py)
 VERIFY_TMPDIR="$(mktemp -d)"
 cleanup() {
   rm -rf "$VERIFY_TMPDIR"
 }
 trap cleanup EXIT
 mkdir -p "$VERIFY_TMPDIR/reports"
+export UV_CACHE_DIR="$VERIFY_TMPDIR/uv-cache"
 export DATABASE_URL="sqlite:///$VERIFY_TMPDIR/opscat-verify.db"
 export REPORT_DIR="$VERIFY_TMPDIR/reports"
 
@@ -1571,7 +1583,7 @@ p122_release_profile_tests() {
   section "P122 security, SBOM, and license gate"
   "${UV_DEV[@]}" python scripts/run_p122_security_gate.py
   section "P122 locked dependency vulnerability audit"
-  "${UV_DEV[@]}" python scripts/run_p122_vulnerability_audit.py
+  "${UV_DEV[@]}" python scripts/run_p122_vulnerability_audit.py --validate-only
   section "P122 docs and migration verification"
   "${UV_DEV[@]}" python scripts/verify_p122_docs.py
   "${UV_DEV[@]}" python scripts/verify_p122_migration_compatibility.py --workdir "$VERIFY_TMPDIR/p122-migration" --output "$VERIFY_TMPDIR/p122-migration.json"
@@ -1595,6 +1607,48 @@ print(json.dumps(actual, sort_keys=True))
 PY
   section "P122 persisted release-evidence freshness"
   "${UV_DEV[@]}" python scripts/validate_p122_release_evidence.py evals/p122/release-evidence.json
+}
+
+phase_release_profile() {
+  local phase="$1"
+  shift
+  local service_glob="app/services/${phase}_*.py"
+  local script_glob="scripts/*${phase}*.py"
+  local test_glob="tests/test_${phase}_*.py"
+  local phase_label
+  phase_label="$(printf '%s' "$phase" | tr '[:lower:]' '[:upper:]')"
+  section "$phase_label evidence-qualified release profile"
+  "${UV_DEV[@]}" pytest -q "$@"
+  # The globs intentionally expand here so missing phase surfaces fail loudly.
+  # shellcheck disable=SC2086
+  "${UV_DEV[@]}" ruff check $service_glob $script_glob $test_glob
+  # shellcheck disable=SC2086
+  "${UV_DEV[@]}" mypy $service_glob $script_glob
+}
+
+p123_release_profile_tests() {
+  phase_release_profile p123 "${P123_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" python scripts/run_p123_shadow_attachment.py \
+    --manifest evals/p123/input/manifest.json \
+    --output evals/p123/shadow-report.json \
+    --release-evidence evals/p123/release-evidence.json
+}
+p124_release_profile_tests() {
+  phase_release_profile p124 "${P124_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" python scripts/run_p124_judgment_quality.py \
+    --cases evals/p124/input/cases.json \
+    --output evals/p124/quality-report.json \
+    --release-evidence evals/p124/release-evidence.json
+}
+p125_release_profile_tests() { phase_release_profile p125 "${P125_RELEASE_PROFILE_TESTS[@]}"; "${UV_DEV[@]}" python scripts/run_p125_shadow_resilience.py; }
+p126_release_profile_tests() { phase_release_profile p126 "${P126_RELEASE_PROFILE_TESTS[@]}"; "${UV_DEV[@]}" python scripts/run_p126_lab_remediation.py; }
+p127_release_profile_tests() { phase_release_profile p127 "${P127_RELEASE_PROFILE_TESTS[@]}"; "${UV_DEV[@]}" python scripts/run_p127_chaos_validation.py; }
+p128_release_profile_tests() { phase_release_profile p128 "${P128_RELEASE_PROFILE_TESTS[@]}"; "${UV_DEV[@]}" python scripts/run_p128_operator_beta.py; }
+p129_release_profile_tests() { phase_release_profile p129 "${P129_RELEASE_PROFILE_TESTS[@]}"; "${UV_DEV[@]}" python scripts/run_p129_distribution_maturity.py; }
+p130_release_profile_tests() {
+  phase_release_profile p130 "${P130_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" python scripts/build_p130_public_beta.py
+  "${UV_DEV[@]}" python scripts/validate_p130_public_beta.py evals/p130/release-evidence.json
 }
 
 p108_prevention_learning_evidence_smoke() {
@@ -1994,6 +2048,15 @@ run_p122_release() {
   p122_release_profile_tests
 }
 
+run_p123_release() { p123_release_profile_tests; }
+run_p124_release() { p124_release_profile_tests; }
+run_p125_release() { p125_release_profile_tests; }
+run_p126_release() { p126_release_profile_tests; }
+run_p127_release() { p127_release_profile_tests; }
+run_p128_release() { p128_release_profile_tests; }
+run_p129_release() { p129_release_profile_tests; }
+run_p130_release() { p130_release_profile_tests; }
+
 run_full() {
   run_fast
   coverage_gate
@@ -2026,6 +2089,14 @@ case "$VERIFY_PROFILE" in
   p120-release) run_p120_release ;;
   p121-release) run_p121_release ;;
   p122-release) run_p122_release ;;
+  p123-release) run_p123_release ;;
+  p124-release) run_p124_release ;;
+  p125-release) run_p125_release ;;
+  p126-release) run_p126_release ;;
+  p127-release) run_p127_release ;;
+  p128-release) run_p128_release ;;
+  p129-release) run_p129_release ;;
+  p130-release) run_p130_release ;;
   full) run_full ;;
 esac
 

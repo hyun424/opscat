@@ -2,7 +2,7 @@
   "archive_inventory": [
     {
       "format": "wheel",
-      "hash": "sha256:2dcc329e15beaf4b18e4fa101fed165bf88f53371ac43832f8b84c959a5e27c4",
+      "hash": "sha256:a3d5327c07c0ba1fa1a12156807677c356c99b8f41bb67bb6851fcd7ed02521a",
       "members": [
         {
           "hash": "sha256:e3fe41ad519f10f0949b6e8f24cc7b7dbacea3dfb04f521f1c9e1b7772a1e69e",
@@ -60,9 +60,9 @@
           "size": 1473
         },
         {
-          "hash": "sha256:e2375cddcb52d3dd39d33c5462083159cfdf42894ad586fe026cae887c44f768",
+          "hash": "sha256:1d9c70ba5aa30c44bbfc67d3d717747be1e53864204cdf44cd08c6a7994545ed",
           "path": "app/api/operator.py",
-          "size": 18799
+          "size": 19412
         },
         {
           "hash": "sha256:ab4570af18a720ceb2d8cfc7c481da43e73e6e7e6ec5d45fbbdb9b875b8ebaf5",
@@ -1175,6 +1175,46 @@
           "size": 70624
         },
         {
+          "hash": "sha256:2f36da8fd14dc0048a2f3f21b6a3324edc8389f3c8205caf6017d8d11d16d519",
+          "path": "app/services/p123_shadow_attachment.py",
+          "size": 21794
+        },
+        {
+          "hash": "sha256:249fd8f441a59b04526fa4c6c2c0bf93f0e317e7682cddef7978caa24e42258c",
+          "path": "app/services/p124_judgment_quality.py",
+          "size": 22577
+        },
+        {
+          "hash": "sha256:a00ef2bf3ceba326431c72316df38c64c67baf0ba0fd339d0ff0bddbd561fd60",
+          "path": "app/services/p125_shadow_resilience.py",
+          "size": 15261
+        },
+        {
+          "hash": "sha256:b4ced153118aafd45f1ed27798d59c972a83f35d01e6e470c8c5d2de085357e4",
+          "path": "app/services/p126_lab_remediation.py",
+          "size": 14719
+        },
+        {
+          "hash": "sha256:73e25e9ab1eafd0258171885400413afdc68a7d85a046546cc91b37be9b4768c",
+          "path": "app/services/p127_chaos_validation.py",
+          "size": 12530
+        },
+        {
+          "hash": "sha256:a86446ffb298aa8bb8d493978e651c4b61dcb256af7f0c40eeab1175b52eb3ac",
+          "path": "app/services/p128_operator_beta.py",
+          "size": 14968
+        },
+        {
+          "hash": "sha256:15e84cf20250d5677a8d8189291463c199b5589c0309d9ec0f756608d6f17bec",
+          "path": "app/services/p129_distribution_maturity.py",
+          "size": 22349
+        },
+        {
+          "hash": "sha256:8dab9296feb460e819a447ce64276452d3c6e3d632d2a6a7c8b90254b15523cb",
+          "path": "app/services/p130_public_beta.py",
+          "size": 21013
+        },
+        {
           "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
           "path": "app/services/policy_calibrator.py",
           "size": 11458
@@ -1620,9 +1660,9 @@
           "size": 34734
         },
         {
-          "hash": "sha256:2e38f668aaee0ccb4cf670e7aa40a107dbc6687a02822ac74f9f749fe2fcd450",
+          "hash": "sha256:30c9cd0330c3ac56ff3b4af2ef8ab8858977b922cbceef5732c2b6f4fa9d4fd3",
           "path": "opscat-0.2.0.dist-info/RECORD",
-          "size": 30241
+          "size": 30999
         },
         {
           "hash": "sha256:60b2577585d0d8543452a9f627eea21080bede239ecbc947df10adbc52e477c4",
@@ -1647,11 +1687,11 @@
       ],
       "path": "dist/opscat-0.2.0-py3-none-any.whl",
       "readable": true,
-      "size": 1010438
+      "size": 1049654
     },
     {
       "format": "sdist",
-      "hash": "sha256:9d4ca9f2e61516d85fc9bf65f6efda7ae792f84759481a0a08e139accad7a549",
+      "hash": "sha256:fdb99eed4a3b089e1375ac07fc9d2608870e2d7de53558ef834c2358ea4da424",
       "members": [
         {
           "hash": "sha256:1dd5af95f40cc7099c794c8404211ff20bc2d2a650fd0f7a9c76309eeebad8a3",
@@ -1724,9 +1764,9 @@
           "size": 1473
         },
         {
-          "hash": "sha256:e2375cddcb52d3dd39d33c5462083159cfdf42894ad586fe026cae887c44f768",
+          "hash": "sha256:1d9c70ba5aa30c44bbfc67d3d717747be1e53864204cdf44cd08c6a7994545ed",
           "path": "opscat-0.2.0/app/api/operator.py",
-          "size": 18799
+          "size": 19412
         },
         {
           "hash": "sha256:ab4570af18a720ceb2d8cfc7c481da43e73e6e7e6ec5d45fbbdb9b875b8ebaf5",
@@ -2839,6 +2879,46 @@
           "size": 70624
         },
         {
+          "hash": "sha256:2f36da8fd14dc0048a2f3f21b6a3324edc8389f3c8205caf6017d8d11d16d519",
+          "path": "opscat-0.2.0/app/services/p123_shadow_attachment.py",
+          "size": 21794
+        },
+        {
+          "hash": "sha256:249fd8f441a59b04526fa4c6c2c0bf93f0e317e7682cddef7978caa24e42258c",
+          "path": "opscat-0.2.0/app/services/p124_judgment_quality.py",
+          "size": 22577
+        },
+        {
+          "hash": "sha256:a00ef2bf3ceba326431c72316df38c64c67baf0ba0fd339d0ff0bddbd561fd60",
+          "path": "opscat-0.2.0/app/services/p125_shadow_resilience.py",
+          "size": 15261
+        },
+        {
+          "hash": "sha256:b4ced153118aafd45f1ed27798d59c972a83f35d01e6e470c8c5d2de085357e4",
+          "path": "opscat-0.2.0/app/services/p126_lab_remediation.py",
+          "size": 14719
+        },
+        {
+          "hash": "sha256:73e25e9ab1eafd0258171885400413afdc68a7d85a046546cc91b37be9b4768c",
+          "path": "opscat-0.2.0/app/services/p127_chaos_validation.py",
+          "size": 12530
+        },
+        {
+          "hash": "sha256:a86446ffb298aa8bb8d493978e651c4b61dcb256af7f0c40eeab1175b52eb3ac",
+          "path": "opscat-0.2.0/app/services/p128_operator_beta.py",
+          "size": 14968
+        },
+        {
+          "hash": "sha256:15e84cf20250d5677a8d8189291463c199b5589c0309d9ec0f756608d6f17bec",
+          "path": "opscat-0.2.0/app/services/p129_distribution_maturity.py",
+          "size": 22349
+        },
+        {
+          "hash": "sha256:8dab9296feb460e819a447ce64276452d3c6e3d632d2a6a7c8b90254b15523cb",
+          "path": "opscat-0.2.0/app/services/p130_public_beta.py",
+          "size": 21013
+        },
+        {
           "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
           "path": "opscat-0.2.0/app/services/policy_calibrator.py",
           "size": 11458
@@ -3284,9 +3364,9 @@
           "size": 34734
         },
         {
-          "hash": "sha256:bde889c35d6385dc9cdd2f5f3236d88485abee78cb35c070256ef9c8334df388",
+          "hash": "sha256:301c4e90ec890fc0eae6c8482a1e041416e508415006b4eab012876b1b3c6421",
           "path": "opscat-0.2.0/opscat.egg-info/SOURCES.txt",
-          "size": 28737
+          "size": 29325
         },
         {
           "hash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
@@ -3799,9 +3879,9 @@
           "size": 4111
         },
         {
-          "hash": "sha256:dcddac794da61ea45d9dd9a7cf46ba4aa3f28d45dac128e7d62b412f36a92535",
+          "hash": "sha256:55cb276c04c30ff7514ed09d5ce254b5d52a069b0c01e501daff5674c67e740e",
           "path": "opscat-0.2.0/tests/test_operator_dashboard_e2e.py",
-          "size": 3883
+          "size": 5187
         },
         {
           "hash": "sha256:f2baa12bbb420291ee27f1d0123cc140a1114c541f5cc1cec1e9ae0abb1a9d2b",
@@ -4569,9 +4649,49 @@
           "size": 1020
         },
         {
+          "hash": "sha256:005d30319e62162a2455acb0c7916707da1edc94e8fdc4df29bb34451b7580c6",
+          "path": "opscat-0.2.0/tests/test_p123_shadow_attachment.py",
+          "size": 3496
+        },
+        {
+          "hash": "sha256:7c213bb09e4d96ef4d83297230f90ab6c3cf337b492d438c4f0918ea0760c951",
+          "path": "opscat-0.2.0/tests/test_p124_judgment_quality.py",
+          "size": 3687
+        },
+        {
+          "hash": "sha256:a2c2eb7613154670b7aa6bc16e2ace7db7085a273601ca1942b26dbc49bac263",
+          "path": "opscat-0.2.0/tests/test_p125_shadow_resilience.py",
+          "size": 6089
+        },
+        {
+          "hash": "sha256:ae0821d6246e6ea769f26b5322489f8b4b4b1379783752eccc2faaf5dc6a91c2",
+          "path": "opscat-0.2.0/tests/test_p126_lab_remediation.py",
+          "size": 5293
+        },
+        {
+          "hash": "sha256:786aea1a6e29083cda3a306242506cc598e74d546024dd872a25a9989f0b85f8",
+          "path": "opscat-0.2.0/tests/test_p127_chaos_validation.py",
+          "size": 4491
+        },
+        {
+          "hash": "sha256:655cac820d5527e4b71540f582de4fefd35be45905f741b16909f25135110471",
+          "path": "opscat-0.2.0/tests/test_p128_operator_beta.py",
+          "size": 2863
+        },
+        {
+          "hash": "sha256:59db3939e147151081c7b14a5be9f30dd42bcc24390f14e7784731438e3e4648",
+          "path": "opscat-0.2.0/tests/test_p129_distribution_maturity.py",
+          "size": 8010
+        },
+        {
           "hash": "sha256:07a895fc55dd2d580ae0502c5010729835579451936f415d008aced18b633a74",
           "path": "opscat-0.2.0/tests/test_p12_release_evidence.py",
           "size": 2021
+        },
+        {
+          "hash": "sha256:1608af3c467d1f239dbdf214751a62a48401bd79fd57d7c8b82f74d7c9960e24",
+          "path": "opscat-0.2.0/tests/test_p130_public_beta.py",
+          "size": 16150
         },
         {
           "hash": "sha256:7b24eb8d26bf5f12d6da91609bc25996a8b98c2c44dbd77e466c37be7d181f29",
@@ -5631,10 +5751,10 @@
       ],
       "path": "dist/opscat-0.2.0.tar.gz",
       "readable": true,
-      "size": 1219415
+      "size": 1259561
     }
   ],
-  "archive_inventory_hash": "sha256:68e668b367fd1e44323f83d8ef51e427b5c6736c9ecf6a4a118a0526dacf8644",
+  "archive_inventory_hash": "sha256:f101d08c1acba8b8893ef6c298fbb4bac8935dc5e9124a7ad7acc38c7799e480",
   "artifacts": {
     "license_inventory": "evals/p122/license-inventory.json",
     "sbom": "evals/p122/sbom.json",
@@ -5650,10 +5770,10 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:8c81e5456118b0c20ebc5341032f5180f6bce8fed7be01e28f9779aa6dc9bf26",
+  "report_hash": "sha256:f88da17247430f2365f31a4ddfd08c59f9e83fd6a2abcc9a6b7c81b31f22711d",
   "root": ".",
-  "root_binding_hash": "sha256:20fee802f01760a54de70f36a695451d30bf8a71a340c62f5c34bc90dfb4446d",
-  "scanned_file_count": 2208,
+  "root_binding_hash": "sha256:27ffe332140b0314222d8afd51f8f81a6b7ff37641e0a4c18449f74f935767dd",
+  "scanned_file_count": 2325,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
   "source_inventory": [
@@ -5813,9 +5933,9 @@
       "size": 1473
     },
     {
-      "hash": "sha256:e2375cddcb52d3dd39d33c5462083159cfdf42894ad586fe026cae887c44f768",
+      "hash": "sha256:1d9c70ba5aa30c44bbfc67d3d717747be1e53864204cdf44cd08c6a7994545ed",
       "path": "app/api/operator.py",
-      "size": 18799
+      "size": 19412
     },
     {
       "hash": "sha256:ab4570af18a720ceb2d8cfc7c481da43e73e6e7e6ec5d45fbbdb9b875b8ebaf5",
@@ -6933,6 +7053,46 @@
       "size": 70624
     },
     {
+      "hash": "sha256:2f36da8fd14dc0048a2f3f21b6a3324edc8389f3c8205caf6017d8d11d16d519",
+      "path": "app/services/p123_shadow_attachment.py",
+      "size": 21794
+    },
+    {
+      "hash": "sha256:249fd8f441a59b04526fa4c6c2c0bf93f0e317e7682cddef7978caa24e42258c",
+      "path": "app/services/p124_judgment_quality.py",
+      "size": 22577
+    },
+    {
+      "hash": "sha256:a00ef2bf3ceba326431c72316df38c64c67baf0ba0fd339d0ff0bddbd561fd60",
+      "path": "app/services/p125_shadow_resilience.py",
+      "size": 15261
+    },
+    {
+      "hash": "sha256:b4ced153118aafd45f1ed27798d59c972a83f35d01e6e470c8c5d2de085357e4",
+      "path": "app/services/p126_lab_remediation.py",
+      "size": 14719
+    },
+    {
+      "hash": "sha256:73e25e9ab1eafd0258171885400413afdc68a7d85a046546cc91b37be9b4768c",
+      "path": "app/services/p127_chaos_validation.py",
+      "size": 12530
+    },
+    {
+      "hash": "sha256:a86446ffb298aa8bb8d493978e651c4b61dcb256af7f0c40eeab1175b52eb3ac",
+      "path": "app/services/p128_operator_beta.py",
+      "size": 14968
+    },
+    {
+      "hash": "sha256:15e84cf20250d5677a8d8189291463c199b5589c0309d9ec0f756608d6f17bec",
+      "path": "app/services/p129_distribution_maturity.py",
+      "size": 22349
+    },
+    {
+      "hash": "sha256:8dab9296feb460e819a447ce64276452d3c6e3d632d2a6a7c8b90254b15523cb",
+      "path": "app/services/p130_public_beta.py",
+      "size": 21013
+    },
+    {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
       "path": "app/services/policy_calibrator.py",
       "size": 11458
@@ -7408,6 +7568,11 @@
       "size": 4380
     },
     {
+      "hash": "sha256:38da7c3253ff32b2eded55f856d9391566d4235f089d752529c134445694b37d",
+      "path": "docs/compatibility.md",
+      "size": 893
+    },
+    {
       "hash": "sha256:08263ef9cdaabc3433f586805fbb133ebd421f3630121185af537b4712f6e4f9",
       "path": "docs/connector-permissions.md",
       "size": 3962
@@ -7446,6 +7611,11 @@
       "hash": "sha256:8b3810dcebadbb73b8218168a01dece92b20e2beeafbf71eb188e1d1b7136b93",
       "path": "docs/install.md",
       "size": 1949
+    },
+    {
+      "hash": "sha256:868ed8852568bf29f4bb7943c2f6085df4b4218c9e0fa068ee358b92f2456504",
+      "path": "docs/installation.md",
+      "size": 793
     },
     {
       "hash": "sha256:f9ae4debded5203483fc49e7a90afe2ca10f365e8522f88bdbce83ef0539fd2f",
@@ -7998,6 +8168,146 @@
       "size": 8304
     },
     {
+      "hash": "sha256:3b00bde5b5c785c266d9d307350eddc5ca1a6b24732c9ee04ba630ce834709a5",
+      "path": "docs/operations/p123-plan-review.md",
+      "size": 3472
+    },
+    {
+      "hash": "sha256:8432ca57e05ab4a8963bb80e35a84ff9920a7f0060be520ec86531382a59aa06",
+      "path": "docs/operations/p123-real-read-only-shadow-telemetry-attachment-roadmap.md",
+      "size": 6778
+    },
+    {
+      "hash": "sha256:9746974925a6206aec96707a5fbfd1fbc68de9c252f84cfbe5cd3b566e2948d5",
+      "path": "docs/operations/p123-test-spec.md",
+      "size": 2572
+    },
+    {
+      "hash": "sha256:1fb1087b54260405cbbd2ecb40b59bbb61c62a972a5fecbc342e6371ad6e5e0f",
+      "path": "docs/operations/p123-verification-handoff.md",
+      "size": 2098
+    },
+    {
+      "hash": "sha256:c869dee6cf42b9173bbd09b7ead5d1f15c60844a8056219952edd216eed482e0",
+      "path": "docs/operations/p124-measured-judgment-quality-roadmap.md",
+      "size": 6291
+    },
+    {
+      "hash": "sha256:e95926c702eec98aa1de3c6675ec9122175377cc61c17301039ad863f3061ee0",
+      "path": "docs/operations/p124-plan-review.md",
+      "size": 2931
+    },
+    {
+      "hash": "sha256:4a7148bb3d7a7ea3c67dc75186acf3a97ba1a35465f63baf06199f7414f3be49",
+      "path": "docs/operations/p124-test-spec.md",
+      "size": 2211
+    },
+    {
+      "hash": "sha256:2602d83dee767a620f2dc4348d2e4c1cb4dec9df27e85769d9b539919768b5fd",
+      "path": "docs/operations/p124-verification-handoff.md",
+      "size": 1845
+    },
+    {
+      "hash": "sha256:71b44374d2fb4fe31eefab133e015da9162f7639129b6fd21f783ab13ac241b2",
+      "path": "docs/operations/p125-long-running-shadow-resilience-roadmap.md",
+      "size": 6080
+    },
+    {
+      "hash": "sha256:c2733483e42c0b8c27b2f019f7655f648abc2e5ef510383d4de3cb9c69f6ccd1",
+      "path": "docs/operations/p125-plan-review.md",
+      "size": 2768
+    },
+    {
+      "hash": "sha256:50592fdb5967ccf02127bed247e68095acc06604e2db9ea6aa6edab528354a44",
+      "path": "docs/operations/p125-test-spec.md",
+      "size": 2193
+    },
+    {
+      "hash": "sha256:08295728fe7b91221bfe2d9639f5360ca445b3019edde573e84cf350c900447e",
+      "path": "docs/operations/p125-verification-handoff.md",
+      "size": 1871
+    },
+    {
+      "hash": "sha256:86438d392e0ecc2017bfc400eb77dd5560bb93a2bc3c7626fc5acf6f64d48733",
+      "path": "docs/operations/p126-controlled-disposable-staging-lab-remediation-roadmap.md",
+      "size": 5331
+    },
+    {
+      "hash": "sha256:91f790ddea572e89d462f01aed88f458e5b336b4a498165b4cf356d68ec5b3d2",
+      "path": "docs/operations/p126-plan-review.md",
+      "size": 2729
+    },
+    {
+      "hash": "sha256:28d10b47c178795b8574efc860a121b74688ca4cc0612aa64a7f0392a9c0b4f4",
+      "path": "docs/operations/p126-test-spec.md",
+      "size": 2157
+    },
+    {
+      "hash": "sha256:54d480a8dbf55dbd84a6ae0486c5a9f1fbc65d5a9d9f22b3ce297a0d18718100",
+      "path": "docs/operations/p126-verification-handoff.md",
+      "size": 1949
+    },
+    {
+      "hash": "sha256:696fc11ecaf82e9ea99684aa2d0ed2c7fbd3795224c496cdef111130ccecf49e",
+      "path": "docs/operations/p127-chaos-fail-closed-roadmap.md",
+      "size": 4862
+    },
+    {
+      "hash": "sha256:44e18e05f572577a04dcba334211a6d23484134e97df1e8853657924aab31d40",
+      "path": "docs/operations/p127-plan-review.md",
+      "size": 2537
+    },
+    {
+      "hash": "sha256:a8f64b2647233fafc7d4617a7a19142723672a112cecfb000edfce441dfb9a1a",
+      "path": "docs/operations/p127-test-spec.md",
+      "size": 2038
+    },
+    {
+      "hash": "sha256:4c76e0f38ef8412ede27e60db8cec2af3a616c7ccdc9a2790333591b9e3baa92",
+      "path": "docs/operations/p127-verification-handoff.md",
+      "size": 1837
+    },
+    {
+      "hash": "sha256:297704ff88a87975e888a6f2b91041b40352552be08cfb4b14c76611bd457414",
+      "path": "docs/operations/p128-operator-evidence-replay-ux-roadmap.md",
+      "size": 2926
+    },
+    {
+      "hash": "sha256:ceb8f2064464fa49fe1c2db12f3f12bc7e441e1742d8632553f5a4a457065ff5",
+      "path": "docs/operations/p128-plan-review.md",
+      "size": 1040
+    },
+    {
+      "hash": "sha256:6d098ee09ee3a2a8a184f779767bb24e88c865c5bc6101ffe68148f095978672",
+      "path": "docs/operations/p128-test-spec.md",
+      "size": 1057
+    },
+    {
+      "hash": "sha256:9254d2d507de28ef9b20173a421e832209a74cde9b9ceaa7469ac1e7a068588a",
+      "path": "docs/operations/p128-verification-handoff.md",
+      "size": 990
+    },
+    {
+      "hash": "sha256:523b85d04c70b03c714ddb2a40ed33fa630a76e353fd136bf64747965fc7550a",
+      "path": "docs/operations/p129-oss-distribution-maturity-roadmap.md",
+      "size": 2788
+    },
+    {
+      "hash": "sha256:b715c39287cedd17d18af92fdba68131b9216efa92e7a556eb36346fea09ca0c",
+      "path": "docs/operations/p129-plan-review.md",
+      "size": 1042
+    },
+    {
+      "hash": "sha256:6dd4c15748b056f7ecd2a92a6a3d47073982c717c1e2f9cc2da9701e966c2ebb",
+      "path": "docs/operations/p129-test-spec.md",
+      "size": 1051
+    },
+    {
+      "hash": "sha256:7b301c5bf9a68eede14d0094c4d39ca72acd361d4cd2957f5e70737a21bb1edd",
+      "path": "docs/operations/p129-verification-handoff.md",
+      "size": 1036
+    },
+    {
       "hash": "sha256:10e8c85e5311bec4a5d3c888234133c31f32f9c54006e14e9064970fe86d7ef9",
       "path": "docs/operations/p13-final-summary.md",
       "size": 2430
@@ -8006,6 +8316,26 @@
       "hash": "sha256:42cf31a104891e64098390fb8a733a57cdf31f8ec137cc94fc9daafa0cbc9a86",
       "path": "docs/operations/p13-ticket-roadmap.md",
       "size": 6011
+    },
+    {
+      "hash": "sha256:84a264520e2cfea9d13bdf61c2c1901a9401847112476eca26ca5668455dae61",
+      "path": "docs/operations/p130-evidence-qualified-public-beta-roadmap.md",
+      "size": 3114
+    },
+    {
+      "hash": "sha256:452e830c2afb2ace312ad6bf830976490e68df11b0326ada39da201fd3b4160e",
+      "path": "docs/operations/p130-plan-review.md",
+      "size": 1166
+    },
+    {
+      "hash": "sha256:d24cc1f6537fa5b43d5af467db4f0893e865137214236f182a5250d1ca975ca9",
+      "path": "docs/operations/p130-test-spec.md",
+      "size": 1058
+    },
+    {
+      "hash": "sha256:de9a6d84233956fae27b62c8c75440193a4640f364ae915a47f27148d87364ce",
+      "path": "docs/operations/p130-verification-handoff.md",
+      "size": 1079
     },
     {
       "hash": "sha256:d547189eaaa5c5e1c2bda31c209d04cb860fd753385f5764e4f71c694c43d155",
@@ -10338,6 +10668,216 @@
       "size": 2874
     },
     {
+      "hash": "sha256:335647e015a15682f4874bc137663c948407ff76228bc76d93e3394a4f36860a",
+      "path": "docs/tickets/p123/P123-001-read-only-telemetry-artifact-intake-contract.md",
+      "size": 827
+    },
+    {
+      "hash": "sha256:9ab933c0602ec93d3e7dc075f45636f274d389f0ede05b036373b77a61403ca3",
+      "path": "docs/tickets/p123/P123-002-recorded-replay-adapter-and-deterministic-playback.md",
+      "size": 742
+    },
+    {
+      "hash": "sha256:6a2725cc0c0fd3f0fb4ccbe9cd518687427b2dd0a8077b82c9dde4b27a48c9b7",
+      "path": "docs/tickets/p123/P123-003-shadow-judgment-outputs-and-evidence-receipts.md",
+      "size": 710
+    },
+    {
+      "hash": "sha256:904a5914d69c3241f9c3c5792ecedd8ff25aa4ec5093a23b1aefdf984019e825",
+      "path": "docs/tickets/p123/P123-004-no-credential-guardrails-and-authority-counters.md",
+      "size": 735
+    },
+    {
+      "hash": "sha256:1db652729ae82bf7a1ba9002265c41145a25bb9123cb495ecda09788ba79fc97",
+      "path": "docs/tickets/p123/P123-005-claim-ledger-verification-handoff-and-dependencies.md",
+      "size": 853
+    },
+    {
+      "hash": "sha256:eadc84ac3f240717a624916ebb788afec7cb7a5437b91388cd0f30ea60aec930",
+      "path": "docs/tickets/p123/README.md",
+      "size": 1049
+    },
+    {
+      "hash": "sha256:fa03493ca40ea165100bc363974e6358b02ae82479347fe212fc754a5531bb75",
+      "path": "docs/tickets/p124/P124-001-evaluation-case-schema-and-hidden-truth-manifest.md",
+      "size": 623
+    },
+    {
+      "hash": "sha256:af0df194d27e7365327ca4b8d3a9884f230ba5c117b7cb1a695655e857569d70",
+      "path": "docs/tickets/p124/P124-002-human-baseline-protocol-and-adjudication-model.md",
+      "size": 641
+    },
+    {
+      "hash": "sha256:37fdf0a87955f26436685a71cd0de3ebac2c8037f6c8adfa35a21b846a8891f6",
+      "path": "docs/tickets/p124/P124-003-judgment-scoring-calibration-and-slice-metrics.md",
+      "size": 624
+    },
+    {
+      "hash": "sha256:3e5d65e906f5bc78860f9a222ff9bc73506e99b9d73bf7e1316860c4b7d3746d",
+      "path": "docs/tickets/p124/P124-004-leakage-claim-controls-and-authority-counters.md",
+      "size": 620
+    },
+    {
+      "hash": "sha256:6903fecde87428221d89a64a7da7007687a87c5dc73397556af79137a0f6d288",
+      "path": "docs/tickets/p124/P124-005-verification-handoff-and-quality-report-gates.md",
+      "size": 834
+    },
+    {
+      "hash": "sha256:20831c2612da55017c0fb43cca7d26b5cff25edb36e29ede96e6b2ae717d7803",
+      "path": "docs/tickets/p124/README.md",
+      "size": 1026
+    },
+    {
+      "hash": "sha256:5c96339b703ddd5c8e3d39d326bddb7930d0e542370969c40802b19ea1897bab",
+      "path": "docs/tickets/p125/P125-001-long-run-manifest-and-resource-envelope.md",
+      "size": 549
+    },
+    {
+      "hash": "sha256:728222a25461b5c03f0f88a6d4b7d07bd3b6354ae5545e310342167c45497bf9",
+      "path": "docs/tickets/p125/P125-002-restart-and-recovery-matrix.md",
+      "size": 576
+    },
+    {
+      "hash": "sha256:d809addfd9b44db4de4813a4a80aec0a86aedb3ca7f0ab8a8ac14c4925143739",
+      "path": "docs/tickets/p125/P125-003-data-loss-ledger-and-durability-assertions.md",
+      "size": 558
+    },
+    {
+      "hash": "sha256:e31538ecf34e1f0dc4ed5ca977d4adb5da642c0c2a36751f2ff9036dc5a4cab7",
+      "path": "docs/tickets/p125/P125-004-cost-reporting-and-degradation-gates.md",
+      "size": 591
+    },
+    {
+      "hash": "sha256:ea3efe7490def3b89453697c24faf24f47ab93782b6a555772cde58a27ad8d35",
+      "path": "docs/tickets/p125/P125-005-verification-handoff-and-resilience-dependencies.md",
+      "size": 755
+    },
+    {
+      "hash": "sha256:ab78beb8e8437a283dd0a3d3773592958d8df577f7be096b5cbea90324882c36",
+      "path": "docs/tickets/p125/README.md",
+      "size": 950
+    },
+    {
+      "hash": "sha256:d6dd91e5503ed8b2a8af43c082ab07cd2f5b2116e8b756f5d592500235f75db0",
+      "path": "docs/tickets/p126/P126-001-disposable-lab-manifest-and-isolation-contract.md",
+      "size": 626
+    },
+    {
+      "hash": "sha256:dd5585035ec05aa4a0dc7aaa1adbd82b02823c2cdb263ef610df561dce63cdfa",
+      "path": "docs/tickets/p126/P126-002-lab-only-remediation-catalog-and-preflight-gate.md",
+      "size": 649
+    },
+    {
+      "hash": "sha256:b4c48ad994146b7566089754c84fa6e91189b4577e7a71d1c51bbf162ed77108",
+      "path": "docs/tickets/p126/P126-003-simulation-execution-receipts-validation-and-rollback.md",
+      "size": 601
+    },
+    {
+      "hash": "sha256:e5604ee6a0665c5648e80cba400d61861110e17958796fdbc0b98beb64914613",
+      "path": "docs/tickets/p126/P126-004-cleanup-destruction-proof-and-non-lab-counters.md",
+      "size": 620
+    },
+    {
+      "hash": "sha256:16e6d9ca65049cf6e33e3a1597cc0435be150407ed13e532512cb9999c0e5040",
+      "path": "docs/tickets/p126/P126-005-verification-handoff-and-controlled-action-dependencies.md",
+      "size": 784
+    },
+    {
+      "hash": "sha256:fa48b49829136d3d13bdd52e976f7375cefddd0c6b3db1617fe611e8ee9cf85f",
+      "path": "docs/tickets/p126/README.md",
+      "size": 1032
+    },
+    {
+      "hash": "sha256:d2cff80874a6d903a1d0fa0e7b0f58fb729d53b9d1bbc0cd2e714ba82499f792",
+      "path": "docs/tickets/p127/P127-001-chaos-fault-catalog-and-injection-boundaries.md",
+      "size": 594
+    },
+    {
+      "hash": "sha256:287e498726abe20bbcab00bfeb8ce0f1aead5b759078ea04a76956a82d26b02a",
+      "path": "docs/tickets/p127/P127-002-fail-closed-decision-records-and-operator-visible-reasons.md",
+      "size": 547
+    },
+    {
+      "hash": "sha256:3606426bb2da542cc9327156b80183b465f7b3b692299d8028fe2316f5ca3312",
+      "path": "docs/tickets/p127/P127-003-containment-rollback-cleanup-and-data-preservation.md",
+      "size": 627
+    },
+    {
+      "hash": "sha256:b488bc5e719de8e819292933a4b5522ef62a490c8aeaee0e82780f671f50dddb",
+      "path": "docs/tickets/p127/P127-004-claim-controls-and-authority-counters.md",
+      "size": 608
+    },
+    {
+      "hash": "sha256:909d62c1d73c9c21137e8cd8f45a2c211cb7743ae4afe31569d4e6d6c0feaabf",
+      "path": "docs/tickets/p127/P127-005-verification-handoff-and-ux-dependency-gate.md",
+      "size": 704
+    },
+    {
+      "hash": "sha256:6b005810aa1c6be5919bbae261dac353005f322daf7d3245a0d70724aa6f369e",
+      "path": "docs/tickets/p127/README.md",
+      "size": 987
+    },
+    {
+      "hash": "sha256:8341b293bf729dd81a8bf5db1cc9b72b01e647a927c455c47ebc982def3720e5",
+      "path": "docs/tickets/p128/P128-001-replay-and-evidence-navigation-model.md",
+      "size": 375
+    },
+    {
+      "hash": "sha256:f4292d6a241855ca3a16b3177703eec5220079449afe157dd51b8301810ace8a",
+      "path": "docs/tickets/p128/P128-002-quality-resilience-and-fail-closed-views.md",
+      "size": 433
+    },
+    {
+      "hash": "sha256:5901deff3836663a360a844a407d54cdc25e35864ce6d4ac2e7c329d91406fb1",
+      "path": "docs/tickets/p128/P128-003-receipt-provenance-counters-and-limitations.md",
+      "size": 355
+    },
+    {
+      "hash": "sha256:7f2d950033112deb6169946b0b89eb079008f732e81b86deef9c509f724bae9e",
+      "path": "docs/tickets/p128/P128-004-read-only-ux-guardrails-and-redaction.md",
+      "size": 379
+    },
+    {
+      "hash": "sha256:12a7e69f87ee75c313371d8eca142f0b27f8950f5742412c13d717aaeb4877a4",
+      "path": "docs/tickets/p128/P128-005-verification-handoff-and-beta-dependency-gate.md",
+      "size": 438
+    },
+    {
+      "hash": "sha256:ce330793eeb27d0581724035201ef03d2e0848c4586cf5371e1f26b0c2a8bac6",
+      "path": "docs/tickets/p128/README.md",
+      "size": 817
+    },
+    {
+      "hash": "sha256:f2234c7f5ecc8d1d01a61b30b631b5c1c44d1de3716c06b39f915345c394b926",
+      "path": "docs/tickets/p129/P129-001-governance-maintainership-and-contribution-policy.md",
+      "size": 414
+    },
+    {
+      "hash": "sha256:a4577494a8fb4abf484bf981640b1b31cd0d33c8c0dd8de756c7b598e3d99fab",
+      "path": "docs/tickets/p129/P129-002-security-intake-and-release-blocking-policy.md",
+      "size": 384
+    },
+    {
+      "hash": "sha256:411e268c4955227917a8c399e868c15568ee44c371e18ece441c9d70fb4b13de",
+      "path": "docs/tickets/p129/P129-003-versioning-compatibility-and-migration-policy.md",
+      "size": 398
+    },
+    {
+      "hash": "sha256:edc421060e688dcb5d5a18580a729d6609ce572f1cf2bd568c809df8abc7cc91",
+      "path": "docs/tickets/p129/P129-004-artifact-provenance-sbom-licenses-and-distribution.md",
+      "size": 446
+    },
+    {
+      "hash": "sha256:a4c86bd1561638e66cd7e70ace4eef9f2ccbd4987ea0bcd02ad6e1d5779bc7d2",
+      "path": "docs/tickets/p129/P129-005-verification-handoff-and-beta-readiness-gate.md",
+      "size": 461
+    },
+    {
+      "hash": "sha256:b4acd8b1211f2f0e3395aac976ae0f70bb689fcf46c44ebc1d06e65360826df9",
+      "path": "docs/tickets/p129/README.md",
+      "size": 846
+    },
+    {
       "hash": "sha256:c91063f1fab8aceb174ac3cd8bf43b7584ce8c66a24e559330cbcc0eff50b3ce",
       "path": "docs/tickets/p13/README.md",
       "size": 1771
@@ -10396,6 +10936,36 @@
       "hash": "sha256:8f1381354f4c11215efcff978918ac711f9409081e3903e56b7dc8ad1b613a9c",
       "path": "docs/tickets/p13/p13-011-p13-release-evidence.md",
       "size": 724
+    },
+    {
+      "hash": "sha256:43ced3aef0977fce0f907b25672346cc7364f0ad70a7073d7690b078ed0bdd20",
+      "path": "docs/tickets/p130/P130-001-beta-entry-criteria-and-evidence-manifest.md",
+      "size": 372
+    },
+    {
+      "hash": "sha256:6759953224e57f91f239c655de730b9dc23cea39cc7e1eaeb7e473eb86df6d24",
+      "path": "docs/tickets/p130/P130-002-public-claim-ledger-and-limitation-language.md",
+      "size": 363
+    },
+    {
+      "hash": "sha256:e407924ded58238cde93f469df81d7c4bc04fe0c3a54fd9f4d6e35dd35812b59",
+      "path": "docs/tickets/p130/P130-003-known-risk-register-and-support-boundary.md",
+      "size": 356
+    },
+    {
+      "hash": "sha256:b6d77833021194174cc408fe7564eb488d49bc60c0276d37f65bda4e69f7cc73",
+      "path": "docs/tickets/p130/P130-004-beta-feedback-intake-and-no-credential-process.md",
+      "size": 425
+    },
+    {
+      "hash": "sha256:3edc483d00d68f948e3e2f0620be6fb23d91db0f2a321d99d9a7362e7c0f65ab",
+      "path": "docs/tickets/p130/P130-005-verification-handoff-exit-and-rollback-gates.md",
+      "size": 462
+    },
+    {
+      "hash": "sha256:e642a5a4dacc708f308606a1c110a483a3bb21fb157fd875f69dcbab2311ae68",
+      "path": "docs/tickets/p130/README.md",
+      "size": 834
     },
     {
       "hash": "sha256:beae4f2e7cc18f81c6ca43a27de6527bfe7fe9d7104d00734cac27810d9e4258",
@@ -12023,6 +12593,56 @@
       "size": 33091
     },
     {
+      "hash": "sha256:c9506fc1a264c29c3ab469587d4a9c8434df81a60f10dcc7e7eb158aa84317c7",
+      "path": "evals/p123/input/manifest.json",
+      "size": 13685
+    },
+    {
+      "hash": "sha256:752b6bd51e42304b17f646c3845733ede84f7ee7d00dce7f6fb6ebd2969bb941",
+      "path": "evals/p124/input/cases.json",
+      "size": 151618
+    },
+    {
+      "hash": "sha256:210099b597e2c36178095770bf76682a62b47ddf220405b03ef3472be603e7a7",
+      "path": "evals/p125/input/soak-profile.json",
+      "size": 1000
+    },
+    {
+      "hash": "sha256:334a6a25e6efee6bb30b470c1ea8d055ce66ceb84fae042cac2f0eb7cd47780d",
+      "path": "evals/p126/input/lab-scenarios.json",
+      "size": 6380
+    },
+    {
+      "hash": "sha256:64e0238c9dcdb2d3b88240699470515bd38fe79776addc967908109ee2b25815",
+      "path": "evals/p127/input/chaos-scenarios.json",
+      "size": 656
+    },
+    {
+      "hash": "sha256:28ec183060dac1c1feacc7c94e05426a4e13c1a1aa7d86cd7fd62bf32793c604",
+      "path": "evals/p128/input/operator-scenarios.json",
+      "size": 5420
+    },
+    {
+      "hash": "sha256:524d8964b42b4e659afdda12f98ae53902885db9a3973c63bc337754c0eb95ee",
+      "path": "evals/p130/input/claims.json",
+      "size": 2225
+    },
+    {
+      "hash": "sha256:91c68a184733af1416167214da1838d92cc644a4d2ccff2fed695d0e4742b0f7",
+      "path": "evals/p130/input/exit-policy.json",
+      "size": 548
+    },
+    {
+      "hash": "sha256:dd2732d5e952dd98ec49b68181434445e655550afcf3137927541072b4e283bb",
+      "path": "evals/p130/input/feedback.json",
+      "size": 423
+    },
+    {
+      "hash": "sha256:c9aaae64b65d2ea0b6aa47067d6a9d224be4fb44464f09e27f9167f4cb3b5046",
+      "path": "evals/p130/input/risks.json",
+      "size": 1323
+    },
+    {
       "hash": "sha256:0d4e9f692dbf5901371abbdc09c390f7751e4e75a2e91b8d803f24d96bb0974f",
       "path": "evals/planning/p66_autonomous_day_loop_backlog.json",
       "size": 4974
@@ -13508,6 +14128,11 @@
       "size": 1348
     },
     {
+      "hash": "sha256:9fe0dc0ccfcce763e86ad3c07af3e9f0e28086e280a68237ae5744780355e044",
+      "path": "scripts/build_p130_public_beta.py",
+      "size": 2039
+    },
+    {
       "hash": "sha256:6c9956a260e00006048d8cebe3e77b0fcf43ce5b21bc282b21f2cdc088102d6e",
       "path": "scripts/coverage_gate.py",
       "size": 7221
@@ -14033,14 +14658,49 @@
       "size": 79792
     },
     {
-      "hash": "sha256:9bf064ea34749e85200c20b04f68427f09407561250635fe65cb7fb2601acf02",
+      "hash": "sha256:76b8fed54b97b833bdfea0ce4d1e147832dfdd5c89f51d4d0c563c82fe8d9de6",
       "path": "scripts/run_p122_security_gate.py",
-      "size": 33434
+      "size": 34133
     },
     {
       "hash": "sha256:cc5d0986c1d3b31b216af7c78987620896967ae40eec02eaffba5fd689949b65",
       "path": "scripts/run_p122_vulnerability_audit.py",
       "size": 4471
+    },
+    {
+      "hash": "sha256:c4f0a5aec628ab4a974f07c0cbb70ed382b692c46a1b68dab046d944c29ba80c",
+      "path": "scripts/run_p123_shadow_attachment.py",
+      "size": 1738
+    },
+    {
+      "hash": "sha256:0ad4cec719e1e7f57e33873fc50fb5d745a7d0a5066d9f92601fc8bafb812111",
+      "path": "scripts/run_p124_judgment_quality.py",
+      "size": 1597
+    },
+    {
+      "hash": "sha256:ac66f325b202c3ebd6f9267e81a9744eb93db07a4301b688eb765fb1c6ccde46",
+      "path": "scripts/run_p125_shadow_resilience.py",
+      "size": 1937
+    },
+    {
+      "hash": "sha256:9f123e5f6f9cc67c76347c0240983f930719ce4a9c92b12fc0fa5ac2910fc85e",
+      "path": "scripts/run_p126_lab_remediation.py",
+      "size": 1693
+    },
+    {
+      "hash": "sha256:640bc2a28da570c114107cdd0926624d2098ea0ffa01a75058853547751b87c9",
+      "path": "scripts/run_p127_chaos_validation.py",
+      "size": 1105
+    },
+    {
+      "hash": "sha256:de393fba204358daaa1b076a899e43c4d77c375ae934d73a1308617ebd575884",
+      "path": "scripts/run_p128_operator_beta.py",
+      "size": 1143
+    },
+    {
+      "hash": "sha256:5bf18b3c78390bca084707940f856b9669c47252783c6c1bf0e6fb690f2b7892",
+      "path": "scripts/run_p129_distribution_maturity.py",
+      "size": 2008
     },
     {
       "hash": "sha256:845eb4d1f36b8d14648cf20a23a9300dc75c17118dbd6fc9b9d068bf4f1fca28",
@@ -14298,9 +14958,14 @@
       "size": 853
     },
     {
-      "hash": "sha256:727bb2480a795c0cfa4bb71b823106f0418b7668977558efb60e9d2cd1f258ad",
+      "hash": "sha256:b5c277334a814c9e2b2933ac9a63d8d78747f1b4827bc0ca9ed5d6d69301818a",
+      "path": "scripts/validate_p130_public_beta.py",
+      "size": 1047
+    },
+    {
+      "hash": "sha256:fad70162e4aa885657179924bada3cd1bfdf89022a44bbba4ffc682b0a4c4b60",
       "path": "scripts/verify.sh",
-      "size": 103279
+      "size": 106979
     },
     {
       "hash": "sha256:ac7c3ef7b2da5eb2587932bd07607ab9a2d911497e7d2175a9128334b2c24b59",
@@ -14863,9 +15528,9 @@
       "size": 4111
     },
     {
-      "hash": "sha256:dcddac794da61ea45d9dd9a7cf46ba4aa3f28d45dac128e7d62b412f36a92535",
+      "hash": "sha256:55cb276c04c30ff7514ed09d5ce254b5d52a069b0c01e501daff5674c67e740e",
       "path": "tests/test_operator_dashboard_e2e.py",
-      "size": 3883
+      "size": 5187
     },
     {
       "hash": "sha256:f2baa12bbb420291ee27f1d0123cc140a1114c541f5cc1cec1e9ae0abb1a9d2b",
@@ -15633,9 +16298,49 @@
       "size": 1020
     },
     {
+      "hash": "sha256:005d30319e62162a2455acb0c7916707da1edc94e8fdc4df29bb34451b7580c6",
+      "path": "tests/test_p123_shadow_attachment.py",
+      "size": 3496
+    },
+    {
+      "hash": "sha256:7c213bb09e4d96ef4d83297230f90ab6c3cf337b492d438c4f0918ea0760c951",
+      "path": "tests/test_p124_judgment_quality.py",
+      "size": 3687
+    },
+    {
+      "hash": "sha256:a2c2eb7613154670b7aa6bc16e2ace7db7085a273601ca1942b26dbc49bac263",
+      "path": "tests/test_p125_shadow_resilience.py",
+      "size": 6089
+    },
+    {
+      "hash": "sha256:ae0821d6246e6ea769f26b5322489f8b4b4b1379783752eccc2faaf5dc6a91c2",
+      "path": "tests/test_p126_lab_remediation.py",
+      "size": 5293
+    },
+    {
+      "hash": "sha256:786aea1a6e29083cda3a306242506cc598e74d546024dd872a25a9989f0b85f8",
+      "path": "tests/test_p127_chaos_validation.py",
+      "size": 4491
+    },
+    {
+      "hash": "sha256:655cac820d5527e4b71540f582de4fefd35be45905f741b16909f25135110471",
+      "path": "tests/test_p128_operator_beta.py",
+      "size": 2863
+    },
+    {
+      "hash": "sha256:59db3939e147151081c7b14a5be9f30dd42bcc24390f14e7784731438e3e4648",
+      "path": "tests/test_p129_distribution_maturity.py",
+      "size": 8010
+    },
+    {
       "hash": "sha256:07a895fc55dd2d580ae0502c5010729835579451936f415d008aced18b633a74",
       "path": "tests/test_p12_release_evidence.py",
       "size": 2021
+    },
+    {
+      "hash": "sha256:1608af3c467d1f239dbdf214751a62a48401bd79fd57d7c8b82f74d7c9960e24",
+      "path": "tests/test_p130_public_beta.py",
+      "size": 16150
     },
     {
       "hash": "sha256:7b24eb8d26bf5f12d6da91609bc25996a8b98c2c44dbd77e466c37be7d181f29",
@@ -16698,6 +17403,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:1322fc40806528eed6ac00fff38aa5f9c3bb0bfcc1a7688dcca9c08c7ad0805f",
+  "source_inventory_hash": "sha256:c3570c7a012456a3de76422c435b68ca24fed6c4d6e97f4a37d551c0c82d6200",
   "status": "pass"
 }

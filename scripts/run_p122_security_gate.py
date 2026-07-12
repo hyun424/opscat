@@ -21,7 +21,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_DIR = ROOT / "evals" / "p122"
-GENERATED_EVIDENCE_PREFIX = ("evals", "p122")
+GENERATED_EVIDENCE_PHASE_MIN = 122
 TEXT_SUFFIXES = {
     ".cfg",
     ".csv",
@@ -176,11 +176,29 @@ def is_scannable_path(root: Path, path: Path) -> bool:
     parts = set(relative.parts)
     if ".git" in parts or ".venv" in parts or "__pycache__" in parts:
         return False
-    if relative.parts[:2] == GENERATED_EVIDENCE_PREFIX:
+    if _is_generated_phase_evidence(relative):
         return False
     if path.suffix not in TEXT_SUFFIXES:
         return False
     return path.is_file() and not relative_posix.endswith(".pyc")
+
+
+def _is_generated_phase_evidence(relative: Path) -> bool:
+    """Exclude promoted phase outputs while retaining immutable input fixtures.
+
+    P122 is an upstream packaging gate for later phases. Including P123+
+    generated release evidence in its source inventory creates a circular hash
+    dependency (P130 -> P129 -> P122 -> P130). Input fixtures remain scanned.
+    """
+
+    if len(relative.parts) < 2 or relative.parts[0] != "evals":
+        return False
+    phase = relative.parts[1]
+    if not phase.startswith("p") or not phase[1:].isdigit():
+        return False
+    if int(phase[1:]) < GENERATED_EVIDENCE_PHASE_MIN:
+        return False
+    return len(relative.parts) < 3 or relative.parts[2] != "input"
 
 
 def read_text(path: Path) -> str | None:

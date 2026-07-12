@@ -1,0 +1,11 @@
+{
+  "intake_paths": [
+    "public issue template with no-secret instructions",
+    "maintainer triage queue for sanitized beta feedback"
+  ],
+  "requires_credentials": false,
+  "requires_live_connector": false,
+  "requires_production_access": false,
+  "schema_version": "p130.feedback_input.v1",
+  "support_boundary": "Offline beta feedback only; no secret handling, no environment access, and no remediation authority."
+}

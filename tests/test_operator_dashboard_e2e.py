@@ -105,3 +105,38 @@ def test_operator_dashboard_browser_contract_escapes_untrusted_alert_text(client
     assert "&lt;script&gt;alert(&#x27;ops&#x27;)&lt;/script&gt; &amp; raw" in page.text
     parsed = parse_dashboard(page.text)
     assert "<script>alert('ops')</script> & raw" in parsed.text
+
+
+def test_operator_beta_evidence_replay_dashboard_is_read_only_and_reachable(client: Any) -> None:
+    page = client.get("/operator/beta", headers=ALPHA_HEADERS)
+
+    assert page.status_code == 200
+    assert "text/html" in page.headers["content-type"]
+    html = page.text
+    lowered = html.lower()
+    assert 'data-testid="p128-beta-shell"' in html
+    assert "Local/sandbox beta" in html
+    assert "Fail-closed reasons" in html
+    assert "Evidence workflow" in html
+    assert "authority_escape" in html
+    assert "<script" not in lowered
+    assert "<form" not in lowered
+    assert "plain-secret" not in html
+    assert "ops@example.com" not in html
+    assert "[REDACTED]" in html
+
+
+def test_existing_operator_inbox_still_works_without_beta_mutation_controls(client: Any) -> None:
+    created = client.post(
+        "/webhooks/alerts/mock?process_now=true",
+        headers=ALPHA_HEADERS,
+        json={"idempotency_key": "p128-e2e-existing", "scenario": "payment_bad_deploy", "message": "p128 existing route"},
+    )
+    assert created.status_code == 201
+
+    inbox = client.get("/operator", headers=ALPHA_HEADERS)
+
+    assert inbox.status_code == 200
+    assert created.json()["id"] in inbox.text
+    assert 'href="/operator/beta"' in inbox.text
+    assert "<form" not in inbox.text.lower()

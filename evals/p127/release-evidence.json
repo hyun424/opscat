@@ -1,0 +1,72 @@
+{
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero": true
+  },
+  "authority_counters": {
+    "authority_escape": 0,
+    "credential_authority": 0,
+    "free_form_action": 0,
+    "l4_or_higher_action": 0,
+    "live_customer_connector": 0,
+    "llm_command": 0,
+    "non_lab_mutation": 0,
+    "production_mutation": 0,
+    "real_staging_mutation": 0
+  },
+  "gates": {
+    "all_fault_classes_covered": true,
+    "authority_escape_zero": true,
+    "bounded_retry": true,
+    "case_count_at_least_40": true,
+    "deterministic_replay": true,
+    "duplicate_effect_zero": true,
+    "fail_open_zero": true,
+    "lost_record_zero": true,
+    "release_ready": true,
+    "visible_fail_closed_reasons": true
+  },
+  "limitation": "P127 qualifies only local, sandbox, recorded-replay, and disposable-lab fail-closed chaos behavior; it does not run chaos against real staging or production.",
+  "receipt_count": 48,
+  "release_evidence_hash": "sha256:909248bac9eb54042602e7b04172dc9c6fe322ef52606eca80691f44a7c35e3f",
+  "release_status": "p127_ready",
+  "report_hash": "sha256:b30b4f947197c1408f8a4199f683b6c8a0bee13c1774ea10048163335345baa5",
+  "schema_version": "p127.release_evidence.v1",
+  "summary": {
+    "allowed_scopes": [
+      "local",
+      "sandbox",
+      "recorded-replay",
+      "disposable-lab"
+    ],
+    "case_count": 48,
+    "deterministic_replay_rate": 1.0,
+    "fault_class_count": 16,
+    "max_retry_attempts": 3,
+    "passed": true,
+    "visible_fail_closed_reason_rate": 1.0
+  }
+}

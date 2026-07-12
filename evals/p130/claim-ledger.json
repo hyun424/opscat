@@ -1,0 +1,77 @@
+{
+  "claim_ledger_hash": "sha256:2efff80913417c1f8d2bd2aa653ab97fb790e34f0e6142baf4f47543efa52c8a",
+  "claims": [
+    {
+      "claim_id": "p130-evidence-qualified-public-beta-framework",
+      "evidence": [
+        {
+          "artifact": "evals/p123/release-evidence.json",
+          "phase": "p123",
+          "release_evidence_hash": "sha256:fd96356d165bd5535989f1bb19719be8e00be464e09ae7eec644e212a9ae6151"
+        },
+        {
+          "artifact": "evals/p124/release-evidence.json",
+          "phase": "p124",
+          "release_evidence_hash": "sha256:08df2446737c2f55785b7be02b13271d19b7808ed73d0cf5a572c8bb90e42191"
+        },
+        {
+          "artifact": "evals/p125/release-evidence.json",
+          "phase": "p125",
+          "release_evidence_hash": "sha256:1cdd5001e5e68882cb070d246d7164122030278ce5eaddb74de0b2789643acdd"
+        },
+        {
+          "artifact": "evals/p126/release-evidence.json",
+          "phase": "p126",
+          "release_evidence_hash": "sha256:2fd4c009af349c8cdde465098e80600eeb7683407301e1025ac754fd2e49e021"
+        },
+        {
+          "artifact": "evals/p127/release-evidence.json",
+          "phase": "p127",
+          "release_evidence_hash": "sha256:909248bac9eb54042602e7b04172dc9c6fe322ef52606eca80691f44a7c35e3f"
+        },
+        {
+          "artifact": "evals/p128/release-evidence.json",
+          "phase": "p128",
+          "release_evidence_hash": "sha256:105bca44eca51d206dbba6601cf6cf6ad6f0743c1f56e1840bae70dd463b476b"
+        },
+        {
+          "artifact": "evals/p129/release-evidence.json",
+          "phase": "p129",
+          "release_evidence_hash": "sha256:0d075fc50e50df51d3a69eda1fd8aaf7cb4c1e0fa8065c7462a5f254b9f8c2e4"
+        }
+      ],
+      "limitation": "Public beta readiness is evidence-qualified and non-production only.",
+      "owner": "ops-beta",
+      "review_date": "2026-07-12",
+      "scope": "local sandbox replay disposable-lab public beta readiness framework",
+      "statement": "OpsCat defines a public beta readiness framework for local, sandbox, replay, and disposable-lab qualified evidence.",
+      "status": "limited",
+      "test": "tests/test_p130_public_beta.py",
+      "withdrawal_path": "Withdraw this claim if any bound upstream release evidence is missing, stale, blocked, or no longer independently reviewed."
+    },
+    {
+      "claim_id": "p130-non-credentialed-feedback-intake",
+      "evidence": [
+        {
+          "artifact": "evals/p129/release-evidence.json",
+          "phase": "p129",
+          "release_evidence_hash": "sha256:0d075fc50e50df51d3a69eda1fd8aaf7cb4c1e0fa8065c7462a5f254b9f8c2e4"
+        }
+      ],
+      "limitation": "Feedback intake is offline and cannot accept secrets or environment access.",
+      "owner": "ops-support",
+      "review_date": "2026-07-12",
+      "scope": "non-credentialed beta feedback handling",
+      "statement": "P130 beta feedback intake is designed to avoid credentials and production access.",
+      "status": "limited",
+      "test": "tests/test_p130_public_beta.py",
+      "withdrawal_path": "Disable or relabel feedback intake if secret-free handling cannot be maintained."
+    }
+  ],
+  "missing_withdrawal_path_count": 0,
+  "prohibited_claims": [],
+  "schema_version": "p130.claim_ledger.v1",
+  "traceability_ratio": 1.0,
+  "undocumented_claim_count": 0,
+  "untraced_claim_count": 0
+}

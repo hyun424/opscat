@@ -1,0 +1,63 @@
+{
+  "claims": [
+    {
+      "claim_id": "p130-evidence-qualified-public-beta-framework",
+      "evidence": [
+        {
+          "artifact": "evals/p123/release-evidence.json",
+          "phase": "p123"
+        },
+        {
+          "artifact": "evals/p124/release-evidence.json",
+          "phase": "p124"
+        },
+        {
+          "artifact": "evals/p125/release-evidence.json",
+          "phase": "p125"
+        },
+        {
+          "artifact": "evals/p126/release-evidence.json",
+          "phase": "p126"
+        },
+        {
+          "artifact": "evals/p127/release-evidence.json",
+          "phase": "p127"
+        },
+        {
+          "artifact": "evals/p128/release-evidence.json",
+          "phase": "p128"
+        },
+        {
+          "artifact": "evals/p129/release-evidence.json",
+          "phase": "p129"
+        }
+      ],
+      "limitation": "Public beta readiness is evidence-qualified and non-production only.",
+      "owner": "ops-beta",
+      "review_date": "2026-07-12",
+      "scope": "local sandbox replay disposable-lab public beta readiness framework",
+      "statement": "OpsCat defines a public beta readiness framework for local, sandbox, replay, and disposable-lab qualified evidence.",
+      "status": "limited",
+      "test": "tests/test_p130_public_beta.py",
+      "withdrawal_path": "Withdraw this claim if any bound upstream release evidence is missing, stale, blocked, or no longer independently reviewed."
+    },
+    {
+      "claim_id": "p130-non-credentialed-feedback-intake",
+      "evidence": [
+        {
+          "artifact": "evals/p129/release-evidence.json",
+          "phase": "p129"
+        }
+      ],
+      "limitation": "Feedback intake is offline and cannot accept secrets or environment access.",
+      "owner": "ops-support",
+      "review_date": "2026-07-12",
+      "scope": "non-credentialed beta feedback handling",
+      "statement": "P130 beta feedback intake is designed to avoid credentials and production access.",
+      "status": "limited",
+      "test": "tests/test_p130_public_beta.py",
+      "withdrawal_path": "Disable or relabel feedback intake if secret-free handling cannot be maintained."
+    }
+  ],
+  "schema_version": "p130.claim_input.v1"
+}

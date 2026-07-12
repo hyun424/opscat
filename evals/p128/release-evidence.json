@@ -1,0 +1,66 @@
+{
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero": true
+  },
+  "authority_counters": {
+    "authority_escape": 0,
+    "credential_authority": 0,
+    "live_connector_call": 0,
+    "non_lab_mutation": 0,
+    "production_mutation": 0,
+    "real_staging_mutation": 0
+  },
+  "contract_hash": "sha256:f10f8d6bc8f79193b04c5b17b80a5717145abd93e876023d452e647176ec37cd",
+  "gates": {
+    "authority_counters_zero": true,
+    "local_sandbox_beta_banner": true,
+    "no_inline_script": true,
+    "no_mutation_form": true,
+    "no_secret_display": true,
+    "read_only": true,
+    "release_ready": true,
+    "required_surfaces_present": true,
+    "server_rendered": true,
+    "workflow_links_at_most_5": true
+  },
+  "limitation": "P128 is a local/sandbox/replay evidence inspection beta only. Auth is deferred, credentials are out of scope, and staging or production mutation authority remains zero.",
+  "release_evidence_hash": "sha256:105bca44eca51d206dbba6601cf6cf6ad6f0743c1f56e1840bae70dd463b476b",
+  "release_status": "p128_ready",
+  "schema_version": "p128.release_evidence.v1",
+  "summary": {
+    "local_sandbox_beta_banner": true,
+    "max_evidence_workflow_links": 5,
+    "no_inline_script": true,
+    "no_mutation_form": true,
+    "passed": true,
+    "read_only": true,
+    "scenario_count": 5,
+    "secret_display_count": 0,
+    "server_rendered": true,
+    "untrusted_data_escaped": true
+  }
+}

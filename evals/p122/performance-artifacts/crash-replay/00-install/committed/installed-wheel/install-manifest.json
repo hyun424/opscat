@@ -62,9 +62,9 @@
       "size": 1473
     },
     {
-      "hash": "sha256:e2375cddcb52d3dd39d33c5462083159cfdf42894ad586fe026cae887c44f768",
+      "hash": "sha256:1d9c70ba5aa30c44bbfc67d3d717747be1e53864204cdf44cd08c6a7994545ed",
       "path": "site-packages/app/api/operator.py",
-      "size": 18799
+      "size": 19412
     },
     {
       "hash": "sha256:ab4570af18a720ceb2d8cfc7c481da43e73e6e7e6ec5d45fbbdb9b875b8ebaf5",
@@ -1177,6 +1177,46 @@
       "size": 70624
     },
     {
+      "hash": "sha256:18888f01918204f408b0b86f831821ae2a8fab6de672283d60418e4f3bc81332",
+      "path": "site-packages/app/services/p123_shadow_attachment.py",
+      "size": 21200
+    },
+    {
+      "hash": "sha256:1895ea928dbd386885acd2adc525b2a2bd586eb629419e47d439ac90a8b4e43e",
+      "path": "site-packages/app/services/p124_judgment_quality.py",
+      "size": 21983
+    },
+    {
+      "hash": "sha256:a00ef2bf3ceba326431c72316df38c64c67baf0ba0fd339d0ff0bddbd561fd60",
+      "path": "site-packages/app/services/p125_shadow_resilience.py",
+      "size": 15261
+    },
+    {
+      "hash": "sha256:b4ced153118aafd45f1ed27798d59c972a83f35d01e6e470c8c5d2de085357e4",
+      "path": "site-packages/app/services/p126_lab_remediation.py",
+      "size": 14719
+    },
+    {
+      "hash": "sha256:73e25e9ab1eafd0258171885400413afdc68a7d85a046546cc91b37be9b4768c",
+      "path": "site-packages/app/services/p127_chaos_validation.py",
+      "size": 12530
+    },
+    {
+      "hash": "sha256:a86446ffb298aa8bb8d493978e651c4b61dcb256af7f0c40eeab1175b52eb3ac",
+      "path": "site-packages/app/services/p128_operator_beta.py",
+      "size": 14968
+    },
+    {
+      "hash": "sha256:15e84cf20250d5677a8d8189291463c199b5589c0309d9ec0f756608d6f17bec",
+      "path": "site-packages/app/services/p129_distribution_maturity.py",
+      "size": 22349
+    },
+    {
+      "hash": "sha256:8dab9296feb460e819a447ce64276452d3c6e3d632d2a6a7c8b90254b15523cb",
+      "path": "site-packages/app/services/p130_public_beta.py",
+      "size": 21013
+    },
+    {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
       "path": "site-packages/app/services/policy_calibrator.py",
       "size": 11458
@@ -1643,9 +1683,9 @@
     }
   ],
   "installed_package": "opscat",
-  "manifest_hash": "sha256:542c2ccc69d27eeb9119dca814343eaa7c8310caf8a9543576da88f60b9e0211",
+  "manifest_hash": "sha256:d74f6e06a94673b019fa9096e990d0b7525994edab716ee03dd9381396588a18",
   "operation": "package_install",
-  "record_entries_verified": 327,
+  "record_entries_verified": 335,
   "schema_version": "p122.canonical_wheel_install.v1",
-  "wheel_checksum": "sha256:2dcc329e15beaf4b18e4fa101fed165bf88f53371ac43832f8b84c959a5e27c4"
+  "wheel_checksum": "sha256:df2b1e825ad65cd70feb7430a1c05a6bffc7b8638074b4d246d5f8639838c4e1"
 }

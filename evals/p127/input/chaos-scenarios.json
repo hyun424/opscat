@@ -1,0 +1,25 @@
+{
+  "schema_version": "p127.chaos_scenarios.v1",
+  "scenario_matrix": {
+    "fault_classes": [
+      "missing_evidence",
+      "stale_evidence",
+      "malformed_telemetry",
+      "clock_skew",
+      "replay_corruption",
+      "restart_interruption",
+      "validation_failure",
+      "rollback_failure",
+      "cleanup_failure",
+      "target_ambiguity",
+      "policy_conflict",
+      "duplicate_delivery",
+      "retry_exhaustion",
+      "malformed_configuration",
+      "prompt_injection",
+      "authority_drift"
+    ],
+    "scopes": ["local", "sandbox", "recorded-replay", "disposable-lab"],
+    "variants": ["primary", "secondary", "receipt"]
+  }
+}

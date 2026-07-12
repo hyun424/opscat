@@ -1,0 +1,72 @@
+{
+  "artifact_hashes": {
+    "report_file_hash": "sha256:a6cf9600513b14926e2cdf08bab1ed89b31d6f8df214d655738724f2a640e174",
+    "report_hash": "sha256:5670704b45a07088c390fdb06a56882e0accb0b8ccaf836c8556c70420bd7afe"
+  },
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_nonlocal_authority_zero": true,
+    "p126_counters": {
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "credential_authority_count": 0,
+      "database_driver_count": 0,
+      "kubernetes_mutation_count": 0,
+      "live_connector_write_count": 0,
+      "network_mutation_count": 0,
+      "nonlocal_mutation_count": 0,
+      "production_mutation_count": 0,
+      "real_staging_mutation_count": 0,
+      "shell_execution_count": 0,
+      "subprocess_execution_count": 0
+    }
+  },
+  "denied_coverage": {
+    "credential_secret": 1,
+    "forbidden_network_shell_subprocess_action": 1,
+    "non_lab_target": 6,
+    "production": 1,
+    "real_staging": 1,
+    "total_denied": 9,
+    "validated_required_categories": 5
+  },
+  "gates": {
+    "approval_accuracy": 1.0,
+    "authority_counters_zero": true,
+    "cleanup_residue": 0,
+    "denied_coverage_valid": true,
+    "duplicate_effects": 0,
+    "eligible_validation": 1.0,
+    "ready": true,
+    "rollback_success": 1.0,
+    "scenario_count": 30,
+    "unsafe_non_lab_blocking": 1.0
+  },
+  "limitation": "Disposable local lab only; never real staging or production remediation.",
+  "release_evidence_hash": "sha256:2fd4c009af349c8cdde465098e80600eeb7683407301e1025ac754fd2e49e021",
+  "release_status": "ready",
+  "schema_version": "p126.release_evidence.v1"
+}

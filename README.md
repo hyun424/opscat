@@ -745,3 +745,24 @@ secure duplicate, and 24 rejection/adversarial cases. P135 reads local fixture
 artifacts only. It makes no provider, network, DNS, socket, credential,
 environment, subprocess, shell, delivery, remediation, staging/production
 mutation, or operator-replacement claim.
+
+## P136 crash-safe incremental local observer
+
+P136 watches one explicitly configured append-only local JSONL index under a
+finite pool of P134 `OA1_LOCAL_ARTIFACT` receipts. It durably reserves an index
+read before opening the file, verifies consumed-prefix and rotation continuity,
+defers incomplete lines, resolves durable duplicates before segment access, and
+routes each first-seen segment through the real P135 adapter with an independent
+manifest, execution receipt, normalized bundle, and receipt ledger.
+
+```bash
+bash scripts/verify.sh --profile p136-release
+```
+
+The source-bound release profile executes a fixed 50-case denominator and proves
+five real first-batch provider promotions, exact-zero forbidden authority, zero
+duplicate promotions/segment reads, bounded resource use, and a current
+independent review with no unresolved P0/P1/P2 findings. This milestone remains
+local-artifact observation only: it adds no provider API call, credential read,
+environment discovery, network access, notification, command execution,
+remediation, staging/production mutation, or operator-replacement authority.

@@ -3138,3 +3138,43 @@ Detailed references:
 - `docs/operations/p134-final-summary.md`
 - `docs/operations/p134-verification-handoff.md`
 - `docs/tickets/p134/README.md`
+
+## P135 provider-shaped local export attachment evidence
+
+P135 performs real bounded local-file reads for five credential-free
+provider-shaped export formats after revalidating P134 OA1 authority. The
+canonical release matrix passes 30/30 cases: five successful attachments, one
+secure duplicate reread, and 24 rejected/adversarial cases. The promoted
+execution ledger contains five successful receipts; parser failures remain
+denominator-visible and cannot be promoted as successes.
+
+Canonical profile:
+
+```bash
+bash scripts/verify.sh --profile p135-release
+```
+
+The canonical run used 335 ms wall time, 332 ms CPU, and 38,486,016 bytes peak
+RSS under 30 s, 10 s, and 96 MiB limits. It performed 60 local stats, 20 opens,
+20 reads, 6,182 bytes read, 19 parsed records, and one duplicate validation
+read. Runtime guards measured every provider, live connector, network, DNS,
+socket, credential, environment, subprocess, shell, signal, delivery,
+remediation, staging mutation, production mutation, and operator-replacement
+counter at exact integer zero. Independent source-bound review records zero
+P0/P1/P2/P3 findings.
+
+Release status is
+`p135_provider_shaped_export_attachment_qualified`; release evidence hash is
+`sha256:ab78a5757fecd5d52f3d2e698e97625f192b0cb8aecac54bda5e0a87e6d70ba7`.
+This qualifies deterministic local export attachment only, not authenticated
+providers, live polling, tailing, external delivery, remediation, mutation, or
+operator replacement.
+
+Detailed references:
+
+- `docs/operations/p135-provider-export-roadmap.md`
+- `docs/operations/p135-test-spec.md`
+- `docs/operations/p135-plan-review.md`
+- `docs/operations/p135-final-summary.md`
+- `docs/operations/p135-verification-handoff.md`
+- `docs/tickets/p135/README.md`

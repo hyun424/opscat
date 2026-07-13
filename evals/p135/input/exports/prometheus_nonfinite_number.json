@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "matrix",
+    "result": [
+      {
+        "metric": {
+          "__name__": "http_requests_total",
+          "job": "checkout"
+        },
+        "values": [
+          [1783900800, NaN]
+        ]
+      }
+    ]
+  }
+}

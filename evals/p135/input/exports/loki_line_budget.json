@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "streams",
+    "result": [
+      {
+        "stream": {
+          "service": "checkout",
+          "level": "error"
+        },
+        "values": [
+          ["1783900800000000000", "this line intentionally exceeds the runner case max_line_bytes limit"]
+        ]
+      }
+    ]
+  }
+}

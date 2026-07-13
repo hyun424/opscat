@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "vector",
+    "result": [
+      {
+        "metric": {
+          "__name__": "http_requests_total",
+          "job": "checkout"
+        },
+        "value": [1783900800, "5"]
+      }
+    ]
+  }
+}

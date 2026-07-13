@@ -725,3 +725,23 @@ P134 is policy-only. It performs no file ingestion, provider request, live GET,
 credential access, notification delivery, command execution, remediation, or
 staging/production mutation. P135 is the first phase allowed to consume the
 qualified local-artifact policy for credential-free provider-shaped exports.
+
+## P135 credential-free provider-shaped export attachment
+
+P135 consumes only bounded local files authorized by a current P134
+`OA1_LOCAL_ARTIFACT` receipt. Versioned adapters normalize Prometheus range,
+Loki streams, Grafana dashboards, Sentry issue lists, and OTLP metrics JSONL
+into independently validated P120 evidence records. Descriptor-relative reads,
+content and identity checks, strict parser budgets, immutable execution
+receipts, duplicate revalidation, denominator-visible failures, and a runtime
+forbidden-authority guard keep attachment fail closed.
+
+```bash
+bash scripts/verify.sh --profile p135-release
+```
+
+The canonical matrix passes 30/30 cases: five provider-shaped attachments, one
+secure duplicate, and 24 rejection/adversarial cases. P135 reads local fixture
+artifacts only. It makes no provider, network, DNS, socket, credential,
+environment, subprocess, shell, delivery, remediation, staging/production
+mutation, or operator-replacement claim.

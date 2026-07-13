@@ -22,11 +22,18 @@ systemd/Compose isolation contracts. It sends no network notification and has
 no action authority. The launchd plist remains an explicitly unqualified
 structural example.
 
-## P134 next: observation authority contract
+## P135 complete: credential-free local export attachment qualified
 
-P134 will separate bounded read-only observation authority from action
-authority before any additional live source is enabled. It will grant no write,
-credential, remediation, staging, or production authority.
+P135 consumes bounded Prometheus, Loki, Grafana, Sentry, and OTLP-shaped local
+exports only after revalidating a current P134 `OA1_LOCAL_ARTIFACT` receipt. The
+canonical 30-case matrix passes with exact-zero forbidden authority, source-bound
+independent review, secure duplicate rereads, and denominator-visible failures.
+
+## P136 next: incremental local export observation
+
+P136 will qualify cursor-bound, crash-safe incremental observation of rotating
+local provider exports without adding credentials, network calls, provider APIs,
+delivery, action execution, remediation, or staging/production mutation.
 
 OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward a beta-grade agentic operations system.
 
@@ -1018,3 +1025,15 @@ immutable receipt-ledger semantics are re-evaluated against the exact contract,
 independent source-bound review has zero unresolved P0/P1/P2 findings, and all
 runtime observation/action plus evaluator authority counters remain exact zero.
 P134 performs no observation or action. P135 is the next dependency.
+
+## P135 complete: provider-shaped local export attachment
+
+P135 implements five strict local-file adapters for Prometheus range matrices,
+Loki streams, Grafana dashboards, Sentry issue lists, and OTLP metrics JSONL.
+Every read is descriptor-relative and bound to a P134 OA1 receipt, expected
+content hash, byte/record estimates, parser budgets, immutable execution
+receipt, and normalized P120 evidence. The canonical 30/30 matrix contains five
+successful provider-shaped attachments, one securely re-read duplicate, and 24
+fail-closed rejection/adversarial cases. Independent review records zero
+P0/P1/P2/P3 findings and all forbidden-authority counters remain integer zero.
+P135 qualifies local artifacts only, not live provider attachment or action.

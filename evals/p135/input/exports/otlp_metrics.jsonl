@@ -1,0 +1,1 @@
+{"resourceMetrics":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"checkout"}}]},"scopeMetrics":[{"metrics":[{"name":"checkout.latency","unit":"ms","gauge":{"dataPoints":[{"timeUnixNano":"1783900800000000000","asDouble":12.5,"attributes":[{"key":"route","value":{"stringValue":"/pay"}}]}]}}]}]}]}

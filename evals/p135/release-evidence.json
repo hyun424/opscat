@@ -1,0 +1,92 @@
+{
+  "artifact_hashes": {
+    "authority_ledger": "sha256:57dd79b4fe0d977478b73a4167c5d48fb010b64e742b29877f1aea97acd9b212",
+    "case_matrix": "sha256:5cd7e8947179138438c25d75915fa1d4499bbcd17dff95c675e2bf3b76b469c3",
+    "independent_review": "sha256:a28244e44b726d66b91bcbbfdcbd7986ae25bf45c9bb02679e14e9f5b863d8c0"
+  },
+  "evaluator_activity": {
+    "artifact_write_count": 5,
+    "profile_read_count": 1,
+    "runner_invocation_count": 1
+  },
+  "forbidden_authority": {
+    "credential_read_count": 0,
+    "delivery_count": 0,
+    "dns_lookup_count": 0,
+    "environment_read_count": 0,
+    "live_connector_call_count": 0,
+    "network_call_count": 0,
+    "operator_replacement_count": 0,
+    "production_mutation_count": 0,
+    "provider_call_count": 0,
+    "remediation_count": 0,
+    "shell_execution_count": 0,
+    "signal_count": 0,
+    "socket_call_count": 0,
+    "staging_mutation_count": 0,
+    "subprocess_launch_count": 0
+  },
+  "gates": {
+    "all_providers_represented": true,
+    "authority_exact_zero": true,
+    "case_matrix_substantive": true,
+    "claim_boundary_exact": true,
+    "independent_review_current": true,
+    "principal_denominator_exact": true
+  },
+  "observation_activity": {
+    "duplicate_validation_read_count": 1,
+    "local_bytes_read": 6182,
+    "local_file_open_count": 20,
+    "local_file_read_count": 20,
+    "local_records_parsed": 19,
+    "local_stat_count": 60
+  },
+  "product_claim": "P135 qualifies credential-free provider-shaped local export attachment from bounded local artifacts.",
+  "public_limitation": "Local file artifacts only: no provider call, live connector, network, DNS, socket, credential, environment, subprocess, shell, delivery, remediation, mutation, production attachment, staging attachment, authenticated provider identity, or operator replacement is claimed.",
+  "reasons": [],
+  "release_evidence_hash": "sha256:ab78a5757fecd5d52f3d2e698e97625f192b0cb8aecac54bda5e0a87e6d70ba7",
+  "release_id": "P135-provider-shaped-export-attachment",
+  "release_status": "p135_provider_shaped_export_attachment_qualified",
+  "schema_version": "p135.release_evidence.v1",
+  "source_bindings": {
+    "app/services/p135_provider_export_attachment.py": "sha256:e6e217c90d415dad719cf923f3bc8429db6439aa513cf0f3364944b1d1484488",
+    "app/services/p135_release_evidence.py": "sha256:0efab0991342fd5c1c9b7ec6f8fc0954dcf329af812386c15246dccabd1b5ffd",
+    "docs/operations/p135-plan-review.md": "sha256:da33d0f9008f3a2bf209a98b3ac670135943a39775ed64f8e18a0b361a764fa9",
+    "docs/operations/p135-provider-export-roadmap.md": "sha256:11694171d4c836c4bade1f462559c34e4b532d272510d698b9dad9664c1a8e78",
+    "docs/operations/p135-test-spec.md": "sha256:b390db877a43fdaf6a1dad4be2e32c72d0f328d59f0c3bdcddacc59dd5c7b087",
+    "docs/tickets/p135/P135-001-authority-manifest.md": "sha256:ef58aee802dd57e3b75750b3aed5a505b123fa05ce579e6f22bbd7e03a01b6f4",
+    "docs/tickets/p135/P135-002-secure-reader.md": "sha256:abdddeff60794fd01060d199b11b9f39f8fc1a2115bea541f7e4deb5e6e71906",
+    "docs/tickets/p135/P135-003-provider-adapters.md": "sha256:5bbd5880e3d71c9192cd81eaba06258ada50967a8121775051b24a065210ca3f",
+    "docs/tickets/p135/P135-004-receipts-ledger.md": "sha256:32efd02835e3d201e760c0531b87c7fb126f28619769358f11b2088e3f1af07f",
+    "docs/tickets/p135/P135-005-evaluation-runner.md": "sha256:43463e33bb87ba5cbdf671f413a6b61ac993cff7d499f72ad7bb077ca2d44cd7",
+    "docs/tickets/p135/P135-006-review-release.md": "sha256:72acab45f03c5f010c9a07efc435762ffba19f3b91d310f0e764ac791c1e1ff2",
+    "docs/tickets/p135/P135-007-final-verification.md": "sha256:02fa53e6aa5267f63f6b583d8d91b4b7e9553acadfcd55f16c9d5e4182a3b877",
+    "docs/tickets/p135/README.md": "sha256:75ce261fe6a09de5a227be1a5b0dd594d9250596f5bce382814526f8fbd2393d",
+    "evals/p135/input/exports/grafana_dashboard.json": "sha256:bd9e703ccdd192c63226cfbf6881db0f03fdc2af81a6ece85f137c13ee53ae38",
+    "evals/p135/input/exports/grafana_duplicate_panel_id.json": "sha256:5658dcb598ff9de112c07cf846406ffa8439538b93f6005c1e5fc80e152c7aa0",
+    "evals/p135/input/exports/loki_line_budget.json": "sha256:a1ee521ba8d073e6e96258fdaef35d616917d8b81189ddf6d2ff6ee820d1a343",
+    "evals/p135/input/exports/loki_malformed_nanosecond.json": "sha256:8b296e973cfbea58152af5b15e379ad1195a8deab9167bffadced1e7b0f5832c",
+    "evals/p135/input/exports/loki_streams.json": "sha256:5965586b10d28423dd99ab70b6c5dfe2374292ed185fb148945ab4b31e4fba1b",
+    "evals/p135/input/exports/otlp_metrics.jsonl": "sha256:fcf33453df7de1563691255f57ef46aaf54e80c45c06d861ef5b6bac15734cd0",
+    "evals/p135/input/exports/otlp_mixed_signal.jsonl": "sha256:4bc3c1e308e19d00abd593e3425902370e4ee181250acc1a44e73641a09c3854",
+    "evals/p135/input/exports/p120_wrapped_prompt_secret.json": "sha256:ea7ec1ee345c1c6d8746e8f1327d138b553005e69b3b0e18b8108514f0a250df",
+    "evals/p135/input/exports/parser_failure_duplicate_key.json": "sha256:d808b66b8a6b3c049f6312d6260ac35bd8dfcc77dffa63e6f5152c134f8cb14a",
+    "evals/p135/input/exports/prometheus_matrix.json": "sha256:6e97737f26619cbb6903ef23fbaa88d7838e65bee949a13675525242a1aad4a6",
+    "evals/p135/input/exports/prometheus_nonfinite_number.json": "sha256:b64e183ae1dcfd1aba64e182c011df77b010d8338eab164492a5e573139cf8b4",
+    "evals/p135/input/exports/prometheus_wrong_result_type.json": "sha256:49397b896e118bd4574b3151f12c642281965ae116b646dfe0186023482da315",
+    "evals/p135/input/exports/sentry_duplicate_issue_identity.json": "sha256:1a0656adf5e2bf5459389597576fe6aad12eeb003a0842752077925f2a5b0854",
+    "evals/p135/input/exports/sentry_issues.json": "sha256:8f66fe0136090011a5a749420bea746c7315ce9d54c7cf3c7b93271a2dd27969",
+    "evals/p135/input/provider-export-profile.json": "sha256:7e13d37fb4880bb8c8cbb640a3563f30a7fe8e3adfba48f365ad8b53bb2a70bd",
+    "scripts/run_p135_provider_export_attachment.py": "sha256:4ab46c4b42446c0d87245347e20382f04455dbdfe203614c906fe5e2eb941efb",
+    "scripts/verify.sh": "sha256:b8e3edb463f0e79953fb96f171e0be4a8428b6d07ebadb4a63631c7fe7dac734",
+    "tests/test_p135_provider_export_attachment.py": "sha256:8b76e8b57b346880d803423425435fd5bd079b4d8b7996dff98582f064c6ae47",
+    "tests/test_p135_release_evidence.py": "sha256:6bfa7827c20d301f5d6e7c82ec45cf05e2b44f42c4fb04af06a92b7cda0116ad",
+    "tests/test_p135_runner.py": "sha256:47b2816851d04e65cc6ee5e68110e980e22776f9f3e6a83896b7e565eb01cc71"
+  },
+  "totals": {
+    "expected_cases": 30,
+    "failed_cases": 0,
+    "passed_cases": 30
+  }
+}

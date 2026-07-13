@@ -1,0 +1,23 @@
+{
+  "title": "Checkout Overview",
+  "schemaVersion": 39,
+  "version": 1,
+  "uid": "checkout-overview",
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Request rate",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-main"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(http_requests_total{service=\"checkout\"}[5m]))"
+        }
+      ]
+    }
+  ]
+}

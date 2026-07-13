@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "streams",
+    "result": [
+      {
+        "stream": {
+          "service": "checkout",
+          "level": "error"
+        },
+        "values": [
+          ["1783900800000000000", "payment worker timeout"],
+          ["1783900860000000000", "retry succeeded"]
+        ]
+      }
+    ]
+  }
+}

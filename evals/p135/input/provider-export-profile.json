@@ -1,0 +1,53 @@
+{
+  "authority_contract_id": "p135-local-export-attachment",
+  "authority_host_label": "local-artifact.telemetry-read",
+  "authority_request_id_prefix": "p135-local-",
+  "case_matrix_version": 1,
+  "input_root": "evals/p135/input/exports",
+  "output_artifacts": [
+    "authority-ledger.json",
+    "case-matrix.json",
+    "execution-ledger.json",
+    "normalized-bundles.json",
+    "release-evidence.json"
+  ],
+  "required_cases": [
+    "prometheus_matrix_success",
+    "loki_streams_success",
+    "grafana_dashboard_success",
+    "sentry_issues_success",
+    "otlp_metrics_success",
+    "deterministic_duplicate",
+    "denied_p134_receipt_rejected",
+    "wrong_p134_capability_rejected",
+    "byte_estimate_exceeded_rejected",
+    "record_estimate_exceeded_fail_closed",
+    "manifest_total_byte_budget_exceeded",
+    "manifest_total_record_budget_exceeded",
+    "absolute_traversal_path_rejected",
+    "symlink_hardlink_nonregular_rejected",
+    "source_id_reuse_changed_content_rejected",
+    "prometheus_wrong_result_type_rejected",
+    "loki_malformed_nanosecond_rejected",
+    "grafana_duplicate_panel_id_rejected",
+    "sentry_duplicate_issue_identity_rejected",
+    "otlp_mixed_signal_rejected",
+    "duplicate_json_key_rejected",
+    "nonfinite_number_rejected",
+    "utf8_string_line_budget_rejected",
+    "prompt_injection_text_flagged_redacted",
+    "sensitive_attribute_hashed_absent",
+    "content_hash_mismatch_rejected",
+    "file_mutation_replacement_rejected",
+    "forged_bundle_receipt_ledger_rejected",
+    "nonzero_forbidden_authority_rejected",
+    "live_provider_credential_action_claim_rejected"
+  ],
+  "resource_limits": {
+    "cpu_limit_ms": 10000,
+    "peak_memory_limit_bytes": 100663296,
+    "wall_limit_ms": 30000
+  },
+  "root_ref_hash": "sha256:8a2f596f67f07c84000fb0d1ab2fc8e5879d7d65dec1f2ec48b7b7cef63118f4",
+  "schema_version": "p135.provider_export_profile.v1"
+}

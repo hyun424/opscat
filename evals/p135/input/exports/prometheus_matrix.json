@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "matrix",
+    "result": [
+      {
+        "metric": {
+          "__name__": "http_requests_total",
+          "job": "checkout",
+          "instance": "checkout-1"
+        },
+        "values": [
+          [1783900800, "5"],
+          [1783900860, "7"]
+        ]
+      }
+    ]
+  }
+}

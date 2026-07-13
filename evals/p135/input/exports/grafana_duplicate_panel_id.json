@@ -1,0 +1,18 @@
+{
+  "title": "Checkout Duplicate Panels",
+  "schemaVersion": 39,
+  "version": 1,
+  "uid": "checkout-duplicate-panels",
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Request rate"
+    },
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Error count"
+    }
+  ]
+}

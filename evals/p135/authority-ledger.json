@@ -1,0 +1,34 @@
+{
+  "authority_ledger_hash": "sha256:4c7164b2ce32625f8df609b6f43d0288ec84dfbd33dd5c6c0b2a1836ff59aafc",
+  "evaluator_activity": {
+    "artifact_write_count": 5,
+    "profile_read_count": 1,
+    "runner_invocation_count": 1
+  },
+  "forbidden_authority": {
+    "credential_read_count": 0,
+    "delivery_count": 0,
+    "dns_lookup_count": 0,
+    "environment_read_count": 0,
+    "live_connector_call_count": 0,
+    "network_call_count": 0,
+    "operator_replacement_count": 0,
+    "production_mutation_count": 0,
+    "provider_call_count": 0,
+    "remediation_count": 0,
+    "shell_execution_count": 0,
+    "signal_count": 0,
+    "socket_call_count": 0,
+    "staging_mutation_count": 0,
+    "subprocess_launch_count": 0
+  },
+  "observation_activity": {
+    "duplicate_validation_read_count": 1,
+    "local_bytes_read": 6182,
+    "local_file_open_count": 20,
+    "local_file_read_count": 20,
+    "local_records_parsed": 19,
+    "local_stat_count": 60
+  },
+  "schema_version": "p135.release_authority_ledger.v1"
+}

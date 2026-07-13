@@ -1,0 +1,24 @@
+[
+  {
+    "id": "9001",
+    "title": "CheckoutError",
+    "level": "error",
+    "count": "1",
+    "firstSeen": "2026-07-13T00:00:00Z",
+    "lastSeen": "2026-07-13T00:01:00Z",
+    "project": {
+      "slug": "checkout"
+    }
+  },
+  {
+    "id": "9001",
+    "title": "CheckoutError retry",
+    "level": "error",
+    "count": "2",
+    "firstSeen": "2026-07-13T00:00:00Z",
+    "lastSeen": "2026-07-13T00:02:00Z",
+    "project": {
+      "slug": "checkout"
+    }
+  }
+]

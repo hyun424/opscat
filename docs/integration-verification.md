@@ -135,3 +135,16 @@ runtime observation/action plus evaluator authority counters remain exact zero.
 This qualifies policy decisions only; it does not perform file/provider/live
 observation, credential access, delivery, remediation, mutation, or operator
 replacement.
+
+## P135 latest verification addendum
+
+P135 attaches bounded local Prometheus, Loki, Grafana, Sentry, and OTLP-shaped
+exports through current P134 OA1 receipts. The dedicated suite passes 46 tests
+plus targeted Ruff and Mypy. The canonical runner passes all 30 provider,
+duplicate, authority, parser, budget, path, mutation, provenance, and tamper
+cases. The promoted release evidence is source-bound to implementation, tests,
+fixtures, profile, plan, and tickets; independent review has zero unresolved
+findings. A runtime guard measures all forbidden provider/network/credential/
+process/action surfaces at exact zero. This is real local-file observation, but
+not live provider access, external notification, remediation, or production
+autonomy.

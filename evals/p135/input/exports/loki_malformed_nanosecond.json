@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "streams",
+    "result": [
+      {
+        "stream": {
+          "service": "checkout",
+          "level": "error"
+        },
+        "values": [
+          ["not-nanoseconds", "malformed timestamp"]
+        ]
+      }
+    ]
+  }
+}

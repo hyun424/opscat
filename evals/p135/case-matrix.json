@@ -1,0 +1,332 @@
+{
+  "cases": {
+    "absolute_traversal_path_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:52dc103a14feb638a8d2e00f5e3578ceb0b4c32880580a7894622a4faef961a1",
+      "error": "unsafe_relative_path",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "byte_estimate_exceeded_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:c0dda1586327654b1074d48ac6e0544feb97ceee4994029a773e22d144c4060b",
+      "error": "authority_byte_estimate_exceeded",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "content_hash_mismatch_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:475038c7e8965cdf443044d39b0993ea0f60e9313c138ce5600e252fb2318635",
+      "error": "content_hash_mismatch",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "denied_p134_receipt_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:cc6467bab32ff3ec22a7af7304a038ae3d9b5fb9b1b1528302cf46a8edf9dbb8",
+      "error": "authority_decision_not_allowed",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "deterministic_duplicate": {
+      "authority_zero": true,
+      "case_hash": "sha256:77cfcc10a375a9f14c94fddc316081853c4c1a196787da2df6da200322802c9a",
+      "error": null,
+      "no_network_credentials_actions": true,
+      "outcome": "duplicate",
+      "passed": true,
+      "provider": null
+    },
+    "duplicate_json_key_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:754990e9c81c7c262d4a5baaaf22a274645751dd39528117b87f4433da3ad073",
+      "error": "duplicate_json_key",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "file_mutation_replacement_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:1378381900b41e0b8294bf46ed74f7cea13bd88f59889d2d3bf27a1d315493c8",
+      "error": "file_identity_changed",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "forged_bundle_receipt_ledger_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:34c263037422e1c956756c8cb123147b9f09f55c70fa565b0f9e364744d34579",
+      "error": "receipt_bundle_hash_mismatch",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "grafana_dashboard_success": {
+      "authority_zero": true,
+      "case_hash": "sha256:67e2255c2ae47102292ba3aee35a392b1c6ae0ec04af83e6b8fb89725a74d19c",
+      "error": null,
+      "no_network_credentials_actions": true,
+      "outcome": "success",
+      "passed": true,
+      "provider": "grafana"
+    },
+    "grafana_duplicate_panel_id_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:0b2dd8415633b5c3ad03255a49ac1ecc3c5914087ac12da48a13d0df59106cc5",
+      "error": "duplicate_grafana_panel_id",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "live_provider_credential_action_claim_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:bf43422dc5be4e9ab84561141ebd14eefd08a833bf0d9b9ac94528253414e769",
+      "error": "authority_level_not_qualified",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "loki_malformed_nanosecond_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:1fc06538e3585702e57bd04059d6d83bfa94b15f4d1be74dd1628f91cf246f3b",
+      "error": "malformed_loki_timestamp",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "loki_streams_success": {
+      "authority_zero": true,
+      "case_hash": "sha256:94905bac856eb3e69984481d786e088bdc28147482e44b96899e0680acb9bc4d",
+      "error": null,
+      "no_network_credentials_actions": true,
+      "outcome": "success",
+      "passed": true,
+      "provider": "loki"
+    },
+    "manifest_total_byte_budget_exceeded": {
+      "authority_zero": true,
+      "case_hash": "sha256:9b302645aadd3d3668c33856e8460d625ec338bfd513b2314d290ab945b6aa15",
+      "error": "manifest_total_byte_budget_exceeded",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "manifest_total_record_budget_exceeded": {
+      "authority_zero": true,
+      "case_hash": "sha256:e580c2cf87218687a784efbe0a4be49f2f1bb6e09c95d4dd5b40cbb97ac9fce5",
+      "error": "manifest_total_record_budget_exceeded",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "nonfinite_number_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:a02a990c2efd1fcd4721415d7e4a8bdd57fa36f4e4b7dc5be6f117bbe5239fbb",
+      "error": "non_finite_number:NaN",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "nonzero_forbidden_authority_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:8407d9e0184755e99cf31d42417288105445ae007697fbd7819a6f2ef4347a18",
+      "error": "network_call_count_nonzero",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "otlp_metrics_success": {
+      "authority_zero": true,
+      "case_hash": "sha256:83ad723da0105221d8f1fe3beb75bb4f081cac6309379342d40b6f1fd58a61d6",
+      "error": null,
+      "no_network_credentials_actions": true,
+      "outcome": "success",
+      "passed": true,
+      "provider": "opentelemetry"
+    },
+    "otlp_mixed_signal_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:b195dad0d7e7aef9db76931ac98fb142717fa30faf5d1d5e8a8818c12963646d",
+      "error": "otlp_signal_family_mismatch",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "prometheus_matrix_success": {
+      "authority_zero": true,
+      "case_hash": "sha256:3e6f14056859df09274e3125b223047626f526811702e1336ee0b049b3782fc6",
+      "error": null,
+      "no_network_credentials_actions": true,
+      "outcome": "success",
+      "passed": true,
+      "provider": "prometheus"
+    },
+    "prometheus_wrong_result_type_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:d71546a28b7849df03342ce9f5cdc6c946f1b8677d13ea2504273ba1cc39fcf0",
+      "error": "prometheus_result_type_mismatch",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "prompt_injection_text_flagged_redacted": {
+      "authority_zero": true,
+      "case_hash": "sha256:39c710b89c7f325146880cf460e8e0f3a88b8e84e2c92174ccd7d27e67c99713",
+      "error": "prompt_like_text:credential_like_text",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "record_estimate_exceeded_fail_closed": {
+      "authority_zero": true,
+      "case_hash": "sha256:1a1b3c29db46300b64c8191ee5111981a3316627dfb5c5fc762d3c2b7202a362",
+      "error": "authority_record_estimate_exceeded",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "sensitive_attribute_hashed_absent": {
+      "authority_zero": true,
+      "case_hash": "sha256:8afb3c8f59281fbc6c458566f1de9f6d09cb587010acb16f3b0ac5476a08e2c5",
+      "error": "sensitive_attribute_hashed_absent",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "sentry_duplicate_issue_identity_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:3ffb6da6fef09560c056bd5765f31d13f1669103bdfd3b4059f9a54a97e75c74",
+      "error": "duplicate_sentry_issue_id",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "sentry_issues_success": {
+      "authority_zero": true,
+      "case_hash": "sha256:ca070b1dd79a3175a479daf02151184fb27275f66fe9b75877e6c8776d3744e1",
+      "error": null,
+      "no_network_credentials_actions": true,
+      "outcome": "success",
+      "passed": true,
+      "provider": "sentry"
+    },
+    "source_id_reuse_changed_content_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:475038c7e8965cdf443044d39b0993ea0f60e9313c138ce5600e252fb2318635",
+      "error": "content_hash_mismatch",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "symlink_hardlink_nonregular_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:8bee0dc756d0a59feb4781b71eaf9d1da8ba6cd8677abf2fdcb3650a637522e2",
+      "error": "symlink_rejected",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "utf8_string_line_budget_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:83306559162ae150598267c4b1d08a0c0e0503457c833204828fc1270b874945",
+      "error": "log_line_budget_exceeded",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    },
+    "wrong_p134_capability_rejected": {
+      "authority_zero": true,
+      "case_hash": "sha256:0d4a030f49d8316d32bdfecbf667565edf7f42687bb6678bec179d36f54fa056",
+      "error": "authority_capability_mismatch",
+      "no_network_credentials_actions": true,
+      "outcome": "rejected",
+      "passed": true,
+      "provider": null
+    }
+  },
+  "matrix_hash": "sha256:2ac845fb56a0e1da3e3614da254f663f326bf38c5fa7da8d625a09bcb64fea48",
+  "provider_successes": {
+    "grafana": 1,
+    "loki": 1,
+    "opentelemetry": 1,
+    "prometheus": 1,
+    "sentry": 1
+  },
+  "required_cases": [
+    "prometheus_matrix_success",
+    "loki_streams_success",
+    "grafana_dashboard_success",
+    "sentry_issues_success",
+    "otlp_metrics_success",
+    "deterministic_duplicate",
+    "denied_p134_receipt_rejected",
+    "wrong_p134_capability_rejected",
+    "byte_estimate_exceeded_rejected",
+    "record_estimate_exceeded_fail_closed",
+    "manifest_total_byte_budget_exceeded",
+    "manifest_total_record_budget_exceeded",
+    "absolute_traversal_path_rejected",
+    "symlink_hardlink_nonregular_rejected",
+    "source_id_reuse_changed_content_rejected",
+    "prometheus_wrong_result_type_rejected",
+    "loki_malformed_nanosecond_rejected",
+    "grafana_duplicate_panel_id_rejected",
+    "sentry_duplicate_issue_identity_rejected",
+    "otlp_mixed_signal_rejected",
+    "duplicate_json_key_rejected",
+    "nonfinite_number_rejected",
+    "utf8_string_line_budget_rejected",
+    "prompt_injection_text_flagged_redacted",
+    "sensitive_attribute_hashed_absent",
+    "content_hash_mismatch_rejected",
+    "file_mutation_replacement_rejected",
+    "forged_bundle_receipt_ledger_rejected",
+    "nonzero_forbidden_authority_rejected",
+    "live_provider_credential_action_claim_rejected"
+  ],
+  "resource_usage": {
+    "cpu_limit_ms": 10000,
+    "cpu_time_ms": 332,
+    "peak_memory_bytes": 38486016,
+    "peak_memory_limit_bytes": 100663296,
+    "wall_limit_ms": 30000,
+    "wall_time_ms": 335
+  },
+  "schema_version": "p135.release_case_matrix.v1",
+  "totals": {
+    "denominator_scope": "principal_provider_export_assertions",
+    "duplicate_cases": 1,
+    "expected_cases": 30,
+    "failed_cases": 0,
+    "passed_cases": 30,
+    "rejected_cases": 24,
+    "successful_provider_attachments": 5
+  }
+}

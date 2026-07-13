@@ -17,7 +17,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     -h|--help)
       cat <<'HELP'
-Usage: bash scripts/verify.sh [--profile fast|full|eval|docs|p107-release|...|p131-release]
+Usage: bash scripts/verify.sh [--profile fast|full|eval|docs|p107-release|...|p132-release]
 
 Profiles:
   fast  Compile, lint, typecheck, and pytest regression suite.
@@ -56,7 +56,7 @@ Profiles:
         P121 local/mock/sandbox proactive prevention and release evidence.
   p122-release
         P122 open-source packaging, security, reproducibility, and bounded release evidence.
-  p123-release..p131-release
+  p123-release..p132-release
         Evidence-qualified shadow attachment, judgment, resilience, local lab,
         chaos, operator UX, distribution, and public-beta release profiles.
 HELP
@@ -70,7 +70,7 @@ HELP
 done
 
 case "$VERIFY_PROFILE" in
-  fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release|p123-release|p124-release|p125-release|p126-release|p127-release|p128-release|p129-release|p130-release|p131-release) ;;
+  fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release|p123-release|p124-release|p125-release|p126-release|p127-release|p128-release|p129-release|p130-release|p131-release|p132-release) ;;
   *)
     printf 'Unknown verify profile: %s\n' "$VERIFY_PROFILE" >&2
     exit 2
@@ -264,6 +264,11 @@ P128_RELEASE_PROFILE_TESTS=(tests/test_p128_operator_beta.py tests/test_operator
 P129_RELEASE_PROFILE_TESTS=(tests/test_p129_distribution_maturity.py)
 P130_RELEASE_PROFILE_TESTS=(tests/test_p130_public_beta.py)
 P131_RELEASE_PROFILE_TESTS=(tests/test_p131_always_on_monitor.py tests/test_p131_release_evidence.py)
+P132_RELEASE_PROFILE_TESTS=(
+  tests/test_p131_always_on_monitor.py
+  tests/test_p132_supervised_runtime.py
+  tests/test_p132_release_evidence.py
+)
 VERIFY_TMPDIR="$(mktemp -d)"
 cleanup() {
   rm -rf "$VERIFY_TMPDIR"
@@ -1657,6 +1662,12 @@ p131_release_profile_tests() {
   "${UV_DEV[@]}" mypy app/monitor_cli.py app/api/health.py app/config.py
   "${UV_DEV[@]}" python scripts/run_p131_always_on_monitor.py
 }
+p132_release_profile_tests() {
+  phase_release_profile p132 "${P132_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/services/p131_always_on_monitor.py app/monitor_cli.py
+  "${UV_DEV[@]}" mypy app/services/p131_always_on_monitor.py app/monitor_cli.py
+  "${UV_DEV[@]}" python scripts/run_p132_supervised_runtime.py --output-dir "$VERIFY_TMPDIR/p132-release"
+}
 
 p108_prevention_learning_evidence_smoke() {
   section "P108 prevention learning evidence smoke"
@@ -2064,6 +2075,7 @@ run_p128_release() { p128_release_profile_tests; }
 run_p129_release() { p129_release_profile_tests; }
 run_p130_release() { p130_release_profile_tests; }
 run_p131_release() { p131_release_profile_tests; }
+run_p132_release() { p132_release_profile_tests; }
 
 run_full() {
   run_fast
@@ -2106,6 +2118,7 @@ case "$VERIFY_PROFILE" in
   p129-release) run_p129_release ;;
   p130-release) run_p130_release ;;
   p131-release) run_p131_release ;;
+  p132-release) run_p132_release ;;
   full) run_full ;;
 esac
 

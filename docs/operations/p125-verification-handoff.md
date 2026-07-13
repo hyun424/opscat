@@ -2,12 +2,13 @@
 
 Schema marker: `p125.verification_handoff.v1`.
 
-Current status: planning complete when this artifact set is accepted;
-implementation evidence is pending.
+Current status: implemented and promoted for the committed deterministic local
+shadow profile.
 
-This handoff is the planned evidence template for future P125 verification. It
-does not claim source implementation, tests, production SLO compliance,
-credentialed access, infrastructure authority, or mutation authority.
+This handoff remains the evidence contract for P125 verification. Source,
+tests, and promoted evidence now exist, but it still does not claim production
+SLO compliance, credentialed access, infrastructure authority, or mutation
+authority.
 
 ## Scope
 
@@ -22,7 +23,7 @@ Verification must prove only the P125 scope:
 
 ## Required Inventory
 
-Future executors must provide changed-file inventory grouped by long-run
+Verifiers must inspect changed-file inventory grouped by long-run
 manifests, restart harnesses, durability ledgers, cost reports, degradation
 gates, docs, tests, and generated verification evidence.
 
@@ -54,4 +55,3 @@ Block verification handoff on missing duration, missing event denominators,
 lost records without explanation, duplicate records, corrupt resume,
 unbounded resource growth, production SLO claims, or nonzero authority
 counters.
-

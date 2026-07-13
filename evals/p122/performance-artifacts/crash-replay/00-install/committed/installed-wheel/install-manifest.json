@@ -237,9 +237,9 @@
       "size": 3350
     },
     {
-      "hash": "sha256:f6de39c74c31eea6993f686fc187c4a9df67cc23cb13e6d19c605e77569e74b0",
+      "hash": "sha256:2123cd65e496f8935eaec5c9c9d1f2ddb655073747877cdb3d5af9adc8062fd9",
       "path": "site-packages/app/monitor_cli.py",
-      "size": 3044
+      "size": 4524
     },
     {
       "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
@@ -1222,14 +1222,24 @@
       "size": 21013
     },
     {
-      "hash": "sha256:5aad22310c7019767030d109d7c17d1087bba38068361b740e6d79636b8cfece",
+      "hash": "sha256:0376de12d2d53ad89c3fcf1be08a86217b5398a1e2e65422da03404ad6aa8c8a",
       "path": "site-packages/app/services/p131_always_on_monitor.py",
-      "size": 51293
+      "size": 64888
     },
     {
       "hash": "sha256:36d3f4acd5545ff05653ac809afc9ae40a7e548e3dd44fe44c555c508e3d7846",
       "path": "site-packages/app/services/p131_release_evidence.py",
       "size": 7173
+    },
+    {
+      "hash": "sha256:9b0fa55d70f65e5878fb13832608f6a14ae6bd50dac454299a804f03666f9c9d",
+      "path": "site-packages/app/services/p132_release_evidence.py",
+      "size": 19815
+    },
+    {
+      "hash": "sha256:4aa49ccd11de7e2f0c90bad1deef01f736e1da724601f11accbaef15b36c5d54",
+      "path": "site-packages/app/services/p132_supervised_runtime.py",
+      "size": 21886
     },
     {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -1672,9 +1682,9 @@
       "size": 10004
     },
     {
-      "hash": "sha256:b5c681097c67d522617acb95bfe5439381af971a7bb7ce0180c6f137414252ed",
+      "hash": "sha256:90030edf8ec3a10f9f18e7ee657951c1b59f0d43a915f8d1e9519e213233ac5a",
       "path": "site-packages/opscat-0.2.0.dist-info/METADATA",
-      "size": 36081
+      "size": 36778
     },
     {
       "hash": "sha256:60b2577585d0d8543452a9f627eea21080bede239ecbc947df10adbc52e477c4",
@@ -1698,9 +1708,9 @@
     }
   ],
   "installed_package": "opscat",
-  "manifest_hash": "sha256:06a33ae06bb22752e14b16ebd3a9feb4a011269a459fe06bb10f68cd87f92a73",
+  "manifest_hash": "sha256:aa62b8e051608c87123b8df3a709a2f9f4ae88823d7da5995e8dff88b7e23a7d",
   "operation": "package_install",
-  "record_entries_verified": 338,
+  "record_entries_verified": 340,
   "schema_version": "p122.canonical_wheel_install.v1",
-  "wheel_checksum": "sha256:529f26fe90f00b8c50572b33df4bb5cd27c3126a7ab9823f4ff5b0f344430802"
+  "wheel_checksum": "sha256:301064861d14f10861fdf28706b0fd3b99dca6cdd785613160047e5436b287ba"
 }

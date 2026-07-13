@@ -8,9 +8,11 @@ operation without credentials, network calls, subprocesses, or remediation.
 
 from __future__ import annotations
 
+import errno
 import fcntl
 import json
 import os
+import re
 import stat
 import tempfile
 import time
@@ -27,9 +29,14 @@ from app.services.p121_signals import P121_AUTHORITY_COUNTER_KEYS, zero_authorit
 CONFIG_SCHEMA_VERSION = "p131.monitor_config.v1"
 STATE_SCHEMA_VERSION = "p131.monitor_state.v1"
 REPORT_SCHEMA_VERSION = "p131.health_report.v1"
+TERMINATION_RECEIPT_SCHEMA_VERSION = "p132.termination_receipt.v1"
 MAX_RECENT_OBSERVATION_HASHES = 2_000
 MAX_STATE_BYTES = 1_048_576
 MAX_FUTURE_CLOCK_SKEW_SECONDS = 5.0
+MAX_REPORT_FILES = 10_000
+MAX_REPORT_DIR_BYTES = 1_073_741_824
+MAX_MIN_ARTIFACT_FREE_BYTES = 1_099_511_627_776
+_REPORT_FILENAME = re.compile(r"p131-health-\d{8}T\d{6}Z\.json\Z")
 _FORBIDDEN_FIELD_TOKENS = (
     "auth",
     "credential",
@@ -54,9 +61,13 @@ _CONFIG_FIELDS = frozenset(
         "max_bytes_per_cycle",
         "max_records_per_cycle",
         "max_line_bytes",
+        "max_report_files",
+        "max_report_dir_bytes",
+        "min_artifact_free_bytes",
         "state_path",
         "report_dir",
         "lease_path",
+        "termination_receipt_path",
         "allowed_data_roots",
         "allowed_artifact_roots",
         "sources",
@@ -75,6 +86,10 @@ class P131StateError(ValueError):
 
 class P131LeaseError(RuntimeError):
     """Raised when another process already owns the runtime lease."""
+
+
+class P131DurabilityUncertainError(OSError):
+    """Raised after replacement when directory durability cannot be proven."""
 
 
 class Clock(Protocol):
@@ -118,9 +133,13 @@ class MonitorConfig:
     max_bytes_per_cycle: int
     max_records_per_cycle: int
     max_line_bytes: int
+    max_report_files: int
+    max_report_dir_bytes: int
+    min_artifact_free_bytes: int
     state_path: Path
     report_dir: Path
     lease_path: Path
+    termination_receipt_path: Path
     allowed_data_roots: tuple[Path, ...]
     allowed_artifact_roots: tuple[Path, ...]
     sources: tuple[LocalJsonlSource, ...]
@@ -162,6 +181,13 @@ def load_monitor_config(path: Path | str) -> MonitorConfig:
     max_bytes = _optional_positive_int(raw, "max_bytes_per_cycle", 1_048_576)
     max_records = _optional_positive_int(raw, "max_records_per_cycle", 10_000)
     max_line_bytes = _optional_positive_int(raw, "max_line_bytes", 65_536)
+    max_report_files = _optional_bounded_positive_int(raw, "max_report_files", 32, MAX_REPORT_FILES)
+    max_report_dir_bytes = _optional_bounded_positive_int(
+        raw, "max_report_dir_bytes", 10_485_760, MAX_REPORT_DIR_BYTES
+    )
+    min_artifact_free_bytes = _optional_bounded_positive_int(
+        raw, "min_artifact_free_bytes", 1_048_576, MAX_MIN_ARTIFACT_FREE_BYTES
+    )
     if max_line_bytes > max_bytes:
         raise P131ConfigError("max_line_bytes_exceeds_cycle_budget")
     runtime_id = _required_text(raw, "runtime_id")
@@ -214,7 +240,14 @@ def load_monitor_config(path: Path | str) -> MonitorConfig:
     state_path = _resolve_path(base, raw.get("state_path"))
     report_dir = _resolve_path(base, raw.get("report_dir"))
     lease_path = _resolve_path(base, raw.get("lease_path"))
-    if not all(any(_is_relative_to(path, root) for root in artifact_roots) for path in (state_path, report_dir, lease_path)):
+    receipt_value = raw.get("termination_receipt_path")
+    termination_receipt_path = (
+        state_path.with_name("termination-receipt.json")
+        if receipt_value is None
+        else _resolve_path(base, receipt_value)
+    )
+    artifact_paths = (state_path, report_dir, lease_path, termination_receipt_path)
+    if not all(any(_is_relative_to(path, root) for root in artifact_roots) for path in artifact_paths):
         raise P131ConfigError("artifact_path_outside_allowed_roots")
 
     return MonitorConfig(
@@ -229,9 +262,13 @@ def load_monitor_config(path: Path | str) -> MonitorConfig:
         max_bytes_per_cycle=max_bytes,
         max_records_per_cycle=max_records,
         max_line_bytes=max_line_bytes,
+        max_report_files=max_report_files,
+        max_report_dir_bytes=max_report_dir_bytes,
+        min_artifact_free_bytes=min_artifact_free_bytes,
         state_path=state_path,
         report_dir=report_dir,
         lease_path=lease_path,
+        termination_receipt_path=termination_receipt_path,
         allowed_data_roots=roots,
         allowed_artifact_roots=artifact_roots,
         sources=tuple(sources),
@@ -252,13 +289,22 @@ class AlwaysOnMonitor:
         self.clock = clock or SystemClock()
         self.canary_probe = canary_probe or _default_canary_probe
 
-    def run(self, *, max_cycles: int | None = None, sleep_enabled: bool = True) -> dict[str, Any]:
+    def run(
+        self,
+        *,
+        max_cycles: int | None = None,
+        sleep_enabled: bool = True,
+        stop_reason: Callable[[], str | None] | None = None,
+        wait_for_stop: Callable[[float], bool] | None = None,
+    ) -> dict[str, Any]:
         """Run forever by default, or for a bounded number of cycles in tests."""
 
         if max_cycles is not None and (isinstance(max_cycles, bool) or max_cycles <= 0):
             raise ValueError("max_cycles_must_be_positive")
         if max_cycles is None and not sleep_enabled:
             raise ValueError("unbounded_run_requires_sleep")
+        if wait_for_stop is not None and not sleep_enabled:
+            raise ValueError("stop_wait_requires_sleep")
 
         invocation = {
             "cycle_count": 0,
@@ -268,6 +314,8 @@ class AlwaysOnMonitor:
         }
         scheduler_anchor = _clock_monotonic(self.clock)
         next_tick_index = 1
+        graceful_stop = False
+        final_stop_reason: str | None = None
 
         with _RuntimeLease(self.config.lease_path, self.config.runtime_id, self.config.allowed_artifact_roots):
             existing = self.config.state_path.exists()
@@ -275,6 +323,12 @@ class AlwaysOnMonitor:
             if existing:
                 state["resume_count"] = int(state["resume_count"]) + 1
             while max_cycles is None or invocation["cycle_count"] < max_cycles:
+                requested_reason = stop_reason() if stop_reason is not None else None
+                if requested_reason is not None:
+                    self._graceful_stop(state, requested_reason)
+                    graceful_stop = True
+                    final_stop_reason = requested_reason
+                    break
                 cycle = self._run_cycle(state)
                 for key in invocation:
                     invocation[key] += int(cycle.get(key, 0))
@@ -291,7 +345,17 @@ class AlwaysOnMonitor:
                 if final_cycle:
                     break
                 if sleep_enabled:
-                    self.clock.sleep(delay)
+                    stopped_while_waiting = wait_for_stop(delay) if wait_for_stop is not None else False
+                    if stopped_while_waiting:
+                        requested_reason = stop_reason() if stop_reason is not None else None
+                        if requested_reason is None:
+                            raise ValueError("stop_wait_triggered_without_reason")
+                        self._graceful_stop(state, requested_reason)
+                        graceful_stop = True
+                        final_stop_reason = requested_reason
+                        break
+                    if wait_for_stop is None:
+                        self.clock.sleep(delay)
 
         status = _status_from_state(
             state,
@@ -302,7 +366,14 @@ class AlwaysOnMonitor:
         return {
             "schema_version": "p131.monitor_run.v1",
             "runtime_id": self.config.runtime_id,
-            "summary": {**invocation, "live": status["live"], "ready": status["ready"], "reasons": status["reasons"]},
+            "summary": {
+                **invocation,
+                "live": status["live"],
+                "ready": status["ready"],
+                "reasons": status["reasons"],
+                "graceful_stop": graceful_stop,
+                "stop_reason": final_stop_reason,
+            },
             "authority": _authority_snapshot(),
             "state_path": str(self.config.state_path),
         }
@@ -315,6 +386,14 @@ class AlwaysOnMonitor:
             if state.get("config_hash") != self.config.config_hash:
                 raise P131StateError("config_hash_mismatch")
             _validate_configured_sources(state, self.config.sources)
+            if "lifecycle" not in state:
+                state["lifecycle"] = {
+                    "phase": "running",
+                    "last_stop_reason": None,
+                    "last_stop_requested_at": None,
+                    "last_stopped_at": None,
+                    "graceful_stop_count": 0,
+                }
             return state
         now = _timestamp(self.clock.now())
         return {
@@ -329,6 +408,13 @@ class AlwaysOnMonitor:
             "cycle_count": 0,
             "resume_count": 0,
             "status": "starting",
+            "lifecycle": {
+                "phase": "starting",
+                "last_stop_reason": None,
+                "last_stop_requested_at": None,
+                "last_stopped_at": None,
+                "graceful_stop_count": 0,
+            },
             "process_health": {"heartbeat_current": False},
             "scheduler": {"last_progress_at": None, "missed_tick_count": 0, "next_delay_seconds": None},
             "source_health": {
@@ -388,6 +474,9 @@ class AlwaysOnMonitor:
         state["cycle_count"] = int(state["cycle_count"]) + 1
         state["last_cycle_at"] = _timestamp(observed_at)
         state["last_heartbeat_at"] = _timestamp(observed_at)
+        lifecycle = _mapping_dict(state.get("lifecycle"))
+        lifecycle["phase"] = "running"
+        state["lifecycle"] = lifecycle
         state["process_health"] = {"heartbeat_current": True}
         scheduler = _mapping_dict(state.get("scheduler"))
         scheduler["last_progress_at"] = _timestamp(observed_at)
@@ -541,12 +630,62 @@ class AlwaysOnMonitor:
         payload["state_hash"] = stable_hash(payload)
         state.clear()
         state.update(payload)
+        self._ensure_artifact_space(self.config.state_path, write_bytes=len(_json_bytes(state)))
         _atomic_write_json(self.config.state_path, state, allowed_roots=self.config.allowed_artifact_roots)
+
+    def _graceful_stop(self, state: dict[str, Any], reason: str) -> dict[str, Any]:
+        if reason not in {"sigterm", "sigint"}:
+            raise ValueError("unsupported_stop_reason")
+        requested_at = _timestamp(self.clock.now())
+        lifecycle = _mapping_dict(state.get("lifecycle"))
+        lifecycle.update(
+            {
+                "phase": "stopped",
+                "last_stop_reason": reason,
+                "last_stop_requested_at": requested_at,
+                "last_stopped_at": _timestamp(self.clock.now()),
+                "graceful_stop_count": int(lifecycle.get("graceful_stop_count", 0)) + 1,
+            }
+        )
+        state["lifecycle"] = lifecycle
+        state["status"] = "stopped"
+        state["process_health"] = {"heartbeat_current": False}
+        scheduler = _mapping_dict(state.get("scheduler"))
+        scheduler["next_delay_seconds"] = None
+        state["scheduler"] = scheduler
+        self._persist_state(state)
+        receipt: dict[str, Any] = {
+            "schema_version": TERMINATION_RECEIPT_SCHEMA_VERSION,
+            "runtime_id": self.config.runtime_id,
+            "config_hash": self.config.config_hash,
+            "reason": reason,
+            "stop_requested_at": requested_at,
+            "stopped_at": lifecycle["last_stopped_at"],
+            "final_cycle_count": state["cycle_count"],
+            "final_state_hash": state["state_hash"],
+        }
+        receipt["receipt_hash"] = stable_hash(receipt)
+        self._ensure_artifact_space(
+            self.config.termination_receipt_path,
+            write_bytes=len(_json_bytes(receipt)),
+        )
+        _atomic_write_json(
+            self.config.termination_receipt_path,
+            receipt,
+            allowed_roots=self.config.allowed_artifact_roots,
+        )
+        return receipt
+
+    def _ensure_artifact_space(self, path: Path, *, write_bytes: int) -> None:
+        required_free = self.config.min_artifact_free_bytes + write_bytes
+        if _artifact_free_bytes(path, self.config.allowed_artifact_roots) < required_free:
+            raise OSError(errno.ENOSPC, "artifact_free_space_below_floor")
 
     def _write_report_if_due(self, state: dict[str, Any]) -> None:
         now = self.clock.now()
         current_bucket = int(now.astimezone(UTC).timestamp()) // self.config.daily_report_interval_seconds
         if state.get("last_report_bucket") == current_bucket:
+            self._prepare_report_capacity(0)
             return
         status = _status_from_state(
             state,
@@ -572,10 +711,87 @@ class AlwaysOnMonitor:
         report["report_hash"] = stable_hash(report)
         bucket_start = datetime.fromtimestamp(current_bucket * self.config.daily_report_interval_seconds, tz=UTC)
         filename = f"p131-health-{bucket_start.strftime('%Y%m%dT%H%M%SZ')}.json"
-        _atomic_write_json(self.config.report_dir / filename, report, allowed_roots=self.config.allowed_artifact_roots)
+        report_path = self.config.report_dir / filename
+        report_bytes = len(_json_bytes(report))
+        self._prepare_report_capacity(report_bytes, prospective_name=filename)
+        self._ensure_artifact_space(report_path, write_bytes=report_bytes)
+        _atomic_write_json(report_path, report, allowed_roots=self.config.allowed_artifact_roots)
         state["last_report_at"] = generated_at
         state["last_report_bucket"] = current_bucket
         self._persist_state(state)
+
+    def _prepare_report_capacity(self, prospective_bytes: int, *, prospective_name: str | None = None) -> None:
+        if prospective_bytes > self.config.max_report_dir_bytes:
+            raise OSError(errno.ENOSPC, "report_exceeds_directory_budget")
+        parent_fd, _ = _open_artifact_parent(
+            self.config.report_dir / ".retention-sentinel",
+            self.config.allowed_artifact_roots,
+            create=True,
+        )
+        candidates: list[tuple[str, int, int, int]] = []
+        try:
+            with os.scandir(parent_fd) as entries:
+                for entry in entries:
+                    if _REPORT_FILENAME.fullmatch(entry.name) is None:
+                        continue
+                    size, device, inode = self._validated_report_candidate(parent_fd, entry.name)
+                    candidates.append((entry.name, size, device, inode))
+
+            candidates.sort()
+            retained = [candidate for candidate in candidates if candidate[0] != prospective_name]
+            total_bytes = sum(size for _, size, _, _ in retained) + prospective_bytes
+            projected_count = len(retained) + (1 if prospective_name is not None else 0)
+            removed = False
+            while retained and (
+                projected_count > self.config.max_report_files
+                or total_bytes > self.config.max_report_dir_bytes
+            ):
+                name, size, device, inode = retained.pop(0)
+                current_size, current_device, current_inode = self._validated_report_candidate(parent_fd, name)
+                if (current_size, current_device, current_inode) != (size, device, inode):
+                    raise P131StateError("report_retention_candidate_changed")
+                os.unlink(name, dir_fd=parent_fd)
+                total_bytes -= size
+                projected_count -= 1
+                removed = True
+            if projected_count > self.config.max_report_files or total_bytes > self.config.max_report_dir_bytes:
+                raise OSError(errno.ENOSPC, "report_retention_budget_exhausted")
+            if removed:
+                os.fsync(parent_fd)
+        finally:
+            os.close(parent_fd)
+
+    def _validated_report_candidate(self, parent_fd: int, name: str) -> tuple[int, int, int]:
+        try:
+            flags = (
+                os.O_RDONLY
+                | getattr(os, "O_NONBLOCK", 0)
+                | getattr(os, "O_NOFOLLOW", 0)
+                | getattr(os, "O_CLOEXEC", 0)
+            )
+            file_fd = os.open(name, flags, dir_fd=parent_fd)
+            try:
+                metadata = os.fstat(file_fd)
+                payload = json.loads(_read_bounded_text(file_fd))
+            except Exception:
+                try:
+                    os.close(file_fd)
+                except OSError:
+                    pass
+                raise
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise P131StateError("report_retention_candidate_invalid") from exc
+        if (
+            not stat.S_ISREG(metadata.st_mode)
+            or not isinstance(payload, Mapping)
+            or payload.get("schema_version") != REPORT_SCHEMA_VERSION
+            or payload.get("runtime_id") != self.config.runtime_id
+            or payload.get("config_hash") != self.config.config_hash
+            or payload.get("report_hash")
+            != stable_hash({key: value for key, value in payload.items() if key != "report_hash"})
+        ):
+            raise P131StateError("report_retention_candidate_invalid")
+        return int(metadata.st_size), int(metadata.st_dev), int(metadata.st_ino)
 
 
 def load_monitor_state(path: Path | str, *, allowed_roots: Sequence[Path] | None = None) -> dict[str, Any]:
@@ -608,6 +824,15 @@ def evaluate_watchdog(path: Path | str, *, now: datetime, heartbeat_timeout_seco
         state = load_monitor_state(state_path)
     except P131StateError as exc:
         return {"schema_version": "p131.watchdog.v1", "healthy": False, "reason": str(exc)}
+    lifecycle = state.get("lifecycle")
+    if isinstance(lifecycle, Mapping) and lifecycle.get("phase") == "stopped":
+        return {
+            "schema_version": "p131.watchdog.v1",
+            "healthy": False,
+            "reason": "runtime_stopped",
+            "runtime_id": state.get("runtime_id"),
+            "state_hash": state.get("state_hash"),
+        }
     heartbeat = state.get("last_heartbeat_at")
     if not isinstance(heartbeat, str):
         return {"schema_version": "p131.watchdog.v1", "healthy": False, "reason": "heartbeat_missing"}
@@ -662,6 +887,17 @@ def _status_from_state(
     heartbeat_timeout_seconds: int,
     data_stale_after_seconds: int,
 ) -> dict[str, Any]:
+    lifecycle = state.get("lifecycle")
+    if isinstance(lifecycle, Mapping) and lifecycle.get("phase") == "stopped":
+        return {
+            "schema_version": "p131.monitor_status.v1",
+            "runtime_id": state.get("runtime_id"),
+            "live": False,
+            "ready": False,
+            "reasons": ["runtime_stopped"],
+            "last_heartbeat_at": state.get("last_heartbeat_at"),
+            "state_hash": state.get("state_hash"),
+        }
     reasons: list[str] = []
     heartbeat = state.get("last_heartbeat_at")
     heartbeat_age = None if not isinstance(heartbeat, str) else (now.astimezone(UTC) - _parse_timestamp(heartbeat)).total_seconds()
@@ -846,6 +1082,11 @@ def _validate_state_timestamps(state: Mapping[str, Any]) -> None:
     scheduler = state.get("scheduler")
     if isinstance(scheduler, Mapping) and scheduler.get("last_progress_at") is not None:
         _parse_timestamp(scheduler.get("last_progress_at"))
+    lifecycle = state.get("lifecycle")
+    if isinstance(lifecycle, Mapping):
+        for key in ("last_stop_requested_at", "last_stopped_at"):
+            if lifecycle.get(key) is not None:
+                _parse_timestamp(lifecycle.get(key))
     source_health = state.get("source_health")
     if isinstance(source_health, Mapping):
         for source in source_health.values():
@@ -859,8 +1100,9 @@ def _validate_state_timestamps(state: Mapping[str, Any]) -> None:
 def _validate_checkpoint_shape(state: Mapping[str, Any]) -> None:
     if not all(isinstance(state.get(key), str) and state.get(key) for key in ("runtime_id", "config_hash")):
         raise P131StateError("state_invalid")
-    if state.get("status") not in {"starting", "ready", "degraded"}:
+    if state.get("status") not in {"starting", "ready", "degraded", "stopped"}:
         raise P131StateError("state_invalid")
+    _validate_lifecycle_state(state)
     for key in ("cycle_count", "resume_count"):
         if type(state.get(key)) is not int or int(state[key]) < 0:
             raise P131StateError("state_invalid")
@@ -916,6 +1158,38 @@ def _validate_checkpoint_shape(state: Mapping[str, Any]) -> None:
         or any(stages.get(key) is not False for key in stage_keys)
     ):
         raise P131StateError("invalid_canary_state")
+
+
+def _validate_lifecycle_state(state: Mapping[str, Any]) -> None:
+    lifecycle = state.get("lifecycle")
+    if lifecycle is None:
+        if state.get("status") == "stopped":
+            raise P131StateError("invalid_lifecycle_state")
+        return
+    fields = {
+        "phase",
+        "last_stop_reason",
+        "last_stop_requested_at",
+        "last_stopped_at",
+        "graceful_stop_count",
+    }
+    if not isinstance(lifecycle, Mapping) or set(lifecycle) != fields:
+        raise P131StateError("invalid_lifecycle_state")
+    phase = lifecycle.get("phase")
+    reason = lifecycle.get("last_stop_reason")
+    requested_at = lifecycle.get("last_stop_requested_at")
+    stopped_at = lifecycle.get("last_stopped_at")
+    count = lifecycle.get("graceful_stop_count")
+    if phase not in {"starting", "running", "stopped"} or type(count) is not int or int(count) < 0:
+        raise P131StateError("invalid_lifecycle_state")
+    if (state.get("status") == "stopped") != (phase == "stopped"):
+        raise P131StateError("invalid_lifecycle_state")
+    if count == 0:
+        if any(value is not None for value in (reason, requested_at, stopped_at)) or phase == "stopped":
+            raise P131StateError("invalid_lifecycle_state")
+        return
+    if reason not in {"sigterm", "sigint"} or not isinstance(requested_at, str) or not isinstance(stopped_at, str):
+        raise P131StateError("invalid_lifecycle_state")
 
 
 def _validate_source_state_shape(state: Mapping[str, Any]) -> None:
@@ -974,6 +1248,7 @@ def _atomic_write_json(path: Path, value: object, *, allowed_roots: Sequence[Pat
         path.parent.mkdir(parents=True, exist_ok=True)
         descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
         temporary = Path(temporary_name)
+        replaced = False
         try:
             with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
                 json.dump(value, handle, indent=2, sort_keys=True, ensure_ascii=True)
@@ -981,17 +1256,23 @@ def _atomic_write_json(path: Path, value: object, *, allowed_roots: Sequence[Pat
                 handle.flush()
                 os.fsync(handle.fileno())
             os.replace(temporary, path)
+            replaced = True
             directory_fd = os.open(path.parent, os.O_RDONLY)
             try:
                 os.fsync(directory_fd)
             finally:
                 os.close(directory_fd)
+        except OSError as exc:
+            if replaced:
+                raise P131DurabilityUncertainError("directory_fsync_failed_after_replace") from exc
+            raise
         finally:
             temporary.unlink(missing_ok=True)
         return
 
     parent_fd, name = _open_artifact_parent(path, allowed_roots, create=True)
     temporary_name = f".{name}.{os.getpid()}.{time.time_ns()}.tmp"
+    replaced = False
     try:
         flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0)
         descriptor = os.open(temporary_name, flags, 0o600, dir_fd=parent_fd)
@@ -1001,13 +1282,31 @@ def _atomic_write_json(path: Path, value: object, *, allowed_roots: Sequence[Pat
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temporary_name, name, src_dir_fd=parent_fd, dst_dir_fd=parent_fd)
+        replaced = True
         os.fsync(parent_fd)
+    except OSError as exc:
+        if replaced:
+            raise P131DurabilityUncertainError("directory_fsync_failed_after_replace") from exc
+        raise
     finally:
         try:
             os.unlink(temporary_name, dir_fd=parent_fd)
         except FileNotFoundError:
             pass
         os.close(parent_fd)
+
+
+def _artifact_free_bytes(path: Path, allowed_roots: Sequence[Path]) -> int:
+    parent_fd, _ = _open_artifact_parent(path, allowed_roots, create=True)
+    try:
+        filesystem = os.fstatvfs(parent_fd)
+        return int(filesystem.f_bavail) * int(filesystem.f_frsize)
+    finally:
+        os.close(parent_fd)
+
+
+def _json_bytes(value: object) -> bytes:
+    return (json.dumps(value, indent=2, sort_keys=True, ensure_ascii=True) + "\n").encode("utf-8")
 
 
 def _read_text(path: Path, *, allowed_roots: Sequence[Path] | None) -> str:
@@ -1113,6 +1412,13 @@ def _optional_positive_int(value: Mapping[str, Any], key: str, default: int) -> 
     result = value.get(key, default)
     if not isinstance(result, int) or isinstance(result, bool) or result <= 0:
         raise P131ConfigError(f"{key}_must_be_positive")
+    return result
+
+
+def _optional_bounded_positive_int(value: Mapping[str, Any], key: str, default: int, maximum: int) -> int:
+    result = _optional_positive_int(value, key, default)
+    if result > maximum:
+        raise P131ConfigError(f"{key}_exceeds_maximum")
     return result
 
 

@@ -1,0 +1,23 @@
+[Unit]
+Description=OpsCat local monitor
+After=local-fs.target
+StartLimitIntervalSec=60
+StartLimitBurst=6
+
+[Service]
+Type=simple
+User=opscat
+Group=opscat
+ExecStart=opscat-monitor run --config /etc/opscat/monitor.json --forever
+Restart=always
+RestartSec=5
+TimeoutStopSec=3
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/opscat /var/log/opscat
+
+[Install]
+WantedBy=multi-user.target

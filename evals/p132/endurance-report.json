@@ -1,0 +1,117 @@
+{
+  "accounting": {
+    "accepted": 1000,
+    "duplicated": 0,
+    "expected": 1000,
+    "invalid": 0,
+    "lost": 0
+  },
+  "artifacts": {
+    "report_dir": "raw/endurance/reports",
+    "report_hashes": {
+      "p131-health-20260713T001520Z.json": "sha256:82a057aeb096b62ffad71ae4567a2fc85e2b2153671f6a1a7337679f384fc997",
+      "p131-health-20260713T001530Z.json": "sha256:46d6b7389b5cccc7738f2b702b2bb0a1ba568ab7e9a8feb572c6dbab0da7d0e3",
+      "p131-health-20260713T001540Z.json": "sha256:44f8eac0a1382e7196d903d31b382bc3fdf3bb44f4b995c5b582cc1f52005312",
+      "p131-health-20260713T001550Z.json": "sha256:d3448cd824796fcc68e3091d659bbb79273dcf3a98ccd696d6aa66c2badedc7b",
+      "p131-health-20260713T001600Z.json": "sha256:52638b50410d2f3dff0bda966d496c14e38243ae827a617c75c60a61b9fac896",
+      "p131-health-20260713T001610Z.json": "sha256:15c6de3fd390fac85842e78cbd028ccc39e9e368a758dcf5ba700510712eac6a",
+      "p131-health-20260713T001620Z.json": "sha256:6ac54be5085eff54b9e85b8c8cd31b2c4e1a3d69aeb5e438b17342bb3c719505",
+      "p131-health-20260713T001630Z.json": "sha256:5d40423806e74b3be6bcf2beff951fa9bf7291dc484c91d1b404150266549b42"
+    },
+    "source_hash": "sha256:0adec88c0b1ae2f90a926c3c638a177eac05d8686aee8bd2e92553bca822a25e",
+    "source_path": "raw/endurance/telemetry.jsonl",
+    "state_hash": "sha256:ba9e60abe0c804f16cd00b223d0d94cdf4e053d6c3ee20706a992e23b9019f97",
+    "state_path": "raw/endurance/state.json",
+    "workspace": "raw/endurance"
+  },
+  "config_hash": "sha256:2373e05a2d66dad78377240f4741c0655077818adc939cd1980752ff3d76911f",
+  "cycle_count": 1000,
+  "endurance_report_hash": "sha256:40593b37108c9e06a33cfa959be2d324469089751a85248f7f33ac1df64f30cf",
+  "evaluator_authority": {
+    "arbitrary_command_count": 0,
+    "child_process_launch_count": 0,
+    "connector_write_count": 0,
+    "credential_read_count": 0,
+    "forced_kill_count": 0,
+    "lease_conflict_count": 0,
+    "network_call_count": 0,
+    "production_mutation_count": 0,
+    "remediation_count": 0,
+    "sigint_count": 0,
+    "sigterm_count": 0,
+    "staging_mutation_count": 0,
+    "status_call_count": 0,
+    "watchdog_call_count": 0
+  },
+  "evaluator_source": {
+    "module": "app.services.p132_supervised_runtime",
+    "self_hash": "sha256:ac6eacbdc9da73cacd50698567510426eca476ad9f6428817637b92eed03b5b0"
+  },
+  "profile_gates": {
+    "max_artifact_bytes": 2097152,
+    "max_cpu_seconds": 30,
+    "max_peak_memory_mib": 64,
+    "max_report_dir_bytes": 1048576,
+    "max_report_files": 8,
+    "max_state_bytes": 1048576,
+    "max_wall_seconds": 60
+  },
+  "profile_id": "p132-promoted-local-supervisor",
+  "resource_gates": {
+    "checks": {
+      "artifact_bytes": true,
+      "cpu_seconds": true,
+      "recent_hash_count": true,
+      "report_dir_bytes": true,
+      "retained_report_count": true,
+      "state_bytes": true,
+      "tracemalloc_peak_mib": true,
+      "wall_seconds": true
+    },
+    "passed": true,
+    "values": {
+      "artifact_bytes": 193050,
+      "cpu_seconds": 3.614329,
+      "report_dir_bytes": 22152,
+      "state_bytes": 81953,
+      "tracemalloc_peak_bytes": 2975038,
+      "tracemalloc_peak_mib": 2.837217330932617,
+      "wall_seconds": 3.648335624995525
+    }
+  },
+  "retained_report_count": 8,
+  "runtime_authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero": true
+  },
+  "runtime_id": "p132-endurance-runtime",
+  "runtime_source": {
+    "class": "AlwaysOnMonitor",
+    "module": "app.services.p131_always_on_monitor",
+    "self_hash": "sha256:6b27ed7966fd8768648ab836670e69cad1e40f41ae4fcd47d1aecb53a73c486e"
+  },
+  "schema_version": "p132.endurance_report.v1"
+}

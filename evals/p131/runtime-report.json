@@ -57,22 +57,26 @@
     "accepted_observation_count": 1,
     "cycle_count": 2,
     "duplicate_observation_count": 0,
+    "graceful_stop": false,
     "live": true,
     "ready": true,
     "reasons": [],
-    "source_failure_count": 0
+    "source_failure_count": 0,
+    "stop_reason": null
   },
   "real_time_bounded_smoke_passed": true,
   "restart_run": {
     "accepted_observation_count": 1,
     "cycle_count": 1,
     "duplicate_observation_count": 0,
+    "graceful_stop": false,
     "live": true,
     "ready": true,
     "reasons": [],
-    "source_failure_count": 0
+    "source_failure_count": 0,
+    "stop_reason": null
   },
-  "runtime_report_hash": "sha256:d3483119b5bf36059af24466125c38d5a278cc1e17923498b75e170a6f378461",
+  "runtime_report_hash": "sha256:fd9d1bf0792065a1f893b8bbcb04ed0f9be69e7cad990f89759f87d9df9b0280",
   "scenario_hash": "sha256:862e90088963fa6f1452b0c83323fee56de7945f5ec76cfe25ab3f27737e4dbc",
   "schema_version": "p131.runtime_evidence.v1",
   "sleep_intervals_seconds": [
@@ -83,8 +87,8 @@
     "source_hashes": {
       "app/api/health.py": "sha256:023ed38112180008c8fcfac6377f9ddbe8eb554be8bb518df16705977c6009ea",
       "app/config.py": "sha256:cbdab4c85abf5bc21fb4afbeb3452480011bfc57758dfcbb534c04ff95d7461c",
-      "app/monitor_cli.py": "sha256:15ef66d11b8abfc571983d884c312cae994f7336919db40ce4d76a8f362f8fcc",
-      "app/services/p131_always_on_monitor.py": "sha256:4f02dd5d12e6bc404d5c907ce9d020771c869a31207eb68c228d9fe99b340e55",
+      "app/monitor_cli.py": "sha256:27027f9dc167d9ddf35589b298ec594b47148b1e5bcd5aa5b8f6672bc3f0dd3e",
+      "app/services/p131_always_on_monitor.py": "sha256:096662c6c99a3f2ea04cc9e3e424d1da6826f9410845ee0603f9904f19858b4d",
       "app/services/p131_release_evidence.py": "sha256:cc991027d268e41027ee49acd29e9fa76ef6744496bddd80fc6b576282322eb6",
       "scripts/run_p131_always_on_monitor.py": "sha256:f94036a545ca2dea630b4030695aefe1aec6307c8180590a028b2a1145c17e1a"
     }

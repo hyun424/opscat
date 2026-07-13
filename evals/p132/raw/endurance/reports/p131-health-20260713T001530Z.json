@@ -1,0 +1,82 @@
+{
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero": true
+  },
+  "canary": {
+    "action_execution_count": 0,
+    "failure_count": 0,
+    "last_result": "passed",
+    "last_run_at": "2026-07-13T00:15:30Z",
+    "last_stages": {
+      "policy_no_action_passed": true,
+      "serialization_round_trip_passed": true,
+      "signal_detection_passed": true
+    },
+    "success_count": 931
+  },
+  "config_hash": "sha256:2373e05a2d66dad78377240f4741c0655077818adc939cd1980752ff3d76911f",
+  "cycle_count": 931,
+  "generated_at": "2026-07-13T00:15:30Z",
+  "report_hash": "sha256:ee854a8b4796cbedcf609687324112008cf19ada8e627fd660d15dd3cf263aa3",
+  "resume_count": 0,
+  "runtime_id": "p132-endurance-runtime",
+  "schema_version": "p131.health_report.v1",
+  "source_health": {
+    "local": {
+      "consecutive_failures": 0,
+      "cursor_bytes": 82749,
+      "enabled": true,
+      "failure_limit": 3,
+      "file_identity": "16777231:176771721",
+      "kind": "local_jsonl",
+      "last_data_at": "2026-07-13T00:15:30Z",
+      "last_error": null,
+      "last_success_at": "2026-07-13T00:15:30Z",
+      "path_hash": "sha256:01df658eadf9529ecd0e4f449dec3cd70de77ddc3b54622f3b20132e177d0cbb",
+      "prefix_hash": "sha256:ecb0b07838920e54661b0a27bbd54e2d717e7a85d89c2874d90d30fa7fdee517",
+      "prefix_length": 4096,
+      "rotation_count": 0
+    }
+  },
+  "state_hash": "sha256:571ad2da2f36ba182513c33692371442268c4ee280f4454a2a016de294b998d1",
+  "status": {
+    "last_heartbeat_at": "2026-07-13T00:15:30Z",
+    "live": true,
+    "ready": true,
+    "reasons": [],
+    "runtime_id": "p132-endurance-runtime",
+    "schema_version": "p131.monitor_status.v1",
+    "state_hash": "sha256:571ad2da2f36ba182513c33692371442268c4ee280f4454a2a016de294b998d1"
+  },
+  "totals": {
+    "accepted_observation_count": 931,
+    "action_execution_count": 0,
+    "duplicate_observation_count": 0,
+    "network_call_count": 0,
+    "source_failure_count": 0
+  }
+}

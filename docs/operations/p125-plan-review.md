@@ -1,15 +1,18 @@
 # P125 Independent-Style Plan Review
 
-## Decision: accepted only as local/sandbox/shadow resilience planning
+## Historical decision: accepted only as local/sandbox/shadow resilience planning
 
-P125 is accepted only as documentation-only planning for long-running
-read-only shadow resilience, cost, restart, and data-loss measurement.
+This file records the original pre-implementation decision. P125 was accepted
+only as documentation planning for long-running read-only shadow resilience,
+cost, restart, and data-loss measurement. It was subsequently implemented and
+promoted under the same local-only boundary; see `p125-final-summary.md`.
 
 P125 is not accepted as production SLO proof, live operations durability,
 credentialed execution, auth completion, staging or production mutation, or
 remediation safety.
 
-Implementation is pending. This review approves planning artifacts only.
+At the time of this review implementation was pending. That historical review
+approved planning artifacts only and did not itself approve later evidence.
 
 ## Required Constraints Incorporated
 
@@ -69,4 +72,3 @@ Stop before implementation or claim promotion if any requirement introduces
 credentials, live connectors, staging/production mutation, production SLO
 claims, nonzero authority counters, aggregate-only endurance evidence, or
 missing data-loss denominators.
-

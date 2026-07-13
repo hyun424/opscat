@@ -46,10 +46,10 @@
   "product_claim": "Credential-free local JSONL monitoring has a tested scheduler contract, restart-safe checkpoints, self-monitoring, and an independent watchdog.",
   "public_limitation": "Local read-only telemetry only; no direct live connector, authentication, credentials, subprocess, remediation, staging mutation, production mutation, production autonomy, or operator replacement is claimed.",
   "reasons": [],
-  "release_evidence_hash": "sha256:b8ba6d07b47063fe8522b553709dee1995232765c35c3795e91372bd50712c44",
+  "release_evidence_hash": "sha256:ecc92694e594108d54ad52d24ab2811981a6a246aa8037d70234a6b2462f56b8",
   "release_id": "P131-always-on-monitor",
   "release_status": "p131_always_on_monitor_qualified",
-  "runtime_report_hash": "sha256:06af2008be4a64c46fa7ea4d8c83a3e199f538ddf92fb861d905798901883b86",
+  "runtime_report_hash": "sha256:d68b7fb72192df21b4d26e913f9fb049bee825af6b0e1643fdc4731276898c0f",
   "schema_version": "p131.release_evidence.v1",
   "watchdog_matrix_hash": "sha256:b3fbf612f1c46900972a02f22cbee42eed344c9a116b193b5d15026831c01673"
 }

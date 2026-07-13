@@ -2,19 +2,20 @@
 
 ## Objective
 
-P125 plans long-running shadow resilience evaluation for OpsCat. It defines
-how future implementation can measure cost, restart behavior, data loss, and
-durability in read-only shadow mode.
+P125 defines and now implements long-running shadow resilience evaluation for
+OpsCat. The promoted deterministic local run processes 10,000 events, exercises
+12 modeled interruption points, accounts for seven durable record families,
+and publishes hash-bound resource, loss, duplicate, and authority evidence.
 
-P125 is documentation-only and implementation is pending. It creates no source
-work, test work, long-running job, infrastructure allocation, credential
-requirement, staging access, production access, or mutation path by itself.
+This document preserves the original plan and conservative claim boundary.
+Implementation is present in `app/services/p125_shadow_resilience.py`,
+`scripts/run_p125_shadow_resilience.py`, and
+`tests/test_p125_shadow_resilience.py`; evidence is under `evals/p125/`.
 
 ## Product Claim
 
-P125 may claim a planned resilience and cost-measurement framework for
-long-running local/sandbox/shadow replay after future implementation and
-verification pass.
+P125 may claim a verified deterministic local resilience and cost-measurement
+framework for the promoted local/sandbox/shadow replay profile.
 
 P125 may not claim production SLO compliance, live operations durability,
 credentialed execution, production or staging mutation, auth completion, or
@@ -77,11 +78,11 @@ LLM command, and authority escape counters.
 
 ## Tickets
 
-1. `[planned] P125-001` - long-run manifest and resource envelope
-2. `[planned] P125-002` - restart and recovery matrix
-3. `[planned] P125-003` - data-loss ledger and durability assertions
-4. `[planned] P125-004` - cost reporting and degradation gates
-5. `[planned] P125-005` - verification handoff and resilience dependencies
+1. `[implemented] P125-001` - long-run manifest and resource envelope
+2. `[implemented] P125-002` - restart and recovery matrix
+3. `[implemented] P125-003` - data-loss ledger and durability assertions
+4. `[implemented] P125-004` - cost reporting and degradation gates
+5. `[implemented] P125-005` - verification handoff and resilience dependencies
 
 ## Release Gates
 
@@ -91,8 +92,8 @@ LLM command, and authority escape counters.
   denominators.
 - Restart evidence reports lost-record counts for every durable record type.
 - Cost claims remain local/sandbox qualified.
-- Implementation remains pending until future source and test changes are
-  explicitly authorized and verified.
+- Promotion remains limited to the committed deterministic local profile and
+  does not generalize to the real P131 process or production SLOs.
 
 ## Executable Resilience Contract
 

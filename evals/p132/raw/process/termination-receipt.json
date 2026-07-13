@@ -1,0 +1,11 @@
+{
+  "config_hash": "sha256:f065430cbf743abc3860fb9abf36f9edf0d72de7c55950f8320a312cb8b573cc",
+  "final_cycle_count": 3,
+  "final_state_hash": "sha256:f3c9a7d602f6fcd90f4e49f90eadff0281ce1513616ccbba8cf64dd4df039ccb",
+  "reason": "sigint",
+  "receipt_hash": "sha256:f9c4d1304462978c287ad6853d07e1de5afa51e11d2e0a333014ca16bacaf3dd",
+  "runtime_id": "p132-real-process-runtime",
+  "schema_version": "p132.termination_receipt.v1",
+  "stop_requested_at": "2026-07-13T15:21:35.526136Z",
+  "stopped_at": "2026-07-13T15:21:35.526156Z"
+}

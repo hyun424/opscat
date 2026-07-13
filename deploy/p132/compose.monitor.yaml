@@ -1,0 +1,28 @@
+{
+  "services": {
+    "opscat-monitor": {
+      "image": "opscat-monitor@sha256:${OPSCAT_MONITOR_IMAGE_DIGEST:?set a 64-hex image manifest digest}",
+      "command": ["run", "--config", "/etc/opscat/monitor.json", "--forever"],
+      "restart": "always",
+      "deploy": {
+        "restart_policy": {
+          "condition": "any",
+          "delay": "5s",
+          "max_attempts": 6,
+          "window": "60s"
+        }
+      },
+      "read_only": true,
+      "user": "10001:10001",
+      "network_mode": "none",
+      "privileged": false,
+      "security_opt": ["no-new-privileges:true"],
+      "stop_grace_period": "3s",
+      "volumes": [
+        "./monitor.json:/etc/opscat/monitor.json:ro",
+        "./state:/var/lib/opscat:rw",
+        "./logs:/var/log/opscat:rw"
+      ]
+    }
+  }
+}

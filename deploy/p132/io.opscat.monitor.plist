@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>io.opscat.monitor</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>opscat-monitor</string>
+    <string>run</string>
+    <string>--config</string>
+    <string>/etc/opscat/monitor.json</string>
+    <string>--forever</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>5</integer>
+  <key>ExitTimeOut</key>
+  <integer>3</integer>
+  <key>StandardOutPath</key>
+  <string>/var/log/opscat/monitor.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/var/log/opscat/monitor.err.log</string>
+  <key>WorkingDirectory</key>
+  <string>/var/lib/opscat</string>
+</dict>
+</plist>

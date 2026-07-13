@@ -10,15 +10,16 @@ Define the P125 verification handoff and dependency gates.
   ticket README, and tickets P125-001 through P125-005.
 - Require handoff evidence for run manifests, restarts, data-loss ledgers,
   cost reports, degradation gates, and exact-zero counters.
-- Mark implementation pending until future source and test evidence exists.
+- Bind the implemented source, tests, promoted profile, report, ledger, release
+  evidence, and `p125-release` verification while preserving the local-only
+  claim boundary.
 
 ## Acceptance
 
-Future phases can decide whether resilience evidence is sufficient without
-overclaiming production durability.
+Future phases can inspect the promoted deterministic evidence without
+overclaiming real-process or production durability.
 
 ## Stop Rules
 
 Stop if handoff omits restart evidence, lost-record counts, resource context,
 limitations, or exact-zero authority counters.
-

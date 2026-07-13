@@ -20,13 +20,16 @@ See [`docs/install.md`](docs/install.md), [`docs/quickstart.md`](docs/quickstart
 
 > Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery; P104 adds network-free evidence-gap sufficiency checks before policy handoff; P105 adds a local calibrated failure-forecasting harness with strict release-qualified prerequisites; P106 is simulation-only preventive planning with `p107_unlocked=false`; P107 adds a local/mock or isolated canary executor; P108 adds deterministic offline outcome learning and unapplied recommendations; P109 imports real public telemetry. On the frozen 25-case RCAEval blind split, P111 improves the paired P110 baseline from 68% to 80% service Top-1 and from 40% to 84% fault accuracy while preserving 100% evidence validity and zero unsafe-action counters. Release remains fail-closed because the 84% Top-1 target, loss-fault floor, and cryptographic reviewer gate were not met. No production actions are enabled. See [`docs/operations/p111-final-summary.md`](docs/operations/p111-final-summary.md).
 
-## Always-on local monitor (P131)
+## Supervised always-on local monitor (P131-P132)
 
 P131 adds an independent foreground process that continuously tails local JSONL
 telemetry, keeps an atomic tamper-evident cursor, resumes without accepting the
 same observation twice, runs a synthetic serialization/detection/no-action canary,
 and exposes separate heartbeat and readiness checks. It has no credentials,
-network calls, subprocesses, or action execution authority.
+network calls, subprocesses, or action execution authority. P132 adds graceful
+SIGTERM/SIGINT receipts, bounded report retention, storage-pressure fail-closed
+behavior, real-process crash/restart and lease-conflict qualification, and
+validated systemd, launchd, and Compose examples.
 
 ```bash
 mkdir -p data/p131
@@ -43,7 +46,19 @@ uv run --no-sync opscat-monitor status --state data/p131/runtime-state.json
 The FastAPI app also exposes `GET /monitor/health` and
 `GET /monitor/readiness`; either returns HTTP 503 when its contract is not met.
 See [`docs/operations/p131-operator-runbook.md`](docs/operations/p131-operator-runbook.md)
-and [`docs/operations/p131-verification-handoff.md`](docs/operations/p131-verification-handoff.md).
+and [`docs/operations/p132-final-summary.md`](docs/operations/p132-final-summary.md).
+
+Run the bounded supervisor qualification without credentials or network access:
+
+```bash
+bash scripts/verify.sh --profile p132-release
+```
+
+Example supervisor manifests are under [`deploy/p132`](deploy/p132). They are
+templates, not proof of cloud deployment or a 24/7 production SLO. The Compose
+template requires `OPSCAT_MONITOR_IMAGE_DIGEST` and refuses mutable image tags.
+Auditable bounded raw qualification inputs and outputs are retained under
+`evals/p132/raw/`.
 
 ## Portfolio demo evidence
 

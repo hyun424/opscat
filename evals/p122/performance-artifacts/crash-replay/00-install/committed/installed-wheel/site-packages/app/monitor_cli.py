@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import signal
 import sys
+import threading
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -57,6 +61,15 @@ def _dispatch(args: argparse.Namespace) -> dict[str, Any]:
         if args.no_sleep and args.max_cycles is None:
             raise ValueError("--no-sleep requires --max-cycles")
         config = load_monitor_config(args.config)
+        if args.forever:
+            controller = _SignalStopController()
+            with controller.installed():
+                return AlwaysOnMonitor(config).run(
+                    max_cycles=None,
+                    sleep_enabled=True,
+                    stop_reason=controller.reason,
+                    wait_for_stop=controller.wait,
+                )
         return AlwaysOnMonitor(config).run(max_cycles=args.max_cycles, sleep_enabled=not args.no_sleep)
     now = datetime.now(UTC)
     if args.command == "watchdog":
@@ -67,6 +80,37 @@ def _dispatch(args: argparse.Namespace) -> dict[str, Any]:
         heartbeat_timeout_seconds=args.heartbeat_timeout_seconds,
         data_stale_after_seconds=args.data_stale_after_seconds,
     )
+
+
+class _SignalStopController:
+    """Translate process signals into a normal-control-flow stop request."""
+
+    def __init__(self) -> None:
+        self._event = threading.Event()
+        self._reason: str | None = None
+
+    def reason(self) -> str | None:
+        return self._reason
+
+    def wait(self, timeout: float) -> bool:
+        return self._event.wait(timeout)
+
+    def _handle(self, signum: int, _frame: object) -> None:
+        if self._reason is None:
+            self._reason = "sigterm" if signum == signal.SIGTERM else "sigint"
+        self._event.set()
+
+    @contextmanager
+    def installed(self) -> Iterator[None]:
+        previous_term = signal.getsignal(signal.SIGTERM)
+        previous_int = signal.getsignal(signal.SIGINT)
+        signal.signal(signal.SIGTERM, self._handle)
+        signal.signal(signal.SIGINT, self._handle)
+        try:
+            yield
+        finally:
+            signal.signal(signal.SIGTERM, previous_term)
+            signal.signal(signal.SIGINT, previous_int)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,23 @@
 # OpsCat Roadmap
 
+## P132 complete: supervised local runtime qualified
+
+P132 hardens and
+qualifies the real P131 local monitor process for graceful signals, bounded
+report retention, storage-pressure failure, single-host supervisor manifests,
+external-process crash/restart recovery, split-brain lease rejection, and
+explicit evaluator-vs-runtime authority accounting. P132 remains no-auth,
+credential-free, local JSONL only, and does not claim direct live connectors,
+external notification, remediation, 24/7 production availability, production
+autonomy, or operator replacement. See
+`docs/operations/p132-final-summary.md`.
+
+## P133 next: local dead-man notification outbox
+
+P133 will convert stopped, stale, missing, and tampered monitor health results
+into redacted, durable local notification drafts. It will not send network
+notifications or acquire action authority.
+
 OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward a beta-grade agentic operations system.
 
 ## P131 complete: credential-free always-on local monitoring

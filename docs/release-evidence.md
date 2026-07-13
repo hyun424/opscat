@@ -3029,3 +3029,35 @@ Detailed references:
 - `docs/operations/p114-deterministic-acceptance-amendment.md`
 - `docs/operations/p114-final-summary.md`
 - `docs/tickets/p114/README.md`
+
+## P132 supervised local runtime evidence
+
+P132 executes the real `opscat-monitor` process in isolated local directories,
+then promotes the bounded raw telemetry, checkpoints, retained reports, receipt,
+configuration, and storage-fault canonical files under `evals/p132/raw/`.
+The promoted matrix covers SIGTERM, SIGINT, forced crash/restart, exclusive-lease
+conflict, four storage-fault recovery cases, and independent watchdog checks for
+current, stopped, stale, missing, and tampered state. Its accelerated endurance
+profile runs 1,000 cycles and accepts 1,000 generated observations with zero
+invalid, duplicate, or lost rows.
+
+Canonical profile:
+
+```bash
+bash scripts/verify.sh --profile p132-release
+```
+
+Promoted artifacts are under `evals/p132/`. Paths in evidence are relative;
+validation re-hashes current source/manifests and every bound promoted raw file.
+Runtime authority remains exact integer zero; evaluator process and signal
+activity is disclosed separately.
+This qualifies bounded single-host supervision only, not 24/7 availability,
+live connectors, notification delivery, remediation, or operator replacement.
+
+Detailed references:
+
+- `docs/operations/p132-supervised-runtime-endurance-roadmap.md`
+- `docs/operations/p132-test-spec.md`
+- `docs/operations/p132-plan-review.md`
+- `docs/operations/p132-final-summary.md`
+- `docs/tickets/p132/README.md`

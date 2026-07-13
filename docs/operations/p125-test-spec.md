@@ -1,9 +1,9 @@
 # P125 Adversarial Test Specification
 
-This specification is a planning handoff for future P125 implementation.
-Implementation is pending. It does not require source-code edits, test edits,
-runtime access, credentials, infrastructure, staging access, production access,
-or mutation during this documentation turn.
+This specification began as the planning handoff and is now implemented by the
+P125 service, runner, tests, promoted input profile, and `p125-release`
+verification profile. It still authorizes no credentials, infrastructure,
+staging access, production access, or mutation.
 
 ## Contract and Authority
 
@@ -51,8 +51,6 @@ or mutation during this documentation turn.
 
 ## Verification Profile
 
-Future implementation must provide targeted P125 verification for long-running
-manifests, restart matrix, recovery, data-loss ledgers, local cost envelopes,
-degradation gates, and exact-zero authority counters. Documentation
-completion does not require those tests to exist yet.
-
+`bash scripts/verify.sh --profile p125-release` provides targeted verification
+for long-running manifests, restart matrix, recovery, data-loss ledgers, local
+cost envelopes, degradation gates, hashes, and exact-zero authority counters.

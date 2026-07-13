@@ -1,0 +1,88 @@
+{
+  "commands": [
+    {
+      "argv_hash": "sha256:a7256d966c5f6fa237f13d8b711b5edbb6d56fd8021c735d86257dc864eaae49",
+      "command_kind": "monitor_run_forever",
+      "label": "sigterm-owner"
+    },
+    {
+      "argv_hash": "sha256:813f501219e89d1c30c5c21cf39e47201d2411970cd4cc731f8d12a5ac302e1e",
+      "command_kind": "monitor_watchdog",
+      "label": "watchdog-current"
+    },
+    {
+      "argv_hash": "sha256:40b5c857e2a5c49c7af7e58b6932d0ada79280d2f7f2c95513c91c1b7f71761b",
+      "command_kind": "monitor_status",
+      "label": "status-current"
+    },
+    {
+      "argv_hash": "sha256:3b41ef0e4306204510c67ebdf3a7ea4c97d9a6f171f81f1c8523047d8485bfbf",
+      "command_kind": "monitor_run",
+      "label": "lease-competitor"
+    },
+    {
+      "label": "stop-sigterm",
+      "returncode": 0,
+      "signal": "sigterm"
+    },
+    {
+      "argv_hash": "sha256:813f501219e89d1c30c5c21cf39e47201d2411970cd4cc731f8d12a5ac302e1e",
+      "command_kind": "monitor_watchdog",
+      "label": "watchdog-stopped"
+    },
+    {
+      "argv_hash": "sha256:a7256d966c5f6fa237f13d8b711b5edbb6d56fd8021c735d86257dc864eaae49",
+      "command_kind": "monitor_run_forever",
+      "label": "crash-owner"
+    },
+    {
+      "label": "stop-sigkill",
+      "returncode": -9,
+      "signal": "sigkill"
+    },
+    {
+      "argv_hash": "sha256:813f501219e89d1c30c5c21cf39e47201d2411970cd4cc731f8d12a5ac302e1e",
+      "command_kind": "monitor_watchdog",
+      "label": "watchdog-stale"
+    },
+    {
+      "argv_hash": "sha256:a7256d966c5f6fa237f13d8b711b5edbb6d56fd8021c735d86257dc864eaae49",
+      "command_kind": "monitor_run_forever",
+      "label": "sigint-owner"
+    },
+    {
+      "label": "stop-sigint",
+      "returncode": 0,
+      "signal": "sigint"
+    },
+    {
+      "argv_hash": "sha256:bb5a2de9377649e69bc86f027bf43be8ca21de35ea9892268e37e00cd8e5bb11",
+      "command_kind": "monitor_watchdog",
+      "label": "watchdog-missing"
+    },
+    {
+      "argv_hash": "sha256:ccca604538b6c95e0850c72841599a4c449a78c580cfd85e5d922b684228e0d2",
+      "command_kind": "monitor_watchdog",
+      "label": "watchdog-tampered"
+    }
+  ],
+  "evaluator_activity": {
+    "arbitrary_command_count": 0,
+    "connector_write_count": 0,
+    "credential_read_count": 0,
+    "forced_kill_count": 1,
+    "lease_conflict_count": 1,
+    "network_call_count": 0,
+    "process_launch_count": 10,
+    "production_mutation_count": 0,
+    "remediation_count": 0,
+    "sigint_count": 1,
+    "signal_count": 2,
+    "sigterm_count": 1,
+    "staging_mutation_count": 0,
+    "status_call_count": 1,
+    "watchdog_call_count": 5
+  },
+  "schema_version": "p132.supervisor_ledger.v1",
+  "supervisor_ledger_hash": "sha256:645345db3baebb6f2b128f428990e0d52b6096d0f9666f9fff575044aa22b73f"
+}

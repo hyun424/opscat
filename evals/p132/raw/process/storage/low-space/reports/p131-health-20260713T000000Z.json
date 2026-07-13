@@ -1,0 +1,82 @@
+{
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero": true
+  },
+  "canary": {
+    "action_execution_count": 0,
+    "failure_count": 0,
+    "last_result": "passed",
+    "last_run_at": "2026-07-13T00:00:00Z",
+    "last_stages": {
+      "policy_no_action_passed": true,
+      "serialization_round_trip_passed": true,
+      "signal_detection_passed": true
+    },
+    "success_count": 1
+  },
+  "config_hash": "sha256:34807d6b95551d76b16ecbca999aeb2b198a4b359dc7533c186475781dbfa62e",
+  "cycle_count": 1,
+  "generated_at": "2026-07-13T00:00:00Z",
+  "report_hash": "sha256:26f9254f819a95516e9f02b5248ec88209945cf0e634f815a7b4a1ceda7b654e",
+  "resume_count": 0,
+  "runtime_id": "p132-storage-low-space",
+  "schema_version": "p131.health_report.v1",
+  "source_health": {
+    "local": {
+      "consecutive_failures": 0,
+      "cursor_bytes": 86,
+      "enabled": true,
+      "failure_limit": 3,
+      "file_identity": "16777231:176772943",
+      "kind": "local_jsonl",
+      "last_data_at": "2026-07-13T00:00:00Z",
+      "last_error": null,
+      "last_success_at": "2026-07-13T00:00:00Z",
+      "path_hash": "sha256:04844406197444ebc814e0441e9b61a2401f942a8965625b2f68f2303c2d7c00",
+      "prefix_hash": "sha256:7727d49da7fba23970aa105942bdd7c88a2f9d98ce1c06c3747142ec6bffca2c",
+      "prefix_length": 86,
+      "rotation_count": 0
+    }
+  },
+  "state_hash": "sha256:54b482e3c1a874cf6d66a1ddfe3f0c827a0cccb973c1ef52ca98a4e64af0f758",
+  "status": {
+    "last_heartbeat_at": "2026-07-13T00:00:00Z",
+    "live": true,
+    "ready": true,
+    "reasons": [],
+    "runtime_id": "p132-storage-low-space",
+    "schema_version": "p131.monitor_status.v1",
+    "state_hash": "sha256:54b482e3c1a874cf6d66a1ddfe3f0c827a0cccb973c1ef52ca98a4e64af0f758"
+  },
+  "totals": {
+    "accepted_observation_count": 1,
+    "action_execution_count": 0,
+    "duplicate_observation_count": 0,
+    "network_call_count": 0,
+    "source_failure_count": 0
+  }
+}

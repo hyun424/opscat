@@ -14,7 +14,10 @@
   "max_bytes_per_cycle": 1048576,
   "max_consecutive_failures": 3,
   "max_line_bytes": 65536,
+  "max_report_dir_bytes": 10485760,
+  "max_report_files": 32,
   "max_records_per_cycle": 10000,
+  "min_artifact_free_bytes": 1048576,
   "report_dir": "../data/p131/reports",
   "runtime_id": "opscat-local-monitor",
   "schema_version": "p131.monitor_config.v1",
@@ -26,5 +29,6 @@
       "source_id": "local-telemetry"
     }
   ],
-  "state_path": "../data/p131/runtime-state.json"
+  "state_path": "../data/p131/runtime-state.json",
+  "termination_receipt_path": "../data/p131/termination-receipt.json"
 }

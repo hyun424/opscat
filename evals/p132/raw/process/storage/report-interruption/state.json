@@ -1,0 +1,95 @@
+{
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero": true
+  },
+  "canary": {
+    "action_execution_count": 0,
+    "failure_count": 0,
+    "last_result": "passed",
+    "last_run_at": "2026-07-13T00:00:10Z",
+    "last_stages": {
+      "policy_no_action_passed": true,
+      "serialization_round_trip_passed": true,
+      "signal_detection_passed": true
+    },
+    "success_count": 2
+  },
+  "config_hash": "sha256:26d6f45e42dd298823afd4359386d0f99b3f91f83fed004f4a98f80ab4be875b",
+  "cycle_count": 2,
+  "last_cycle_at": "2026-07-13T00:00:10Z",
+  "last_heartbeat_at": "2026-07-13T00:00:10Z",
+  "last_report_at": "2026-07-13T00:00:00Z",
+  "last_report_bucket": 178390080,
+  "lifecycle": {
+    "graceful_stop_count": 0,
+    "last_stop_reason": null,
+    "last_stop_requested_at": null,
+    "last_stopped_at": null,
+    "phase": "running"
+  },
+  "process_health": {
+    "heartbeat_current": true
+  },
+  "recent_observation_hashes": [
+    "sha256:57861816b17b231f86d379eab0ca223fa71a98c05753718c528b24faeb01debb"
+  ],
+  "resume_count": 1,
+  "runtime_id": "p132-storage-report-interruption",
+  "scheduler": {
+    "last_progress_at": "2026-07-13T00:00:10Z",
+    "missed_tick_count": 0,
+    "next_delay_seconds": null
+  },
+  "schema_version": "p131.monitor_state.v1",
+  "source_health": {
+    "local": {
+      "consecutive_failures": 0,
+      "cursor_bytes": 86,
+      "enabled": true,
+      "failure_limit": 3,
+      "file_identity": "16777231:176772963",
+      "kind": "local_jsonl",
+      "last_data_at": "2026-07-13T00:00:00Z",
+      "last_error": null,
+      "last_success_at": "2026-07-13T00:00:10Z",
+      "path_hash": "sha256:042b6f66046d8cf66d7472bad024cdd3593f0d0c592687b4fec4ce52d1a51806",
+      "prefix_hash": "sha256:7727d49da7fba23970aa105942bdd7c88a2f9d98ce1c06c3747142ec6bffca2c",
+      "prefix_length": 86,
+      "rotation_count": 0
+    }
+  },
+  "started_at": "2026-07-13T00:00:00Z",
+  "state_hash": "sha256:ca3ed0922a58e446d6fdf251295dac42b23c5981a16a42960a02d0a7606ac81a",
+  "status": "ready",
+  "totals": {
+    "accepted_observation_count": 1,
+    "action_execution_count": 0,
+    "duplicate_observation_count": 0,
+    "network_call_count": 0,
+    "source_failure_count": 0
+  }
+}

@@ -2,7 +2,7 @@
   "archive_inventory": [
     {
       "format": "wheel",
-      "hash": "sha256:a3d5327c07c0ba1fa1a12156807677c356c99b8f41bb67bb6851fcd7ed02521a",
+      "hash": "sha256:529f26fe90f00b8c50572b33df4bb5cd27c3126a7ab9823f4ff5b0f344430802",
       "members": [
         {
           "hash": "sha256:e3fe41ad519f10f0949b6e8f24cc7b7dbacea3dfb04f521f1c9e1b7772a1e69e",
@@ -40,9 +40,9 @@
           "size": 2573
         },
         {
-          "hash": "sha256:4f671d5970512194323e3b3e32095507060b9d1bb8462604848a839a417772d1",
+          "hash": "sha256:015b67e139e7863dd434b10e291afe18f1dcefef4077935446dfd4a554c3dd9a",
           "path": "app/api/health.py",
-          "size": 1881
+          "size": 3522
         },
         {
           "hash": "sha256:c9e862e5dcc78ec321b63a2b8257f52279821265bd0d97d7e73ecbd2fbc7f128",
@@ -80,9 +80,9 @@
           "size": 2557
         },
         {
-          "hash": "sha256:02a7dc5ed014ad17aec1a7efeefbc3fb854a5b75ecd1ebb9ecbfeffdb43165b2",
+          "hash": "sha256:1d0ec5990fa359f41c004c23155b80d6d48eeb8700f4df15b2cff10c457d6d4f",
           "path": "app/config.py",
-          "size": 889
+          "size": 1047
         },
         {
           "hash": "sha256:fd2e02c25c1c74ea02d1a4425cc4ef5338d1e168f5b8e15d968142be878a5683",
@@ -233,6 +233,11 @@
           "hash": "sha256:f70c46f1eaedc795dadb2cf682355c443bead6da883491770997f623861c12ba",
           "path": "app/models/workflow.py",
           "size": 3350
+        },
+        {
+          "hash": "sha256:f6de39c74c31eea6993f686fc187c4a9df67cc23cb13e6d19c605e77569e74b0",
+          "path": "app/monitor_cli.py",
+          "size": 3044
         },
         {
           "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
@@ -1215,6 +1220,16 @@
           "size": 21013
         },
         {
+          "hash": "sha256:5aad22310c7019767030d109d7c17d1087bba38068361b740e6d79636b8cfece",
+          "path": "app/services/p131_always_on_monitor.py",
+          "size": 51293
+        },
+        {
+          "hash": "sha256:36d3f4acd5545ff05653ac809afc9ae40a7e548e3dd44fe44c555c508e3d7846",
+          "path": "app/services/p131_release_evidence.py",
+          "size": 7173
+        },
+        {
           "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
           "path": "app/services/policy_calibrator.py",
           "size": 11458
@@ -1655,14 +1670,14 @@
           "size": 10004
         },
         {
-          "hash": "sha256:b29aa033866fee8f04345bcaee577994b6dc10229b6cbe94ae4bd356f998634b",
+          "hash": "sha256:b5c681097c67d522617acb95bfe5439381af971a7bb7ce0180c6f137414252ed",
           "path": "opscat-0.2.0.dist-info/METADATA",
-          "size": 34734
+          "size": 36081
         },
         {
-          "hash": "sha256:30c9cd0330c3ac56ff3b4af2ef8ab8858977b922cbceef5732c2b6f4fa9d4fd3",
+          "hash": "sha256:baab9111e6375c1963d46af1fb4640543903731d21b5e9e2503d46c6219906fe",
           "path": "opscat-0.2.0.dist-info/RECORD",
-          "size": 30999
+          "size": 31265
         },
         {
           "hash": "sha256:60b2577585d0d8543452a9f627eea21080bede239ecbc947df10adbc52e477c4",
@@ -1670,9 +1685,9 @@
           "size": 91
         },
         {
-          "hash": "sha256:6119b8a438db038f84523fc5530148d7bf629a16332391efedd8816755042f10",
+          "hash": "sha256:ae4c0f996a0d9ecf090b5c7a5014c797befe4efbbff9a7e26a85f727fd69eaed",
           "path": "opscat-0.2.0.dist-info/entry_points.txt",
-          "size": 40
+          "size": 78
         },
         {
           "hash": "sha256:1dd5af95f40cc7099c794c8404211ff20bc2d2a650fd0f7a9c76309eeebad8a3",
@@ -1687,11 +1702,11 @@
       ],
       "path": "dist/opscat-0.2.0-py3-none-any.whl",
       "readable": true,
-      "size": 1049654
+      "size": 1065219
     },
     {
       "format": "sdist",
-      "hash": "sha256:fdb99eed4a3b089e1375ac07fc9d2608870e2d7de53558ef834c2358ea4da424",
+      "hash": "sha256:6e6a8480f2672830ff3535ebab26a45d8697f7c9f31877ac5049c3fc8869a454",
       "members": [
         {
           "hash": "sha256:1dd5af95f40cc7099c794c8404211ff20bc2d2a650fd0f7a9c76309eeebad8a3",
@@ -1699,14 +1714,14 @@
           "size": 11394
         },
         {
-          "hash": "sha256:b29aa033866fee8f04345bcaee577994b6dc10229b6cbe94ae4bd356f998634b",
+          "hash": "sha256:b5c681097c67d522617acb95bfe5439381af971a7bb7ce0180c6f137414252ed",
           "path": "opscat-0.2.0/PKG-INFO",
-          "size": 34734
+          "size": 36081
         },
         {
-          "hash": "sha256:bc20a2f3413608fe8f2226dd2b9c865225d1219a1462f8db56e568408e98a7a2",
+          "hash": "sha256:22b365d2144daa19c1368805d38a290b4adbbf1f0abdce4004035307d55c451b",
           "path": "opscat-0.2.0/README.md",
-          "size": 33639
+          "size": 34986
         },
         {
           "hash": "sha256:e3fe41ad519f10f0949b6e8f24cc7b7dbacea3dfb04f521f1c9e1b7772a1e69e",
@@ -1744,9 +1759,9 @@
           "size": 2573
         },
         {
-          "hash": "sha256:4f671d5970512194323e3b3e32095507060b9d1bb8462604848a839a417772d1",
+          "hash": "sha256:015b67e139e7863dd434b10e291afe18f1dcefef4077935446dfd4a554c3dd9a",
           "path": "opscat-0.2.0/app/api/health.py",
-          "size": 1881
+          "size": 3522
         },
         {
           "hash": "sha256:c9e862e5dcc78ec321b63a2b8257f52279821265bd0d97d7e73ecbd2fbc7f128",
@@ -1784,9 +1799,9 @@
           "size": 2557
         },
         {
-          "hash": "sha256:02a7dc5ed014ad17aec1a7efeefbc3fb854a5b75ecd1ebb9ecbfeffdb43165b2",
+          "hash": "sha256:1d0ec5990fa359f41c004c23155b80d6d48eeb8700f4df15b2cff10c457d6d4f",
           "path": "opscat-0.2.0/app/config.py",
-          "size": 889
+          "size": 1047
         },
         {
           "hash": "sha256:fd2e02c25c1c74ea02d1a4425cc4ef5338d1e168f5b8e15d968142be878a5683",
@@ -1937,6 +1952,11 @@
           "hash": "sha256:f70c46f1eaedc795dadb2cf682355c443bead6da883491770997f623861c12ba",
           "path": "opscat-0.2.0/app/models/workflow.py",
           "size": 3350
+        },
+        {
+          "hash": "sha256:f6de39c74c31eea6993f686fc187c4a9df67cc23cb13e6d19c605e77569e74b0",
+          "path": "opscat-0.2.0/app/monitor_cli.py",
+          "size": 3044
         },
         {
           "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
@@ -2919,6 +2939,16 @@
           "size": 21013
         },
         {
+          "hash": "sha256:5aad22310c7019767030d109d7c17d1087bba38068361b740e6d79636b8cfece",
+          "path": "opscat-0.2.0/app/services/p131_always_on_monitor.py",
+          "size": 51293
+        },
+        {
+          "hash": "sha256:36d3f4acd5545ff05653ac809afc9ae40a7e548e3dd44fe44c555c508e3d7846",
+          "path": "opscat-0.2.0/app/services/p131_release_evidence.py",
+          "size": 7173
+        },
+        {
           "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
           "path": "opscat-0.2.0/app/services/policy_calibrator.py",
           "size": 11458
@@ -3359,14 +3389,14 @@
           "size": 10004
         },
         {
-          "hash": "sha256:b29aa033866fee8f04345bcaee577994b6dc10229b6cbe94ae4bd356f998634b",
+          "hash": "sha256:b5c681097c67d522617acb95bfe5439381af971a7bb7ce0180c6f137414252ed",
           "path": "opscat-0.2.0/opscat.egg-info/PKG-INFO",
-          "size": 34734
+          "size": 36081
         },
         {
-          "hash": "sha256:301c4e90ec890fc0eae6c8482a1e041416e508415006b4eab012876b1b3c6421",
+          "hash": "sha256:a0ef0b2bdd1d51010394951b6296d387f462919a240de66c179c14f13623fceb",
           "path": "opscat-0.2.0/opscat.egg-info/SOURCES.txt",
-          "size": 29325
+          "size": 29494
         },
         {
           "hash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
@@ -3374,9 +3404,9 @@
           "size": 1
         },
         {
-          "hash": "sha256:6119b8a438db038f84523fc5530148d7bf629a16332391efedd8816755042f10",
+          "hash": "sha256:ae4c0f996a0d9ecf090b5c7a5014c797befe4efbbff9a7e26a85f727fd69eaed",
           "path": "opscat-0.2.0/opscat.egg-info/entry_points.txt",
-          "size": 40
+          "size": 78
         },
         {
           "hash": "sha256:4d778a5b631b11ab234f96cdb9eccf13db8ed383a47ce4a54e13fc21393365f8",
@@ -3389,9 +3419,9 @@
           "size": 4
         },
         {
-          "hash": "sha256:a26807fd02d8e3cd8b47553d04e050a8f6eef5fd7588fd62f17bf65ccbc2313c",
+          "hash": "sha256:91b723ff50d27ef4380dff3f5dbf69a49a26512820f9bf8eb0943303acd5c773",
           "path": "opscat-0.2.0/pyproject.toml",
-          "size": 1591
+          "size": 1631
         },
         {
           "hash": "sha256:1c473cbaee8da5fc46e7f0158794af5cea4414c34a3cf3f180c2001f5e38bd3e",
@@ -4694,6 +4724,16 @@
           "size": 16150
         },
         {
+          "hash": "sha256:83bb7e417add08eae544ae1f635695558e51b77204a731a91c0de345cdbfc5e5",
+          "path": "opscat-0.2.0/tests/test_p131_always_on_monitor.py",
+          "size": 27012
+        },
+        {
+          "hash": "sha256:ff922d550d4185be7d9ce87983bcc452374506985629ebbabbf74d5750e2eec3",
+          "path": "opscat-0.2.0/tests/test_p131_release_evidence.py",
+          "size": 7579
+        },
+        {
           "hash": "sha256:7b24eb8d26bf5f12d6da91609bc25996a8b98c2c44dbd77e466c37be7d181f29",
           "path": "opscat-0.2.0/tests/test_p13_release_evidence.py",
           "size": 1753
@@ -5751,10 +5791,10 @@
       ],
       "path": "dist/opscat-0.2.0.tar.gz",
       "readable": true,
-      "size": 1259561
+      "size": 1279877
     }
   ],
-  "archive_inventory_hash": "sha256:f101d08c1acba8b8893ef6c298fbb4bac8935dc5e9124a7ad7acc38c7799e480",
+  "archive_inventory_hash": "sha256:a34cd7304510c6341fef0674af73c409bd8647262819c70ac9bfe4ff67a79e64",
   "artifacts": {
     "license_inventory": "evals/p122/license-inventory.json",
     "sbom": "evals/p122/sbom.json",
@@ -5770,10 +5810,10 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:f88da17247430f2365f31a4ddfd08c59f9e83fd6a2abcc9a6b7c81b31f22711d",
+  "report_hash": "sha256:77a953e5cc0c39aceb63fbdac69fbf215550265dd0788c720b0f16f6b4ec94f9",
   "root": ".",
-  "root_binding_hash": "sha256:27ffe332140b0314222d8afd51f8f81a6b7ff37641e0a4c18449f74f935767dd",
-  "scanned_file_count": 2325,
+  "root_binding_hash": "sha256:0cbb98a2447cf6d76dabc825d4a0723f522025e1a15202242db41eb618aeac78",
+  "scanned_file_count": 2344,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
   "source_inventory": [
@@ -5853,9 +5893,9 @@
       "size": 13148
     },
     {
-      "hash": "sha256:211734ac368fe1906135755fa6becd88c7dcf5965b314f8573840b29978397c7",
+      "hash": "sha256:96d89968c99f68e339178fed77c05b47aeeca6d2631f8d8baf5214ec1d91b052",
       "path": "CHANGELOG.md",
-      "size": 12324
+      "size": 13008
     },
     {
       "hash": "sha256:7882e0de102de42df04a6cdb6505138731e280d8a678f3d4b43b33192393583e",
@@ -5863,14 +5903,14 @@
       "size": 3930
     },
     {
-      "hash": "sha256:bc20a2f3413608fe8f2226dd2b9c865225d1219a1462f8db56e568408e98a7a2",
+      "hash": "sha256:22b365d2144daa19c1368805d38a290b4adbbf1f0abdce4004035307d55c451b",
       "path": "README.md",
-      "size": 33639
+      "size": 34986
     },
     {
-      "hash": "sha256:f545dbb94cd7ee9a96c84322fab171e32748c506bbdae7213eb2bdf8d201b112",
+      "hash": "sha256:d5023fa256c9deb72a25cfe953733a72ebea1b59f3b1772091cde346d019436e",
       "path": "ROADMAP.md",
-      "size": 97463
+      "size": 98344
     },
     {
       "hash": "sha256:3d6e9eec25759bf1c54bbeb42f16674071cf095caf0e7b0c78a9ad23ee0378df",
@@ -5913,9 +5953,9 @@
       "size": 2573
     },
     {
-      "hash": "sha256:4f671d5970512194323e3b3e32095507060b9d1bb8462604848a839a417772d1",
+      "hash": "sha256:015b67e139e7863dd434b10e291afe18f1dcefef4077935446dfd4a554c3dd9a",
       "path": "app/api/health.py",
-      "size": 1881
+      "size": 3522
     },
     {
       "hash": "sha256:c9e862e5dcc78ec321b63a2b8257f52279821265bd0d97d7e73ecbd2fbc7f128",
@@ -5953,9 +5993,9 @@
       "size": 2557
     },
     {
-      "hash": "sha256:02a7dc5ed014ad17aec1a7efeefbc3fb854a5b75ecd1ebb9ecbfeffdb43165b2",
+      "hash": "sha256:1d0ec5990fa359f41c004c23155b80d6d48eeb8700f4df15b2cff10c457d6d4f",
       "path": "app/config.py",
-      "size": 889
+      "size": 1047
     },
     {
       "hash": "sha256:fd2e02c25c1c74ea02d1a4425cc4ef5338d1e168f5b8e15d968142be878a5683",
@@ -6106,6 +6146,11 @@
       "hash": "sha256:f70c46f1eaedc795dadb2cf682355c443bead6da883491770997f623861c12ba",
       "path": "app/models/workflow.py",
       "size": 3350
+    },
+    {
+      "hash": "sha256:f6de39c74c31eea6993f686fc187c4a9df67cc23cb13e6d19c605e77569e74b0",
+      "path": "app/monitor_cli.py",
+      "size": 3044
     },
     {
       "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
@@ -7093,6 +7138,16 @@
       "size": 21013
     },
     {
+      "hash": "sha256:5aad22310c7019767030d109d7c17d1087bba38068361b740e6d79636b8cfece",
+      "path": "app/services/p131_always_on_monitor.py",
+      "size": 51293
+    },
+    {
+      "hash": "sha256:36d3f4acd5545ff05653ac809afc9ae40a7e548e3dd44fe44c555c508e3d7846",
+      "path": "app/services/p131_release_evidence.py",
+      "size": 7173
+    },
+    {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
       "path": "app/services/policy_calibrator.py",
       "size": 11458
@@ -7541,6 +7596,11 @@
       "hash": "sha256:b889b42830223a0704701125f5b4b3a90d9e0e115a8ab8abf11ee7e64d942668",
       "path": "config/opscat.local.example.json",
       "size": 703
+    },
+    {
+      "hash": "sha256:ed648179063bd51800d51ac523e9cb0c5580a0307c4c59573d6723558422c958",
+      "path": "config/p131-monitor.example.json",
+      "size": 791
     },
     {
       "hash": "sha256:601fff4f58c9d3c7877254aabcefb0a4b2948b0e9edbef5647fdf35eae2092e3",
@@ -8336,6 +8396,31 @@
       "hash": "sha256:de9a6d84233956fae27b62c8c75440193a4640f364ae915a47f27148d87364ce",
       "path": "docs/operations/p130-verification-handoff.md",
       "size": 1079
+    },
+    {
+      "hash": "sha256:3c7fc373376a8e8890b508e33f343fa936d27ce5ebd88501982878732380cd41",
+      "path": "docs/operations/p131-always-on-monitoring-runtime-roadmap.md",
+      "size": 2357
+    },
+    {
+      "hash": "sha256:ab9b9728b5e31a648939475eca684c2ec2119dff0dcdeaeba8569615c934d23b",
+      "path": "docs/operations/p131-operator-runbook.md",
+      "size": 2671
+    },
+    {
+      "hash": "sha256:0e247291625ad04dea2d354c4ad1ba8208c8f53e8674068c6c8f1a907334c103",
+      "path": "docs/operations/p131-plan-review.md",
+      "size": 1796
+    },
+    {
+      "hash": "sha256:330a493b22f2d6819cd896f57bb4fc89417a353f4cb05a8ba3f60d6350ebb248",
+      "path": "docs/operations/p131-test-spec.md",
+      "size": 1730
+    },
+    {
+      "hash": "sha256:01746b038ba311a3709e8d3c3db45a096363e7c988a16e83819a42da10d8e7ca",
+      "path": "docs/operations/p131-verification-handoff.md",
+      "size": 1153
     },
     {
       "hash": "sha256:d547189eaaa5c5e1c2bda31c209d04cb860fd753385f5764e4f71c694c43d155",
@@ -10968,6 +11053,36 @@
       "size": 834
     },
     {
+      "hash": "sha256:e25b33f523ae1d4ba581300517f291340dd9b19cf140e3971acd5f23cefe1397",
+      "path": "docs/tickets/p131/P131-001-runtime-contract.md",
+      "size": 240
+    },
+    {
+      "hash": "sha256:cbe4e60a63fdfb5fcb762af5f71952444be4f6e05577983e87c7fa643edd2697",
+      "path": "docs/tickets/p131/P131-002-durable-loop.md",
+      "size": 172
+    },
+    {
+      "hash": "sha256:4558f32792a844e0c7ae87d4960669c445b4de531c8255ca1373e7f69f784fa1",
+      "path": "docs/tickets/p131/P131-003-self-monitoring.md",
+      "size": 197
+    },
+    {
+      "hash": "sha256:30dac50a8fd1c19592396a49bb28b810dfe855a7120c58a87391c86e8c9573d7",
+      "path": "docs/tickets/p131/P131-004-watchdog-and-health.md",
+      "size": 167
+    },
+    {
+      "hash": "sha256:1aafb9ceb21e8bca7c60e5d2064f4bcabe2d61d423684519ae94c33497402162",
+      "path": "docs/tickets/p131/P131-005-release-evidence.md",
+      "size": 201
+    },
+    {
+      "hash": "sha256:cc4f937c3d0cd0b595715bff4e951bafc948d92a71df38e09b62a435352d7160",
+      "path": "docs/tickets/p131/README.md",
+      "size": 388
+    },
+    {
       "hash": "sha256:beae4f2e7cc18f81c6ca43a27de6527bfe7fe9d7104d00734cac27810d9e4258",
       "path": "docs/tickets/p14/README.md",
       "size": 1078
@@ -12643,6 +12758,11 @@
       "size": 1323
     },
     {
+      "hash": "sha256:5c7407feccb8bd8a42b8882d880ac7144ecef9da7f1ea2c22e4017916bb8d3ba",
+      "path": "evals/p131/input/scenario.json",
+      "size": 346
+    },
+    {
       "hash": "sha256:0d4e9f692dbf5901371abbdc09c390f7751e4e75a2e91b8d803f24d96bb0974f",
       "path": "evals/planning/p66_autonomous_day_loop_backlog.json",
       "size": 4974
@@ -14048,9 +14168,9 @@
       "size": 4045
     },
     {
-      "hash": "sha256:a26807fd02d8e3cd8b47553d04e050a8f6eef5fd7588fd62f17bf65ccbc2313c",
+      "hash": "sha256:91b723ff50d27ef4380dff3f5dbf69a49a26512820f9bf8eb0943303acd5c773",
       "path": "pyproject.toml",
-      "size": 1591
+      "size": 1631
     },
     {
       "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -14703,6 +14823,11 @@
       "size": 2008
     },
     {
+      "hash": "sha256:2b06a82772f306899c48723f5c8bcf484bcf84b2604aa60a2359bbc16a33b514",
+      "path": "scripts/run_p131_always_on_monitor.py",
+      "size": 10350
+    },
+    {
       "hash": "sha256:845eb4d1f36b8d14648cf20a23a9300dc75c17118dbd6fc9b9d068bf4f1fca28",
       "path": "scripts/run_portfolio_demo_pack.py",
       "size": 1264
@@ -14963,9 +15088,9 @@
       "size": 1047
     },
     {
-      "hash": "sha256:fad70162e4aa885657179924bada3cd1bfdf89022a44bbba4ffc682b0a4c4b60",
+      "hash": "sha256:646d167b362667a47a7616a79001d57ce0b888adcc6b0fd1830d146840695b4d",
       "path": "scripts/verify.sh",
-      "size": 106979
+      "size": 107492
     },
     {
       "hash": "sha256:ac7c3ef7b2da5eb2587932bd07607ab9a2d911497e7d2175a9128334b2c24b59",
@@ -16343,6 +16468,16 @@
       "size": 16150
     },
     {
+      "hash": "sha256:83bb7e417add08eae544ae1f635695558e51b77204a731a91c0de345cdbfc5e5",
+      "path": "tests/test_p131_always_on_monitor.py",
+      "size": 27012
+    },
+    {
+      "hash": "sha256:ff922d550d4185be7d9ce87983bcc452374506985629ebbabbf74d5750e2eec3",
+      "path": "tests/test_p131_release_evidence.py",
+      "size": 7579
+    },
+    {
       "hash": "sha256:7b24eb8d26bf5f12d6da91609bc25996a8b98c2c44dbd77e466c37be7d181f29",
       "path": "tests/test_p13_release_evidence.py",
       "size": 1753
@@ -17403,6 +17538,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:c3570c7a012456a3de76422c435b68ca24fed6c4d6e97f4a37d551c0c82d6200",
+  "source_inventory_hash": "sha256:006a5cd78ff09d895937ab8eb4e36641b59338f6a871e4b5e7740f2d6b6b8f9b",
   "status": "pass"
 }

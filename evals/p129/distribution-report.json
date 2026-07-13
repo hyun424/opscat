@@ -66,7 +66,7 @@
   },
   "governed_docs": [
     {
-      "hash": "sha256:bc20a2f3413608fe8f2226dd2b9c865225d1219a1462f8db56e568408e98a7a2",
+      "hash": "sha256:22b365d2144daa19c1368805d38a290b4adbbf1f0abdce4004035307d55c451b",
       "missing_terms": [],
       "path": "README.md",
       "prohibited_claim_detected": false,
@@ -135,17 +135,17 @@
     },
     "product_claim": "production-grade packaging practices with local/mock/sandbox qualification",
     "public_limitation": "Production autonomy, auth completion, credentials, live connector writes, production/staging mutation, and operator replacement are not proven or enabled.",
-    "release_evidence_hash": "sha256:47cfd0c2107ddb564680e81831e4650111e2be792aff934a475e9c6c3a171fae",
+    "release_evidence_hash": "sha256:447c490f6b512af8ecaf59deab4ece22191206aaa044958c77468d09899f2f3f",
     "release_status": "p122_open_source_local_rc"
   },
   "packaging": {
     "clean_install_contract_demo_uninstall": true,
-    "clean_install_hash": "sha256:a2fa26ff946e229bff5ebc27bce2ef941ea6357ea1bb15bf7f94e972aa8e7cce",
+    "clean_install_hash": "sha256:5e80743ac683be87d21fb88ec526c35d122b15b8c41f2ac416b1d0bdeca88918",
     "package_checksum_count": 2,
-    "reproducible_build_hash": "sha256:101877df7719ba80419e9143c9b72f5fb8f3f82aec1773f6b00199bd0f9db2ba",
+    "reproducible_build_hash": "sha256:a0783853e74e9b2aac0cc365d912913ae029158c9f2fcc77b0d9df59a811ab63",
     "reproducible_wheel_and_sdist": true,
-    "sdist_hash": "sha256:fdb99eed4a3b089e1375ac07fc9d2608870e2d7de53558ef834c2358ea4da424",
-    "wheel_hash": "sha256:a3d5327c07c0ba1fa1a12156807677c356c99b8f41bb67bb6851fcd7ed02521a"
+    "sdist_hash": "sha256:6e6a8480f2672830ff3535ebab26a45d8697f7c9f31877ac5049c3fc8869a454",
+    "wheel_hash": "sha256:529f26fe90f00b8c50572b33df4bb5cd27c3126a7ab9823f4ff5b0f344430802"
   },
   "phase": "P129",
   "planning_docs": [
@@ -178,7 +178,7 @@
   "product_claim": "OSS distribution maturity with local/mock/sandbox qualification",
   "public_limitation": "Production autonomy, auth completion, credentials, live connector writes, production/staging mutation, operator replacement, and enterprise support readiness are not proven or enabled.",
   "reasons": [],
-  "report_hash": "sha256:10627f29e7684e7b5cd19b32aa6e2477d35dcd564f13cf73d2817075bfe9d24d",
+  "report_hash": "sha256:4d364748b2297d973e85200dc6d7c69b808354b2869a64a44dc811619c06acc4",
   "review": {
     "builder_id": "autonomous-builder",
     "reviewer_id": "independent-p129-verifier"
@@ -189,7 +189,7 @@
     "high_or_critical_security_findings": 0,
     "high_or_critical_vulnerabilities": 0,
     "production_enabled_defaults": 0,
-    "security_report_hash": "sha256:f88da17247430f2365f31a4ddfd08c59f9e83fd6a2abcc9a6b7c81b31f22711d",
+    "security_report_hash": "sha256:77a953e5cc0c39aceb63fbdac69fbf215550265dd0788c720b0f16f6b4ec94f9",
     "unpinned_runtime_dependencies": 0,
     "vulnerability_audit_hash": "sha256:0c1a8673f421828951f47d6d48e0c9e1703eed28d28fb38bd668b683f5fda19c"
   },

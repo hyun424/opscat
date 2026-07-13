@@ -42,9 +42,9 @@
       "size": 2573
     },
     {
-      "hash": "sha256:4f671d5970512194323e3b3e32095507060b9d1bb8462604848a839a417772d1",
+      "hash": "sha256:015b67e139e7863dd434b10e291afe18f1dcefef4077935446dfd4a554c3dd9a",
       "path": "site-packages/app/api/health.py",
-      "size": 1881
+      "size": 3522
     },
     {
       "hash": "sha256:c9e862e5dcc78ec321b63a2b8257f52279821265bd0d97d7e73ecbd2fbc7f128",
@@ -82,9 +82,9 @@
       "size": 2557
     },
     {
-      "hash": "sha256:02a7dc5ed014ad17aec1a7efeefbc3fb854a5b75ecd1ebb9ecbfeffdb43165b2",
+      "hash": "sha256:1d0ec5990fa359f41c004c23155b80d6d48eeb8700f4df15b2cff10c457d6d4f",
       "path": "site-packages/app/config.py",
-      "size": 889
+      "size": 1047
     },
     {
       "hash": "sha256:fd2e02c25c1c74ea02d1a4425cc4ef5338d1e168f5b8e15d968142be878a5683",
@@ -235,6 +235,11 @@
       "hash": "sha256:f70c46f1eaedc795dadb2cf682355c443bead6da883491770997f623861c12ba",
       "path": "site-packages/app/models/workflow.py",
       "size": 3350
+    },
+    {
+      "hash": "sha256:f6de39c74c31eea6993f686fc187c4a9df67cc23cb13e6d19c605e77569e74b0",
+      "path": "site-packages/app/monitor_cli.py",
+      "size": 3044
     },
     {
       "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
@@ -1177,14 +1182,14 @@
       "size": 70624
     },
     {
-      "hash": "sha256:18888f01918204f408b0b86f831821ae2a8fab6de672283d60418e4f3bc81332",
+      "hash": "sha256:2f36da8fd14dc0048a2f3f21b6a3324edc8389f3c8205caf6017d8d11d16d519",
       "path": "site-packages/app/services/p123_shadow_attachment.py",
-      "size": 21200
+      "size": 21794
     },
     {
-      "hash": "sha256:1895ea928dbd386885acd2adc525b2a2bd586eb629419e47d439ac90a8b4e43e",
+      "hash": "sha256:249fd8f441a59b04526fa4c6c2c0bf93f0e317e7682cddef7978caa24e42258c",
       "path": "site-packages/app/services/p124_judgment_quality.py",
-      "size": 21983
+      "size": 22577
     },
     {
       "hash": "sha256:a00ef2bf3ceba326431c72316df38c64c67baf0ba0fd339d0ff0bddbd561fd60",
@@ -1215,6 +1220,16 @@
       "hash": "sha256:8dab9296feb460e819a447ce64276452d3c6e3d632d2a6a7c8b90254b15523cb",
       "path": "site-packages/app/services/p130_public_beta.py",
       "size": 21013
+    },
+    {
+      "hash": "sha256:5aad22310c7019767030d109d7c17d1087bba38068361b740e6d79636b8cfece",
+      "path": "site-packages/app/services/p131_always_on_monitor.py",
+      "size": 51293
+    },
+    {
+      "hash": "sha256:36d3f4acd5545ff05653ac809afc9ae40a7e548e3dd44fe44c555c508e3d7846",
+      "path": "site-packages/app/services/p131_release_evidence.py",
+      "size": 7173
     },
     {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -1657,9 +1672,9 @@
       "size": 10004
     },
     {
-      "hash": "sha256:b29aa033866fee8f04345bcaee577994b6dc10229b6cbe94ae4bd356f998634b",
+      "hash": "sha256:b5c681097c67d522617acb95bfe5439381af971a7bb7ce0180c6f137414252ed",
       "path": "site-packages/opscat-0.2.0.dist-info/METADATA",
-      "size": 34734
+      "size": 36081
     },
     {
       "hash": "sha256:60b2577585d0d8543452a9f627eea21080bede239ecbc947df10adbc52e477c4",
@@ -1667,9 +1682,9 @@
       "size": 91
     },
     {
-      "hash": "sha256:6119b8a438db038f84523fc5530148d7bf629a16332391efedd8816755042f10",
+      "hash": "sha256:ae4c0f996a0d9ecf090b5c7a5014c797befe4efbbff9a7e26a85f727fd69eaed",
       "path": "site-packages/opscat-0.2.0.dist-info/entry_points.txt",
-      "size": 40
+      "size": 78
     },
     {
       "hash": "sha256:1dd5af95f40cc7099c794c8404211ff20bc2d2a650fd0f7a9c76309eeebad8a3",
@@ -1683,9 +1698,9 @@
     }
   ],
   "installed_package": "opscat",
-  "manifest_hash": "sha256:d74f6e06a94673b019fa9096e990d0b7525994edab716ee03dd9381396588a18",
+  "manifest_hash": "sha256:06a33ae06bb22752e14b16ebd3a9feb4a011269a459fe06bb10f68cd87f92a73",
   "operation": "package_install",
-  "record_entries_verified": 335,
+  "record_entries_verified": 338,
   "schema_version": "p122.canonical_wheel_install.v1",
-  "wheel_checksum": "sha256:df2b1e825ad65cd70feb7430a1c05a6bffc7b8638074b4d246d5f8639838c4e1"
+  "wheel_checksum": "sha256:529f26fe90f00b8c50572b33df4bb5cd27c3126a7ab9823f4ff5b0f344430802"
 }

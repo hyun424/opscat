@@ -1,0 +1,30 @@
+{
+  "cases": {
+    "current": {
+      "healthy": true,
+      "heartbeat_age_seconds": 0.0,
+      "reason": "heartbeat_current",
+      "runtime_id": "p131-release-runtime",
+      "schema_version": "p131.watchdog.v1"
+    },
+    "missing": {
+      "healthy": false,
+      "reason": "state_missing",
+      "schema_version": "p131.watchdog.v1"
+    },
+    "stale": {
+      "healthy": false,
+      "heartbeat_age_seconds": 181.0,
+      "reason": "heartbeat_stale",
+      "runtime_id": "p131-release-runtime",
+      "schema_version": "p131.watchdog.v1"
+    },
+    "tampered": {
+      "healthy": false,
+      "reason": "state_hash_invalid",
+      "schema_version": "p131.watchdog.v1"
+    }
+  },
+  "schema_version": "p131.watchdog_matrix.v1",
+  "watchdog_matrix_hash": "sha256:0fdadf783b7a3ba4bf21501ed498613630b0bb5b16bbf8b283be7ca0f4220216"
+}

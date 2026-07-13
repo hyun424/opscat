@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     prometheus_base_url: str | None = None
     prometheus_allowed_hosts: str = "localhost,127.0.0.1,::1"
     prometheus_timeout_seconds: float = 5.0
+    monitor_state_path: str = "data/p131/runtime-state.json"
+    monitor_heartbeat_timeout_seconds: int = 180
+    monitor_data_stale_after_seconds: int = 300
 
 
 @lru_cache

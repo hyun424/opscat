@@ -27,8 +27,8 @@
     "exact_zero_runtime_authority": true,
     "nonzero_phases": []
   },
-  "beta_evidence_hash": "sha256:9830dbcc4277243792669e57797f638f191db9577ddf4ce77ec3dc2a9beba3f9",
-  "claim_ledger_hash": "sha256:2efff80913417c1f8d2bd2aa653ab97fb790e34f0e6142baf4f47543efa52c8a",
+  "beta_evidence_hash": "sha256:502336da5263259a42298c621e4c7f0f102c87429a10bcfa5f35ec16109e33b6",
+  "claim_ledger_hash": "sha256:69ee36a3016156249458acc877d4fce7a77168540e8dc7681a06d03505ad64f3",
   "claim_summary": {
     "claim_count": 2,
     "prohibited_claims": [],
@@ -59,7 +59,7 @@
   "product_claim": "Evidence-qualified public beta readiness framework for local, sandbox, replay, and disposable-lab evidence.",
   "public_limitation": "Non-production public beta framework only; auth, credentials, live connectors, staging/production mutation, production autonomy, and operator replacement are forbidden and unproven. Reviewer independence is process-asserted, not cryptographically proven.",
   "reasons": [],
-  "release_evidence_hash": "sha256:eb576df0a06eb23c0f4ab3d9b8a9ceab776939ebb19cef6093ff7ec70017a9b1",
+  "release_evidence_hash": "sha256:731c7084acaab23e90876cc8bf7f03570388705fdc361edbe237eb451dd23549",
   "release_id": "P130-public-beta",
   "release_status": "p130_public_beta_qualified",
   "review": {
@@ -88,28 +88,46 @@
         "subprocess_execution_count": 0,
         "unapproved_intervention_count": 0
       },
+      "boolean_gate_counts": {
+        "p123": 11,
+        "p124": 13,
+        "p125": 3,
+        "p126": 3,
+        "p127": 10,
+        "p128": 10,
+        "p129": 13
+      },
       "builder_id": "autonomous-builder",
       "findings": [],
       "limitations": [
-        "This PASS is limited to evidence-qualified non-production public beta readiness over local, sandbox, replay, disposable-lab, and OSS distribution artifacts.",
-        "Process separation is evidenced by distinct reviewer/builder identifiers and an independently generated hash-bound artifact, but reviewer identity is not cryptographically proven.",
-        "P130 release-evidence.json was not modified in this review per scope; it must be rebuilt separately to incorporate this current independent-review artifact.",
-        "No live production, credentialed, staging mutation, production mutation, live connector write, production autonomy, or operator replacement behavior was proven."
+        "PASS is limited to the inspected local frozen workspace artifacts and their deterministic validators/tests.",
+        "Evidence is non-production: local, read-only, sandbox, replay, disposable-lab, OSS distribution, and public-beta aggregation evidence only.",
+        "No auth completion, credentials, live connector proof, live connector writes, staging mutation, production mutation, production autonomy, or operator replacement behavior was proven.",
+        "Reviewer independence is represented by distinct reviewer/builder identifiers and this hash-bound artifact; reviewer identity is not cryptographically proven.",
+        "This review updates only evals/p130/independent-review.json; P130 release artifacts must be rebuilt separately if they need to embed this current review."
       ],
-      "review_date": "2026-07-12",
+      "release_statuses": {
+        "p123": "p123_read_only_shadow_replay_promoted",
+        "p124": "p124_judgment_quality_promoted",
+        "p125": "ready",
+        "p126": "ready",
+        "p127": "p127_ready",
+        "p128": "p128_ready",
+        "p129": "p129_distribution_maturity_ready"
+      },
+      "review_date": "2026-07-13",
       "review_method": "codex_native_subagent",
       "reviewed_checks": {
-        "canonical_p121_authority_counters": "PASS: authority.counters in all seven P123-P129 release artifacts exactly match app.services.p121_signals.zero_authority_counters(): no missing keys, no extra keys, and no nonzero values.",
-        "p122_package_boundary": "PASS: P122 release_status is p122_open_source_local_rc; package gates include clean install/demo/uninstall, byte reproducible build, current package artifacts, security gate, vulnerability audit, SBOM/license, docs, migration compatibility, and exact nonlocal authority zero. Wheel hash sha256:a3d5327c07c0ba1fa1a12156807677c356c99b8f41bb67bb6851fcd7ed02521a and sdist hash sha256:fdb99eed4a3b089e1375ac07fc9d2608870e2d7de53558ef834c2358ea4da424 are current evidence inputs.",
-        "p122_validator": "PASS: .venv/bin/python scripts/validate_p122_release_evidence.py evals/p122/release-evidence.json returned valid=true with schema_current, self_hash_current, all_fields_current, source_hashes_current, package_checksums_current, upstream_hashes_current, gates_current, independent_review_current, and release_qualified all true.",
-        "p123_p129_file_hashes_recorded": "PASS: current file SHA-256 values for evals/p123..p129/release-evidence.json are recorded in reviewed_file_sha256.",
-        "p123_p129_readiness": "PASS: release statuses are {'p123': 'p123_read_only_shadow_replay_promoted', 'p124': 'p124_judgment_quality_promoted', 'p125': 'ready', 'p126': 'ready', 'p127': 'p127_ready', 'p128': 'p128_ready', 'p129': 'p129_distribution_maturity_ready'}; every boolean release gate in P123-P129 is true.",
+        "canonical_p121_authority_counters": "PASS: each P123-P129 authority counter map exactly matches app.services.p121_signals.zero_authority_counters(): 22 keys, integer zero values, no bools, no missing keys, and no extra keys.",
+        "p122_validator": "PASS: PYTHONDONTWRITEBYTECODE=1 .venv/bin/python scripts/validate_p122_release_evidence.py evals/p122/release-evidence.json returned valid=true with schema_current, self_hash_current, all_fields_current, source_hashes_current, package_checksums_current, upstream_hashes_current, gates_current, independent_review_current, and release_qualified all true.",
+        "p123_p129_boolean_gates": "PASS: all top-level boolean gates in P123-P129 release evidence are true; gate counts are recorded in boolean_gate_counts.",
+        "p123_p129_file_sha256_recorded": "PASS: SHA-256 of each current evals/p123..p129/release-evidence.json file is recorded in reviewed_file_sha256.",
+        "p123_p129_ready_statuses": "PASS: current statuses are p123_read_only_shadow_replay_promoted, p124_judgment_quality_promoted, ready, ready, p127_ready, p128_ready, and p129_distribution_maturity_ready.",
         "p123_p129_release_hashes_current": "PASS: each evals/p123..p129/release-evidence.json release_evidence_hash equals stable_hash(payload excluding release_evidence_hash).",
+        "p129_profile_tests": "PASS: PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -p no:cacheprovider tests/test_p129_distribution_maturity.py passed 8 tests with one StarletteDeprecationWarning.",
         "p129_validator": "PASS: validate_p129_release_evidence(evals/p129/release-evidence.json) returned valid=true with schema_current, self_hash_current, all_fields_current, distribution_report_hash_current, and release_qualified all true.",
-        "p130_validator_context": "PASS: pre-review P130 validation failed only because existing P130 artifacts were bound to stale upstream hashes after P123-P129 regeneration; this replacement review binds the current P123-P129 release_evidence_hash values required by build_p130_public_beta._review_current.",
-        "process_separation": "PASS: review artifact uses reviewer_id independent-p130-verifier, builder_id autonomous-builder, and review_method codex_native_subagent; process separation is evidenced by distinct ids and this independently generated artifact, but identity is not cryptographically proven.",
-        "safety_boundaries": "PASS: reviewed release evidence is limited to local, read-only, sandbox, recorded replay, disposable lab, OSS distribution, and evidence-qualified beta claims; auth completion, credentials, live connector proof/writes, real staging mutation, production mutation, production autonomy, and operator replacement remain forbidden, unproven, or out of scope.",
-        "targeted_tests": "PASS: PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest tests/test_p123_shadow_attachment.py tests/test_p124_judgment_quality.py tests/test_p125_shadow_resilience.py tests/test_p126_lab_remediation.py tests/test_p127_chaos_validation.py tests/test_p128_operator_beta.py tests/test_p129_distribution_maturity.py tests/test_p130_public_beta.py -q passed 58 tests with one StarletteDeprecationWarning."
+        "process_separation": "PASS: reviewer_id independent-p130-verifier differs from builder_id autonomous-builder and review_method is codex_native_subagent; identity is process-asserted, not cryptographically proven.",
+        "targeted_p123_p130_tests": "PASS: PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -p no:cacheprovider tests/test_p123_shadow_attachment.py tests/test_p124_judgment_quality.py tests/test_p125_shadow_resilience.py tests/test_p126_lab_remediation.py tests/test_p127_chaos_validation.py tests/test_p128_operator_beta.py tests/test_p129_distribution_maturity.py tests/test_p130_public_beta.py passed 58 tests with one StarletteDeprecationWarning."
       },
       "reviewed_file_sha256": {
         "p123": "sha256:09adc8df6ae7322a1c47d179764b808bb04db9afc18df3011c47988d0497d70c",
@@ -118,7 +136,7 @@
         "p126": "sha256:2b224ee2fa978df15788263e8277257cee165aab58f999ce792fa3c5e66184c2",
         "p127": "sha256:de3571d118ebe5a31d25458f13ff43f9802868640078775aaea1e64561ace4e2",
         "p128": "sha256:6aac8667c4dd8b1920ed65bc8ab9959ad23ab3cd2eabe352f8781dce05d8aa94",
-        "p129": "sha256:ed3e4aaf6007519dcb850cc2437bfe6c71a9dfbbdf311c5392e51926ea358192"
+        "p129": "sha256:277e06d153edd44eb95407fbddec27ae2335851db4d0da2272886c7baf317c2c"
       },
       "reviewed_release_hashes": {
         "p123": "sha256:fd96356d165bd5535989f1bb19719be8e00be464e09ae7eec644e212a9ae6151",
@@ -127,12 +145,12 @@
         "p126": "sha256:2fd4c009af349c8cdde465098e80600eeb7683407301e1025ac754fd2e49e021",
         "p127": "sha256:909248bac9eb54042602e7b04172dc9c6fe322ef52606eca80691f44a7c35e3f",
         "p128": "sha256:105bca44eca51d206dbba6601cf6cf6ad6f0743c1f56e1840bae70dd463b476b",
-        "p129": "sha256:0d075fc50e50df51d3a69eda1fd8aaf7cb4c1e0fa8065c7462a5f254b9f8c2e4"
+        "p129": "sha256:53ee920fc57e2f90181cec29f9e616da01454ba5dd9922eaf76573d483dac58b"
       },
       "reviewer_id": "independent-p130-verifier",
       "schema_version": "p130.independent_review.v1",
-      "scope": "Final distinct-process P130 gate review of current P123-P129 release evidence for evidence-qualified non-production public beta readiness.",
-      "self_hash": "sha256:ca5f3d9a7f2d36fdfea350e30d57ef7d2051aab05e9831dac0a60e958f0c22a8",
+      "scope": "Final P130 distinct-process independent review of the frozen current P123-P129 release evidence for evidence-qualified, non-production public beta readiness.",
+      "self_hash": "sha256:c83056cb8c06223cfb3cd1154f9b94eb34f324fccce1a81a5159e581a5c9b3ce",
       "verdict": "PASS"
     },
     "builder_id": "autonomous-builder",
@@ -152,7 +170,7 @@
     "p126": "sha256:2fd4c009af349c8cdde465098e80600eeb7683407301e1025ac754fd2e49e021",
     "p127": "sha256:909248bac9eb54042602e7b04172dc9c6fe322ef52606eca80691f44a7c35e3f",
     "p128": "sha256:105bca44eca51d206dbba6601cf6cf6ad6f0743c1f56e1840bae70dd463b476b",
-    "p129": "sha256:0d075fc50e50df51d3a69eda1fd8aaf7cb4c1e0fa8065c7462a5f254b9f8c2e4"
+    "p129": "sha256:53ee920fc57e2f90181cec29f9e616da01454ba5dd9922eaf76573d483dac58b"
   },
   "withdrawal_paths": [
     "Disable or relabel feedback intake if secret-free handling cannot be maintained.",

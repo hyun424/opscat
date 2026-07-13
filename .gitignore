@@ -8,6 +8,7 @@ __pycache__/
 opscat.db
 .env
 data/mock_reports/*.md
+data/p131/
 *$py.class
 *.egg-info/
 build/

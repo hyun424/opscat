@@ -1,0 +1,15 @@
+{
+  "schema_version": "p131.runtime_scenario.v1",
+  "telemetry_rows": [
+    {
+      "message": "checkout baseline healthy",
+      "service": "checkout",
+      "timestamp": "2026-07-13T00:00:00Z"
+    },
+    {
+      "message": "checkout latency leading indicator",
+      "service": "checkout",
+      "timestamp": "2026-07-13T00:01:00Z"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "allowed_artifact_roots": [
+    "../data/p131"
+  ],
+  "allowed_data_roots": [
+    "../data/p131"
+  ],
+  "canary_every_cycles": 5,
+  "daily_report_interval_seconds": 86400,
+  "data_stale_after_seconds": 300,
+  "heartbeat_timeout_seconds": 180,
+  "interval_seconds": 60,
+  "lease_path": "../data/p131/runtime.lock",
+  "max_bytes_per_cycle": 1048576,
+  "max_consecutive_failures": 3,
+  "max_line_bytes": 65536,
+  "max_records_per_cycle": 10000,
+  "report_dir": "../data/p131/reports",
+  "runtime_id": "opscat-local-monitor",
+  "schema_version": "p131.monitor_config.v1",
+  "sources": [
+    {
+      "enabled": true,
+      "kind": "local_jsonl",
+      "path": "../data/p131/telemetry.jsonl",
+      "source_id": "local-telemetry"
+    }
+  ],
+  "state_path": "../data/p131/runtime-state.json"
+}

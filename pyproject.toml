@@ -37,6 +37,7 @@ Documentation = "https://github.com/gimdonghyeon/opscat/tree/main/docs"
 
 [project.scripts]
 opscat = "app.cli:main"
+opscat-monitor = "app.monitor_cli:main"
 
 [build-system]
 requires = ["setuptools>=80,<82", "wheel>=0.45,<1"]

@@ -1,0 +1,92 @@
+{
+  "final_state": {
+    "accepted_observation_count": 2,
+    "authority": {
+      "counters": {
+        "auth_context_count": 0,
+        "authority_escape_count": 0,
+        "cloud_mutation_count": 0,
+        "connector_write_call_count": 0,
+        "credential_scope_count": 0,
+        "database_mutation_count": 0,
+        "evidence_bypass_count": 0,
+        "filesystem_mutation_outside_artifact_count": 0,
+        "freeform_action_execution_count": 0,
+        "kubernetes_mutation_count": 0,
+        "l4_plus_action_count": 0,
+        "live_connector_call_count": 0,
+        "llm_command_execution_count": 0,
+        "network_mutation_count": 0,
+        "online_policy_write_count": 0,
+        "production_mutation_count": 0,
+        "rollback_missing_execution_count": 0,
+        "secret_material_count": 0,
+        "shell_execution_count": 0,
+        "staging_mutation_count": 0,
+        "subprocess_execution_count": 0,
+        "unapproved_intervention_count": 0
+      },
+      "exact_zero": true
+    },
+    "canary": {
+      "action_execution_count": 0,
+      "failure_count": 0,
+      "last_result": "passed",
+      "last_run_at": "2026-07-13T00:01:00Z",
+      "last_stages": {
+        "policy_no_action_passed": true,
+        "serialization_round_trip_passed": true,
+        "signal_detection_passed": true
+      },
+      "success_count": 3
+    },
+    "cycle_count": 3,
+    "duplicate_observation_count": 0,
+    "ready": true,
+    "reasons": [],
+    "resume_count": 1,
+    "totals": {
+      "accepted_observation_count": 2,
+      "action_execution_count": 0,
+      "duplicate_observation_count": 0,
+      "network_call_count": 0,
+      "source_failure_count": 0
+    }
+  },
+  "first_run": {
+    "accepted_observation_count": 1,
+    "cycle_count": 2,
+    "duplicate_observation_count": 0,
+    "live": true,
+    "ready": true,
+    "reasons": [],
+    "source_failure_count": 0
+  },
+  "real_time_bounded_smoke_passed": true,
+  "restart_run": {
+    "accepted_observation_count": 1,
+    "cycle_count": 1,
+    "duplicate_observation_count": 0,
+    "live": true,
+    "ready": true,
+    "reasons": [],
+    "source_failure_count": 0
+  },
+  "runtime_report_hash": "sha256:d3483119b5bf36059af24466125c38d5a278cc1e17923498b75e170a6f378461",
+  "scenario_hash": "sha256:862e90088963fa6f1452b0c83323fee56de7945f5ec76cfe25ab3f27737e4dbc",
+  "schema_version": "p131.runtime_evidence.v1",
+  "sleep_intervals_seconds": [
+    60.0
+  ],
+  "static_boundary": {
+    "forbidden_matches": [],
+    "source_hashes": {
+      "app/api/health.py": "sha256:023ed38112180008c8fcfac6377f9ddbe8eb554be8bb518df16705977c6009ea",
+      "app/config.py": "sha256:cbdab4c85abf5bc21fb4afbeb3452480011bfc57758dfcbb534c04ff95d7461c",
+      "app/monitor_cli.py": "sha256:15ef66d11b8abfc571983d884c312cae994f7336919db40ce4d76a8f362f8fcc",
+      "app/services/p131_always_on_monitor.py": "sha256:4f02dd5d12e6bc404d5c907ce9d020771c869a31207eb68c228d9fe99b340e55",
+      "app/services/p131_release_evidence.py": "sha256:cc991027d268e41027ee49acd29e9fa76ef6744496bddd80fc6b576282322eb6",
+      "scripts/run_p131_always_on_monitor.py": "sha256:f94036a545ca2dea630b4030695aefe1aec6307c8180590a028b2a1145c17e1a"
+    }
+  }
+}

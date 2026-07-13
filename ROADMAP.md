@@ -2,6 +2,21 @@
 
 OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward a beta-grade agentic operations system.
 
+## P131 complete: credential-free always-on local monitoring
+
+P131 adds a standalone, supervisor-friendly monitor process with monotonic
+cadence, bounded local JSONL ingestion, atomic hash-verified checkpoints,
+rotation/deduplication recovery, exclusive leasing, source freshness, synthetic
+canary, daily summaries, independent watchdog, HTTP liveness/readiness, and a
+deterministic release profile. Direct Prometheus polling is deferred because the
+current P121 contract counts every live connector call as non-zero authority.
+No auth, credentials, network calls, subprocesses, remediation, staging mutation,
+or production mutation are enabled.
+
+Next production-hardening candidates are a separately reviewed read-only
+observation-authority contract, real multi-hour soak evidence, supervisor crash
+recovery tests, and external notification delivery that cannot execute actions.
+
 ## P4 complete
 
 P4 is complete. It added reproducible evidence for the local/mock operator-replacement claim:

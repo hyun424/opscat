@@ -50,6 +50,19 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 
 ## Unreleased
 
+### P131 always-on local monitor
+
+- Added a standalone monotonic-cadence local JSONL monitor with bounded reads,
+  atomic hash-verified checkpoints, lease protection, rotation handling, and
+  restart-safe duplicate suppression.
+- Added independent watchdog and HTTP liveness/readiness surfaces for missing,
+  stale, future, malformed, and tampered state plus source freshness and canary
+  degradation.
+- Added deterministic P131 runtime/watchdog/release evidence and a dedicated
+  verification profile with exact-zero P121 authority.
+- Kept direct live connectors, auth, credentials, network calls, subprocesses,
+  remediation, staging mutation, and production mutation out of P131.
+
 ### P121 proactive prevention readiness
 
 - Added durable local-sandbox L3 execution with WAL/hash-chain recovery,

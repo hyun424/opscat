@@ -3061,3 +3061,39 @@ Detailed references:
 - `docs/operations/p132-plan-review.md`
 - `docs/operations/p132-final-summary.md`
 - `docs/tickets/p132/README.md`
+
+## P133 local dead-man evidence outbox
+
+P133 consumes only the independent P131/P132 watchdog state and emits a
+crash-safe, redacted local event chain. Deterministic incident identity,
+event-first cursor durability, exclusive process serialization, immutable local
+acknowledgement, and conservative retention preserve evidence across restarts
+without adding network, credential, connector, command, or remediation authority.
+
+Canonical profile:
+
+```bash
+bash scripts/verify.sh --profile p133-release
+```
+
+The promoted matrix passes 20/20 transition and fault cases. Eight real CLI
+subprocess cases cover stale detection, deduplication, reminder, recovery, list,
+acknowledgement, restart, lease contention, and SIGTERM shutdown. Exact runtime
+authority remains zero. The systemd and Compose isolation contracts qualify;
+the launchd plist is explicitly an unqualified structural example pending an
+external macOS sandbox or MDM policy.
+
+This evidence qualifies durable local dead-man records only under an owned,
+non-group/world-writable, cooperative single-writer directory boundary. It does
+not prove external notification delivery, 24/7 availability, multi-host failover,
+same-UID malicious-writer resistance, remediation quality, or unattended
+production operation.
+
+Detailed references:
+
+- `docs/operations/p133-local-deadman-outbox-roadmap.md`
+- `docs/operations/p133-test-spec.md`
+- `docs/operations/p133-plan-review.md`
+- `docs/operations/p133-final-summary.md`
+- `docs/operations/p133-verification-handoff.md`
+- `docs/tickets/p133/README.md`

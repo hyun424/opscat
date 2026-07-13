@@ -1,0 +1,18 @@
+{
+  "ack_dir": "../data/p133/acks",
+  "allowed_artifact_roots": [
+    "../data"
+  ],
+  "check_interval_seconds": 30,
+  "cursor_path": "../data/p133/cursor.json",
+  "heartbeat_timeout_seconds": 180,
+  "max_event_bytes": 32768,
+  "max_event_files": 32,
+  "max_outbox_bytes": 1048576,
+  "min_artifact_free_bytes": 1048576,
+  "outbox_dir": "../data/p133/outbox",
+  "reminder_interval_seconds": 300,
+  "runtime_ref": "opscat-local-monitor",
+  "schema_version": "p133.deadman_config.v1",
+  "state_path": "../data/p131/runtime-state.json"
+}

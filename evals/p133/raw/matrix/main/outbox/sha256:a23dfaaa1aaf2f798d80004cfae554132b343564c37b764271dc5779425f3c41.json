@@ -1,0 +1,43 @@
+{
+  "authority_counters": {
+    "auth_context_count": 0,
+    "authority_escape_count": 0,
+    "cloud_mutation_count": 0,
+    "connector_write_call_count": 0,
+    "credential_scope_count": 0,
+    "database_mutation_count": 0,
+    "evidence_bypass_count": 0,
+    "filesystem_mutation_outside_artifact_count": 0,
+    "freeform_action_execution_count": 0,
+    "kubernetes_mutation_count": 0,
+    "l4_plus_action_count": 0,
+    "live_connector_call_count": 0,
+    "llm_command_execution_count": 0,
+    "network_mutation_count": 0,
+    "online_policy_write_count": 0,
+    "production_mutation_count": 0,
+    "rollback_missing_execution_count": 0,
+    "secret_material_count": 0,
+    "shell_execution_count": 0,
+    "staging_mutation_count": 0,
+    "subprocess_execution_count": 0,
+    "unapproved_intervention_count": 0
+  },
+  "config_hash": "sha256:15394a713b7e64fca831690a71c45782d254718966ebf91af8ed60a2c050cc65",
+  "event_hash": "sha256:919eeb2b961f1bd599a16ef75cbe96209aec8b26993355a8ef32db8817d83dc8",
+  "event_id": "sha256:a23dfaaa1aaf2f798d80004cfae554132b343564c37b764271dc5779425f3c41",
+  "incident_id": "sha256:48e8191edbf0789b97026080eb0380e5d27c9d0c66e4f524aa507f86ac0ca7f2",
+  "occurred_at": "2026-07-13T00:10:00Z",
+  "previous_event_id": "sha256:12f6acbf8ec61ad92e18b042d5ab46e93ed5009af851db68fb7812b2ec61cde1",
+  "schema_version": "p133.deadman_event.v1",
+  "sequence": 3,
+  "snapshot": {
+    "healthy": false,
+    "heartbeat_age_seconds": 10,
+    "reason": "runtime_stopped",
+    "runtime_ref_hash": "sha256:26281df6aa16fcd51a246716e6fa9a04d65d73e5dccfea9a574e15c8669615a3",
+    "snapshot_fingerprint": "sha256:7774a3c25c302f1fb201044a77ecd4e7daafff709c54feb2033503e3527a7274",
+    "state_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+  },
+  "transition_kind": "reminder"
+}

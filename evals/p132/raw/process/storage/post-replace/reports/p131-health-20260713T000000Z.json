@@ -38,10 +38,10 @@
     },
     "success_count": 2
   },
-  "config_hash": "sha256:625e57f6b1ef5e717df46fa899591044914ad78ea352d6cc43a2b47bf6ad96d1",
+  "config_hash": "sha256:1ada7f5f20b215b35dcea7e01e0e94b21d9001a79eb14eb0b9d7b5c84e8bc321",
   "cycle_count": 2,
   "generated_at": "2026-07-13T00:00:00Z",
-  "report_hash": "sha256:a25c25247651882569a77a8cdcb01ec15fcf9d78757a51fe899fcdba65f902c1",
+  "report_hash": "sha256:51d426c45ca8c52be8ca9ed03a5a6b766a4c085c98e2640fb1dda0ceb65d8d5a",
   "resume_count": 1,
   "runtime_id": "p132-storage-post-replace",
   "schema_version": "p131.health_report.v1",
@@ -51,18 +51,18 @@
       "cursor_bytes": 86,
       "enabled": true,
       "failure_limit": 3,
-      "file_identity": "16777231:176772954",
+      "file_identity": "16777231:177285761",
       "kind": "local_jsonl",
       "last_data_at": "2026-07-13T00:00:00Z",
       "last_error": null,
       "last_success_at": "2026-07-13T00:00:00Z",
-      "path_hash": "sha256:7b47ecc5b88cf7f344c48ef8021000fab4494c24a71a94826edd7f30adf489c8",
+      "path_hash": "sha256:41b327c7cf1d8f52ccaf2e5a9f537a69f4cc60ef43d1ae4c8c79844200711677",
       "prefix_hash": "sha256:7727d49da7fba23970aa105942bdd7c88a2f9d98ce1c06c3747142ec6bffca2c",
       "prefix_length": 86,
       "rotation_count": 0
     }
   },
-  "state_hash": "sha256:475fcfd2fde2e59bac304395e2a72e8fca7232f95895e96e29e4816b5f8856ad",
+  "state_hash": "sha256:4608a7d4fd7db00c7c101fb34613e5c1469d3f1dace1bbc1b666d4fd699571fa",
   "status": {
     "last_heartbeat_at": "2026-07-13T00:00:00Z",
     "live": true,
@@ -70,7 +70,7 @@
     "reasons": [],
     "runtime_id": "p132-storage-post-replace",
     "schema_version": "p131.monitor_status.v1",
-    "state_hash": "sha256:475fcfd2fde2e59bac304395e2a72e8fca7232f95895e96e29e4816b5f8856ad"
+    "state_hash": "sha256:4608a7d4fd7db00c7c101fb34613e5c1469d3f1dace1bbc1b666d4fd699571fa"
   },
   "totals": {
     "accepted_observation_count": 1,

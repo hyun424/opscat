@@ -181,6 +181,20 @@ def test_report_retention_revalidates_identity_immediately_before_delete(
     assert oldest.exists()
 
 
+def test_report_retention_rejects_group_or_world_writable_directory(tmp_path: Path) -> None:
+    clock = FakeClock()
+    config = load_monitor_config(_config(tmp_path, max_report_files=1, report_interval=1))
+    monitor = AlwaysOnMonitor(config, clock=clock)
+    monitor.run(max_cycles=2, sleep_enabled=True)
+    retained = sorted(config.report_dir.glob("p131-health-*.json"))
+    assert len(retained) == 1
+    config.report_dir.chmod(0o777)
+
+    with pytest.raises(P131StateError, match="report_retention_directory_permissions_unsafe"):
+        monitor.run(max_cycles=1, sleep_enabled=False)
+    assert retained[0].exists()
+
+
 def test_low_space_preserves_prior_checkpoint(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     config = load_monitor_config(_config(tmp_path))
     AlwaysOnMonitor(config, clock=FakeClock()).run(max_cycles=1, sleep_enabled=False)

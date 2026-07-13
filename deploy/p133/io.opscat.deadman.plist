@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>io.opscat.deadman</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/opscat-monitor</string>
+    <string>deadman-run</string>
+    <string>--config</string>
+    <string>/usr/local/etc/opscat/deadman.json</string>
+    <string>--forever</string>
+  </array>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>5</integer>
+  <key>ExitTimeOut</key>
+  <integer>3</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>UserName</key>
+  <string>opscat</string>
+  <key>WorkingDirectory</key>
+  <string>/var/lib/opscat/deadman</string>
+  <key>StandardOutPath</key>
+  <string>/var/log/opscat-deadman.log</string>
+  <key>StandardErrorPath</key>
+  <string>/var/log/opscat-deadman.err</string>
+</dict>
+</plist>

@@ -1,22 +1,22 @@
 {
   "commands": [
     {
-      "argv_hash": "sha256:a7256d966c5f6fa237f13d8b711b5edbb6d56fd8021c735d86257dc864eaae49",
+      "argv_hash": "sha256:8f24be67a95e1277110b0f48acbeb8c1da9fbfc0385b46c418e65a181eeb984c",
       "command_kind": "monitor_run_forever",
       "label": "sigterm-owner"
     },
     {
-      "argv_hash": "sha256:813f501219e89d1c30c5c21cf39e47201d2411970cd4cc731f8d12a5ac302e1e",
+      "argv_hash": "sha256:1ec46ea6de49500a161561fc0107e49175031fcbbfe30d4abf9f3e9fece2438e",
       "command_kind": "monitor_watchdog",
       "label": "watchdog-current"
     },
     {
-      "argv_hash": "sha256:40b5c857e2a5c49c7af7e58b6932d0ada79280d2f7f2c95513c91c1b7f71761b",
+      "argv_hash": "sha256:f8cc4881edb7131d3a049c7256012b8222daeee40e567b53145327f4498b4519",
       "command_kind": "monitor_status",
       "label": "status-current"
     },
     {
-      "argv_hash": "sha256:3b41ef0e4306204510c67ebdf3a7ea4c97d9a6f171f81f1c8523047d8485bfbf",
+      "argv_hash": "sha256:17ba322232e2e51b29f3cb90c68cc7c866b0339acb8189c013d7be3e57039cb2",
       "command_kind": "monitor_run",
       "label": "lease-competitor"
     },
@@ -26,12 +26,12 @@
       "signal": "sigterm"
     },
     {
-      "argv_hash": "sha256:813f501219e89d1c30c5c21cf39e47201d2411970cd4cc731f8d12a5ac302e1e",
+      "argv_hash": "sha256:1ec46ea6de49500a161561fc0107e49175031fcbbfe30d4abf9f3e9fece2438e",
       "command_kind": "monitor_watchdog",
       "label": "watchdog-stopped"
     },
     {
-      "argv_hash": "sha256:a7256d966c5f6fa237f13d8b711b5edbb6d56fd8021c735d86257dc864eaae49",
+      "argv_hash": "sha256:8f24be67a95e1277110b0f48acbeb8c1da9fbfc0385b46c418e65a181eeb984c",
       "command_kind": "monitor_run_forever",
       "label": "crash-owner"
     },
@@ -41,12 +41,12 @@
       "signal": "sigkill"
     },
     {
-      "argv_hash": "sha256:813f501219e89d1c30c5c21cf39e47201d2411970cd4cc731f8d12a5ac302e1e",
+      "argv_hash": "sha256:1ec46ea6de49500a161561fc0107e49175031fcbbfe30d4abf9f3e9fece2438e",
       "command_kind": "monitor_watchdog",
       "label": "watchdog-stale"
     },
     {
-      "argv_hash": "sha256:a7256d966c5f6fa237f13d8b711b5edbb6d56fd8021c735d86257dc864eaae49",
+      "argv_hash": "sha256:8f24be67a95e1277110b0f48acbeb8c1da9fbfc0385b46c418e65a181eeb984c",
       "command_kind": "monitor_run_forever",
       "label": "sigint-owner"
     },
@@ -56,12 +56,12 @@
       "signal": "sigint"
     },
     {
-      "argv_hash": "sha256:bb5a2de9377649e69bc86f027bf43be8ca21de35ea9892268e37e00cd8e5bb11",
+      "argv_hash": "sha256:42539410b7a0f4657014cd7d3d2d975a64418188c1a1fa775f7cf3eb0993286c",
       "command_kind": "monitor_watchdog",
       "label": "watchdog-missing"
     },
     {
-      "argv_hash": "sha256:ccca604538b6c95e0850c72841599a4c449a78c580cfd85e5d922b684228e0d2",
+      "argv_hash": "sha256:6db3f56c9d96dad1b43413feb145f7db2c1c637a1be5cb05740764a102e0e9db",
       "command_kind": "monitor_watchdog",
       "label": "watchdog-tampered"
     }
@@ -84,5 +84,5 @@
     "watchdog_call_count": 5
   },
   "schema_version": "p132.supervisor_ledger.v1",
-  "supervisor_ledger_hash": "sha256:645345db3baebb6f2b128f428990e0d52b6096d0f9666f9fff575044aa22b73f"
+  "supervisor_ledger_hash": "sha256:2af62ac9514ec8926189ef05fd281239fe4dfed834d218017563142158c8c529"
 }

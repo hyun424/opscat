@@ -18,7 +18,9 @@ production mutation, multi-host failover, or operator-replacement authority.
 - Watchdog and status fail immediately with `runtime_stopped`; forced process
   death remains distinguishable as `heartbeat_stale`.
 - Health reports are bounded by count and bytes. Retention accepts only exact,
-  owned, regular, non-symlink, schema-valid, hash-valid reports.
+  owned, regular, non-symlink, schema-valid, hash-valid reports and refuses
+  deletion unless the report directory is service-owned and not group/world
+  writable.
 - State, report, and receipt writes check a configured free-space floor.
   Pre-replace failures preserve the canonical file; post-replace directory-sync
   failures raise explicit durability uncertainty.

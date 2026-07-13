@@ -1,0 +1,36 @@
+{
+  "services": {
+    "deadman": {
+      "image": "opscat-monitor@sha256:${OPSCAT_MONITOR_IMAGE_DIGEST:?set a 64-hex image manifest digest}",
+      "user": "65532:65532",
+      "command": [
+        "opscat-monitor",
+        "deadman-run",
+        "--config",
+        "/etc/opscat/deadman.json",
+        "--forever"
+      ],
+      "restart": "unless-stopped",
+      "deploy": {
+        "restart_policy": {
+          "condition": "on-failure",
+          "delay": "5s",
+          "max_attempts": 6,
+          "window": "60s"
+        }
+      },
+      "stop_grace_period": "3s",
+      "read_only": true,
+      "privileged": false,
+      "network_mode": "none",
+      "cap_drop": ["ALL"],
+      "security_opt": ["no-new-privileges:true"],
+      "tmpfs": ["/tmp:size=16m,mode=1777"],
+      "volumes": [
+        "./config/p133-deadman.json:/etc/opscat/deadman.json:ro",
+        "./data/p131:/var/lib/opscat/monitor:ro",
+        "./data/p133:/var/lib/opscat/deadman:rw"
+      ]
+    }
+  }
+}

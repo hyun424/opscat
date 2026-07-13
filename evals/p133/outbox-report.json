@@ -1,0 +1,341 @@
+{
+  "artifact_paths": {
+    "authority_ledger": "authority-ledger.json",
+    "outbox_report": "outbox-report.json",
+    "process_matrix": "process-matrix.json",
+    "release_evidence": "release-evidence.json",
+    "supervisor_validation": "supervisor-validation.json"
+  },
+  "cases": {
+    "ack_does_not_resolve": {
+      "evidence": {
+        "ack_event_id": "sha256:f3e0195c7695edd68326da9872656925159c380924957181236488fe2ad3f533",
+        "active_incident_after_ack": true
+      },
+      "passed": true
+    },
+    "acknowledged_retention": {
+      "evidence": {
+        "removed_acks": 1,
+        "removed_events": 1
+      },
+      "passed": true
+    },
+    "budget_exhaustion_preservation": {
+      "evidence": {
+        "prior_cursor_preserved": true,
+        "prior_events_preserved": true
+      },
+      "passed": true
+    },
+    "event_cursor_crash_retry": {
+      "evidence": {
+        "event_file_count": 1,
+        "event_id": "sha256:a106d3a5d314c0207e612e417758559bad94789e6349c48a4fa58e5431e8db6f",
+        "next_sequence": 2,
+        "occurred_at": "2026-07-13T00:00:00Z",
+        "replayed_event_id": "sha256:a106d3a5d314c0207e612e417758559bad94789e6349c48a4fa58e5431e8db6f",
+        "replayed_occurred_at": "2026-07-13T00:00:00Z"
+      },
+      "passed": true
+    },
+    "hardlink_retention_block": {
+      "evidence": {
+        "blocked": true,
+        "case": "hardlink_retention_block",
+        "failure": "event_has_multiple_links"
+      },
+      "passed": true
+    },
+    "healthy_no_event": {
+      "evidence": {
+        "deduplicated_checks": 1,
+        "emitted_events": 0
+      },
+      "passed": true
+    },
+    "low_space_preservation": {
+      "evidence": {
+        "prior_cursor_preserved": true,
+        "prior_events_preserved": true
+      },
+      "passed": true
+    },
+    "missing_open": {
+      "evidence": {
+        "event_id": "sha256:d689c5ebf3a3ed6f6f1fcb7a85f81ab9d0ca201ed7f9ddf1ddeaa39c54bf48d9",
+        "transition_kind": "opened"
+      },
+      "passed": true
+    },
+    "post_replace_reload_rewrite": {
+      "evidence": {
+        "durability_uncertainty_exposed": true,
+        "rewritten_hash": "sha256:d6650e9ee920dc06bd1a97b326eeadfc1d23b3101db58db175efe987fe96f1b3",
+        "uncertain_hash": "sha256:d6650e9ee920dc06bd1a97b326eeadfc1d23b3101db58db175efe987fe96f1b3"
+      },
+      "passed": true
+    },
+    "reason_update": {
+      "evidence": {
+        "event_id": "sha256:12f6acbf8ec61ad92e18b042d5ab46e93ed5009af851db68fb7812b2ec61cde1",
+        "previous_event_id": "sha256:577fba4b799fa71a2d533b0440cf432e9872c917696c81b14dfb1d5222f444db",
+        "transition_kind": "updated"
+      },
+      "passed": true
+    },
+    "recovery": {
+      "evidence": {
+        "active_incident_closed": true,
+        "event_id": "sha256:0fd83a6b0b8a591210015e26c5334ca0d2fd1409461a7227511c2b384421d589",
+        "transition_kind": "recovered"
+      },
+      "passed": true
+    },
+    "reminder_boundary": {
+      "evidence": {
+        "event_id": "sha256:a23dfaaa1aaf2f798d80004cfae554132b343564c37b764271dc5779425f3c41",
+        "reminder_interval_seconds": 300,
+        "transition_kind": "reminder"
+      },
+      "passed": true
+    },
+    "retention_partial_delete_recovery": {
+      "evidence": {
+        "crash_injected": true,
+        "orphan_ack_observed": true,
+        "orphan_acks_removed": 1
+      },
+      "passed": true
+    },
+    "stale_open": {
+      "evidence": {
+        "event_id": "sha256:577fba4b799fa71a2d533b0440cf432e9872c917696c81b14dfb1d5222f444db",
+        "transition_kind": "opened"
+      },
+      "passed": true
+    },
+    "stopped_open": {
+      "evidence": {
+        "event_id": "sha256:c24ea921cb3ceaeb2a1d79fd0cabac6088dd3fe1acd238bfc2a728753f3b9a44",
+        "transition_kind": "opened"
+      },
+      "passed": true
+    },
+    "symlink_retention_block": {
+      "evidence": {
+        "blocked": true,
+        "case": "symlink_retention_block",
+        "failure": "event_not_regular"
+      },
+      "passed": true
+    },
+    "tampered_open": {
+      "evidence": {
+        "event_id": "sha256:102e3b2537ebb7b793e1a7d4aa28ade16a7f4f7578560d8e14fdbc08c79ac404",
+        "transition_kind": "opened"
+      },
+      "passed": true
+    },
+    "tampered_retention_block": {
+      "evidence": {
+        "blocked": true,
+        "case": "tampered_retention_block",
+        "failure": "event_hash_invalid"
+      },
+      "passed": true
+    },
+    "unchanged_dedup": {
+      "evidence": {
+        "deduplicated_checks": 1,
+        "emitted_events": 0
+      },
+      "passed": true
+    },
+    "unsafe_retention_directory_block": {
+      "evidence": {
+        "blocked": true,
+        "failure": "retention_parent_permissions_unsafe",
+        "prior_cursor_preserved": true,
+        "prior_event_preserved": true
+      },
+      "passed": true
+    }
+  },
+  "config_hashes": {
+    "healthy": "sha256:f90d791296bad4f80ec685b4ea5cfb51c410bf6321c17a3788dd57291d75320a",
+    "main": "sha256:15394a713b7e64fca831690a71c45782d254718966ebf91af8ed60a2c050cc65",
+    "missing_open": "sha256:27c04e0fc33a656c8473599156781b1fd5649fa112a139f9204dfb6bff6b152f",
+    "stopped_open": "sha256:4f9676cb7386c73e34d127dc2320fe5224c78eca61282258c8b18cbe7601161d",
+    "tampered_open": "sha256:124b3f361fa3bbb65aa37c9994ce657f9511b5871706c7eb5f1cda1511e1f797"
+  },
+  "outbox_report_hash": "sha256:649fb77b2bdb4e8e42ba097a174e52de83a8aef0ab89cbda795b12bde5e56419",
+  "passed": true,
+  "profile_hash": "sha256:25e13c52888bad18b082540059e04e2bd8b39d1d334680e189bb1cc8d56fcfac",
+  "raw_evidence": {
+    "files": {
+      "raw/matrix/ack/acks/sha256:f3e0195c7695edd68326da9872656925159c380924957181236488fe2ad3f533.json": "sha256:b923c1b48e8c12f7994d8e8128f3480de58b1c39bd3dd35cd10389dfc6a125f4",
+      "raw/matrix/ack/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/ack/cursor/deadman-cursor.json": "sha256:9b71ecf6fa57b8e43d60d72ac13c2f264c4c1c68e1dab5086b3c439644f98aa0",
+      "raw/matrix/ack/deadman-config.json": "sha256:fee4e114c1e47f9185b93fb1042b71f3d1574f74fba092055fc8dd6eeaa1e8d5",
+      "raw/matrix/ack/outbox/sha256:f3e0195c7695edd68326da9872656925159c380924957181236488fe2ad3f533.json": "sha256:8fbba6c99ea7a3808d37f790e5ccd0adb1501174c9206bf1a7d9e784e390d757",
+      "raw/matrix/budget_exhaustion_preservation/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/budget_exhaustion_preservation/cursor/deadman-cursor.json": "sha256:8d0c294166c27b4883657016934358a03f06c1c43b405db60f8b9c301b0c8259",
+      "raw/matrix/budget_exhaustion_preservation/deadman-config.json": "sha256:cdfc6c8016c9c3550438e4e7c830fa1ef7163dc969eca6222ef34e0b89d82c2a",
+      "raw/matrix/budget_exhaustion_preservation/outbox/sha256:4ca26f2b9fc4bc2e98c0e8f4fcf95e39237427517d2a71478a693e6822700456.json": "sha256:24298e1581c43093d4465784ed9652cd5a64045dbb2e7c0f1e2905b0e67146db",
+      "raw/matrix/crash/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/crash/cursor/deadman-cursor.json": "sha256:6d9cef7e6f8afd051667b524d2e734c8cd03e6bf2dcb9926c04b87830edb2802",
+      "raw/matrix/crash/deadman-config.json": "sha256:0af915f23d72405048ec27e32c6272c650eafa003a34c093756e6a9fb8fbbbb1",
+      "raw/matrix/crash/outbox/sha256:a106d3a5d314c0207e612e417758559bad94789e6349c48a4fa58e5431e8db6f.json": "sha256:36c71efd8954c88c3cc5972b814549237b79c7b7249013ac10c2ef659429188f",
+      "raw/matrix/hardlink_retention_block/acks/sha256:1a02ee6d24f78b75ffa0b5007bc1718cc034eb2528060a7091d1f31606fe3f9d.json": "sha256:79fba1d5380874f1882a8a9166c01fa651f7ad61c8ffc77520be8abbca018228",
+      "raw/matrix/hardlink_retention_block/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/hardlink_retention_block/cursor/deadman-cursor.json": "sha256:9726e8df4b065a0a87ff069f2e9214210bbb111b46691035ee2570f0f8f39999",
+      "raw/matrix/hardlink_retention_block/deadman-config.json": "sha256:384f4ce9fe8808e11c6eb4dc1b49417a9c2b2226d0b706ea58d924ae9aafa3e3",
+      "raw/matrix/hardlink_retention_block/outbox/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff.json": "sha256:b15ec43b072cfbf6c6a3dafad3fe2ebe065941bcc04784ce2c0a5d6d612d9321",
+      "raw/matrix/hardlink_retention_block/outbox/sha256:1a02ee6d24f78b75ffa0b5007bc1718cc034eb2528060a7091d1f31606fe3f9d.json": "sha256:b15ec43b072cfbf6c6a3dafad3fe2ebe065941bcc04784ce2c0a5d6d612d9321",
+      "raw/matrix/healthy/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/healthy/cursor/deadman-cursor.json": "sha256:a4249ffc28fba427eaf9fbdbef292a8a84b9c202893ceb753089bbdf9d3548a7",
+      "raw/matrix/healthy/deadman-config.json": "sha256:213df69b546e51b51c98950835ddd5e6accf1327364f9f1ee5d78706d54def14",
+      "raw/matrix/low_space_preservation/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/low_space_preservation/cursor/deadman-cursor.json": "sha256:9c6b124f561d22b0ed72d5a066c205c0efa999ca70fb956655a4b05b3d8bbf9c",
+      "raw/matrix/low_space_preservation/deadman-config.json": "sha256:8363d997cc00a09237e2f6eac3be91be6bbddbbf78945459d1ab902cd9c50d83",
+      "raw/matrix/low_space_preservation/outbox/sha256:49c5118d245577e111d373c67a08d2c5f0676b1d0ebd5218d29d9501a5d38fc3.json": "sha256:25a82dfb51f51ce0598d5d460e1d1dcce849968f6b8cc0a2d825f154834a104c",
+      "raw/matrix/main/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/main/cursor/deadman-cursor.json": "sha256:cf99df572531dc27f1916ee8ab13ee155b820f6203e9dcba64b3fc20d67ec4c8",
+      "raw/matrix/main/deadman-config.json": "sha256:8a488a407cb326534a655d0b3cbf8dae463b3b2a0dc3ef7b978b207b3754e3c8",
+      "raw/matrix/main/outbox/sha256:0fd83a6b0b8a591210015e26c5334ca0d2fd1409461a7227511c2b384421d589.json": "sha256:452bd7f2a1d4518490751f9f402d5e510ad1015ea54035349f676000ed798c11",
+      "raw/matrix/main/outbox/sha256:12f6acbf8ec61ad92e18b042d5ab46e93ed5009af851db68fb7812b2ec61cde1.json": "sha256:fd6ddb6439f9f0992ebe5edbadf1b9a8ae366930d5bb5557478e4219bdc4ac53",
+      "raw/matrix/main/outbox/sha256:577fba4b799fa71a2d533b0440cf432e9872c917696c81b14dfb1d5222f444db.json": "sha256:1e4474bb6da73b257a079d18e6eadccbf644316c44c9767b046c838455615f54",
+      "raw/matrix/main/outbox/sha256:a23dfaaa1aaf2f798d80004cfae554132b343564c37b764271dc5779425f3c41.json": "sha256:b19ff651fa9bddaa5cafeece8b96e9d7e77bd37c75806d0fe333a2bf1f69390f",
+      "raw/matrix/missing_open/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/missing_open/cursor/deadman-cursor.json": "sha256:7768ffad154210c294f430f5b636d407973596f9de64c78a97b4693977169014",
+      "raw/matrix/missing_open/deadman-config.json": "sha256:0a02fd2d994557f0aa9b236b75edb2f5ee558d3cc2ee93b006abe35f69b33aec",
+      "raw/matrix/missing_open/outbox/sha256:d689c5ebf3a3ed6f6f1fcb7a85f81ab9d0ca201ed7f9ddf1ddeaa39c54bf48d9.json": "sha256:b1c2f1a9950cbb06f0ff2eee94e1dfad39c0be221e3e15d1b9811fc76df9d98d",
+      "raw/matrix/partial/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/partial/cursor/deadman-cursor.json": "sha256:eeb4439ea8df13b9dbec8f36f666d687306b0c25fa35cc4b93cd202d372062b3",
+      "raw/matrix/partial/deadman-config.json": "sha256:a61826ebbbd92acf9113a8ede7b71b9ccb334dd1669365e353ac4c92e32165b1",
+      "raw/matrix/post_replace_reload_rewrite/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/post_replace_reload_rewrite/cursor/deadman-cursor.json": "sha256:12041cc7057aebf4d3227df3c0c54a4f6698ad19af6e17c6dcb28727c173faad",
+      "raw/matrix/post_replace_reload_rewrite/deadman-config.json": "sha256:3653d83d90e2d377028ac222351048113268686553cd7272f1ccf47115155cd7",
+      "raw/matrix/post_replace_reload_rewrite/outbox/sha256:f4d960c874fdabf945af32df7cb5ebd77fa5e68efed3e22e1bc844b464d27ef5.json": "sha256:c41106d07d442299520ecf77ca18c8b3a857e28aeca6e4db04d1572e297704ac",
+      "raw/matrix/retention/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/retention/cursor/deadman-cursor.json": "sha256:daa8b92239f64ce9ebd1ab62e4e1794e9c47cc9e58099efd48c48ed10274b159",
+      "raw/matrix/retention/deadman-config.json": "sha256:f7a521972cfa6452d373f1624f02ded00d00c803fb01e037bc166468a1500698",
+      "raw/matrix/retention/outbox/sha256:08693004b082a677b75d1837ecd605b2523106ae4e15d9b661a9b221f47f19e8.json": "sha256:1401c91180698d70d62e18ee81ea0be24ec40b772cfd3ff755f5da48d35665e1",
+      "raw/matrix/stopped_open/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/stopped_open/cursor/deadman-cursor.json": "sha256:14bd8df4e819ac0c023e100b4c0bf5bbd7cbee28d691e199150167fa41bcabb6",
+      "raw/matrix/stopped_open/deadman-config.json": "sha256:6abf52773ca339969fc7b86a2112b40a10893dfd3f711bae10df1949688ccd43",
+      "raw/matrix/stopped_open/outbox/sha256:c24ea921cb3ceaeb2a1d79fd0cabac6088dd3fe1acd238bfc2a728753f3b9a44.json": "sha256:bc35c7dd33cfe3f1ce6215c88ed76c6002e258280a9c2b5d805d79be60b1f2e4",
+      "raw/matrix/symlink_retention_block/acks/sha256:1b52b413c771a8ec641913d6e92efae4e2cd7cb9853be07525a809c65f3f87cb.json": "sha256:6e4bc7117638e20ec99bb054a3cef83df43a3c9bb7af3032751b945c12ebf22b",
+      "raw/matrix/symlink_retention_block/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/symlink_retention_block/cursor/deadman-cursor.json": "sha256:8ae1354c7082aaf4afcf5fc1db18d62560c9fabb145b362c9982ab0e152f3cff",
+      "raw/matrix/symlink_retention_block/deadman-config.json": "sha256:ed062c9fdbe45cc7be48831dbc0641e9e6a4b95af8a1b24e5a21b64976783423",
+      "raw/matrix/symlink_retention_block/outbox/target.json": "sha256:61f805601be3a1696d81653e76e51b4fc9f1a9b2f6377171a9c6057a778ec3dc",
+      "raw/matrix/tampered_open/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/tampered_open/cursor/deadman-cursor.json": "sha256:2640e8aab25e63850010ef1e1d8b61c8bafa09fc26fb67245b80957f8a304140",
+      "raw/matrix/tampered_open/deadman-config.json": "sha256:8bc66fc7f2dbb44b60516aa2e450f5f5771ef466773e591f09a08498f668a4e4",
+      "raw/matrix/tampered_open/outbox/sha256:102e3b2537ebb7b793e1a7d4aa28ade16a7f4f7578560d8e14fdbc08c79ac404.json": "sha256:e78315ebd7a77df79bf19ddb3b90171f23658602e36d9a9ff8d0133dc137d059",
+      "raw/matrix/tampered_retention_block/acks/sha256:dd334d1dace60a81e061744c9d0010a47254dfbaad9bb72e42ed80cb1e7076e4.json": "sha256:f5fd8a5f48ec9d1eec2d2d3a477361b74c73d25287a40f356069779c662faa4c",
+      "raw/matrix/tampered_retention_block/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/tampered_retention_block/cursor/deadman-cursor.json": "sha256:62758891ea22d83523d54549dd847e3ff0513f4d67196043b084fa72ef9304ed",
+      "raw/matrix/tampered_retention_block/deadman-config.json": "sha256:c52443b02db683e8d97b5570b7af2ac11b27fe09969c9fbc37cd92f271b69994",
+      "raw/matrix/tampered_retention_block/outbox/sha256:dd334d1dace60a81e061744c9d0010a47254dfbaad9bb72e42ed80cb1e7076e4.json": "sha256:95afa779cc0f453a078fe2d1168c0464a1f41a0bbb58fea3ec3add19b5ddb92f",
+      "raw/matrix/unsafe_retention_directory_block/acks/sha256:eace0ac61e78383e431453a916d37c0a17745b1ed25478749c41c92351d2a886.json": "sha256:68b0c15213cac3631f50347c63c0b10eb85f134632fb6d51852adeefc9b0df00",
+      "raw/matrix/unsafe_retention_directory_block/cursor/.deadman-cursor.json.lock": "sha256:41b468a1831e7dc7ff1390ea84cfe7966e7f26ca02b1b5d93584002c4c2fb5e4",
+      "raw/matrix/unsafe_retention_directory_block/cursor/deadman-cursor.json": "sha256:38950929e84145c76a99ec63e7fed194649dff7d35ab8aad907401df85c61b46",
+      "raw/matrix/unsafe_retention_directory_block/deadman-config.json": "sha256:104a873d149991297a1ffdf93b50e2b66cbc09498fde4ae0678f5d05ebdd6f4b",
+      "raw/matrix/unsafe_retention_directory_block/outbox/sha256:eace0ac61e78383e431453a916d37c0a17745b1ed25478749c41c92351d2a886.json": "sha256:10766aa4606bf586cda309f5a7c6a0efd93d1dea41213bf00ff44f88d7239dd3",
+      "raw/subprocess/runtime/acks/sha256:85089a558da9682917710c55460f87b7186583c7771d12a0fa2b9fbc997d9610.json": "sha256:3066c672fb21c21dd853c64b268b9901eaa8d57691b5a5c23dda6351b11ae1aa",
+      "raw/subprocess/runtime/cursor/.deadman-cursor.json.lock": "sha256:1f577627a8814fcc0c15597d34e02448aa723ad84b0dfd001dc81621863114b9",
+      "raw/subprocess/runtime/cursor/deadman-cursor.json": "sha256:05adae265aecfcb964f4dfd9146678a5dc3edf71d5638b132b4ba04e025e25da",
+      "raw/subprocess/runtime/deadman-config.json": "sha256:f3eeda8444cd61ad26de22a448e774f91b3bcc672dd83ae2efb89991f57ec7eb",
+      "raw/subprocess/runtime/monitor-config.json": "sha256:a4f81f74044dc59b04f0e1a3b5e4afab4025564fdd9ce7a822ec75a8c402c0ba",
+      "raw/subprocess/runtime/monitor-reports/p131-health-20260713T170000Z.json": "sha256:b6a6adcc894fb7337058a1bfb9c26407461f9c21fb3f5ad40025ea30b03580de",
+      "raw/subprocess/runtime/monitor-state.json": "sha256:a30023a537b3799c09f7100922442870fa7aaf6c7f613a0fe671d04489a14ccd",
+      "raw/subprocess/runtime/monitor.lock": "sha256:ddd334fbf1a29ade0493c76cdcca6d80af13dc48853e6e2ea3f7e1c64a4eacf9",
+      "raw/subprocess/runtime/outbox/sha256:384c6704a9f0599c5795f8cd95224a30f488881a7389f6d10bc95744729e68e5.json": "sha256:74b73a13a76a37f8093e1067debb6628101f139f3d6c290f19af317eadca5a30",
+      "raw/subprocess/runtime/outbox/sha256:85089a558da9682917710c55460f87b7186583c7771d12a0fa2b9fbc997d9610.json": "sha256:3ffcbc8d5dfec071d27cf0a2a5ff1ce008972bb8b57a6abc55b60a811c777d9b",
+      "raw/subprocess/runtime/outbox/sha256:bb0ca9baf3232be351ec37582dd9c51a820d21f5ef1ecc5fc3afd6d9670f9f4c.json": "sha256:e1a31ddb0248163abd177141d44cb5bf41d993b5f4e2a5533f96d36f292b552d",
+      "raw/subprocess/runtime/telemetry.jsonl": "sha256:caeb3956055ad0fabf4a747acc240b6872efa4310e69e883a6e946b1ff80a288"
+    },
+    "root": "raw",
+    "root_hash": "sha256:78ef86bc3958b4d6c924d8111df6dbe20f7f0ed144c1d47ac51997b28275fb53",
+    "total_bytes": 94560
+  },
+  "required_scenarios": [
+    "healthy_no_event",
+    "stale_open",
+    "unchanged_dedup",
+    "reason_update",
+    "reminder_boundary",
+    "recovery",
+    "stopped_open",
+    "missing_open",
+    "tampered_open",
+    "event_cursor_crash_retry",
+    "ack_does_not_resolve",
+    "acknowledged_retention",
+    "retention_partial_delete_recovery",
+    "low_space_preservation",
+    "budget_exhaustion_preservation",
+    "tampered_retention_block",
+    "symlink_retention_block",
+    "hardlink_retention_block",
+    "unsafe_retention_directory_block",
+    "post_replace_reload_rewrite"
+  ],
+  "runtime_authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero": true
+  },
+  "schema_version": "p133.outbox_report.v1",
+  "source_hashes": {
+    "app/monitor_cli.py": "sha256:d689a0981b458fb421160622385d8d26ef850db4c96159f28062b28260ec5562",
+    "app/services/p131_always_on_monitor.py": "sha256:b18cc959c3632004c6d895dd706f33421aa2c682a0176def9482c3f612a5610c",
+    "app/services/p133_deadman_outbox.py": "sha256:9272a71c853c919d44300aab5d08fa78faac04bda06e2661116d81cef3f0df6a",
+    "app/services/p133_release_evidence.py": "sha256:69af546494bfc146cfbe273cf0fd378a83449152804780fb0f4c14e89e0e97c8",
+    "evals/p133/input/outbox-profile.json": "sha256:25e13c52888bad18b082540059e04e2bd8b39d1d334680e189bb1cc8d56fcfac",
+    "scripts/run_p133_deadman_outbox.py": "sha256:7223fe7324480efd06e334462b332ddb608ed23d54099323b87df44379b6b0eb"
+  },
+  "totals": {
+    "denominator_scope": "principal_transition_assertions",
+    "expected_acknowledgements": 2,
+    "expected_deduplicated_checks": 2,
+    "expected_emitted_events": 10,
+    "expected_pruned_events": 1,
+    "expected_recoveries": 1,
+    "expected_retained_events": 2,
+    "expected_scenarios": 20,
+    "failed_scenarios": 0,
+    "observed_acknowledgements": 2,
+    "observed_deduplicated_checks": 2,
+    "observed_emitted_events": 10,
+    "observed_pruned_events": 1,
+    "observed_recoveries": 1,
+    "observed_retained_events": 2,
+    "passed_scenarios": 20
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "example_only_manifests": [
+    "deploy/p133/io.opscat.deadman.plist"
+  ],
+  "manifest_root": "deploy/p133",
+  "manifests": {
+    "deploy/p133/compose.deadman.yaml": {
+      "checks": {
+        "bounded_stop": true,
+        "closed_fields": true,
+        "container_hardened": true,
+        "exact_argv": true,
+        "immutable_digest_required": true,
+        "monitor_state_read_only": true,
+        "network_disabled": true,
+        "no_evaluator_flag": true,
+        "non_root": true,
+        "outbox_only_writable": true,
+        "restart_throttled": true
+      },
+      "hash": "sha256:35c6699a995877b7188768ef2a00ff981079159419e46fe26efec5783b22b228",
+      "parsed_argv": [
+        "opscat-monitor",
+        "deadman-run",
+        "--config",
+        "/etc/opscat/deadman.json",
+        "--forever"
+      ],
+      "passed": true,
+      "status": "qualified"
+    },
+    "deploy/p133/io.opscat.deadman.plist": {
+      "checks": {
+        "bounded_stop": true,
+        "closed_fields": true,
+        "exact_argv": true,
+        "no_evaluator_flag": true,
+        "non_root": true,
+        "restart_throttled": true
+      },
+      "hash": "sha256:afcc49ceadd4045900209e73880f275ac670cc7c23e00f63c37b2bd2e4026749",
+      "limitation": "launchd plist alone cannot enforce the qualified no-network and read-only-monitor-state boundary; use an independently reviewed macOS sandbox/MDM policy before deployment",
+      "parsed_argv": [
+        "/usr/local/bin/opscat-monitor",
+        "deadman-run",
+        "--config",
+        "/usr/local/etc/opscat/deadman.json",
+        "--forever"
+      ],
+      "passed": false,
+      "status": "example_only_not_qualified",
+      "structural_checks_passed": true
+    },
+    "deploy/p133/opscat-deadman.service": {
+      "checks": {
+        "bounded_stop": true,
+        "closed_fields": true,
+        "exact_argv": true,
+        "filesystem_hardened": true,
+        "monitor_state_read_only": true,
+        "network_disabled": true,
+        "no_evaluator_flag": true,
+        "no_privilege_gain": true,
+        "non_root": true,
+        "outbox_only_writable": true,
+        "restart_throttled": true
+      },
+      "hash": "sha256:894c675ae0a15e91ec45b39e848e94174ab5d3827e8f9e5f8c574f89db103381",
+      "parsed_argv": [
+        "/usr/local/bin/opscat-monitor",
+        "deadman-run",
+        "--config",
+        "/etc/opscat/deadman.json",
+        "--forever"
+      ],
+      "passed": true,
+      "status": "qualified"
+    }
+  },
+  "passed": true,
+  "qualified_manifests": [
+    "deploy/p133/opscat-deadman.service",
+    "deploy/p133/compose.deadman.yaml"
+  ],
+  "schema_version": "p133.supervisor_validation.v1",
+  "source_hashes": {
+    "deploy/p133/compose.deadman.yaml": "sha256:35c6699a995877b7188768ef2a00ff981079159419e46fe26efec5783b22b228",
+    "deploy/p133/io.opscat.deadman.plist": "sha256:afcc49ceadd4045900209e73880f275ac670cc7c23e00f63c37b2bd2e4026749",
+    "deploy/p133/opscat-deadman.service": "sha256:894c675ae0a15e91ec45b39e848e94174ab5d3827e8f9e5f8c574f89db103381"
+  },
+  "supervisor_validation_hash": "sha256:8a8b21ea2276ccb1397e3b42455f2f35c71d414e34f85c9c440871310c534319"
+}

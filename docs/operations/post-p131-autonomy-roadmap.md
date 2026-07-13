@@ -13,18 +13,21 @@ but no phase silently converts observation permission into action authority.
 
 ## Dependency order
 
-### P132 - Supervised Runtime Endurance Qualification
+### P132 - Supervised Runtime Endurance Qualification (complete)
 
 Harden and qualify the real P131 process: graceful signals, bounded report
 retention, disk-pressure failure, external-process restart, lease conflict,
 restart backoff, and deployment templates. This is local single-host evidence,
 not a 24/7 production SLO.
 
-### P133 - Local Dead-Man Notification Outbox
+### P133 - Local Dead-Man Notification Outbox (complete)
 
-Turn unhealthy watchdog and readiness results into redacted, durable local
-notification drafts with evidence references. P133 sends no email, webhook,
-Slack message, page, or network request.
+Turn unhealthy independent watchdog results into redacted, durable local
+notification drafts with evidence references. Source readiness remains outside
+P133 and belongs to the later evidence-investigation phase. P133 sends no email,
+webhook, Slack message, page, or network request. The qualified P133 supervisor
+set is systemd plus Compose; launchd remains a structural example because the
+plist alone does not enforce equivalent filesystem/network isolation.
 
 ### P134 - Observation Authority Contract
 

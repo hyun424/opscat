@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from app.services.p131_always_on_monitor import AlwaysOnMonitor, evaluate_watchdog, load_monitor_config, monitor_status_snapshot
+from app.services.p133_deadman_outbox import DeadmanOutbox, acknowledge_event, list_outbox, load_deadman_config
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -34,6 +35,22 @@ def build_parser() -> argparse.ArgumentParser:
     status.add_argument("--state", type=Path, required=True)
     status.add_argument("--heartbeat-timeout-seconds", type=int, default=180)
     status.add_argument("--data-stale-after-seconds", type=int, default=300)
+
+    deadman_run = subparsers.add_parser("deadman-run", help="Run the local dead-man outbox")
+    deadman_run.add_argument("--config", type=Path, required=True)
+    deadman_run.add_argument("--max-cycles", type=int)
+    deadman_run.add_argument("--forever", action="store_true")
+    deadman_run.add_argument("--no-sleep", action="store_true")
+
+    deadman_check = subparsers.add_parser("deadman-check", help="Run one local dead-man check")
+    deadman_check.add_argument("--config", type=Path, required=True)
+
+    outbox_list = subparsers.add_parser("outbox-list", help="List redacted local dead-man events")
+    outbox_list.add_argument("--config", type=Path, required=True)
+
+    outbox_ack = subparsers.add_parser("outbox-ack", help="Acknowledge one local dead-man event")
+    outbox_ack.add_argument("--config", type=Path, required=True)
+    outbox_ack.add_argument("--event-id", required=True)
     return parser
 
 
@@ -49,6 +66,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if result.get("healthy") is True else 1
     if args.command == "status":
         return 0 if result.get("live") is True else 1
+    if args.command == "deadman-check":
+        return 0 if result.get("healthy") is True else 1
     return 0
 
 
@@ -60,17 +79,56 @@ def _dispatch(args: argparse.Namespace) -> dict[str, Any]:
             raise ValueError("choose --forever or --max-cycles")
         if args.no_sleep and args.max_cycles is None:
             raise ValueError("--no-sleep requires --max-cycles")
-        config = load_monitor_config(args.config)
+        monitor_config = load_monitor_config(args.config)
         if args.forever:
             controller = _SignalStopController()
             with controller.installed():
-                return AlwaysOnMonitor(config).run(
+                return AlwaysOnMonitor(monitor_config).run(
                     max_cycles=None,
                     sleep_enabled=True,
                     stop_reason=controller.reason,
                     wait_for_stop=controller.wait,
                 )
-        return AlwaysOnMonitor(config).run(max_cycles=args.max_cycles, sleep_enabled=not args.no_sleep)
+        return AlwaysOnMonitor(monitor_config).run(max_cycles=args.max_cycles, sleep_enabled=not args.no_sleep)
+    if args.command == "deadman-run":
+        if args.forever and args.max_cycles is not None:
+            raise ValueError("--forever and --max-cycles are mutually exclusive")
+        if not args.forever and args.max_cycles is None:
+            raise ValueError("choose --forever or --max-cycles")
+        if args.no_sleep and args.max_cycles is None:
+            raise ValueError("--no-sleep requires --max-cycles")
+        deadman_config = load_deadman_config(args.config)
+        if args.forever:
+            controller = _SignalStopController()
+            with controller.installed():
+                return DeadmanOutbox(deadman_config).run(
+                    forever=True,
+                    stop_reason=controller.reason,
+                    wait_for_stop=controller.wait,
+                )
+        runtime = DeadmanOutbox(deadman_config, sleep=(lambda _seconds: None) if args.no_sleep else None)
+        return runtime.run(max_cycles=args.max_cycles)
+    if args.command == "deadman-check":
+        return DeadmanOutbox(load_deadman_config(args.config)).check_once()
+    if args.command == "outbox-list":
+        events = list_outbox(load_deadman_config(args.config))
+        summaries = [
+            {
+                "event_id": event["event_id"],
+                "incident_id": event["incident_id"],
+                "sequence": event["sequence"],
+                "transition_kind": event["transition_kind"],
+                "occurred_at": event["occurred_at"],
+                "reason": event["snapshot"]["reason"],
+                "healthy": event["snapshot"]["healthy"],
+                "authority_counters": event["authority_counters"],
+            }
+            for event in events
+        ]
+        return {"schema_version": "p133.outbox_list.v1", "count": len(summaries), "events": summaries}
+    if args.command == "outbox-ack":
+        deadman_config = load_deadman_config(args.config)
+        return acknowledge_event(deadman_config, args.event_id, now=datetime.now(UTC))
     now = datetime.now(UTC)
     if args.command == "watchdog":
         return evaluate_watchdog(args.state, now=now, heartbeat_timeout_seconds=args.timeout_seconds)

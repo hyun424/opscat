@@ -83,6 +83,12 @@ a non-symlink regular file whose name exactly matches
 `config_hash` match the active runtime. Unreadable, tampered, foreign, or
 unexpected candidates block cleanup rather than being deleted.
 
+The report directory must also be owned by the service UID and not group/world
+writable before retention can delete anything. The process lease plus this
+permission boundary establishes cooperative single-writer ownership. P132 does
+not claim atomic protection against a malicious same-UID process that can rewrite
+the directory entry between validation and POSIX unlink-by-name.
+
 Failures before `os.replace` must leave the prior canonical file unchanged. A
 directory `fsync` error after successful replace may leave a newer hash-valid
 canonical file; P132 records durability as uncertain and requires a successful

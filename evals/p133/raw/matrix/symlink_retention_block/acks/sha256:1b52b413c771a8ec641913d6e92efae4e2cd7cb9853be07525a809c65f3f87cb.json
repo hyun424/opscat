@@ -1,0 +1,32 @@
+{
+  "ack_hash": "sha256:363ad45f3ae35a923f946d7f4154548da80efa32db7d3ac64c06367a7439bb78",
+  "acknowledged_at": "2026-07-13T00:00:00Z",
+  "authority_counters": {
+    "auth_context_count": 0,
+    "authority_escape_count": 0,
+    "cloud_mutation_count": 0,
+    "connector_write_call_count": 0,
+    "credential_scope_count": 0,
+    "database_mutation_count": 0,
+    "evidence_bypass_count": 0,
+    "filesystem_mutation_outside_artifact_count": 0,
+    "freeform_action_execution_count": 0,
+    "kubernetes_mutation_count": 0,
+    "l4_plus_action_count": 0,
+    "live_connector_call_count": 0,
+    "llm_command_execution_count": 0,
+    "network_mutation_count": 0,
+    "online_policy_write_count": 0,
+    "production_mutation_count": 0,
+    "rollback_missing_execution_count": 0,
+    "secret_material_count": 0,
+    "shell_execution_count": 0,
+    "staging_mutation_count": 0,
+    "subprocess_execution_count": 0,
+    "unapproved_intervention_count": 0
+  },
+  "config_hash": "sha256:91a66a1d247e434b2620d1405e635b6e54423e648705883e1ade7bda89531c09",
+  "event_hash": "sha256:c7f59e1c1c6644d55fd5ddd4c7e4e222bbde915e147d36ede1a8494f8d9ec298",
+  "event_id": "sha256:1b52b413c771a8ec641913d6e92efae4e2cd7cb9853be07525a809c65f3f87cb",
+  "schema_version": "p133.deadman_ack.v1"
+}

@@ -1,0 +1,32 @@
+{
+  "active_incident": null,
+  "authority_counters": {
+    "auth_context_count": 0,
+    "authority_escape_count": 0,
+    "cloud_mutation_count": 0,
+    "connector_write_call_count": 0,
+    "credential_scope_count": 0,
+    "database_mutation_count": 0,
+    "evidence_bypass_count": 0,
+    "filesystem_mutation_outside_artifact_count": 0,
+    "freeform_action_execution_count": 0,
+    "kubernetes_mutation_count": 0,
+    "l4_plus_action_count": 0,
+    "live_connector_call_count": 0,
+    "llm_command_execution_count": 0,
+    "network_mutation_count": 0,
+    "online_policy_write_count": 0,
+    "production_mutation_count": 0,
+    "rollback_missing_execution_count": 0,
+    "secret_material_count": 0,
+    "shell_execution_count": 0,
+    "staging_mutation_count": 0,
+    "subprocess_execution_count": 0,
+    "unapproved_intervention_count": 0
+  },
+  "config_hash": "sha256:f90d791296bad4f80ec685b4ea5cfb51c410bf6321c17a3788dd57291d75320a",
+  "cursor_hash": "sha256:794962340a8947f37ea2d04d20951230c4ecd29b05c8960aafee4038126cdc8b",
+  "last_checked_at": "2026-07-13T00:00:00Z",
+  "next_sequence": 1,
+  "schema_version": "p133.deadman_cursor.v1"
+}

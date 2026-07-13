@@ -1,0 +1,214 @@
+{
+  "artifact_hashes": {
+    "authority_ledger": "sha256:6e0a6a7bdec74028b0758a085338db1864947d2751f7d9160161bd99ea80126e",
+    "outbox_report": "sha256:d6f58f1499e56e5e70d75149af5f30ef764909c5e90aaf1f1cdfb48a2cbc182f",
+    "process_matrix": "sha256:c4f557a155000d3bec447e0083c4e39b4a8bcf58793ddd08481ef11617d7e96c",
+    "supervisor_validation": "sha256:017856e0696513abdb945060ea181f7f2d65e7481cfe5470d54a2ff58140e5d3"
+  },
+  "evaluator_activity": {
+    "forced_kill_count": 0,
+    "process_launch_count": 8,
+    "sigint_count": 0,
+    "signal_count": 1,
+    "sigterm_count": 1
+  },
+  "evaluator_authority": {
+    "arbitrary_command_count": 0,
+    "connector_write_count": 0,
+    "credential_read_count": 0,
+    "network_call_count": 0,
+    "production_mutation_count": 0,
+    "remediation_count": 0,
+    "shell_execution_count": 0,
+    "staging_mutation_count": 0
+  },
+  "gates": {
+    "authority_ledger_self_hash_current": true,
+    "evaluator_activity_disclosed": true,
+    "evaluator_zero_authority": true,
+    "ledger_runtime_authority_exact_zero": true,
+    "outbox_report_self_hash_current": true,
+    "process_matrix_self_hash_current": true,
+    "raw_evidence_bounded_and_relative": true,
+    "resource_usage_within_profile": true,
+    "runtime_authority_exact_zero": true,
+    "semantic_artifact_binding_present": true,
+    "subprocess_smoke_passed": true,
+    "supervisor_validation_passed": true,
+    "supervisor_validation_self_hash_current": true,
+    "transition_matrix_passed": true
+  },
+  "product_claim": "P133 persists redacted local dead-man outbox evidence for bounded P131 watchdog unhealthy transitions.",
+  "public_limitation": "Bounded local single-host outbox persistence only; no network delivery, external paging, authentication, credential access, remediation, shell execution, production autonomy, 24/7 availability, or operator replacement is claimed.",
+  "reasons": [],
+  "release_evidence_hash": "sha256:ba47502a7b82cea2521c581716801563f4ea31746cc243dfbbbd639707ffe73f",
+  "release_id": "P133-local-deadman-outbox",
+  "release_status": "p133_local_deadman_outbox_qualified",
+  "runtime_authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero": true
+  },
+  "schema_version": "p133.release_evidence.v1",
+  "semantic_binding": {
+    "authority": {
+      "ledger_hash": "sha256:fae6de567ccffe4a299c338f22994c271ab6e2279a8b0bdd967133d3f7b6ae9d",
+      "source_hashes": {
+        "app/monitor_cli.py": "sha256:d689a0981b458fb421160622385d8d26ef850db4c96159f28062b28260ec5562",
+        "app/services/p131_always_on_monitor.py": "sha256:b18cc959c3632004c6d895dd706f33421aa2c682a0176def9482c3f612a5610c",
+        "app/services/p133_deadman_outbox.py": "sha256:9272a71c853c919d44300aab5d08fa78faac04bda06e2661116d81cef3f0df6a",
+        "app/services/p133_release_evidence.py": "sha256:69af546494bfc146cfbe273cf0fd378a83449152804780fb0f4c14e89e0e97c8",
+        "evals/p133/input/outbox-profile.json": "sha256:25e13c52888bad18b082540059e04e2bd8b39d1d334680e189bb1cc8d56fcfac",
+        "scripts/run_p133_deadman_outbox.py": "sha256:7223fe7324480efd06e334462b332ddb608ed23d54099323b87df44379b6b0eb"
+      }
+    },
+    "outbox": {
+      "artifact_paths": {
+        "authority_ledger": "authority-ledger.json",
+        "outbox_report": "outbox-report.json",
+        "process_matrix": "process-matrix.json",
+        "release_evidence": "release-evidence.json",
+        "supervisor_validation": "supervisor-validation.json"
+      },
+      "config_hashes": {
+        "healthy": "sha256:f90d791296bad4f80ec685b4ea5cfb51c410bf6321c17a3788dd57291d75320a",
+        "main": "sha256:15394a713b7e64fca831690a71c45782d254718966ebf91af8ed60a2c050cc65",
+        "missing_open": "sha256:27c04e0fc33a656c8473599156781b1fd5649fa112a139f9204dfb6bff6b152f",
+        "stopped_open": "sha256:4f9676cb7386c73e34d127dc2320fe5224c78eca61282258c8b18cbe7601161d",
+        "tampered_open": "sha256:124b3f361fa3bbb65aa37c9994ce657f9511b5871706c7eb5f1cda1511e1f797"
+      },
+      "profile_hash": "sha256:25e13c52888bad18b082540059e04e2bd8b39d1d334680e189bb1cc8d56fcfac",
+      "raw_evidence_hash": "sha256:78ef86bc3958b4d6c924d8111df6dbe20f7f0ed144c1d47ac51997b28275fb53",
+      "source_hashes": {
+        "app/monitor_cli.py": "sha256:d689a0981b458fb421160622385d8d26ef850db4c96159f28062b28260ec5562",
+        "app/services/p131_always_on_monitor.py": "sha256:b18cc959c3632004c6d895dd706f33421aa2c682a0176def9482c3f612a5610c",
+        "app/services/p133_deadman_outbox.py": "sha256:9272a71c853c919d44300aab5d08fa78faac04bda06e2661116d81cef3f0df6a",
+        "app/services/p133_release_evidence.py": "sha256:69af546494bfc146cfbe273cf0fd378a83449152804780fb0f4c14e89e0e97c8",
+        "evals/p133/input/outbox-profile.json": "sha256:25e13c52888bad18b082540059e04e2bd8b39d1d334680e189bb1cc8d56fcfac",
+        "scripts/run_p133_deadman_outbox.py": "sha256:7223fe7324480efd06e334462b332ddb608ed23d54099323b87df44379b6b0eb"
+      }
+    },
+    "process": {
+      "artifact_hashes": {
+        "subprocess_config": "sha256:f3eeda8444cd61ad26de22a448e774f91b3bcc672dd83ae2efb89991f57ec7eb",
+        "subprocess_cursor": "sha256:05adae265aecfcb964f4dfd9146678a5dc3edf71d5638b132b4ba04e025e25da"
+      },
+      "artifact_paths": {
+        "subprocess_config": "raw/subprocess/runtime/deadman-config.json",
+        "subprocess_cursor": "raw/subprocess/runtime/cursor/deadman-cursor.json"
+      },
+      "cases_hash": "sha256:beec84bb984c8d63d72847e47aaf3707d2ba5e2d471bca82ffd9c74d4cab84ff",
+      "source_hashes": {
+        "app/monitor_cli.py": "sha256:d689a0981b458fb421160622385d8d26ef850db4c96159f28062b28260ec5562",
+        "app/services/p131_always_on_monitor.py": "sha256:b18cc959c3632004c6d895dd706f33421aa2c682a0176def9482c3f612a5610c",
+        "app/services/p133_deadman_outbox.py": "sha256:9272a71c853c919d44300aab5d08fa78faac04bda06e2661116d81cef3f0df6a",
+        "app/services/p133_release_evidence.py": "sha256:69af546494bfc146cfbe273cf0fd378a83449152804780fb0f4c14e89e0e97c8",
+        "evals/p133/input/outbox-profile.json": "sha256:25e13c52888bad18b082540059e04e2bd8b39d1d334680e189bb1cc8d56fcfac",
+        "scripts/run_p133_deadman_outbox.py": "sha256:7223fe7324480efd06e334462b332ddb608ed23d54099323b87df44379b6b0eb"
+      }
+    },
+    "supervisor": {
+      "manifests": {
+        "deploy/p133/compose.deadman.yaml": {
+          "checks": {
+            "bounded_stop": true,
+            "closed_fields": true,
+            "container_hardened": true,
+            "exact_argv": true,
+            "immutable_digest_required": true,
+            "monitor_state_read_only": true,
+            "network_disabled": true,
+            "no_evaluator_flag": true,
+            "non_root": true,
+            "outbox_only_writable": true,
+            "restart_throttled": true
+          },
+          "hash": "sha256:35c6699a995877b7188768ef2a00ff981079159419e46fe26efec5783b22b228",
+          "parsed_argv": [
+            "opscat-monitor",
+            "deadman-run",
+            "--config",
+            "/etc/opscat/deadman.json",
+            "--forever"
+          ],
+          "passed": true,
+          "status": "qualified"
+        },
+        "deploy/p133/io.opscat.deadman.plist": {
+          "checks": {
+            "bounded_stop": true,
+            "closed_fields": true,
+            "exact_argv": true,
+            "no_evaluator_flag": true,
+            "non_root": true,
+            "restart_throttled": true
+          },
+          "hash": "sha256:afcc49ceadd4045900209e73880f275ac670cc7c23e00f63c37b2bd2e4026749",
+          "limitation": "launchd plist alone cannot enforce the qualified no-network and read-only-monitor-state boundary; use an independently reviewed macOS sandbox/MDM policy before deployment",
+          "parsed_argv": [
+            "/usr/local/bin/opscat-monitor",
+            "deadman-run",
+            "--config",
+            "/usr/local/etc/opscat/deadman.json",
+            "--forever"
+          ],
+          "passed": false,
+          "status": "example_only_not_qualified",
+          "structural_checks_passed": true
+        },
+        "deploy/p133/opscat-deadman.service": {
+          "checks": {
+            "bounded_stop": true,
+            "closed_fields": true,
+            "exact_argv": true,
+            "filesystem_hardened": true,
+            "monitor_state_read_only": true,
+            "network_disabled": true,
+            "no_evaluator_flag": true,
+            "no_privilege_gain": true,
+            "non_root": true,
+            "outbox_only_writable": true,
+            "restart_throttled": true
+          },
+          "hash": "sha256:894c675ae0a15e91ec45b39e848e94174ab5d3827e8f9e5f8c574f89db103381",
+          "parsed_argv": [
+            "/usr/local/bin/opscat-monitor",
+            "deadman-run",
+            "--config",
+            "/etc/opscat/deadman.json",
+            "--forever"
+          ],
+          "passed": true,
+          "status": "qualified"
+        }
+      },
+      "source_hashes": {
+        "deploy/p133/compose.deadman.yaml": "sha256:35c6699a995877b7188768ef2a00ff981079159419e46fe26efec5783b22b228",
+        "deploy/p133/io.opscat.deadman.plist": "sha256:afcc49ceadd4045900209e73880f275ac670cc7c23e00f63c37b2bd2e4026749",
+        "deploy/p133/opscat-deadman.service": "sha256:894c675ae0a15e91ec45b39e848e94174ab5d3827e8f9e5f8c574f89db103381"
+      }
+    }
+  }
+}

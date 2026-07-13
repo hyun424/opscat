@@ -1,0 +1,174 @@
+{
+  "authority_ledger_hash": "sha256:fae6de567ccffe4a299c338f22994c271ab6e2279a8b0bdd967133d3f7b6ae9d",
+  "evaluator_activity": {
+    "forced_kill_count": 0,
+    "process_launch_count": 8,
+    "sigint_count": 0,
+    "signal_count": 1,
+    "sigterm_count": 1
+  },
+  "evaluator_authority": {
+    "counters": {
+      "arbitrary_command_count": 0,
+      "connector_write_count": 0,
+      "credential_read_count": 0,
+      "network_call_count": 0,
+      "production_mutation_count": 0,
+      "remediation_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0
+    },
+    "exact_zero": true
+  },
+  "process_ledger": [
+    {
+      "argv": [
+        "/Users/gimdonghyeon/projects/opscat/.venv/bin/python",
+        "-m",
+        "app.monitor_cli",
+        "deadman-check",
+        "--config",
+        "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/deadman-config.json"
+      ],
+      "bounded": true,
+      "label": "deadman-check",
+      "shell": false
+    },
+    {
+      "argv": [
+        "/Users/gimdonghyeon/projects/opscat/.venv/bin/python",
+        "-m",
+        "app.monitor_cli",
+        "deadman-run",
+        "--config",
+        "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/deadman-config.json",
+        "--max-cycles",
+        "2",
+        "--no-sleep"
+      ],
+      "bounded": true,
+      "label": "deadman-run",
+      "shell": false
+    },
+    {
+      "argv": [
+        "/Users/gimdonghyeon/projects/opscat/.venv/bin/python",
+        "-m",
+        "app.monitor_cli",
+        "deadman-check",
+        "--config",
+        "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/deadman-config.json"
+      ],
+      "bounded": true,
+      "label": "deadman-check",
+      "shell": false
+    },
+    {
+      "argv": [
+        "/Users/gimdonghyeon/projects/opscat/.venv/bin/python",
+        "-m",
+        "app.monitor_cli",
+        "deadman-check",
+        "--config",
+        "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/deadman-config.json"
+      ],
+      "bounded": true,
+      "label": "deadman-check",
+      "shell": false
+    },
+    {
+      "argv": [
+        "/Users/gimdonghyeon/projects/opscat/.venv/bin/python",
+        "-m",
+        "app.monitor_cli",
+        "outbox-list",
+        "--config",
+        "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/deadman-config.json"
+      ],
+      "bounded": true,
+      "label": "outbox-list",
+      "shell": false
+    },
+    {
+      "argv": [
+        "/Users/gimdonghyeon/projects/opscat/.venv/bin/python",
+        "-m",
+        "app.monitor_cli",
+        "outbox-ack",
+        "--config",
+        "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/deadman-config.json",
+        "--event-id",
+        "sha256:85089a558da9682917710c55460f87b7186583c7771d12a0fa2b9fbc997d9610"
+      ],
+      "bounded": true,
+      "label": "outbox-ack",
+      "shell": false
+    },
+    {
+      "argv": [
+        "/Users/gimdonghyeon/projects/opscat/.venv/bin/python",
+        "-m",
+        "app.monitor_cli",
+        "deadman-run",
+        "--config",
+        "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/deadman-config.json",
+        "--max-cycles",
+        "1",
+        "--no-sleep"
+      ],
+      "bounded": true,
+      "label": "deadman-run",
+      "shell": false
+    },
+    {
+      "argv": [
+        "/Users/gimdonghyeon/projects/opscat/.venv/bin/python",
+        "-m",
+        "app.monitor_cli",
+        "deadman-run",
+        "--config",
+        "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/deadman-config.json",
+        "--forever"
+      ],
+      "bounded": true,
+      "label": "graceful_stop",
+      "shell": false
+    }
+  ],
+  "runtime_authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero": true
+  },
+  "schema_version": "p133.authority_ledger.v1",
+  "source_hashes": {
+    "app/monitor_cli.py": "sha256:d689a0981b458fb421160622385d8d26ef850db4c96159f28062b28260ec5562",
+    "app/services/p131_always_on_monitor.py": "sha256:b18cc959c3632004c6d895dd706f33421aa2c682a0176def9482c3f612a5610c",
+    "app/services/p133_deadman_outbox.py": "sha256:9272a71c853c919d44300aab5d08fa78faac04bda06e2661116d81cef3f0df6a",
+    "app/services/p133_release_evidence.py": "sha256:69af546494bfc146cfbe273cf0fd378a83449152804780fb0f4c14e89e0e97c8",
+    "evals/p133/input/outbox-profile.json": "sha256:25e13c52888bad18b082540059e04e2bd8b39d1d334680e189bb1cc8d56fcfac",
+    "scripts/run_p133_deadman_outbox.py": "sha256:7223fe7324480efd06e334462b332ddb608ed23d54099323b87df44379b6b0eb"
+  }
+}

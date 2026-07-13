@@ -237,9 +237,9 @@
       "size": 3350
     },
     {
-      "hash": "sha256:2123cd65e496f8935eaec5c9c9d1f2ddb655073747877cdb3d5af9adc8062fd9",
+      "hash": "sha256:96c5a8a2661445b7e4e5802351a568f7c86ca4c641a1cfc6a42293c641030062",
       "path": "site-packages/app/monitor_cli.py",
-      "size": 4524
+      "size": 7653
     },
     {
       "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
@@ -1222,9 +1222,9 @@
       "size": 21013
     },
     {
-      "hash": "sha256:0376de12d2d53ad89c3fcf1be08a86217b5398a1e2e65422da03404ad6aa8c8a",
+      "hash": "sha256:76b8b303af0ba39e6062d43b67bf80f8939076eb6f8969a3a20194d02f781100",
       "path": "site-packages/app/services/p131_always_on_monitor.py",
-      "size": 64888
+      "size": 65454
     },
     {
       "hash": "sha256:36d3f4acd5545ff05653ac809afc9ae40a7e548e3dd44fe44c555c508e3d7846",
@@ -1240,6 +1240,16 @@
       "hash": "sha256:4aa49ccd11de7e2f0c90bad1deef01f736e1da724601f11accbaef15b36c5d54",
       "path": "site-packages/app/services/p132_supervised_runtime.py",
       "size": 21886
+    },
+    {
+      "hash": "sha256:5bc8445aaf4eb122155dd787c1adc4481cf480069b2a443376a150aef7214ee7",
+      "path": "site-packages/app/services/p133_deadman_outbox.py",
+      "size": 58571
+    },
+    {
+      "hash": "sha256:1512e0d98763fe64a813528dc0b04cce4cf26f2cb980eff9ebfab3696ea10a49",
+      "path": "site-packages/app/services/p133_release_evidence.py",
+      "size": 29133
     },
     {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -1682,9 +1692,9 @@
       "size": 10004
     },
     {
-      "hash": "sha256:90030edf8ec3a10f9f18e7ee657951c1b59f0d43a915f8d1e9519e213233ac5a",
+      "hash": "sha256:e5d48e9d629e03d6b05ce24b019bba01638e282f5626f8116ebe1927134f27b9",
       "path": "site-packages/opscat-0.2.0.dist-info/METADATA",
-      "size": 36778
+      "size": 38688
     },
     {
       "hash": "sha256:60b2577585d0d8543452a9f627eea21080bede239ecbc947df10adbc52e477c4",
@@ -1708,9 +1718,9 @@
     }
   ],
   "installed_package": "opscat",
-  "manifest_hash": "sha256:aa62b8e051608c87123b8df3a709a2f9f4ae88823d7da5995e8dff88b7e23a7d",
+  "manifest_hash": "sha256:5d9a07c4e7395207e91d06b1b23de68edcad4a75be9321039d3ff1860ff89aa3",
   "operation": "package_install",
-  "record_entries_verified": 340,
+  "record_entries_verified": 342,
   "schema_version": "p122.canonical_wheel_install.v1",
-  "wheel_checksum": "sha256:301064861d14f10861fdf28706b0fd3b99dca6cdd785613160047e5436b287ba"
+  "wheel_checksum": "sha256:8020804ceaaca01dd465913efa63e7233fe60cfdcdd523c693cdd16baef3c1f5"
 }

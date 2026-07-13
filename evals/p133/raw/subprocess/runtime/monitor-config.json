@@ -1,0 +1,28 @@
+{
+  "allowed_artifact_roots": [
+    "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime"
+  ],
+  "allowed_data_roots": [
+    "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime"
+  ],
+  "canary_every_cycles": 1,
+  "daily_report_interval_seconds": 3600,
+  "data_stale_after_seconds": 60,
+  "heartbeat_timeout_seconds": 1,
+  "interval_seconds": 1,
+  "lease_path": "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/monitor.lock",
+  "max_consecutive_failures": 3,
+  "report_dir": "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/monitor-reports",
+  "runtime_id": "p133-subprocess-watchdog",
+  "schema_version": "p131.monitor_config.v1",
+  "sources": [
+    {
+      "enabled": true,
+      "kind": "local_jsonl",
+      "path": "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/telemetry.jsonl",
+      "source_id": "p133-release-local"
+    }
+  ],
+  "state_path": "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/monitor-state.json",
+  "termination_receipt_path": "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/subprocess/runtime/monitor-termination.json"
+}

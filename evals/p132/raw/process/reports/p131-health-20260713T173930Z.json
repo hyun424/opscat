@@ -1,0 +1,82 @@
+{
+  "authority": {
+    "counters": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "exact_zero": true
+  },
+  "canary": {
+    "action_execution_count": 0,
+    "failure_count": 0,
+    "last_result": "passed",
+    "last_run_at": "2026-07-13T17:39:30.504472Z",
+    "last_stages": {
+      "policy_no_action_passed": true,
+      "serialization_round_trip_passed": true,
+      "signal_detection_passed": true
+    },
+    "success_count": 3
+  },
+  "config_hash": "sha256:82c57d7513a6b9b3eed55390bf9618292b6a8a35ee1f8c9bf968fb5ce6af8170",
+  "cycle_count": 3,
+  "generated_at": "2026-07-13T17:39:30.505303Z",
+  "report_hash": "sha256:f6d0ce369361e40fa72b480453d6fbe379719fa3ba159e4ac269dfc31c088a12",
+  "resume_count": 2,
+  "runtime_id": "p132-real-process-runtime",
+  "schema_version": "p131.health_report.v1",
+  "source_health": {
+    "local": {
+      "consecutive_failures": 0,
+      "cursor_bytes": 258,
+      "enabled": true,
+      "failure_limit": 3,
+      "file_identity": "16777231:177285730",
+      "kind": "local_jsonl",
+      "last_data_at": "2026-07-13T17:39:30.504472Z",
+      "last_error": null,
+      "last_success_at": "2026-07-13T17:39:30.504472Z",
+      "path_hash": "sha256:4ad9d790902f37a380f694b416b4adc92c381f2359134f48ac86f43a62000ad6",
+      "prefix_hash": "sha256:05dbd522afc86c42393a21ae12920cf90c56154a84b2657a59aa12688abbaee2",
+      "prefix_length": 258,
+      "rotation_count": 0
+    }
+  },
+  "state_hash": "sha256:71ad8b3422baad18aeb8bf81ae816f7033781081ffb1f7272d6f55dafff2c697",
+  "status": {
+    "last_heartbeat_at": "2026-07-13T17:39:30.504472Z",
+    "live": true,
+    "ready": true,
+    "reasons": [],
+    "runtime_id": "p132-real-process-runtime",
+    "schema_version": "p131.monitor_status.v1",
+    "state_hash": "sha256:71ad8b3422baad18aeb8bf81ae816f7033781081ffb1f7272d6f55dafff2c697"
+  },
+  "totals": {
+    "accepted_observation_count": 3,
+    "action_execution_count": 0,
+    "duplicate_observation_count": 0,
+    "network_call_count": 0,
+    "source_failure_count": 0
+  }
+}

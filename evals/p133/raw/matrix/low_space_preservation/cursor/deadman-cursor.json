@@ -1,0 +1,39 @@
+{
+  "active_incident": {
+    "incident_id": "sha256:270a341a17b05cd1d1981995c9fc3d5be92b1080c372f831a3896b0dff19f1f9",
+    "last_emitted_at": "2026-07-13T00:00:00Z",
+    "last_event_id": "sha256:49c5118d245577e111d373c67a08d2c5f0676b1d0ebd5218d29d9501a5d38fc3",
+    "last_reason": "runtime_stopped",
+    "last_snapshot_fingerprint": "sha256:651727935bdd361460ae39f3b413d43740e4cad8033ad9635a5a1308ab27118c",
+    "opened_at": "2026-07-13T00:00:00Z"
+  },
+  "authority_counters": {
+    "auth_context_count": 0,
+    "authority_escape_count": 0,
+    "cloud_mutation_count": 0,
+    "connector_write_call_count": 0,
+    "credential_scope_count": 0,
+    "database_mutation_count": 0,
+    "evidence_bypass_count": 0,
+    "filesystem_mutation_outside_artifact_count": 0,
+    "freeform_action_execution_count": 0,
+    "kubernetes_mutation_count": 0,
+    "l4_plus_action_count": 0,
+    "live_connector_call_count": 0,
+    "llm_command_execution_count": 0,
+    "network_mutation_count": 0,
+    "online_policy_write_count": 0,
+    "production_mutation_count": 0,
+    "rollback_missing_execution_count": 0,
+    "secret_material_count": 0,
+    "shell_execution_count": 0,
+    "staging_mutation_count": 0,
+    "subprocess_execution_count": 0,
+    "unapproved_intervention_count": 0
+  },
+  "config_hash": "sha256:8a1bfb448ef8c7a4cd19f2e1444772ab5213fb79a9ce51358f0dba71fca862d5",
+  "cursor_hash": "sha256:e73a99208c92f83bcdee51bd0aae87816defbe993582b151a235333812e230d5",
+  "last_checked_at": "2026-07-13T00:00:00Z",
+  "next_sequence": 2,
+  "schema_version": "p133.deadman_cursor.v1"
+}

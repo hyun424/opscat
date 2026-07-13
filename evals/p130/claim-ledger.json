@@ -1,5 +1,5 @@
 {
-  "claim_ledger_hash": "sha256:671d4e3abb10fbe35cb941618e7ed325cd896d8b658064472929e2ac733e6f67",
+  "claim_ledger_hash": "sha256:af3184c9e64f12b9b0b4ea404d8895ba8a15b228ae7c6a9856aa8d4bd805c7b9",
   "claims": [
     {
       "claim_id": "p130-evidence-qualified-public-beta-framework",
@@ -37,7 +37,7 @@
         {
           "artifact": "evals/p129/release-evidence.json",
           "phase": "p129",
-          "release_evidence_hash": "sha256:61c13fd49001ea717ec7b0ed8bd31fdd4ac4e54d31819c5d8802cfe514194479"
+          "release_evidence_hash": "sha256:9f6c0371514fc15a62fd93875a1339cf2920399a560b653a90ba8859cd8aa6d1"
         }
       ],
       "limitation": "Public beta readiness is evidence-qualified and non-production only.",
@@ -55,7 +55,7 @@
         {
           "artifact": "evals/p129/release-evidence.json",
           "phase": "p129",
-          "release_evidence_hash": "sha256:61c13fd49001ea717ec7b0ed8bd31fdd4ac4e54d31819c5d8802cfe514194479"
+          "release_evidence_hash": "sha256:9f6c0371514fc15a62fd93875a1339cf2920399a560b653a90ba8859cd8aa6d1"
         }
       ],
       "limitation": "Feedback intake is offline and cannot accept secrets or environment access.",

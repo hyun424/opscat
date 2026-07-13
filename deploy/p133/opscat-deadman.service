@@ -1,0 +1,26 @@
+[Unit]
+Description=OpsCat local dead-man outbox
+After=local-fs.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=opscat
+Group=opscat
+ExecStart=/usr/local/bin/opscat-monitor deadman-run --config /etc/opscat/deadman.json --forever
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/var/lib/opscat/monitor
+ReadWritePaths=/var/lib/opscat/deadman
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

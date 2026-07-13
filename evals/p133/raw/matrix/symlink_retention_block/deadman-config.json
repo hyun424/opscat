@@ -1,0 +1,18 @@
+{
+  "ack_dir": "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/matrix/symlink_retention_block/acks",
+  "allowed_artifact_roots": [
+    "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/matrix/symlink_retention_block"
+  ],
+  "check_interval_seconds": 30,
+  "cursor_path": "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/matrix/symlink_retention_block/cursor/deadman-cursor.json",
+  "heartbeat_timeout_seconds": 180,
+  "max_event_bytes": 32768,
+  "max_event_files": 32,
+  "max_outbox_bytes": 1048576,
+  "min_artifact_free_bytes": 1,
+  "outbox_dir": "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/matrix/symlink_retention_block/outbox",
+  "reminder_interval_seconds": 300,
+  "runtime_ref": "p133-release-runtime",
+  "schema_version": "p133.deadman_config.v1",
+  "state_path": "/private/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p133-_4g1tvsv/matrix/symlink_retention_block/monitor-state.json"
+}

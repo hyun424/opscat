@@ -20,7 +20,7 @@ See [`docs/install.md`](docs/install.md), [`docs/quickstart.md`](docs/quickstart
 
 > Current status: the local/mock MVP is green through compile, lint, typecheck, pytest, deterministic demo, Docker Compose config, and coverage gates. P96 adds an opt-in Prometheus read-only connector while fixture mode remains the default; P97-P100 add causal, broad, and stateful evaluation; P101 adds executed read-only tool selection before evidence-gated action; P102 evaluates a fail-closed LLM tool planner; P103 adds negative-result replanning and measured multi-step recovery; P104 adds network-free evidence-gap sufficiency checks before policy handoff; P105 adds a local calibrated failure-forecasting harness with strict release-qualified prerequisites; P106 is simulation-only preventive planning with `p107_unlocked=false`; P107 adds a local/mock or isolated canary executor; P108 adds deterministic offline outcome learning and unapplied recommendations; P109 imports real public telemetry. On the frozen 25-case RCAEval blind split, P111 improves the paired P110 baseline from 68% to 80% service Top-1 and from 40% to 84% fault accuracy while preserving 100% evidence validity and zero unsafe-action counters. Release remains fail-closed because the 84% Top-1 target, loss-fault floor, and cryptographic reviewer gate were not met. No production actions are enabled. See [`docs/operations/p111-final-summary.md`](docs/operations/p111-final-summary.md).
 
-## Supervised always-on local monitor (P131-P132)
+## Supervised always-on local monitor and dead-man outbox (P131-P133)
 
 P131 adds an independent foreground process that continuously tails local JSONL
 telemetry, keeps an atomic tamper-evident cursor, resumes without accepting the
@@ -30,6 +30,11 @@ network calls, subprocesses, or action execution authority. P132 adds graceful
 SIGTERM/SIGINT receipts, bounded report retention, storage-pressure fail-closed
 behavior, real-process crash/restart and lease-conflict qualification, and
 validated systemd, launchd, and Compose examples.
+P133 adds a separate credential-free process that converts only the independent
+watchdog's closed health outcomes into durable, redacted local incident events.
+It deduplicates unchanged failures, emits bounded reminders and recovery, and
+retains unacknowledged evidence without sending notifications or executing an
+action. P133 serializes all local operations with an exclusive process lease.
 
 ```bash
 mkdir -p data/p131
@@ -41,24 +46,44 @@ uv run --no-sync opscat-monitor run --config config/p131-monitor.example.json --
 # Run independently from the monitor process; non-zero means stale/missing/tampered heartbeat.
 uv run --no-sync opscat-monitor watchdog --state data/p131/runtime-state.json --timeout-seconds 180
 uv run --no-sync opscat-monitor status --state data/p131/runtime-state.json
+
+# Run as a separate supervised process. It watches the P131 state file, not the monitor process itself.
+uv run --no-sync opscat-monitor deadman-run --config config/p133-deadman.example.json --forever
+
+# One check exits 0 when healthy, 1 when unhealthy, and 2 on config/storage failure.
+uv run --no-sync opscat-monitor deadman-check --config config/p133-deadman.example.json
+uv run --no-sync opscat-monitor outbox-list --config config/p133-deadman.example.json
+# Acknowledgement is local bookkeeping only; it does not close the active incident.
+uv run --no-sync opscat-monitor outbox-ack --config config/p133-deadman.example.json --event-id 'sha256:<64-hex>'
 ```
 
 The FastAPI app also exposes `GET /monitor/health` and
 `GET /monitor/readiness`; either returns HTTP 503 when its contract is not met.
-See [`docs/operations/p131-operator-runbook.md`](docs/operations/p131-operator-runbook.md)
-and [`docs/operations/p132-final-summary.md`](docs/operations/p132-final-summary.md).
+See [`docs/operations/p131-operator-runbook.md`](docs/operations/p131-operator-runbook.md),
+[`docs/operations/p132-final-summary.md`](docs/operations/p132-final-summary.md),
+[`docs/operations/p133-final-summary.md`](docs/operations/p133-final-summary.md),
+and [`docs/operations/p133-local-deadman-outbox-roadmap.md`](docs/operations/p133-local-deadman-outbox-roadmap.md).
 
 Run the bounded supervisor qualification without credentials or network access:
 
 ```bash
-bash scripts/verify.sh --profile p132-release
+bash scripts/verify.sh --profile p133-release
 ```
 
-Example supervisor manifests are under [`deploy/p132`](deploy/p132). They are
+Example supervisor manifests are under [`deploy/p132`](deploy/p132) and
+[`deploy/p133`](deploy/p133). They are
 templates, not proof of cloud deployment or a 24/7 production SLO. The Compose
 template requires `OPSCAT_MONITOR_IMAGE_DIGEST` and refuses mutable image tags.
+P133 qualifies the parsed systemd and Compose isolation contracts. Its launchd
+plist is a structurally validated example only because a plist by itself cannot
+enforce the same no-network and read-only-monitor-state boundary; macOS use
+requires a separately reviewed sandbox or MDM policy.
 Auditable bounded raw qualification inputs and outputs are retained under
-`evals/p132/raw/`.
+`evals/p132/raw/` and `evals/p133/raw/`.
+P133's outbox is local evidence only: it does not prove notification delivery,
+multi-host availability, remediation quality, malicious same-UID writer
+resistance, or unattended production operation. Retention requires service-owned,
+non-group/world-writable outbox and acknowledgement directories.
 
 ## Portfolio demo evidence
 

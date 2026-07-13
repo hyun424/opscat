@@ -730,6 +730,7 @@ class AlwaysOnMonitor:
         )
         candidates: list[tuple[str, int, int, int]] = []
         try:
+            _validate_report_retention_directory(parent_fd)
             with os.scandir(parent_fd) as entries:
                 for entry in entries:
                     if _REPORT_FILENAME.fullmatch(entry.name) is None:
@@ -792,6 +793,19 @@ class AlwaysOnMonitor:
         ):
             raise P131StateError("report_retention_candidate_invalid")
         return int(metadata.st_size), int(metadata.st_dev), int(metadata.st_ino)
+
+
+def _validate_report_retention_directory(fd: int) -> None:
+    metadata = os.fstat(fd)
+    owner_permissions = stat.S_IWUSR | stat.S_IXUSR
+    unsafe_writer_permissions = stat.S_IWGRP | stat.S_IWOTH
+    if (
+        not stat.S_ISDIR(metadata.st_mode)
+        or metadata.st_uid != os.geteuid()
+        or metadata.st_mode & owner_permissions != owner_permissions
+        or metadata.st_mode & unsafe_writer_permissions
+    ):
+        raise P131StateError("report_retention_directory_permissions_unsafe")
 
 
 def load_monitor_state(path: Path | str, *, allowed_roots: Sequence[Path] | None = None) -> dict[str, Any]:

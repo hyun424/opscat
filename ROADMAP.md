@@ -12,11 +12,21 @@ external notification, remediation, 24/7 production availability, production
 autonomy, or operator replacement. See
 `docs/operations/p132-final-summary.md`.
 
-## P133 next: local dead-man notification outbox
+## P133 complete: local dead-man evidence outbox
 
-P133 will convert stopped, stale, missing, and tampered monitor health results
-into redacted, durable local notification drafts. It will not send network
-notifications or acquire action authority.
+P133 converts stopped, stale, missing, and tampered monitor health results into
+redacted, durable local incident events. It adds deterministic transition
+identity, crash replay, exclusive process leasing, local acknowledgement,
+acknowledged-only retention, real CLI subprocess qualification, and parsed
+systemd/Compose isolation contracts. It sends no network notification and has
+no action authority. The launchd plist remains an explicitly unqualified
+structural example.
+
+## P134 next: observation authority contract
+
+P134 will separate bounded read-only observation authority from action
+authority before any additional live source is enabled. It will grant no write,
+credential, remediation, staging, or production authority.
 
 OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward a beta-grade agentic operations system.
 
@@ -985,3 +995,14 @@ then passed the one-shot 90-case RE2-OB acceptance: 81.11% service Top-1,
 recall, and 100% evidence precision/replay/diagnosis preservation. Every
 required safety counter was present and zero. This qualifies bounded diagnosis,
 not production remediation. See `docs/operations/p114-final-summary.md`.
+
+## P133 complete: local dead-man outbox
+
+P133 turns P132's independent watchdog outcomes into a crash-safe, redacted
+local outbox. It opens, updates, reminds, recovers, acknowledges, and retains
+local dead-man events with deterministic identity and exact-zero authority. It
+does not send notifications, access credentials, call connectors, execute
+remediation, or mutate staging/production. See
+`docs/operations/p133-final-summary.md`,
+`docs/operations/p133-local-deadman-outbox-roadmap.md`, and
+`docs/tickets/p133/README.md`.

@@ -41,6 +41,9 @@
 - Retention considers only exact P131 report names and requires regular
   non-symlink type, bounded parse, valid schema/hash, and matching runtime/config
   ownership; foreign, unreadable, or tampered candidates block cleanup.
+- The report directory must be owned by the service UID and not group/world
+  writable. Unsafe permissions block retention and preserve existing reports;
+  malicious same-UID writers remain outside the qualified threat model.
 - Retained count, directory bytes, and free-space config values are bounded
   positive integers.
 - Low space before write fails closed.

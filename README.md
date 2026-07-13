@@ -709,3 +709,19 @@ uv run --no-sync --extra dev python scripts/demo_agentic_loop.py
 ```
 
 Evidence and docs: `docs/agentic-loop.md`, `docs/portfolio-demo.md`, `docs/security-review-p6.md`, and `docs/release-evidence.md`. This remains a local/beta portfolio demo and does not claim unattended production mutation safety.
+
+## P134 observation-authority contract
+
+OpsCat now separates read-only observation permission from action authority with
+strict `OA0`/`OA1` contracts, hash-bound structural review receipts, immutable
+decision receipts, deterministic budget accounting, replay protection, and a
+fail-closed 24-case release matrix.
+
+```bash
+bash scripts/verify.sh --profile p134-release
+```
+
+P134 is policy-only. It performs no file ingestion, provider request, live GET,
+credential access, notification delivery, command execution, remediation, or
+staging/production mutation. P135 is the first phase allowed to consume the
+qualified local-artifact policy for credential-free provider-shaped exports.

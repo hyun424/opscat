@@ -5870,10 +5870,10 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:c9d826527a4ba40d14d406e00b5a309a7b0fb854271a3360e7b11e19d2852d36",
+  "report_hash": "sha256:232a067f5e6bf1f6ea579593fcc2fcdedd443c1f141520e97f345cd15ad28673",
   "root": ".",
-  "root_binding_hash": "sha256:7c369bf006b293fb12ad182b276aa9df0adcf0bc01131598b327c500a650f796",
-  "scanned_file_count": 2385,
+  "root_binding_hash": "sha256:6711806f8f6748a7cc6f444b3da6df3e5cb34085178efb8febd246f1fae9857d",
+  "scanned_file_count": 2404,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
   "source_inventory": [
@@ -5963,14 +5963,14 @@
       "size": 3930
     },
     {
-      "hash": "sha256:51e72b3e184be95b4f76ebca23c798f614ef789a289dbefc156e225bca7fb176",
+      "hash": "sha256:31171996207ba4abd2c02061a617c2e526d6b3128de8b6b20214e8c5f929e136",
       "path": "README.md",
-      "size": 37593
+      "size": 38277
     },
     {
-      "hash": "sha256:97d40860cd0a77b3a2639abbf9f24e487c8a16dbf37dbcf15d5b72036721306a",
+      "hash": "sha256:39e0282795c366d2928eb7ef16ad5595eca31f21d8323963ef2102c1effcb8fe",
       "path": "ROADMAP.md",
-      "size": 100263
+      "size": 101009
     },
     {
       "hash": "sha256:3d6e9eec25759bf1c54bbeb42f16674071cf095caf0e7b0c78a9ad23ee0378df",
@@ -7228,6 +7228,16 @@
       "size": 29133
     },
     {
+      "hash": "sha256:539447062ff98814c5de910893d1479c830a2d8b782b3d05cc3b51290fe02aad",
+      "path": "app/services/p134_observation_authority.py",
+      "size": 40678
+    },
+    {
+      "hash": "sha256:f7cfb80d63d2ce4c8918325a7b621957ad0b526736e0546f3b84a82652d167df",
+      "path": "app/services/p134_release_evidence.py",
+      "size": 25781
+    },
+    {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
       "path": "app/services/policy_calibrator.py",
       "size": 11458
@@ -7773,9 +7783,9 @@
       "size": 793
     },
     {
-      "hash": "sha256:f9ae4debded5203483fc49e7a90afe2ca10f365e8522f88bdbce83ef0539fd2f",
+      "hash": "sha256:ecbc9cc79cbc9e64b1f5bca50c2079aa0aafc38f62db99bbfefd71194131e4d9",
       "path": "docs/integration-verification.md",
-      "size": 8164
+      "size": 8764
     },
     {
       "hash": "sha256:4d0fc5bf902ef25ba6afd3197fe13966f7db2473d6955f87dc34262d00e89766",
@@ -8548,9 +8558,9 @@
       "size": 2158
     },
     {
-      "hash": "sha256:3afa82d187dd1e9229f9b46caeb5363563f758cfda3f1f794295ff409a02aa7f",
+      "hash": "sha256:395ee925a4b0a55b55cf49da1766bab481d1535b4dca7cf136e59ac3527a1f7e",
       "path": "docs/operations/p133-final-summary.md",
-      "size": 4479
+      "size": 4581
     },
     {
       "hash": "sha256:395255e283d2d59024a6cd5457b053c5e29b5b989b9b498ffef2d7a2fe8e84b3",
@@ -8571,6 +8581,31 @@
       "hash": "sha256:6a1330945d0b44ee9dd9cfd9ac0694dee6291a15e290f5e4898bfcf3c65f738f",
       "path": "docs/operations/p133-verification-handoff.md",
       "size": 2491
+    },
+    {
+      "hash": "sha256:6598a6e7b87eb0f68e03f11beb1e2ab6f5ddd71affd9d8d37282596b0b7b7e9f",
+      "path": "docs/operations/p134-final-summary.md",
+      "size": 3604
+    },
+    {
+      "hash": "sha256:f2d4fb0c285787cf615f8ec6035dc16a387ee9041135f383340a39a49ce5ab46",
+      "path": "docs/operations/p134-observation-authority-roadmap.md",
+      "size": 14704
+    },
+    {
+      "hash": "sha256:27356c946013e9d11c98abec2ca8a60e23ea189480e5b780579ae46b7ecf14ab",
+      "path": "docs/operations/p134-plan-review.md",
+      "size": 3034
+    },
+    {
+      "hash": "sha256:5afb826d6ee2c6cdcf80d741e3a54e35585624dc64faac7f884c7a14352234d2",
+      "path": "docs/operations/p134-test-spec.md",
+      "size": 6915
+    },
+    {
+      "hash": "sha256:a2a2b777b446580cf4ecf26fb23407e1f6749082b8898482d3f04930e331b1f9",
+      "path": "docs/operations/p134-verification-handoff.md",
+      "size": 2357
     },
     {
       "hash": "sha256:d547189eaaa5c5e1c2bda31c209d04cb860fd753385f5764e4f71c694c43d155",
@@ -9588,9 +9623,9 @@
       "size": 865
     },
     {
-      "hash": "sha256:8408e8568debdda1d64576b30e270cace00f41f80121572fc2aefeadfd55b886",
+      "hash": "sha256:8189a8cfc085d7afd7e5c158335d2f3fc57a6e053c2b9612339744230e229808",
       "path": "docs/release-evidence.md",
-      "size": 199544
+      "size": 201366
     },
     {
       "hash": "sha256:e85476e2bdf4a3e876f60e59cff3ce2146ebe536f3f66fde9d9bc3c858287cd7",
@@ -11308,6 +11343,41 @@
       "size": 683
     },
     {
+      "hash": "sha256:879a1cc7010b6c415f4ef7594fc882a1cdfa89a9868bfb4e849064004be4088a",
+      "path": "docs/tickets/p134/P134-001-contract-levels.md",
+      "size": 524
+    },
+    {
+      "hash": "sha256:53e2c18e37ac8baa8de47bf3fb2698453e571efb5f686ef1ad1feaa1c19b2907",
+      "path": "docs/tickets/p134/P134-002-review-gate.md",
+      "size": 386
+    },
+    {
+      "hash": "sha256:2133c8e0dfc3335ce8bf776b1d2db3b25eb2b39460347f06113679b9fa49bc71",
+      "path": "docs/tickets/p134/P134-003-policy-evaluator.md",
+      "size": 413
+    },
+    {
+      "hash": "sha256:e213a62c7789140c31f1727e82fdbb47565d920aa95a2511b800cd2be5a5a680",
+      "path": "docs/tickets/p134/P134-004-ledger-budgets-idempotency.md",
+      "size": 525
+    },
+    {
+      "hash": "sha256:f949270870f9ed58f7c41ae22c1d87f46da0b4457aa7c81b3dedfa84cc72a7b9",
+      "path": "docs/tickets/p134/P134-005-matrices-runner.md",
+      "size": 465
+    },
+    {
+      "hash": "sha256:9e2f3f436ee2a0184dbd402b96c93cafe85c842ca1f62568614de341ccaed7b8",
+      "path": "docs/tickets/p134/P134-006-release-verification.md",
+      "size": 568
+    },
+    {
+      "hash": "sha256:32b0325346b52e485b734ed1d44dde7e6a9b9e77da6017f4892b79dbfd8ea2c2",
+      "path": "docs/tickets/p134/README.md",
+      "size": 383
+    },
+    {
       "hash": "sha256:beae4f2e7cc18f81c6ca43a27de6527bfe7fe9d7104d00734cac27810d9e4258",
       "path": "docs/tickets/p14/README.md",
       "size": 1078
@@ -12996,6 +13066,11 @@
       "hash": "sha256:8c20a26034896fa3b78d9cd8fff7c38bece98e18148d2960c4bbc58805b5aae7",
       "path": "evals/p133/input/outbox-profile.json",
       "size": 1012
+    },
+    {
+      "hash": "sha256:5cca163e0bbc52ce96f289c900183b9e7cd63fb92b255d6cc8eed2b12e750c8c",
+      "path": "evals/p134/input/authority-profile.json",
+      "size": 3278
     },
     {
       "hash": "sha256:0d4e9f692dbf5901371abbdc09c390f7751e4e75a2e91b8d803f24d96bb0974f",
@@ -15073,6 +15148,11 @@
       "size": 49571
     },
     {
+      "hash": "sha256:b6110a6aae7ebbeafba9188bcc1662782a81b122b2664264d789bbd530dd1bee",
+      "path": "scripts/run_p134_observation_authority.py",
+      "size": 27644
+    },
+    {
       "hash": "sha256:845eb4d1f36b8d14648cf20a23a9300dc75c17118dbd6fc9b9d068bf4f1fca28",
       "path": "scripts/run_portfolio_demo_pack.py",
       "size": 1264
@@ -15333,9 +15413,9 @@
       "size": 1047
     },
     {
-      "hash": "sha256:c07bbec677ccff9ce8b1e3f3e8139d0bc97a3d3bda17ae6f2c84237ba3c7bfbc",
+      "hash": "sha256:17ff8994111e6d79842b892c0bbcfd558080214b86d33ee5c775ca074880b26a",
       "path": "scripts/verify.sh",
-      "size": 109094
+      "size": 110166
     },
     {
       "hash": "sha256:ac7c3ef7b2da5eb2587932bd07607ab9a2d911497e7d2175a9128334b2c24b59",
@@ -16743,6 +16823,21 @@
       "size": 14547
     },
     {
+      "hash": "sha256:d11cb26b6d8bbccdadd8126c4f1bcb3de47d3fa7e6cf0809d65ee6d60e3d7492",
+      "path": "tests/test_p134_observation_authority.py",
+      "size": 19742
+    },
+    {
+      "hash": "sha256:603af9834d9972cc8849c379e8ddc5dd402841875d73696876417c939f2244eb",
+      "path": "tests/test_p134_release_evidence.py",
+      "size": 17155
+    },
+    {
+      "hash": "sha256:624116d5b50ce5830c716ba16b4cbd1c253998a6beb9363836a7a84fe547b95a",
+      "path": "tests/test_p134_runner.py",
+      "size": 3444
+    },
+    {
       "hash": "sha256:7b24eb8d26bf5f12d6da91609bc25996a8b98c2c44dbd77e466c37be7d181f29",
       "path": "tests/test_p13_release_evidence.py",
       "size": 1753
@@ -17803,6 +17898,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:dd7a7af209ed69c311789a61f029563a63f99d892ed6fd508e283362edd9f6b7",
+  "source_inventory_hash": "sha256:c8895cdf8418cb79352daf596f363ce40d37f5e0a4aaf1e36d6c704bd3d673f7",
   "status": "pass"
 }

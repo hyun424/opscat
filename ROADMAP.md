@@ -1006,3 +1006,15 @@ remediation, or mutate staging/production. See
 `docs/operations/p133-final-summary.md`,
 `docs/operations/p133-local-deadman-outbox-roadmap.md`, and
 `docs/tickets/p133/README.md`.
+
+## P134 complete: observation authority contract
+
+P134 establishes a separate `OA*` observation-authority hierarchy before any
+new source attachment. OA0 denies all observation proposals; OA1 permits only
+bounded synthetic local-artifact policy declarations. OA2 provider-shaped
+exports, OA3 live GET shadow, and OA4 credential/external reads remain blocked
+for later reviewed phases. The canonical 24-case contract/fault matrix passes,
+immutable receipt-ledger semantics are re-evaluated against the exact contract,
+independent source-bound review has zero unresolved P0/P1/P2 findings, and all
+runtime observation/action plus evaluator authority counters remain exact zero.
+P134 performs no observation or action. P135 is the next dependency.

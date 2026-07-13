@@ -3097,3 +3097,44 @@ Detailed references:
 - `docs/operations/p133-final-summary.md`
 - `docs/operations/p133-verification-handoff.md`
 - `docs/tickets/p133/README.md`
+
+## P134 observation-authority contract evidence
+
+P134 qualifies the policy boundary for observation proposals without performing
+an observation. The contract separates `OA0_CONTRACT_ONLY` and
+`OA1_LOCAL_ARTIFACT` from reserved OA2/OA3 and forbidden OA4, while existing
+P121 action authority remains exact zero.
+
+Canonical profile:
+
+```bash
+bash scripts/verify.sh --profile p134-release
+```
+
+The promoted evidence under `evals/p134/` passes exactly 18/18 contract cases
+and 6/6 adversarial fault cases. The canonical immutable ledger contains two
+allowed policy decisions and revalidates proposal hashes, deterministic receipt
+IDs, policy outcomes, counter transitions, sequence, genesis/previous links,
+and the final ledger hash. Independent review is bound to current sources and
+records zero P0/P1/P2/P3 findings; reviewer identity remains explicitly
+unauthenticated. Runtime observation/action and evaluator authority counters are
+all integer zero. Evaluator activity discloses one invocation, one profile read,
+and five artifact writes.
+
+The canonical run used 116 ms wall time, 113 ms CPU, and 28,196,864 bytes peak
+RSS under 20 s, 10 s, and 64 MiB limits. Its release status is
+`p134_observation_authority_contract_qualified` and release evidence hash is
+`sha256:eed48c9b7192bccf7c4392cb7385b894c09c76f17d33e8990be6cbb00e8288fc`.
+
+This evidence does not claim file ingestion, provider attachment, live GET,
+credentials, authenticated review identity, delivery, remediation, mutation,
+production observation, or operator replacement.
+
+Detailed references:
+
+- `docs/operations/p134-observation-authority-roadmap.md`
+- `docs/operations/p134-test-spec.md`
+- `docs/operations/p134-plan-review.md`
+- `docs/operations/p134-final-summary.md`
+- `docs/operations/p134-verification-handoff.md`
+- `docs/tickets/p134/README.md`

@@ -1,0 +1,104 @@
+{
+  "contract_core": {
+    "action_authority": {
+      "auth_context_count": 0,
+      "authority_escape_count": 0,
+      "cloud_mutation_count": 0,
+      "connector_write_call_count": 0,
+      "credential_scope_count": 0,
+      "database_mutation_count": 0,
+      "evidence_bypass_count": 0,
+      "filesystem_mutation_outside_artifact_count": 0,
+      "freeform_action_execution_count": 0,
+      "kubernetes_mutation_count": 0,
+      "l4_plus_action_count": 0,
+      "live_connector_call_count": 0,
+      "llm_command_execution_count": 0,
+      "network_mutation_count": 0,
+      "online_policy_write_count": 0,
+      "production_mutation_count": 0,
+      "rollback_missing_execution_count": 0,
+      "secret_material_count": 0,
+      "shell_execution_count": 0,
+      "staging_mutation_count": 0,
+      "subprocess_execution_count": 0,
+      "unapproved_intervention_count": 0
+    },
+    "allowed_capabilities": [
+      "telemetry.logs.read",
+      "telemetry.metrics.read",
+      "telemetry.traces.read"
+    ],
+    "allowed_hosts": [
+      "local-artifact.logs",
+      "local-artifact.metrics",
+      "local-artifact.traces"
+    ],
+    "allowed_methods": [
+      "LOCAL_LIST_DIR",
+      "LOCAL_READ_FILE",
+      "LOCAL_STAT"
+    ],
+    "budgets": {
+      "max_allowed_estimated_records_per_window": 1000,
+      "max_allowed_estimated_response_bytes_per_window": 10000,
+      "max_allowed_requests_per_window": 8,
+      "max_attempt_number": 3,
+      "max_single_response_bytes": 4000,
+      "max_timeout_ms": 5000,
+      "max_unique_capabilities_per_window": 3,
+      "max_unique_hosts_per_window": 3,
+      "max_unique_methods_per_window": 3,
+      "window_seconds": 3600
+    },
+    "contract_id": "p134-release-profile",
+    "contract_version": 1,
+    "default_decision": "deny",
+    "expires_at": "2026-07-14T00:00:00Z",
+    "kill_switch": false,
+    "max_authority_level": "OA1_LOCAL_ARTIFACT",
+    "subject_ref_hash": "sha256:ded2708a90c8f2125b0522276f8489d5d3f1dd2d3192058aefaa026fe868e229",
+    "valid_from": "2026-07-13T00:00:00Z"
+  },
+  "required_contract_cases": [
+    "oa0_default_deny",
+    "oa1_allowed",
+    "deterministic_duplicate",
+    "capability_denied",
+    "host_denied",
+    "method_denied",
+    "level_escalation_denied",
+    "kill_switch_deny",
+    "contract_not_yet_valid",
+    "contract_expired",
+    "allowed_request_budget_exhausted",
+    "byte_budget_exhausted",
+    "record_budget_exhausted",
+    "host_budget_exhausted",
+    "capability_budget_exhausted",
+    "response_byte_estimate_too_large",
+    "timeout_too_large",
+    "attempt_budget_exhausted"
+  ],
+  "required_fault_cases": [
+    "tampered_review_receipt",
+    "changed_request_id_replay",
+    "boolean_counter_rejected",
+    "url_credential_input_rejected",
+    "ledger_reorder_rejected",
+    "nonzero_action_authority_rejected"
+  ],
+  "resource_limits": {
+    "cpu_limit_ms": 10000,
+    "peak_memory_limit_bytes": 67108864,
+    "wall_limit_ms": 20000
+  },
+  "review": {
+    "decision": "approve",
+    "expires_at": "2026-07-13T23:59:59Z",
+    "reviewed_at": "2026-07-13T00:00:01Z",
+    "reviewer_ref_hash": "sha256:ae994e9e876970fe88c8a476093f46fb87deb7069669f49daa3a2571a26a9884"
+  },
+  "schema_version": "p134.authority_profile.v1",
+  "window_started_at": "2026-07-13T00:00:00Z"
+}

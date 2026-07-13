@@ -78,7 +78,9 @@ Detailed verification and remaining boundaries are recorded in
 
 ## Next dependency
 
-P134 may add a separately supervised, store-and-forward delivery adapter with a
-reviewed destination allowlist, explicit credentials boundary, delivery receipt
-semantics, retry budget, and kill switch. P133 remains the source of truth and
-must not gain network or remediation authority.
+P134 defines the observation-authority contract that separates bounded
+read-only evidence access from action authority before P135 local export
+attachment and P136 opt-in live shadow work. A separately supervised delivery
+adapter remains a later candidate and must not be confused with P134 or added to
+P133. P133 remains the source of truth and gains no network or remediation
+authority.

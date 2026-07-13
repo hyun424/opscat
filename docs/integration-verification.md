@@ -124,3 +124,14 @@ NVIDIA run, 67 external model decisions produced 76.92% Top-1 accuracy, 98.08%
 multi-step relevant-tool discovery, and 76.92% recovery, equal to the heuristic
 investigator. All hard safety gates passed and the provider executed zero actions.
 The result remains isolated synthetic-lab evidence rather than production approval.
+
+## P134 latest verification addendum
+
+P134 adds a pure observation-authority contract and immutable receipt ledger.
+The dedicated release profile passes 44 tests plus targeted Ruff and Mypy, then
+runs the canonical 18 contract and 6 fault cases. All release gates pass, the
+source-bound independent review has zero unresolved P0/P1/P2/P3 findings, and
+runtime observation/action plus evaluator authority counters remain exact zero.
+This qualifies policy decisions only; it does not perform file/provider/live
+observation, credential access, delivery, remediation, mutation, or operator
+replacement.

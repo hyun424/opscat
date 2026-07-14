@@ -185,6 +185,24 @@ def test_status_reports_ready_only_with_held_lease_and_matching_heartbeat(
     assert status["health"] == "ready"
     assert {path.name: path.read_bytes() for path in termination_dir.glob("*.json")} == termination_before
 
+    future_readiness = dict(readiness)
+    future_readiness["written_at"] = "2026-07-13T00:10:06Z"
+    future_readiness["readiness_hash"] = stable_hash(
+        {key: value for key, value in future_readiness.items() if key != "readiness_hash"}
+    )
+    readiness_path.write_text(
+        json.dumps(future_readiness, sort_keys=True, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
+    with lease_path.open("a+", encoding="utf-8") as lease:
+        fcntl.flock(lease.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        with pytest.raises(P139ServiceError, match="control_record_from_future"):
+            inspect_local_triage_service(
+                base_path=fixture.root,
+                bundle=fixture.bundle,
+                now=str(result["exit_receipt"]["created_at"]),
+            )
+
 
 @pytest.mark.parametrize("signum", [signal.SIGINT, signal.SIGTERM])
 def test_signal_controller_stops_before_a_new_cycle_with_bound_receipt(tmp_path: Path, signum: int) -> None:

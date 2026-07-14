@@ -3196,13 +3196,17 @@ both sides of the P136 checkpoint boundary. `p136-release`, `p137-release`, and
 is exact integer zero.
 
 Release status is
-`p138_local_observation_to_triage_supervisor_qualified`; release evidence hash
-is `sha256:3442abc0717f0aff8a41efad17f3a1343f1ef4ae10dd21fb6691813e5499f663`.
-It binds P136 evidence `sha256:ab094a86c371391833f917e855f8f53695a50c4e462ae39cb4464bfd8fc17605`
-and P137 evidence `sha256:4aae360e10102c4db1cdb538c72533440208bcdcc1715730455a9bb0f9727aaa`
+`p138_local_observation_to_triage_supervisor_qualified`; refreshed release
+evidence hash is
+`sha256:d49eb7ad7cbf28d10d3afcecfb2cb7841bb36e40b24e717e78d478ad49eca43d`.
+It binds refreshed P136 evidence
+`sha256:08d2fcc12d9d9b82087fbbf61d89f77dfd9efa584dc1b2eb064348d8976271a5`
+and P137 evidence
+`sha256:bac53fdb15aaff99de659a4d2b5a26e3b1867db07a8bae5052024fa9c0c4a577`
 plus their exact review hashes. The local deterministic final review records
 zero P0/P1/P2/P3 findings and explicitly records that an external reviewer
-resume was blocked to avoid transmitting uncommitted workspace code.
+identity is not authenticated; its refreshed review hash is
+`sha256:ffb8f4c6d7d99ee5ad56633e552d260a4ecea8074c87e347f1d971e111153f33`.
 
 P138 grants no authentication, credentials, environment
 discovery, provider/live-connector API, network/DNS/socket, notification,
@@ -3228,11 +3232,15 @@ restart, status, and forced-SIGTERM recovery.
 
 The matrix hash is
 `sha256:3b9ce5c53c1cceb7ee85ec2010196e77a45927a0b3530af75e528486f5ad77e6`.
-The final local adversarial review has zero P0/P1/P2/P3 findings and hash
-`sha256:838ad7ef1dafd38dfa5c29189a9427a7d0cd487a4a66f9ea8f88c0adab022724`.
+The refreshed local adversarial review has zero P0/P1/P2/P3 findings and hash
+`sha256:ff2a2ed1850b939c1fd6eb42a38020c9508c6a6b52dc27bf5f0b04491696fa4e`.
 Release status is `p139_local_triage_service_host_qualified`; release evidence
 hash is
-`sha256:0b7fc33e95412695c539cc308392070603a2e2409bde5b65735911e39de5d9c2`.
+`sha256:54fc58a8de1701b88a39821979426c9b028c9e95d2d59c80e17a7a2841bef4b3`.
+
+The refresh adds fail-closed rejection of readiness or heartbeat records later
+than the explicit observation time; this defect was found by P140 adversarial
+integration testing before P140 release qualification.
 
 P139 binds the corrected P138 evidence hash
 `sha256:3442abc0717f0aff8a41efad17f3a1343f1ef4ae10dd21fb6691813e5499f663`
@@ -3246,3 +3254,35 @@ This evidence qualifies a local process host only. It grants no authentication,
 credentials, environment discovery, live provider/network access, external
 notification, action/remediation, staging/production mutation, unattended
 operation, or operator replacement.
+
+## P140 P139-to-P133 local dead-man adapter evidence
+
+P140 evaluates P139 through the public local status API and injects the result
+into the existing P133 `DeadmanOutbox`; P133 remains the only event, cursor,
+acknowledgement, reminder, recovery, and retention writer. P140 adds a stable
+status projection, redacted invalid-state fingerprints, whole-adapter lease,
+cross-domain path containment, descriptor-relative no-follow reads, resource
+budgets, safe signals, an explicit JSON CLI, and networkless deployment
+templates.
+
+The canonical matrix proves exactly 32 expected/32 passed/0 failed. Matrix hash
+is `sha256:a30f3aa123efa3b1c06a764567c0ed443b4433c25acf37a13eef371365afda21`.
+The final review has zero P0/P1/P2/P3 findings and hash
+`sha256:507e1d354eb1982a03e5a4b94614e13250c967c2fc583a90ddc6d13c7b3f5621`.
+Release status is `p140_p139_deadman_adapter_qualified`; evidence hash is
+`sha256:d8b7ac9a539228fce6505dda8876088d5f3489dcdb8e7e146655b4e7cea209eb`.
+
+`p140-release` also reproduced the refreshed P132/P136/P137/P138/P139 chain
+after adding the new profile invalidated older source-bound evidence. P140
+qualifies durable local dead-man evidence only. It does not deliver a page,
+authenticate a reviewer, access credentials or a network, execute an action,
+remediate a system, mutate staging/production, or replace an operator. The
+systemd/Compose evidence is static manifest validation, not a live deployment.
+
+Detailed references:
+
+- `docs/operations/p140-p139-deadman-adapter-roadmap.md`
+- `docs/operations/p140-test-spec.md`
+- `docs/operations/p140-plan-review.md`
+- `docs/operations/p140-final-summary.md`
+- `docs/tickets/p140/README.md`

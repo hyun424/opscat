@@ -17,7 +17,8 @@ local health while preserving the exact shared zero-authority boundary.
   recovery at intent/history/current split commits;
 - terminal-control rollover intent/history/removal/completion split commits and
   exact dual-lease ordering without P138 ledger/checkpoint/termination mutation;
-- readiness/heartbeat/termination/ledger/status classification;
+- readiness/heartbeat/termination/ledger/status classification, including
+  fail-closed rejection of controls later than the explicit observation time;
 - exact exit-code mapping and signal-controller behavior;
 - systemd and Compose hardening parsers.
 

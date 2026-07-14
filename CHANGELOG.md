@@ -50,6 +50,19 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 
 ## Unreleased
 
+### P140 P139-to-P133 local dead-man adapter
+
+- Added an explicit-path, self-hashed P140 config and public-API-only P139
+  health evaluator while retaining P133 as the sole event/cursor/ack writer.
+- Added stable status projection, redacted invalid-state fingerprints,
+  whole-adapter/P133 lease ordering, cross-domain path isolation, bounded
+  runtime resources, safe signals, and JSON CLI errors.
+- Added networkless least-privilege systemd/Compose templates with only P140
+  state and the exact P139 lease probe file writable.
+- Added a source-bound exact 32-case qualification and `p140-release` profile.
+  P140 grants no notification, action, remediation, credential, network,
+  production-mutation, or operator-replacement authority.
+
 ### P139 local triage service host
 
 - Packaged the qualified P138 loop behind an explicit-path

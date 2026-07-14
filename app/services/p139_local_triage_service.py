@@ -46,8 +46,8 @@ _BYTES_TAG = "__opscat_p139_bytes_hex__"
 
 P138_QUALIFIED_STATUS = "p138_local_observation_to_triage_supervisor_qualified"
 # Updated by the P139 release freeze whenever qualified P138 source changes.
-EXPECTED_P138_EVIDENCE_HASH = "sha256:3442abc0717f0aff8a41efad17f3a1343f1ef4ae10dd21fb6691813e5499f663"
-EXPECTED_P138_REVIEW_HASH = "sha256:4e7bc40bf8d12881463254e8192852bebe5490ef962bd3c1238d855a274e4c1f"
+EXPECTED_P138_EVIDENCE_HASH = "sha256:d49eb7ad7cbf28d10d3afcecfb2cb7841bb36e40b24e717e78d478ad49eca43d"
+EXPECTED_P138_REVIEW_HASH = "sha256:ffb8f4c6d7d99ee5ad56633e552d260a4ecea8074c87e347f1d971e111153f33"
 
 MAX_BOOTSTRAP_BUNDLE_BYTES = 16_777_216
 _HASH_NONE = "sha256:" + ("0" * 64)
@@ -551,6 +551,8 @@ def inspect_local_triage_service(
         if record is None:
             continue
         age_ms = int((current_dt - _parse_timestamp(record["written_at"], "control_written_at")).total_seconds() * 1000)
+        if age_ms < 0:
+            raise P139ServiceError("control_record_from_future")
         if age_ms > int(cfg["limits"]["startup_readiness_stale_after_ms"]):
             stale = True
     if stale:

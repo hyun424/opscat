@@ -38,6 +38,7 @@ Documentation = "https://github.com/gimdonghyeon/opscat/tree/main/docs"
 [project.scripts]
 opscat = "app.cli:main"
 opscat-monitor = "app.monitor_cli:main"
+opscat-triage-deadman = "app.p140_deadman_cli:main"
 opscat-triage-service = "app.p139_service_cli:main"
 
 [build-system]

@@ -857,3 +857,27 @@ This qualifies a local service host, not live provider observation, external
 notification, autonomous remediation, unattended production operation, or
 operator replacement. See
 [`docs/operations/p139-local-triage-service-host-roadmap.md`](docs/operations/p139-local-triage-service-host-roadmap.md).
+
+## P140 P139 dead-man adapter
+
+P140 connects P139 health to the P133 local dead-man outbox without creating a
+second event writer. It revalidates the P139 bundle and P133 config on every
+check, probes the P139 service lease through the public status API, maps closed
+health outcomes into P133 watchdog results, and lets P133 perform all durable
+event, cursor, reminder, recovery, acknowledgement, and retention operations.
+
+```bash
+opscat-triage-deadman validate --config /etc/opscat/p140-deadman-adapter.json
+opscat-triage-deadman check --config /etc/opscat/p140-deadman-adapter.json
+opscat-triage-deadman run --config /etc/opscat/p140-deadman-adapter.json --forever
+bash scripts/verify.sh --profile p140-release
+```
+
+The adapter has no credentials, environment discovery, network access,
+notification delivery, command execution, action, remediation, or production
+mutation authority. Its local outbox is evidence for a future notification
+layer, not proof of paging delivery or operator replacement. Deployment must
+grant the unprivileged adapter write-open access to the exact P139 lease file
+because the qualified P139 status probe uses an `r+` lease descriptor; all
+other P139 artifacts remain read-only. See
+[`docs/operations/p140-p139-deadman-adapter-roadmap.md`](docs/operations/p140-p139-deadman-adapter-roadmap.md).

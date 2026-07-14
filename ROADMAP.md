@@ -77,10 +77,19 @@ hash-chained exit receipts, deterministic status, safe signals, and
 network-disabled least-privilege deployment examples. The final evidence is
 source-bound and preserves exact-zero shared runtime authority.
 
-P140 is next: translate P139 health and terminal receipts into P133-compatible
-credential-free local dead-man events. External notification requires a later
-reviewed notification-only authority, and remediation remains blocked behind
-separate observation, identity, approval, and action-authority qualification.
+## P140: P139-to-P133 local dead-man adapter
+
+P140 is implemented as a credential-free, network-free adapter that evaluates
+P139 through its public status contract and delegates event durability to the
+existing P133 writer. It preserves P133 event identity, crash replay,
+deduplication, reminders, acknowledgement, recovery, and retention while
+binding every result to P139 bundle and P133 config hashes. A stable P140
+projection excludes observation timestamps so repeated checks do not create
+false updates.
+
+External notification requires a later reviewed notification-only authority,
+and remediation remains blocked behind separate observation, identity,
+approval, and action-authority qualification.
 
 OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward a beta-grade agentic operations system.
 

@@ -82,6 +82,8 @@ The approved plan now:
 - defines intent/history/removal/completion restart-control rollover;
 - fixes lease order as service -> P138;
 - requires held-lease proof for `ready`;
+- rejects negative readiness/heartbeat age so future-dated controls cannot
+  satisfy `ready`;
 - adds stale-self-stop, rollover crash, and real clean restart coverage;
 - requires final review of evaluator-vs-runtime process/signal accounting.
 

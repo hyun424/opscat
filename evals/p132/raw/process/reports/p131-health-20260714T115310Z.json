@@ -30,7 +30,7 @@
     "action_execution_count": 0,
     "failure_count": 0,
     "last_result": "passed",
-    "last_run_at": "2026-07-14T10:30:18.046194Z",
+    "last_run_at": "2026-07-14T11:53:16.292800Z",
     "last_stages": {
       "policy_no_action_passed": true,
       "serialization_round_trip_passed": true,
@@ -38,10 +38,10 @@
     },
     "success_count": 1
   },
-  "config_hash": "sha256:b5dd826201cd4698564c63d52b2e7929e07e7c8c2d6d482675efc5a610db8216",
+  "config_hash": "sha256:b0204b30ead300b0487cd198f2f6e3d3a018e3d492a0c5f1e34599084626717a",
   "cycle_count": 1,
-  "generated_at": "2026-07-14T10:30:18.046787Z",
-  "report_hash": "sha256:82e45d2a037a55e6f7096a1814180c279bd42504e1849767b46111274f874525",
+  "generated_at": "2026-07-14T11:53:16.293532Z",
+  "report_hash": "sha256:dea6712cdd91f6ce5b82aaaf2f8becea93445ae84a83762c7001928569bff679",
   "resume_count": 0,
   "runtime_id": "p132-real-process-runtime",
   "schema_version": "p131.health_report.v1",
@@ -51,26 +51,26 @@
       "cursor_bytes": 86,
       "enabled": true,
       "failure_limit": 3,
-      "file_identity": "16777231:181760665",
+      "file_identity": "16777231:182086098",
       "kind": "local_jsonl",
-      "last_data_at": "2026-07-14T10:30:18.046194Z",
+      "last_data_at": "2026-07-14T11:53:16.292800Z",
       "last_error": null,
-      "last_success_at": "2026-07-14T10:30:18.046194Z",
-      "path_hash": "sha256:f5d7608171d948d5565641fca5785785f60e0f84296d5e56c0fdad5533d997f9",
+      "last_success_at": "2026-07-14T11:53:16.292800Z",
+      "path_hash": "sha256:b0ad47c185d4fda188b126b1ef0cf590dc65d44ec1d98ad4c36f392070578de9",
       "prefix_hash": "sha256:7727d49da7fba23970aa105942bdd7c88a2f9d98ce1c06c3747142ec6bffca2c",
       "prefix_length": 86,
       "rotation_count": 0
     }
   },
-  "state_hash": "sha256:c16460b9e8d4966341f1a5de27b2f914aa5b047bb3ccd473c70edeeea9799341",
+  "state_hash": "sha256:c02ede83375fc193a6d4e391ab7550e33fb06ecc5919b2b1a5dc7f0f941ddebc",
   "status": {
-    "last_heartbeat_at": "2026-07-14T10:30:18.046194Z",
+    "last_heartbeat_at": "2026-07-14T11:53:16.292800Z",
     "live": true,
     "ready": true,
     "reasons": [],
     "runtime_id": "p132-real-process-runtime",
     "schema_version": "p131.monitor_status.v1",
-    "state_hash": "sha256:c16460b9e8d4966341f1a5de27b2f914aa5b047bb3ccd473c70edeeea9799341"
+    "state_hash": "sha256:c02ede83375fc193a6d4e391ab7550e33fb06ecc5919b2b1a5dc7f0f941ddebc"
   },
   "totals": {
     "accepted_observation_count": 1,

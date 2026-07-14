@@ -1,0 +1,34 @@
+[Unit]
+Description=OpsCat credential-free P139 dead-man adapter
+After=local-fs.target
+StartLimitIntervalSec=60
+StartLimitBurst=6
+
+[Service]
+Type=simple
+User=opscat
+Group=opscat
+ExecStartPre=/usr/local/bin/opscat-triage-deadman validate --config /etc/opscat/p140-deadman-adapter.json
+ExecStart=/usr/local/bin/opscat-triage-deadman run --config /etc/opscat/p140-deadman-adapter.json --forever
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateNetwork=true
+ReadOnlyPaths=/etc/opscat
+ReadOnlyPaths=/var/lib/opscat/p139
+ReadWritePaths=/var/lib/opscat/p139/service.lock
+ReadWritePaths=/var/lib/opscat/p140
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

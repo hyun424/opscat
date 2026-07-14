@@ -1,0 +1,36 @@
+{
+  "x-opscat-preflight": {
+    "required_regular_files": ["./data/p139/service.lock"],
+    "required_owner": "65532:65532",
+    "required_mode": "0600"
+  },
+  "services": {
+    "opscat-triage-deadman": {
+      "image": "opscat@sha256:${OPSCAT_IMAGE_DIGEST:?set a 64-hex image manifest digest}",
+      "user": "65532:65532",
+      "command": [
+        "opscat-triage-deadman",
+        "run",
+        "--config",
+        "/etc/opscat/p140-deadman-adapter.json",
+        "--forever"
+      ],
+      "restart": "on-failure:6",
+      "stop_grace_period": "10s",
+      "read_only": true,
+      "privileged": false,
+      "network_mode": "none",
+      "cap_drop": ["ALL"],
+      "security_opt": ["no-new-privileges:true"],
+      "tmpfs": ["/tmp:size=16m,mode=1777,noexec,nosuid,nodev"],
+      "volumes": [
+        "./config/p140-deadman-adapter.json:/etc/opscat/p140-deadman-adapter.json:ro",
+        "./config/p139-service-bundle.json:/etc/opscat/p139-service-bundle.json:ro",
+        "./config/p133-deadman.json:/etc/opscat/p133-deadman.json:ro",
+        "./data/p139:/var/lib/opscat/p139:ro",
+        "./data/p139/service.lock:/var/lib/opscat/p139/service.lock:rw",
+        "./data/p140:/var/lib/opscat/p140:rw"
+      ]
+    }
+  }
+}

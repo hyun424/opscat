@@ -41,7 +41,8 @@ replacement claim.
   retained with the current receipt and direct predecessor protected.
 - `ready` requires fresh matching P138 readiness/heartbeat plus proof that the
   whole-service lease is held. A free lease with active-looking bytes is
-  classified unclean rather than healthy.
+  classified unclean rather than healthy. A future-dated readiness or
+  heartbeat record is invalid rather than fresh.
 - Production and evaluator process boundaries are separate. Evaluator
   subprocess and signal injection never appear in runtime authority counters.
 - The systemd and Compose examples disable networking, drop capabilities, use

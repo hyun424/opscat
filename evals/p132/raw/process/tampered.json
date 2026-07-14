@@ -30,7 +30,7 @@
     "action_execution_count": 0,
     "failure_count": 0,
     "last_result": "passed",
-    "last_run_at": "2026-07-14T11:53:17.894373Z",
+    "last_run_at": "2026-07-14T14:19:22.548948Z",
     "last_stages": {
       "policy_no_action_passed": true,
       "serialization_round_trip_passed": true,
@@ -38,17 +38,17 @@
     },
     "success_count": 3
   },
-  "config_hash": "sha256:b0204b30ead300b0487cd198f2f6e3d3a018e3d492a0c5f1e34599084626717a",
+  "config_hash": "sha256:5a094a766519c34c613bf0ae9f7ea9d41326658baebc5aa0d3f13b1a05232798",
   "cycle_count": 999999,
-  "last_cycle_at": "2026-07-14T11:53:17.894373Z",
-  "last_heartbeat_at": "2026-07-14T11:53:17.894373Z",
-  "last_report_at": "2026-07-14T11:53:16.293532Z",
-  "last_report_bucket": 178402999,
+  "last_cycle_at": "2026-07-14T14:19:22.548948Z",
+  "last_heartbeat_at": "2026-07-14T14:19:22.548948Z",
+  "last_report_at": "2026-07-14T14:19:20.971008Z",
+  "last_report_bucket": 178403876,
   "lifecycle": {
     "graceful_stop_count": 2,
     "last_stop_reason": "sigint",
-    "last_stop_requested_at": "2026-07-14T11:53:17.920274Z",
-    "last_stopped_at": "2026-07-14T11:53:17.920289Z",
+    "last_stop_requested_at": "2026-07-14T14:19:22.555871Z",
+    "last_stopped_at": "2026-07-14T14:19:22.555875Z",
     "phase": "stopped"
   },
   "process_health": {
@@ -62,7 +62,7 @@
   "resume_count": 2,
   "runtime_id": "p132-real-process-runtime",
   "scheduler": {
-    "last_progress_at": "2026-07-14T11:53:17.894373Z",
+    "last_progress_at": "2026-07-14T14:19:22.548948Z",
     "missed_tick_count": 0,
     "next_delay_seconds": null
   },
@@ -73,19 +73,19 @@
       "cursor_bytes": 258,
       "enabled": true,
       "failure_limit": 3,
-      "file_identity": "16777231:182086098",
+      "file_identity": "16777231:182702162",
       "kind": "local_jsonl",
-      "last_data_at": "2026-07-14T11:53:17.894373Z",
+      "last_data_at": "2026-07-14T14:19:22.548948Z",
       "last_error": null,
-      "last_success_at": "2026-07-14T11:53:17.894373Z",
-      "path_hash": "sha256:b0ad47c185d4fda188b126b1ef0cf590dc65d44ec1d98ad4c36f392070578de9",
+      "last_success_at": "2026-07-14T14:19:22.548948Z",
+      "path_hash": "sha256:c161c7d45327213ca3c132525ba823483e06ac74588aad4546fc1ab3b351e96e",
       "prefix_hash": "sha256:05dbd522afc86c42393a21ae12920cf90c56154a84b2657a59aa12688abbaee2",
       "prefix_length": 258,
       "rotation_count": 0
     }
   },
-  "started_at": "2026-07-14T11:53:16.292719Z",
-  "state_hash": "sha256:da734f690a2d6254e1f843fbcef6e145f01daf8d09e135acf6722d6bfa7c2cca",
+  "started_at": "2026-07-14T14:19:20.970149Z",
+  "state_hash": "sha256:9f86d425c01c2c48755bfb60df6aeffd5ddb7819d6968e0eea9a74f4ca452c00",
   "status": "stopped",
   "totals": {
     "accepted_observation_count": 3,

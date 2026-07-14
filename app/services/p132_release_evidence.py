@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import tomllib
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
 from app.services.p110_evaluation import stable_hash
 from app.services.p121_signals import P121_AUTHORITY_COUNTER_KEYS
+from app.services.p132_supervised_runtime import EXPECTED_CONSOLE_ENTRYPOINT
 
 P132_RELEASE_SCHEMA_VERSION = "p132.release_evidence.v1"
 P132_READY_STATUS = "p132_supervised_runtime_qualified"
@@ -339,6 +341,11 @@ def _current_sources_and_artifacts(
         return False
     if not _source_hashes_current(project_root, _mapping(supervisor_validation.get("source_hashes"))):
         return False
+    if (
+        supervisor_validation.get("console_entrypoint") != EXPECTED_CONSOLE_ENTRYPOINT
+        or _current_monitor_console_entrypoint(project_root / "pyproject.toml") != EXPECTED_CONSOLE_ENTRYPOINT
+    ):
+        return False
 
     endurance_artifacts = _mapping(endurance_report.get("artifacts"))
     workspace = endurance_artifacts.get("workspace")
@@ -382,6 +389,17 @@ def _source_hashes_current(root: Path, source_hashes: Mapping[str, Any]) -> bool
     return bool(source_hashes) and all(
         _bound_file_current(root, relative, expected_hash) for relative, expected_hash in source_hashes.items()
     )
+
+
+def _current_monitor_console_entrypoint(pyproject_path: Path) -> str | None:
+    try:
+        data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+    except (OSError, tomllib.TOMLDecodeError):
+        return None
+    project = data.get("project")
+    scripts = project.get("scripts") if isinstance(project, Mapping) else None
+    value = scripts.get("opscat-monitor") if isinstance(scripts, Mapping) else None
+    return value if isinstance(value, str) else None
 
 
 def _bound_file_current(root: Path, relative: object, expected_hash: object) -> bool:

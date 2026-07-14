@@ -1,11 +1,11 @@
 {
-  "config_hash": "sha256:b0204b30ead300b0487cd198f2f6e3d3a018e3d492a0c5f1e34599084626717a",
+  "config_hash": "sha256:5a094a766519c34c613bf0ae9f7ea9d41326658baebc5aa0d3f13b1a05232798",
   "final_cycle_count": 3,
-  "final_state_hash": "sha256:da734f690a2d6254e1f843fbcef6e145f01daf8d09e135acf6722d6bfa7c2cca",
+  "final_state_hash": "sha256:9f86d425c01c2c48755bfb60df6aeffd5ddb7819d6968e0eea9a74f4ca452c00",
   "reason": "sigint",
-  "receipt_hash": "sha256:e36bc2e18d69bcd22f9938882d6a0ecf7756b9e8743a57528cc317c63df629d2",
+  "receipt_hash": "sha256:b8a372a66fef5e51a9c852ba605a946401bb94e06f654020fe1f62b7b7dcc368",
   "runtime_id": "p132-real-process-runtime",
   "schema_version": "p132.termination_receipt.v1",
-  "stop_requested_at": "2026-07-14T11:53:17.920274Z",
-  "stopped_at": "2026-07-14T11:53:17.920289Z"
+  "stop_requested_at": "2026-07-14T14:19:22.555871Z",
+  "stopped_at": "2026-07-14T14:19:22.555875Z"
 }

@@ -9,24 +9,24 @@
   "artifacts": {
     "report_dir": "raw/endurance/reports",
     "report_hashes": {
-      "p131-health-20260713T001520Z.json": "sha256:ec3497c24c87c6798b74d6e7f7ec380933f66f6eda4a457c1d8333dda65bb70d",
-      "p131-health-20260713T001530Z.json": "sha256:a249f0c992249d18454f4e2e5298c5206503b2e8d0c76c708bcaf7b6d0b9b290",
-      "p131-health-20260713T001540Z.json": "sha256:125b734fa5c929a6847ecd8cf08308239e20396e2f24c0e07f1ea7e9cb165fa4",
-      "p131-health-20260713T001550Z.json": "sha256:cda05f94be210752d1e6a019aaac4125aa5610cf597ef1d8a81c23f0a6a0e065",
-      "p131-health-20260713T001600Z.json": "sha256:851e4efffc672b69e352219d23324a0997853d550f6aee8ed7fbe3c3835d2f4e",
-      "p131-health-20260713T001610Z.json": "sha256:4f3a3a715cfc4e5cb9ebd205ce16dfd33285470fefc6d1ea7343320963973c0e",
-      "p131-health-20260713T001620Z.json": "sha256:692afbf575ec5f0c080183de16140aaf24535ab54e1e3ed6fe92b2ca3290e4e9",
-      "p131-health-20260713T001630Z.json": "sha256:e5d019049f5463bce0771312d454a1bdabed4d20be97619b55e26ef3b1a6146b"
+      "p131-health-20260713T001520Z.json": "sha256:421973761f8517493c09b29e316e6cb69d0bab6c53fe9800f1c4e2629dac0bee",
+      "p131-health-20260713T001530Z.json": "sha256:e14cc79a9fcb42abaf614c6f72d8772075a620abeef23964782bfa7e95ccee23",
+      "p131-health-20260713T001540Z.json": "sha256:956ceb4ab2f32ff6d5db2bc9494bf0a428581821d7a864da2dad738836c7c05a",
+      "p131-health-20260713T001550Z.json": "sha256:98f957e7d8c21315f45603a83abcbfefea5f7dd455afb2a26a652c5f34ebc59e",
+      "p131-health-20260713T001600Z.json": "sha256:fc34a2f3d5348cad2ee8d0f0857e9ac98eb31e215d6c40811ec59788ce475e8a",
+      "p131-health-20260713T001610Z.json": "sha256:d7be152a65a540a54c01d8870d5731cd7648b8e267c94b5a6f7455ee18b8df6b",
+      "p131-health-20260713T001620Z.json": "sha256:4d9042ff4ff77ca15432640bc52328f5c2480fe6620930eecb87f6dc39055720",
+      "p131-health-20260713T001630Z.json": "sha256:d1dfa9375f74457c59e033b076db92c5a828dcefda666aa654c1d9109bbc399a"
     },
     "source_hash": "sha256:0adec88c0b1ae2f90a926c3c638a177eac05d8686aee8bd2e92553bca822a25e",
     "source_path": "raw/endurance/telemetry.jsonl",
-    "state_hash": "sha256:4564320be9cbc723d7422bcad0a6c632cac46c6a8113bbac136a786d01dd08b0",
+    "state_hash": "sha256:32d6d1072a5a845947dec7435547f09fe756dc9ad3ba3fc57e425160fa9b3bd0",
     "state_path": "raw/endurance/state.json",
     "workspace": "raw/endurance"
   },
   "config_hash": "sha256:2373e05a2d66dad78377240f4741c0655077818adc939cd1980752ff3d76911f",
   "cycle_count": 1000,
-  "endurance_report_hash": "sha256:42918a8e68a016dbade40012b2f2c44016338f888f4ee3b8f8705cc2cdd1d823",
+  "endurance_report_hash": "sha256:04eb683e4453fe859defeece5ece1625086c928e9b5a4691bbad794351f89846",
   "evaluator_authority": {
     "arbitrary_command_count": 0,
     "child_process_launch_count": 0,
@@ -45,7 +45,7 @@
   },
   "evaluator_source": {
     "module": "app.services.p132_supervised_runtime",
-    "self_hash": "sha256:ac6eacbdc9da73cacd50698567510426eca476ad9f6428817637b92eed03b5b0"
+    "self_hash": "sha256:4b47db4e7c9669322874a82a8c85b53d8599881a2b2320b1f30bc30856f51e94"
   },
   "profile_gates": {
     "max_artifact_bytes": 2097152,
@@ -70,13 +70,13 @@
     },
     "passed": true,
     "values": {
-      "artifact_bytes": 193050,
-      "cpu_seconds": 4.029015,
+      "artifact_bytes": 193049,
+      "cpu_seconds": 3.9515950000000006,
       "report_dir_bytes": 22152,
       "state_bytes": 81953,
-      "tracemalloc_peak_bytes": 2977459,
-      "tracemalloc_peak_mib": 2.8395261764526367,
-      "wall_seconds": 4.0989584579947405
+      "tracemalloc_peak_bytes": 2981139,
+      "tracemalloc_peak_mib": 2.8430356979370117,
+      "wall_seconds": 4.025154167000437
     }
   },
   "retained_report_count": 8,

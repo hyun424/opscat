@@ -1,0 +1,35 @@
+{
+  "x-opscat-preflight": {
+    "required_regular_files": ["./data/p133/.cursor.json.lock"],
+    "required_owner": "65532:65532",
+    "required_mode": "0600"
+  },
+  "services": {
+    "opscat-notification-authority": {
+      "image": "opscat@sha256:${OPSCAT_IMAGE_DIGEST:?set a 64-hex image manifest digest}",
+      "user": "65532:65532",
+      "command": [
+        "opscat-notification-authority",
+        "run",
+        "--config",
+        "/etc/opscat/p141-notification.json",
+        "--forever"
+      ],
+      "restart": "on-failure:6",
+      "stop_grace_period": "10s",
+      "read_only": true,
+      "privileged": false,
+      "network_mode": "none",
+      "cap_drop": ["ALL"],
+      "security_opt": ["no-new-privileges:true"],
+      "tmpfs": ["/tmp:size=16m,mode=1777,noexec,nosuid,nodev"],
+      "volumes": [
+        "./config/p141-notification.json:/etc/opscat/p141-notification.json:ro",
+        "./config/p133-deadman.json:/etc/opscat/p133-deadman.json:ro",
+        "./data/p133:/var/lib/opscat/p133:ro",
+        "./data/p133/.cursor.json.lock:/var/lib/opscat/p133/.cursor.json.lock:rw",
+        "./data/p141:/var/lib/opscat/p141:rw"
+      ]
+    }
+  }
+}

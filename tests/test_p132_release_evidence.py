@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -206,6 +207,55 @@ def test_release_validation_recomputes_current_source_hashes(tmp_path: Path) -> 
             process_matrix=process,
             supervisor_validation=artifacts["supervisor-validation.json"],
             artifact_root=tmp_path,
+        )
+
+
+def test_release_validation_binds_only_the_monitor_console_mapping(tmp_path: Path) -> None:
+    artifacts = _run_release(tmp_path / "artifacts")
+    project = tmp_path / "project"
+    project.mkdir()
+    source_paths = {
+        *artifacts["process-matrix.json"]["source_hashes"],
+        *artifacts["supervisor-validation.json"]["source_hashes"],
+        "app/services/p131_always_on_monitor.py",
+        "app/services/p132_supervised_runtime.py",
+        "pyproject.toml",
+    }
+    for relative in source_paths:
+        target = project / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(relative, target)
+
+    pyproject = project / "pyproject.toml"
+    pyproject.write_text(
+        pyproject.read_text(encoding="utf-8")
+        + '\nunrelated-future-command = "app.future_cli:main"\n',
+        encoding="utf-8",
+    )
+    validate_p132_release_evidence(
+        artifacts["release-evidence.json"],
+        endurance_report=artifacts["endurance-report.json"],
+        process_matrix=artifacts["process-matrix.json"],
+        supervisor_validation=artifacts["supervisor-validation.json"],
+        project_root=project,
+        artifact_root=tmp_path / "artifacts",
+    )
+
+    pyproject.write_text(
+        pyproject.read_text(encoding="utf-8").replace(
+            'opscat-monitor = "app.monitor_cli:main"',
+            'opscat-monitor = "app.wrong_cli:main"',
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(P132ReleaseEvidenceError, match="release_evidence_artifact_stale"):
+        validate_p132_release_evidence(
+            artifacts["release-evidence.json"],
+            endurance_report=artifacts["endurance-report.json"],
+            process_matrix=artifacts["process-matrix.json"],
+            supervisor_validation=artifacts["supervisor-validation.json"],
+            project_root=project,
+            artifact_root=tmp_path / "artifacts",
         )
 
 

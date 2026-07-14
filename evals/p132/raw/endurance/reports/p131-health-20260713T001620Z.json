@@ -41,7 +41,7 @@
   "config_hash": "sha256:2373e05a2d66dad78377240f4741c0655077818adc939cd1980752ff3d76911f",
   "cycle_count": 981,
   "generated_at": "2026-07-13T00:16:20Z",
-  "report_hash": "sha256:271d9cd517898b28cabc67034a2756d6aaee0991876a5993abedcd41a6314eac",
+  "report_hash": "sha256:0736799b0efa30a03e4caade370f2f80caab0b85a2091d543a30b32d43902d61",
   "resume_count": 0,
   "runtime_id": "p132-endurance-runtime",
   "schema_version": "p131.health_report.v1",
@@ -51,18 +51,18 @@
       "cursor_bytes": 87199,
       "enabled": true,
       "failure_limit": 3,
-      "file_identity": "16777231:182084890",
+      "file_identity": "16777231:182700953",
       "kind": "local_jsonl",
       "last_data_at": "2026-07-13T00:16:20Z",
       "last_error": null,
       "last_success_at": "2026-07-13T00:16:20Z",
-      "path_hash": "sha256:66dc2571d40f95b3e14bd4a0cd38262f24dec10ecaaea045f18c9032cd7cbf73",
+      "path_hash": "sha256:56cd53c2857acb3f083f732d15c090b618d0e946bfe4b721e1e2b750e83fdf55",
       "prefix_hash": "sha256:ecb0b07838920e54661b0a27bbd54e2d717e7a85d89c2874d90d30fa7fdee517",
       "prefix_length": 4096,
       "rotation_count": 0
     }
   },
-  "state_hash": "sha256:1f351d3bb276d813c097e84fe1c786e5850020f3ed87da1712b7af0d95e985dc",
+  "state_hash": "sha256:9e6749a342c677bc9f9426392e735da93fcc0e4203b961e42478572890056a61",
   "status": {
     "last_heartbeat_at": "2026-07-13T00:16:20Z",
     "live": true,
@@ -70,7 +70,7 @@
     "reasons": [],
     "runtime_id": "p132-endurance-runtime",
     "schema_version": "p131.monitor_status.v1",
-    "state_hash": "sha256:1f351d3bb276d813c097e84fe1c786e5850020f3ed87da1712b7af0d95e985dc"
+    "state_hash": "sha256:9e6749a342c677bc9f9426392e735da93fcc0e4203b961e42478572890056a61"
   },
   "totals": {
     "accepted_observation_count": 981,

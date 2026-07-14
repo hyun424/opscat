@@ -166,7 +166,6 @@ def validate_supervisor_manifests(manifest_dir: Path | str, *, project_root: Pat
         (manifest_root / name).relative_to(root).as_posix(): _file_hash(manifest_root / name)
         for name in (SYSTEMD_MANIFEST, LAUNCHD_MANIFEST, COMPOSE_MANIFEST)
     }
-    source_hashes["pyproject.toml"] = _file_hash(root / "pyproject.toml")
     passed = entrypoint == EXPECTED_CONSOLE_ENTRYPOINT and all(checks.values())
     result: dict[str, Any] = {
         "schema_version": SUPERVISOR_VALIDATION_SCHEMA_VERSION,

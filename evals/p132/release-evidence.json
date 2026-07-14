@@ -1,8 +1,8 @@
 {
   "artifact_hashes": {
-    "endurance_report": "sha256:fc5497063a8dbe0683ec54f570008367f7e18814ec78c5d61e6ce196753b8ddb",
-    "process_matrix": "sha256:026633e67764818f160675f0b754eb4fee4584c2bfcb9d2cfb7d267833303b1f",
-    "supervisor_validation": "sha256:b505d9486b76343bb5746d313c47fd3a1428048041657a2662324da3180682af"
+    "endurance_report": "sha256:3ec87e684a743351b8978f50ac3e4c752061f2adbf02121a45f07865f2d1e0f5",
+    "process_matrix": "sha256:826cd6db38cf39f4ff2cb7617de85afed94cb1e5fd30275dcc6e6aa328070092",
+    "supervisor_validation": "sha256:44cbc332bc54ddae86528b8f285a3f5ebc95e9e5a6040222547bffc7c02565c6"
   },
   "evaluator_activity": {
     "arbitrary_command_count": 0,
@@ -40,7 +40,7 @@
   "product_claim": "P131's local JSONL monitor is qualified for bounded single-host external supervisor management.",
   "public_limitation": "Bounded local single-host qualification only; no 24/7 production availability, multi-host failover, live connector, external paging, authentication, credential access, remediation, production autonomy, or operator replacement is claimed.",
   "reasons": [],
-  "release_evidence_hash": "sha256:cc5b8ca9f17682275d96df890a1a8d3d595dad5dec0e3f4e6803623d34cbbfde",
+  "release_evidence_hash": "sha256:89053f3e5ad2e801dc538ac7d28a56fa829acf8d07de2d4b580836c1cf4b757a",
   "release_id": "P132-supervised-runtime-endurance",
   "release_status": "p132_supervised_runtime_qualified",
   "runtime_authority": {
@@ -80,33 +80,33 @@
         "workspace": "raw/endurance"
       },
       "config_hash": "sha256:2373e05a2d66dad78377240f4741c0655077818adc939cd1980752ff3d76911f",
-      "evaluator_source_hash": "sha256:ac6eacbdc9da73cacd50698567510426eca476ad9f6428817637b92eed03b5b0",
+      "evaluator_source_hash": "sha256:4b47db4e7c9669322874a82a8c85b53d8599881a2b2320b1f30bc30856f51e94",
       "profile_id": "p132-promoted-local-supervisor",
       "report_hashes": {
-        "p131-health-20260713T001520Z.json": "sha256:ec3497c24c87c6798b74d6e7f7ec380933f66f6eda4a457c1d8333dda65bb70d",
-        "p131-health-20260713T001530Z.json": "sha256:a249f0c992249d18454f4e2e5298c5206503b2e8d0c76c708bcaf7b6d0b9b290",
-        "p131-health-20260713T001540Z.json": "sha256:125b734fa5c929a6847ecd8cf08308239e20396e2f24c0e07f1ea7e9cb165fa4",
-        "p131-health-20260713T001550Z.json": "sha256:cda05f94be210752d1e6a019aaac4125aa5610cf597ef1d8a81c23f0a6a0e065",
-        "p131-health-20260713T001600Z.json": "sha256:851e4efffc672b69e352219d23324a0997853d550f6aee8ed7fbe3c3835d2f4e",
-        "p131-health-20260713T001610Z.json": "sha256:4f3a3a715cfc4e5cb9ebd205ce16dfd33285470fefc6d1ea7343320963973c0e",
-        "p131-health-20260713T001620Z.json": "sha256:692afbf575ec5f0c080183de16140aaf24535ab54e1e3ed6fe92b2ca3290e4e9",
-        "p131-health-20260713T001630Z.json": "sha256:e5d019049f5463bce0771312d454a1bdabed4d20be97619b55e26ef3b1a6146b"
+        "p131-health-20260713T001520Z.json": "sha256:421973761f8517493c09b29e316e6cb69d0bab6c53fe9800f1c4e2629dac0bee",
+        "p131-health-20260713T001530Z.json": "sha256:e14cc79a9fcb42abaf614c6f72d8772075a620abeef23964782bfa7e95ccee23",
+        "p131-health-20260713T001540Z.json": "sha256:956ceb4ab2f32ff6d5db2bc9494bf0a428581821d7a864da2dad738836c7c05a",
+        "p131-health-20260713T001550Z.json": "sha256:98f957e7d8c21315f45603a83abcbfefea5f7dd455afb2a26a652c5f34ebc59e",
+        "p131-health-20260713T001600Z.json": "sha256:fc34a2f3d5348cad2ee8d0f0857e9ac98eb31e215d6c40811ec59788ce475e8a",
+        "p131-health-20260713T001610Z.json": "sha256:d7be152a65a540a54c01d8870d5731cd7648b8e267c94b5a6f7455ee18b8df6b",
+        "p131-health-20260713T001620Z.json": "sha256:4d9042ff4ff77ca15432640bc52328f5c2480fe6620930eecb87f6dc39055720",
+        "p131-health-20260713T001630Z.json": "sha256:d1dfa9375f74457c59e033b076db92c5a828dcefda666aa654c1d9109bbc399a"
       },
       "runtime_id": "p132-endurance-runtime",
       "runtime_source_hash": "sha256:b18cc959c3632004c6d895dd706f33421aa2c682a0176def9482c3f612a5610c",
       "source_hash": "sha256:0adec88c0b1ae2f90a926c3c638a177eac05d8686aee8bd2e92553bca822a25e",
-      "state_hash": "sha256:4564320be9cbc723d7422bcad0a6c632cac46c6a8113bbac136a786d01dd08b0"
+      "state_hash": "sha256:32d6d1072a5a845947dec7435547f09fe756dc9ad3ba3fc57e425160fa9b3bd0"
     },
     "process": {
       "artifact_hashes": {
-        "final_state": "sha256:7716d9ffe648847834fabc89cd2616e9172f96b50f5698b758adffda7335ec62",
-        "monitor_config": "sha256:624294a2346e2b70304c67f07a66cd184f0e698471cb518b4d76297a1d48b04f",
-        "storage_low_space_state": "sha256:05e90f5a6cfaa9910012f7ce05b545dd9b084b186b2fb1638bf4a35844b20ab9",
-        "storage_post_replace_state": "sha256:acdda1992ba050d7883e5ba6d4f0d53f541f1ed04c732586d90b7d91b45f0e9c",
+        "final_state": "sha256:22bd2410f5a8122bad9fef16be185b55e32565fff413017bd23eafc1bac2a72b",
+        "monitor_config": "sha256:abab547d46f994de5639f975dd0311d3ae16f580959a4dc8b924a2861ab20d01",
+        "storage_low_space_state": "sha256:3aaafbfe8ef72293fed318e145da0ab822434adb94be8d058c8ce98bd9e7465b",
+        "storage_post_replace_state": "sha256:3d2f84f5cca83969b04ebe68322e4864c3067da2cbae6a936d9ebbecd23f88dd",
         "storage_pre_replace_canonical": "sha256:87248a78703c00a5052c0e3e624175ad519411cbb415039a7021aa0cf515feab",
-        "storage_report_interruption_state": "sha256:90ec87c9f0c5936806452fe0e5f792137c6ac41f09e85330b8bf8d4c03251d98",
+        "storage_report_interruption_state": "sha256:d47e0ff316848ad24c585bb3aea16b8206e9310a41f702132300188cc4b0c81d",
         "telemetry": "sha256:05dbd522afc86c42393a21ae12920cf90c56154a84b2657a59aa12688abbaee2",
-        "termination_receipt": "sha256:3070832d9f0f62221a7680a925e8a5125714ede58e111e1b3d248ed90c51a341"
+        "termination_receipt": "sha256:a18b4ec233ec66743c3759fb63d0d20b71016b1dc8eb584576e21a6ab1d94a83"
       },
       "artifact_paths": {
         "final_state": "raw/process/state.json",
@@ -118,15 +118,15 @@
         "telemetry": "raw/process/telemetry.jsonl",
         "termination_receipt": "raw/process/termination-receipt.json"
       },
-      "cases_hash": "sha256:f3dbf8182c93b3c8b4d3f561ff036dee306e2a8ccbd195d524ee5c87c3b0628c",
+      "cases_hash": "sha256:87fad0c134dd4ec25f9edc5a3c7564d06355717d346f906b033bfb580cf4e440",
       "source_hashes": {
         "app/monitor_cli.py": "sha256:d689a0981b458fb421160622385d8d26ef850db4c96159f28062b28260ec5562",
         "app/services/p131_always_on_monitor.py": "sha256:b18cc959c3632004c6d895dd706f33421aa2c682a0176def9482c3f612a5610c",
-        "app/services/p132_release_evidence.py": "sha256:0679d1a97163d743a2bd8e5acaa859ca9882396f9848ae2f1f6faf8cb00dc270",
-        "app/services/p132_supervised_runtime.py": "sha256:ac6eacbdc9da73cacd50698567510426eca476ad9f6428817637b92eed03b5b0",
+        "app/services/p132_release_evidence.py": "sha256:bf2fddc7894d62ea6dc06b8698795ae85412b02c911b3eacc15e73b1e6e4490a",
+        "app/services/p132_supervised_runtime.py": "sha256:4b47db4e7c9669322874a82a8c85b53d8599881a2b2320b1f30bc30856f51e94",
         "scripts/run_p132_supervised_runtime.py": "sha256:a9dc55672c379a9e32246f50692229405c22ec4423f6ef9a38f44546ca76dbce"
       },
-      "storage_cases_hash": "sha256:7c7ce147946372e0abf0e8e57a5c85e945ed5f79e28ee5f15bd6531d13023e3e"
+      "storage_cases_hash": "sha256:da115c3d2cced9003a738e4ffcb7611f75625ce534df7579958543eb50ed1a6b"
     },
     "supervisor": {
       "console_entrypoint": "app.monitor_cli:main",
@@ -138,8 +138,7 @@
       "source_hashes": {
         "deploy/p132/compose.monitor.yaml": "sha256:981c335f897e34a879fbdb2ad84408231b5ba0a3c7d55785ea2e7295a0764e05",
         "deploy/p132/io.opscat.monitor.plist": "sha256:6567dffa270f7885767dca6386aff1404a71f827a3a4e76a0f1f04dc604efc4d",
-        "deploy/p132/opscat-monitor.service": "sha256:b3dbe611fe4dc59308ae69ec10da03589bcf001657a2e828f7c45985def5dd46",
-        "pyproject.toml": "sha256:bea7db5f69fa5ce663754b0b8b3dbb253ce43d60bf5435381760c65a00645079"
+        "deploy/p132/opscat-monitor.service": "sha256:b3dbe611fe4dc59308ae69ec10da03589bcf001657a2e828f7c45985def5dd46"
       }
     }
   }

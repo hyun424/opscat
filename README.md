@@ -881,3 +881,24 @@ grant the unprivileged adapter write-open access to the exact P139 lease file
 because the qualified P139 status probe uses an `r+` lease descriptor; all
 other P139 artifacts remain read-only. See
 [`docs/operations/p140-p139-deadman-adapter-roadmap.md`](docs/operations/p140-p139-deadman-adapter-roadmap.md).
+
+## P141 notification-only authority simulator
+
+P141 consumes validated P133 events through the public reader and creates
+deterministic, redacted local notification envelopes plus simulated delivery
+receipts. The simulator is multi-destination, idempotent, crash-safe, leased,
+budget bounded, and explicit that no notification was delivered or acknowledged.
+
+```bash
+opscat-notification-authority validate --config /etc/opscat/p141-notification.json
+opscat-notification-authority process --config /etc/opscat/p141-notification.json
+opscat-notification-authority list-receipts --config /etc/opscat/p141-notification.json
+opscat-notification-authority run --config /etc/opscat/p141-notification.json --forever
+bash scripts/verify.sh --profile p141-release
+```
+
+P141 reads no credentials or environment values, opens no network connection,
+sends no message, writes no P133 acknowledgement, and has no action,
+remediation, or mutation authority. Its receipts are design and durability
+evidence for a later separately reviewed outbound transport. See
+[`docs/operations/p141-notification-authority-roadmap.md`](docs/operations/p141-notification-authority-roadmap.md).

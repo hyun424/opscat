@@ -91,6 +91,18 @@ External notification requires a later reviewed notification-only authority,
 and remediation remains blocked behind separate observation, identity,
 approval, and action-authority qualification.
 
+## P141: notification-only authority simulator
+
+P141 is implemented as a credential-free, network-free local simulator over
+validated P133 events. It creates deterministic redacted envelopes and
+simulated-only receipts for closed destination labels, advances its cursor only
+after all destination artifacts are durable, and keeps delivery,
+acknowledgement, action, remediation, and mutation counters at exact zero.
+
+A future phase may introduce a reviewed outbound notification transport. That
+phase must add identity, credential, privacy, provider, retry, rate-limit, and
+delivery verification contracts without inheriting action authority.
+
 OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward a beta-grade agentic operations system.
 
 ## P131 complete: credential-free always-on local monitoring

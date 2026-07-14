@@ -1,0 +1,65 @@
+{
+  "coverage": {
+    "covered": 82264,
+    "executable": 108214,
+    "minimum_percent": 60.0,
+    "passed": true,
+    "percent": 76.02
+  },
+  "focused_p142": {
+    "failed": 0,
+    "mypy": "pass",
+    "passed": 84,
+    "ruff": "pass"
+  },
+  "gates": {
+    "docs": {
+      "command": "bash scripts/verify.sh --profile docs",
+      "exit_code": 0,
+      "local_log_bytes": 3218,
+      "local_log_path": "/tmp/opscat-docs-final.log",
+      "local_log_sha256": "sha256:bb7f186f111b271966c00e8cb97e4cb1d02237c329b1319b675ee2d7e76ce2e6",
+      "terminal_marker": "Verification complete (docs)",
+      "terminal_marker_present": true
+    },
+    "full": {
+      "command": "bash scripts/verify.sh --profile full",
+      "exit_code": 0,
+      "local_log_bytes": 58650,
+      "local_log_path": "/tmp/opscat-full-final.log",
+      "local_log_sha256": "sha256:07eee0e3c0e1f4a32d86ef412cd16a21bf783bc61398b439ca63583d7782846b",
+      "terminal_marker": "Verification complete (full)",
+      "terminal_marker_present": true
+    },
+    "p122-release": {
+      "command": "bash scripts/verify.sh --profile p122-release",
+      "exit_code": 0,
+      "local_log_bytes": 2956,
+      "local_log_path": "/tmp/opscat-p122-release-final.log",
+      "local_log_sha256": "sha256:c8c1f95ce7e3cde50ef63b69dd6a1ce0922346e0d9d591c4b4d2db892466933b",
+      "terminal_marker": "Verification complete (p122-release)",
+      "terminal_marker_present": true
+    },
+    "p142-release": {
+      "command": "bash scripts/verify.sh --profile p142-release",
+      "exit_code": 0,
+      "local_log_bytes": 5049,
+      "local_log_path": "/tmp/opscat-p142-release-final.log",
+      "local_log_sha256": "sha256:3b44a36fd96974383e2df13ca4ee4923dea30ece6dda46f873f0f8cd10411216",
+      "terminal_marker": "Verification complete (p142-release)",
+      "terminal_marker_present": true
+    }
+  },
+  "generated_at": "2026-07-14T20:17:50.569661Z",
+  "limitations": [
+    "local_log_paths_are_ephemeral",
+    "local_execution_provenance_is_not_cryptographic_attestation"
+  ],
+  "p122_evidence_hash": "sha256:6c195e243140ab84ea72d38908fdf1e1481a63917b0115d2eed5387d43ca90d9",
+  "p122_release_status": "p122_open_source_local_rc",
+  "p142_evidence_hash": "sha256:1d9f00eb142739a5da04fd0de3ebd19dc62a20ec94252d7a4d4f6b14ed02c254",
+  "p142_release_status": "p142_loopback_transport_lab_qualified",
+  "schema_version": "p142.verification_receipt.v1",
+  "status": "pass",
+  "verification_receipt_hash": "sha256:7df9769e01f98ffb174d741a93494e2125ab983fdf71552df8faca73c97ba9a1"
+}

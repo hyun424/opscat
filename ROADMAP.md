@@ -1092,3 +1092,14 @@ successful provider-shaped attachments, one securely re-read duplicate, and 24
 fail-closed rejection/adversarial cases. Independent review records zero
 P0/P1/P2/P3 findings and all forbidden-authority counters remain integer zero.
 P135 qualifies local artifacts only, not live provider attachment or action.
+
+## P142 in qualification: numeric-loopback notification transport lab
+
+P142 introduces the first real socket transport after P141, but restricts it
+to structurally parsed numeric loopback addresses. It adds deterministic
+dispatch and attempt identities, a durable request-commit journal, bounded
+HTTP response parsing, replay barriers, and exact authority counters. DNS,
+credentials, proxies, TLS, authentication, redirects, providers, P133
+acknowledgements, remediation, and staging/production mutation remain blocked.
+The milestone qualifies transport mechanics only; it does not claim external
+notification delivery or production readiness.

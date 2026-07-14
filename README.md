@@ -902,3 +902,25 @@ sends no message, writes no P133 acknowledgement, and has no action,
 remediation, or mutation authority. Its receipts are design and durability
 evidence for a later separately reviewed outbound transport. See
 [`docs/operations/p141-notification-authority-roadmap.md`](docs/operations/p141-notification-authority-roadmap.md).
+
+## P142 numeric-loopback transport lab
+
+P142 consumes hash-valid P141 envelopes and exercises real HTTP request and
+receipt behavior only against explicitly configured numeric loopback targets.
+It uses family-specific raw sockets, a durable request-commit journal,
+deterministic dispatch identities, bounded response parsing, and fail-closed
+recovery that never repeats a request whose outcome became uncertain.
+
+```bash
+opscat-loopback-transport-lab validate --config /etc/opscat/p142-loopback.json
+opscat-loopback-transport-lab process --config /etc/opscat/p142-loopback.json
+opscat-loopback-transport-lab list --config /etc/opscat/p142-loopback.json
+bash scripts/verify.sh --profile p142-release
+```
+
+P142 remains credential-free and external-network-free. It forbids DNS,
+proxies, environment-derived configuration, TLS, authentication, redirects,
+provider SDKs, P133 acknowledgements, action, remediation, and production
+mutation. A successful receipt proves only isolated loopback acceptance, not
+production notification delivery. See
+[`docs/operations/p142-loopback-transport-roadmap.md`](docs/operations/p142-loopback-transport-roadmap.md).

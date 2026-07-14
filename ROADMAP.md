@@ -29,11 +29,24 @@ exports only after revalidating a current P134 `OA1_LOCAL_ARTIFACT` receipt. The
 canonical 30-case matrix passes with exact-zero forbidden authority, source-bound
 independent review, secure duplicate rereads, and denominator-visible failures.
 
-## P136 next: incremental local export observation
+## P136 complete: incremental local export observation
 
-P136 will qualify cursor-bound, crash-safe incremental observation of rotating
+P136 qualifies cursor-bound, crash-safe incremental observation of rotating
 local provider exports without adding credentials, network calls, provider APIs,
 delivery, action execution, remediation, or staging/production mutation.
+
+## P137 complete: bounded local investigation and triage
+
+P137 validates P136's fixed handoff bundle and turns promoted local evidence
+into durable incidents, closed hypotheses, bounded local evidence selections,
+terminal classifications, and a CAS-chained investigation ledger. Its canonical
+60-case gate covers handoff tampering, correlation, every request catalog entry,
+classification, lease, signals, crash replay, readiness, CAS, and resource
+failure. Durable recovery revalidates atom semantics and rederives request
+results, while the freeze binds every case's exact effective P137 config and
+rebuilds expectations from case-input oracles. This qualifies local evidence triage only; live provider observation,
+notifications, action/remediation, production mutation, and operator replacement
+remain outside the authority boundary.
 
 OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward a beta-grade agentic operations system.
 

@@ -17,7 +17,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     -h|--help)
       cat <<'HELP'
-Usage: bash scripts/verify.sh [--profile fast|full|eval|docs|p107-release|...|p136-release]
+Usage: bash scripts/verify.sh [--profile fast|full|eval|docs|p107-release|...|p137-release]
 
 Profiles:
   fast  Compile, lint, typecheck, and pytest regression suite.
@@ -65,6 +65,8 @@ Profiles:
         Credential-free provider-shaped local export attachment, normalization, ledgers, and release evidence.
   p136-release
         Crash-safe incremental local observation, real P135 bridge, recovery, and source-bound release evidence.
+  p137-release
+        Local-only evidence-to-incident triage, bounded investigation, crash recovery, and source-bound release evidence.
 HELP
       exit 0
       ;;
@@ -76,7 +78,7 @@ HELP
 done
 
 case "$VERIFY_PROFILE" in
-  fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release|p123-release|p124-release|p125-release|p126-release|p127-release|p128-release|p129-release|p130-release|p131-release|p132-release|p133-release|p134-release|p135-release|p136-release) ;;
+  fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release|p123-release|p124-release|p125-release|p126-release|p127-release|p128-release|p129-release|p130-release|p131-release|p132-release|p133-release|p134-release|p135-release|p136-release|p137-release) ;;
   *)
     printf 'Unknown verify profile: %s\n' "$VERIFY_PROFILE" >&2
     exit 2
@@ -296,6 +298,19 @@ P136_RELEASE_PROFILE_TESTS=(
   tests/test_p136_incremental_observer.py
   tests/test_p136_release_evidence.py
   tests/test_p136_runner.py
+)
+P137_RELEASE_PROFILE_TESTS=(
+  tests/test_p137_contracts.py
+  tests/test_p137_p136_handoff.py
+  tests/test_p137_correlation.py
+  tests/test_p137_hypotheses.py
+  tests/test_p137_requests.py
+  tests/test_p137_classification.py
+  tests/test_p137_ledger.py
+  tests/test_p137_runtime.py
+  tests/test_p137_authority_boundary.py
+  tests/test_p137_release_evidence.py
+  tests/test_p137_runner.py
 )
 VERIFY_TMPDIR="$(mktemp -d)"
 cleanup() {
@@ -1720,6 +1735,32 @@ p136_release_profile_tests() {
   "${UV_DEV[@]}" mypy app/services/p136_incremental_observer.py app/services/p136_release_evidence.py app/services/p136_runner.py scripts/run_p136_incremental_observer.py tests/test_p136_incremental_observer.py tests/test_p136_release_evidence.py tests/test_p136_runner.py
   "${UV_DEV[@]}" python scripts/run_p136_incremental_observer.py --output-dir "$VERIFY_TMPDIR/p136-release"
 }
+p137_release_profile_tests() {
+  phase_release_profile p137 "${P137_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check \
+    app/services/p137_contracts.py app/services/p137_p136_handoff.py \
+    app/services/p137_correlation.py app/services/p137_hypotheses.py \
+    app/services/p137_requests.py app/services/p137_classification.py \
+    app/services/p137_ledger.py app/services/p137_runtime.py \
+    app/services/p137_release_evidence.py app/services/p137_runner.py \
+    scripts/run_p137_local_triage.py tests/fixtures/p137/builders.py \
+    "${P137_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" mypy \
+    app/services/p137_contracts.py app/services/p137_p136_handoff.py \
+    app/services/p137_correlation.py app/services/p137_hypotheses.py \
+    app/services/p137_requests.py app/services/p137_classification.py \
+    app/services/p137_ledger.py app/services/p137_runtime.py \
+    app/services/p137_release_evidence.py app/services/p137_runner.py \
+    scripts/run_p137_local_triage.py tests/fixtures/p137/builders.py \
+    tests/fixtures/p136/builders.py
+  "${UV_DEV[@]}" python scripts/run_p137_local_triage.py \
+    --mode final \
+    --profile evals/p137/input/local-triage-profile.json \
+    --canonical-matrix evals/p137/output/canonical-matrix.json \
+    --freeze-manifest evals/p137/output/freeze-manifest.json \
+    --final-implementation-review evals/p137/final-implementation-review.json \
+    --output-dir "$VERIFY_TMPDIR/p137-release"
+}
 
 p108_prevention_learning_evidence_smoke() {
   section "P108 prevention learning evidence smoke"
@@ -2132,6 +2173,7 @@ run_p133_release() { p133_release_profile_tests; }
 run_p134_release() { p134_release_profile_tests; }
 run_p135_release() { p135_release_profile_tests; }
 run_p136_release() { p136_release_profile_tests; }
+run_p137_release() { p137_release_profile_tests; }
 
 run_full() {
   run_fast
@@ -2179,6 +2221,7 @@ case "$VERIFY_PROFILE" in
   p134-release) run_p134_release ;;
   p135-release) run_p135_release ;;
   p136-release) run_p136_release ;;
+  p137-release) run_p137_release ;;
   full) run_full ;;
 esac
 

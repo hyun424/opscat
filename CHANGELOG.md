@@ -50,6 +50,32 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 
 ## Unreleased
 
+### P137 local evidence-to-incident triage
+
+- Added a P136-owned sequenced fixed-path handoff publisher and P137 validator
+  over current P136 authority, checkpoint, promotion, canonical-byte, review,
+  and release contracts.
+- Added exact evidence atoms, deterministic incident correlation, closed
+  hypotheses with integer semantic ranking, a 15-operation local-only evidence
+  request catalog, terminal classifications, and a CAS-chained investigation
+  ledger.
+- Added nonblocking process leasing, atomic/fsynced state, checkpoint lineage,
+  crash replay, finite continuous mode, heartbeat/readiness/termination records,
+  and exact-zero forbidden authority.
+- Added a source-bound 60-case release matrix and dedicated `p137-release`
+  verification profile with complete case-input/probe and fixture-tree content
+  freezes, explicit per-case effective-config hashes, scenario-authored
+  evaluator expectations rederived from frozen input oracles, and independent
+  resource budgets.
+- Added exact real-P136 atom ingestion for named Grafana/Loki integration cases
+  while explicitly retaining the remaining rows as source-bound component
+  fixtures with no P136 or live-provider authenticity claim.
+- Added self-hash/link validation for publisher state and pending intent before
+  mutation, plus semantic durable-state recovery that revalidates atom domains
+  and deterministically re-executes persisted evidence-request selection.
+  Auth, credentials, provider/network access, notification, action,
+  remediation, and production mutation remain excluded.
+
 ### P131 always-on local monitor
 
 - Added a standalone monotonic-cadence local JSONL monitor with bounded reads,

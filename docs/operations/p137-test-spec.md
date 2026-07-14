@@ -237,7 +237,8 @@
   not accepted.
 - Every canonical matrix row references a named delta profile. All forbidden
   authority deltas are exact zero. Byte deltas are fixture-derived integers:
-  `handoff_bundle_bytes_read = len(canonical_handoff_bundle_bytes)` and
+  `handoff_bundle_bytes_read = len(canonical_handoff_bundle_bytes) + 1` for the
+  fixed-path newline-framed handoff file and
   `promotion_bytes_validated = sum(len(canonical_promotion_bytes))`; final
   evidence contains only materialized integers.
 - Profile evidence must either contain exact full maps for every canonical
@@ -258,8 +259,10 @@ exact expected error, and independently rebuilds all totals. Required totals:
 - 60 expected, 60 passed, 0 failed;
 - all four terminal classifications represented among accepted incidents;
 - all 15 evidence request catalog entries represented;
-- all five P135 provider profiles represented through P136 promotions, with
-  OTLP counted as metrics;
+- Grafana and Loki integration rows use the exact atom tuples returned by the
+  real P136 handoff validator; all remaining provider/scenario rows are frozen
+  source-bound P137 component fixtures and do not claim P136 or live-provider
+  authenticity;
 - zero original provider artifact reads;
 - zero provider/network/credential/action/remediation authority;
 - all recovery, lease, CAS, hash namespace, guard, bounded continuous-mode,
@@ -271,6 +274,11 @@ exact expected error, and independently rebuilds all totals. Required totals:
   rows represented;
 - resource usage within 30 s wall, 15 s self-plus-child CPU, and 128 MiB peak
   RSS growth;
+- scenario-authored evaluator expectations and fixed resource budgets are
+  independent of observed counters; final assembly rederives expectation maps
+  from frozen case-input oracles, and the complete runtime input/probe
+  descriptors, exact per-case effective P137 config, and fixture-tree bytes are
+  frozen into the matrix and manifest;
 - exact release status `p137_local_evidence_triage_qualified`;
 - a final frozen-source implementation-review artifact over the frozen source,
   profile, fixtures, and preliminary matrix output is mandatory input to
@@ -287,7 +295,8 @@ exact expected error, and independently rebuilds all totals. Required totals:
 6. Static authority scan and evaluator-injected runtime guard probes.
 7. Targeted Ruff and Mypy.
 8. Preliminary canonical 60-case run to a temporary directory, freezing source
-   hashes, profile bytes, fixture bytes, and matrix output.
+   hashes, release-gate script bytes, profile bytes, fixture bytes, generated
+   case-input bytes, generated case-evidence bytes, and matrix output.
 9. Final frozen-source implementation review and resolution against the frozen
    source, docs, profile, fixtures, and matrix output.
 10. `bash scripts/verify.sh --profile p137-release`, structurally consuming the

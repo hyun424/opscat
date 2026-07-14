@@ -766,3 +766,31 @@ independent review with no unresolved P0/P1/P2 findings. This milestone remains
 local-artifact observation only: it adds no provider API call, credential read,
 environment discovery, network access, notification, command execution,
 remediation, staging/production mutation, or operator-replacement authority.
+
+## P137 local evidence-to-incident triage agent
+
+P137 consumes only P136's fixed, self-contained handoff bundle. It revalidates
+the current P136 config, authority, checkpoint, canonical promotion bytes, and
+release evidence before converting promotions into exact self-hashed evidence
+atoms. A crash-safe local runtime then correlates incidents, ranks closed-form
+hypotheses with explicit support/contradiction/missing-evidence edges, executes
+only bounded in-memory selections from a 15-operation catalog, and commits a
+terminal classification plus CAS-chained investigation ledger.
+
+```bash
+bash scripts/verify.sh --profile p137-release
+```
+
+The release gate uses a fixed 60-case matrix, exact validator-returned P136
+atoms in named Grafana/Loki integration cases, and frozen source-bound
+component fixtures for the remaining scenarios. It independently checks
+scenario-authored evaluator expectations, fixed wall/self-plus-child CPU/memory
+budgets, final evidence expectations rederived from frozen case-input oracles,
+complete runtime input/probe bindings plus the exact effective P137 config for
+every case, fixture-tree bytes,
+crash-replay and lease behavior, source hashes, and a separate final
+implementation review. Component fixtures make no P136 or live-provider
+authenticity claim. P137 remains deliberately local-only: no auth,
+credentials, environment discovery, provider API, network, notification,
+command execution, action, remediation, staging/production mutation, or
+operator-replacement authority is present.

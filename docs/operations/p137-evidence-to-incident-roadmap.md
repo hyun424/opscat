@@ -1129,8 +1129,9 @@ booleans alone are insufficient.
 Delta profiles are machine-readable exact-key maps emitted by the source-bound
 fixture builder. Every profile includes all forbidden-authority keys, every
 forbidden-authority delta is integer `0`, and every runtime/write delta is an
-integer. Byte deltas are not constants: `handoff_bundle_bytes_read` is
-materialized as `len(canonical_handoff_bundle_bytes)` for that case fixture, and
+integer. Byte deltas are not constants: `handoff_bundle_bytes_read` is measured
+from the fixed-path framed file as `len(canonical_handoff_bundle_bytes) + 1` for
+its required newline delimiter, and
 `promotion_bytes_validated` is materialized as
 `sum(len(canonical_promotion_bytes) for included promotions)` for that case
 fixture. The final matrix evidence must contain those concrete integers, never
@@ -1252,8 +1253,10 @@ Required totals:
 - 60 expected, 60 passed, 0 failed;
 - all four terminal classifications represented among accepted incidents;
 - all 15 evidence request catalog entries represented;
-- all five P135 provider profiles represented through P136 promotions, with
-  OTLP counted as metrics;
+- Grafana and Loki integration rows consume the exact atom tuples returned by
+  the real P136 handoff validator; the remaining provider/scenario rows are
+  frozen source-bound P137 component fixtures and make no P136 or live-provider
+  authenticity claim;
 - zero provider/network/credential/action/remediation authority;
 - zero reads of original provider artifacts;
 - denominator includes explicit guard, lease, bounded continuous mode, heartbeat,
@@ -1263,6 +1266,13 @@ Required totals:
 - probe-derived duplicate atom and request counts match case fixtures;
 - every row references a named exact delta profile, and all forbidden-authority
   deltas are zero;
+- evaluator expectations are scenario-authored independently of observations
+  and final release assembly rederives them from frozen case-input oracle maps;
+  resource expectations are fixed budgets, including a 15 s self-plus-child
+  CPU ceiling, rather than copies of measured usage;
+- fixture-tree bytes and every runtime case input, including probe identity and
+  the exact validated effective P137 config, are content-bound into the matrix
+  and explicit per-case config freeze hashes;
 - exact release status `p137_local_evidence_triage_qualified`.
 
 ## Release gates
@@ -1271,7 +1281,9 @@ Required totals:
 - Plan-readiness review is separate from final implementation review. The
   plan-readiness review may approve only the roadmap, test spec, and tickets.
 - The preliminary canonical matrix may run only to a temporary directory. That
-  run freezes source hashes, profile bytes, fixture bytes, and matrix output.
+  run freezes source hashes, release-gate script bytes, profile bytes, fixture
+  bytes, generated case-input bytes, generated case-evidence bytes, and matrix
+  output.
 - Final frozen-source implementation review is created only after that freeze,
   is source-bound to the frozen source/docs/profile/fixtures/matrix output, and
   has zero unresolved P0/P1/P2 findings.
@@ -1285,12 +1297,13 @@ Required totals:
 - Canonical 60-case runner passes with independently rebuilt totals and exact
   delta-profile validation.
 - Release evidence includes source hashes for P134/P135/P136/P137 validators,
-  P137 runtime, runner, fixtures, docs, the P136 handoff bundle, and the
-  canonical matrix output.
+  P137 runtime, runner, release gate, fixtures, docs, the P136 handoff bundle,
+  generated case-input/evidence byte hashes, and the canonical matrix output.
 - Runtime forbidden authority has the exact schema and exact integer zero.
-- Runtime/evaluator activity and resources have exact schemas and measured
-  values; wall is at most 30 seconds, self-plus-child CPU is at most 15 seconds,
-  and peak RSS growth is at most 128 MiB.
+- Runtime/evaluator activity and resources have exact observed and expected
+  full-map schemas. Release totals are rebuilt from case maps plus explicit
+  observed matrix overhead maps; wall is at most 30 seconds, self-plus-child CPU
+  is at most 15 seconds, and peak RSS growth is at most 128 MiB.
 
 ## Verification sequence
 
@@ -1304,7 +1317,8 @@ Required totals:
 7. Static authority scan and evaluator-injected guard probes.
 8. Targeted Ruff and Mypy.
 9. Preliminary canonical 60-case run to a temporary directory; freeze source
-   hashes, `p137-release` profile bytes, fixture bytes, and matrix output.
+   hashes, release-gate script bytes, `p137-release` profile bytes, fixture
+   bytes, generated case-input/evidence bytes, and matrix output.
 10. Final frozen-source implementation review over the frozen source, docs,
     profile, fixtures, and matrix output; resolve all P0/P1/P2 findings.
 11. `bash scripts/verify.sh --profile p137-release`; structural validation

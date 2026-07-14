@@ -5870,9 +5870,9 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:be4ce602e54dd3d1703afdc0949c638a598e480af9eed5a9ebe06c8ac9133b73",
+  "report_hash": "sha256:11dbbd43da85113a86cd10994bab9dd29f597baeac9073204c5509a2049f481c",
   "root": ".",
-  "root_binding_hash": "sha256:609e48642c64c98e1ebc6ea0647f7707bcefae3325c73a220ab22787946d8a71",
+  "root_binding_hash": "sha256:83c6c416733d3ccb8a0c43fdd00117f657c5a5b032bc4fe69cfa06021f6f8930",
   "scanned_file_count": 2497,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
@@ -5953,9 +5953,9 @@
       "size": 13148
     },
     {
-      "hash": "sha256:7cd265e45f4ab259a7fceb34ae9f660908d51f1d749e584cac3387af163a5a69",
+      "hash": "sha256:8e1479484617f3a7eb5952c4e28d5dc290f306d731ff3668b959f48a490ce9b5",
       "path": "CHANGELOG.md",
-      "size": 14568
+      "size": 15023
     },
     {
       "hash": "sha256:7882e0de102de42df04a6cdb6505138731e280d8a678f3d4b43b33192393583e",
@@ -5968,9 +5968,9 @@
       "size": 41894
     },
     {
-      "hash": "sha256:3b7cb2b5cb9c66b18ae6e519f180b51fd8d18701d76a26b9b833aedebaeabdd9",
+      "hash": "sha256:b338c536580bcd12d9519511f7bacc54b99b2c0b76c2a067ed1c988eb7a7db2a",
       "path": "ROADMAP.md",
-      "size": 103024
+      "size": 103211
     },
     {
       "hash": "sha256:3d6e9eec25759bf1c54bbeb42f16674071cf095caf0e7b0c78a9ad23ee0378df",
@@ -17283,9 +17283,9 @@
       "size": 25323
     },
     {
-      "hash": "sha256:3d1cc83756a0742f9cccb54cf47fb175aa06c69129299dec85f92cebc8154ec5",
+      "hash": "sha256:3ddfd9ef047c48160be6cb3073392402431ea3511882bc2c84b53002cda9ef46",
       "path": "tests/test_p137_release_evidence.py",
-      "size": 21699
+      "size": 23378
     },
     {
       "hash": "sha256:60b312420d19d37816d787b311c05841961a961808c30cd7488d3fcfe39246a8",
@@ -17293,9 +17293,9 @@
       "size": 5562
     },
     {
-      "hash": "sha256:e32acad2ee004e8c4e58ac6d51fb614a0830a1ee4aadf4241e610d1516295306",
+      "hash": "sha256:69f8866fc6859bdfd30eb3011d5dce062c188621ec2f597497ad2d991587edba",
       "path": "tests/test_p137_runner.py",
-      "size": 19678
+      "size": 23623
     },
     {
       "hash": "sha256:616c022b9cb71d9d55d29e533c35018cf513c28fef771a4fb658249f1d4f83f9",
@@ -18363,6 +18363,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:b30ce49334e69267beb194e39e4ed9fe8edb6bb283a1a108461ac7148145e051",
+  "source_inventory_hash": "sha256:5c654c98a84af6ef6f1e3a384737f78def5b33bdbbba1876236bcab88ce85247",
   "status": "pass"
 }

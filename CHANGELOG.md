@@ -73,6 +73,12 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 - Added self-hash/link validation for publisher state and pending intent before
   mutation, plus semantic durable-state recovery that revalidates atom domains
   and deterministically re-executes persisted evidence-request selection.
+- Added explicit provenance regressions proving missing observed runtime
+  activity cannot fall back to expected delta profiles, evaluator guard rows
+  cross the production rejection boundary without invoking forbidden callables,
+  and the aborted-classification row executes real crash recovery.
+- Added a matched observed-and-expected runtime forgery regression proving the
+  final release rederives runtime expectations from frozen case-input oracles.
   Auth, credentials, provider/network access, notification, action,
   remediation, and production mutation remain excluded.
 

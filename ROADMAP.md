@@ -44,7 +44,10 @@ terminal classifications, and a CAS-chained investigation ledger. Its canonical
 classification, lease, signals, crash replay, readiness, CAS, and resource
 failure. Durable recovery revalidates atom semantics and rederives request
 results, while the freeze binds every case's exact effective P137 config and
-rebuilds expectations from case-input oracles. This qualifies local evidence triage only; live provider observation,
+rebuilds expectations from case-input oracles. A post-release provenance audit
+also locks real runtime-counter, evaluator-guard, and crash-recovery boundaries
+with explicit spies and rejects matched observed/expected runtime forgery. This
+qualifies local evidence triage only; live provider observation,
 notifications, action/remediation, production mutation, and operator replacement
 remain outside the authority boundary.
 

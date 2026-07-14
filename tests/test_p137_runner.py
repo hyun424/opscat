@@ -1,13 +1,22 @@
 from __future__ import annotations
 
 import importlib
+import json
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-from app.services.p137_contracts import ALLOWED_REQUEST_CATALOG, EVALUATOR_ACTIVITY_KEYS, FORBIDDEN_AUTHORITY_KEYS, RESOURCE_USAGE_KEYS, RUNTIME_ACTIVITY_KEYS
+from app.services.p137_contracts import (
+    ALLOWED_REQUEST_CATALOG,
+    EVALUATOR_ACTIVITY_KEYS,
+    FORBIDDEN_AUTHORITY_KEYS,
+    RESOURCE_USAGE_KEYS,
+    RUNTIME_ACTIVITY_KEYS,
+    zero_forbidden_authority,
+    zero_runtime_activity,
+)
 from scripts.run_p137_local_triage import P137ProfileError, _validate_external_final_review, current_p137_source_hashes
 from tests.fixtures.p137.builders import P137_SOURCE_SCOPE, TEST_SOURCE_BINDINGS, final_implementation_review, local_triage_profile, release_evidence_stub, runtime_inputs
 
@@ -344,6 +353,91 @@ def test_runner_rejects_missing_runtime_evidence_probe_instead_of_materializing_
             tmp_path,
             runtime_factory=factory,
         )
+
+
+def test_runner_rejects_missing_observed_runtime_activity_instead_of_using_delta_profile(tmp_path: Path) -> None:
+    api = _runner_api("run_p137_preliminary_matrix")
+
+    def factory(case_id: str) -> dict[str, Any]:
+        runtime = runtime_inputs(tmp_path / case_id, case_id)
+        if case_id == "p137-case-01":
+            original_probe = runtime["runtime_probe"]
+
+            def missing_activity_probe(**kwargs: Any) -> dict[str, Any]:
+                result = dict(original_probe(**kwargs))
+                result.pop("runtime_activity")
+                return result
+
+            runtime["runtime_probe"] = missing_activity_probe
+        return runtime
+
+    with pytest.raises(_error(), match="invalid_runtime_activity_schema"):
+        api.run_p137_preliminary_matrix(
+            tmp_path,
+            runtime_factory=factory,
+        )
+
+
+def test_guard_and_aborted_recovery_matrix_rows_use_real_production_boundaries(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    api = _runner_api("run_p137_preliminary_matrix")
+    from tests.fixtures.p137 import builders as p137_builders
+
+    original_guard = p137_builders.reject_evaluator_guard_callables
+    original_runtime = p137_builders.run_p137_runtime_once
+    guard_calls = 0
+    recovery_calls: list[str | None] = []
+    case_58_config: dict[str, Any] = {}
+
+    def guard_spy(callables: dict[str, Any]) -> None:
+        nonlocal guard_calls
+        guard_calls += 1
+        original_guard(callables)
+
+    def runtime_spy(*args: Any, **kwargs: Any) -> dict[str, Any]:
+        if "p137-case-58" in str(kwargs["base_path"]):
+            recovery_calls.append(kwargs.get("crash_after"))
+        return original_runtime(*args, **kwargs)
+
+    def factory(case_id: str) -> dict[str, Any]:
+        runtime = runtime_inputs(tmp_path / case_id, case_id)
+        if case_id == "p137-case-58":
+            case_58_config.update(deepcopy(runtime["effective_p137_config"]))
+        return runtime
+
+    monkeypatch.setattr(p137_builders, "reject_evaluator_guard_callables", guard_spy)
+    monkeypatch.setattr(p137_builders, "run_p137_runtime_once", runtime_spy)
+
+    result = api.run_p137_preliminary_matrix(tmp_path, runtime_factory=factory)
+    guard_case = result["cases"][14]["evidence"]
+    recovery_case = result["cases"][57]["evidence"]
+
+    assert guard_calls == 1
+    assert guard_case["actual_error"] == "guard_probe_blocked_before_boundary"
+    assert guard_case["termination_reason"] == "evaluator_only"
+    assert guard_case["api_calls"] == ["p137_contracts.reject_evaluator_guard_callables"]
+    assert guard_case["runtime_activity"] == zero_runtime_activity()
+    assert guard_case["expected_runtime_activity"] == zero_runtime_activity()
+    assert guard_case["forbidden_authority"] == zero_forbidden_authority()
+    assert guard_case["evaluator_activity"]["fake_guard_callable_count"] > 0
+
+    assert recovery_calls == ["classification_write", None, None]
+    assert recovery_case["actual_label"] == "aborted_fail_closed"
+    assert recovery_case["termination_reason"] == "aborted_fail_closed"
+    assert recovery_case["api_calls"] == ["p137_runtime.run_p137_runtime_once"]
+    assert recovery_case["runtime_activity"]["classification_write_count"] == 1
+    assert recovery_case["runtime_activity"]["ledger_write_count"] == 1
+    assert recovery_case["runtime_activity"]["recovery_replay_count"] == 1
+
+    root = tmp_path / "p137-case-58" / "control-probe"
+    classification_files = list((root / case_58_config["classification_dir"]).glob("*.json"))
+    ledger = json.loads((root / case_58_config["ledger_path"]).read_text())
+    classification = json.loads(classification_files[0].read_text())
+    assert len(classification_files) == 1
+    assert classification["classification"] == "aborted_fail_closed"
+    assert len(ledger["classification_hashes"]) == 1
 
 
 def test_runner_fails_when_control_probe_raw_runtime_outcome_is_wrong(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

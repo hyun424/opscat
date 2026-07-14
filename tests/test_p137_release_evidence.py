@@ -430,6 +430,40 @@ def test_frozen_release_rederives_evaluator_expectations_from_case_input_oracle(
         )
 
 
+def test_frozen_release_rederives_runtime_expectations_from_case_input_oracle(tmp_path: Path) -> None:
+    api = _release_api("assemble_p137_release_evidence_from_frozen_matrix")
+    _, matrix, manifest, review, profile_hash, fixture_hash = _freeze_bundle(tmp_path)
+    tampered = deepcopy(matrix)
+    case = tampered["cases"][57]
+    for field in ("runtime_activity", "expected_runtime_activity"):
+        case["evidence"][field]["lease_acquire_count"] += 1
+    case["case_evidence_hash"] = stable_hash({key: item for key, item in case.items() if key != "case_evidence_hash"})
+    tampered["matrix_hash"] = stable_hash(tampered["cases"])
+    tampered["case_evidence_hash"] = stable_hash([item["case_evidence_hash"] for item in tampered["cases"]])
+
+    rebound_manifest = deepcopy(manifest)
+    rebound_manifest["matrix_hash"] = tampered["matrix_hash"]
+    rebound_manifest["case_evidence_hash"] = tampered["case_evidence_hash"]
+    rebound_manifest["freeze_manifest_hash"] = stable_hash(
+        {key: item for key, item in rebound_manifest.items() if key != "freeze_manifest_hash"}
+    )
+    rebound_review = _review_for(
+        matrix_hash=tampered["matrix_hash"],
+        profile_hash=profile_hash,
+        fixture_hash=fixture_hash,
+    )
+
+    with pytest.raises(_error(), match="case_expected_runtime_oracle_mismatch"):
+        api.assemble_p137_release_evidence_from_frozen_matrix(
+            tampered,
+            freeze_manifest=rebound_manifest,
+            final_implementation_review=rebound_review,
+            expected_source_hashes=TEST_SOURCE_BINDINGS,
+            expected_profile_hash=profile_hash,
+            expected_fixture_hash=fixture_hash,
+        )
+
+
 def test_freeze_manifest_binds_full_effective_p137_config_for_every_case(tmp_path: Path) -> None:
     api = _release_api("assemble_p137_release_evidence_from_frozen_matrix")
     _, matrix, manifest, review, profile_hash, fixture_hash = _freeze_bundle(tmp_path)

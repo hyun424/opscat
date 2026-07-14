@@ -3197,7 +3197,7 @@ is exact integer zero.
 
 Release status is
 `p138_local_observation_to_triage_supervisor_qualified`; release evidence hash
-is `sha256:1c3cbb6fe575b17e4fcf2159ac2cff15fc90b6cd1c452acb1cb81eaa0f5c76d7`.
+is `sha256:3442abc0717f0aff8a41efad17f3a1343f1ef4ae10dd21fb6691813e5499f663`.
 It binds P136 evidence `sha256:ab094a86c371391833f917e855f8f53695a50c4e462ae39cb4464bfd8fc17605`
 and P137 evidence `sha256:4aae360e10102c4db1cdb538c72533440208bcdcc1715730455a9bb0f9727aaa`
 plus their exact review hashes. The local deterministic final review records
@@ -3216,3 +3216,33 @@ Handoff and contract references:
 - `docs/operations/p138-plan-review.md`
 - `docs/operations/p138-verification-handoff.md`
 - `docs/tickets/p138/README.md`
+
+## P139 local triage service host evidence
+
+P139 packages P138 as an explicit-path, credential-free local service process.
+The frozen matrix proves exactly 32 expected/32 passed/0 failed across canonical
+bundle validation, real P138 cycles, lease contention, terminal-control and
+exit-receipt split commits, tampering, path/framing attacks, safe signals,
+health classification, deployment hardening, and real subprocess clean,
+restart, status, and forced-SIGTERM recovery.
+
+The matrix hash is
+`sha256:3b9ce5c53c1cceb7ee85ec2010196e77a45927a0b3530af75e528486f5ad77e6`.
+The final local adversarial review has zero P0/P1/P2/P3 findings and hash
+`sha256:838ad7ef1dafd38dfa5c29189a9427a7d0cd487a4a66f9ea8f88c0adab022724`.
+Release status is `p139_local_triage_service_host_qualified`; release evidence
+hash is
+`sha256:0b7fc33e95412695c539cc308392070603a2e2409bde5b65735911e39de5d9c2`.
+
+P139 binds the corrected P138 evidence hash
+`sha256:3442abc0717f0aff8a41efad17f3a1343f1ef4ae10dd21fb6691813e5499f663`
+and review hash
+`sha256:4e7bc40bf8d12881463254e8192852bebe5490ef962bd3c1238d855a274e4c1f`.
+Every shared runtime authority counter remains exact integer zero. Evaluator
+subprocess and signal injection are disclosed separately and do not grant
+runtime process or signal authority.
+
+This evidence qualifies a local process host only. It grants no authentication,
+credentials, environment discovery, live provider/network access, external
+notification, action/remediation, staging/production mutation, unattended
+operation, or operator replacement.

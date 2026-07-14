@@ -162,7 +162,7 @@ class CanonicalCaseExecutor:
             config=config,
             p136_runtime=fixture.p136_runtime,
             publisher_inputs=_supervisor_publisher_inputs(fixture),
-            now="2026-07-14T00:00:04Z",
+            now="2026-07-13T00:10:04Z",
             **kwargs,
         )
         self._record_result_boundaries(result)
@@ -538,7 +538,7 @@ class CanonicalCaseExecutor:
         fixture, config = self._accepted()
         bundle = _read_json(fixture.root / str(config["p136_handoff_bundle_path"]))
         state = _read_json(fixture.root / str(config["publisher_state_path"]))
-        bundle["created_at"] = "2026-07-14T00:00:09Z"
+        bundle["created_at"] = "2026-07-13T00:10:09Z"
         bundle["bundle_hash"] = stable_hash({key: value for key, value in bundle.items() if key != "bundle_hash"})
         state["last_bundle_hash"] = bundle["bundle_hash"]
         state["state_hash"] = stable_hash({key: value for key, value in state.items() if key != "state_hash"})
@@ -573,7 +573,7 @@ class CanonicalCaseExecutor:
     def _case_13(self) -> dict[str, Any]:
         fixture, config = self._accepted()
         bundle = _read_json(fixture.root / str(config["p136_handoff_bundle_path"]))
-        bundle["created_at"] = "2026-07-14T00:00:08Z"
+        bundle["created_at"] = "2026-07-13T00:10:08Z"
         _write_json(fixture.root / str(config["p136_handoff_bundle_path"]), bundle)
         result = self._run(fixture, config)
         _require(result.get("status") == "failed_closed", "publisher_fixed_mismatch_not_blocked")
@@ -662,7 +662,7 @@ class CanonicalCaseExecutor:
             config=config,
             p136_runtime=fixture.p136_runtime,
             publisher_inputs=_supervisor_publisher_inputs(fixture),
-            now_values=("2026-07-14T00:00:04Z",),
+            now_values=("2026-07-13T00:10:04Z",),
             stop_controller=controller,
             monotonic=lambda: 1.0,
             sleep=lambda _: None,
@@ -735,7 +735,7 @@ class CanonicalCaseExecutor:
             promotion_records=observed["promotion_records"],
             p136_independent_review=non_fixture.publisher_inputs["p136_independent_review"],
             p136_release_evidence=non_fixture.publisher_inputs["p136_release_evidence"],
-            created_at="2026-07-14T00:00:03Z",
+            created_at="2026-07-13T00:10:03Z",
         )
         non_genesis = self._run(non_fixture, non_config)
         _require(non_genesis.get("expected_error") == "bootstrap_requires_genesis_bundle", "non_genesis_not_blocked")
@@ -764,7 +764,7 @@ class CanonicalCaseExecutor:
             config=config,
             p136_runtime=fixture.p136_runtime,
             publisher_inputs=_supervisor_publisher_inputs(fixture),
-            now_values=tuple(f"2026-07-14T00:00:0{index}Z" for index in range(4, 8)),
+            now_values=tuple(f"2026-07-13T00:10:0{index}Z" for index in range(4, 8)),
             monotonic=lambda: 1.0,
             sleep=lambda _: None,
         )
@@ -779,7 +779,7 @@ class CanonicalCaseExecutor:
                 config=failed_config,
                 p136_runtime=failed_fixture.p136_runtime,
                 publisher_inputs=_supervisor_publisher_inputs(failed_fixture),
-                now_values=("2026-07-14T00:00:04Z", "2026-07-14T00:00:05Z"),
+                now_values=("2026-07-13T00:10:04Z", "2026-07-13T00:10:05Z"),
                 monotonic=lambda: 1.0,
                 sleep=lambda _: None,
             )
@@ -802,7 +802,7 @@ class CanonicalCaseExecutor:
             config=config,
             p136_runtime=fixture.p136_runtime,
             publisher_inputs=_supervisor_publisher_inputs(fixture),
-            now_values=("2026-07-14T00:00:04Z", "2026-07-14T00:00:05Z"),
+            now_values=("2026-07-13T00:10:04Z", "2026-07-13T00:10:05Z"),
             monotonic=lambda: 1.0,
             sleep=lambda _: None,
         )
@@ -819,7 +819,7 @@ class CanonicalCaseExecutor:
             config=stale_config,
             p136_runtime=stale_fixture.p136_runtime,
             publisher_inputs=_supervisor_publisher_inputs(stale_fixture),
-            now_values=("2026-07-14T00:00:04Z",),
+            now_values=("2026-07-13T00:10:04Z",),
             monotonic=lambda: 1.0,
             sleep=lambda _: None,
         )
@@ -841,7 +841,7 @@ class CanonicalCaseExecutor:
             config=signal_config,
             p136_runtime=signal_fixture.p136_runtime,
             publisher_inputs=_supervisor_publisher_inputs(signal_fixture),
-            now_values=("2026-07-14T00:00:04Z",),
+            now_values=("2026-07-13T00:10:04Z",),
             stop_controller=controller,
             monotonic=lambda: 1.0,
             sleep=lambda _: None,

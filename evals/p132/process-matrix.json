@@ -1,13 +1,13 @@
 {
   "artifact_hashes": {
-    "final_state": "sha256:c2d1f56c86489f0922696a4fc75868db0a5d93f51299e2c11556cb04c1d4ff3d",
-    "monitor_config": "sha256:141438561cddfe06cf095df9bddd5b4b0278f3a49d5bbca158ec63bd7f95d9d5",
-    "storage_low_space_state": "sha256:232d9d71fd0e99c7da70fe102a2e197871895b8da5d61aff46976f2606e117a0",
-    "storage_post_replace_state": "sha256:427f79523b545932da477d9c2a461b214933d279bcc740eed8fed2a36daac067",
+    "final_state": "sha256:0a2b7b094013e5d2964d067168d4a42b7019e4307e762aeb740b02387f64453f",
+    "monitor_config": "sha256:44cc2cee7ffc4ea113c5ebb911f77d80a0709abfd3ddf728d70e1cbb6cc1f744",
+    "storage_low_space_state": "sha256:395332140793a0f207f7e22a2ac4fa45cae29c685baa57e76ca19bdf8f684ed5",
+    "storage_post_replace_state": "sha256:010feec8622fccc27d5234bd65a2a3b3b97173dc1a95278ad98fad205dfe7d3d",
     "storage_pre_replace_canonical": "sha256:87248a78703c00a5052c0e3e624175ad519411cbb415039a7021aa0cf515feab",
-    "storage_report_interruption_state": "sha256:c12924213d131c944f9235eedf71b5395a8fbc8afded7d961dd535d38b4c1dee",
+    "storage_report_interruption_state": "sha256:b4cc00fc3ad2f77ad94c7fddb63c679a36891673c7d53dbd3db89cab1e93809c",
     "telemetry": "sha256:05dbd522afc86c42393a21ae12920cf90c56154a84b2657a59aa12688abbaee2",
-    "termination_receipt": "sha256:202c2dfd2bc368f7848781836693c5fc55eeab85bff6700521e895dcac792c8c"
+    "termination_receipt": "sha256:9bae1f2d3a75bc1ad93d83b4f4e9e7d98f92ee21555900ce170f401bd3464ca2"
   },
   "artifact_paths": {
     "final_state": "raw/process/state.json",
@@ -32,18 +32,18 @@
       "passed": true
     },
     "sigint": {
-      "latency_seconds": 0.006626458998653106,
+      "latency_seconds": 0.007954792003147304,
       "passed": true,
       "returncode": 0,
       "stderr_hash": "sha256:12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
-      "stdout_hash": "sha256:b71e8e6b8aaad19be921adccbdf86fa27c8f440f25afdb514cc2867b56356479"
+      "stdout_hash": "sha256:5891b15c8ae4d36b3dbe2953eabce6e9ed5f2d88bef2ca45337ba200ccaf4e2b"
     },
     "sigterm": {
-      "latency_seconds": 0.007320584001718089,
+      "latency_seconds": 0.007831000024452806,
       "passed": true,
       "returncode": 0,
       "stderr_hash": "sha256:12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
-      "stdout_hash": "sha256:55e0fc2d9e3da3b09c77de741fde0594332f3dc5926efc63433d5c262b81ac88"
+      "stdout_hash": "sha256:3fc71dd8098d253af3bd623322422e77c31dc43e2dd4b40c9a2c5cfaa0e465bc"
     }
   },
   "evaluator_activity": {
@@ -63,9 +63,9 @@
     "status_call_count": 1,
     "watchdog_call_count": 5
   },
-  "final_state_hash": "sha256:c1a8398eb5a46319c2fef3918b403a3739330096f5fa2d5a2d70a9269cef87ce",
+  "final_state_hash": "sha256:638a8541eb1f3f501d3a78e6bf82439e070f5573c55301e9c86d54c8149ac49b",
   "passed": true,
-  "process_matrix_hash": "sha256:4e6126f2a930164fa75a937f6d54d1fdd16a4d1ee476d955385c485d3c37bf58",
+  "process_matrix_hash": "sha256:b42550faf692d8424fe2910aff027ab42df4c2266719851fedb5afde5f9a443b",
   "runtime_authority": {
     "counters": {
       "auth_context_count": 0,
@@ -106,13 +106,13 @@
     "low_space_preserves_checkpoint": {
       "failure": "[Errno 28] artifact_free_space_below_floor",
       "passed": true,
-      "state_hash": "sha256:250f9ba24f8eb1eec4099546fe4f8e84366170cce2936e4461466fccf12c960c"
+      "state_hash": "sha256:d507e486404bcfa0a3fd27bbfeb6172b368a1fa1d21041418e23f57b0fad4776"
     },
     "post_replace_recovery": {
       "failure": "directory_fsync_failed_after_replace",
       "passed": true,
-      "recovered_state_hash": "sha256:2bf2aa4e2f44691b9a0fd2b4da535d44909f9791324c3e14bb9e6af670d73645",
-      "uncertain_state_hash": "sha256:640718f07ae59ee665e484ed9318361535127d85ef66bfc95d880d28c981a67f"
+      "recovered_state_hash": "sha256:909527c1a5f68bd9ea510b6bb4ea82f850a612445eb27a1b200b4130ed8d8ec8",
+      "uncertain_state_hash": "sha256:a2a8e2abc568a786f1173f7effb00d41287d0017475a1f46f9022a7ee38a9ff6"
     },
     "pre_replace_preserves_canonical": {
       "canonical_hash": "sha256:87248a78703c00a5052c0e3e624175ad519411cbb415039a7021aa0cf515feab",
@@ -126,7 +126,7 @@
       "prior_report_bucket": 178390080
     }
   },
-  "storage_matrix_hash": "sha256:9167c3a359b443c13aec4af20e2e64cc1b69f16b9fc1d60b32e5b122f7fb0196",
+  "storage_matrix_hash": "sha256:525c1ee896184ae0f808b7f767adba11c1130c8ae5590e69619ea9efd30032ef",
   "watchdog_cases": {
     "current": true,
     "missing": true,

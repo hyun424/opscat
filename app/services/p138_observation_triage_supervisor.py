@@ -4066,6 +4066,10 @@ def _run_p138_supervisor_loop(
         )
     for index in range(maximum):
         now = _utc_timestamp() if supplied_times is None else supplied_times[index]
+        if isinstance(p136_runtime, dict):
+            p136_runtime["now"] = now
+        if isinstance(publisher_inputs, dict):
+            publisher_inputs["created_at"] = now
         if evaluator_mode:
             last_result = run_p138_supervisor_once_for_evaluation(
                 base_path=root,

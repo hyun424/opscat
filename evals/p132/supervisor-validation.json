@@ -11,7 +11,7 @@
     "deploy/p132/compose.monitor.yaml": "sha256:981c335f897e34a879fbdb2ad84408231b5ba0a3c7d55785ea2e7295a0764e05",
     "deploy/p132/io.opscat.monitor.plist": "sha256:6567dffa270f7885767dca6386aff1404a71f827a3a4e76a0f1f04dc604efc4d",
     "deploy/p132/opscat-monitor.service": "sha256:b3dbe611fe4dc59308ae69ec10da03589bcf001657a2e828f7c45985def5dd46",
-    "pyproject.toml": "sha256:b1fda5511b5fcea9640f9f622ff6bb57749a66d129134fe62c236e22cc88921c"
+    "pyproject.toml": "sha256:37e4f1065a0f23834f4452a663629cbf421dc3a27bda8037d0c652722dc9d2fe"
   },
-  "supervisor_validation_hash": "sha256:0cfe585a339c22c941f0956715bfafed7202c4ac5fe32b325bab98895d641123"
+  "supervisor_validation_hash": "sha256:d84fb0583de7bdcea2c5bebb2d539784d5e0cb7de519fd301c1afa533a12baa4"
 }

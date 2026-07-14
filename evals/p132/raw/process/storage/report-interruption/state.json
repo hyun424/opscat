@@ -38,7 +38,7 @@
     },
     "success_count": 2
   },
-  "config_hash": "sha256:da692242a363a028829866206a071b64de13597ad72aabf4d79df2d1556bb62c",
+  "config_hash": "sha256:52dfd9199268ada37cd311c8472f58bf9befa265ca5c155a29384d2f5a9d2525",
   "cycle_count": 2,
   "last_cycle_at": "2026-07-13T00:00:10Z",
   "last_heartbeat_at": "2026-07-13T00:00:10Z",
@@ -71,19 +71,19 @@
       "cursor_bytes": 86,
       "enabled": true,
       "failure_limit": 3,
-      "file_identity": "16777231:177285770",
+      "file_identity": "16777231:181760707",
       "kind": "local_jsonl",
       "last_data_at": "2026-07-13T00:00:00Z",
       "last_error": null,
       "last_success_at": "2026-07-13T00:00:10Z",
-      "path_hash": "sha256:a97b04eba79c8950e4b7eba020207ef061e197f08e69d2e25cf0a0ce4f10797a",
+      "path_hash": "sha256:bb065b76d1d123b64ba3a15ef45cda69888f1347e008bb03fcddcab74faa9a98",
       "prefix_hash": "sha256:7727d49da7fba23970aa105942bdd7c88a2f9d98ce1c06c3747142ec6bffca2c",
       "prefix_length": 86,
       "rotation_count": 0
     }
   },
   "started_at": "2026-07-13T00:00:00Z",
-  "state_hash": "sha256:2e4650d008651c11131dc50796c6e9fb6e1389313eda0efdec7619e710eab016",
+  "state_hash": "sha256:1cb8e0ba76b6d2c111fbceaf98c5fdaec355bbabe920cf16f00b3fe1494e5f58",
   "status": "ready",
   "totals": {
     "accepted_observation_count": 1,

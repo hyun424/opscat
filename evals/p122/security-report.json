@@ -5870,10 +5870,10 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:54f5a26feb1ff176e0afca9e629e7eeb9916a39ac9269e21134535c403fc9fd0",
+  "report_hash": "sha256:2b0cea2feb25e5da808c0ac56a59efbcc90b1b8d97267fa2400cfcc079ff3d59",
   "root": ".",
-  "root_binding_hash": "sha256:94a4773c66f786dff2f1a1d251c9ea2d2fa10c9907a88f36fd4c6592c66c1ff0",
-  "scanned_file_count": 2520,
+  "root_binding_hash": "sha256:d47326893adfce025adc7c5acf5d22fb1753957ee77c9a15960950ef59b78a88",
+  "scanned_file_count": 2546,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
   "source_inventory": [
@@ -5953,9 +5953,9 @@
       "size": 13148
     },
     {
-      "hash": "sha256:e72e9b2e11c4925da7c9de08342e7b97b547b2c8e3c9c5ab9971f2644e3ae578",
+      "hash": "sha256:d6365e94560965e11f112934c55ef2a22fc198a14f0a72548d98e6ba47d16b0e",
       "path": "CHANGELOG.md",
-      "size": 16075
+      "size": 16836
     },
     {
       "hash": "sha256:7882e0de102de42df04a6cdb6505138731e280d8a678f3d4b43b33192393583e",
@@ -5963,14 +5963,14 @@
       "size": 3930
     },
     {
-      "hash": "sha256:55bde8280ca0dd1d1179f2dd9bc41ca32e574067089f62b2047aed4a6ca46c91",
+      "hash": "sha256:c32d2342027a1ba2963100628e381fa19440c369277569fa7ae5af0a0cb3ef6f",
       "path": "README.md",
-      "size": 44001
+      "size": 45581
     },
     {
-      "hash": "sha256:f232552b586dc03e1991b32d7d5003c9b2104765d4d592011797bcc547d7442f",
+      "hash": "sha256:58669a2f89dd8a7f70223dd041f18edd419795dcc7399b01167153e4f8ca9c83",
       "path": "ROADMAP.md",
-      "size": 102873
+      "size": 103594
     },
     {
       "hash": "sha256:3d6e9eec25759bf1c54bbeb42f16674071cf095caf0e7b0c78a9ad23ee0378df",
@@ -6211,6 +6211,11 @@
       "hash": "sha256:96c5a8a2661445b7e4e5802351a568f7c86ca4c641a1cfc6a42293c641030062",
       "path": "app/monitor_cli.py",
       "size": 7653
+    },
+    {
+      "hash": "sha256:81cefd298f4edb166345c66a866a953907981ecda37a472267363defae618ea9",
+      "path": "app/p139_service_cli.py",
+      "size": 3091
     },
     {
       "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
@@ -7313,9 +7318,9 @@
       "size": 79577
     },
     {
-      "hash": "sha256:2c17c2bfb41c7e7fd9bbf3e18915061952cd7959122125578b07133f71bc2afc",
+      "hash": "sha256:f722aa9f088e6ecdc1f9991dacc2197b6cbcad67f7390dcac068b46a2a7366d0",
       "path": "app/services/p138_observation_triage_supervisor.py",
-      "size": 144616
+      "size": 144793
     },
     {
       "hash": "sha256:ea42d2d2cd2474fcfb787445ea9bff670fd97804ecf562ac9d44581ea29762d9",
@@ -7326,6 +7331,21 @@
       "hash": "sha256:44ab453a276df94b019ddcceb2f57a051c0d42dec1d1ef37e9c523d2408b3e42",
       "path": "app/services/p138_runner.py",
       "size": 30064
+    },
+    {
+      "hash": "sha256:d480809a809ed9e125c3728b98a43d8211a73601a7ca726feb764a3d3330b162",
+      "path": "app/services/p139_local_triage_service.py",
+      "size": 65383
+    },
+    {
+      "hash": "sha256:be7c07d9ee63ba2f476ff19632809f122c401dab7f8b6a6c8aebba5d027d6846",
+      "path": "app/services/p139_release_evidence.py",
+      "size": 8158
+    },
+    {
+      "hash": "sha256:ac29acf05e73f34678f4b5e0355d58483893eccee46403ea8726a825029418c7",
+      "path": "app/services/p139_runner.py",
+      "size": 10205
     },
     {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -7796,6 +7816,11 @@
       "hash": "sha256:75a85ed89885124213b9b2bfe250e79941373fd78bbc85ac839f9f8f6dbf1750",
       "path": "deploy/p133/compose.deadman.yaml",
       "size": 981
+    },
+    {
+      "hash": "sha256:67651733ebe74f66e3401d9d954de82917cfa327ca8f3a7a049fdd13359d8050",
+      "path": "deploy/p139/compose.triage-service.yaml",
+      "size": 807
     },
     {
       "hash": "sha256:601fff4f58c9d3c7877254aabcefb0a4b2948b0e9edbef5647fdf35eae2092e3",
@@ -8758,9 +8783,9 @@
       "size": 20798
     },
     {
-      "hash": "sha256:794e0bbd53dc32dfec11a9d666cd76cdb2b287cd64eb34d241a656c9e58b062a",
+      "hash": "sha256:e2882000ba833387a7ad6b829e6545a8bb727c3545005bc8729204da2b7d33bb",
       "path": "docs/operations/p138-plan-review.md",
-      "size": 41865
+      "size": 41845
     },
     {
       "hash": "sha256:71a79eef993539c90a2b5eaa2999766a2d072b6f9dbee0b873b7759edd0670a0",
@@ -8768,9 +8793,24 @@
       "size": 17716
     },
     {
-      "hash": "sha256:5fad0500e8afa8ee3c570025a0f235b059276c66ea01f57e141d15c001169432",
+      "hash": "sha256:6dbb8ae6b94904d3d07fa0091269bcb6563e0ef8d0d1c8219486761bb152dbf7",
       "path": "docs/operations/p138-verification-handoff.md",
       "size": 11075
+    },
+    {
+      "hash": "sha256:721e736d98a8b4e08ccd0c8e1188c9e747b08dab5190cdfead9f9f18d19fd53b",
+      "path": "docs/operations/p139-local-triage-service-host-roadmap.md",
+      "size": 2809
+    },
+    {
+      "hash": "sha256:cabf493fcdf5230c65d66fd5f52043485397c68c78b8a05d6c0b207ae01b2ee0",
+      "path": "docs/operations/p139-plan-review.md",
+      "size": 4254
+    },
+    {
+      "hash": "sha256:9f86c7df5f5c2e0bab7b134818db7312603285c343f37aff7a312d2e7f9ca6fc",
+      "path": "docs/operations/p139-test-spec.md",
+      "size": 4023
     },
     {
       "hash": "sha256:d547189eaaa5c5e1c2bda31c209d04cb860fd753385f5764e4f71c694c43d155",
@@ -9788,9 +9828,9 @@
       "size": 865
     },
     {
-      "hash": "sha256:cb51bf4f0a4f54ff47b572ca148673de968096cf4e5f41d920b830fdbd08c41c",
+      "hash": "sha256:ba04afe43352b1e900bad63469cd16253a4b31614f41fb54f4cb2d4c2ba60a19",
       "path": "docs/release-evidence.md",
-      "size": 205138
+      "size": 206682
     },
     {
       "hash": "sha256:e85476e2bdf4a3e876f60e59cff3ce2146ebe536f3f66fde9d9bc3c858287cd7",
@@ -11728,6 +11768,51 @@
       "size": 3397
     },
     {
+      "hash": "sha256:97c2be39d1119198141d17cc6698009e0e12d0d7ad5dc026952d16d5f98df54e",
+      "path": "docs/tickets/p139/P139-001.md",
+      "size": 349
+    },
+    {
+      "hash": "sha256:869e45669f6479b6a7f1656741773502d0376d0d15cc20a21e9e1438f0071bde",
+      "path": "docs/tickets/p139/P139-002.md",
+      "size": 305
+    },
+    {
+      "hash": "sha256:62babe9a0f4f92e83b183987976b887997c9ea6e104697d8f97247b38bc424c9",
+      "path": "docs/tickets/p139/P139-003.md",
+      "size": 266
+    },
+    {
+      "hash": "sha256:c6cda456b83551612c51600fe79376b978949656592111e1639cac017002f9c6",
+      "path": "docs/tickets/p139/P139-004.md",
+      "size": 296
+    },
+    {
+      "hash": "sha256:2c5d84bd76afcc6068a08319efe6facee2f9dc83d902c7c6de69a765d763d832",
+      "path": "docs/tickets/p139/P139-005.md",
+      "size": 293
+    },
+    {
+      "hash": "sha256:c99dac1e4beb9cc48cda238fe050720658f3352fb9d29fd0c3127ae7bd37c781",
+      "path": "docs/tickets/p139/P139-006.md",
+      "size": 266
+    },
+    {
+      "hash": "sha256:cfe418fe3a7d7be3f49b067fa1aeda69407f682bb09399fadfc43f891984440f",
+      "path": "docs/tickets/p139/P139-007.md",
+      "size": 217
+    },
+    {
+      "hash": "sha256:a0558d7ed9dd2fee82e58b77b3b70d74f545b57e89cd7bb564fa56205fd402f4",
+      "path": "docs/tickets/p139/P139-008.md",
+      "size": 267
+    },
+    {
+      "hash": "sha256:9067f3b0cbb9f6d1fff1f99034112c713c217ff7bf3b80868e28b6e7985bd58a",
+      "path": "docs/tickets/p139/README.md",
+      "size": 640
+    },
+    {
       "hash": "sha256:beae4f2e7cc18f81c6ca43a27de6527bfe7fe9d7104d00734cac27810d9e4258",
       "path": "docs/tickets/p14/README.md",
       "size": 1078
@@ -13503,6 +13588,11 @@
       "size": 1208
     },
     {
+      "hash": "sha256:63fd279736759d2ee135f0b1ee732681b359791822553aa19bc448a0a6da675b",
+      "path": "evals/p139/input/local-triage-service-profile.json",
+      "size": 6844
+    },
+    {
       "hash": "sha256:0d4e9f692dbf5901371abbdc09c390f7751e4e75a2e91b8d803f24d96bb0974f",
       "path": "evals/planning/p66_autonomous_day_loop_backlog.json",
       "size": 4974
@@ -14908,9 +14998,9 @@
       "size": 4045
     },
     {
-      "hash": "sha256:91b723ff50d27ef4380dff3f5dbf69a49a26512820f9bf8eb0943303acd5c773",
+      "hash": "sha256:d5425598d968ca00b40ad4d9875ea5623e7a707396f477f5768b133f7c4c65a5",
       "path": "pyproject.toml",
-      "size": 1631
+      "size": 1683
     },
     {
       "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -15598,9 +15688,19 @@
       "size": 7350
     },
     {
-      "hash": "sha256:daf5969a5e8cd7bc9d814d7264c7ad38c7f7d0826e47d677cea8acecb5cc56f0",
+      "hash": "sha256:78b0e85791dfcb5083f21da6b55a52b9e9719bd11ad2cace7d0f258ca06aab4b",
       "path": "scripts/run_p138_observation_triage_supervisor.py",
       "size": 57547
+    },
+    {
+      "hash": "sha256:8519a6f4aeea2c181fe91196d78a51c9b49bad9f0dadab7c3fb4fc1089befde6",
+      "path": "scripts/run_p139_local_triage_service.py",
+      "size": 4296
+    },
+    {
+      "hash": "sha256:bdf3a2f8df090ce514b9b43ea572fee24764c77fc62e0be04b8c4daf7d8d21a2",
+      "path": "scripts/run_p139_service_evaluation.py",
+      "size": 2225
     },
     {
       "hash": "sha256:845eb4d1f36b8d14648cf20a23a9300dc75c17118dbd6fc9b9d068bf4f1fca28",
@@ -15863,9 +15963,9 @@
       "size": 1047
     },
     {
-      "hash": "sha256:2562632908baec596bb9ebae91a5f8071719f1f93fdfedb23c2c9fa810e558cb",
+      "hash": "sha256:53686da8ca2389cfe6a826febfd309e6ae673914221e3e2717bc81196cee5695",
       "path": "scripts/verify.sh",
-      "size": 115478
+      "size": 117431
     },
     {
       "hash": "sha256:ac7c3ef7b2da5eb2587932bd07607ab9a2d911497e7d2175a9128334b2c24b59",
@@ -15973,9 +16073,19 @@
       "size": 498
     },
     {
-      "hash": "sha256:b5d13e377c917bd550331d168a9f2489ab865582dfa804c3767ca79a2edd5f64",
+      "hash": "sha256:03ad4980a86320a9166b5c0c305d9b15e9d966b0e857f98a8ee15ee568068a36",
       "path": "tests/fixtures/p138/builders.py",
       "size": 14941
+    },
+    {
+      "hash": "sha256:0e54e19dc4ed8e4d0ea546ad278b41d26db960710eeeae528fb9f4553b89d5de",
+      "path": "tests/fixtures/p139/__init__.py",
+      "size": 35
+    },
+    {
+      "hash": "sha256:2edcedbc205815f1b90d12ced7c7fdcca07ca1f40b8890bcea96e401c93486a3",
+      "path": "tests/fixtures/p139/builders.py",
+      "size": 2647
     },
     {
       "hash": "sha256:118e31b09b9759186a0bf271eb3f795f82ad0e2eb67c4099cbed09a77e0137c3",
@@ -17403,9 +17513,9 @@
       "size": 41568
     },
     {
-      "hash": "sha256:1042e6c80097d59e6a8009757fd0f9077e950bae44496ec5dee8fca6dca5ce4c",
+      "hash": "sha256:f876e89ebbdbffdd83a89e1150ed4b3a4f7602fa2c2c905fab315e3001ef3fd1",
       "path": "tests/test_p138_observation_triage_supervisor.py",
-      "size": 35062
+      "size": 36075
     },
     {
       "hash": "sha256:7c170c0604b31edcbbfd544ee7a3fada9bf200360a7feb57fceba29190cee8dd",
@@ -17413,9 +17523,29 @@
       "size": 13555
     },
     {
-      "hash": "sha256:30fdbc97812e76d4b337e046d457b983f984cd34221011ec0bac20a72be2c7ae",
+      "hash": "sha256:f1c6c79c2b5834c134b0c899ae705d4d6f7b0da98e529d5d87b96feedbedf722",
       "path": "tests/test_p138_runner.py",
       "size": 13044
+    },
+    {
+      "hash": "sha256:65bbe5a8ff0cbb0a0221026765e820b5a7e2ad577d3dbba0005ad50966e496cc",
+      "path": "tests/test_p139_local_triage_service.py",
+      "size": 14296
+    },
+    {
+      "hash": "sha256:05b0ad40cce3e59bedc044ae0e55503d1baca42c8977193a2ef9c2007d152127",
+      "path": "tests/test_p139_release_evidence.py",
+      "size": 2584
+    },
+    {
+      "hash": "sha256:fa005f570f274e3d4c95e09b0f01fd895af242805631841a9581afde0f572fe6",
+      "path": "tests/test_p139_runner.py",
+      "size": 2403
+    },
+    {
+      "hash": "sha256:d648d46ec29ee70cd59c8a3c18d4aefd6ca1d44c755d53b52f1c1c54ec751c43",
+      "path": "tests/test_p139_service_cli.py",
+      "size": 7184
     },
     {
       "hash": "sha256:7b24eb8d26bf5f12d6da91609bc25996a8b98c2c44dbd77e466c37be7d181f29",
@@ -18478,6 +18608,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:eb7e45d21777a51ccbfe5ef2fd1e9ba46ce577a039e006d1eb15579de03987c1",
+  "source_inventory_hash": "sha256:20418efaa54aa9b77e710a227476a67cb39db85ec201d34e089cd186208dee86",
   "status": "pass"
 }

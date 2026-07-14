@@ -1,16 +1,16 @@
 {
   "allowed_artifact_roots": [
-    "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ke3w_dkv/process/storage/report-interruption"
+    "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ksd0zriu/process/storage/report-interruption"
   ],
   "allowed_data_roots": [
-    "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ke3w_dkv/process/storage/report-interruption"
+    "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ksd0zriu/process/storage/report-interruption"
   ],
   "canary_every_cycles": 1,
   "daily_report_interval_seconds": 10,
   "data_stale_after_seconds": 30,
   "heartbeat_timeout_seconds": 1,
   "interval_seconds": 1,
-  "lease_path": "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ke3w_dkv/process/storage/report-interruption/runtime.lock",
+  "lease_path": "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ksd0zriu/process/storage/report-interruption/runtime.lock",
   "max_bytes_per_cycle": 65536,
   "max_consecutive_failures": 3,
   "max_line_bytes": 4096,
@@ -18,17 +18,17 @@
   "max_report_dir_bytes": 1048576,
   "max_report_files": 8,
   "min_artifact_free_bytes": 1,
-  "report_dir": "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ke3w_dkv/process/storage/report-interruption/reports",
+  "report_dir": "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ksd0zriu/process/storage/report-interruption/reports",
   "runtime_id": "p132-storage-report-interruption",
   "schema_version": "p131.monitor_config.v1",
   "sources": [
     {
       "enabled": true,
       "kind": "local_jsonl",
-      "path": "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ke3w_dkv/process/storage/report-interruption/telemetry.jsonl",
+      "path": "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ksd0zriu/process/storage/report-interruption/telemetry.jsonl",
       "source_id": "local"
     }
   ],
-  "state_path": "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ke3w_dkv/process/storage/report-interruption/state.json",
-  "termination_receipt_path": "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ke3w_dkv/process/storage/report-interruption/termination-receipt.json"
+  "state_path": "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ksd0zriu/process/storage/report-interruption/state.json",
+  "termination_receipt_path": "/var/folders/_r/412y3yxs1xn9msgzm5ygs2lh0000gn/T/opscat-p132-ksd0zriu/process/storage/report-interruption/termination-receipt.json"
 }

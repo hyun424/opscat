@@ -69,6 +69,19 @@ auth, credentials, environment discovery, provider/network access,
 notification, action/remediation, staging/production mutation, or operator
 replacement.
 
+## P139: hardened local triage service host
+
+P139 is qualified at exact 32/32. It hosts P138 behind explicit local bundle
+and base paths, a whole-service lease, recoverable restart-control rollover,
+hash-chained exit receipts, deterministic status, safe signals, and
+network-disabled least-privilege deployment examples. The final evidence is
+source-bound and preserves exact-zero shared runtime authority.
+
+P140 is next: translate P139 health and terminal receipts into P133-compatible
+credential-free local dead-man events. External notification requires a later
+reviewed notification-only authority, and remediation remains blocked behind
+separate observation, identity, approval, and action-authority qualification.
+
 OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward a beta-grade agentic operations system.
 
 ## P131 complete: credential-free always-on local monitoring

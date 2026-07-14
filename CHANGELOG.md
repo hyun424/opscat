@@ -50,6 +50,20 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 
 ## Unreleased
 
+### P139 local triage service host
+
+- Packaged the qualified P138 loop behind an explicit-path
+  `opscat-triage-service validate|run|status` process boundary with no
+  credential or environment discovery.
+- Added service/P138 lease ordering, crash-recoverable terminal-control
+  rollover, generation-chained exit receipts with bounded retention, and
+  held-lease health proof.
+- Added safe SIGINT/SIGTERM handling, real subprocess clean/restart/forced-stop
+  tests, and network-disabled least-privilege systemd/Compose examples.
+- Qualified the exact 32-case matrix at 32 passed/0 failed while preserving the
+  shared exact-zero runtime authority map. P139 grants no notification,
+  action, remediation, production mutation, or operator-replacement authority.
+
 ### P138 local observation-to-triage supervisor
 
 - Locked the approved reconciliation-first contract to the exact six-phase

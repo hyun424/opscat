@@ -41,7 +41,7 @@ from tests.fixtures.p136.builders import (
     runtime_inputs as p136_runtime_inputs,
 )
 
-NOW = "2026-07-14T00:00:00Z"
+NOW = "2026-07-13T00:10:00Z"
 P136_STATUS = "p136_incremental_local_observation_qualified"
 P137_STATUS = "p137_local_evidence_triage_qualified"
 
@@ -365,7 +365,7 @@ def build_p138_fixture(
             promotion_records=selected,
             p136_independent_review=review,
             p136_release_evidence=p136_evidence,
-            created_at="2026-07-14T00:00:01Z",
+            created_at="2026-07-13T00:10:01Z",
         )
         chain_root = str(genesis_bundle["handoff_chain_root_hash"])
     p137_config_value = p137_config(root, chain_root=chain_root)
@@ -375,7 +375,7 @@ def build_p138_fixture(
         genesis_p137_result = run_p137_runtime_once(
             base_path=root,
             config=p137_config_value,
-            now="2026-07-14T00:00:02Z",
+            now="2026-07-13T00:10:02Z",
         )
         if genesis_p137_result["status"] != "ok":
             raise AssertionError(genesis_p137_result)
@@ -391,7 +391,7 @@ def build_p138_fixture(
         "p136_release_evidence": p136_evidence,
         "p137_release_evidence": p137_evidence,
         "p137_final_implementation_review": p137_review,
-        "created_at": "2026-07-14T00:00:03Z",
+        "created_at": "2026-07-13T00:10:03Z",
     }
     return P138Fixture(
         root=root,

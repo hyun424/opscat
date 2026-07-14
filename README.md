@@ -829,3 +829,31 @@ authority is present. It is not unattended production operation. See
 [`docs/operations/p138-observation-to-triage-supervisor-roadmap.md`](docs/operations/p138-observation-to-triage-supervisor-roadmap.md),
 [`docs/operations/p138-test-spec.md`](docs/operations/p138-test-spec.md), and
 [`docs/operations/p138-verification-handoff.md`](docs/operations/p138-verification-handoff.md).
+
+## P139 hardened local triage service host
+
+P139 packages P138 as a restartable local process without expanding its
+authority. `opscat-triage-service` validates a canonical source-bound bundle,
+runs the supervisor under a whole-service lease, handles SIGINT/SIGTERM only at
+safe cycle boundaries, and exposes deterministic read-only health. Restart
+rollover and exit receipts are intent-journaled, hash chained, recoverable, and
+bound to P138 ledger/readiness/heartbeat/termination evidence.
+
+The exact release denominator passes 32/32 cases, including real subprocess
+run/restart/status, forced SIGTERM recovery, lease contention, split commits,
+tampering, unsafe paths, and systemd/Compose hardening. `ready` requires both
+fresh matching control records and a held service lease. Runtime authority
+remains exact zero for credentials, environment, network, subprocess/shell,
+notification, remediation, production mutation, and operator replacement.
+
+```bash
+opscat-triage-service validate --bundle /etc/opscat/p139-service-bundle.json
+opscat-triage-service run --bundle /etc/opscat/p139-service-bundle.json --base /var/lib/opscat
+opscat-triage-service status --bundle /etc/opscat/p139-service-bundle.json --base /var/lib/opscat
+bash scripts/verify.sh --profile p139-release
+```
+
+This qualifies a local service host, not live provider observation, external
+notification, autonomous remediation, unattended production operation, or
+operator replacement. See
+[`docs/operations/p139-local-triage-service-host-roadmap.md`](docs/operations/p139-local-triage-service-host-roadmap.md).

@@ -16,7 +16,7 @@ The approved P138 plan is now backed by the complete tracked qualification set:
 
 Final mode reproduced exactly 30 expected, 30 passed, and 0 failed. The tracked
 release evidence hash is
-`sha256:1c3cbb6fe575b17e4fcf2159ac2cff15fc90b6cd1c452acb1cb81eaa0f5c76d7`;
+`sha256:3442abc0717f0aff8a41efad17f3a1343f1ef4ae10dd21fb6691813e5499f663`;
 the final review records P0/P1/P2/P3 all at zero. The P138 evidence also binds
 the exact qualified P136 and P137 evidence/review hashes. The claimed status is
 `p138_local_observation_to_triage_supervisor_qualified`.

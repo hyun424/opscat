@@ -4,6 +4,7 @@ import fcntl
 import json
 import os
 import signal
+from collections.abc import Mapping
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, cast
@@ -78,7 +79,7 @@ def _run_once(fixture: Any, config: dict[str, Any], **kwargs: Any) -> dict[str, 
         config=config,
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
-        now="2026-07-14T00:00:04Z",
+        now="2026-07-13T00:10:04Z",
         **kwargs,
     )
 
@@ -215,7 +216,7 @@ def test_absent_publisher_genesis_rejects_before_observation(tmp_path: Path) -> 
         config=config,
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
-        now="2026-07-14T00:00:04Z",
+        now="2026-07-13T00:10:04Z",
         component_callables={"observe": observe},
     )
 
@@ -308,7 +309,7 @@ def test_p136_empty_same_cycle_recovery_consumes_no_second_receipt(
         config=config,
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
-        now="2026-07-14T00:00:04Z",
+        now="2026-07-13T00:10:04Z",
     )
     assert first["status"] == "failed_closed"
     assert first["phase"]["phase"] == "cycle_started"
@@ -349,7 +350,7 @@ def test_restart_through_every_phase_boundary_publishes_and_triages_once(
         config=config,
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
-        now="2026-07-14T00:00:04Z",
+        now="2026-07-13T00:10:04Z",
         crash_after_phase=crash_after,
     )
     assert first["status"] == "failed_closed"
@@ -432,7 +433,7 @@ def test_non_genesis_without_p138_history_fails_closed(tmp_path: Path) -> None:
         promotion_records=observed["promotion_records"],
         p136_independent_review=fixture.publisher_inputs["p136_independent_review"],
         p136_release_evidence=fixture.publisher_inputs["p136_release_evidence"],
-        created_at="2026-07-14T00:00:03Z",
+        created_at="2026-07-13T00:10:03Z",
     )
     assert bundle["bundle_sequence"] == 2
     result = _run_once(fixture, config)
@@ -464,7 +465,7 @@ def test_supplied_p136_checkpoint_must_match_prior_p138_ledger_before_components
 ) -> None:
     fixture, config, prior = _bootstrap_accepted(tmp_path)
     stale = deepcopy(fixture.p136_runtime["checkpoint"])
-    stale["updated_at"] = "2026-07-14T00:00:03Z"
+    stale["updated_at"] = "2026-07-13T00:10:03Z"
     stale["checkpoint_hash"] = stable_hash(
         {key: item for key, item in stale.items() if key != "checkpoint_hash"}
     )
@@ -480,7 +481,7 @@ def test_supplied_p136_checkpoint_must_match_prior_p138_ledger_before_components
         config=config,
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
-        now="2026-07-14T00:00:04Z",
+        now="2026-07-13T00:10:04Z",
         component_callables={"observe": observe},
     )
 
@@ -518,7 +519,7 @@ def test_real_p137_release_validator_rejects_fabricated_minimal_evidence(
             config=config,
             p136_runtime=fixture.p136_runtime,
             publisher_inputs=publisher_inputs,
-            now="2026-07-14T00:00:04Z",
+            now="2026-07-13T00:10:04Z",
         )
 
 
@@ -552,7 +553,7 @@ def test_supervisor_recovers_real_publisher_split_crashes_exactly_once(
         config=config,
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
-        now="2026-07-14T00:00:04Z",
+        now="2026-07-13T00:10:04Z",
         component_callables={"publish": crashing_publish},
     )
     assert first["status"] == "failed_closed"
@@ -583,7 +584,7 @@ def test_finalization_crash_windows_reconcile_one_ledger_and_checkpoint(
         config=config,
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
-        now="2026-07-14T00:00:04Z",
+        now="2026-07-13T00:10:04Z",
         crash_after_phase=crash_after,
     )
     assert first["status"] == "failed_closed"
@@ -679,7 +680,7 @@ def test_finite_loop_writes_heartbeat_readiness_and_max_cycle_termination(tmp_pa
         config=config,
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
-        now_values=("2026-07-14T00:00:04Z", "2026-07-14T00:00:05Z"),
+        now_values=("2026-07-13T00:10:04Z", "2026-07-13T00:10:05Z"),
         monotonic=lambda: 1.0,
         sleep=lambda _: None,
     )
@@ -692,6 +693,34 @@ def test_finite_loop_writes_heartbeat_readiness_and_max_cycle_termination(tmp_pa
     assert _read_json(fixture.root, config["heartbeat_path"])["cycle_sequence"] == 2
     assert _read_json(fixture.root, config["readiness_path"])["status"] == "stopped"
     assert result["forbidden_authority"] == zero_forbidden_authority()
+
+
+def test_loop_propagates_each_cycle_time_into_p136_and_publisher_inputs(
+    tmp_path: Path,
+) -> None:
+    fixture, config, _bootstrap = _bootstrap_accepted(tmp_path)
+    observed_times: list[str] = []
+
+    def observe(runtime: Mapping[str, Any]) -> dict[str, Any]:
+        observed_times.append(str(runtime["now"]))
+        return observe_one_cycle(runtime)
+
+    times = ("2026-07-13T00:10:04Z", "2026-07-13T00:10:05Z")
+    result = p138_api.run_p138_supervisor_loop_for_evaluation(
+        base_path=fixture.root,
+        config=config,
+        p136_runtime=fixture.p136_runtime,
+        publisher_inputs=fixture.publisher_inputs,
+        now_values=times,
+        monotonic=lambda: 1.0,
+        sleep=lambda _: None,
+        component_callables={"observe": observe},
+    )
+
+    assert result["status"] == "stopped"
+    assert observed_times == list(times)
+    assert fixture.p136_runtime["now"] == times[-1]
+    assert fixture.publisher_inputs["created_at"] == times[-1]
 
 
 def test_loop_receipt_exhaustion_and_failure_threshold_have_distinct_stops(tmp_path: Path) -> None:
@@ -710,7 +739,7 @@ def test_loop_receipt_exhaustion_and_failure_threshold_have_distinct_stops(tmp_p
         config=receipt_config,
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
-        now_values=tuple(f"2026-07-14T00:00:0{index}Z" for index in range(4, 8)),
+        now_values=tuple(f"2026-07-13T00:10:0{index}Z" for index in range(4, 8)),
         monotonic=lambda: 1.0,
         sleep=lambda _: None,
     )
@@ -728,7 +757,7 @@ def test_loop_receipt_exhaustion_and_failure_threshold_have_distinct_stops(tmp_p
             config=failed_config,
             p136_runtime=failed_fixture.p136_runtime,
             publisher_inputs=failed_fixture.publisher_inputs,
-            now_values=("2026-07-14T00:00:04Z", "2026-07-14T00:00:05Z"),
+            now_values=("2026-07-13T00:10:04Z", "2026-07-13T00:10:05Z"),
             monotonic=lambda: 1.0,
             sleep=lambda _: None,
         )
@@ -747,7 +776,7 @@ def test_loop_stale_readiness_deadman_and_safe_signal_stop_before_components(tmp
         config=stale_config,
         p136_runtime=stale_fixture.p136_runtime,
         publisher_inputs=stale_fixture.publisher_inputs,
-        now_values=("2026-07-14T00:00:04Z",),
+        now_values=("2026-07-13T00:10:04Z",),
         monotonic=lambda: 1.0,
         sleep=lambda _: None,
     )
@@ -774,7 +803,7 @@ def test_loop_stale_readiness_deadman_and_safe_signal_stop_before_components(tmp
         config=signal_config,
         p136_runtime=signal_fixture.p136_runtime,
         publisher_inputs=signal_fixture.publisher_inputs,
-        now_values=("2026-07-14T00:00:04Z",),
+        now_values=("2026-07-13T00:10:04Z",),
         stop_controller=controller,
         monotonic=lambda: 1.0,
         sleep=lambda _: None,
@@ -830,9 +859,9 @@ def test_loop_heartbeat_interval_and_existing_ledger_binding(tmp_path: Path) -> 
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
         now_values=(
-            "2026-07-14T00:00:04Z",
-            "2026-07-14T00:00:05Z",
-            "2026-07-14T00:00:06Z",
+            "2026-07-13T00:10:04Z",
+            "2026-07-13T00:10:05Z",
+            "2026-07-13T00:10:06Z",
         ),
         monotonic=lambda: next(ticks),
         sleep=lambda _seconds: None,
@@ -850,7 +879,7 @@ def test_loop_heartbeat_interval_and_existing_ledger_binding(tmp_path: Path) -> 
         config=config,
         p136_runtime=fixture.p136_runtime,
         publisher_inputs=fixture.publisher_inputs,
-        now_values=("2026-07-14T00:00:07Z",),
+        now_values=("2026-07-13T00:10:07Z",),
         stop_controller=controller,
         monotonic=lambda: 1.0,
         sleep=lambda _seconds: None,

@@ -211,12 +211,12 @@ def test_publisher_split_commit_case_requires_supervisor_recovery(
     executor = CanonicalCaseExecutor(tmp_path, "P138-CASE-23", row)
     fixture = SimpleNamespace(
         root=tmp_path,
-        p136_runtime={"authority": {}, "now": "2026-07-14T00:00:04Z"},
+        p136_runtime={"authority": {}, "now": "2026-07-13T00:10:04Z"},
         publisher_inputs={
             "canonical_entry_map": {},
             "p136_independent_review": {},
             "p136_release_evidence": {},
-            "created_at": "2026-07-14T00:00:03Z",
+            "created_at": "2026-07-13T00:10:03Z",
         },
     )
     config: dict[str, Any] = {

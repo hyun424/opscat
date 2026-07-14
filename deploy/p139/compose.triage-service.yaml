@@ -1,0 +1,28 @@
+{
+  "services": {
+    "opscat-triage-service": {
+      "image": "opscat@sha256:${OPSCAT_IMAGE_DIGEST:?set a 64-hex image manifest digest}",
+      "user": "65532:65532",
+      "command": [
+        "opscat-triage-service",
+        "run",
+        "--bundle",
+        "/etc/opscat/p139-service-bundle.json",
+        "--base",
+        "/var/lib/opscat"
+      ],
+      "restart": "on-failure:6",
+      "stop_grace_period": "10s",
+      "read_only": true,
+      "privileged": false,
+      "network_mode": "none",
+      "cap_drop": ["ALL"],
+      "security_opt": ["no-new-privileges:true"],
+      "tmpfs": ["/tmp:size=16m,mode=1777,noexec,nosuid,nodev"],
+      "volumes": [
+        "./config/p139-service-bundle.json:/etc/opscat/p139-service-bundle.json:ro",
+        "./data:/var/lib/opscat:rw"
+      ]
+    }
+  }
+}

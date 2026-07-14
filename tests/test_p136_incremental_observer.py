@@ -43,6 +43,7 @@ EXPECTED_CONFIG_KEYS = {
     "index_intent_dir",
     "journal_dir",
     "promotion_dir",
+    "cycle_outcome_dir",
     "lease_path",
     "p134_contract_hash",
     "p134_receipt_ledger_hash",
@@ -122,6 +123,14 @@ def _journal_path(runtime: dict[str, Any], result: dict[str, Any]) -> Path:
     return Path(runtime["base_path"]) / runtime["config"]["journal_dir"] / f"{intent_name}.promotion-intent.json"
 
 
+def _cycle_outcome_path(runtime: dict[str, Any], cycle_id: str) -> Path:
+    return (
+        Path(runtime["base_path"])
+        / runtime["config"]["cycle_outcome_dir"]
+        / f"{cycle_id.removeprefix('sha256:')}.json"
+    )
+
+
 def _write_index_entry(runtime: dict[str, Any], entry: dict[str, Any]) -> None:
     (Path(runtime["base_path"]) / runtime["config"]["index_path"]).write_bytes(canonical_bytes(entry) + b"\n")
 
@@ -147,6 +156,16 @@ def test_config_validation_rejects_unknown_fields_boolean_limits_and_unsafe_stat
         api.build_incremental_observer_config(config_input(tmp_path, limits={**config_input(tmp_path)["limits"], "max_cycles": True}))
     with pytest.raises(error, match="state_path_overlaps_index_path"):
         api.build_incremental_observer_config(config_input(tmp_path, checkpoint_path="data/index.jsonl/checkpoint.json"))
+    with pytest.raises(error, match="state_paths_overlap"):
+        api.build_incremental_observer_config(config_input(tmp_path, cycle_outcome_dir="state/journal/outcomes"))
+    missing_outcome_dir = config_input(tmp_path)
+    missing_outcome_dir.pop("cycle_outcome_dir")
+    with pytest.raises(error, match="missing_config_field"):
+        api.build_incremental_observer_config(missing_outcome_dir)
+    missing_outcome_budget = config_input(tmp_path)
+    missing_outcome_budget["limits"].pop("max_cycle_outcome_bytes")
+    with pytest.raises(error, match="invalid_limits_fields"):
+        api.build_incremental_observer_config(missing_outcome_budget)
 
 
 def test_index_entry_contract_is_exact_key_global_sequence_chained_and_self_hashed() -> None:
@@ -274,8 +293,236 @@ def test_observe_cycle_promotes_and_checkpoints_only_after_durable_records(tmp_p
     assert (Path(runtime["base_path"]) / runtime["config"]["journal_dir"] / f"{intent_name}.promotion-intent.json").is_file()
     assert (Path(runtime["base_path"]) / runtime["config"]["promotion_dir"] / f"{promotion_name}.json").is_file()
     assert (Path(runtime["base_path"]) / runtime["config"]["checkpoint_path"]).is_file()
+    outcome = json.loads(_cycle_outcome_path(runtime, result["index_read_intent"]["cycle_id"]).read_text())
+    assert outcome["schema_version"] == "p136.cycle_completion.v1"
+    assert outcome["starting_checkpoint_hash"] == runtime["checkpoint"]["checkpoint_hash"]
+    assert outcome["resulting_checkpoint"] == result["advanced_checkpoint"]
+    assert outcome["resulting_checkpoint_hash"] == result["advanced_checkpoint"]["checkpoint_hash"]
+    assert outcome["committed_checkpoint_hash"] == result["advanced_checkpoint"]["checkpoint_hash"]
+    assert outcome["promotion_sequences"] == [1]
+    assert outcome["promotion_hashes"] == [result["promotion_records"][0]["promotion_hash"]]
+    assert outcome["promotion_records"] == result["promotion_records"]
+    assert outcome["fsync"] == {"file": True, "parent_directory": True}
+    assert outcome["completion_hash"] == stable_hash(
+        {key: value for key, value in outcome.items() if key != "completion_hash"}
+    )
     assert result["activity"]["promotion_intent_write_count"] == 1
     assert result["activity"]["checkpoint_write_count"] == 1
+
+
+@pytest.mark.parametrize("with_promotion", [True, False], ids=["nonempty", "empty"])
+@pytest.mark.parametrize(
+    "crash_phase",
+    ["cycle_outcome_intent_durable", "cycle_checkpoint_durable"],
+    ids=["before-checkpoint", "after-checkpoint"],
+)
+def test_two_phase_cycle_outcome_recovers_exact_cycle_without_new_index_read(
+    tmp_path: Path,
+    with_promotion: bool,
+    crash_phase: str,
+) -> None:
+    api = _api("observe_one_cycle", "recover_cycle_outcome", "validate_cycle_outcome")
+    error = _error()
+    authority = authority_bundle(index_receipts=2, segment_receipts=5)
+    runtime = _bind_runtime_checkpoint(runtime_inputs(tmp_path, authority=authority))
+    if with_promotion:
+        _write_index_entry(runtime, provider_index_entries(authority["segment_receipts"])[0])
+
+    def crash_at(phase: str) -> None:
+        if phase == crash_phase:
+            raise error(f"evaluator_crash:{phase}")
+
+    with pytest.raises(error, match=f"evaluator_crash:{crash_phase}"):
+        api.observe_one_cycle({**runtime, "evaluator_crash_injector": crash_at})
+
+    outcome_paths = list(
+        (Path(runtime["base_path"]) / runtime["config"]["cycle_outcome_dir"]).glob("*.json")
+    )
+    assert len(outcome_paths) == 1
+    intent = json.loads(outcome_paths[0].read_text())
+    assert intent["schema_version"] == "p136.cycle_outcome_intent.v1"
+    assert intent["promotion_count"] == int(with_promotion)
+    assert intent["promotion_sequences"] == ([1] if with_promotion else [])
+    durable_checkpoint_path = _checkpoint_path(runtime)
+    if crash_phase == "cycle_outcome_intent_durable":
+        assert not durable_checkpoint_path.exists()
+        recovery_checkpoint = runtime["checkpoint"]
+    else:
+        recovery_checkpoint = json.loads(durable_checkpoint_path.read_text())
+        assert recovery_checkpoint["checkpoint_hash"] == intent["resulting_checkpoint_hash"]
+
+    runtime["probe"] = ActivityProbe()
+    recovered = api.recover_cycle_outcome(
+        {
+            **runtime,
+            "checkpoint": recovery_checkpoint,
+        },
+        cycle_id=intent["cycle_id"],
+        index_read_receipt_hash=intent["index_read_receipt_hash"],
+    )
+    completion = json.loads(outcome_paths[0].read_text())
+    api.validate_cycle_outcome(completion, runtime["config"])
+
+    assert recovered["recovered_cycle_outcome"] is True
+    assert recovered["cycle_outcome"] == completion
+    assert completion["schema_version"] == "p136.cycle_completion.v1"
+    assert recovered["advanced_checkpoint"] == intent["resulting_checkpoint"]
+    assert recovered["advanced_checkpoint"]["consumed_index_read_receipt_hashes"] == [
+        authority["index_receipts"][0]["receipt_hash"]
+    ]
+    assert len(recovered["promotion_records"]) == int(with_promotion)
+    assert runtime["probe"].index_open_count == 0
+    assert runtime["probe"].index_read_count == 0
+    assert runtime["probe"].segment_open_count == 0
+    assert recovered["activity"]["recovery_replay_count"] == 1
+
+
+def test_cycle_outcome_completion_reconciles_only_exact_bound_tuple_and_fails_closed_on_tamper(
+    tmp_path: Path,
+) -> None:
+    api = _api("observe_one_cycle", "recover_cycle_outcome")
+    error = _error()
+    authority = authority_bundle(index_receipts=2, segment_receipts=5)
+    runtime = _bind_runtime_checkpoint(runtime_inputs(tmp_path, authority=authority))
+    _write_index_entry(runtime, provider_index_entries(authority["segment_receipts"])[0])
+    observed = api.observe_one_cycle(runtime)
+    cycle_id = observed["index_read_intent"]["cycle_id"]
+    receipt_hash = observed["index_read_intent"]["receipt_hash"]
+    outcome_path = _cycle_outcome_path(runtime, cycle_id)
+    checkpoint_before = _checkpoint_path(runtime).read_bytes()
+
+    runtime["probe"] = ActivityProbe()
+    reconciled = api.recover_cycle_outcome(
+        {
+            **runtime,
+            "checkpoint": observed["advanced_checkpoint"],
+        },
+        cycle_id=cycle_id,
+        index_read_receipt_hash=receipt_hash,
+    )
+    assert reconciled["recovered_cycle_outcome"] is True
+    assert runtime["probe"].events == []
+
+    tampered = json.loads(outcome_path.read_text())
+    tampered["resulting_checkpoint"]["committed_cursor"] += 1
+    tampered["resulting_checkpoint_hash"] = stable_hash(
+        {key: value for key, value in tampered["resulting_checkpoint"].items() if key != "checkpoint_hash"}
+    )
+    tampered["completion_hash"] = stable_hash(
+        {key: value for key, value in tampered.items() if key != "completion_hash"}
+    )
+    outcome_path.write_text(json.dumps(tampered, sort_keys=True, separators=(",", ":")) + "\n")
+
+    with pytest.raises(error, match="cycle_outcome"):
+        api.recover_cycle_outcome(
+            {
+                **runtime,
+                "checkpoint": observed["advanced_checkpoint"],
+            },
+            cycle_id=cycle_id,
+            index_read_receipt_hash=receipt_hash,
+        )
+    assert _checkpoint_path(runtime).read_bytes() == checkpoint_before
+
+
+@pytest.mark.parametrize("encoding", ["pretty", "missing_newline", "extra_newline"])
+def test_cycle_outcome_recovery_rejects_noncanonical_persisted_bytes(
+    tmp_path: Path,
+    encoding: str,
+) -> None:
+    api = _api("observe_one_cycle", "recover_cycle_outcome")
+    error = _error()
+    authority = authority_bundle(index_receipts=2, segment_receipts=5)
+    runtime = _bind_runtime_checkpoint(runtime_inputs(tmp_path, authority=authority))
+    _write_index_entry(runtime, provider_index_entries(authority["segment_receipts"])[0])
+    observed = api.observe_one_cycle(runtime)
+    cycle_id = observed["index_read_intent"]["cycle_id"]
+    outcome_path = _cycle_outcome_path(runtime, cycle_id)
+    outcome = json.loads(outcome_path.read_text(encoding="utf-8"))
+    if encoding == "pretty":
+        raw = json.dumps(outcome, indent=2, sort_keys=True).encode() + b"\n"
+    elif encoding == "missing_newline":
+        raw = canonical_bytes(outcome)
+    else:
+        raw = canonical_bytes(outcome) + b"\n\n"
+    outcome_path.write_bytes(raw)
+
+    with pytest.raises(error, match="state_json_noncanonical"):
+        api.recover_cycle_outcome(
+            {**runtime, "checkpoint": observed["advanced_checkpoint"]},
+            cycle_id=cycle_id,
+            index_read_receipt_hash=observed["index_read_intent"]["receipt_hash"],
+        )
+
+
+def test_bound_cycle_recovery_fails_closed_when_outcome_is_missing(
+    tmp_path: Path,
+) -> None:
+    api = _api("recover_cycle_outcome")
+    error = _error()
+    authority = authority_bundle(index_receipts=2, segment_receipts=5)
+    runtime = _bind_runtime_checkpoint(runtime_inputs(tmp_path, authority=authority))
+    receipt_hash = authority["index_receipts"][0]["receipt_hash"]
+    cycle_id = stable_hash(
+        {
+            "schema_version": "p136.deterministic_cycle_id.v1",
+            "config_hash": runtime["config"]["config_hash"],
+            "checkpoint_hash": runtime["checkpoint"]["checkpoint_hash"],
+            "receipt_hash": receipt_hash,
+        }
+    )
+
+    with pytest.raises(error, match="expected_cycle_outcome_missing"):
+        api.recover_cycle_outcome(
+            runtime,
+            cycle_id=cycle_id,
+            index_read_receipt_hash=receipt_hash,
+        )
+
+    assert runtime["probe"].events == []
+    assert not _checkpoint_path(runtime).exists()
+
+
+def test_cycle_outcome_binds_each_ordered_promotion_record_hash(
+    tmp_path: Path,
+) -> None:
+    api = _api("observe_one_cycle", "validate_cycle_outcome")
+    error = _error()
+    authority = authority_bundle(index_receipts=2, segment_receipts=5)
+    config = config_input(tmp_path, authority)
+    config["limits"]["max_journal_bytes"] = 1_000_000
+    config["limits"]["max_promotion_bytes"] = 1_000_000
+    runtime = _bind_runtime_checkpoint(
+        runtime_inputs(tmp_path, authority=authority, config=config)
+    )
+    entries = provider_index_entries(authority["segment_receipts"])[:2]
+    index_path = Path(runtime["base_path"]) / runtime["config"]["index_path"]
+    index_path.write_bytes(
+        b"".join(canonical_bytes(entry) + b"\n" for entry in entries)
+    )
+
+    def crash_at(phase: str) -> None:
+        if phase == "cycle_outcome_intent_durable":
+            raise error("evaluator_crash:cycle_outcome_intent_durable")
+
+    with pytest.raises(error, match="evaluator_crash:cycle_outcome_intent_durable"):
+        api.observe_one_cycle({**runtime, "evaluator_crash_injector": crash_at})
+
+    outcome_path = next(
+        (
+            Path(runtime["base_path"])
+            / runtime["config"]["cycle_outcome_dir"]
+        ).glob("*.json")
+    )
+    intent = json.loads(outcome_path.read_text())
+    assert len(intent["promotion_records"]) == 2
+    intent["promotion_hashes"][0] = stable_hash({"forged": "first"})
+    intent["intent_hash"] = stable_hash(
+        {key: value for key, value in intent.items() if key != "intent_hash"}
+    )
+
+    with pytest.raises(error, match="cycle_outcome_promotion_record_hash_mismatch"):
+        api.validate_cycle_outcome(intent, runtime["config"])
 
 
 def test_observe_cycle_rejects_symlink_parent_before_index_open(tmp_path: Path) -> None:

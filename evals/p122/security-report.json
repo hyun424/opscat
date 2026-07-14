@@ -5870,10 +5870,10 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:11dbbd43da85113a86cd10994bab9dd29f597baeac9073204c5509a2049f481c",
+  "report_hash": "sha256:54f5a26feb1ff176e0afca9e629e7eeb9916a39ac9269e21134535c403fc9fd0",
   "root": ".",
-  "root_binding_hash": "sha256:83c6c416733d3ccb8a0c43fdd00117f657c5a5b032bc4fe69cfa06021f6f8930",
-  "scanned_file_count": 2497,
+  "root_binding_hash": "sha256:94a4773c66f786dff2f1a1d251c9ea2d2fa10c9907a88f36fd4c6592c66c1ff0",
+  "scanned_file_count": 2520,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
   "source_inventory": [
@@ -5953,9 +5953,9 @@
       "size": 13148
     },
     {
-      "hash": "sha256:8e1479484617f3a7eb5952c4e28d5dc290f306d731ff3668b959f48a490ce9b5",
+      "hash": "sha256:e72e9b2e11c4925da7c9de08342e7b97b547b2c8e3c9c5ab9971f2644e3ae578",
       "path": "CHANGELOG.md",
-      "size": 15023
+      "size": 16075
     },
     {
       "hash": "sha256:7882e0de102de42df04a6cdb6505138731e280d8a678f3d4b43b33192393583e",
@@ -5963,14 +5963,14 @@
       "size": 3930
     },
     {
-      "hash": "sha256:6dcb42c6f0f1ae3c8e8595c9ca74f34d23a591a409f65dd4504254b047345c46",
+      "hash": "sha256:55bde8280ca0dd1d1179f2dd9bc41ca32e574067089f62b2047aed4a6ca46c91",
       "path": "README.md",
-      "size": 41894
+      "size": 44001
     },
     {
-      "hash": "sha256:b338c536580bcd12d9519511f7bacc54b99b2c0b76c2a067ed1c988eb7a7db2a",
+      "hash": "sha256:f232552b586dc03e1991b32d7d5003c9b2104765d4d592011797bcc547d7442f",
       "path": "ROADMAP.md",
-      "size": 103211
+      "size": 102873
     },
     {
       "hash": "sha256:3d6e9eec25759bf1c54bbeb42f16674071cf095caf0e7b0c78a9ad23ee0378df",
@@ -7248,9 +7248,9 @@
       "size": 26306
     },
     {
-      "hash": "sha256:1ee59e336dec58b11351e593e1a2abee76d208722397d066fad99e297440c8de",
+      "hash": "sha256:07165d040ae79140b8ac0daaf0e668fd6d4f84e0a724de5dca10a6ecb6211acf",
       "path": "app/services/p136_incremental_observer.py",
-      "size": 97414
+      "size": 122309
     },
     {
       "hash": "sha256:c3130257a067328e5751024ca449712b613f5165f225d3345b331f465f7f57dd",
@@ -7288,9 +7288,9 @@
       "size": 12051
     },
     {
-      "hash": "sha256:d1074cbc8c47d25299fb3644324f82f61760ff14c422d03f066ce741225a1b29",
+      "hash": "sha256:2c027298c9768388a6b64efdb38d4b8e6f3ae77d3ff4ce7aa5b2395baa9e6180",
       "path": "app/services/p137_p136_handoff.py",
-      "size": 47826
+      "size": 65826
     },
     {
       "hash": "sha256:b2d4561f04f7566149b9a9a077314a6fc823283888565ff30b94e74ae7947a5f",
@@ -7311,6 +7311,21 @@
       "hash": "sha256:2844b4acac1ab28f138e4398ca417a8ec1f91ed02e36e974c87b4300b0184f35",
       "path": "app/services/p137_runtime.py",
       "size": 79577
+    },
+    {
+      "hash": "sha256:2c17c2bfb41c7e7fd9bbf3e18915061952cd7959122125578b07133f71bc2afc",
+      "path": "app/services/p138_observation_triage_supervisor.py",
+      "size": 144616
+    },
+    {
+      "hash": "sha256:ea42d2d2cd2474fcfb787445ea9bff670fd97804ecf562ac9d44581ea29762d9",
+      "path": "app/services/p138_release_evidence.py",
+      "size": 55168
+    },
+    {
+      "hash": "sha256:44ab453a276df94b019ddcceb2f57a051c0d42dec1d1ef37e9c523d2408b3e42",
+      "path": "app/services/p138_runner.py",
+      "size": 30064
     },
     {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -8738,6 +8753,26 @@
       "size": 18137
     },
     {
+      "hash": "sha256:cd6e0a5ca729a23d1697714e431ab65c5b092e5d99c7fa2cbe0cded508df0e91",
+      "path": "docs/operations/p138-observation-to-triage-supervisor-roadmap.md",
+      "size": 20798
+    },
+    {
+      "hash": "sha256:794e0bbd53dc32dfec11a9d666cd76cdb2b287cd64eb34d241a656c9e58b062a",
+      "path": "docs/operations/p138-plan-review.md",
+      "size": 41865
+    },
+    {
+      "hash": "sha256:71a79eef993539c90a2b5eaa2999766a2d072b6f9dbee0b873b7759edd0670a0",
+      "path": "docs/operations/p138-test-spec.md",
+      "size": 17716
+    },
+    {
+      "hash": "sha256:5fad0500e8afa8ee3c570025a0f235b059276c66ea01f57e141d15c001169432",
+      "path": "docs/operations/p138-verification-handoff.md",
+      "size": 11075
+    },
+    {
       "hash": "sha256:d547189eaaa5c5e1c2bda31c209d04cb860fd753385f5764e4f71c694c43d155",
       "path": "docs/operations/p14-final-summary.md",
       "size": 2448
@@ -9753,9 +9788,9 @@
       "size": 865
     },
     {
-      "hash": "sha256:44f6b0f8d00deeb75891dd6d954fe8eb6e426d93c16222348832dbb7f5147e3d",
+      "hash": "sha256:cb51bf4f0a4f54ff47b572ca148673de968096cf4e5f41d920b830fdbd08c41c",
       "path": "docs/release-evidence.md",
-      "size": 203112
+      "size": 205138
     },
     {
       "hash": "sha256:e85476e2bdf4a3e876f60e59cff3ce2146ebe536f3f66fde9d9bc3c858287cd7",
@@ -11648,6 +11683,51 @@
       "size": 2663
     },
     {
+      "hash": "sha256:1fb5e3a796e0615634e821cb63f1f45e2c41c6ca071b989bf345c731ee2a358c",
+      "path": "docs/tickets/p138/P138-001.md",
+      "size": 2146
+    },
+    {
+      "hash": "sha256:47a57a7032daa8e2cbcf4b95b6804944f9dbfdb151ab2113d6138f2b335e35fc",
+      "path": "docs/tickets/p138/P138-002.md",
+      "size": 2471
+    },
+    {
+      "hash": "sha256:41a94b0594fe040f2491a96cfc04b5bf944d642ba4f4d8e6fdf178a6f7f503f0",
+      "path": "docs/tickets/p138/P138-003.md",
+      "size": 1726
+    },
+    {
+      "hash": "sha256:7bfc48b5b91126e1ebc6a2935410789d923defb199ec0009026e282b0be32bde",
+      "path": "docs/tickets/p138/P138-004.md",
+      "size": 1757
+    },
+    {
+      "hash": "sha256:9b8af523d4323d83e8ab21a09e33b1fb8f267b5bc9ed8debe5db46837d46822f",
+      "path": "docs/tickets/p138/P138-005.md",
+      "size": 1909
+    },
+    {
+      "hash": "sha256:38498ed14085d8b94ffb913b678bd9a8984b39cebeb7a37c7cc009c1523cda33",
+      "path": "docs/tickets/p138/P138-006.md",
+      "size": 1645
+    },
+    {
+      "hash": "sha256:b298ca95e07b6a74b649d9b4c21ce6de7b1e86a2703c18616644327de55b73ad",
+      "path": "docs/tickets/p138/P138-007.md",
+      "size": 1551
+    },
+    {
+      "hash": "sha256:81ae4166e6d85ddab69fe7b58242e26b1764bef02400a8b76f79b2a678cc2d94",
+      "path": "docs/tickets/p138/P138-008.md",
+      "size": 1919
+    },
+    {
+      "hash": "sha256:70327afdc91ba30b8354e467e8ffe8f2d34e0c0b03110e1d9582bd736e7b4182",
+      "path": "docs/tickets/p138/README.md",
+      "size": 3397
+    },
+    {
       "hash": "sha256:beae4f2e7cc18f81c6ca43a27de6527bfe7fe9d7104d00734cac27810d9e4258",
       "path": "docs/tickets/p14/README.md",
       "size": 1078
@@ -13416,6 +13496,11 @@
       "hash": "sha256:5b99aa4abc59b4ab4d27bed755d3707faf466ac57471d451f83212d5d116ad19",
       "path": "evals/p137/input/local-triage-profile.json",
       "size": 1816
+    },
+    {
+      "hash": "sha256:ca68f1edcfcf4df3cbc255785b2670f0b8a0660ad6f70d8f41185c93bddf2239",
+      "path": "evals/p138/input/observation-triage-supervisor-profile.json",
+      "size": 1208
     },
     {
       "hash": "sha256:0d4e9f692dbf5901371abbdc09c390f7751e4e75a2e91b8d803f24d96bb0974f",
@@ -15503,14 +15588,19 @@
       "size": 51673
     },
     {
-      "hash": "sha256:aa4f02e5843655c8c48cc3755513d674a0a70be3053f1af858840f0db5585ce4",
+      "hash": "sha256:1934977c1862d7b1350cf9d6b89ce2921695525df3941611d0524f76d74f4d83",
       "path": "scripts/run_p136_incremental_observer.py",
-      "size": 20301
+      "size": 20538
     },
     {
       "hash": "sha256:8e157f8a1852ff181bc6ca2de0a188324357a560fa1f49ce5e76aa680ea3cc72",
       "path": "scripts/run_p137_local_triage.py",
       "size": 7350
+    },
+    {
+      "hash": "sha256:daf5969a5e8cd7bc9d814d7264c7ad38c7f7d0826e47d677cea8acecb5cc56f0",
+      "path": "scripts/run_p138_observation_triage_supervisor.py",
+      "size": 57547
     },
     {
       "hash": "sha256:845eb4d1f36b8d14648cf20a23a9300dc75c17118dbd6fc9b9d068bf4f1fca28",
@@ -15773,9 +15863,9 @@
       "size": 1047
     },
     {
-      "hash": "sha256:90d9014aa9222bf89630cf8453852906b4b5af7b12136beae324ef2a5c85b923",
+      "hash": "sha256:2562632908baec596bb9ebae91a5f8071719f1f93fdfedb23c2c9fa810e558cb",
       "path": "scripts/verify.sh",
-      "size": 114521
+      "size": 115478
     },
     {
       "hash": "sha256:ac7c3ef7b2da5eb2587932bd07607ab9a2d911497e7d2175a9128334b2c24b59",
@@ -15863,9 +15953,9 @@
       "size": 40
     },
     {
-      "hash": "sha256:22d9cbe866f38f4e8f7d6b0ab6f31c7fa8c9316e19f22b716a63046981480c68",
+      "hash": "sha256:7caf46ffe4feb040e29c5a28928c9e31f6b036bacbb4595c6eb77ef6b8b18902",
       "path": "tests/fixtures/p136/builders.py",
-      "size": 21654
+      "size": 21753
     },
     {
       "hash": "sha256:9566f22b0d02621b2d52ba395992eb5520fdc186ab5e84c7526d361ca0294a8f",
@@ -15876,6 +15966,16 @@
       "hash": "sha256:1f0319c17b8e1f0455a0894f80f7b2baafad7b404a74c354192b60a3c298e260",
       "path": "tests/fixtures/p137/builders.py",
       "size": 60027
+    },
+    {
+      "hash": "sha256:f1b3c42a36b11374c5604861ee883753edcdeb427fd3f686855c714c2e196ff8",
+      "path": "tests/fixtures/p138/__init__.py",
+      "size": 498
+    },
+    {
+      "hash": "sha256:b5d13e377c917bd550331d168a9f2489ab865582dfa804c3767ca79a2edd5f64",
+      "path": "tests/fixtures/p138/builders.py",
+      "size": 14941
     },
     {
       "hash": "sha256:118e31b09b9759186a0bf271eb3f795f82ad0e2eb67c4099cbed09a77e0137c3",
@@ -17233,9 +17333,9 @@
       "size": 13270
     },
     {
-      "hash": "sha256:2309c86b610ee6ca9a807421d38bf5e969a8d974c76a575ac606d61c0a43863a",
+      "hash": "sha256:244a0e8540f8e8c730e8d2ac0a1b6f0269a10d224e6440746d537e9da466df94",
       "path": "tests/test_p136_incremental_observer.py",
-      "size": 36927
+      "size": 47819
     },
     {
       "hash": "sha256:b606853a86aba0b9681bccc9eba04f62b98b6b4051757a402f906fb109bffc5e",
@@ -17278,9 +17378,9 @@
       "size": 3593
     },
     {
-      "hash": "sha256:92939cf0f34754b8ebb3d4691676c1ed57a50233b76ad5abc2f37905c2319cfb",
+      "hash": "sha256:845424627b595ab124ad75b035d5d380c6cf0c1e46e6cef35b26c616d2882360",
       "path": "tests/test_p137_p136_handoff.py",
-      "size": 25323
+      "size": 36606
     },
     {
       "hash": "sha256:3ddfd9ef047c48160be6cb3073392402431ea3511882bc2c84b53002cda9ef46",
@@ -17301,6 +17401,21 @@
       "hash": "sha256:616c022b9cb71d9d55d29e533c35018cf513c28fef771a4fb658249f1d4f83f9",
       "path": "tests/test_p137_runtime.py",
       "size": 41568
+    },
+    {
+      "hash": "sha256:1042e6c80097d59e6a8009757fd0f9077e950bae44496ec5dee8fca6dca5ce4c",
+      "path": "tests/test_p138_observation_triage_supervisor.py",
+      "size": 35062
+    },
+    {
+      "hash": "sha256:7c170c0604b31edcbbfd544ee7a3fada9bf200360a7feb57fceba29190cee8dd",
+      "path": "tests/test_p138_release_evidence.py",
+      "size": 13555
+    },
+    {
+      "hash": "sha256:30fdbc97812e76d4b337e046d457b983f984cd34221011ec0bac20a72be2c7ae",
+      "path": "tests/test_p138_runner.py",
+      "size": 13044
     },
     {
       "hash": "sha256:7b24eb8d26bf5f12d6da91609bc25996a8b98c2c44dbd77e466c37be7d181f29",
@@ -18363,6 +18478,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:5c654c98a84af6ef6f1e3a384737f78def5b33bdbbba1876236bcab88ce85247",
+  "source_inventory_hash": "sha256:eb7e45d21777a51ccbfe5ef2fd1e9ba46ce577a039e006d1eb15579de03987c1",
   "status": "pass"
 }

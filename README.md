@@ -794,3 +794,38 @@ authenticity claim. P137 remains deliberately local-only: no auth,
 credentials, environment discovery, provider API, network, notification,
 command execution, action, remediation, staging/production mutation, or
 operator-replacement authority is present.
+
+## P138 local observation-to-triage supervisor
+
+P138 is the reconciliation-first coordinator over one real P136 observation
+cycle, the P136-owned fixed-path publisher, and the bounded P137 runtime. It
+finishes an already-published or already-triaged durable state before starting
+new observation work. Its normal phase path is
+`cycle_started -> p136_completed -> handoff_selected -> handoff_published -> p137_accepted -> cycle_finalized`;
+an empty promotion delta uses
+`cycle_started -> p136_completed -> cycle_finalized` and invokes neither the
+publisher nor P137.
+
+The implementation adds P136's recoverable
+`p136.cycle_outcome_intent.v1` -> checkpoint ->
+`p136.cycle_completion.v1` sequence, a whole-operation publisher lease with
+recovery across all three split-commit boundaries, contiguous new-promotion
+deltas, and genesis-only bootstrap. The immutable P138 release denominator is
+exactly `P138-CASE-01` through `P138-CASE-30`; CASE-21/22 and CASE-29/30 cover
+both sides of the P136 checkpoint boundary.
+
+P138 qualification is fail-closed: the runner/profile, frozen canonical matrix
+and manifest, release evidence, independent final implementation review, and
+`p138-release` profile must exist and reproduce 30 expected/30 passed/0 failed
+before status `p138_local_observation_to_triage_supervisor_qualified` is
+accepted. The tracked release evidence is authoritative; plan approval alone is
+not final implementation evidence.
+
+The boundary remains production-shaped but local-only and finite: no
+authentication, credentials, environment discovery, provider/live-connector
+API, network/DNS/socket access, notification/delivery, subprocess/shell,
+action/remediation, staging/production mutation, or operator-replacement
+authority is present. It is not unattended production operation. See
+[`docs/operations/p138-observation-to-triage-supervisor-roadmap.md`](docs/operations/p138-observation-to-triage-supervisor-roadmap.md),
+[`docs/operations/p138-test-spec.md`](docs/operations/p138-test-spec.md), and
+[`docs/operations/p138-verification-handoff.md`](docs/operations/p138-verification-handoff.md).

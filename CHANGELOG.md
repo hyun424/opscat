@@ -50,6 +50,26 @@ All notable OpsCat local/mock release evidence changes are tracked here.
 
 ## Unreleased
 
+### P138 local observation-to-triage supervisor
+
+- Locked the approved reconciliation-first contract to the exact six-phase
+  path and the zero-delta `cycle_started -> p136_completed -> cycle_finalized`
+  path.
+- Added the P136 two-phase outcome contract
+  (`intent -> checkpoint -> completion`), publisher whole-operation lease and
+  three split-commit recovery boundaries, contiguous delta, and genesis-only
+  bootstrap semantics.
+- Fixed the release denominator at exactly `P138-CASE-01` through
+  `P138-CASE-30`; CASE-21/22 and CASE-29/30 cover both sides of the P136
+  checkpoint boundary.
+- Preserved exact-zero shared 15-key forbidden authority and the local-only,
+  finite, no-auth/no-credentials/no-network/no-notification/no-action/
+  no-remediation/no-operator-replacement boundary.
+- Added the complete runner/profile, frozen 30-case artifact flow, independent
+  final-review gate, and `p138-release` verification profile. The tracked
+  release evidence remains the source of truth for whether the exact qualified
+  status may be claimed.
+
 ### P137 local evidence-to-incident triage
 
 - Added a P136-owned sequenced fixed-path handoff publisher and P137 validator

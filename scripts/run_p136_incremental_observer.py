@@ -412,6 +412,7 @@ def _config_input(base_path: Path, authority: Mapping[str, Any]) -> dict[str, An
         "checkpoint_path": "state/checkpoint.json",
         "index_intent_dir": "state/index-intents",
         "journal_dir": "state/journal",
+        "cycle_outcome_dir": "state/cycle-outcomes",
         "promotion_dir": "state/promotions",
         "lease_path": "state/p136.lock",
         "p134_contract_hash": _mapping(authority.get("contract"), "contract")[
@@ -435,6 +436,7 @@ def _config_input(base_path: Path, authority: Mapping[str, Any]) -> dict[str, An
             "max_pending_entries": 16,
             "max_promotions_per_cycle": 8,
             "max_journal_bytes": 65_536,
+            "max_cycle_outcome_bytes": 131_072,
             "max_promotion_bytes": 65_536,
             "max_consecutive_failures": 2,
             "max_clock_rollback_ms": 250,
@@ -486,7 +488,14 @@ def _write_exact_artifacts(
         destination = output_dir / name
         temporary = destination.with_name(f".{destination.name}.tmp")
         temporary.write_text(
-            json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+            json.dumps(
+                value,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=True,
+            )
+            + "\n",
+            encoding="utf-8",
         )
         temporary.replace(destination)
 

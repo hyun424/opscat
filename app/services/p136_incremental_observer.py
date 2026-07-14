@@ -48,6 +48,8 @@ CHECKPOINT_SCHEMA_VERSION = "p136.observation_checkpoint.v1"
 INDEX_INTENT_SCHEMA_VERSION = "p136.index_read_intent.v1"
 PROMOTION_INTENT_SCHEMA_VERSION = "p136.promotion_intent.v1"
 PROMOTION_SCHEMA_VERSION = "p136.promotion_record.v1"
+CYCLE_OUTCOME_INTENT_SCHEMA_VERSION = "p136.cycle_outcome_intent.v1"
+CYCLE_COMPLETION_SCHEMA_VERSION = "p136.cycle_completion.v1"
 TERMINATION_SCHEMA_VERSION = "p136.termination_receipt.v1"
 
 FORBIDDEN_AUTHORITY_KEYS = (
@@ -119,6 +121,7 @@ _CONFIG_INPUT_FIELDS = frozenset(
         "index_intent_dir",
         "journal_dir",
         "promotion_dir",
+        "cycle_outcome_dir",
         "lease_path",
         "p134_contract_hash",
         "p134_receipt_ledger_hash",
@@ -214,6 +217,36 @@ _PROMOTION_INTENT_FIELDS = frozenset(
         "intent_hash",
     }
 )
+_CYCLE_OUTCOME_COMMON_FIELDS = frozenset(
+    {
+        "config_hash",
+        "cycle_id",
+        "index_read_receipt_hash",
+        "starting_checkpoint_hash",
+        "resulting_checkpoint_hash",
+        "resulting_checkpoint",
+        "promotion_count",
+        "promotion_sequences",
+        "promotion_hashes",
+        "promotion_records",
+        "created_at",
+        "fsync",
+    }
+)
+_CYCLE_OUTCOME_INTENT_FIELDS = frozenset(
+    {"schema_version", *_CYCLE_OUTCOME_COMMON_FIELDS, "intent_hash"}
+)
+_CYCLE_COMPLETION_FIELDS = frozenset(
+    {
+        "schema_version",
+        *_CYCLE_OUTCOME_COMMON_FIELDS,
+        "intent_hash",
+        "committed_checkpoint_hash",
+        "completed_at",
+        "completion_hash",
+    }
+)
+_RECOVERY_ONLY_TOKEN = object()
 _LIMIT_FIELDS = frozenset(
     {
         "poll_interval_ms",
@@ -229,6 +262,7 @@ _LIMIT_FIELDS = frozenset(
         "max_promotions_per_cycle",
         "max_journal_bytes",
         "max_promotion_bytes",
+        "max_cycle_outcome_bytes",
         "max_consecutive_failures",
         "max_clock_rollback_ms",
         "max_retained_entry_identities",
@@ -261,7 +295,7 @@ def zero_runtime_activity() -> dict[str, int]:
 def build_incremental_observer_config(data: Mapping[str, Any]) -> dict[str, Any]:
     raw = _mapping(data, "config")
     unknown = set(raw) - _CONFIG_INPUT_FIELDS
-    missing = _CONFIG_INPUT_FIELDS - set(raw)
+    missing = set(_CONFIG_INPUT_FIELDS) - set(raw)
     if unknown:
         raise P136ObservationError("unexpected_config_field")
     if missing:
@@ -275,6 +309,7 @@ def build_incremental_observer_config(data: Mapping[str, Any]) -> dict[str, Any]
             "index_intent_dir",
             "journal_dir",
             "promotion_dir",
+            "cycle_outcome_dir",
             "lease_path",
         )
     }
@@ -484,6 +519,40 @@ def validate_observer_runtime_authority(
     return {"config": cfg, "contract": dict(contract), "ledger": dict(ledger), "receipts": [dict(item) for item in receipts]}
 
 
+def validate_cycle_outcome(
+    outcome: Mapping[str, Any], config: Mapping[str, Any]
+) -> None:
+    """Validate an exact P136 intent or completion record."""
+
+    _validate_cycle_outcome(outcome, _ensure_config(config))
+
+
+def recover_cycle_outcome(
+    runtime: Mapping[str, Any],
+    *,
+    cycle_id: str,
+    index_read_receipt_hash: str,
+) -> dict[str, Any]:
+    """Reconcile one deterministic P136 cycle under the normal observer lease."""
+
+    value = dict(_mapping(runtime, "runtime"))
+    bound_cycle_id = _hash(cycle_id, "expected_cycle_id")
+    bound_receipt_hash = _hash(
+        index_read_receipt_hash, "expected_index_read_receipt_hash"
+    )
+    if value.get("expected_cycle_id") not in {None, bound_cycle_id}:
+        raise P136ObservationError("conflicting_expected_cycle_id")
+    if value.get("expected_index_read_receipt_hash") not in {
+        None,
+        bound_receipt_hash,
+    }:
+        raise P136ObservationError("conflicting_expected_cycle_receipt")
+    value["expected_cycle_id"] = bound_cycle_id
+    value["expected_index_read_receipt_hash"] = bound_receipt_hash
+    value["_recovery_only_token"] = _RECOVERY_ONLY_TOKEN
+    return observe_one_cycle(value)
+
+
 def observe_one_cycle(runtime: Mapping[str, Any]) -> dict[str, Any]:
     value = _mapping(runtime, "runtime")
     probe = value.get("probe")
@@ -511,13 +580,61 @@ def observe_one_cycle(runtime: Mapping[str, Any]) -> dict[str, Any]:
         )
         receipts = authority_result["receipts"]
         consumed_receipts = set(_sequence(checkpoint.get("consumed_index_read_receipt_hashes", []), "consumed_index_read_receipt_hashes"))
-        receipt = next((item for item in receipts if item["receipt_hash"] not in consumed_receipts), None)
+        expected_cycle_id_raw = value.get("expected_cycle_id")
+        expected_receipt_hash_raw = value.get("expected_index_read_receipt_hash")
+        expected_cycle_id = (
+            None
+            if expected_cycle_id_raw is None
+            else _hash(expected_cycle_id_raw, "expected_cycle_id")
+        )
+        expected_receipt_hash = (
+            None
+            if expected_receipt_hash_raw is None
+            else _hash(expected_receipt_hash_raw, "expected_index_read_receipt_hash")
+        )
+        if (expected_cycle_id is None) != (expected_receipt_hash is None):
+            raise P136ObservationError("incomplete_expected_cycle_outcome_binding")
+        receipt = (
+            next(
+                (
+                    item
+                    for item in receipts
+                    if item["receipt_hash"] == expected_receipt_hash
+                ),
+                None,
+            )
+            if expected_receipt_hash is not None
+            else next(
+                (item for item in receipts if item["receipt_hash"] not in consumed_receipts),
+                None,
+            )
+        )
         if receipt is None:
+            if expected_receipt_hash is not None:
+                raise P136ObservationError("expected_cycle_outcome_receipt_missing")
             raise P136ObservationError("index_read_receipt_pool_exhausted")
+        receipt_hash = str(receipt["receipt_hash"])
+        if base_path_value is not None and expected_cycle_id is not None:
+            outcome = _read_cycle_outcome(
+                Path(base_path_value),
+                cfg,
+                expected_cycle_id,
+            )
+            if outcome is not None:
+                return _recover_cycle_outcome(
+                    base_path=Path(base_path_value),
+                    cfg=cfg,
+                    runtime=value,
+                    checkpoint=checkpoint,
+                    receipt=receipt,
+                    outcome=outcome,
+                    probe=probe,
+                )
+            if value.get("_recovery_only_token") is _RECOVERY_ONLY_TOKEN:
+                raise P136ObservationError("expected_cycle_outcome_missing")
         recovery_intent = value.get("recovery_intent")
         if recovery_intent is None and base_path_value is not None:
             recovery_intent = _discover_index_read_intent(Path(base_path_value), cfg, checkpoint, receipts)
-        receipt_hash = str(receipt["receipt_hash"])
         if recovery_intent is not None:
             recovery_hash = str(_mapping(recovery_intent, "recovery_intent").get("receipt_hash", ""))
             matching_receipt = next((item for item in receipts if item["receipt_hash"] == recovery_hash), receipt)
@@ -537,6 +654,20 @@ def observe_one_cycle(runtime: Mapping[str, Any]) -> dict[str, Any]:
                 "receipt_hash": receipt_hash,
             }
         )
+        if expected_cycle_id is not None and cycle_id != expected_cycle_id:
+            raise P136ObservationError("expected_cycle_id_mismatch")
+        if base_path_value is not None and expected_cycle_id is None:
+            outcome = _read_cycle_outcome(Path(base_path_value), cfg, cycle_id)
+            if outcome is not None:
+                return _recover_cycle_outcome(
+                    base_path=Path(base_path_value),
+                    cfg=cfg,
+                    runtime=value,
+                    checkpoint=checkpoint,
+                    receipt=receipt,
+                    outcome=outcome,
+                    probe=probe,
+                )
         intent: dict[str, Any] = {
             "schema_version": INDEX_INTENT_SCHEMA_VERSION,
             "cycle_id": cycle_id,
@@ -617,9 +748,55 @@ def observe_one_cycle(runtime: Mapping[str, Any]) -> dict[str, Any]:
                 )
             if resolution["promotion_records"]:
                 _inject_evaluator_crash(value, "promotion_records_durable")
+            outcome_intent = _build_cycle_outcome_intent(
+                cfg=cfg,
+                cycle_id=cycle_id,
+                receipt_hash=receipt_hash,
+                starting_checkpoint=checkpoint,
+                resulting_checkpoint=durable_checkpoint,
+                promotions=resolution["promotion_records"],
+                created_at=runtime_now,
+            )
+            cycle_outcome = _complete_cycle_outcome(
+                outcome_intent,
+                completed_at=runtime_now,
+            )
+            _validate_cycle_outcome(cycle_outcome, cfg)
+            _require_cycle_outcome_budget(cycle_outcome, cfg)
+            outcome_path = _cycle_outcome_path(cfg, cycle_id)
+            _atomic_write_limited_json(
+                base_path,
+                outcome_path,
+                outcome_intent,
+                cfg["limits"]["max_cycle_outcome_bytes"],
+                "cycle_outcome_byte_budget_exceeded",
+            )
+            _record_probe(probe, "write_cycle_outcome_intent")
+            _inject_evaluator_crash(value, "cycle_outcome_intent_durable")
             next_checkpoint = advance_checkpoint({**value, "checkpoint": checkpoint}, durable_checkpoint)
+            _inject_evaluator_crash(value, "cycle_checkpoint_durable")
+            _atomic_write_limited_json(
+                base_path,
+                outcome_path,
+                cycle_outcome,
+                cfg["limits"]["max_cycle_outcome_bytes"],
+                "cycle_outcome_byte_budget_exceeded",
+            )
+            _record_probe(probe, "write_cycle_completion")
         else:
             next_checkpoint = _rehash_checkpoint(next_checkpoint)
+            outcome_intent = _build_cycle_outcome_intent(
+                cfg=cfg,
+                cycle_id=cycle_id,
+                receipt_hash=receipt_hash,
+                starting_checkpoint=checkpoint,
+                resulting_checkpoint=next_checkpoint,
+                promotions=resolution["promotion_records"],
+                created_at=runtime_now,
+            )
+            cycle_outcome = _complete_cycle_outcome(outcome_intent, completed_at=runtime_now)
+            _validate_cycle_outcome(cycle_outcome, cfg)
+            _require_cycle_outcome_budget(cycle_outcome, cfg)
         activity = _merge_activity(
             zero_runtime_activity(),
             {
@@ -633,7 +810,7 @@ def observe_one_cycle(runtime: Mapping[str, Any]) -> dict[str, Any]:
                 "promotion_intent_write_count": len(resolution["promotion_records"]),
                 "promotion_record_write_count": len(resolution["promotion_records"]),
                 "checkpoint_write_count": 1,
-                "directory_fsync_count": 2 + (2 * len(resolution["promotion_records"])) if base_path_value is not None else 0,
+                "directory_fsync_count": 4 + (2 * len(resolution["promotion_records"])) if base_path_value is not None else 0,
                 "duplicate_resolution_count": len(resolution["duplicate_entries"]),
                 "rotation_count": int(bool(scan["rotated"])),
             },
@@ -646,6 +823,8 @@ def observe_one_cycle(runtime: Mapping[str, Any]) -> dict[str, Any]:
         "promotion_records": resolution["promotion_records"],
         "duplicate_entries": resolution["duplicate_entries"],
         "advanced_checkpoint": next_checkpoint,
+        "cycle_outcome": cycle_outcome,
+        "recovered_cycle_outcome": False,
         "activity": activity,
     }
 
@@ -663,6 +842,453 @@ def _inject_evaluator_crash(runtime: Mapping[str, Any], phase: str) -> None:
     if not callable(injector):
         raise P136ObservationError("invalid_evaluator_crash_injector")
     injector(phase)
+
+
+def _cycle_outcome_path(cfg: Mapping[str, Any], cycle_id: str) -> str:
+    return (
+        f"{cfg['cycle_outcome_dir']}/"
+        f"{_hash(cycle_id, 'cycle_id').removeprefix('sha256:')}.json"
+    )
+
+
+def _build_cycle_outcome_intent(
+    *,
+    cfg: Mapping[str, Any],
+    cycle_id: str,
+    receipt_hash: str,
+    starting_checkpoint: Mapping[str, Any],
+    resulting_checkpoint: Mapping[str, Any],
+    promotions: Sequence[Mapping[str, Any]],
+    created_at: str,
+) -> dict[str, Any]:
+    promotion_records = [
+        deepcopy(dict(_mapping(item, "promotion"))) for item in promotions
+    ]
+    intent: dict[str, Any] = {
+        "schema_version": CYCLE_OUTCOME_INTENT_SCHEMA_VERSION,
+        "config_hash": cfg["config_hash"],
+        "cycle_id": _hash(cycle_id, "cycle_id"),
+        "index_read_receipt_hash": _hash(
+            receipt_hash, "index_read_receipt_hash"
+        ),
+        "starting_checkpoint_hash": _hash(
+            starting_checkpoint.get("checkpoint_hash"),
+            "starting_checkpoint_hash",
+        ),
+        "resulting_checkpoint_hash": _hash(
+            resulting_checkpoint.get("checkpoint_hash"),
+            "resulting_checkpoint_hash",
+        ),
+        "resulting_checkpoint": deepcopy(dict(resulting_checkpoint)),
+        "promotion_count": len(promotion_records),
+        "promotion_sequences": [
+            _positive_int(item.get("promotion_sequence"), "promotion_sequence")
+            for item in promotion_records
+        ],
+        "promotion_hashes": [
+            _hash(item.get("promotion_hash"), "promotion_hash")
+            for item in promotion_records
+        ],
+        "promotion_records": promotion_records,
+        "created_at": _timestamp(created_at, "cycle_outcome_created_at"),
+        "fsync": {"file": True, "parent_directory": True},
+    }
+    intent["intent_hash"] = stable_hash(intent)
+    _validate_cycle_outcome(intent, cfg)
+    return intent
+
+
+def _complete_cycle_outcome(
+    intent: Mapping[str, Any],
+    *,
+    completed_at: str,
+) -> dict[str, Any]:
+    completion = {
+        "schema_version": CYCLE_COMPLETION_SCHEMA_VERSION,
+        **{
+            key: deepcopy(intent[key])
+            for key in _CYCLE_OUTCOME_COMMON_FIELDS
+        },
+        "intent_hash": intent["intent_hash"],
+        "committed_checkpoint_hash": intent["resulting_checkpoint_hash"],
+        "completed_at": _timestamp(completed_at, "cycle_completed_at"),
+    }
+    completion["completion_hash"] = stable_hash(completion)
+    return completion
+
+
+def _require_cycle_outcome_budget(
+    outcome: Mapping[str, Any], cfg: Mapping[str, Any]
+) -> None:
+    if len(_canonical_bytes(outcome)) + 1 > cfg["limits"][
+        "max_cycle_outcome_bytes"
+    ]:
+        raise P136ObservationError("cycle_outcome_byte_budget_exceeded")
+
+
+def _read_cycle_outcome(
+    base_path: Path,
+    cfg: Mapping[str, Any],
+    cycle_id: str,
+) -> Mapping[str, Any] | None:
+    outcome_dir = base_path / str(cfg["cycle_outcome_dir"])
+    if not outcome_dir.exists():
+        return None
+    value = _read_optional_json(
+        base_path,
+        _cycle_outcome_path(cfg, cycle_id),
+        cfg["limits"]["max_cycle_outcome_bytes"],
+    )
+    if value is None:
+        return None
+    outcome = _mapping(value, "cycle_outcome")
+    _validate_cycle_outcome(outcome, cfg)
+    if outcome.get("cycle_id") != cycle_id:
+        raise P136ObservationError("cycle_outcome_cycle_id_mismatch")
+    return outcome
+
+
+def _validate_cycle_outcome(
+    outcome: Mapping[str, Any],
+    cfg: Mapping[str, Any],
+) -> None:
+    schema = outcome.get("schema_version")
+    if schema == CYCLE_OUTCOME_INTENT_SCHEMA_VERSION:
+        if set(outcome) != _CYCLE_OUTCOME_INTENT_FIELDS:
+            raise P136ObservationError("invalid_cycle_outcome_intent_fields")
+        if outcome.get("intent_hash") != stable_hash(
+            {key: item for key, item in outcome.items() if key != "intent_hash"}
+        ):
+            raise P136ObservationError("cycle_outcome_intent_hash_invalid")
+    elif schema == CYCLE_COMPLETION_SCHEMA_VERSION:
+        if set(outcome) != _CYCLE_COMPLETION_FIELDS:
+            raise P136ObservationError("invalid_cycle_completion_fields")
+        if outcome.get("completion_hash") != stable_hash(
+            {key: item for key, item in outcome.items() if key != "completion_hash"}
+        ):
+            raise P136ObservationError("cycle_outcome_completion_hash_invalid")
+        intent = {
+            "schema_version": CYCLE_OUTCOME_INTENT_SCHEMA_VERSION,
+            **{
+                key: deepcopy(outcome[key])
+                for key in _CYCLE_OUTCOME_COMMON_FIELDS
+            },
+            "intent_hash": outcome.get("intent_hash"),
+        }
+        if intent["intent_hash"] != stable_hash(
+            {key: item for key, item in intent.items() if key != "intent_hash"}
+        ):
+            raise P136ObservationError("cycle_outcome_completion_intent_hash_invalid")
+        if outcome.get("committed_checkpoint_hash") != outcome.get(
+            "resulting_checkpoint_hash"
+        ):
+            raise P136ObservationError(
+                "cycle_outcome_committed_checkpoint_hash_mismatch"
+            )
+        _timestamp(outcome.get("completed_at"), "cycle_completed_at")
+    else:
+        raise P136ObservationError("invalid_cycle_outcome_schema")
+    if outcome.get("config_hash") != cfg.get("config_hash"):
+        raise P136ObservationError("cycle_outcome_config_hash_mismatch")
+    cycle_id = _hash(outcome.get("cycle_id"), "cycle_outcome_cycle_id")
+    receipt_hash = _hash(
+        outcome.get("index_read_receipt_hash"),
+        "cycle_outcome_index_read_receipt_hash",
+    )
+    starting_hash = _hash(
+        outcome.get("starting_checkpoint_hash"),
+        "cycle_outcome_starting_checkpoint_hash",
+    )
+    expected_cycle_id = stable_hash(
+        {
+            "schema_version": "p136.deterministic_cycle_id.v1",
+            "config_hash": cfg["config_hash"],
+            "checkpoint_hash": starting_hash,
+            "receipt_hash": receipt_hash,
+        }
+    )
+    if cycle_id != expected_cycle_id:
+        raise P136ObservationError("cycle_outcome_cycle_id_invalid")
+    try:
+        resulting_checkpoint = _checkpoint_for_config(
+            _mapping(
+                outcome.get("resulting_checkpoint"),
+                "cycle_outcome_resulting_checkpoint",
+            ),
+            cfg,
+        )
+    except P136ObservationError as exc:
+        raise P136ObservationError("cycle_outcome_checkpoint_invalid") from exc
+    if resulting_checkpoint.get("checkpoint_hash") != outcome.get(
+        "resulting_checkpoint_hash"
+    ):
+        raise P136ObservationError("cycle_outcome_resulting_checkpoint_hash_mismatch")
+    if receipt_hash not in resulting_checkpoint.get(
+        "consumed_index_read_receipt_hashes", []
+    ):
+        raise P136ObservationError("cycle_outcome_receipt_not_consumed")
+    count = outcome.get("promotion_count")
+    if type(count) is not int or count < 0:
+        raise P136ObservationError("cycle_outcome_promotion_count_invalid")
+    sequences = _sequence(
+        outcome.get("promotion_sequences"), "cycle_outcome_promotion_sequences"
+    )
+    hashes = _sequence(
+        outcome.get("promotion_hashes"), "cycle_outcome_promotion_hashes"
+    )
+    promotion_records = [
+        _mapping(item, "cycle_outcome_promotion")
+        for item in _sequence(
+            outcome.get("promotion_records"),
+            "cycle_outcome_promotion_records",
+        )
+    ]
+    if (
+        len(sequences) != count
+        or len(hashes) != count
+        or len(promotion_records) != count
+    ):
+        raise P136ObservationError("cycle_outcome_promotion_count_mismatch")
+    for item in hashes:
+        _hash(item, "cycle_outcome_promotion_hash")
+    next_sequence = _positive_int(
+        resulting_checkpoint.get("next_promotion_sequence"),
+        "next_promotion_sequence",
+    )
+    expected_start = next_sequence - count
+    if expected_start <= 0 or sequences != list(range(expected_start, next_sequence)):
+        raise P136ObservationError("cycle_outcome_promotion_sequence_mismatch")
+    _validate_promotion_sequence(promotion_records, expected_start)
+    for promotion, sequence, promotion_hash in zip(
+        promotion_records,
+        sequences,
+        hashes,
+        strict=True,
+    ):
+        _validate_recovery_promotion(promotion)
+        if promotion.get("promotion_sequence") != sequence:
+            raise P136ObservationError(
+                "cycle_outcome_promotion_record_sequence_mismatch"
+            )
+        if promotion.get("promotion_hash") != promotion_hash:
+            raise P136ObservationError(
+                "cycle_outcome_promotion_record_hash_mismatch"
+            )
+    if count and resulting_checkpoint.get("last_promotion_hash") != hashes[-1]:
+        raise P136ObservationError("cycle_outcome_last_promotion_hash_mismatch")
+    _timestamp(outcome.get("created_at"), "cycle_outcome_created_at")
+    if outcome.get("fsync") != {"file": True, "parent_directory": True}:
+        raise P136ObservationError("cycle_outcome_fsync_invalid")
+
+
+def _recover_cycle_outcome(
+    *,
+    base_path: Path,
+    cfg: Mapping[str, Any],
+    runtime: Mapping[str, Any],
+    checkpoint: Mapping[str, Any],
+    receipt: Mapping[str, Any],
+    outcome: Mapping[str, Any],
+    probe: Any,
+) -> dict[str, Any]:
+    _validate_cycle_outcome(outcome, cfg)
+    if outcome.get("index_read_receipt_hash") != receipt.get("receipt_hash"):
+        raise P136ObservationError("cycle_outcome_receipt_mismatch")
+    resulting_checkpoint = _checkpoint_for_config(
+        _mapping(outcome.get("resulting_checkpoint"), "resulting_checkpoint"),
+        cfg,
+    )
+    supplied_checkpoint = _checkpoint_for_config(checkpoint, cfg)
+    durable_raw = _read_optional_json(
+        base_path,
+        cfg["checkpoint_path"],
+        cfg["limits"]["max_journal_bytes"],
+    )
+    durable_checkpoint = (
+        None
+        if durable_raw is None
+        else _checkpoint_for_config(_mapping(durable_raw, "checkpoint"), cfg)
+    )
+    valid_hashes = {
+        outcome["starting_checkpoint_hash"],
+        outcome["resulting_checkpoint_hash"],
+    }
+    if supplied_checkpoint["checkpoint_hash"] not in valid_hashes:
+        raise P136ObservationError("cycle_outcome_checkpoint_tuple_mismatch")
+    if durable_checkpoint is not None and durable_checkpoint["checkpoint_hash"] not in valid_hashes:
+        raise P136ObservationError("cycle_outcome_durable_checkpoint_mismatch")
+    if (
+        durable_checkpoint is None
+        and supplied_checkpoint["checkpoint_hash"]
+        == outcome["resulting_checkpoint_hash"]
+    ):
+        raise P136ObservationError("cycle_outcome_durable_checkpoint_missing")
+    current_checkpoint = durable_checkpoint or supplied_checkpoint
+    if (
+        durable_checkpoint is not None
+        and durable_checkpoint["checkpoint_hash"] != supplied_checkpoint["checkpoint_hash"]
+        and not (
+            supplied_checkpoint["checkpoint_hash"]
+            == outcome["starting_checkpoint_hash"]
+            and durable_checkpoint["checkpoint_hash"]
+            == outcome["resulting_checkpoint_hash"]
+        )
+    ):
+        raise P136ObservationError("cycle_outcome_checkpoint_predecessor_mismatch")
+    promotions = _cycle_outcome_promotions(
+        base_path=base_path,
+        cfg=cfg,
+        runtime=runtime,
+        outcome=outcome,
+        resulting_checkpoint=resulting_checkpoint,
+    )
+    index_intent = _read_cycle_index_intent(
+        base_path=base_path,
+        cfg=cfg,
+        outcome=outcome,
+        receipt=receipt,
+    )
+    schema = outcome["schema_version"]
+    current_hash = current_checkpoint["checkpoint_hash"]
+    checkpoint_advanced = False
+    if schema == CYCLE_OUTCOME_INTENT_SCHEMA_VERSION:
+        if current_hash == outcome["starting_checkpoint_hash"]:
+            _atomic_write_limited_json(
+                base_path,
+                cfg["checkpoint_path"],
+                resulting_checkpoint,
+                cfg["limits"]["max_journal_bytes"],
+                "checkpoint_byte_budget_exceeded",
+            )
+            checkpoint_advanced = True
+            _inject_evaluator_crash(runtime, "cycle_checkpoint_durable")
+        elif current_hash != outcome["resulting_checkpoint_hash"]:
+            raise P136ObservationError("cycle_outcome_checkpoint_tuple_mismatch")
+        completion = _complete_cycle_outcome(
+            outcome,
+            completed_at=_timestamp(runtime.get("now"), "now"),
+        )
+        _validate_cycle_outcome(completion, cfg)
+        _require_cycle_outcome_budget(completion, cfg)
+        _atomic_write_limited_json(
+            base_path,
+            _cycle_outcome_path(cfg, str(outcome["cycle_id"])),
+            completion,
+            cfg["limits"]["max_cycle_outcome_bytes"],
+            "cycle_outcome_byte_budget_exceeded",
+        )
+        _record_probe(probe, "write_cycle_completion")
+        completion_written = True
+    elif current_hash == outcome["resulting_checkpoint_hash"]:
+        completion = deepcopy(dict(outcome))
+        completion_written = False
+    else:
+        raise P136ObservationError("cycle_outcome_completion_checkpoint_mismatch")
+    activity = _merge_activity(
+        zero_runtime_activity(),
+        {
+            "checkpoint_write_count": int(checkpoint_advanced),
+            "directory_fsync_count": int(checkpoint_advanced)
+            + int(completion_written),
+            "recovery_replay_count": 1,
+        },
+    )
+    return {
+        "index_read_intent": index_intent,
+        "scan": {"recovered_cycle_outcome": True},
+        "checkpoint": supplied_checkpoint,
+        "promotion_records": promotions,
+        "duplicate_entries": [],
+        "advanced_checkpoint": resulting_checkpoint,
+        "cycle_outcome": completion,
+        "recovered_cycle_outcome": True,
+        "activity": activity,
+    }
+
+
+def _cycle_outcome_promotions(
+    *,
+    base_path: Path,
+    cfg: Mapping[str, Any],
+    runtime: Mapping[str, Any],
+    outcome: Mapping[str, Any],
+    resulting_checkpoint: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    hashes = list(
+        _sequence(outcome.get("promotion_hashes"), "cycle_outcome_promotion_hashes")
+    )
+    sequences = list(
+        _sequence(
+            outcome.get("promotion_sequences"),
+            "cycle_outcome_promotion_sequences",
+        )
+    )
+    checkpoint_promotions = _mapping(
+        resulting_checkpoint.get("promotion_keys"), "promotion_keys"
+    )
+    promotions: list[dict[str, Any]] = []
+    for expected_sequence, promotion_hash in zip(sequences, hashes, strict=True):
+        raw = _read_required_json(
+            base_path,
+            f"{cfg['promotion_dir']}/{str(promotion_hash).removeprefix('sha256:')}.json",
+            cfg["limits"]["max_promotion_bytes"],
+        )
+        promotion = deepcopy(dict(_mapping(raw, "promotion")))
+        try:
+            _validate_recovery_promotion(promotion)
+            if promotion.get("promotion_hash") != promotion_hash:
+                raise P136ObservationError("promotion_hash_mismatch")
+            if promotion.get("promotion_sequence") != expected_sequence:
+                raise P136ObservationError("promotion_sequence_mismatch")
+            checkpoint_value = checkpoint_promotions.get(str(promotion["entry_hash"]))
+            if not isinstance(checkpoint_value, Mapping) or _canonical_bytes(
+                checkpoint_value
+            ) != _canonical_bytes(promotion):
+                raise P136ObservationError("checkpoint_promotion_value_mismatch")
+            validate_promotion_record(
+                promotion,
+                expected_entry=_entry_for_recovery_promotion(
+                    resulting_checkpoint, promotion, runtime
+                ),
+                runtime=runtime,
+            )
+        except P136ObservationError as exc:
+            raise P136ObservationError("cycle_outcome_promotion_mismatch") from exc
+        promotions.append(promotion)
+    return promotions
+
+
+def _read_cycle_index_intent(
+    *,
+    base_path: Path,
+    cfg: Mapping[str, Any],
+    outcome: Mapping[str, Any],
+    receipt: Mapping[str, Any],
+) -> dict[str, Any]:
+    cycle_id = str(outcome["cycle_id"])
+    raw = _read_optional_json(
+        base_path,
+        f"{cfg['index_intent_dir']}/{cycle_id.removeprefix('sha256:')}.json",
+        cfg["limits"]["max_journal_bytes"],
+    )
+    if raw is None:
+        raise P136ObservationError("cycle_outcome_index_intent_missing")
+    intent = deepcopy(dict(_mapping(raw, "index_read_intent")))
+    if (
+        intent.get("schema_version") != INDEX_INTENT_SCHEMA_VERSION
+        or intent.get("intent_hash")
+        != stable_hash(
+            {key: item for key, item in intent.items() if key != "intent_hash"}
+        )
+        or intent.get("config_hash") != cfg.get("config_hash")
+        or intent.get("cycle_id") != cycle_id
+        or intent.get("checkpoint_hash") != outcome.get("starting_checkpoint_hash")
+        or intent.get("receipt_hash") != receipt.get("receipt_hash")
+        or intent.get("receipt_bytes_hash")
+        != _content_hash(_canonical_bytes(receipt))
+    ):
+        raise P136ObservationError("cycle_outcome_index_intent_mismatch")
+    return intent
 
 
 def scan_incremental_index(
@@ -1844,11 +2470,15 @@ def _read_json_entry(parent_fd: int, name: str, maximum: int) -> Any:
             total += len(chunk)
             if total > maximum:
                 raise P136ObservationError("state_json_byte_budget_exceeded")
-        data = b"".join(chunks)
-        if data.endswith(b"\n"):
-            data = data[:-1]
-        return json.loads(data.decode("utf-8"))
-    except json.JSONDecodeError as exc:
+        framed = b"".join(chunks)
+        if not framed.endswith(b"\n"):
+            raise P136ObservationError("state_json_noncanonical")
+        data = framed[:-1]
+        value = json.loads(data.decode("utf-8"))
+        if _canonical_bytes(value) + b"\n" != framed:
+            raise P136ObservationError("state_json_noncanonical")
+        return value
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise P136ObservationError("state_json_malformed") from exc
     finally:
         os.close(fd)
@@ -2041,7 +2671,9 @@ def _manifest_id(entry_id: str) -> str:
 
 def _validate_limits(value: Any) -> dict[str, int]:
     limits = _mapping(value, "limits")
-    if set(limits) != _LIMIT_FIELDS:
+    unknown = set(limits) - _LIMIT_FIELDS
+    missing = set(_LIMIT_FIELDS) - set(limits)
+    if unknown or missing:
         raise P136ObservationError("invalid_limits_fields")
     result: dict[str, int] = {}
     for key in _LIMIT_FIELDS:
@@ -2056,7 +2688,14 @@ def _validate_limits(value: Any) -> dict[str, int]:
 
 def _validate_path_topology(paths: Mapping[str, str]) -> None:
     index_parts = PurePosixPath(paths["index_path"]).parts
-    state_names = ("checkpoint_path", "index_intent_dir", "journal_dir", "promotion_dir", "lease_path")
+    state_names = (
+        "checkpoint_path",
+        "index_intent_dir",
+        "journal_dir",
+        "promotion_dir",
+        "cycle_outcome_dir",
+        "lease_path",
+    )
     for name in state_names:
         parts = PurePosixPath(paths[name]).parts
         if parts[: len(index_parts)] == index_parts or index_parts[: len(parts)] == parts:
@@ -2064,6 +2703,15 @@ def _validate_path_topology(paths: Mapping[str, str]) -> None:
     state_paths = [PurePosixPath(paths[name]) for name in state_names]
     if len({str(path) for path in state_paths}) != len(state_paths):
         raise P136ObservationError("state_paths_overlap")
+    for index, left in enumerate(state_paths):
+        for right in state_paths[index + 1 :]:
+            left_parts = left.parts
+            right_parts = right.parts
+            if (
+                left_parts[: len(right_parts)] == right_parts
+                or right_parts[: len(left_parts)] == left_parts
+            ):
+                raise P136ObservationError("state_paths_overlap")
 
 
 def _path_ref(value: Any, label: str) -> dict[str, str]:

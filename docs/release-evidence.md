@@ -3178,3 +3178,41 @@ Detailed references:
 - `docs/operations/p135-final-summary.md`
 - `docs/operations/p135-verification-handoff.md`
 - `docs/tickets/p135/README.md`
+
+## P138 local observation-to-triage supervisor evidence
+
+P138 has an approved implementation contract for a reconciliation-first,
+production-shaped local-only finite supervisor over P136 observation, the
+P136-owned fixed-path publisher, and P137 triage. The contract requires P136's
+two-phase outcome sequence (`intent -> checkpoint -> completion`), the exact
+six-phase P138 path plus zero-delta short path, whole-operation publisher
+leasing and split-commit recovery, genesis-only contiguous bootstrap, and the
+shared exact 15-key zero forbidden-authority tuple.
+
+The frozen final matrix proves exactly 30 expected/30 passed/0 failed for
+`P138-CASE-01` through `P138-CASE-30`, including CASE-21/22 and CASE-29/30 on
+both sides of the P136 checkpoint boundary. `p136-release`, `p137-release`, and
+`p138-release` reproduce successfully. Every shared forbidden-authority counter
+is exact integer zero.
+
+Release status is
+`p138_local_observation_to_triage_supervisor_qualified`; release evidence hash
+is `sha256:1c3cbb6fe575b17e4fcf2159ac2cff15fc90b6cd1c452acb1cb81eaa0f5c76d7`.
+It binds P136 evidence `sha256:ab094a86c371391833f917e855f8f53695a50c4e462ae39cb4464bfd8fc17605`
+and P137 evidence `sha256:4aae360e10102c4db1cdb538c72533440208bcdcc1715730455a9bb0f9727aaa`
+plus their exact review hashes. The local deterministic final review records
+zero P0/P1/P2/P3 findings and explicitly records that an external reviewer
+resume was blocked to avoid transmitting uncommitted workspace code.
+
+P138 grants no authentication, credentials, environment
+discovery, provider/live-connector API, network/DNS/socket, notification,
+subprocess/shell, action/remediation, staging/production mutation, or
+operator-replacement authority and is not unattended production operation.
+
+Handoff and contract references:
+
+- `docs/operations/p138-observation-to-triage-supervisor-roadmap.md`
+- `docs/operations/p138-test-spec.md`
+- `docs/operations/p138-plan-review.md`
+- `docs/operations/p138-verification-handoff.md`
+- `docs/tickets/p138/README.md`

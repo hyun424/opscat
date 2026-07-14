@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import fcntl
 import json
 import os
+import stat
 import time
 from collections.abc import Mapping, Sequence
 from copy import deepcopy
@@ -58,6 +60,7 @@ PUBLISHER_INTENT_FIELDS = frozenset(
         "intent_hash",
     }
 )
+_MAX_PUBLISHER_JSON_BYTES = 16 * 1024 * 1024
 
 
 class P137HandoffError(ValueError):
@@ -83,25 +86,34 @@ def publish_p136_handoff_bundle(
     p136_independent_review: Mapping[str, Any],
     p136_release_evidence: Mapping[str, Any],
     created_at: str,
+    lease_path: str | None = None,
+    evaluator_crash_injector: Any = None,
     crash_after_intent: bool = False,
 ) -> dict[str, Any]:
     if fixed_handoff_path != FIXED_P136_HANDOFF_PATH:
         raise P137HandoffError("invalid_fixed_handoff_path")
-    state = _read_json_optional(base_path, state_path, label="publisher_state")
-    pending = _read_json_optional(base_path, intent_path, label="publisher_intent")
-    if state is not None:
-        _validate_publisher_state(state, fixed_handoff_path=fixed_handoff_path)
-        _validate_publisher_state_current_bundle(base_path, fixed_handoff_path, state)
-    if pending is not None:
-        _validate_publisher_intent(
-            pending,
-            state=state,
-            fixed_handoff_path=fixed_handoff_path,
-        )
-    if pending is not None:
-        pending_bundle = _mapping(pending.get("bundle"), "pending_bundle")
-        candidate = _candidate_bundle(
-            state=state,
+    resolved_lease_path = (
+        _default_publisher_lease_path(state_path)
+        if lease_path is None
+        else _relative_path(lease_path, "lease_path")
+    )
+    _validate_publisher_paths(
+        state_path=state_path,
+        intent_path=intent_path,
+        fixed_handoff_path=fixed_handoff_path,
+        lease_path=resolved_lease_path,
+    )
+    if evaluator_crash_injector is not None and not callable(
+        evaluator_crash_injector
+    ):
+        raise P137HandoffError("invalid_publisher_evaluator_crash_injector")
+    if type(crash_after_intent) is not bool:
+        raise P137HandoffError("invalid_publisher_crash_after_intent")
+    with _PublisherLease(base_path, resolved_lease_path):
+        return _publish_p136_handoff_bundle_locked(
+            base_path=base_path,
+            state_path=state_path,
+            intent_path=intent_path,
             fixed_handoff_path=fixed_handoff_path,
             p136_config=p136_config,
             p136_runtime_authority=p136_runtime_authority,
@@ -112,13 +124,180 @@ def publish_p136_handoff_bundle(
             p136_independent_review=p136_independent_review,
             p136_release_evidence=p136_release_evidence,
             created_at=created_at,
+            evaluator_crash_injector=evaluator_crash_injector,
+            crash_after_intent=crash_after_intent,
         )
-        if dict(pending_bundle) != candidate:
+
+
+def recover_p136_handoff_publication(
+    *,
+    base_path: Path,
+    state_path: str,
+    intent_path: str,
+    fixed_handoff_path: str,
+    lease_path: str | None = None,
+) -> dict[str, Any]:
+    """Recover one exact durable publisher intent without deriving new work."""
+
+    if fixed_handoff_path != FIXED_P136_HANDOFF_PATH:
+        raise P137HandoffError("invalid_fixed_handoff_path")
+    resolved_lease_path = (
+        _default_publisher_lease_path(state_path)
+        if lease_path is None
+        else _relative_path(lease_path, "lease_path")
+    )
+    _validate_publisher_paths(
+        state_path=state_path,
+        intent_path=intent_path,
+        fixed_handoff_path=fixed_handoff_path,
+        lease_path=resolved_lease_path,
+    )
+    with _PublisherLease(base_path, resolved_lease_path):
+        state = _read_json_optional(
+            base_path,
+            state_path,
+            label="publisher_state",
+        )
+        pending = _read_json_optional(
+            base_path,
+            intent_path,
+            label="publisher_intent",
+        )
+        current = _read_json_optional(
+            base_path,
+            fixed_handoff_path,
+            label="current_handoff_bundle",
+        )
+        if state is not None:
+            _validate_publisher_state(
+                state,
+                fixed_handoff_path=fixed_handoff_path,
+            )
+        if current is not None:
+            _validate_publisher_bundle(
+                current,
+                fixed_handoff_path=fixed_handoff_path,
+            )
+        if pending is None:
+            raise P137HandoffError("publisher_recovery_intent_missing")
+        _validate_publisher_intent_envelope(
+            pending,
+            fixed_handoff_path=fixed_handoff_path,
+        )
+        return _recover_pending_publication(
+            base_path=base_path,
+            state_path=state_path,
+            intent_path=intent_path,
+            fixed_handoff_path=fixed_handoff_path,
+            state=state,
+            pending=pending,
+            current=current,
+            evaluator_crash_injector=None,
+        )
+
+
+def read_p136_handoff_publication_snapshot(
+    *,
+    base_path: Path,
+    state_path: str,
+    intent_path: str,
+    fixed_handoff_path: str,
+    lease_path: str | None = None,
+) -> dict[str, Any]:
+    """Read one publisher generation while holding the publisher lease."""
+
+    if fixed_handoff_path != FIXED_P136_HANDOFF_PATH:
+        raise P137HandoffError("invalid_fixed_handoff_path")
+    resolved_lease_path = (
+        _default_publisher_lease_path(state_path)
+        if lease_path is None
+        else _relative_path(lease_path, "lease_path")
+    )
+    _validate_publisher_paths(
+        state_path=state_path,
+        intent_path=intent_path,
+        fixed_handoff_path=fixed_handoff_path,
+        lease_path=resolved_lease_path,
+    )
+    with _PublisherLease(base_path, resolved_lease_path):
+        state = _read_json_optional(base_path, state_path, label="publisher_state")
+        intent = _read_json_optional(base_path, intent_path, label="publisher_intent")
+        bundle = _read_json_optional(
+            base_path,
+            fixed_handoff_path,
+            label="current_handoff_bundle",
+        )
+        return {
+            "state": deepcopy(state),
+            "intent": deepcopy(intent),
+            "bundle": deepcopy(bundle),
+            "bundle_bytes": None if bundle is None else canonical_json_bytes(bundle),
+        }
+
+
+def _publish_p136_handoff_bundle_locked(
+    *,
+    base_path: Path,
+    state_path: str,
+    intent_path: str,
+    fixed_handoff_path: str,
+    p136_config: Mapping[str, Any],
+    p136_runtime_authority: Mapping[str, Any],
+    now: str,
+    p136_checkpoint: Mapping[str, Any],
+    canonical_entry_map: Mapping[str, Mapping[str, Any]],
+    promotion_records: Sequence[Mapping[str, Any]],
+    p136_independent_review: Mapping[str, Any],
+    p136_release_evidence: Mapping[str, Any],
+    created_at: str,
+    evaluator_crash_injector: Any,
+    crash_after_intent: bool,
+) -> dict[str, Any]:
+    state = _read_json_optional(base_path, state_path, label="publisher_state")
+    pending = _read_json_optional(base_path, intent_path, label="publisher_intent")
+    current = _read_json_optional(
+        base_path, fixed_handoff_path, label="current_handoff_bundle"
+    )
+    if state is not None:
+        _validate_publisher_state(state, fixed_handoff_path=fixed_handoff_path)
+    if current is not None:
+        _validate_publisher_bundle(current, fixed_handoff_path=fixed_handoff_path)
+    if pending is not None:
+        _validate_publisher_intent_envelope(
+            pending, fixed_handoff_path=fixed_handoff_path
+        )
+    if pending is not None:
+        if not _pending_bundle_matches_inputs(
+            pending,
+            p136_config=p136_config,
+            p136_runtime_authority=p136_runtime_authority,
+            now=now,
+            p136_checkpoint=p136_checkpoint,
+            canonical_entry_map=canonical_entry_map,
+            promotion_records=promotion_records,
+            p136_independent_review=p136_independent_review,
+            p136_release_evidence=p136_release_evidence,
+            created_at=created_at,
+        ):
             raise P137HandoffError("conflicting_pending_handoff_intent")
-        _atomic_write_json(base_path, fixed_handoff_path, pending_bundle)
-        _atomic_write_json(base_path, state_path, _state_from_bundle(pending_bundle))
-        _unlink_optional(base_path, intent_path)
-        return dict(pending_bundle)
+        return _recover_pending_publication(
+            base_path=base_path,
+            state_path=state_path,
+            intent_path=intent_path,
+            fixed_handoff_path=fixed_handoff_path,
+            state=state,
+            pending=pending,
+            current=current,
+            evaluator_crash_injector=evaluator_crash_injector,
+        )
+
+    if state is None:
+        if current is not None:
+            raise P137HandoffError("publisher_current_bundle_without_state")
+    else:
+        if current is None:
+            raise P137HandoffError("publisher_state_current_bundle_missing")
+        _validate_publisher_state_matches_bundle(state, current)
 
     bundle = _candidate_bundle(
         state=state,
@@ -147,8 +326,17 @@ def publish_p136_handoff_bundle(
     _atomic_write_json(base_path, intent_path, intent)
     if crash_after_intent:
         raise P137HandoffError("publisher_crash_after_intent")
+    _inject_publisher_evaluator_crash(
+        evaluator_crash_injector, "publisher_intent_durable"
+    )
     _atomic_write_json(base_path, fixed_handoff_path, bundle)
+    _inject_publisher_evaluator_crash(
+        evaluator_crash_injector, "publisher_fixed_replaced"
+    )
     _atomic_write_json(base_path, state_path, _state_from_bundle(bundle))
+    _inject_publisher_evaluator_crash(
+        evaluator_crash_injector, "publisher_state_replaced"
+    )
     _unlink_optional(base_path, intent_path)
     return bundle
 
@@ -353,62 +541,54 @@ def _validate_publisher_state(state: Mapping[str, Any], *, fixed_handoff_path: s
         raise P137HandoffError("publisher_state_hash_invalid")
 
 
-def _validate_publisher_state_current_bundle(
-    base_path: Path,
-    fixed_handoff_path: str,
-    state: Mapping[str, Any],
+def _validate_publisher_state_matches_bundle(
+    state: Mapping[str, Any], bundle: Mapping[str, Any]
 ) -> None:
-    current = _read_json_optional(base_path, fixed_handoff_path, label="current_handoff_bundle")
-    if current is None:
-        raise P137HandoffError("publisher_state_current_bundle_missing")
-    _validate_publisher_bundle(current, fixed_handoff_path=fixed_handoff_path)
-    if current.get("bundle_sequence") != state.get("last_bundle_sequence"):
+    if state.get("last_bundle_sequence") != bundle.get("bundle_sequence"):
         raise P137HandoffError("publisher_state_current_sequence_mismatch")
-    if current.get("bundle_hash") != state.get("last_bundle_hash"):
+    if state.get("last_bundle_hash") != bundle.get("bundle_hash"):
         raise P137HandoffError("publisher_state_current_hash_mismatch")
-    if current.get("p136_checkpoint_hash") != state.get("last_p136_checkpoint_hash"):
+    if state.get("last_p136_checkpoint_hash") != bundle.get(
+        "p136_checkpoint_hash"
+    ):
         raise P137HandoffError("publisher_state_current_checkpoint_hash_mismatch")
-    if current.get("handoff_chain_root_hash") != state.get("handoff_chain_root_hash"):
+    if state.get("handoff_chain_root_hash") != bundle.get(
+        "handoff_chain_root_hash"
+    ):
         raise P137HandoffError("publisher_state_current_chain_root_mismatch")
 
 
-def _validate_publisher_intent(
-    intent: Mapping[str, Any],
-    *,
-    state: Mapping[str, Any] | None,
-    fixed_handoff_path: str,
+def _validate_publisher_intent_envelope(
+    intent: Mapping[str, Any], *, fixed_handoff_path: str
 ) -> None:
-    if set(intent) != PUBLISHER_INTENT_FIELDS or intent.get("schema_version") != PUBLISHER_INTENT_SCHEMA_VERSION:
+    if (
+        set(intent) != PUBLISHER_INTENT_FIELDS
+        or intent.get("schema_version") != PUBLISHER_INTENT_SCHEMA_VERSION
+    ):
         raise P137HandoffError("invalid_publisher_intent_fields")
-    expected_intent_hash = stable_hash({key: value for key, value in intent.items() if key != "intent_hash"})
+    expected_intent_hash = stable_hash(
+        {key: value for key, value in intent.items() if key != "intent_hash"}
+    )
     if intent.get("intent_hash") != expected_intent_hash:
         raise P137HandoffError("publisher_intent_hash_invalid")
     if intent.get("fixed_handoff_path") != fixed_handoff_path:
         raise P137HandoffError("publisher_intent_fixed_handoff_path_mismatch")
     if intent.get("fsync") != {"file": True, "parent_directory": True}:
         raise P137HandoffError("publisher_intent_fsync_invalid")
-
     state_hash = intent.get("state_hash")
-    if state is None:
-        if state_hash is not None:
-            raise P137HandoffError("publisher_intent_state_missing")
-        expected_sequence = 1
-        expected_previous_hash = None
-    else:
-        expected_state_hash = _hash(state.get("state_hash"), "publisher_state_hash")
-        if state_hash != expected_state_hash:
-            raise P137HandoffError("publisher_intent_state_hash_mismatch")
-        expected_sequence = _positive_int(state.get("last_bundle_sequence"), "publisher_state_last_bundle_sequence") + 1
-        expected_previous_hash = _hash(state.get("last_bundle_hash"), "publisher_state_last_bundle_hash")
-
-    sequence = _positive_int(intent.get("bundle_sequence"), "publisher_intent_bundle_sequence")
-    if sequence != expected_sequence:
-        raise P137HandoffError("publisher_intent_bundle_sequence_mismatch")
+    if state_hash is not None:
+        _hash(state_hash, "publisher_intent_state_hash")
+    sequence = _positive_int(
+        intent.get("bundle_sequence"), "publisher_intent_bundle_sequence"
+    )
     previous_hash = intent.get("previous_bundle_hash")
-    if previous_hash != expected_previous_hash:
-        raise P137HandoffError("publisher_intent_previous_bundle_hash_mismatch")
-    if previous_hash is not None:
+    if sequence == 1:
+        if state_hash is not None or previous_hash is not None:
+            raise P137HandoffError("publisher_intent_genesis_binding_invalid")
+    else:
         _hash(previous_hash, "publisher_intent_previous_bundle_hash")
+        if state_hash is None:
+            raise P137HandoffError("publisher_intent_state_missing")
     bundle_hash = _hash(intent.get("bundle_hash"), "publisher_intent_bundle_hash")
     bundle = _mapping(intent.get("bundle"), "pending_bundle")
     _validate_publisher_bundle(bundle, fixed_handoff_path=fixed_handoff_path)
@@ -418,10 +598,111 @@ def _validate_publisher_intent(
         raise P137HandoffError("publisher_intent_bundle_sequence_mismatch")
     if bundle.get("previous_bundle_hash") != previous_hash:
         raise P137HandoffError("publisher_intent_previous_bundle_hash_mismatch")
-    if state is not None and bundle.get("handoff_chain_root_hash") != state.get("handoff_chain_root_hash"):
-        raise P137HandoffError("publisher_intent_state_chain_root_mismatch")
-    if state is not None and bundle.get("previous_bundle_hash") != state.get("last_bundle_hash"):
-        raise P137HandoffError("publisher_intent_state_previous_hash_mismatch")
+
+
+def _pending_bundle_matches_inputs(
+    pending: Mapping[str, Any],
+    *,
+    p136_config: Mapping[str, Any],
+    p136_runtime_authority: Mapping[str, Any],
+    now: str,
+    p136_checkpoint: Mapping[str, Any],
+    canonical_entry_map: Mapping[str, Mapping[str, Any]],
+    promotion_records: Sequence[Mapping[str, Any]],
+    p136_independent_review: Mapping[str, Any],
+    p136_release_evidence: Mapping[str, Any],
+    created_at: str,
+) -> bool:
+    bundle = _mapping(pending.get("bundle"), "pending_bundle")
+    return (
+        bundle.get("p136_config") == dict(p136_config)
+        and bundle.get("p136_runtime_authority")
+        == _encoded_authority(p136_runtime_authority)
+        and bundle.get("now") == now
+        and bundle.get("p136_checkpoint") == dict(p136_checkpoint)
+        and bundle.get("canonical_entry_map") == _entry_wrappers(canonical_entry_map)
+        and bundle.get("promotion_map") == _promotion_wrappers(promotion_records)
+        and bundle.get("p136_independent_review")
+        == dict(p136_independent_review)
+        and bundle.get("p136_release_evidence") == dict(p136_release_evidence)
+        and bundle.get("created_at") == created_at
+    )
+
+
+def _recover_pending_publication(
+    *,
+    base_path: Path,
+    state_path: str,
+    intent_path: str,
+    fixed_handoff_path: str,
+    state: Mapping[str, Any] | None,
+    pending: Mapping[str, Any],
+    current: Mapping[str, Any] | None,
+    evaluator_crash_injector: Any,
+) -> dict[str, Any]:
+    bundle = _mapping(pending.get("bundle"), "pending_bundle")
+    new_state = _state_from_bundle(bundle)
+    state_is_committed = state is not None and dict(state) == new_state
+    state_is_predecessor = False
+    if state is None:
+        state_is_predecessor = (
+            pending.get("state_hash") is None
+            and bundle.get("bundle_sequence") == 1
+            and bundle.get("previous_bundle_hash") is None
+        )
+    elif pending.get("state_hash") == state.get("state_hash"):
+        state_is_predecessor = (
+            bundle.get("bundle_sequence")
+            == _positive_int(
+                state.get("last_bundle_sequence"),
+                "publisher_state_last_bundle_sequence",
+            )
+            + 1
+            and bundle.get("previous_bundle_hash") == state.get("last_bundle_hash")
+            and bundle.get("handoff_chain_root_hash")
+            == state.get("handoff_chain_root_hash")
+        )
+    if not state_is_committed and not state_is_predecessor:
+        raise P137HandoffError("publisher_recovery_state_mismatch")
+
+    current_is_pending = current is not None and dict(current) == dict(bundle)
+    current_is_predecessor = (
+        state_is_predecessor
+        and state is not None
+        and current is not None
+        and _bundle_matches_publisher_state(current, state)
+    )
+    if state_is_committed:
+        if not current_is_pending:
+            raise P137HandoffError("publisher_recovery_fixed_bundle_mismatch")
+        _unlink_optional(base_path, intent_path)
+        return dict(bundle)
+    if not current_is_pending:
+        if not (state is None and current is None) and not current_is_predecessor:
+            raise P137HandoffError("publisher_recovery_fixed_bundle_mismatch")
+        _atomic_write_json(base_path, fixed_handoff_path, bundle)
+        _inject_publisher_evaluator_crash(
+            evaluator_crash_injector, "publisher_fixed_replaced"
+        )
+    _atomic_write_json(base_path, state_path, new_state)
+    _inject_publisher_evaluator_crash(
+        evaluator_crash_injector, "publisher_state_replaced"
+    )
+    _unlink_optional(base_path, intent_path)
+    return dict(bundle)
+
+
+def _bundle_matches_publisher_state(
+    bundle: Mapping[str, Any], state: Mapping[str, Any]
+) -> bool:
+    return (
+        bundle.get("bundle_sequence") == state.get("last_bundle_sequence")
+        and bundle.get("bundle_hash") == state.get("last_bundle_hash")
+        and bundle.get("p136_checkpoint_hash")
+        == state.get("last_p136_checkpoint_hash")
+        and bundle.get("handoff_chain_root_hash")
+        == state.get("handoff_chain_root_hash")
+    )
 
 
 def _validate_publisher_bundle(bundle: Mapping[str, Any], *, fixed_handoff_path: str) -> None:
@@ -915,55 +1196,300 @@ def _differs_only_promotion_key(left: Mapping[str, Any], right: Mapping[str, Any
     return differing == {"promotion_key"}
 
 
+class _PublisherLease:
+    def __init__(self, base_path: Path, relative_path: str) -> None:
+        self.base_path = base_path
+        self.parts = PurePosixPath(_relative_path(relative_path, "lease_path")).parts
+        self.parent_fd: int | None = None
+        self.handle: Any = None
+
+    def __enter__(self) -> None:
+        self.parent_fd = _open_secure_parent_dir(
+            self.base_path,
+            self.parts,
+            create=True,
+        )
+        flags = (
+            os.O_RDWR
+            | os.O_CREAT
+            | getattr(os, "O_NOFOLLOW", 0)
+            | getattr(os, "O_CLOEXEC", 0)
+        )
+        try:
+            fd = os.open(
+                self.parts[-1],
+                flags,
+                0o600,
+                dir_fd=self.parent_fd,
+            )
+        except OSError as exc:
+            os.close(self.parent_fd)
+            self.parent_fd = None
+            raise P137HandoffError("publisher_lease_invalid") from exc
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+            os.close(fd)
+            os.close(self.parent_fd)
+            self.parent_fd = None
+            raise P137HandoffError("publisher_lease_invalid")
+        self.handle = os.fdopen(fd, "a+", encoding="utf-8")
+        try:
+            fcntl.flock(self.handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            self.handle.close()
+            self.handle = None
+            os.close(self.parent_fd)
+            self.parent_fd = None
+            raise P137HandoffError("publisher_lease_unavailable") from exc
+
+    def __exit__(self, exc_type: object, exc: object, traceback: object) -> None:
+        if self.handle is not None:
+            fcntl.flock(self.handle.fileno(), fcntl.LOCK_UN)
+            self.handle.close()
+        if self.parent_fd is not None:
+            os.close(self.parent_fd)
+            self.parent_fd = None
+
+
+def _default_publisher_lease_path(state_path: str) -> str:
+    state = PurePosixPath(_relative_path(state_path, "state_path"))
+    return (state.parent / "p137-publisher.lock").as_posix()
+
+
+def _validate_publisher_paths(
+    *,
+    state_path: str,
+    intent_path: str,
+    fixed_handoff_path: str,
+    lease_path: str,
+) -> None:
+    paths = [
+        PurePosixPath(_relative_path(state_path, "state_path")),
+        PurePosixPath(_relative_path(intent_path, "intent_path")),
+        PurePosixPath(_relative_path(fixed_handoff_path, "fixed_handoff_path")),
+        PurePosixPath(_relative_path(lease_path, "lease_path")),
+    ]
+    if len({path.as_posix() for path in paths}) != len(paths):
+        raise P137HandoffError("publisher_paths_overlap")
+    for index, left in enumerate(paths):
+        for right in paths[index + 1 :]:
+            if (
+                left.parts[: len(right.parts)] == right.parts
+                or right.parts[: len(left.parts)] == left.parts
+            ):
+                raise P137HandoffError("publisher_paths_overlap")
+
+
+def _inject_publisher_evaluator_crash(injector: Any, phase: str) -> None:
+    if injector is not None:
+        injector(phase)
+
+
 def _atomic_write_json(base_path: Path, relative_path: str, value: Mapping[str, Any]) -> None:
-    path = base_path / _relative_path(relative_path, "relative_path")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temp = path.parent / f".{path.name}.{os.getpid()}.{time.monotonic_ns()}.tmp"
+    parts = PurePosixPath(_relative_path(relative_path, "relative_path")).parts
+    parent_fd = _open_secure_parent_dir(base_path, parts, create=True)
+    target_name = parts[-1]
+    temp_name = f".{target_name}.{os.getpid()}.{time.monotonic_ns()}.tmp"
+    descriptor: int | None = None
     try:
-        with temp.open("wb") as handle:
+        try:
+            _stat_secure_regular_entry(parent_fd, target_name)
+        except FileNotFoundError:
+            pass
+        descriptor = os.open(
+            temp_name,
+            os.O_WRONLY
+            | os.O_CREAT
+            | os.O_EXCL
+            | getattr(os, "O_NOFOLLOW", 0)
+            | getattr(os, "O_CLOEXEC", 0),
+            0o600,
+            dir_fd=parent_fd,
+        )
+        os.fchmod(descriptor, 0o600)
+        with os.fdopen(descriptor, "wb") as handle:
+            descriptor = None
             handle.write(canonical_json_bytes(value) + b"\n")
             handle.flush()
             os.fsync(handle.fileno())
-        os.replace(temp, path)
-        directory = os.open(path.parent, os.O_RDONLY)
-        try:
-            os.fsync(directory)
-        finally:
-            os.close(directory)
+        _stat_secure_regular_entry(parent_fd, temp_name)
+        os.replace(
+            temp_name,
+            target_name,
+            src_dir_fd=parent_fd,
+            dst_dir_fd=parent_fd,
+        )
+        _stat_secure_regular_entry(parent_fd, target_name)
+        os.fsync(parent_fd)
+    except P137HandoffError:
+        raise
+    except OSError as exc:
+        raise P137HandoffError("publisher_atomic_write_failed") from exc
     finally:
+        if descriptor is not None:
+            os.close(descriptor)
         try:
-            temp.unlink()
+            os.unlink(temp_name, dir_fd=parent_fd)
         except FileNotFoundError:
             pass
+        except OSError:
+            pass
+        os.close(parent_fd)
 
 
 def _read_json_optional(base_path: Path, relative_path: str, *, label: str) -> dict[str, Any] | None:
-    path = base_path / _relative_path(relative_path, "relative_path")
-    if not path.exists():
-        return None
-    raw = path.read_bytes()
-    if raw.endswith(b"\n"):
-        raw = raw[:-1]
+    parts = PurePosixPath(_relative_path(relative_path, "relative_path")).parts
     try:
-        value = json.loads(raw)
-    except json.JSONDecodeError as exc:
-        raise P137HandoffError(f"invalid_{label}_json") from exc
-    if not isinstance(value, Mapping):
-        raise P137HandoffError(f"invalid_{label}")
-    return dict(value)
+        parent_fd = _open_secure_parent_dir(base_path, parts, create=False)
+    except FileNotFoundError:
+        return None
+    try:
+        try:
+            before = _stat_secure_regular_entry(parent_fd, parts[-1])
+        except FileNotFoundError:
+            return None
+        try:
+            descriptor = os.open(
+                parts[-1],
+                os.O_RDONLY
+                | getattr(os, "O_NOFOLLOW", 0)
+                | getattr(os, "O_CLOEXEC", 0),
+                dir_fd=parent_fd,
+            )
+        except OSError as exc:
+            raise P137HandoffError("publisher_read_failed") from exc
+        try:
+            opened = os.fstat(descriptor)
+            if (
+                not stat.S_ISREG(opened.st_mode)
+                or opened.st_nlink != 1
+                or (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino)
+            ):
+                raise P137HandoffError("publisher_target_not_secure_regular_file")
+            chunks: list[bytes] = []
+            total = 0
+            while True:
+                chunk = os.read(
+                    descriptor,
+                    min(65_536, _MAX_PUBLISHER_JSON_BYTES + 1 - total),
+                )
+                if not chunk:
+                    break
+                chunks.append(chunk)
+                total += len(chunk)
+                if total > _MAX_PUBLISHER_JSON_BYTES:
+                    raise P137HandoffError("publisher_json_byte_budget_exceeded")
+            after = _stat_secure_regular_entry(parent_fd, parts[-1])
+            if (after.st_dev, after.st_ino) != (opened.st_dev, opened.st_ino):
+                raise P137HandoffError("publisher_path_binding_changed")
+        finally:
+            os.close(descriptor)
+        raw = b"".join(chunks)
+        if raw.endswith(b"\n"):
+            raw = raw[:-1]
+        try:
+            value = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise P137HandoffError(f"invalid_{label}_json") from exc
+        if not isinstance(value, Mapping):
+            raise P137HandoffError(f"invalid_{label}")
+        if raw != canonical_json_bytes(value):
+            raise P137HandoffError("noncanonical_publisher_json_bytes")
+        return dict(value)
+    finally:
+        os.close(parent_fd)
 
 
 def _unlink_optional(base_path: Path, relative_path: str) -> None:
-    path = base_path / _relative_path(relative_path, "relative_path")
+    parts = PurePosixPath(_relative_path(relative_path, "relative_path")).parts
     try:
-        path.unlink()
+        parent_fd = _open_secure_parent_dir(base_path, parts, create=False)
     except FileNotFoundError:
         return
-    directory = os.open(path.parent, os.O_RDONLY)
     try:
-        os.fsync(directory)
+        try:
+            _stat_secure_regular_entry(parent_fd, parts[-1])
+        except FileNotFoundError:
+            return
+        os.unlink(parts[-1], dir_fd=parent_fd)
+        os.fsync(parent_fd)
+    except OSError as exc:
+        raise P137HandoffError("publisher_unlink_failed") from exc
     finally:
-        os.close(directory)
+        os.close(parent_fd)
+
+
+def _open_base_dir(base_path: Path) -> int:
+    try:
+        descriptor = os.open(
+            base_path,
+            os.O_RDONLY
+            | getattr(os, "O_DIRECTORY", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+            | getattr(os, "O_CLOEXEC", 0),
+        )
+    except OSError as exc:
+        raise P137HandoffError("publisher_parent_symlink_or_invalid") from exc
+    info = os.fstat(descriptor)
+    if not stat.S_ISDIR(info.st_mode):
+        os.close(descriptor)
+        raise P137HandoffError("publisher_parent_symlink_or_invalid")
+    return descriptor
+
+
+def _open_secure_parent_dir(
+    base_path: Path,
+    parts: Sequence[str],
+    *,
+    create: bool,
+) -> int:
+    if not parts:
+        raise P137HandoffError("publisher_parent_symlink_or_invalid")
+    parent_fd = _open_base_dir(base_path)
+    flags = (
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_CLOEXEC", 0)
+    )
+    for part in parts[:-1]:
+        try:
+            child_fd = os.open(part, flags, dir_fd=parent_fd)
+        except FileNotFoundError:
+            if not create:
+                os.close(parent_fd)
+                raise
+            try:
+                os.mkdir(part, 0o700, dir_fd=parent_fd)
+                child_fd = os.open(part, flags, dir_fd=parent_fd)
+            except OSError as exc:
+                os.close(parent_fd)
+                raise P137HandoffError(
+                    "publisher_parent_symlink_or_invalid"
+                ) from exc
+        except OSError as exc:
+            os.close(parent_fd)
+            raise P137HandoffError("publisher_parent_symlink_or_invalid") from exc
+        info = os.fstat(child_fd)
+        if not stat.S_ISDIR(info.st_mode):
+            os.close(child_fd)
+            os.close(parent_fd)
+            raise P137HandoffError("publisher_parent_symlink_or_invalid")
+        os.close(parent_fd)
+        parent_fd = child_fd
+    return parent_fd
+
+
+def _stat_secure_regular_entry(parent_fd: int, name: str) -> os.stat_result:
+    try:
+        info = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+    except FileNotFoundError:
+        raise
+    except OSError as exc:
+        raise P137HandoffError("publisher_target_not_secure_regular_file") from exc
+    if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+        raise P137HandoffError("publisher_target_not_secure_regular_file")
+    return info
 
 
 def _relative_path(value: Any, label: str) -> str:

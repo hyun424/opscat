@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import fcntl
 import json
+import os
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -242,8 +244,12 @@ def test_publisher_crash_recovery_commits_unlinks_intent_and_allows_next_publica
         "created_at": "2026-07-14T00:00:01Z",
     }
 
+    def crash_after_intent(phase: str) -> None:
+        if phase == "publisher_intent_durable":
+            raise handoff.P137HandoffError("publisher_crash_after_intent")
+
     with pytest.raises(handoff.P137HandoffError, match="publisher_crash_after_intent"):
-        handoff.publish_p136_handoff_bundle(**kwargs, crash_after_intent=True)
+        handoff.publish_p136_handoff_bundle(**kwargs, evaluator_crash_injector=crash_after_intent)
     changed = dict(kwargs)
     changed["created_at"] = "2026-07-14T00:00:09Z"
     with pytest.raises(handoff.P137HandoffError, match="conflicting_pending_handoff_intent"):
@@ -260,6 +266,270 @@ def test_publisher_crash_recovery_commits_unlinks_intent_and_allows_next_publica
     assert second["bundle_sequence"] == 2
     assert second["previous_bundle_hash"] == recovered["bundle_hash"]
     assert second["created_at"] == "2026-07-14T00:00:09Z"
+
+
+@pytest.mark.parametrize(
+    ("crash_phase", "error_label"),
+    [
+        ("publisher_intent_durable", "publisher_crash_after_intent"),
+        ("publisher_fixed_replaced", "publisher_crash_after_fixed_replacement"),
+        ("publisher_state_replaced", "publisher_crash_after_state_replacement"),
+    ],
+)
+def test_publisher_whole_operation_lease_recovers_every_split_commit_exactly_once(
+    tmp_path: Path,
+    crash_phase: str,
+    error_label: str,
+) -> None:
+    handoff = _handoff()
+    runtime, first, _config = _published(tmp_path)
+    base_path = Path(runtime["base_path"])
+    state_path = base_path / "state/p137-publisher.json"
+    intent_path = base_path / "state/p137-publisher-intent.json"
+    fixed_path = base_path / _contracts().FIXED_P136_HANDOFF_PATH
+    prior_state = state_path.read_bytes()
+    prior_fixed = fixed_path.read_bytes()
+    kwargs = {
+        "base_path": base_path,
+        "state_path": "state/p137-publisher.json",
+        "intent_path": "state/p137-publisher-intent.json",
+        "lease_path": "state/p137-publisher.lock",
+        "fixed_handoff_path": _contracts().FIXED_P136_HANDOFF_PATH,
+        "p136_config": runtime["config"],
+        "p136_runtime_authority": runtime["authority"],
+        "now": runtime["now"],
+        "p136_checkpoint": first["p136_checkpoint"],
+        "canonical_entry_map": {
+            key: item["entry"] for key, item in first["canonical_entry_map"].items()
+        },
+        "promotion_records": [item["promotion"] for item in first["promotion_map"].values()],
+        "p136_independent_review": first["p136_independent_review"],
+        "p136_release_evidence": first["p136_release_evidence"],
+        "created_at": "2026-07-14T00:00:02Z",
+    }
+
+    def crash_at(phase: str) -> None:
+        if phase == crash_phase:
+            raise handoff.P137HandoffError(error_label)
+
+    with pytest.raises(handoff.P137HandoffError, match=error_label):
+        handoff.publish_p136_handoff_bundle(**kwargs, evaluator_crash_injector=crash_at)
+    pending = json.loads(intent_path.read_text())
+    pending_bundle = pending["bundle"]
+
+    if crash_phase == "publisher_intent_durable":
+        assert state_path.read_bytes() == prior_state
+        assert fixed_path.read_bytes() == prior_fixed
+    elif crash_phase == "publisher_fixed_replaced":
+        assert state_path.read_bytes() == prior_state
+        assert json.loads(fixed_path.read_text()) == pending_bundle
+    else:
+        assert json.loads(state_path.read_text())["last_bundle_hash"] == pending_bundle["bundle_hash"]
+        assert json.loads(fixed_path.read_text()) == pending_bundle
+
+    recovered = handoff.publish_p136_handoff_bundle(**kwargs)
+
+    assert recovered == pending_bundle
+    assert recovered["bundle_sequence"] == first["bundle_sequence"] + 1
+    assert recovered["previous_bundle_hash"] == first["bundle_hash"]
+    assert not intent_path.exists()
+    assert json.loads(state_path.read_text())["last_bundle_hash"] == recovered["bundle_hash"]
+    assert json.loads(fixed_path.read_text()) == recovered
+
+
+def test_publisher_lease_conflict_precedes_reads_and_path_or_tuple_mismatch_fails_closed(
+    tmp_path: Path,
+) -> None:
+    handoff = _handoff()
+    runtime, first, _config = _published(tmp_path)
+    base_path = Path(runtime["base_path"])
+    lease_path = base_path / "state/p137-publisher.lock"
+    state_path = base_path / "state/p137-publisher.json"
+    fixed_path = base_path / _contracts().FIXED_P136_HANDOFF_PATH
+    state_before = state_path.read_bytes()
+    fixed_before = fixed_path.read_bytes()
+    kwargs = {
+        "base_path": base_path,
+        "state_path": "state/p137-publisher.json",
+        "intent_path": "state/p137-publisher-intent.json",
+        "lease_path": "state/p137-publisher.lock",
+        "fixed_handoff_path": _contracts().FIXED_P136_HANDOFF_PATH,
+        "p136_config": runtime["config"],
+        "p136_runtime_authority": runtime["authority"],
+        "now": runtime["now"],
+        "p136_checkpoint": first["p136_checkpoint"],
+        "canonical_entry_map": {
+            key: item["entry"] for key, item in first["canonical_entry_map"].items()
+        },
+        "promotion_records": [item["promotion"] for item in first["promotion_map"].values()],
+        "p136_independent_review": first["p136_independent_review"],
+        "p136_release_evidence": first["p136_release_evidence"],
+        "created_at": "2026-07-14T00:00:02Z",
+    }
+    lease_path.touch()
+    with lease_path.open("a+") as held:
+        fcntl.flock(held.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        with pytest.raises(handoff.P137HandoffError, match="publisher_lease_unavailable"):
+            handoff.publish_p136_handoff_bundle(**kwargs)
+    assert state_path.read_bytes() == state_before
+    assert fixed_path.read_bytes() == fixed_before
+
+    with pytest.raises(handoff.P137HandoffError, match="publisher_paths_overlap"):
+        handoff.publish_p136_handoff_bundle(
+            **{**kwargs, "lease_path": kwargs["state_path"]}
+        )
+    assert state_path.read_bytes() == state_before
+    assert fixed_path.read_bytes() == fixed_before
+
+
+@pytest.mark.parametrize(
+    ("symlink_parent", "paths"),
+    [
+        (
+            "publisher-state",
+            {
+                "state_path": "publisher-state/state.json",
+                "intent_path": "publisher-intent/intent.json",
+                "lease_path": "publisher-lease/publisher.lock",
+            },
+        ),
+        (
+            "publisher-intent",
+            {
+                "state_path": "publisher-state/state.json",
+                "intent_path": "publisher-intent/intent.json",
+                "lease_path": "publisher-lease/publisher.lock",
+            },
+        ),
+        (
+            "publisher-lease",
+            {
+                "state_path": "publisher-state/state.json",
+                "intent_path": "publisher-intent/intent.json",
+                "lease_path": "publisher-lease/publisher.lock",
+            },
+        ),
+        (
+            "handoff",
+            {
+                "state_path": "publisher-state/state.json",
+                "intent_path": "publisher-intent/intent.json",
+                "lease_path": "publisher-lease/publisher.lock",
+            },
+        ),
+    ],
+)
+def test_publisher_rejects_symlinked_parent_without_outside_mutation(
+    tmp_path: Path,
+    symlink_parent: str,
+    paths: dict[str, str],
+) -> None:
+    handoff = _handoff()
+    runtime = _bind_runtime(tmp_path)
+    observed = observe_one_cycle(runtime)
+    base_path = Path(runtime["base_path"])
+    outside = tmp_path / f"outside-{symlink_parent}"
+    outside.mkdir()
+    os.symlink(outside, base_path / symlink_parent, target_is_directory=True)
+
+    with pytest.raises(handoff.P137HandoffError, match="publisher_parent_symlink_or_invalid"):
+        handoff.publish_p136_handoff_bundle(
+            base_path=base_path,
+            fixed_handoff_path=_contracts().FIXED_P136_HANDOFF_PATH,
+            p136_config=runtime["config"],
+            p136_runtime_authority=runtime["authority"],
+            now=runtime["now"],
+            p136_checkpoint=observed["advanced_checkpoint"],
+            canonical_entry_map=runtime["provider_entries"],
+            promotion_records=observed["promotion_records"],
+            p136_independent_review=independent_review_artifact(),
+            p136_release_evidence=release_evidence(),
+            created_at="2026-07-14T00:00:01Z",
+            **paths,
+        )
+
+    assert list(outside.iterdir()) == []
+
+
+def test_publisher_recovery_rejects_forked_fixed_bytes_and_preserves_last_valid_state(
+    tmp_path: Path,
+) -> None:
+    handoff = _handoff()
+    runtime, first, _config = _published(tmp_path)
+    base_path = Path(runtime["base_path"])
+    state_path = base_path / "state/p137-publisher.json"
+    fixed_path = base_path / _contracts().FIXED_P136_HANDOFF_PATH
+    kwargs = {
+        "base_path": base_path,
+        "state_path": "state/p137-publisher.json",
+        "intent_path": "state/p137-publisher-intent.json",
+        "lease_path": "state/p137-publisher.lock",
+        "fixed_handoff_path": _contracts().FIXED_P136_HANDOFF_PATH,
+        "p136_config": runtime["config"],
+        "p136_runtime_authority": runtime["authority"],
+        "now": runtime["now"],
+        "p136_checkpoint": first["p136_checkpoint"],
+        "canonical_entry_map": {
+            key: item["entry"] for key, item in first["canonical_entry_map"].items()
+        },
+        "promotion_records": [item["promotion"] for item in first["promotion_map"].values()],
+        "p136_independent_review": first["p136_independent_review"],
+        "p136_release_evidence": first["p136_release_evidence"],
+        "created_at": "2026-07-14T00:00:02Z",
+    }
+
+    def crash_after_fixed(phase: str) -> None:
+        if phase == "publisher_fixed_replaced":
+            raise handoff.P137HandoffError("publisher_crash_after_fixed_replacement")
+
+    with pytest.raises(handoff.P137HandoffError, match="publisher_crash_after_fixed_replacement"):
+        handoff.publish_p136_handoff_bundle(**kwargs, evaluator_crash_injector=crash_after_fixed)
+    state_before = state_path.read_bytes()
+    forked = json.loads(fixed_path.read_text())
+    forked["bundle_sequence"] += 1
+    fixed_path.write_text(json.dumps(forked, sort_keys=True, separators=(",", ":")) + "\n")
+    forked_before = fixed_path.read_bytes()
+
+    with pytest.raises(handoff.P137HandoffError, match="publisher_bundle_hash_invalid"):
+        handoff.publish_p136_handoff_bundle(**kwargs)
+    assert state_path.read_bytes() == state_before
+    assert fixed_path.read_bytes() == forked_before
+
+
+def test_publisher_rejects_noncanonical_persisted_predecessor_bytes(
+    tmp_path: Path,
+) -> None:
+    handoff = _handoff()
+    runtime, first, _config = _published(tmp_path)
+    base_path = Path(runtime["base_path"])
+    fixed_path = base_path / _contracts().FIXED_P136_HANDOFF_PATH
+    fixed_path.write_text(json.dumps(first, indent=2, sort_keys=True) + "\n")
+
+    with pytest.raises(
+        handoff.P137HandoffError,
+        match="noncanonical_publisher_json_bytes",
+    ):
+        handoff.publish_p136_handoff_bundle(
+            base_path=base_path,
+            state_path="state/p137-publisher.json",
+            intent_path="state/p137-publisher-intent.json",
+            lease_path="state/p137-publisher.lock",
+            fixed_handoff_path=_contracts().FIXED_P136_HANDOFF_PATH,
+            p136_config=runtime["config"],
+            p136_runtime_authority=runtime["authority"],
+            now=runtime["now"],
+            p136_checkpoint=first["p136_checkpoint"],
+            canonical_entry_map={
+                key: item["entry"]
+                for key, item in first["canonical_entry_map"].items()
+            },
+            promotion_records=[
+                item["promotion"] for item in first["promotion_map"].values()
+            ],
+            p136_independent_review=first["p136_independent_review"],
+            p136_release_evidence=first["p136_release_evidence"],
+            created_at="2026-07-14T00:00:02Z",
+        )
 
 
 def test_publisher_rejects_tampered_state_before_deriving_next_sequence(tmp_path: Path) -> None:

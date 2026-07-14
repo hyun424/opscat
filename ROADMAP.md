@@ -51,6 +51,24 @@ qualifies local evidence triage only; live provider observation,
 notifications, action/remediation, production mutation, and operator replacement
 remain outside the authority boundary.
 
+## P138: local observation-to-triage supervision
+
+P138 composes P136 observation, the P136-owned publisher, and P137 triage under
+a reconciliation-first finite supervisor. The approved contract requires the
+exact six-phase path and zero-delta short path, P136 outcome intent -> checkpoint
+-> completion recovery, whole-operation publisher leasing and split-commit
+recovery, contiguous new-promotion publication, genesis-only bootstrap, the
+shared exact 15-key zero-authority tuple, and exactly 30/30 release cases.
+
+Qualification is fail-closed and artifact-driven. The runner/profile, tracked
+matrix, freeze manifest, release evidence, independent final implementation
+review, and `p138-release` profile must all validate before P138 is described as
+`p138_local_observation_to_triage_supervisor_qualified`. The target is a production-shaped
+local-only finite supervisor, not unattended production operation; it adds no
+auth, credentials, environment discovery, provider/network access,
+notification, action/remediation, staging/production mutation, or operator
+replacement.
+
 OpsCat is moving from a portfolio-grade local/mock agentic on-call MVP toward a beta-grade agentic operations system.
 
 ## P131 complete: credential-free always-on local monitoring
@@ -218,11 +236,6 @@ P15 active scope: NVIDIA LLM Provider Opt-in. P15-mini adds an explicit NVIDIA/O
 P15 implemented as opt-in NVIDIA LLM Provider evidence. P15-mini adds `NvidiaLLMJudgmentProvider` for the OpenAI-compatible NVIDIA endpoint, default model `nvidia/nemotron-3-ultra-550b-a55b`, `NVIDIA_API_KEY` key gating, prompt contract, response parsing, CLI `--provider nvidia` selection, offline fake-client tests, and release evidence. The boundary remains no-auth/local-mock by default: normal verification performs no external model/API calls, and live NVIDIA use remains explicit, safety-gated, and action-execution disabled.
 
 
-## P16 active
-
-P16 active scope: LLM Provider Evaluation Runner. P16 evaluates mock and opt-in NVIDIA judgment providers across existing judgment cases with schema, citation, route, hypothesis, evidence, forbidden-action, and safety scoring. The boundary remains no-auth/local-mock by default: normal verification performs no external model/API calls, no API keys are committed or printed, and no action execution or production mutation is introduced.
-
-
 ## P16 implemented
 
 P16 implemented as LLM Provider Evaluation Runner evidence. P16 scores mock and explicit opt-in NVIDIA provider judgments across incident cases for schema validity, evidence citation accuracy, route judgment, hypothesis coverage, required evidence citation, forbidden-action handling, safety-gate behavior, latency, and failure reasons. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.
@@ -258,10 +271,6 @@ P19 active scope: Operator Judgment Improvement Loop. P19 converts P18B raw mode
 ## P19 implemented
 
 P19 implemented as Operator Judgment Improvement Loop evidence. P19 adds failure intake, safety-first prioritization, non-mutating recommendations, read-only missing-evidence planning, regression pack generation, trend comparison, CLI reporting, verification smoke, and release evidence. Normal verification remains no-auth/local-mock by default and performs no external model/API calls or action execution.
-
-## P20 active
-
-P20 active scope: Closed-loop Agentic Incident Response. P20 connects observation, initial LLM-shaped judgment, missing-evidence detection, safe read-only local/mock diagnostic tool execution, revised judgment, action proposal, dry-run simulation, final approval/escalation routing, CLI reports, verification integration, and release evidence. The boundary remains no-auth/local-mock by default: no login/session UI, production credentials, hosted SaaS operations, Kubernetes/cloud/database mutation, unrestricted shell execution, default external model/API calls during verification, action execution, or unattended production-operation claims.
 
 ## P20 implemented
 
@@ -318,10 +327,6 @@ P26 implemented as Real Telemetry Adapter Contract evidence. P26 adds read-only 
 ## P27 active
 
 P27 active scope: Connector Readiness and Permission Contract. P27 defines safe read-only connector readiness before any live polling: declared capabilities, required permissions, credential references, health states, rate-limit/backoff policy, read-only enforcement, CLI reports, verification, and release evidence. The boundary remains no-auth/local-mock by default: no production credentials, live writes, production mutation, remediation execution, default external model/API calls, or unattended production-operation claims.
-
-## P28 planned
-
-P28 planned scope: Read-only Polling Runtime. P28 will add a bounded local/mock polling runtime that schedules read-only connector polls, applies timeout/backoff/rate-limit behavior, converts responses through P26 adapters, and emits telemetry batches without production mutation.
 
 ## P29 planned
 

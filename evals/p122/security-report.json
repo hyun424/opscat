@@ -2,7 +2,7 @@
   "archive_inventory": [
     {
       "format": "wheel",
-      "hash": "sha256:e7ccd466585afa43f01c68bf5b97e9be6a4f99d0831a9c8c43cc0c86b2fdaab9",
+      "hash": "sha256:aa2e2baa8751d58337605aa63f68d6181ba3473e4eb97e16519d7eaf11bfd2a4",
       "members": [
         {
           "hash": "sha256:e3fe41ad519f10f0949b6e8f24cc7b7dbacea3dfb04f521f1c9e1b7772a1e69e",
@@ -268,6 +268,11 @@
           "hash": "sha256:20b4a2739a7d3e4d3e8fe14130d88b886c03ec1323a3b5d7df6cd413581c1ec0",
           "path": "app/p144_provider_adapter_cli.py",
           "size": 2459
+        },
+        {
+          "hash": "sha256:a32fd10ee599878d5b97f1d24441e86496a0fd398f959e2146245855a33ebcdb",
+          "path": "app/p145_response_duty_cli.py",
+          "size": 4173
         },
         {
           "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
@@ -1380,7 +1385,7 @@
           "size": 30064
         },
         {
-          "hash": "sha256:4446b58db53ab38d5233bb7b5c55516bdac0425bc8dce1c97088c826256aed95",
+          "hash": "sha256:f158c9dd175db08eb903f773c168d4b89ec85b8edf67d14536b1d52da924f4eb",
           "path": "app/services/p139_local_triage_service.py",
           "size": 65471
         },
@@ -1400,7 +1405,7 @@
           "size": 25059
         },
         {
-          "hash": "sha256:9c4ef87eda93035efae17c8fed4c270fb7797bfc07ac555ba6844e78f28e225f",
+          "hash": "sha256:1c4f78a6ffc3efe9b07bc68892f7c4c9f849bee13f681899d7ce0db504f54be8",
           "path": "app/services/p140_release_evidence.py",
           "size": 11460
         },
@@ -1415,7 +1420,7 @@
           "size": 45196
         },
         {
-          "hash": "sha256:20462b0402e3dc093e75bd00515e5432641c94afc74eec7dcbf05f1cdf3934a0",
+          "hash": "sha256:9f77ed11d58271214e3a0952d5d4042da366789e338b7976859f35ceb86e5a12",
           "path": "app/services/p141_release_evidence.py",
           "size": 11490
         },
@@ -1430,7 +1435,7 @@
           "size": 71860
         },
         {
-          "hash": "sha256:1808598a0cc2cb5258e32e06cc3051707cb34b25097a394f73348ec7132e41e4",
+          "hash": "sha256:dad7397b3f5de5d29ea90d3fea88b88ded15c0a103682ba3de1875a0aa0ac6f4",
           "path": "app/services/p142_release_evidence.py",
           "size": 12444
         },
@@ -1440,7 +1445,7 @@
           "size": 22038
         },
         {
-          "hash": "sha256:4dc2e2d8b3cb926aa46c8405064afb478bca4d7647d680850b83da1de9f73d4c",
+          "hash": "sha256:660d14cf8a44a37fbd1d6d96fc81cbf84f42020ac48c38344b949242d39b0516",
           "path": "app/services/p143_egress_contract_lab.py",
           "size": 78300
         },
@@ -1455,7 +1460,7 @@
           "size": 20292
         },
         {
-          "hash": "sha256:46f5c74b980613ef0642bdb2fa7a142860eb96773231a8382d155948b9b26cc5",
+          "hash": "sha256:bdc0a745e1678f9ea0f819875a8a50cc64ae445f25e116ebeabdb28bf813d863",
           "path": "app/services/p144_provider_adapter_lab.py",
           "size": 87543
         },
@@ -1468,6 +1473,21 @@
           "hash": "sha256:63157ced3912fc114bc713c1e41e5a50e57d1d57abf77cec29a24bdc775266e6",
           "path": "app/services/p144_runner.py",
           "size": 21917
+        },
+        {
+          "hash": "sha256:052e34bdbae237215b85f4a060100aa3e4bc07e2653075a69715e1fbafb23da6",
+          "path": "app/services/p145_release_evidence.py",
+          "size": 16214
+        },
+        {
+          "hash": "sha256:5fdccbaed1862308e7b50eb680a7dec4e77461fd837385d9553b2592c5aa4d6a",
+          "path": "app/services/p145_response_duty_officer.py",
+          "size": 120762
+        },
+        {
+          "hash": "sha256:e047be1829a743790e6684e070ac0ba86f35757dd00c0a51aa2e1b39e211a2e9",
+          "path": "app/services/p145_runner.py",
+          "size": 26257
         },
         {
           "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -1915,9 +1935,9 @@
           "size": 50316
         },
         {
-          "hash": "sha256:647faff330dfd65420dedb46a03fc3bbeddfd47e09bf35ab8bd75964c4bb331a",
+          "hash": "sha256:8fc1b13de9f165fd79d5a7237396b5c9a53e2fca7e8ce6edcab2fc0aceb69214",
           "path": "opscat-0.2.0.dist-info/RECORD",
-          "size": 35677
+          "size": 36044
         },
         {
           "hash": "sha256:60b2577585d0d8543452a9f627eea21080bede239ecbc947df10adbc52e477c4",
@@ -1925,9 +1945,9 @@
           "size": 91
         },
         {
-          "hash": "sha256:b982536c752cee09bb59b1d456e5c539f31d7abb6625aafc1197239c05e228da",
+          "hash": "sha256:6da0f0dde4d8f4ed6b19b824cd49a597aad675d8f841b8fd8fb9918c3fe51592",
           "path": "opscat-0.2.0.dist-info/entry_points.txt",
-          "size": 428
+          "size": 491
         },
         {
           "hash": "sha256:1dd5af95f40cc7099c794c8404211ff20bc2d2a650fd0f7a9c76309eeebad8a3",
@@ -1942,11 +1962,11 @@
       ],
       "path": "dist/opscat-0.2.0-py3-none-any.whl",
       "readable": true,
-      "size": 1416490
+      "size": 1453205
     },
     {
       "format": "sdist",
-      "hash": "sha256:5ab4cf91b44e693440d40ea93a1d96642f21397a05d282b6dcdda9d636e52ecb",
+      "hash": "sha256:1a16458a874e55590c798809df06cd52058a24701a6a56b136dfb8f007856186",
       "members": [
         {
           "hash": "sha256:1dd5af95f40cc7099c794c8404211ff20bc2d2a650fd0f7a9c76309eeebad8a3",
@@ -2227,6 +2247,11 @@
           "hash": "sha256:20b4a2739a7d3e4d3e8fe14130d88b886c03ec1323a3b5d7df6cd413581c1ec0",
           "path": "opscat-0.2.0/app/p144_provider_adapter_cli.py",
           "size": 2459
+        },
+        {
+          "hash": "sha256:a32fd10ee599878d5b97f1d24441e86496a0fd398f959e2146245855a33ebcdb",
+          "path": "opscat-0.2.0/app/p145_response_duty_cli.py",
+          "size": 4173
         },
         {
           "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
@@ -3339,7 +3364,7 @@
           "size": 30064
         },
         {
-          "hash": "sha256:4446b58db53ab38d5233bb7b5c55516bdac0425bc8dce1c97088c826256aed95",
+          "hash": "sha256:f158c9dd175db08eb903f773c168d4b89ec85b8edf67d14536b1d52da924f4eb",
           "path": "opscat-0.2.0/app/services/p139_local_triage_service.py",
           "size": 65471
         },
@@ -3359,7 +3384,7 @@
           "size": 25059
         },
         {
-          "hash": "sha256:9c4ef87eda93035efae17c8fed4c270fb7797bfc07ac555ba6844e78f28e225f",
+          "hash": "sha256:1c4f78a6ffc3efe9b07bc68892f7c4c9f849bee13f681899d7ce0db504f54be8",
           "path": "opscat-0.2.0/app/services/p140_release_evidence.py",
           "size": 11460
         },
@@ -3374,7 +3399,7 @@
           "size": 45196
         },
         {
-          "hash": "sha256:20462b0402e3dc093e75bd00515e5432641c94afc74eec7dcbf05f1cdf3934a0",
+          "hash": "sha256:9f77ed11d58271214e3a0952d5d4042da366789e338b7976859f35ceb86e5a12",
           "path": "opscat-0.2.0/app/services/p141_release_evidence.py",
           "size": 11490
         },
@@ -3389,7 +3414,7 @@
           "size": 71860
         },
         {
-          "hash": "sha256:1808598a0cc2cb5258e32e06cc3051707cb34b25097a394f73348ec7132e41e4",
+          "hash": "sha256:dad7397b3f5de5d29ea90d3fea88b88ded15c0a103682ba3de1875a0aa0ac6f4",
           "path": "opscat-0.2.0/app/services/p142_release_evidence.py",
           "size": 12444
         },
@@ -3399,7 +3424,7 @@
           "size": 22038
         },
         {
-          "hash": "sha256:4dc2e2d8b3cb926aa46c8405064afb478bca4d7647d680850b83da1de9f73d4c",
+          "hash": "sha256:660d14cf8a44a37fbd1d6d96fc81cbf84f42020ac48c38344b949242d39b0516",
           "path": "opscat-0.2.0/app/services/p143_egress_contract_lab.py",
           "size": 78300
         },
@@ -3414,7 +3439,7 @@
           "size": 20292
         },
         {
-          "hash": "sha256:46f5c74b980613ef0642bdb2fa7a142860eb96773231a8382d155948b9b26cc5",
+          "hash": "sha256:bdc0a745e1678f9ea0f819875a8a50cc64ae445f25e116ebeabdb28bf813d863",
           "path": "opscat-0.2.0/app/services/p144_provider_adapter_lab.py",
           "size": 87543
         },
@@ -3427,6 +3452,21 @@
           "hash": "sha256:63157ced3912fc114bc713c1e41e5a50e57d1d57abf77cec29a24bdc775266e6",
           "path": "opscat-0.2.0/app/services/p144_runner.py",
           "size": 21917
+        },
+        {
+          "hash": "sha256:052e34bdbae237215b85f4a060100aa3e4bc07e2653075a69715e1fbafb23da6",
+          "path": "opscat-0.2.0/app/services/p145_release_evidence.py",
+          "size": 16214
+        },
+        {
+          "hash": "sha256:5fdccbaed1862308e7b50eb680a7dec4e77461fd837385d9553b2592c5aa4d6a",
+          "path": "opscat-0.2.0/app/services/p145_response_duty_officer.py",
+          "size": 120762
+        },
+        {
+          "hash": "sha256:e047be1829a743790e6684e070ac0ba86f35757dd00c0a51aa2e1b39e211a2e9",
+          "path": "opscat-0.2.0/app/services/p145_runner.py",
+          "size": 26257
         },
         {
           "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -3874,9 +3914,9 @@
           "size": 50316
         },
         {
-          "hash": "sha256:8c4e9cc2e3de100d5e40ef378e8893c5181948be7ddd0372a7ca6c878f701906",
+          "hash": "sha256:ffe0d751540d2604d4866eff9cc83874e2477d96a762ea3d978f4d0cffac272c",
           "path": "opscat-0.2.0/opscat.egg-info/SOURCES.txt",
-          "size": 32904
+          "size": 33146
         },
         {
           "hash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
@@ -3884,9 +3924,9 @@
           "size": 1
         },
         {
-          "hash": "sha256:b982536c752cee09bb59b1d456e5c539f31d7abb6625aafc1197239c05e228da",
+          "hash": "sha256:6da0f0dde4d8f4ed6b19b824cd49a597aad675d8f841b8fd8fb9918c3fe51592",
           "path": "opscat-0.2.0/opscat.egg-info/entry_points.txt",
-          "size": 428
+          "size": 491
         },
         {
           "hash": "sha256:4d778a5b631b11ab234f96cdb9eccf13db8ed383a47ce4a54e13fc21393365f8",
@@ -3899,9 +3939,9 @@
           "size": 4
         },
         {
-          "hash": "sha256:2ce699a641ddb7df627217479aef88226ff3dba53845f8a2de7e9ebde60c1ce1",
+          "hash": "sha256:c22d8e03f3d2e576dc05b6854c6c16afab9c14293aff4e76e6cfae330ac8752b",
           "path": "opscat-0.2.0/pyproject.toml",
-          "size": 1993
+          "size": 2058
         },
         {
           "hash": "sha256:1c473cbaee8da5fc46e7f0158794af5cea4414c34a3cf3f180c2001f5e38bd3e",
@@ -5149,9 +5189,9 @@
           "size": 973
         },
         {
-          "hash": "sha256:6411a724b3993157847c923666fb8cf79c27a115c1cc257b285c2efe641446e6",
+          "hash": "sha256:74e7fb548010bcd7e45f4621b5549ebff06b6791ac39ca5de81eaae8a07c1b45",
           "path": "opscat-0.2.0/tests/test_p122_security_gate.py",
-          "size": 8731
+          "size": 9038
         },
         {
           "hash": "sha256:33f37ddb6f515c196fcfe186610c97b1405be2752ec05bc671265693f66b46e7",
@@ -5444,7 +5484,7 @@
           "size": 50112
         },
         {
-          "hash": "sha256:61ac6b8669cbc13d84385409628c218cd65ec56f87591dd3f58348cd4f446f57",
+          "hash": "sha256:a9ca6146afb4e160d6d6623346f746e6aad0a326b3a1966f9e6e04bb358d4d54",
           "path": "opscat-0.2.0/tests/test_p143_release_evidence.py",
           "size": 10137
         },
@@ -5464,7 +5504,7 @@
           "size": 43076
         },
         {
-          "hash": "sha256:d20cfd9c356199db4ded65556322b5b2a399c13b7f9d9c6d1b535ea9ad2593d2",
+          "hash": "sha256:d6dbff19a7dafe0222483ae771d17508f2c89ba75252380f4d5fcdc127211cf7",
           "path": "opscat-0.2.0/tests/test_p144_release_evidence.py",
           "size": 11430
         },
@@ -5472,6 +5512,21 @@
           "hash": "sha256:f6d01c82bddbdafd18545a735e4be0ec82d46eb179983b8a495311a3947221fd",
           "path": "opscat-0.2.0/tests/test_p144_runner.py",
           "size": 4719
+        },
+        {
+          "hash": "sha256:2587de0902751ebed0f2febd3d71e383581ca337d0a99628028bfb44b0171b08",
+          "path": "opscat-0.2.0/tests/test_p145_release_evidence.py",
+          "size": 6497
+        },
+        {
+          "hash": "sha256:9cdff1d21d8e0e612cb18ddabe4d9edd66f7b68c2606e0d2d16068a609a28409",
+          "path": "opscat-0.2.0/tests/test_p145_response_duty_officer.py",
+          "size": 54210
+        },
+        {
+          "hash": "sha256:9760be819fb43c602ed674ef6ad44d9539c6357f6c81adb489b79925ef8dac2a",
+          "path": "opscat-0.2.0/tests/test_p145_runner.py",
+          "size": 7590
         },
         {
           "hash": "sha256:a2999b3a104e39772d100e052d82db36fb156cf16211ea7d3ade257ce4fa194e",
@@ -6526,10 +6581,10 @@
       ],
       "path": "dist/opscat-0.2.0.tar.gz",
       "readable": true,
-      "size": 1730037
+      "size": 1774123
     }
   ],
-  "archive_inventory_hash": "sha256:20213001e32a1144b0eddd6fbe71c74dfd0424fc2ab2dfe0fe285117e4c6a334",
+  "archive_inventory_hash": "sha256:57bcecff7a76df7d2dfb840aa6e98caab059372d69a6786be93088b877253141",
   "artifacts": {
     "license_inventory": "evals/p122/license-inventory.json",
     "sbom": "evals/p122/sbom.json",
@@ -6545,10 +6600,10 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:755a0fb9e13f5f02ece9eb010e4c6754bbc263df10dd2f09a461753bd6c7e170",
+  "report_hash": "sha256:a78688ac47ed024013494ad1a8948a2ece6f91840f035ad251b8303731823414",
   "root": ".",
-  "root_binding_hash": "sha256:92859f6e4cb0dd94bc6c6d4ba3fd298979c59191ea8ac2711d76dc81a328543b",
-  "scanned_file_count": 2642,
+  "root_binding_hash": "sha256:5e2d27ff510769b05a94d814c70805ca115d6a899fc07f493a4baf5b59311a4a",
+  "scanned_file_count": 2703,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
   "source_inventory": [
@@ -6946,6 +7001,11 @@
       "hash": "sha256:20b4a2739a7d3e4d3e8fe14130d88b886c03ec1323a3b5d7df6cd413581c1ec0",
       "path": "app/p144_provider_adapter_cli.py",
       "size": 2459
+    },
+    {
+      "hash": "sha256:a32fd10ee599878d5b97f1d24441e86496a0fd398f959e2146245855a33ebcdb",
+      "path": "app/p145_response_duty_cli.py",
+      "size": 4173
     },
     {
       "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
@@ -8063,7 +8123,7 @@
       "size": 30064
     },
     {
-      "hash": "sha256:4446b58db53ab38d5233bb7b5c55516bdac0425bc8dce1c97088c826256aed95",
+      "hash": "sha256:f158c9dd175db08eb903f773c168d4b89ec85b8edf67d14536b1d52da924f4eb",
       "path": "app/services/p139_local_triage_service.py",
       "size": 65471
     },
@@ -8083,7 +8143,7 @@
       "size": 25059
     },
     {
-      "hash": "sha256:9c4ef87eda93035efae17c8fed4c270fb7797bfc07ac555ba6844e78f28e225f",
+      "hash": "sha256:1c4f78a6ffc3efe9b07bc68892f7c4c9f849bee13f681899d7ce0db504f54be8",
       "path": "app/services/p140_release_evidence.py",
       "size": 11460
     },
@@ -8098,7 +8158,7 @@
       "size": 45196
     },
     {
-      "hash": "sha256:20462b0402e3dc093e75bd00515e5432641c94afc74eec7dcbf05f1cdf3934a0",
+      "hash": "sha256:9f77ed11d58271214e3a0952d5d4042da366789e338b7976859f35ceb86e5a12",
       "path": "app/services/p141_release_evidence.py",
       "size": 11490
     },
@@ -8113,7 +8173,7 @@
       "size": 71860
     },
     {
-      "hash": "sha256:1808598a0cc2cb5258e32e06cc3051707cb34b25097a394f73348ec7132e41e4",
+      "hash": "sha256:dad7397b3f5de5d29ea90d3fea88b88ded15c0a103682ba3de1875a0aa0ac6f4",
       "path": "app/services/p142_release_evidence.py",
       "size": 12444
     },
@@ -8123,7 +8183,7 @@
       "size": 22038
     },
     {
-      "hash": "sha256:4dc2e2d8b3cb926aa46c8405064afb478bca4d7647d680850b83da1de9f73d4c",
+      "hash": "sha256:660d14cf8a44a37fbd1d6d96fc81cbf84f42020ac48c38344b949242d39b0516",
       "path": "app/services/p143_egress_contract_lab.py",
       "size": 78300
     },
@@ -8138,7 +8198,7 @@
       "size": 20292
     },
     {
-      "hash": "sha256:46f5c74b980613ef0642bdb2fa7a142860eb96773231a8382d155948b9b26cc5",
+      "hash": "sha256:bdc0a745e1678f9ea0f819875a8a50cc64ae445f25e116ebeabdb28bf813d863",
       "path": "app/services/p144_provider_adapter_lab.py",
       "size": 87543
     },
@@ -8151,6 +8211,21 @@
       "hash": "sha256:63157ced3912fc114bc713c1e41e5a50e57d1d57abf77cec29a24bdc775266e6",
       "path": "app/services/p144_runner.py",
       "size": 21917
+    },
+    {
+      "hash": "sha256:052e34bdbae237215b85f4a060100aa3e4bc07e2653075a69715e1fbafb23da6",
+      "path": "app/services/p145_release_evidence.py",
+      "size": 16214
+    },
+    {
+      "hash": "sha256:5fdccbaed1862308e7b50eb680a7dec4e77461fd837385d9553b2592c5aa4d6a",
+      "path": "app/services/p145_response_duty_officer.py",
+      "size": 120762
+    },
+    {
+      "hash": "sha256:e047be1829a743790e6684e070ac0ba86f35757dd00c0a51aa2e1b39e211a2e9",
+      "path": "app/services/p145_runner.py",
+      "size": 26257
     },
     {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
@@ -9726,6 +9801,16 @@
       "hash": "sha256:7266e0546023b69b34fab6b9c548316e546f71a9001cd2be71e7caa9aa60969f",
       "path": "docs/operations/p144-test-spec.md",
       "size": 15414
+    },
+    {
+      "hash": "sha256:156a63ac61077dfebb125988e30090334b1a9b033ddfda6c292cd488354aa11b",
+      "path": "docs/operations/p145-implementation-review.md",
+      "size": 3454
+    },
+    {
+      "hash": "sha256:d59b48335c6c265ca2d723aae6a739252eabab5db2438a03de428bd496a851e8",
+      "path": "docs/operations/p145-plan-review.md",
+      "size": 4492
     },
     {
       "hash": "sha256:72274365b622629154b4347ea3caff48bb4672076287c72165c19b01aeab8050",
@@ -14573,6 +14658,11 @@
       "size": 10148
     },
     {
+      "hash": "sha256:66f4fd5f27d7dd93a1bb6a1411068a35a592e6a583e5b6799f2c72bdcd31dfea",
+      "path": "evals/p145/input/response-duty-profile.json",
+      "size": 16203
+    },
+    {
       "hash": "sha256:0d4e9f692dbf5901371abbdc09c390f7751e4e75a2e91b8d803f24d96bb0974f",
       "path": "evals/planning/p66_autonomous_day_loop_backlog.json",
       "size": 4974
@@ -15978,9 +16068,9 @@
       "size": 4045
     },
     {
-      "hash": "sha256:2ce699a641ddb7df627217479aef88226ff3dba53845f8a2de7e9ebde60c1ce1",
+      "hash": "sha256:c22d8e03f3d2e576dc05b6854c6c16afab9c14293aff4e76e6cfae330ac8752b",
       "path": "pyproject.toml",
-      "size": 1993
+      "size": 2058
     },
     {
       "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -16708,6 +16798,11 @@
       "size": 4130
     },
     {
+      "hash": "sha256:020e8f72edcf1fc45a271603aa93158b4a4147ca1cb636d1764c2672afc3a474",
+      "path": "scripts/run_p145_response_duty_officer.py",
+      "size": 137
+    },
+    {
       "hash": "sha256:845eb4d1f36b8d14648cf20a23a9300dc75c17118dbd6fc9b9d068bf4f1fca28",
       "path": "scripts/run_portfolio_demo_pack.py",
       "size": 1264
@@ -16968,9 +17063,9 @@
       "size": 1047
     },
     {
-      "hash": "sha256:a4335516a988225bf4a5dd97a2f6546d77dca035d9ab33c501511b43e304fea8",
+      "hash": "sha256:bb56ac49573071d0b35d0ab8802df416a0352e2cc89e9341d572b8a20589b339",
       "path": "scripts/verify.sh",
-      "size": 123587
+      "size": 125129
     },
     {
       "hash": "sha256:ac7c3ef7b2da5eb2587932bd07607ab9a2d911497e7d2175a9128334b2c24b59",
@@ -17141,6 +17236,256 @@
       "hash": "sha256:733453ecec2e109e933f90e9f2878e93f0e939e81397671bb9c8b0bf7605a859",
       "path": "tests/fixtures/p144/builders.py",
       "size": 5346
+    },
+    {
+      "hash": "sha256:59af733a495751ac8b8bfeabf292df170155d428bbda04a744fdfab3b3cb3d68",
+      "path": "tests/fixtures/p145/__init__.py",
+      "size": 28
+    },
+    {
+      "hash": "sha256:f7fdd7187cf8b8b5a654e13ed336fbfd58b322405572aaba191f47e9633adb84",
+      "path": "tests/fixtures/p145/builders.py",
+      "size": 11092
+    },
+    {
+      "hash": "sha256:3b33e09e2c7cd4f9b1e9adfaebbea14921d8115ca3a1a472d75e3c9b2c78c22b",
+      "path": "tests/fixtures/p145/cases/P145-CASE-01.json",
+      "size": 6566
+    },
+    {
+      "hash": "sha256:04241bf13c1bb4be5c201f621c1299d325cc35e63d256432fd2b2e106d9c45e6",
+      "path": "tests/fixtures/p145/cases/P145-CASE-02.json",
+      "size": 6575
+    },
+    {
+      "hash": "sha256:c9e716a076f4c59868ac9cd4f6638f547c752233db53f1d04d98604a03e67882",
+      "path": "tests/fixtures/p145/cases/P145-CASE-03.json",
+      "size": 6544
+    },
+    {
+      "hash": "sha256:8274afe34a560a6d657999f3ded75f18674d057dd0562590d1c9da8bc88918c0",
+      "path": "tests/fixtures/p145/cases/P145-CASE-04.json",
+      "size": 6628
+    },
+    {
+      "hash": "sha256:0837dbb64dbf84440e72f26612fae756a493967114a7a00bbed149102d8c8fb6",
+      "path": "tests/fixtures/p145/cases/P145-CASE-05.json",
+      "size": 6468
+    },
+    {
+      "hash": "sha256:2330e3239298bb93d324f72582775dc23947eca15524c51af7ecfc39e3b0fbe6",
+      "path": "tests/fixtures/p145/cases/P145-CASE-06.json",
+      "size": 6433
+    },
+    {
+      "hash": "sha256:bcad1a7d4d76d6f24d7416b5bcbbbd74269e04bb3c76ce6a27985b488e53a433",
+      "path": "tests/fixtures/p145/cases/P145-CASE-07.json",
+      "size": 6409
+    },
+    {
+      "hash": "sha256:ba6a5091229d87c7afc9c33900ec2da72f32e3323a442307af36442f6fe7fbe5",
+      "path": "tests/fixtures/p145/cases/P145-CASE-08.json",
+      "size": 6419
+    },
+    {
+      "hash": "sha256:494bc9ddff67d4b4267955719f16d366d982b7d5cd5aee64f8c6e2d96cf94369",
+      "path": "tests/fixtures/p145/cases/P145-CASE-09.json",
+      "size": 6441
+    },
+    {
+      "hash": "sha256:b316dc1960a8a0757d3311bbe80d42befab0eb66985110433e90d12bc33851b3",
+      "path": "tests/fixtures/p145/cases/P145-CASE-10.json",
+      "size": 6537
+    },
+    {
+      "hash": "sha256:7639824fc8449b26d9186a020c0efc6bd9b66100f07c36fe86c1668c4d96b2a5",
+      "path": "tests/fixtures/p145/cases/P145-CASE-11.json",
+      "size": 6594
+    },
+    {
+      "hash": "sha256:1c3fc52925aaea0d6398acfebdc774e2e19403bc214900d8270e3dc508893085",
+      "path": "tests/fixtures/p145/cases/P145-CASE-12.json",
+      "size": 6459
+    },
+    {
+      "hash": "sha256:e50541be0392fb078cb6327304a2da8ed454e538f4be79a1287982851b4be8f3",
+      "path": "tests/fixtures/p145/cases/P145-CASE-13.json",
+      "size": 6624
+    },
+    {
+      "hash": "sha256:ee4b76c3e669710b4e0375bf302bab8d824facb71cec15ee5292e73cb0882f38",
+      "path": "tests/fixtures/p145/cases/P145-CASE-14.json",
+      "size": 6606
+    },
+    {
+      "hash": "sha256:991ddcc9831ff62203b01536279d8a5ad6ad2c60db10efaa106313dd7b8ab1ea",
+      "path": "tests/fixtures/p145/cases/P145-CASE-15.json",
+      "size": 6541
+    },
+    {
+      "hash": "sha256:e056540adf525ced8a00cec0d83eb4a274656ceca933fcbd6b4a3240f53e8b1c",
+      "path": "tests/fixtures/p145/cases/P145-CASE-16.json",
+      "size": 6439
+    },
+    {
+      "hash": "sha256:6b61715ed829068b3138f53881f9af9815365c29e2c818b68e6b5ff593c583e2",
+      "path": "tests/fixtures/p145/cases/P145-CASE-17.json",
+      "size": 6421
+    },
+    {
+      "hash": "sha256:b066bf0f659852e26270572ccaf8aa5d0bbe00e736054649b00d7038994ce59a",
+      "path": "tests/fixtures/p145/cases/P145-CASE-18.json",
+      "size": 6603
+    },
+    {
+      "hash": "sha256:d5f48202cd171135e5bdb884042987323491104502f06acbc3f9a9ec147dd7ee",
+      "path": "tests/fixtures/p145/cases/P145-CASE-19.json",
+      "size": 6599
+    },
+    {
+      "hash": "sha256:8406371da528dd5f47c11c8985c913052ba93e1c81799bb7a0105409a27c1365",
+      "path": "tests/fixtures/p145/cases/P145-CASE-20.json",
+      "size": 6294
+    },
+    {
+      "hash": "sha256:c691d035c4a2de1bb52c0d256d1b9ab92906643e8a49d64da46160ebfa882a35",
+      "path": "tests/fixtures/p145/cases/P145-CASE-21.json",
+      "size": 6331
+    },
+    {
+      "hash": "sha256:93d19f597e60d12acd24bd88aab7d504de223e01fa5794ba9af4a75f5c4d9a50",
+      "path": "tests/fixtures/p145/cases/P145-CASE-22.json",
+      "size": 6326
+    },
+    {
+      "hash": "sha256:9afb1968fb25ff3d40b3db32418e76dbde18c2ceef0f588490a1613eccd0af9a",
+      "path": "tests/fixtures/p145/cases/P145-CASE-23.json",
+      "size": 6295
+    },
+    {
+      "hash": "sha256:ed1c5a684c35431300e0eadd38c6cfe0e4211e304f8e3ecbdf4b0c8b387fb310",
+      "path": "tests/fixtures/p145/cases/P145-CASE-24.json",
+      "size": 6341
+    },
+    {
+      "hash": "sha256:6c7117bb91c50c8cac5bcee738c3c1c6642a97701e68e35368355048265fbef1",
+      "path": "tests/fixtures/p145/cases/P145-CASE-25.json",
+      "size": 6594
+    },
+    {
+      "hash": "sha256:5c71770d0a699f393e1f50b65cec9b5cc81b440179360216a8921db7ce63aa86",
+      "path": "tests/fixtures/p145/cases/P145-CASE-26.json",
+      "size": 6550
+    },
+    {
+      "hash": "sha256:e0ad9f22902cccc7a76702ffd39588367e2d87ace69a864e29438edb90d52571",
+      "path": "tests/fixtures/p145/cases/P145-CASE-27.json",
+      "size": 6625
+    },
+    {
+      "hash": "sha256:9f0087f6e2869b5b45172525a6c15741b9e302ae86e3dc87c2dd9c70aa54fcc1",
+      "path": "tests/fixtures/p145/cases/P145-CASE-28.json",
+      "size": 6606
+    },
+    {
+      "hash": "sha256:30cebdf3235c8c8e7e31fb5610cff2fcba8ca9d3e56826bf81c5a210092f59dc",
+      "path": "tests/fixtures/p145/cases/P145-CASE-29.json",
+      "size": 6600
+    },
+    {
+      "hash": "sha256:33fb644d55152c7b41c898348b908b99f153c87305428e68433f03ed9d2c908b",
+      "path": "tests/fixtures/p145/cases/P145-CASE-30.json",
+      "size": 6564
+    },
+    {
+      "hash": "sha256:d087910983f34b4fba88fad4f4da34cb2120aaf62e6fc72d9537c7f234e27939",
+      "path": "tests/fixtures/p145/cases/P145-CASE-31.json",
+      "size": 6572
+    },
+    {
+      "hash": "sha256:a2737baf893f38a5b247ed57542cac7a489935d494219c1ce286ede62fa09373",
+      "path": "tests/fixtures/p145/cases/P145-CASE-32.json",
+      "size": 6611
+    },
+    {
+      "hash": "sha256:3087d5104b5e5896d5ce7b488d9d5db35169ee3b35a724726702c34bcbb1436a",
+      "path": "tests/fixtures/p145/cases/P145-CASE-33.json",
+      "size": 6604
+    },
+    {
+      "hash": "sha256:928a128b6683f72e9480cdfaee21a0d09ba4b78bd63649e3d10e366e08911ed9",
+      "path": "tests/fixtures/p145/cases/P145-CASE-34.json",
+      "size": 6631
+    },
+    {
+      "hash": "sha256:1616f797511de91506125da6895185ac7f5e1c2a33b913b61b38c86773d2b6fa",
+      "path": "tests/fixtures/p145/cases/P145-CASE-35.json",
+      "size": 6610
+    },
+    {
+      "hash": "sha256:04618b708ce84d87b6f7f4b96c14a9b2147dfaa1629bf5cf33999dfb8cba9631",
+      "path": "tests/fixtures/p145/cases/P145-CASE-36.json",
+      "size": 6656
+    },
+    {
+      "hash": "sha256:93d85f40ae1feb7ab9d4e453315157839ccbead8200019a75d6ffb39fc6cf25e",
+      "path": "tests/fixtures/p145/cases/P145-CASE-37.json",
+      "size": 6576
+    },
+    {
+      "hash": "sha256:31b01a67e8523ae99725e2d1ec7e53db0a805da4e02742e6a0f8ec846791376b",
+      "path": "tests/fixtures/p145/cases/P145-CASE-38.json",
+      "size": 6637
+    },
+    {
+      "hash": "sha256:7167d65c4dbf49aba293bbe4fc2278cbd028e773b74a580a58b4d64f8c79a9d9",
+      "path": "tests/fixtures/p145/cases/P145-CASE-39.json",
+      "size": 6659
+    },
+    {
+      "hash": "sha256:0454fb4bbbbd9e548466e44600e0999545372c5641f528fd8db438e9ba2966c8",
+      "path": "tests/fixtures/p145/cases/P145-CASE-40.json",
+      "size": 6613
+    },
+    {
+      "hash": "sha256:282aab899a176e0add46c2ca7f1e0379a1db01991b427d70ddd6770ae8e13729",
+      "path": "tests/fixtures/p145/cases/P145-CASE-41.json",
+      "size": 6655
+    },
+    {
+      "hash": "sha256:d74a76de1f699d1d54297fc46a91ca9460ee471b4ce7c742fc7e0350c657cd5e",
+      "path": "tests/fixtures/p145/cases/P145-CASE-42.json",
+      "size": 6462
+    },
+    {
+      "hash": "sha256:661a565c63b3ab97e7f7b994bf23f3b159da3178f15450f12e2ef48258fca6d6",
+      "path": "tests/fixtures/p145/cases/P145-CASE-43.json",
+      "size": 6512
+    },
+    {
+      "hash": "sha256:c78c816c709de7da5d1f3a5de3f195061418709f62b9fd68a18f421dd9acd643",
+      "path": "tests/fixtures/p145/cases/P145-CASE-44.json",
+      "size": 6606
+    },
+    {
+      "hash": "sha256:f4dc01b1e94c691117535c55cec87e8c5e0074fa2ebb4d4834bac4483bfaf2eb",
+      "path": "tests/fixtures/p145/cases/P145-CASE-45.json",
+      "size": 7228
+    },
+    {
+      "hash": "sha256:bc334c3122737e276e1bb4a693bd009997c431c5261c6b40d60fdd09b73b9163",
+      "path": "tests/fixtures/p145/cases/P145-CASE-46.json",
+      "size": 6357
+    },
+    {
+      "hash": "sha256:5e0462c1261e5ca80546a0a229069dbe5ae649d15410354e932e01dd6c4fceae",
+      "path": "tests/fixtures/p145/cases/P145-CASE-47.json",
+      "size": 6381
+    },
+    {
+      "hash": "sha256:ba604b53c9228ad06a45fad1e4c30dbbf1f01cfbacead07aa52b8e06a00798ae",
+      "path": "tests/fixtures/p145/cases/P145-CASE-48.json",
+      "size": 6329
     },
     {
       "hash": "sha256:118e31b09b9759186a0bf271eb3f795f82ad0e2eb67c4099cbed09a77e0137c3",
@@ -18383,9 +18728,9 @@
       "size": 973
     },
     {
-      "hash": "sha256:6411a724b3993157847c923666fb8cf79c27a115c1cc257b285c2efe641446e6",
+      "hash": "sha256:74e7fb548010bcd7e45f4621b5549ebff06b6791ac39ca5de81eaae8a07c1b45",
       "path": "tests/test_p122_security_gate.py",
-      "size": 8731
+      "size": 9038
     },
     {
       "hash": "sha256:33f37ddb6f515c196fcfe186610c97b1405be2752ec05bc671265693f66b46e7",
@@ -18678,7 +19023,7 @@
       "size": 50112
     },
     {
-      "hash": "sha256:61ac6b8669cbc13d84385409628c218cd65ec56f87591dd3f58348cd4f446f57",
+      "hash": "sha256:a9ca6146afb4e160d6d6623346f746e6aad0a326b3a1966f9e6e04bb358d4d54",
       "path": "tests/test_p143_release_evidence.py",
       "size": 10137
     },
@@ -18698,7 +19043,7 @@
       "size": 43076
     },
     {
-      "hash": "sha256:d20cfd9c356199db4ded65556322b5b2a399c13b7f9d9c6d1b535ea9ad2593d2",
+      "hash": "sha256:d6dbff19a7dafe0222483ae771d17508f2c89ba75252380f4d5fcdc127211cf7",
       "path": "tests/test_p144_release_evidence.py",
       "size": 11430
     },
@@ -18706,6 +19051,21 @@
       "hash": "sha256:f6d01c82bddbdafd18545a735e4be0ec82d46eb179983b8a495311a3947221fd",
       "path": "tests/test_p144_runner.py",
       "size": 4719
+    },
+    {
+      "hash": "sha256:2587de0902751ebed0f2febd3d71e383581ca337d0a99628028bfb44b0171b08",
+      "path": "tests/test_p145_release_evidence.py",
+      "size": 6497
+    },
+    {
+      "hash": "sha256:9cdff1d21d8e0e612cb18ddabe4d9edd66f7b68c2606e0d2d16068a609a28409",
+      "path": "tests/test_p145_response_duty_officer.py",
+      "size": 54210
+    },
+    {
+      "hash": "sha256:9760be819fb43c602ed674ef6ad44d9539c6357f6c81adb489b79925ef8dac2a",
+      "path": "tests/test_p145_runner.py",
+      "size": 7590
     },
     {
       "hash": "sha256:a2999b3a104e39772d100e052d82db36fb156cf16211ea7d3ade257ce4fa194e",
@@ -19763,6 +20123,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:70075f3a9c5f0254ab888d22d9b62d9dcc3850ef5fcfc639dacdb48546bb0cb7",
+  "source_inventory_hash": "sha256:0fe1876f00f6ab51217c4e84fab9a3b93f3f52081fdcba53b30345155824dbc4",
   "status": "pass"
 }

@@ -17,7 +17,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     -h|--help)
       cat <<'HELP'
-Usage: bash scripts/verify.sh [--profile fast|full|eval|docs|p107-release|...|p144-release]
+Usage: bash scripts/verify.sh [--profile fast|full|eval|docs|p107-release|...|p145-release]
 
 Profiles:
   fast  Compile, lint, typecheck, and pytest regression suite.
@@ -81,6 +81,8 @@ Profiles:
         Provider-neutral local egress contract lab, exact 52-case matrix, external independent review, and final source-bound release evidence.
   p144-release
         Numeric-loopback provider adapter conformance lab, exact 64-case matrix, and final source-bound release evidence.
+  p145-release
+        Local response duty officer, exact 48-case preliminary matrix, and independent-review-gated final evidence.
 HELP
       exit 0
       ;;
@@ -92,7 +94,7 @@ HELP
 done
 
 case "$VERIFY_PROFILE" in
-  fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release|p123-release|p124-release|p125-release|p126-release|p127-release|p128-release|p129-release|p130-release|p131-release|p132-release|p133-release|p134-release|p135-release|p136-release|p137-release|p138-release|p139-release|p140-release|p141-release|p142-release|p143-release|p144-release) ;;
+  fast|full|eval|docs|p107-release|p108-release|p109-release|p110-release|p111-release|p112-release|p113-release|p114-release|p115-release|p116-release|p117-release|p118-release|p119-release|p120-release|p121-release|p122-release|p123-release|p124-release|p125-release|p126-release|p127-release|p128-release|p129-release|p130-release|p131-release|p132-release|p133-release|p134-release|p135-release|p136-release|p137-release|p138-release|p139-release|p140-release|p141-release|p142-release|p143-release|p144-release|p145-release) ;;
   *)
     printf 'Unknown verify profile: %s\n' "$VERIFY_PROFILE" >&2
     exit 2
@@ -360,6 +362,11 @@ P144_RELEASE_PROFILE_TESTS=(
   tests/test_p144_provider_adapter_cli.py
   tests/test_p144_runner.py
   tests/test_p144_release_evidence.py
+)
+P145_RELEASE_PROFILE_TESTS=(
+  tests/test_p145_response_duty_officer.py
+  tests/test_p145_runner.py
+  tests/test_p145_release_evidence.py
 )
 VERIFY_TMPDIR="$(mktemp -d)"
 cleanup() {
@@ -1912,6 +1919,19 @@ p144_release_profile_tests() {
     --final-review evals/p144/final-implementation-review.json \
     --output-dir "$VERIFY_TMPDIR/p144-release"
 }
+p145_release_profile_tests() {
+  p144_release_profile_tests
+  phase_release_profile p145 "${P145_RELEASE_PROFILE_TESTS[@]}"
+  "${UV_DEV[@]}" ruff check app/p145_response_duty_cli.py app/services/p145_response_duty_officer.py app/services/p145_runner.py app/services/p145_release_evidence.py scripts/run_p145_response_duty_officer.py tests/fixtures/p145 tests/test_p145_response_duty_officer.py tests/test_p145_runner.py tests/test_p145_release_evidence.py
+  "${UV_DEV[@]}" mypy app/p145_response_duty_cli.py app/services/p145_response_duty_officer.py app/services/p145_runner.py app/services/p145_release_evidence.py scripts/run_p145_response_duty_officer.py tests/fixtures/p145 tests/test_p145_response_duty_officer.py tests/test_p145_runner.py tests/test_p145_release_evidence.py
+  "${UV_DEV[@]}" python scripts/run_p145_response_duty_officer.py \
+    --mode final \
+    --profile evals/p145/input/response-duty-profile.json \
+    --canonical-matrix evals/p145/output/canonical-matrix.json \
+    --freeze-manifest evals/p145/output/freeze-manifest.json \
+    --final-review evals/p145/final-implementation-review.json \
+    --output-dir "$VERIFY_TMPDIR/p145-release"
+}
 
 p108_prevention_learning_evidence_smoke() {
   section "P108 prevention learning evidence smoke"
@@ -2331,6 +2351,7 @@ run_p140_release() { p140_release_profile_tests; }
 run_p141_release() { p141_release_profile_tests; }
 run_p142_release() { p142_release_profile_tests; }
 run_p144_release() { p144_release_profile_tests; }
+run_p145_release() { p145_release_profile_tests; }
 
 run_full() {
   run_fast
@@ -2386,6 +2407,7 @@ case "$VERIFY_PROFILE" in
   p142-release) run_p142_release ;;
   p143-release) p143_release_profile_tests ;;
   p144-release) run_p144_release ;;
+  p145-release) run_p145_release ;;
   full) run_full ;;
 esac
 

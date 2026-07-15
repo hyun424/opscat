@@ -59,7 +59,7 @@ def test_final_evidence_binds_all_frozen_inputs_and_review() -> None:
     manifest = build_p143_freeze_manifest(project_root=ROOT, profile=p143_profile(), matrix=matrix)
     assert manifest["approved_plan_sha256"] == "sha256:220b75a4ee32871eed1c2b41b43bbd299c425ea330fc023b73ca5f891668099e"
     assert manifest["approved_test_spec_sha256"] == "sha256:5c7f32cfb563df023544792c0494c842fdc3f566e0725cf9322ccbf0117f19ab"
-    assert manifest["dependency_bindings"]["p142_evidence_hash"] == "sha256:ac3830fcad5a8919d98b53bcadd39679ad26f6b3ad0890d24e4616b8993d57e6"
+    assert manifest["dependency_bindings"]["p142_evidence_hash"] == "sha256:3e952653a335da77ca6ce5f9cc7d6dcb9b39299afc7324c016fe8446f5c7f8e6"
     preliminary = build_p143_preliminary_evidence(matrix, manifest)
     assert preliminary["status"] == P143_PRELIMINARY_STATUS
     assert preliminary["final_review_hash"] is None

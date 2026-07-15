@@ -137,6 +137,14 @@ def run(command: str) -> None:
     assert any(finding["rule_id"] == "static.arbitrary_subprocess_execution" for finding in report["findings"])
 
 
+def test_p145_selector_runner_has_no_arbitrary_subprocess_surface() -> None:
+    gate = load_gate()
+
+    findings = gate.scan_shell_incident_paths(ROOT, [ROOT / "app/services/p145_runner.py"])
+
+    assert not [finding for finding in findings if finding.rule_id == "static.arbitrary_subprocess_execution"]
+
+
 def test_generated_archives_normalize_app_paths_before_subprocess_scan(tmp_path: Path) -> None:
     gate = load_gate()
     dist = tmp_path / "dist"

@@ -63,8 +63,8 @@ def test_final_evidence_binds_freeze_review_dependencies_and_limitations() -> No
     assert preliminary["final_review_hash"] is None
     assert manifest["approved_plan_sha256"] == "sha256:592153aec6310429b4ddd728b25633d2553b07682513463d23641ed1fdd9e886"
     assert manifest["approved_test_spec_sha256"] == "sha256:7266e0546023b69b34fab6b9c548316e546f71a9001cd2be71e7caa9aa60969f"
-    assert manifest["dependency_bindings"]["p143_evidence_hash"] == "sha256:0a6aacb837e931858e78db82e41a8273b39d145070a4f95f4c67a0f4cbfe1a72"
-    assert manifest["dependency_bindings"]["p142_evidence_hash"] == "sha256:ac3830fcad5a8919d98b53bcadd39679ad26f6b3ad0890d24e4616b8993d57e6"
+    assert manifest["dependency_bindings"]["p143_evidence_hash"] == "sha256:a791376fe892fd9d31474e6cc007410687f2ece4da4eae096e23c0a6bfe0e1a8"
+    assert manifest["dependency_bindings"]["p142_evidence_hash"] == "sha256:3e952653a335da77ca6ce5f9cc7d6dcb9b39299afc7324c016fe8446f5c7f8e6"
     assert manifest["dependency_bindings"]["p133_dependency"] == {
         "p133_status": "p133_local_deadman_outbox_qualified",
         "p133_evidence_hash": "sha256:ba47502a7b82cea2521c581716801563f4ea31746cc243dfbbbd639707ffe73f",

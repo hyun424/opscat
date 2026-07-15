@@ -24,8 +24,8 @@ PROFILE_SCHEMA_VERSION = "p141.notification_authority_profile.v1"
 EXPECTED_P133_STATUS = "p133_local_deadman_outbox_qualified"
 EXPECTED_P133_HASH = "sha256:ba47502a7b82cea2521c581716801563f4ea31746cc243dfbbbd639707ffe73f"
 EXPECTED_P140_STATUS = "p140_p139_deadman_adapter_qualified"
-EXPECTED_P140_HASH = "sha256:2c503bb36d50467bfb5aae3a370804c3de4ade78f86a35c6ea4668f8d298d4f2"
-EXPECTED_P140_REVIEW_HASH = "sha256:a74b6fd3959f0278fdfa646cfad3f5657060f7bb2b93ee3616230257a7bc98b5"
+EXPECTED_P140_HASH = "sha256:c590518a868c8cbc0475eff6f8d4ac8a6fae4786a7c5eacecfeaa9432f09699f"
+EXPECTED_P140_REVIEW_HASH = "sha256:55797516f050956fc0368de34a2069a991ca47d89380fcb17f98f00d3241aabb"
 REQUIRED_LIMITATIONS = frozenset(
     {
         "local_simulated_notification_receipts_only_no_delivery",

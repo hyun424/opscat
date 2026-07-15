@@ -30,9 +30,9 @@ CURSOR_SCHEMA_VERSION = "p143.egress_cursor.v1"
 RUN_SCHEMA_VERSION = "p143.egress_run.v1"
 PROFILE_SCHEMA_VERSION = "p143.shadow_provider_profile.v1"
 EXPECTED_P142_STATUS = "p142_loopback_transport_lab_qualified"
-EXPECTED_P142_EVIDENCE_HASH = "sha256:82fd6e7e80a49adb2fe57e82d4f4cc5083f1413e4c7b36b13ed86032e24f75a7"
+EXPECTED_P142_EVIDENCE_HASH = "sha256:ac3830fcad5a8919d98b53bcadd39679ad26f6b3ad0890d24e4616b8993d57e6"
 EXPECTED_P141_STATUS = "p141_notification_authority_simulator_qualified"
-EXPECTED_P141_EVIDENCE_HASH = "sha256:2fc165abaf0cd8929cf66a6e2f3904e0585b9c8239af4c740c7482e4c16d475a"
+EXPECTED_P141_EVIDENCE_HASH = "sha256:16f03f2d85b1b38dbf761c9ca1eae8fba2aea42b67f6a8bb7d1406f905a53aab"
 
 FORBIDDEN_COUNTER_KEYS: tuple[str, ...] = (
     "credential_read_count",

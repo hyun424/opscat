@@ -13,6 +13,7 @@ import pytest
 
 from tests.fixtures.p146.builders import (
     EVALUATOR_COUNTER_KEYS,
+    FAULT_CATEGORIES,
     FORBIDDEN_COUNTER_KEYS,
     P146_CLOSED_CATEGORIES,
     RESOURCE_COUNTER_KEYS,
@@ -23,6 +24,81 @@ from tests.fixtures.p146.builders import (
     expected_denominators,
     semantic_rebind_case,
 )
+
+APPENDIX_C_EDGES: dict[str, tuple[tuple[str, str, int], tuple[str, str, int], tuple[str, str, int]]] = {
+    "deploy_regression": (
+        ("m.deploy.error", "error_rate_bps", 1500),
+        ("l.deploy.marker", "release_change", 5000),
+        ("t.deploy.handler", "http.handler", 2500),
+    ),
+    "db_pool_exhaustion": (
+        ("m.pool.saturation", "db_pool_saturation_bps", 5000),
+        ("l.pool.timeout", "pool_timeout", 3000),
+        ("t.pool.wait", "db.pool.wait", 1500),
+    ),
+    "downstream_timeout": (
+        ("m.dependency.timeout", "dependency_timeout_bps", 5000),
+        ("l.dependency.timeout", "upstream_timeout", 3000),
+        ("t.peer.error", "http.client", 1500),
+    ),
+    "queue_backlog": (
+        ("m.queue.depth", "queue_depth", 5000),
+        ("l.queue.lag", "consumer_lag", 3000),
+        ("t.queue.receive", "queue.receive", 1500),
+    ),
+    "cpu_saturation": (
+        ("m.cpu.high", "cpu_usage_bps", 5000),
+        ("l.cpu.throttle", "cpu_throttled", 3000),
+        ("t.cpu.compute", "compute.hot_loop", 1500),
+    ),
+    "memory_pressure": (
+        ("m.memory.high", "memory_usage_bps", 5000),
+        ("l.memory.oom", "oom_warning", 3000),
+        ("t.memory.alloc", "allocator.pressure", 1500),
+    ),
+    "retry_storm": (
+        ("m.retry.rate", "retry_rate_bps", 5000),
+        ("l.retry.storm", "retry_storm", 3000),
+        ("t.retry.children", "http.retry", 1500),
+    ),
+    "slow_query": (
+        ("m.db.slow", "db_query_p95_ms", 5000),
+        ("l.db.slow", "slow_query", 3000),
+        ("t.db.slow", "db.query", 1500),
+    ),
+}
+
+APPENDIX_C_THRESHOLDS = {
+    "error_rate_bps": 500,
+    "db_pool_saturation_bps": 9000,
+    "dependency_timeout_bps": 1000,
+    "queue_depth": 1000,
+    "cpu_usage_bps": 9000,
+    "memory_usage_bps": 9000,
+    "retry_rate_bps": 2000,
+    "db_query_p95_ms": 500,
+}
+
+
+def _refresh_visible_hashes(visible: dict[str, Any]) -> dict[str, Any]:
+    from app.services.p110_evaluation import stable_hash
+
+    if visible.get("traces") is not None:
+        visible["traces"]["response_hash"] = stable_hash(
+            {key: value for key, value in visible["traces"].items() if key != "response_hash"}
+        )
+    visible["visible_case_hash"] = stable_hash({key: value for key, value in visible.items() if key != "visible_case_hash"})
+    return visible
+
+
+def _artifact_snapshot(root: Path) -> dict[str, str]:
+    if not root.exists():
+        return {}
+    return {
+        str(path.relative_to(root)): "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(root.rglob("*"))
+        if path.is_file()
+    }
 
 
 def _normative_trace_payload() -> dict[str, Any]:
@@ -233,11 +309,24 @@ def test_trace_delta_validation_and_redaction() -> None:
     wrong_hash["response_hash"] = "sha256:" + "0" * 64
     with pytest.raises(P146LiveShadowError, match="trace|response_hash|hash"):
         validate_trace_response(wrong_hash)
+    forged_visible = copy.deepcopy(visible)
+    forged_visible["traces"]["response_hash"] = "sha256:" + "0" * 64
+    with pytest.raises(P146LiveShadowError, match="trace|response_hash|hash"):
+        canonicalize_visible_case(forged_visible)
     assert "raw" not in str(canonicalize_visible_case(visible)).lower()
     forged: Any = copy.deepcopy(trace)
     forged["resource_spans"][0]["spans"][0]["attributes"]["authorization"] = "secret-token"
     with pytest.raises(P146LiveShadowError, match="attribute|secret|schema"):
         validate_trace_response(forged)
+
+
+def test_live_shadow_episode_rejects_bad_trace_response_hash() -> None:
+    from app.services.p146_live_shadow import P146LiveShadowError, run_live_shadow_episode
+
+    forged_visible = copy.deepcopy(build_known_conformance_corpus()["visible_cases"][0])
+    forged_visible["traces"]["response_hash"] = "sha256:" + "0" * 64
+    with pytest.raises(P146LiveShadowError, match="trace|response_hash|hash"):
+        run_live_shadow_episode(forged_visible)
 
 
 def test_closed_lattice_ranks_complete_faults_and_abstains_on_gaps() -> None:
@@ -270,23 +359,73 @@ def test_closed_lattice_ranks_complete_faults_and_abstains_on_gaps() -> None:
 def test_appendix_c_lattice_uses_exact_edges_weights_and_tiebreaks() -> None:
     from app.services.p146_live_shadow import rank_hypotheses_for_visible_case
 
-    visible = build_known_conformance_corpus()["visible_cases"][0]
-    ranked = rank_hypotheses_for_visible_case(visible)["ranked_hypotheses"]
-    deploy = next(item for item in ranked if item["category"] == "deploy_regression")
-    assert deploy["score_bps"] == 9000
-    assert deploy["provider_count"] == 3
-    assert deploy["support_edges"] == ["m.deploy.error", "l.deploy.marker", "t.deploy.handler"]
-    assert deploy["contradiction_edges"] == []
+    corpus = build_known_conformance_corpus()
+    by_category = {category: next(item for item in corpus["visible_cases"] if item["case_id"] and item["loki"]["markers"][0] == edges[1][1]) for category, edges in APPENDIX_C_EDGES.items()}
+    for category, visible in by_category.items():
+        ranked = rank_hypotheses_for_visible_case(visible)["ranked_hypotheses"]
+        hypothesis = next(item for item in ranked if item["category"] == category)
+        expected_edges = [edge_id for edge_id, _signal, _weight in APPENDIX_C_EDGES[category]]
+        expected_score = sum(weight for _edge_id, _signal, weight in APPENDIX_C_EDGES[category])
+        assert hypothesis["score_bps"] == expected_score
+        assert hypothesis["provider_count"] == 3
+        assert hypothesis["support_edges"] == expected_edges
+        assert hypothesis["contradiction_edges"] == []
 
-    one_provider_tie = copy.deepcopy(visible)
-    one_provider_tie["prometheus"]["signals"] = {key: 0 for key in one_provider_tie["prometheus"]["signals"]}
-    one_provider_tie["prometheus"]["signals"]["cpu_usage_bps"] = 1000
-    one_provider_tie["prometheus"]["signals"]["memory_usage_bps"] = 1000
-    one_provider_tie["prometheus"]["signals"]["db_query_p95_ms"] = 30
-    one_provider_tie["loki"]["markers"] = ["release_change", "upstream_timeout"]
-    one_provider_tie["traces"]["resource_spans"][0]["spans"][0]["status"] = "ok"
-    ranked_tie = rank_hypotheses_for_visible_case(one_provider_tie)["ranked_hypotheses"]
+    healthy = next(item for item in corpus["visible_cases"] if item["loki"]["markers"] == ["steady_state"])
+    healthy_ranked = rank_hypotheses_for_visible_case(healthy)["ranked_hypotheses"]
+    healthy_hypothesis = next(item for item in healthy_ranked if item["category"] == "healthy")
+    assert healthy_hypothesis["score_bps"] == 9000
+    assert healthy_hypothesis["provider_count"] == 3
+    assert healthy_hypothesis["support_edges"] == ["m.healthy", "l.healthy", "t.healthy"]
+    for category in FAULT_CATEGORIES:
+        contradicted = next(item for item in healthy_ranked if item["category"] == category)
+        assert contradicted["score_bps"] == -12000
+        assert contradicted["contradiction_edges"] == ["m.healthy", "l.healthy", "t.healthy"]
+
+    boundary_base = copy.deepcopy(healthy)
+    boundary_base["traces"]["resource_spans"][0]["spans"][0]["status"] = "ok"
+    for category, edges in APPENDIX_C_EDGES.items():
+        metric_edge, signal, _weight = edges[0]
+        threshold = APPENDIX_C_THRESHOLDS[signal]
+        below = copy.deepcopy(boundary_base)
+        below["prometheus"]["signals"] = {key: 0 for key in below["prometheus"]["signals"]}
+        below["prometheus"]["signals"].update({"cpu_usage_bps": 1000, "memory_usage_bps": 1000, "db_query_p95_ms": 30})
+        below["prometheus"]["signals"][signal] = threshold - 1
+        below["loki"]["markers"] = ["steady_state"]
+        _refresh_visible_hashes(below)
+        below_hypothesis = next(item for item in rank_hypotheses_for_visible_case(below)["ranked_hypotheses"] if item["category"] == category)
+        assert metric_edge not in below_hypothesis["support_edges"]
+
+        at_threshold = copy.deepcopy(below)
+        at_threshold["prometheus"]["signals"][signal] = threshold
+        _refresh_visible_hashes(at_threshold)
+        at_hypothesis = next(item for item in rank_hypotheses_for_visible_case(at_threshold)["ranked_hypotheses"] if item["category"] == category)
+        assert metric_edge in at_hypothesis["support_edges"]
+
+    one_provider = copy.deepcopy(healthy)
+    one_provider["prometheus"]["signals"] = {key: 0 for key in one_provider["prometheus"]["signals"]}
+    one_provider["prometheus"]["signals"].update({"error_rate_bps": 500, "cpu_usage_bps": 1000, "memory_usage_bps": 1000, "db_query_p95_ms": 30})
+    one_provider["loki"]["markers"] = ["steady_state"]
+    _refresh_visible_hashes(one_provider)
+    ranked_one_provider = rank_hypotheses_for_visible_case(one_provider)["ranked_hypotheses"]
+    assert ranked_one_provider[0]["category"] == "insufficient_evidence"
+    assert ranked_one_provider[0]["score_bps"] == 1000
+    deploy = next(item for item in ranked_one_provider if item["category"] == "deploy_regression")
+    assert deploy["score_bps"] == 1000
+    assert deploy["provider_count"] == 1
+
+    two_provider_tie = copy.deepcopy(healthy)
+    two_provider_tie["prometheus"]["signals"] = {key: 0 for key in two_provider_tie["prometheus"]["signals"]}
+    two_provider_tie["prometheus"]["signals"].update(
+        {"cpu_usage_bps": 9000, "memory_usage_bps": 9000, "db_query_p95_ms": 30}
+    )
+    two_provider_tie["loki"]["markers"] = ["cpu_throttled", "oom_warning"]
+    two_provider_tie["traces"]["resource_spans"][0]["spans"][0]["status"] = "error"
+    two_provider_tie["traces"]["resource_spans"][0]["spans"][0]["name"] = "unclassified.span"
+    _refresh_visible_hashes(two_provider_tie)
+    ranked_tie = rank_hypotheses_for_visible_case(two_provider_tie)["ranked_hypotheses"]
     assert ranked_tie[0]["category"] == "insufficient_evidence"
+    assert ranked_tie[0]["score_bps"] == 8000
 
 
 def test_p14_route_adapter_and_safety_overlay_are_total(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -315,7 +454,9 @@ def test_p14_route_adapter_and_safety_overlay_are_total(monkeypatch: pytest.Monk
     assert blocked_prediction["final_shadow_route"] == "blocked_untrusted_evidence"
 
     def human_required_judgment(_context: object, *, provider: object) -> SimpleNamespace:
-        return SimpleNamespace(to_dict=lambda: {"safety_gate": {"final_route": "human_required"}, "citations": []})
+        return SimpleNamespace(
+            to_dict=lambda: {"local_mock_only": True, "safety_gate": {"final_route": "human_required"}, "citations": []}
+        )
 
     monkeypatch.setattr(live_shadow, "run_llm_judgment_from_packet", human_required_judgment)
     human_required_prediction = predict_shadow_case(corpus["visible_cases"][0])
@@ -441,7 +582,11 @@ def test_closed_counters_reconcile_and_forbidden_authority_is_zero() -> None:
     import app.services.p146_live_shadow as live_shadow
     from app.services.p146_live_shadow import run_live_shadow_episode, validate_counter_maps
 
+    artifact_root = Path("evals/p146/output")
+    artifacts_before = _artifact_snapshot(artifact_root)
     episode = run_live_shadow_episode(build_known_conformance_corpus()["visible_cases"][40])
+    artifacts_after = _artifact_snapshot(artifact_root)
+    assert artifacts_after == artifacts_before
     assert set(episode) == {"schema_version", "prediction", "request_receipts", "response_receipts", "aggregate_counters", "episode_hash"}
     validate_counter_maps(episode["aggregate_counters"])
     counters = episode["aggregate_counters"]
@@ -498,7 +643,6 @@ def test_closed_counters_reconcile_and_forbidden_authority_is_zero() -> None:
     assert counters["evaluator"]["server_response_count"] == sum(1 for receipt in response_receipts if receipt["complete"] is True)
     assert counters["evaluator"]["server_response_byte_count"] == counters["runtime"]["response_byte_count"]
     assert counters["forbidden"] == {key: 0 for key in FORBIDDEN_COUNTER_KEYS}
-    assert not any(Path(".").glob("evals/p146/output/*"))
 
     def disabled_socket(*_args: object, **_kwargs: object) -> socket.socket:
         raise AssertionError("loopback socket was not opened")

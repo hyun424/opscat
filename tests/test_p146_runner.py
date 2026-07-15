@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import base64
 import copy
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +13,38 @@ from app.services.p110_evaluation import stable_hash
 from tests.fixtures.p146.builders import P146_RELEASE_SELECTORS, build_known_conformance_corpus
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_selector_row_binds_actual_subprocess_stdout_and_stderr(monkeypatch: pytest.MonkeyPatch) -> None:
+    import app.services.p146_runner as runner
+
+    selector = P146_RELEASE_SELECTORS[0]
+    proof = {"collected": [selector], "executed": [selector], "passed": [selector]}
+    semantics = {"selector": selector, "semantic": selector.rsplit("::", 1)[-1], "passed": True}
+    stdout = (
+        b"real pytest prelude\n"
+        + b"P146_SELECTOR_PROOF="
+        + json.dumps(proof, sort_keys=True, separators=(",", ":")).encode()
+        + b"\nP146_OBSERVED_SEMANTICS="
+        + json.dumps(semantics, sort_keys=True, separators=(",", ":")).encode()
+        + b"\n1 passed\n"
+    )
+    stderr = b"real pytest warning\n"
+    monkeypatch.setattr(
+        runner.subprocess,
+        "run",
+        lambda *args, **kwargs: subprocess.CompletedProcess(args[0], 0, stdout=stdout, stderr=stderr),
+    )
+
+    row = runner._collect_selector_row(project_root=ROOT, selector=selector, ordinal=1)
+    command_proof = row["command_proof"]
+
+    assert base64.b64decode(command_proof["stdout_b64"], validate=True) == stdout
+    assert base64.b64decode(command_proof["stderr_b64"], validate=True) == stderr
+    assert command_proof["stdout_sha256"] == _bytes_sha256(stdout)
+    assert command_proof["stderr_sha256"] == _bytes_sha256(stderr)
+    assert command_proof["transcript_sha256"] == _bytes_sha256(stdout + stderr)
+    assert row["resource_counters"]["artifact_bytes"] == len(stdout) + len(stderr)
 
 
 def test_selector_collector_executes_actual_subprocesses_and_emits_required_markers(tmp_path: Path) -> None:
@@ -27,7 +61,7 @@ def test_selector_collector_executes_actual_subprocesses_and_emits_required_mark
     assert matrix["aggregate_counters"]["forbidden"]["subprocess_action_count"] == 0
     for row in matrix["selectors"]:
         proof = row["command_proof"]
-        transcript = proof["stdout_b64"]
+        transcript = base64.b64decode(proof["stdout_b64"], validate=True).decode("utf-8")
         assert proof["collected_nodeids"] == [row["selector"]]
         assert proof["selector_execution_proof"] == {
             "collected": [row["selector"]],
@@ -178,6 +212,12 @@ def _zero_finding_review(freeze: dict[str, Any]) -> dict[str, Any]:
     }
     review["review_hash"] = stable_hash({key: value for key, value in review.items() if key != "review_hash"})
     return review
+
+
+def _bytes_sha256(value: bytes) -> str:
+    import hashlib
+
+    return "sha256:" + hashlib.sha256(value).hexdigest()
 
 
 def _file_sha256(path: Path) -> str:

@@ -191,6 +191,9 @@ def _is_generated_phase_evidence(relative: Path) -> bool:
     dependency (P130 -> P129 -> P122 -> P130). Input fixtures remain scanned.
     """
 
+    if relative.parts[:2] == ("docs", "operations"):
+        match = re.fullmatch(r"p(\d+)-implementation-review\.md", relative.name)
+        return match is not None and int(match.group(1)) >= GENERATED_EVIDENCE_PHASE_MIN
     if len(relative.parts) < 2 or relative.parts[0] != "evals":
         return False
     phase = relative.parts[1]

@@ -6600,10 +6600,10 @@
     "Static shell/action checks are heuristic and focus on Python subprocess/os.system paths in non-fixture source.",
     "License metadata prefers installed package metadata and falls back to the documented in-script allowlist."
   ],
-  "report_hash": "sha256:a78688ac47ed024013494ad1a8948a2ece6f91840f035ad251b8303731823414",
+  "report_hash": "sha256:9973839f88fd3e06277bd34e131055a8cea12f6173cd2ec831b6dc03911cfeeb",
   "root": ".",
-  "root_binding_hash": "sha256:5e2d27ff510769b05a94d814c70805ca115d6a899fc07f493a4baf5b59311a4a",
-  "scanned_file_count": 2703,
+  "root_binding_hash": "sha256:2fed1db45a36bd1fd7ab7e8094f0ff5b76d243bc08aff6b10e6709831c79bc5a",
+  "scanned_file_count": 2714,
   "schema_version": "p122.security_report.v2",
   "severity_counts": {},
   "source_inventory": [
@@ -7008,6 +7008,11 @@
       "size": 4173
     },
     {
+      "hash": "sha256:8d6d1e3e99eac9010c6f9846241e8c8028349b66890fc7dc2addb056f25b2e99",
+      "path": "app/p146_live_shadow_cli.py",
+      "size": 21892
+    },
+    {
       "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
       "path": "app/plugin_sdk.py",
       "size": 1022
@@ -7343,9 +7348,9 @@
       "size": 16967
     },
     {
-      "hash": "sha256:a744eaac9c9e907808a099262dd7f224265b2e670d18591a8e485b3bb1359f1f",
+      "hash": "sha256:0af5df64e94897760ee73ee96e91d2f3173d2834a4733d0d8afca8d722046bea",
       "path": "app/services/llm_judgment.py",
-      "size": 24884
+      "size": 25048
     },
     {
       "hash": "sha256:c39934672034ced69c25ae5bd5771df176af76cee5881fc4f0bd08ae156bf0a7",
@@ -8228,6 +8233,21 @@
       "size": 26257
     },
     {
+      "hash": "sha256:84b90a376514dbe90ba0dc62c8b3196e510b7af3cd82a5b22b81b38418177caa",
+      "path": "app/services/p146_live_shadow.py",
+      "size": 55209
+    },
+    {
+      "hash": "sha256:26aa4038ac477180fa5b03f08711411a18afd256bc94183376bf219443ea317d",
+      "path": "app/services/p146_release_evidence.py",
+      "size": 59726
+    },
+    {
+      "hash": "sha256:997ec56d8b030d789fbe5beb181b8c30a6102d477c550032af003c45329c6695",
+      "path": "app/services/p146_runner.py",
+      "size": 13225
+    },
+    {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
       "path": "app/services/policy_calibrator.py",
       "size": 11458
@@ -8348,9 +8368,9 @@
       "size": 2721
     },
     {
-      "hash": "sha256:02c6f20b494b879f63c17483055d19424db807f9df5dad7e219c423b738a4083",
+      "hash": "sha256:e8be97744e6f541215c26226d27f684f7f1ca52204b594e0f6d98dcf3caa7345",
       "path": "app/services/preventive_action_benchmark.py",
-      "size": 44560
+      "size": 44901
     },
     {
       "hash": "sha256:3a7e5b0c4c6c48e6b5694603e93268707d606bf8dca180d2b8ace19f9f8142f7",
@@ -9733,11 +9753,6 @@
       "size": 2053
     },
     {
-      "hash": "sha256:9e6d7fa3902aa7b948c8989f705f49888e70522ac84402c45837e65b7fbf46cf",
-      "path": "docs/operations/p141-implementation-review.md",
-      "size": 3105
-    },
-    {
       "hash": "sha256:d602cc5c590135d72110d89fb3a97ad134ab08e28bceb22057a604b3bfce30a9",
       "path": "docs/operations/p141-notification-authority-roadmap.md",
       "size": 1243
@@ -9751,11 +9766,6 @@
       "hash": "sha256:e8cda65e4b773db33ce741b950e624299120b1b682bb8df755bc66a16ed4e442",
       "path": "docs/operations/p141-test-spec.md",
       "size": 2828
-    },
-    {
-      "hash": "sha256:092971d239d881254fb8ff9bf812319152679be8ebd88b97a62e619a330384d9",
-      "path": "docs/operations/p142-implementation-review.md",
-      "size": 2838
     },
     {
       "hash": "sha256:cb98af1496d39d94e250c75bba22cd65bfa8970333211e1fb6f30a1698e5c328",
@@ -9773,11 +9783,6 @@
       "size": 18362
     },
     {
-      "hash": "sha256:b364dd9dd903a6244b7514240c68e856706dec63f785cf82f076faf6a8a2d9a3",
-      "path": "docs/operations/p143-implementation-review.md",
-      "size": 1686
-    },
-    {
       "hash": "sha256:c3cf23c275ca6c4b09096e704c51560effaf9aec27934d76c4504024c5ff2ecd",
       "path": "docs/operations/p143-plan-review.md",
       "size": 1988
@@ -9786,11 +9791,6 @@
       "hash": "sha256:5c7f32cfb563df023544792c0494c842fdc3f566e0725cf9322ccbf0117f19ab",
       "path": "docs/operations/p143-test-spec.md",
       "size": 13976
-    },
-    {
-      "hash": "sha256:a7bcf33dedef43c23f71c9519adad9899af303709dd398fc1299090259d24272",
-      "path": "docs/operations/p144-implementation-review.md",
-      "size": 2563
     },
     {
       "hash": "sha256:7480df9163b4a61735b81f4f7c9a4a26828651918ce4ac8ab8451e15592af07c",
@@ -9803,11 +9803,6 @@
       "size": 15414
     },
     {
-      "hash": "sha256:156a63ac61077dfebb125988e30090334b1a9b033ddfda6c292cd488354aa11b",
-      "path": "docs/operations/p145-implementation-review.md",
-      "size": 3454
-    },
-    {
       "hash": "sha256:d59b48335c6c265ca2d723aae6a739252eabab5db2438a03de428bd496a851e8",
       "path": "docs/operations/p145-plan-review.md",
       "size": 4492
@@ -9816,6 +9811,21 @@
       "hash": "sha256:72274365b622629154b4347ea3caff48bb4672076287c72165c19b01aeab8050",
       "path": "docs/operations/p145-test-spec.md",
       "size": 12122
+    },
+    {
+      "hash": "sha256:2488575f23d629f2fefbd5c6650ec044945deba4cea6960a138d78ee5c029142",
+      "path": "docs/operations/p146-live-shadow-qualification-plan.md",
+      "size": 38190
+    },
+    {
+      "hash": "sha256:a0def45954a2e313a3ae733e6228d649245e37c619fe50b769a120e72ab3dcc9",
+      "path": "docs/operations/p146-plan-review.md",
+      "size": 2611
+    },
+    {
+      "hash": "sha256:f5dd6c79a368ddbc0287ac91629b4e2e910024b81579c47636a5921c1fc55789",
+      "path": "docs/operations/p146-test-spec.md",
+      "size": 7569
     },
     {
       "hash": "sha256:807620f62baf5b24c8f4951d46e7ed0ab28559a390ea6baeb28cf7aee5ba8099",
@@ -16678,9 +16688,9 @@
       "size": 79792
     },
     {
-      "hash": "sha256:76b8fed54b97b833bdfea0ce4d1e147832dfdd5c89f51d4d0c563c82fe8d9de6",
+      "hash": "sha256:054e93c020d366b863813f1e5008f5d65f50ebe7f3e0e61239fccb73c04cddd8",
       "path": "scripts/run_p122_security_gate.py",
-      "size": 34133
+      "size": 34356
     },
     {
       "hash": "sha256:cc5d0986c1d3b31b216af7c78987620896967ae40eec02eaffba5fd689949b65",
@@ -16801,6 +16811,16 @@
       "hash": "sha256:020e8f72edcf1fc45a271603aa93158b4a4147ca1cb636d1764c2672afc3a474",
       "path": "scripts/run_p145_response_duty_officer.py",
       "size": 137
+    },
+    {
+      "hash": "sha256:ad75f939a9d0fe17bef79397a7d017cea7d27b6f1746c72ecbb8c87f5ba2082a",
+      "path": "scripts/run_p146_live_shadow.py",
+      "size": 135
+    },
+    {
+      "hash": "sha256:87ce0aab5a16dae31255cbe9bae62cbabec8be746a0afa7e7163dba6ffe075cb",
+      "path": "scripts/run_p146_release.py",
+      "size": 2156
     },
     {
       "hash": "sha256:845eb4d1f36b8d14648cf20a23a9300dc75c17118dbd6fc9b9d068bf4f1fca28",
@@ -17091,6 +17111,11 @@
       "hash": "sha256:9e4bf131380d29e386d73e9966e4129c69937e054ac60b31fdc037f8735c0927",
       "path": "scripts/verify_p122_reproducible_build.py",
       "size": 4963
+    },
+    {
+      "hash": "sha256:b3eb8cb3dbf18b6c4a700e7ac29c1c0ac85fb358d3d4d643143f39bc6296ed27",
+      "path": "scripts/verify_p146.sh",
+      "size": 1091
     },
     {
       "hash": "sha256:1b6c0146c5a3b77ef7f8e35af41dd1f35442fb279ffd47f96e859771670d67e5",
@@ -17486,6 +17511,16 @@
       "hash": "sha256:ba604b53c9228ad06a45fad1e4c30dbbf1f01cfbacead07aa52b8e06a00798ae",
       "path": "tests/fixtures/p145/cases/P145-CASE-48.json",
       "size": 6329
+    },
+    {
+      "hash": "sha256:3c78788ea0fb8b468bf16f215d385ccca713e31b0d6625da9c1c4e1f920e5b92",
+      "path": "tests/fixtures/p146/__init__.py",
+      "size": 36
+    },
+    {
+      "hash": "sha256:54a134e27295dc50e418797fcfda9f138dd9d1af41a6a991f42b58ff852c94f3",
+      "path": "tests/fixtures/p146/builders.py",
+      "size": 12341
     },
     {
       "hash": "sha256:118e31b09b9759186a0bf271eb3f795f82ad0e2eb67c4099cbed09a77e0137c3",
@@ -18728,9 +18763,9 @@
       "size": 973
     },
     {
-      "hash": "sha256:74e7fb548010bcd7e45f4621b5549ebff06b6791ac39ca5de81eaae8a07c1b45",
+      "hash": "sha256:5f928739f6545154f47d8a0e3dae49505c6098ef503e5884b45ecfd7c0503a0c",
       "path": "tests/test_p122_security_gate.py",
-      "size": 9038
+      "size": 9456
     },
     {
       "hash": "sha256:33f37ddb6f515c196fcfe186610c97b1405be2752ec05bc671265693f66b46e7",
@@ -19066,6 +19101,26 @@
       "hash": "sha256:9760be819fb43c602ed674ef6ad44d9539c6357f6c81adb489b79925ef8dac2a",
       "path": "tests/test_p145_runner.py",
       "size": 7590
+    },
+    {
+      "hash": "sha256:9a7df27e97c37a2784512699f9de639c04986af2ad795259fa61b1611939a047",
+      "path": "tests/test_p146_cli.py",
+      "size": 3252
+    },
+    {
+      "hash": "sha256:5732ba3e456b8b481d6b9714c4baabb612342f40db9384c22dc8ee88662b367b",
+      "path": "tests/test_p146_live_shadow.py",
+      "size": 32103
+    },
+    {
+      "hash": "sha256:f6cf500bfffdd606d8ea8189d1d3e1668bb0b2d766280158e33e3159905e6009",
+      "path": "tests/test_p146_release_evidence.py",
+      "size": 17799
+    },
+    {
+      "hash": "sha256:ced24fd8fa136351e5d6f48ab8fda380cc6d5979c189ec3febd37094640eefcd",
+      "path": "tests/test_p146_runner.py",
+      "size": 10090
     },
     {
       "hash": "sha256:a2999b3a104e39772d100e052d82db36fb156cf16211ea7d3ade257ce4fa194e",
@@ -19773,9 +19828,9 @@
       "size": 6956
     },
     {
-      "hash": "sha256:824b2ae6ac3cadc4ed9d9cf28a36ca0654c06edbe3ad4cad5c839248478b9cdd",
+      "hash": "sha256:7f5a4256d4adfe7705d587752d46fb7c026fd3224741bd5e18fd8ac6f88b39e1",
       "path": "tests/test_preventive_action_benchmark.py",
-      "size": 15504
+      "size": 15871
     },
     {
       "hash": "sha256:c320116ac0abbc59996a650961b8fa87987abe254c17bf69bb08c36e26231f56",
@@ -20123,6 +20178,6 @@
       "size": 491
     }
   ],
-  "source_inventory_hash": "sha256:0fe1876f00f6ab51217c4e84fab9a3b93f3f52081fdcba53b30345155824dbc4",
+  "source_inventory_hash": "sha256:bb15cb5f7dfd90503cca51d668b0845a8f3aaab5bfa7c08c4c8742bc603b7387",
   "status": "pass"
 }

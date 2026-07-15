@@ -15,17 +15,17 @@
     "preliminary_evidence_requires_independent_review_before_final_qualification",
     "process_owned_fault_lab_only_no_staging_production_or_real_remediation"
   ],
-  "review_hash": "sha256:d024c87646a127e4a34cc33affb61b61846009703847c45f59db9333e8e2539d",
-  "reviewed_at": "2026-07-15T11:15:35Z",
+  "review_hash": "sha256:77dbc251e0db67c4597ccee560b34e0416bec91c06b1b368e98abf75420599b3",
+  "reviewed_at": "2026-07-15T16:26:55Z",
   "reviewed_dependency_hashes": {
     "evals/p122/package-checksums.json": "sha256:8ef88dba83eccbb6f9af378a6c89cdb7773d4fbd09c6e4d900d66a5ab4de7c1d",
     "evals/p122/release-evidence.json": "sha256:c64afdc8d0b4da63904edfde5d5c90cc1037e333fddf01e5a0dd08db998db3cf",
-    "evals/p122/security-report.json": "sha256:0dd27560f4eb2ccb324153291c67e93cd446cdf3f95fe8e2439f27737a4b22cb",
+    "evals/p122/security-report.json": "sha256:b5b9d444af6138bd674137fd1875a66607e0793e8daf94e088e1f266a0858fa2",
     "uv.lock": "sha256:670457fc63a97375684fc7633ee369b5cbfb2eca5a1ebf4a3848541471284f7d"
   },
   "reviewed_fixture_hash": "sha256:cef42c9782f9b049de3b06b565e9387ed2918c6716e53e46f986c9392f451925",
-  "reviewed_freeze_manifest_hash": "sha256:bd4301e60164601f4e90650b0afaee6986595f331d62f744d5435f078fcfbcac",
-  "reviewed_matrix_hash": "sha256:356acc2df6ca9d56b904fbe49bbdfb06ea99b89347707acba704cc2e8366ec82",
+  "reviewed_freeze_manifest_hash": "sha256:8d46222c8521b99e513f32eba1f9f2fc545d93a95eee5cda61136f0a46c65539",
+  "reviewed_matrix_hash": "sha256:ae7c60ae011f82307491b1d8844247e4e858ad27d1aaa7e46baf064761f1e499",
   "reviewed_plan_review_sha256": "sha256:d59b48335c6c265ca2d723aae6a739252eabab5db2438a03de428bd496a851e8",
   "reviewed_plan_sha256": "sha256:72e3ce302020acd05061fecb178b5f5fbddadae751cf42be0dfc28e92edb8a3b",
   "reviewed_predecessor_bindings": {
@@ -68,8 +68,8 @@
     "tests/test_p145_runner.py": "sha256:9760be819fb43c602ed674ef6ad44d9539c6357f6c81adb489b79925ef8dac2a"
   },
   "reviewed_test_spec_sha256": "sha256:72274365b622629154b4347ea3caff48bb4672076287c72165c19b01aeab8050",
-  "reviewer_agent_id": "019f657d-43b8-7086-b7c8-cdbc1c5d6119",
-  "reviewer_identity": "p145-independent-final-reviewer-codex-20260715-r4",
-  "reviewer_type": "codex-native-code-reviewer",
+  "reviewer_agent_id": "019f669a-4c5d-7589-be35-a0ccb592efa5",
+  "reviewer_identity": "p145-independent-final-reviewer-codex-20260715t162655z",
+  "reviewer_type": "codex-native-independent-reviewer",
   "schema_version": "p145.final_implementation_review.v1"
 }

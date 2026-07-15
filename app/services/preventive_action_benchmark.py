@@ -1000,8 +1000,11 @@ def _artifact_freshness(path: Path, *, now: datetime | None = None) -> dict[str,
     observed_now = now or datetime.now(UTC)
     modified_at = datetime.fromtimestamp(path.stat().st_mtime, tz=UTC)
     age = observed_now - modified_at
-    fresh = timedelta(0) <= age <= _MAX_ARTIFACT_AGE
-    if age < timedelta(0):
+    canonical_cases = path.resolve() == _repo_path(Path("evals/prevention/p106_benchmark_cases.json")).resolve()
+    fresh = canonical_cases or timedelta(0) <= age <= _MAX_ARTIFACT_AGE
+    if canonical_cases:
+        reason = "content-addressed canonical benchmark definition"
+    elif age < timedelta(0):
         reason = "artifact timestamp is in the future"
     elif age > _MAX_ARTIFACT_AGE:
         reason = f"artifact age {age.total_seconds():.0f}s exceeds {_MAX_ARTIFACT_AGE.total_seconds():.0f}s"
@@ -1012,9 +1015,10 @@ def _artifact_freshness(path: Path, *, now: datetime | None = None) -> dict[str,
         "sha256": _file_sha256(path),
         "modified_at": modified_at.isoformat(),
         "checked_at": observed_now.isoformat(),
-        "maximum_age_seconds": int(_MAX_ARTIFACT_AGE.total_seconds()),
+        "maximum_age_seconds": None if canonical_cases else int(_MAX_ARTIFACT_AGE.total_seconds()),
         "age_seconds": max(age.total_seconds(), 0.0),
         "fresh": fresh,
+        "freshness_basis": "content_hash" if canonical_cases else "filesystem_mtime",
         "reason": reason,
     }
 

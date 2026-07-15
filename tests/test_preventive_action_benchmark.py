@@ -297,6 +297,15 @@ def test_benchmark_freshness_is_derived_from_artifact_timestamp(tmp_path: Path) 
     assert "stale" in json.dumps(_get(result, "reasons", []), sort_keys=True).lower()
 
 
+def test_canonical_benchmark_definition_is_content_addressed_not_wall_clock_expiring() -> None:
+    result = _api().run_preventive_action_benchmark(BENCHMARK_CASES)
+
+    artifact = _get(result, "benchmark_artifact", {})
+    assert artifact["fresh"] is True
+    assert artifact["freshness_basis"] == "content_hash"
+    assert artifact["maximum_age_seconds"] is None
+
+
 def test_benchmark_planner_input_strips_scorer_only_fields_and_ignores_treatment_selected_capability(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

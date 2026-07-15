@@ -463,6 +463,23 @@ def test_p14_route_adapter_and_safety_overlay_are_total(monkeypatch: pytest.Monk
     assert human_required_prediction["p14_route"] == "human_required"
     assert human_required_prediction["final_shadow_route"] == "human_review_required"
 
+    def validated_human_required_judgment(_context: object, *, provider: object) -> SimpleNamespace:
+        return SimpleNamespace(
+            to_dict=lambda: {
+                "provider": "mock",
+                "validation": {"valid": True, "errors": []},
+                "citation_check": {"valid": True},
+                "judgment": {"recommended_route": "human_required"},
+                "safety_gate": {"final_route": "human_required"},
+                "citations": [],
+            }
+        )
+
+    monkeypatch.setattr(live_shadow, "run_llm_judgment_from_packet", validated_human_required_judgment)
+    validated_human_prediction = predict_shadow_case(corpus["visible_cases"][0])
+    assert validated_human_prediction["p14_route"] == "human_required"
+    assert validated_human_prediction["final_shadow_route"] == "human_review_required"
+
 
 def test_known_corpus_predictions_ignore_identifiers_hashes_paths_and_truth_pairing() -> None:
     from app.services.p146_live_shadow import predict_shadow_case, score_sealed_predictions

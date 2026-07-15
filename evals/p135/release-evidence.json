@@ -1,8 +1,8 @@
 {
   "artifact_hashes": {
     "authority_ledger": "sha256:57dd79b4fe0d977478b73a4167c5d48fb010b64e742b29877f1aea97acd9b212",
-    "case_matrix": "sha256:5cd7e8947179138438c25d75915fa1d4499bbcd17dff95c675e2bf3b76b469c3",
-    "independent_review": "sha256:a28244e44b726d66b91bcbbfdcbd7986ae25bf45c9bb02679e14e9f5b863d8c0"
+    "case_matrix": "sha256:4da7e220dea90feaa5dcb1d19f11ea908969e16a9b9e7b6a752e6044761707ba",
+    "independent_review": "sha256:db111f873f5e28f5fca613934e65b9425b0cbaf30771d75b766b98325b96cae3"
   },
   "evaluator_activity": {
     "artifact_write_count": 5,
@@ -45,7 +45,7 @@
   "product_claim": "P135 qualifies credential-free provider-shaped local export attachment from bounded local artifacts.",
   "public_limitation": "Local file artifacts only: no provider call, live connector, network, DNS, socket, credential, environment, subprocess, shell, delivery, remediation, mutation, production attachment, staging attachment, authenticated provider identity, or operator replacement is claimed.",
   "reasons": [],
-  "release_evidence_hash": "sha256:ab78a5757fecd5d52f3d2e698e97625f192b0cb8aecac54bda5e0a87e6d70ba7",
+  "release_evidence_hash": "sha256:8e22ecd7e7823efbbe09433ad6a0543dbfc48bf1ad955b7a10433c1c1c500ed4",
   "release_id": "P135-provider-shaped-export-attachment",
   "release_status": "p135_provider_shaped_export_attachment_qualified",
   "schema_version": "p135.release_evidence.v1",
@@ -79,7 +79,7 @@
     "evals/p135/input/exports/sentry_issues.json": "sha256:8f66fe0136090011a5a749420bea746c7315ce9d54c7cf3c7b93271a2dd27969",
     "evals/p135/input/provider-export-profile.json": "sha256:7e13d37fb4880bb8c8cbb640a3563f30a7fe8e3adfba48f365ad8b53bb2a70bd",
     "scripts/run_p135_provider_export_attachment.py": "sha256:4ab46c4b42446c0d87245347e20382f04455dbdfe203614c906fe5e2eb941efb",
-    "scripts/verify.sh": "sha256:b8e3edb463f0e79953fb96f171e0be4a8428b6d07ebadb4a63631c7fe7dac734",
+    "scripts/verify.sh": "sha256:bb56ac49573071d0b35d0ab8802df416a0352e2cc89e9341d572b8a20589b339",
     "tests/test_p135_provider_export_attachment.py": "sha256:8b76e8b57b346880d803423425435fd5bd079b4d8b7996dff98582f064c6ae47",
     "tests/test_p135_release_evidence.py": "sha256:6bfa7827c20d301f5d6e7c82ec45cf05e2b44f42c4fb04af06a92b7cda0116ad",
     "tests/test_p135_runner.py": "sha256:47b2816851d04e65cc6ee5e68110e980e22776f9f3e6a83896b7e565eb01cc71"

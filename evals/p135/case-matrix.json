@@ -271,7 +271,7 @@
       "provider": null
     }
   },
-  "matrix_hash": "sha256:2ac845fb56a0e1da3e3614da254f663f326bf38c5fa7da8d625a09bcb64fea48",
+  "matrix_hash": "sha256:b887d47b9b959f843631bdad3951d266ea152c1d00764a6bd5a1968f3f88a112",
   "provider_successes": {
     "grafana": 1,
     "loki": 1,
@@ -313,11 +313,11 @@
   ],
   "resource_usage": {
     "cpu_limit_ms": 10000,
-    "cpu_time_ms": 332,
-    "peak_memory_bytes": 38486016,
+    "cpu_time_ms": 351,
+    "peak_memory_bytes": 38633472,
     "peak_memory_limit_bytes": 100663296,
     "wall_limit_ms": 30000,
-    "wall_time_ms": 335
+    "wall_time_ms": 358
   },
   "schema_version": "p135.release_case_matrix.v1",
   "totals": {

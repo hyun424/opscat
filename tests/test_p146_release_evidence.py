@@ -89,7 +89,7 @@ def test_release_matrix_rejects_forgery() -> None:
 def test_release_matrix_requires_exact_nonempty_aggregate_counters() -> None:
     from app.services.p146_release_evidence import validate_release_matrix
 
-    matrix = _valid_selector_matrix()
+    matrix = _valid_selector_matrix(bind_aggregate=False)
     with pytest.raises(ValueError, match="aggregate|counter"):
         validate_release_matrix(matrix)
 
@@ -97,7 +97,8 @@ def test_release_matrix_requires_exact_nonempty_aggregate_counters() -> None:
     validate_release_matrix(matrix)
 
     forged = copy.deepcopy(matrix)
-    forged["aggregate_counters"]["runtime"]["request_commit_count"] += 1
+    aggregate = cast(dict[str, dict[str, int]], forged["aggregate_counters"])
+    aggregate["runtime"]["request_commit_count"] += 1
     forged["matrix_hash"] = stable_hash({key: value for key, value in forged.items() if key != "matrix_hash"})
     with pytest.raises(ValueError, match="aggregate|counter"):
         validate_release_matrix(forged)
@@ -150,7 +151,7 @@ def test_freeze_dependency_graph_is_exact_appendix_f_without_duplicate_p145_key(
         assert binding["key"] == key
 
 
-def test_source_scope_binds_runner_verifier_and_installed_entrypoint() -> None:
+def test_source_scope_binds_runner_verifier_and_source_entrypoints() -> None:
     from app.services.p146_release_evidence import current_p146_source_hashes
 
     hashes = current_p146_source_hashes(ROOT)
@@ -201,8 +202,78 @@ def test_release_evidence_validates_and_binds_actual_benchmark_artifact(tmp_path
     with pytest.raises(ValueError, match="benchmark|artifact|binding|hash"):
         validate_release_evidence(forged, matrix=matrix, manifest=manifest, review=review, benchmark_report_path=benchmark_path)
 
+    forged_report = copy.deepcopy(benchmark)
+    forged_report["confusion"] = {"tp": 0, "fp": 40, "fn": 8, "tn": 0}
+    forged_report["report_hash"] = stable_hash(
+        {key: value for key, value in forged_report.items() if key != "report_hash"}
+    )
+    write_canonical_json(benchmark_path, forged_report)
+    with pytest.raises(ValueError, match="benchmark|confusion|gate|metric"):
+        assemble_p146_final_evidence(
+            matrix,
+            manifest=manifest,
+            review=review,
+            benchmark_report_path=benchmark_path,
+        )
 
-def _valid_selector_matrix() -> dict[str, object]:
+    descriptive_report = cast(dict[str, Any], copy.deepcopy(benchmark))
+    descriptive_metrics = cast(dict[str, Any], descriptive_report["descriptive_metrics"])
+    wilson_intervals = cast(dict[str, Any], descriptive_report["wilson_intervals"])
+    descriptive_metrics["top1_accuracy"] = 0.5
+    from app.services.p124_judgment_quality import wilson_interval
+
+    wilson_intervals["top1_accuracy"] = wilson_interval(16, 32)
+    descriptive_report["report_hash"] = stable_hash(
+        {key: value for key, value in descriptive_report.items() if key != "report_hash"}
+    )
+    write_canonical_json(benchmark_path, descriptive_report)
+    descriptive_evidence = assemble_p146_final_evidence(
+        matrix,
+        manifest=manifest,
+        review=review,
+        benchmark_report_path=benchmark_path,
+    )
+    assert descriptive_evidence["status"] == "p146_live_shadow_qualification_ready"
+
+    legacy_failure_report = cast(dict[str, Any], copy.deepcopy(benchmark))
+    legacy_rows = cast(list[dict[str, Any]], legacy_failure_report["rows"])
+    legacy_rows[0]["top3_match"] = False
+    legacy_rows[0]["row_hash"] = stable_hash(
+        {key: value for key, value in legacy_rows[0].items() if key != "row_hash"}
+    )
+    cast(dict[str, Any], legacy_failure_report["descriptive_metrics"])["brier_score"] = round(1 / 48, 6)
+    legacy_failure_report["failure_analysis"] = [
+        {"case_ref_hash": legacy_rows[0]["case_ref_hash"], "row_hash": legacy_rows[0]["row_hash"]}
+    ]
+    legacy_failure_report["report_hash"] = stable_hash(
+        {key: value for key, value in legacy_failure_report.items() if key != "report_hash"}
+    )
+    write_canonical_json(benchmark_path, legacy_failure_report)
+    with pytest.raises(ValueError, match="failure|benchmark|row|schema"):
+        assemble_p146_final_evidence(
+            matrix,
+            manifest=manifest,
+            review=review,
+            benchmark_report_path=benchmark_path,
+        )
+
+    legacy_failure_report["failure_analysis"] = [
+        {"case_ref_hash": legacy_rows[0]["case_ref_hash"], "failure_classes": ["top3_miss"]}
+    ]
+    legacy_failure_report["report_hash"] = stable_hash(
+        {key: value for key, value in legacy_failure_report.items() if key != "report_hash"}
+    )
+    write_canonical_json(benchmark_path, legacy_failure_report)
+    exact_failure_evidence = assemble_p146_final_evidence(
+        matrix,
+        manifest=manifest,
+        review=review,
+        benchmark_report_path=benchmark_path,
+    )
+    assert exact_failure_evidence["status"] == "p146_live_shadow_qualification_ready"
+
+
+def _valid_selector_matrix(*, bind_aggregate: bool = True) -> dict[str, object]:
     rows = []
     for ordinal, selector in enumerate(P146_RELEASE_SELECTORS, start=1):
         observed = {"selector": selector, "semantic": selector.rsplit("::", 1)[1], "passed": True}
@@ -219,9 +290,9 @@ def _valid_selector_matrix() -> dict[str, object]:
             "executable_provenance": {
                 "resolved_python": ".venv/bin/python",
                 "project_python": True,
-                "python_sha256": "sha256:" + f"{ordinal:064x}"[-64:],
-                "pytest_module_path": ".venv/lib/python/site-packages/pytest/__init__.py",
-                "pytest_module_sha256": "sha256:" + f"{ordinal + 100:064x}"[-64:],
+                "python_sha256": _file_sha256(Path(sys.executable)),
+                "pytest_module_path": _project_relative_path(Path(pytest_module.__file__).resolve()),
+                "pytest_module_sha256": _file_sha256(Path(pytest_module.__file__).resolve()),
             },
             "exit_code": 0,
             "collected_nodeids": [selector],
@@ -253,7 +324,10 @@ def _valid_selector_matrix() -> dict[str, object]:
         row["row_hash"] = stable_hash({key: value for key, value in row.items() if key != "row_hash"})
         rows.append(row)
     matrix = {"schema_version": "p146.release_case_matrix.v1", "expected": 12, "passed": 12, "failed": 0, "selectors": rows, "aggregate_counters": {}, "matrix_hash": ""}
-    matrix["matrix_hash"] = stable_hash({key: value for key, value in matrix.items() if key != "matrix_hash"})
+    if bind_aggregate:
+        _bind_aggregate_counters(matrix)
+    else:
+        matrix["matrix_hash"] = stable_hash({key: value for key, value in matrix.items() if key != "matrix_hash"})
     return matrix
 
 
@@ -283,48 +357,10 @@ def _project_relative_path(path: Path) -> str:
 
 
 def _valid_benchmark_report(matrix: dict[str, object]) -> dict[str, object]:
-    rows = []
-    for ordinal in range(48):
-        row = {
-            "schema_version": "p146.benchmark_row.v1",
-            "case_ref_hash": "sha256:" + hashlib.sha256(f"case-{ordinal}".encode()).hexdigest(),
-            "prediction_hash": "sha256:" + hashlib.sha256(f"prediction-{ordinal}".encode()).hexdigest(),
-            "truth_row_hash": "sha256:" + hashlib.sha256(f"truth-{ordinal}".encode()).hexdigest(),
-            "diagnostic_match": True,
-            "top3_match": True,
-            "abstention_match": ordinal >= 40,
-            "citation_valid": True,
-            "injection_contained": ordinal < 8,
-            "latency_ns": 1000 + ordinal,
-            "row_hash": "",
-        }
-        row["row_hash"] = stable_hash({key: value for key, value in row.items() if key != "row_hash"})
-        rows.append(row)
-    report = {
-        "schema_version": "p146.benchmark_report.v1",
-        "corpus_version": "p146_known_conformance_corpus_v1",
-        "denominators": {"all": 48, "complete_fault": 32, "healthy": 8, "gap": 8, "injection": 8},
-        "confusion": {"tp": 32, "fp": 0, "fn": 0, "tn": 8},
-        "descriptive_metrics": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f1": 1.0,
-            "false_positive_rate": 0.0,
-            "top1_accuracy": 1.0,
-            "top3_accuracy": 1.0,
-            "brier_score": 0.0,
-            "p95_latency_ns": 1045,
-        },
-        "wilson_intervals": {},
-        "slices": {},
-        "failure_analysis": [],
-        "aggregate_counters": matrix["aggregate_counters"],
-        "semantic_prediction_hash": stable_hash([row["prediction_hash"] for row in rows]),
-        "rows": rows,
-        "report_hash": "",
-    }
-    report["report_hash"] = stable_hash({key: value for key, value in report.items() if key != "report_hash"})
-    return report
+    del matrix
+    from app.services.p146_live_shadow import run_known_conformance_benchmark
+
+    return cast(dict[str, object], run_known_conformance_benchmark(build_known_conformance_corpus()))
 
 
 def _forge_matrix(matrix: dict[str, object], mutation: str) -> dict[str, object]:

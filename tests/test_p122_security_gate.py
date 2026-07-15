@@ -145,6 +145,14 @@ def test_p145_selector_runner_has_no_arbitrary_subprocess_surface() -> None:
     assert not [finding for finding in findings if finding.rule_id == "static.arbitrary_subprocess_execution"]
 
 
+def test_post_p122_generated_review_documents_are_not_source_bound() -> None:
+    gate = load_gate()
+
+    assert gate._is_generated_phase_evidence(Path("docs/operations/p146-implementation-review.md")) is True
+    assert gate._is_generated_phase_evidence(Path("docs/operations/p121-implementation-review.md")) is False
+    assert gate._is_generated_phase_evidence(Path("docs/operations/p146-test-spec.md")) is False
+
+
 def test_generated_archives_normalize_app_paths_before_subprocess_scan(tmp_path: Path) -> None:
     gate = load_gate()
     dist = tmp_path / "dist"

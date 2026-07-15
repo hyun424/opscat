@@ -194,7 +194,10 @@ def semantic_rebind_case(visible_case: dict[str, Any]) -> dict[str, Any]:
     rebound["prometheus"]["source_id"] = "rebinding-prometheus"
     rebound["loki"]["source_id"] = "rebinding-loki"
     if rebound["traces"] is not None:
-        rebound["traces"]["source_id"] = "rebinding-traces"
+        rebound["traces"]["resource_spans"][0]["resource"]["service_name"] = "rebinding-traces"
+        rebound["traces"]["response_hash"] = stable_hash(
+            {key: value for key, value in rebound["traces"].items() if key != "response_hash"}
+        )
     rebound["visible_case_hash"] = stable_hash({key: value for key, value in rebound.items() if key != "visible_case_hash"})
     return rebound
 
@@ -224,12 +227,15 @@ def _visible_case(case_id: str, category: str, variant: int, *, traces_present: 
         if not traces_present
         else {
             "schema_version": "p146.otel_trace_response.v1",
-            "source_id": f"trace-{case_id}",
-            "observed_at_ms": 0,
-            "spans": _trace_spans(category, variant),
+            "resource_spans": [{"resource": {"service_name": "opscat-lab"}, "spans": _trace_spans(category, variant)}],
+            "response_hash": "",
         },
         "visible_case_hash": "",
     }
+    if payload["traces"] is not None:
+        payload["traces"]["response_hash"] = stable_hash(
+            {key: value for key, value in payload["traces"].items() if key != "response_hash"}
+        )
     payload["visible_case_hash"] = stable_hash({key: value for key, value in payload.items() if key != "visible_case_hash"})
     return payload
 
@@ -318,4 +324,3 @@ def _trace_spans(category: str, variant: int) -> list[dict[str, Any]]:
             "attributes": {"retry.count": str(variant)} if category == "retry_storm" else {},
         }
     ]
-

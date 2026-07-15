@@ -46,8 +46,8 @@ _BYTES_TAG = "__opscat_p139_bytes_hex__"
 
 P138_QUALIFIED_STATUS = "p138_local_observation_to_triage_supervisor_qualified"
 # Updated by the P139 release freeze whenever qualified P138 source changes.
-EXPECTED_P138_EVIDENCE_HASH = "sha256:8a27adad2c8afaefd3c6cf48bf83112549f1db8a5dee14d50486346ba591de52"
-EXPECTED_P138_REVIEW_HASH = "sha256:d1673c9526f21a93fbd06ea236570aca8d1f289a7d052f34f4519d3889d196f1"
+EXPECTED_P138_EVIDENCE_HASH = "sha256:1f6a90d5fe73dcaedee965d9bc738e1e2d9c64ce859ce356633b3b4f62762aa7"
+EXPECTED_P138_REVIEW_HASH = "sha256:3a1827240b79aeca40a1a3b3ae54ea4835e9481b3cfaaafb117b92d3d062c86a"
 
 MAX_BOOTSTRAP_BUNDLE_BYTES = 16_777_216
 _HASH_NONE = "sha256:" + ("0" * 64)

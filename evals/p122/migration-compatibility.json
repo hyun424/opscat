@@ -1,10 +1,10 @@
 {
   "artifacts": {
-    "backup": "/tmp/opscat-p122-final-refresh.sRzLb1/migration/opscat-0.1.x-state.backup.json",
-    "fixture": "/tmp/opscat-p122-final-refresh.sRzLb1/migration/opscat-0.1.x-state.json",
-    "restored": "/tmp/opscat-p122-final-refresh.sRzLb1/migration/opscat-restored-0.1.x-state.json",
-    "rollback": "/tmp/opscat-p122-final-refresh.sRzLb1/migration/opscat-rollback-state.json",
-    "upgraded": "/tmp/opscat-p122-final-refresh.sRzLb1/migration/opscat-0.2.0-state.json"
+    "backup": "/tmp/opscat-p122-migration-refresh/opscat-0.1.x-state.backup.json",
+    "fixture": "/tmp/opscat-p122-migration-refresh/opscat-0.1.x-state.json",
+    "restored": "/tmp/opscat-p122-migration-refresh/opscat-restored-0.1.x-state.json",
+    "rollback": "/tmp/opscat-p122-migration-refresh/opscat-rollback-state.json",
+    "upgraded": "/tmp/opscat-p122-migration-refresh/opscat-0.2.0-state.json"
   },
   "authority_counters": {
     "auth_context_count": 0,
@@ -59,7 +59,7 @@
     "rollback_missing_execution_count"
   ],
   "fixture_upgrade_executed": true,
-  "report_hash": "sha256:509ab269fbacaa6e41af6a77e3aaecd858046c31a80b3716cc8d1faa2fcfffdb",
+  "report_hash": "sha256:bbf8b55262263ba31ae77c9079bfac30deab0f04cfd14b1bf39e2a2f4ef53ce6",
   "restore_verified": true,
   "rollback_verified": true,
   "schema_version": "p122.migration_compatibility.v1",

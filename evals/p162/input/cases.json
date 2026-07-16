@@ -1,0 +1,14 @@
+{
+  "schema_version": "p162.input.v1",
+  "phase": "p162",
+  "cases": [
+    {"case_id":"P162-C01","initial_labels":["db_pool_exhaustion","dependency_timeout"],"plan":["metrics.query","logs.search"],"catalog":{"metrics.query":[{"id":"m1","label":"db_pool_exhaustion"}],"logs.search":[{"id":"l1","label":"db_pool_exhaustion"}]},"expected_outcome":"db_pool_exhaustion"},
+    {"case_id":"P162-C02","initial_labels":["dependency_timeout","retry_storm"],"plan":["logs.search","metrics.query"],"catalog":{"logs.search":[{"id":"l2","label":"dependency_timeout"}],"metrics.query":[{"id":"m2","label":"dependency_timeout"}]},"expected_outcome":"dependency_timeout"},
+    {"case_id":"P162-C03","initial_labels":["recent_deploy_regression","resource_saturation"],"plan":["deploy.read","metrics.query"],"catalog":{"deploy.read":[{"id":"d3","label":"recent_deploy_regression"}],"metrics.query":[{"id":"m3","label":"recent_deploy_regression"}]},"expected_outcome":"recent_deploy_regression"},
+    {"case_id":"P162-C04","initial_labels":["queue_backlog","resource_saturation"],"plan":["metrics.query","logs.search"],"catalog":{"metrics.query":[{"id":"m4","label":"queue_backlog"}],"logs.search":[{"id":"l4","label":"queue_backlog"}]},"expected_outcome":"queue_backlog"},
+    {"case_id":"P162-C05","initial_labels":["retry_storm","dependency_timeout"],"plan":["metrics.query","logs.search","deploy.read"],"catalog":{"metrics.query":[{"id":"m5","label":"retry_storm"}],"logs.search":[{"id":"l5","label":"retry_storm"}],"deploy.read":[]},"expected_outcome":"retry_storm"},
+    {"case_id":"P162-C06","initial_labels":["db_pool_exhaustion","dependency_timeout"],"plan":["metrics.query","logs.search"],"catalog":{"metrics.query":[{"id":"m6","label":"db_pool_exhaustion"}],"logs.search":[{"id":"l6","label":"dependency_timeout"}]},"expected_outcome":"insufficient_evidence"},
+    {"case_id":"P162-C07","initial_labels":["queue_backlog","resource_saturation"],"plan":["metrics.query","logs.search"],"catalog":{"metrics.query":[],"logs.search":[]},"expected_outcome":"insufficient_evidence"},
+    {"case_id":"P162-C08","initial_labels":["recent_deploy_regression","dependency_timeout"],"plan":["deploy.read","metrics.query","logs.search"],"catalog":{"deploy.read":[{"id":"d8","label":"recent_deploy_regression"}],"metrics.query":[{"id":"m8","label":"dependency_timeout"}],"logs.search":[]},"expected_outcome":"insufficient_evidence"}
+  ]
+}

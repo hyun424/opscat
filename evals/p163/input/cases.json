@@ -1,0 +1,14 @@
+{
+  "schema_version": "p163.input.v1",
+  "phase": "p163",
+  "cases": [
+    {"case_id":"P163-C01","action":"tune_pool","approval_granted":true,"pre_state":{"error_rate_bps":4800,"healthy":false,"generation":1},"post_state":{"error_rate_bps":600,"healthy":true,"generation":2},"rollback_restored":false,"expected_outcome":"recovery_verified"},
+    {"case_id":"P163-C02","action":"restart_worker","approval_granted":true,"pre_state":{"error_rate_bps":4200,"healthy":false,"generation":2},"post_state":{"error_rate_bps":500,"healthy":true,"generation":3},"rollback_restored":false,"expected_outcome":"recovery_verified"},
+    {"case_id":"P163-C03","action":"rollback_canary","approval_granted":true,"pre_state":{"error_rate_bps":6200,"healthy":false,"generation":3},"post_state":{"error_rate_bps":700,"healthy":true,"generation":4},"rollback_restored":false,"expected_outcome":"recovery_verified"},
+    {"case_id":"P163-C04","action":"tune_pool","approval_granted":true,"pre_state":{"error_rate_bps":5300,"healthy":false,"generation":4},"post_state":{"error_rate_bps":800,"healthy":true,"generation":5},"rollback_restored":false,"expected_outcome":"recovery_verified"},
+    {"case_id":"P163-C05","action":"restart_worker","approval_granted":true,"pre_state":{"error_rate_bps":3900,"healthy":false,"generation":5},"post_state":{"error_rate_bps":900,"healthy":true,"generation":6},"rollback_restored":false,"expected_outcome":"recovery_verified"},
+    {"case_id":"P163-C06","action":"tune_pool","approval_granted":true,"pre_state":{"error_rate_bps":3100,"healthy":false,"generation":6},"post_state":{"error_rate_bps":4500,"healthy":false,"generation":7},"rollback_restored":true,"expected_outcome":"rollback_verified"},
+    {"case_id":"P163-C07","action":"restart_worker","approval_granted":true,"pre_state":{"error_rate_bps":2200,"healthy":false,"generation":7},"post_state":{"error_rate_bps":2600,"healthy":false,"generation":8},"rollback_restored":true,"expected_outcome":"rollback_verified"},
+    {"case_id":"P163-C08","action":"rollback_canary","approval_granted":true,"pre_state":{"error_rate_bps":2800,"healthy":false,"generation":8},"post_state":{"error_rate_bps":1700,"healthy":true,"generation":9},"rollback_restored":true,"expected_outcome":"rollback_verified"}
+  ]
+}

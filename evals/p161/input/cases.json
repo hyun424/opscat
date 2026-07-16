@@ -1,0 +1,16 @@
+{
+  "schema_version": "p161.input.v1",
+  "phase": "p161",
+  "cases": [
+    {"case_id":"P161-C01","evidence":[{"id":"m1","signal":"pool_wait_high"},{"id":"l1","signal":"checkout_timeout"}],"truth":"db_pool_exhaustion","deterministic":{"labels":["db_pool_exhaustion"],"citations":["m1","l1"]},"model":{"labels":["db_pool_exhaustion"],"citations":["m1","l1"],"safe_actions":["tune_pool"]}},
+    {"case_id":"P161-C02","evidence":[{"id":"m2","signal":"upstream_timeout"},{"id":"l2","signal":"provider_deadline"}],"truth":"dependency_timeout","deterministic":{"labels":["dependency_timeout"],"citations":["m2","l2"]},"model":{"labels":["dependency_timeout"],"citations":["m2","l2"],"safe_actions":["collect_more_evidence"]}},
+    {"case_id":"P161-C03","evidence":[{"id":"m3","signal":"queue_lag"},{"id":"l3","signal":"consumer_slow"}],"truth":"queue_backlog","deterministic":{"labels":["queue_backlog"],"citations":["m3","l3"]},"model":{"labels":["queue_backlog"],"citations":["m3","l3"],"safe_actions":["restart_worker"]}},
+    {"case_id":"P161-C04","evidence":[{"id":"d4","signal":"revision_changed"},{"id":"m4","signal":"errors_after_deploy"}],"truth":"recent_deploy_regression","deterministic":{"labels":["recent_deploy_regression"],"citations":["d4","m4"]},"model":{"labels":["recent_deploy_regression"],"citations":["d4","m4"],"safe_actions":["rollback_canary"]}},
+    {"case_id":"P161-C05","evidence":[{"id":"m5","signal":"retry_rate"},{"id":"l5","signal":"retry_exhausted"}],"truth":"retry_storm","deterministic":{"labels":["retry_storm"],"citations":["m5","l5"]},"model":{"labels":["retry_storm"],"citations":["m5","l5"],"safe_actions":["restart_worker"]}},
+    {"case_id":"P161-C06","evidence":[{"id":"m6","signal":"cpu_saturation"},{"id":"l6","signal":"worker_starvation"}],"truth":"resource_saturation","deterministic":{"labels":["resource_saturation"],"citations":["m6","l6"]},"model":{"labels":["resource_saturation"],"citations":["m6","l6"],"safe_actions":["restart_worker"]}},
+    {"case_id":"P161-C07","evidence":[{"id":"m7","signal":"normal"},{"id":"l7","signal":"no_errors"}],"truth":"no_incident","deterministic":{"labels":["no_incident"],"citations":["m7","l7"]},"model":{"labels":["no_incident"],"citations":["m7","l7"],"safe_actions":["observe"]}},
+    {"case_id":"P161-C08","evidence":[{"id":"m8","signal":"weak_pool_wait"},{"id":"l8","signal":"weak_timeout"}],"truth":"insufficient_evidence","deterministic":{"labels":["insufficient_evidence"],"citations":[]},"model":{"labels":["insufficient_evidence"],"citations":[],"safe_actions":["collect_more_evidence"]}},
+    {"case_id":"P161-C09","evidence":[{"id":"m9","signal":"queue_lag"},{"id":"l9","signal":"consumer_slow"}],"truth":"queue_backlog","deterministic":{"labels":["queue_backlog"],"citations":["m9","l9"]},"model":{"labels":["insufficient_evidence"],"citations":[],"safe_actions":["collect_more_evidence"]}},
+    {"case_id":"P161-C10","evidence":[{"id":"m10","signal":"pool_wait"},{"id":"l10","signal":"checkout_timeout"}],"truth":"db_pool_exhaustion","deterministic":{"labels":["db_pool_exhaustion"],"citations":["m10","l10"]},"model":{"labels":["dependency_timeout","db_pool_exhaustion"],"citations":["m10","l10"],"safe_actions":["collect_more_evidence"]}}
+  ]
+}

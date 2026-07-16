@@ -1,0 +1,13 @@
+{
+  "schema_version": "p159.input.v1",
+  "phase": "p159",
+  "write_requires_capability": true,
+  "cases": [
+    {"case_id":"P159-C01","fault":"db_pool_exhaustion","target":"http://127.0.0.1:41001","observed_endpoints":["/health","/metrics","/logs","/deploys"],"fault_visible":true},
+    {"case_id":"P159-C02","fault":"dependency_timeout","target":"http://127.0.0.1:41002","observed_endpoints":["/health","/metrics","/logs","/deploys"],"fault_visible":true},
+    {"case_id":"P159-C03","fault":"queue_backlog","target":"http://127.0.0.1:41003","observed_endpoints":["/health","/metrics","/logs","/deploys"],"fault_visible":true},
+    {"case_id":"P159-C04","fault":"recent_deploy_regression","target":"http://127.0.0.1:41004","observed_endpoints":["/health","/metrics","/logs","/deploys"],"fault_visible":true},
+    {"case_id":"P159-C05","fault":"retry_storm","target":"http://127.0.0.1:41005","observed_endpoints":["/health","/metrics","/logs","/deploys"],"fault_visible":true},
+    {"case_id":"P159-C06","fault":"resource_saturation","target":"http://127.0.0.1:41006","observed_endpoints":["/health","/metrics","/logs","/deploys"],"fault_visible":true}
+  ]
+}

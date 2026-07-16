@@ -7,14 +7,14 @@
   "ordinal": 7,
   "output_ref": "committed/rollback.json",
   "output_schema": "p121.validation_outcome.v1",
-  "parent_pid": 83033,
+  "parent_pid": 69433,
   "precommit_hash": "sha256:b2eb2d8e2c7fc48e4e2486d7ba5a70430d82c9bd8174aca1c85d3a13a84dabcf",
   "precommit_kind": "file",
   "precommit_ref": "precommit/rollback.json",
   "precommit_validation_hash": "sha256:4c779da3a1718e42f972a40014a54f9d9303b147e735961c8bcd753bbc76af90",
-  "record_hash": "sha256:365af2b404584b6e9fe9e3ce4d3a2b5817342c724b4cc56935113024a88e5d19",
+  "record_hash": "sha256:d74ae63a34c4083881208716ffca9b7d61f11069786e522c9d8ed1de215af334",
   "schema_version": "p122.release_stage_pending.v1",
   "stage": "rollback",
   "status": "pending",
-  "worker_pid": 83049
+  "worker_pid": 69450
 }

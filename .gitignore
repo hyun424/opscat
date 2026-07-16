@@ -61,3 +61,5 @@ evals/real_datasets/external/p114/raw/
 evals/real_datasets/external/p114/results/development/
 evals/real_datasets/external/p114/results/validation/
 evals/real_datasets/external/p114/results/blind/batch-*/
+.coverage
+htmlcov/

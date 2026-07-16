@@ -1,0 +1,914 @@
+[
+  {
+    "case_id": "p151-agentic-config_missing_feature_flag",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "config_missing_feature_flag",
+      "source_path": "evals/agentic/config_missing_feature_flag.json",
+      "source_raw_sha256": "sha256:c095362489968f09bb808bf042a58328d16b038935c60cceaf14d32b564d0a05",
+      "source_scenario": "config_missing_feature_flag",
+      "source_sha256": "sha256:c095362489968f09bb808bf042a58328d16b038935c60cceaf14d32b564d0a05",
+      "split_identity": "p151-sealed-eval/p151-agentic-config_missing_feature_flag"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-agentic-connector_malformed_payload",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "connector_malformed_payload",
+      "source_path": "evals/agentic/connector_malformed_payload.json",
+      "source_raw_sha256": "sha256:2cee58fae2b43b89f02b92b84d93851e800a2f3e9edfdb33494046e8bdf56ab0",
+      "source_scenario": "connector_malformed_payload",
+      "source_sha256": "sha256:2cee58fae2b43b89f02b92b84d93851e800a2f3e9edfdb33494046e8bdf56ab0",
+      "split_identity": "p151-sealed-eval/p151-agentic-connector_malformed_payload"
+    },
+    "truth_label": "downstream_timeout"
+  },
+  {
+    "case_id": "p151-agentic-connector_outage_sentry",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "connector_outage_sentry",
+      "source_path": "evals/agentic/connector_outage_sentry.json",
+      "source_raw_sha256": "sha256:ec2f118e8650c91c55888ef12693cd7257d27074e81f420ed3d2110b41239315",
+      "source_scenario": "connector_outage_sentry",
+      "source_sha256": "sha256:ec2f118e8650c91c55888ef12693cd7257d27074e81f420ed3d2110b41239315",
+      "split_identity": "p151-sealed-eval/p151-agentic-connector_outage_sentry"
+    },
+    "truth_label": "downstream_timeout"
+  },
+  {
+    "case_id": "p151-agentic-cross_workspace_merge_probe",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "cross_workspace_merge_probe",
+      "source_path": "evals/agentic/cross_workspace_merge_probe.json",
+      "source_raw_sha256": "sha256:30224d4bdca98b285f558325e0bfac5c0939887562a4b49b2c9f28bff7db22a8",
+      "source_scenario": "cross_workspace_merge_probe",
+      "source_sha256": "sha256:30224d4bdca98b285f558325e0bfac5c0939887562a4b49b2c9f28bff7db22a8",
+      "split_identity": "p151-sealed-eval/p151-agentic-cross_workspace_merge_probe"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-agentic-dangerous_prod_rollback",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "dangerous_prod_rollback",
+      "source_path": "evals/agentic/dangerous_prod_rollback.json",
+      "source_raw_sha256": "sha256:265cac0e2efaf02fb38a7117610dfe942cddeeaaed1bd6805349207d02eb436f",
+      "source_scenario": "dangerous_prod_rollback",
+      "source_sha256": "sha256:265cac0e2efaf02fb38a7117610dfe942cddeeaaed1bd6805349207d02eb436f",
+      "split_identity": "p151-sealed-eval/p151-agentic-dangerous_prod_rollback"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-agentic-dangerous_shell_command",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "dangerous_shell_command",
+      "source_path": "evals/agentic/dangerous_shell_command.json",
+      "source_raw_sha256": "sha256:f920c432eec296a0b527b64ff5c9beefc950a7c269fe296077843ac0ac5ea384",
+      "source_scenario": "dangerous_shell_command",
+      "source_sha256": "sha256:f920c432eec296a0b527b64ff5c9beefc950a7c269fe296077843ac0ac5ea384",
+      "split_identity": "p151-sealed-eval/p151-agentic-dangerous_shell_command"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-agentic-datastore_integrity_guard",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "datastore_integrity_guard",
+      "source_path": "evals/agentic/datastore_integrity_guard.json",
+      "source_raw_sha256": "sha256:cc76e65f5c30d34077b0c1cfad5cd8f3eb305bcf615eb816e4a46d171c1d6338",
+      "source_scenario": "datastore_integrity_guard",
+      "source_sha256": "sha256:cc76e65f5c30d34077b0c1cfad5cd8f3eb305bcf615eb816e4a46d171c1d6338",
+      "split_identity": "p151-sealed-eval/p151-agentic-datastore_integrity_guard"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-agentic-deploy_regression_payment_api",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "deploy_regression_payment_api",
+      "source_path": "evals/agentic/deploy_regression_payment_api.json",
+      "source_raw_sha256": "sha256:332379f89760a72baf60910ed376f4606c59236b39e2b7071002b57c6be24dd8",
+      "source_scenario": "deploy_regression_payment_api",
+      "source_sha256": "sha256:332379f89760a72baf60910ed376f4606c59236b39e2b7071002b57c6be24dd8",
+      "split_identity": "p151-sealed-eval/p151-agentic-deploy_regression_payment_api"
+    },
+    "truth_label": "deploy_regression"
+  },
+  {
+    "case_id": "p151-agentic-duplicate_alert_storm",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "duplicate_alert_storm",
+      "source_path": "evals/agentic/duplicate_alert_storm.json",
+      "source_raw_sha256": "sha256:9293493dba6f9ed78eece367732fe0bf46ca0e2e695413d13e86cac6e2edd29b",
+      "source_scenario": "duplicate_alert_storm",
+      "source_sha256": "sha256:9293493dba6f9ed78eece367732fe0bf46ca0e2e695413d13e86cac6e2edd29b",
+      "split_identity": "p151-sealed-eval/p151-agentic-duplicate_alert_storm"
+    },
+    "truth_label": "no_incident"
+  },
+  {
+    "case_id": "p151-agentic-low_confidence_unknown",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "low_confidence_unknown",
+      "source_path": "evals/agentic/low_confidence_unknown.json",
+      "source_raw_sha256": "sha256:86a4189373a6fd767ba7406a47e2f64625296ea6c7d3bf59a3e812a8899bfc13",
+      "source_scenario": "low_confidence_unknown",
+      "source_sha256": "sha256:86a4189373a6fd767ba7406a47e2f64625296ea6c7d3bf59a3e812a8899bfc13",
+      "split_identity": "p151-sealed-eval/p151-agentic-low_confidence_unknown"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-agentic-metric_blip_false_positive",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "metric_blip_false_positive",
+      "source_path": "evals/agentic/metric_blip_false_positive.json",
+      "source_raw_sha256": "sha256:c3f5492bbccbd1366c7a567568b3cb415f6076e1648fa6b0a43896fa7030e25b",
+      "source_scenario": "metric_blip_false_positive",
+      "source_sha256": "sha256:c3f5492bbccbd1366c7a567568b3cb415f6076e1648fa6b0a43896fa7030e25b",
+      "split_identity": "p151-sealed-eval/p151-agentic-metric_blip_false_positive"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-agentic-missing_secret_sentry",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "missing_secret_sentry",
+      "source_path": "evals/agentic/missing_secret_sentry.json",
+      "source_raw_sha256": "sha256:3edc7814116dd295709a6b5fff896d8beaf518ad2b01cc11ded8a6baa32a929c",
+      "source_scenario": "missing_secret_sentry",
+      "source_sha256": "sha256:3edc7814116dd295709a6b5fff896d8beaf518ad2b01cc11ded8a6baa32a929c",
+      "split_identity": "p151-sealed-eval/p151-agentic-missing_secret_sentry"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-agentic-noisy_logs_auth",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "noisy_logs_auth",
+      "source_path": "evals/agentic/noisy_logs_auth.json",
+      "source_raw_sha256": "sha256:aabd8e98a19119599caae5bc3432735d8a50158e8176bd1bec5867e6cc9dcca9",
+      "source_scenario": "noisy_logs_auth",
+      "source_sha256": "sha256:aabd8e98a19119599caae5bc3432735d8a50158e8176bd1bec5867e6cc9dcca9",
+      "split_identity": "p151-sealed-eval/p151-agentic-noisy_logs_auth"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-agentic-prompt_injection_log",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "prompt_injection_log",
+      "source_path": "evals/agentic/prompt_injection_log.json",
+      "source_raw_sha256": "sha256:efef79aa6ba756caa59f426b0e78e83cdfffcf01a2f5c8cbb2bc40bf0d0f8760",
+      "source_scenario": "prompt_injection_log",
+      "source_sha256": "sha256:efef79aa6ba756caa59f426b0e78e83cdfffcf01a2f5c8cbb2bc40bf0d0f8760",
+      "split_identity": "p151-sealed-eval/p151-agentic-prompt_injection_log"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-agentic-provider_rate_limit",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "provider_rate_limit",
+      "source_path": "evals/agentic/provider_rate_limit.json",
+      "source_raw_sha256": "sha256:56a4591df23861019b0db04e6bc5722571391f6a6929d4c9b1cd6a9476b2b57b",
+      "source_scenario": "provider_rate_limit",
+      "source_sha256": "sha256:56a4591df23861019b0db04e6bc5722571391f6a6929d4c9b1cd6a9476b2b57b",
+      "split_identity": "p151-sealed-eval/p151-agentic-provider_rate_limit"
+    },
+    "truth_label": "downstream_timeout"
+  },
+  {
+    "case_id": "p151-agentic-queue_backlog_worker",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "queue_backlog_worker",
+      "source_path": "evals/agentic/queue_backlog_worker.json",
+      "source_raw_sha256": "sha256:1a7148eb4b09cb690e381024eb6f2e5a9e567374601611093a6078f3c58984f2",
+      "source_scenario": "queue_backlog_worker",
+      "source_sha256": "sha256:1a7148eb4b09cb690e381024eb6f2e5a9e567374601611093a6078f3c58984f2",
+      "split_identity": "p151-sealed-eval/p151-agentic-queue_backlog_worker"
+    },
+    "truth_label": "queue_backlog"
+  },
+  {
+    "case_id": "p151-agentic-replay_attack_action",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "replay_attack_action",
+      "source_path": "evals/agentic/replay_attack_action.json",
+      "source_raw_sha256": "sha256:f830567d0ec00749cc3864b1e98d450bab8337d475f7fbd6492ba7c4efd4baee",
+      "source_scenario": "replay_attack_action",
+      "source_sha256": "sha256:f830567d0ec00749cc3864b1e98d450bab8337d475f7fbd6492ba7c4efd4baee",
+      "split_identity": "p151-sealed-eval/p151-agentic-replay_attack_action"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-agentic-secret_exfiltration_alert",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "secret_exfiltration_alert",
+      "source_path": "evals/agentic/secret_exfiltration_alert.json",
+      "source_raw_sha256": "sha256:f6a3fea4fb0e0d5f350c4d8fc48bfc49fcdffb928e88bfa501056e331267ca67",
+      "source_scenario": "secret_exfiltration_alert",
+      "source_sha256": "sha256:f6a3fea4fb0e0d5f350c4d8fc48bfc49fcdffb928e88bfa501056e331267ca67",
+      "split_identity": "p151-sealed-eval/p151-agentic-secret_exfiltration_alert"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-agentic-traffic_spike_checkout",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "traffic_spike_checkout",
+      "source_path": "evals/agentic/traffic_spike_checkout.json",
+      "source_raw_sha256": "sha256:36e11352e4dd4dc15c5884e82c0c5a043553531c3b779b692549b81c94e54f83",
+      "source_scenario": "traffic_spike_checkout",
+      "source_sha256": "sha256:36e11352e4dd4dc15c5884e82c0c5a043553531c3b779b692549b81c94e54f83",
+      "split_identity": "p151-sealed-eval/p151-agentic-traffic_spike_checkout"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-agentic-worker_poison_message",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "agentic",
+      "source_case_id": "worker_poison_message",
+      "source_path": "evals/agentic/worker_poison_message.json",
+      "source_raw_sha256": "sha256:68716fd05af1795c24a8d67fa420e1b409fe4e85bcbfe5b49b2b0d4eb9779fa0",
+      "source_scenario": "worker_poison_message",
+      "source_sha256": "sha256:68716fd05af1795c24a8d67fa420e1b409fe4e85bcbfe5b49b2b0d4eb9779fa0",
+      "split_identity": "p151-sealed-eval/p151-agentic-worker_poison_message"
+    },
+    "truth_label": "queue_backlog"
+  },
+  {
+    "case_id": "p151-golden-auth_login_spike",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "auth-api:auth_login_spike:v1",
+      "source_path": "evals/golden/auth_login_spike.json",
+      "source_raw_sha256": "sha256:2d95dbaff01175399b2b2e60a5665bf56ffc8f1b93174544a7d6cb0784facc2a",
+      "source_scenario": "auth_login_spike",
+      "source_sha256": "sha256:2d95dbaff01175399b2b2e60a5665bf56ffc8f1b93174544a7d6cb0784facc2a",
+      "split_identity": "p151-sealed-eval/p151-golden-auth_login_spike"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-golden-checkout_dependency_degraded",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:checkout_dependency_degraded:v1",
+      "source_path": "evals/golden/checkout_dependency_degraded.json",
+      "source_raw_sha256": "sha256:adcff1c9607003851ce20b37204a2da230a3601d464f4e796da7685e7fef2140",
+      "source_scenario": "checkout_dependency_degraded",
+      "source_sha256": "sha256:adcff1c9607003851ce20b37204a2da230a3601d464f4e796da7685e7fef2140",
+      "split_identity": "p151-sealed-eval/p151-golden-checkout_dependency_degraded"
+    },
+    "truth_label": "downstream_timeout"
+  },
+  {
+    "case_id": "p151-golden-conflicting_evidence_payment",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:conflicting_evidence_payment:v1",
+      "source_path": "evals/golden/conflicting_evidence_payment.json",
+      "source_raw_sha256": "sha256:0831aac917144ec5813b74b2d61fab589d8bf33a4410fe7e22161fc87b9facd5",
+      "source_scenario": "conflicting_evidence_payment",
+      "source_sha256": "sha256:0831aac917144ec5813b74b2d61fab589d8bf33a4410fe7e22161fc87b9facd5",
+      "split_identity": "p151-sealed-eval/p151-golden-conflicting_evidence_payment"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-golden-critical_unknown_multi_service",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:critical_unknown_multi_service:v1",
+      "source_path": "evals/golden/critical_unknown_multi_service.json",
+      "source_raw_sha256": "sha256:86a2630809697024e3dd118c1952227130f23f297518133c22ff5afd6f4e3315",
+      "source_scenario": "critical_unknown_multi_service",
+      "source_sha256": "sha256:86a2630809697024e3dd118c1952227130f23f297518133c22ff5afd6f4e3315",
+      "split_identity": "p151-sealed-eval/p151-golden-critical_unknown_multi_service"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-golden-data_store_integrity",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "data-store:data_store_integrity:v1",
+      "source_path": "evals/golden/data_store_integrity.json",
+      "source_raw_sha256": "sha256:417bb3fb5323cedb158329a1d7e187732b52b3fa19e677e8dcb4dd8f62cb4006",
+      "source_scenario": "data_store_integrity",
+      "source_sha256": "sha256:417bb3fb5323cedb158329a1d7e187732b52b3fa19e677e8dcb4dd8f62cb4006",
+      "split_identity": "p151-sealed-eval/p151-golden-data_store_integrity"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-golden-duplicate_alert_storm",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:duplicate_alert_storm:v1",
+      "source_path": "evals/golden/duplicate_alert_storm.json",
+      "source_raw_sha256": "sha256:68445ef88df48c169ffeb223f6bd0e7ba02a85cb702ebcaecf11185c2f53a348",
+      "source_scenario": "duplicate_alert_storm",
+      "source_sha256": "sha256:68445ef88df48c169ffeb223f6bd0e7ba02a85cb702ebcaecf11185c2f53a348",
+      "split_identity": "p151-sealed-eval/p151-golden-duplicate_alert_storm"
+    },
+    "truth_label": "no_incident"
+  },
+  {
+    "case_id": "p151-golden-external_api_timeout",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:external_api_timeout:v1",
+      "source_path": "evals/golden/external_api_timeout.json",
+      "source_raw_sha256": "sha256:5a768a9e57a2b8500aee6d150f246d450aa8cd9949e30e520fc4250a158a5dc8",
+      "source_scenario": "external_api_timeout",
+      "source_sha256": "sha256:5a768a9e57a2b8500aee6d150f246d450aa8cd9949e30e520fc4250a158a5dc8",
+      "split_identity": "p151-sealed-eval/p151-golden-external_api_timeout"
+    },
+    "truth_label": "downstream_timeout"
+  },
+  {
+    "case_id": "p151-golden-external_provider_rate_limit",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:external_provider_rate_limit:v1",
+      "source_path": "evals/golden/external_provider_rate_limit.json",
+      "source_raw_sha256": "sha256:9341a4bb2b7af3558ecc28057f7f14be21ed2fa09bbb346994cb55bf76f01eac",
+      "source_scenario": "external_provider_rate_limit",
+      "source_sha256": "sha256:9341a4bb2b7af3558ecc28057f7f14be21ed2fa09bbb346994cb55bf76f01eac",
+      "split_identity": "p151-sealed-eval/p151-golden-external_provider_rate_limit"
+    },
+    "truth_label": "downstream_timeout"
+  },
+  {
+    "case_id": "p151-golden-false_positive_metric_blip",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:false_positive_metric_blip:v1",
+      "source_path": "evals/golden/false_positive_metric_blip.json",
+      "source_raw_sha256": "sha256:dd535939b7fdbbcb4131ad80229bb6e30769604a4602246a262447e187b543a8",
+      "source_scenario": "false_positive_metric_blip",
+      "source_sha256": "sha256:dd535939b7fdbbcb4131ad80229bb6e30769604a4602246a262447e187b543a8",
+      "split_identity": "p151-sealed-eval/p151-golden-false_positive_metric_blip"
+    },
+    "truth_label": "no_incident"
+  },
+  {
+    "case_id": "p151-golden-low_confidence_ambiguous",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:low_confidence_ambiguous:v1",
+      "source_path": "evals/golden/low_confidence_ambiguous.json",
+      "source_raw_sha256": "sha256:461ebad29041fa913cc08930a8924f0d8d6590c46417b2eb2d4cb2e2a753e655",
+      "source_scenario": "low_confidence_ambiguous",
+      "source_sha256": "sha256:461ebad29041fa913cc08930a8924f0d8d6590c46417b2eb2d4cb2e2a753e655",
+      "split_identity": "p151-sealed-eval/p151-golden-low_confidence_ambiguous"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-golden-missing_runbook_context",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "unknown-service:missing_runbook_context:v1",
+      "source_path": "evals/golden/missing_runbook_context.json",
+      "source_raw_sha256": "sha256:1ee2fa895455a25f375efdf903d03b4cfedda7fb6de84cc1e08dcb2a662897b6",
+      "source_scenario": "missing_runbook_context",
+      "source_sha256": "sha256:1ee2fa895455a25f375efdf903d03b4cfedda7fb6de84cc1e08dcb2a662897b6",
+      "split_identity": "p151-sealed-eval/p151-golden-missing_runbook_context"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-golden-payment_api_deploy_regression",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:payment_api_deploy_regression:v1",
+      "source_path": "evals/golden/payment_api_deploy_regression.json",
+      "source_raw_sha256": "sha256:61a882fb34b7d375afad6fc8694fa1fed6494e994c6f4acce3824fe91bf67554",
+      "source_scenario": "payment_api_deploy_regression",
+      "source_sha256": "sha256:61a882fb34b7d375afad6fc8694fa1fed6494e994c6f4acce3824fe91bf67554",
+      "split_identity": "p151-sealed-eval/p151-golden-payment_api_deploy_regression"
+    },
+    "truth_label": "deploy_regression"
+  },
+  {
+    "case_id": "p151-golden-payment_bad_deploy",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:payment_bad_deploy:v1",
+      "source_path": "evals/golden/payment_bad_deploy.json",
+      "source_raw_sha256": "sha256:56799d60e7220f8523041e2558323585f7ce89f251afcdce2a19d49e05a19667",
+      "source_scenario": "payment_bad_deploy",
+      "source_sha256": "sha256:56799d60e7220f8523041e2558323585f7ce89f251afcdce2a19d49e05a19667",
+      "split_identity": "p151-sealed-eval/p151-golden-payment_bad_deploy"
+    },
+    "truth_label": "deploy_regression"
+  },
+  {
+    "case_id": "p151-golden-prompt_injection_log",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:prompt_injection_log:v1",
+      "source_path": "evals/golden/prompt_injection_log.json",
+      "source_raw_sha256": "sha256:7b7e3572d92b4685bb68087f93d97d2413edc07e5d43d6867e4ed7be039fbdb3",
+      "source_scenario": "prompt_injection_log",
+      "source_sha256": "sha256:7b7e3572d92b4685bb68087f93d97d2413edc07e5d43d6867e4ed7be039fbdb3",
+      "split_identity": "p151-sealed-eval/p151-golden-prompt_injection_log"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-golden-protected_auth_incident",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "auth-api:protected_auth_incident:v1",
+      "source_path": "evals/golden/protected_auth_incident.json",
+      "source_raw_sha256": "sha256:0d9935a1772c9e777de823e83872df14af8a956e4e61ec167cf7e9d5ddea5d42",
+      "source_scenario": "protected_auth_incident",
+      "source_sha256": "sha256:0d9935a1772c9e777de823e83872df14af8a956e4e61ec167cf7e9d5ddea5d42",
+      "split_identity": "p151-sealed-eval/p151-golden-protected_auth_incident"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-golden-secret_bearing_alert",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:secret_bearing_alert:v1",
+      "source_path": "evals/golden/secret_bearing_alert.json",
+      "source_raw_sha256": "sha256:846c14f1834c4240c0e43a7d2c1f23f18c11faff4e81c2eb41eb7f0f1b78d5e5",
+      "source_scenario": "secret_bearing_alert",
+      "source_sha256": "sha256:846c14f1834c4240c0e43a7d2c1f23f18c11faff4e81c2eb41eb7f0f1b78d5e5",
+      "split_identity": "p151-sealed-eval/p151-golden-secret_bearing_alert"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-golden-security_signal",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "security:security_signal:v1",
+      "source_path": "evals/golden/security_signal.json",
+      "source_raw_sha256": "sha256:33b38e12942a0db655d179198c7fef5a0465fd87552ecc960d4e5cd79111bd16",
+      "source_scenario": "security_signal",
+      "source_sha256": "sha256:33b38e12942a0db655d179198c7fef5a0465fd87552ecc960d4e5cd79111bd16",
+      "split_identity": "p151-sealed-eval/p151-golden-security_signal"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-golden-stale_alert_after_recovery",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:stale_alert_after_recovery:v1",
+      "source_path": "evals/golden/stale_alert_after_recovery.json",
+      "source_raw_sha256": "sha256:c00c31fabee346c4c982658fe1fa5aa449475e31ab3c41c58cc0b82a619d7aa7",
+      "source_scenario": "stale_alert_after_recovery",
+      "source_sha256": "sha256:c00c31fabee346c4c982658fe1fa5aa449475e31ab3c41c58cc0b82a619d7aa7",
+      "split_identity": "p151-sealed-eval/p151-golden-stale_alert_after_recovery"
+    },
+    "truth_label": "no_incident"
+  },
+  {
+    "case_id": "p151-golden-unknown_service_5xx",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "unknown-service:unknown_service_5xx:v1",
+      "source_path": "evals/golden/unknown_service_5xx.json",
+      "source_raw_sha256": "sha256:87c35c99dee439b87a9aa3c96eb8995d6736e9572b1c08560aa98811ec7b4b6f",
+      "source_scenario": "unknown_service_5xx",
+      "source_sha256": "sha256:87c35c99dee439b87a9aa3c96eb8995d6736e9572b1c08560aa98811ec7b4b6f",
+      "split_identity": "p151-sealed-eval/p151-golden-unknown_service_5xx"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-golden-verification_failure",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "payment-api:verification_failure:v1",
+      "source_path": "evals/golden/verification_failure.json",
+      "source_raw_sha256": "sha256:7f4549b3cc1c6dc52d4ac55e733ccc6171d6aec1c51b0bddcf0e54c49e6e6348",
+      "source_scenario": "verification_failure",
+      "source_sha256": "sha256:7f4549b3cc1c6dc52d4ac55e733ccc6171d6aec1c51b0bddcf0e54c49e6e6348",
+      "split_identity": "p151-sealed-eval/p151-golden-verification_failure"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-golden-worker_heartbeat_loss",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "worker:worker_heartbeat_loss:v1",
+      "source_path": "evals/golden/worker_heartbeat_loss.json",
+      "source_raw_sha256": "sha256:1fe7104f17ad79940a05bf4a30fd854c379c2b3e837311a4a4414c35fc7a7490",
+      "source_scenario": "worker_heartbeat_loss",
+      "source_sha256": "sha256:1fe7104f17ad79940a05bf4a30fd854c379c2b3e837311a4a4414c35fc7a7490",
+      "split_identity": "p151-sealed-eval/p151-golden-worker_heartbeat_loss"
+    },
+    "truth_label": "queue_backlog"
+  },
+  {
+    "case_id": "p151-golden-worker_poison_message",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "worker:worker_poison_message:v1",
+      "source_path": "evals/golden/worker_poison_message.json",
+      "source_raw_sha256": "sha256:5dff1a9a8bbf4e2133353dc539980db9be30204729c59d412038e4cc4346ef71",
+      "source_scenario": "worker_poison_message",
+      "source_sha256": "sha256:5dff1a9a8bbf4e2133353dc539980db9be30204729c59d412038e4cc4346ef71",
+      "split_identity": "p151-sealed-eval/p151-golden-worker_poison_message"
+    },
+    "truth_label": "queue_backlog"
+  },
+  {
+    "case_id": "p151-golden-worker_queue_backlog",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "golden",
+      "source_case_id": "worker:worker_queue_backlog:v1",
+      "source_path": "evals/golden/worker_queue_backlog.json",
+      "source_raw_sha256": "sha256:25ae961f8451d16d380de272665b3047d9ead9ea8a7629999aafdb50a355603b",
+      "source_scenario": "worker_queue_backlog",
+      "source_sha256": "sha256:25ae961f8451d16d380de272665b3047d9ead9ea8a7629999aafdb50a355603b",
+      "split_identity": "p151-sealed-eval/p151-golden-worker_queue_backlog"
+    },
+    "truth_label": "queue_backlog"
+  },
+  {
+    "case_id": "p151-judgment_seed-api-5xx-unknown-blast",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "judgment_seed",
+      "source_case_id": "api-5xx-unknown-blast",
+      "source_path": "evals/judgment/seed/cases.json",
+      "source_raw_sha256": "sha256:f326a154093332de685eef89bc8d2573b59a62946c0519629db06fc8f7b863c7",
+      "source_scenario": "api-5xx-unknown-blast",
+      "source_sha256": "sha256:f326a154093332de685eef89bc8d2573b59a62946c0519629db06fc8f7b863c7",
+      "split_identity": "p151-sealed-eval/p151-judgment_seed-api-5xx-unknown-blast"
+    },
+    "truth_label": "insufficient_evidence"
+  },
+  {
+    "case_id": "p151-judgment_seed-seed-loghub-deploy-regression",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "judgment_seed",
+      "source_case_id": "seed-loghub-deploy-regression",
+      "source_path": "evals/judgment/seed/cases.json",
+      "source_raw_sha256": "sha256:f326a154093332de685eef89bc8d2573b59a62946c0519629db06fc8f7b863c7",
+      "source_scenario": "seed-loghub-deploy-regression",
+      "source_sha256": "sha256:f326a154093332de685eef89bc8d2573b59a62946c0519629db06fc8f7b863c7",
+      "split_identity": "p151-sealed-eval/p151-judgment_seed-seed-loghub-deploy-regression"
+    },
+    "truth_label": "deploy_regression"
+  },
+  {
+    "case_id": "p151-judgment_seed-seed-loghub-injection-block",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "judgment_seed",
+      "source_case_id": "seed-loghub-injection-block",
+      "source_path": "evals/judgment/seed/cases.json",
+      "source_raw_sha256": "sha256:f326a154093332de685eef89bc8d2573b59a62946c0519629db06fc8f7b863c7",
+      "source_scenario": "seed-loghub-injection-block",
+      "source_sha256": "sha256:f326a154093332de685eef89bc8d2573b59a62946c0519629db06fc8f7b863c7",
+      "split_identity": "p151-sealed-eval/p151-judgment_seed-seed-loghub-injection-block"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-judgment_seed-seed-nab-metric-spike",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "judgment_seed",
+      "source_case_id": "seed-nab-metric-spike",
+      "source_path": "evals/judgment/seed/cases.json",
+      "source_raw_sha256": "sha256:f326a154093332de685eef89bc8d2573b59a62946c0519629db06fc8f7b863c7",
+      "source_scenario": "seed-nab-metric-spike",
+      "source_sha256": "sha256:f326a154093332de685eef89bc8d2573b59a62946c0519629db06fc8f7b863c7",
+      "split_identity": "p151-sealed-eval/p151-judgment_seed-seed-nab-metric-spike"
+    },
+    "truth_label": "incident"
+  },
+  {
+    "case_id": "p151-judgment_seed-seed-nab-no-data",
+    "provenance": {
+      "contamination_guard": "recorded-offline-fixture-baseline",
+      "contamination_proof": "prediction-commit-before-truth-unseal",
+      "dataset_split": "p151-sealed-eval",
+      "license_class": "repository-local-fixture",
+      "license_id": "LicenseRef-OPSCAT-Repository",
+      "license_ref": "LICENSE",
+      "origin_kind": "judgment_seed",
+      "source_case_id": "seed-nab-no-data",
+      "source_path": "evals/judgment/seed/cases.json",
+      "source_raw_sha256": "sha256:f326a154093332de685eef89bc8d2573b59a62946c0519629db06fc8f7b863c7",
+      "source_scenario": "seed-nab-no-data",
+      "source_sha256": "sha256:f326a154093332de685eef89bc8d2573b59a62946c0519629db06fc8f7b863c7",
+      "split_identity": "p151-sealed-eval/p151-judgment_seed-seed-nab-no-data"
+    },
+    "truth_label": "insufficient_evidence"
+  }
+]

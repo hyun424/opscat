@@ -277,6 +277,11 @@
       "size": 4173
     },
     {
+      "hash": "sha256:8d6d1e3e99eac9010c6f9846241e8c8028349b66890fc7dc2addb056f25b2e99",
+      "path": "site-packages/app/p146_live_shadow_cli.py",
+      "size": 21892
+    },
+    {
       "hash": "sha256:d6e34fd0dbee0e0978a91c8ec1dbe74758281834b25dd88ecf2adf323edca823",
       "path": "site-packages/app/plugin_sdk.py",
       "size": 1022
@@ -607,9 +612,9 @@
       "size": 16967
     },
     {
-      "hash": "sha256:a744eaac9c9e907808a099262dd7f224265b2e670d18591a8e485b3bb1359f1f",
+      "hash": "sha256:0af5df64e94897760ee73ee96e91d2f3173d2834a4733d0d8afca8d722046bea",
       "path": "site-packages/app/services/llm_judgment.py",
-      "size": 24884
+      "size": 25048
     },
     {
       "hash": "sha256:c39934672034ced69c25ae5bd5771df176af76cee5881fc4f0bd08ae156bf0a7",
@@ -1492,6 +1497,56 @@
       "size": 26257
     },
     {
+      "hash": "sha256:84b90a376514dbe90ba0dc62c8b3196e510b7af3cd82a5b22b81b38418177caa",
+      "path": "site-packages/app/services/p146_live_shadow.py",
+      "size": 55209
+    },
+    {
+      "hash": "sha256:26aa4038ac477180fa5b03f08711411a18afd256bc94183376bf219443ea317d",
+      "path": "site-packages/app/services/p146_release_evidence.py",
+      "size": 59726
+    },
+    {
+      "hash": "sha256:997ec56d8b030d789fbe5beb181b8c30a6102d477c550032af003c45329c6695",
+      "path": "site-packages/app/services/p146_runner.py",
+      "size": 13225
+    },
+    {
+      "hash": "sha256:42f763502c4062752214073c9a9d85e03993c74957e08c065434253c8fa93936",
+      "path": "site-packages/app/services/p147_durable_shadow.py",
+      "size": 23186
+    },
+    {
+      "hash": "sha256:4284b1a8cf2e8fd74be434d50dd5523d46ba7274c7f800cccea24e19bc4ea21f",
+      "path": "site-packages/app/services/p147_p152_contracts.py",
+      "size": 38771
+    },
+    {
+      "hash": "sha256:99096dce45f3280bcdf451db0db3a8f333b02a5fe515b7bd82ef3ed309babad9",
+      "path": "site-packages/app/services/p148_reversible_lab.py",
+      "size": 30375
+    },
+    {
+      "hash": "sha256:3b36ce4cedd4fa2642571cdcd5a1d88527c6782375a1cff512918edb80ff4b5c",
+      "path": "site-packages/app/services/p149_canary_control.py",
+      "size": 25963
+    },
+    {
+      "hash": "sha256:012b9830924312b485c7c0372b30eff0b3981d25827a0806868a5278667ce615",
+      "path": "site-packages/app/services/p150_unattended_soak.py",
+      "size": 50881
+    },
+    {
+      "hash": "sha256:a5fa1cb7895700acbad04e4345c91089c6ee5472f14f000af3f8e68f11baf8c3",
+      "path": "site-packages/app/services/p151_ground_truth_quality.py",
+      "size": 39388
+    },
+    {
+      "hash": "sha256:5980cd88cb8707bb559ff2f29a83859b6b2a68e389f1f267330686f1f90d6f3c",
+      "path": "site-packages/app/services/p152_operator_readiness.py",
+      "size": 27899
+    },
+    {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
       "path": "site-packages/app/services/policy_calibrator.py",
       "size": 11458
@@ -1612,9 +1667,9 @@
       "size": 2721
     },
     {
-      "hash": "sha256:02c6f20b494b879f63c17483055d19424db807f9df5dad7e219c423b738a4083",
+      "hash": "sha256:e8be97744e6f541215c26226d27f684f7f1ca52204b594e0f6d98dcf3caa7345",
       "path": "site-packages/app/services/preventive_action_benchmark.py",
-      "size": 44560
+      "size": 44901
     },
     {
       "hash": "sha256:3a7e5b0c4c6c48e6b5694603e93268707d606bf8dca180d2b8ace19f9f8142f7",
@@ -1958,9 +2013,9 @@
     }
   ],
   "installed_package": "opscat",
-  "manifest_hash": "sha256:66f91e26cadb46d66a61ce1fbabe86440cbfbdab3d781687217c4568e8057dd1",
+  "manifest_hash": "sha256:b1d9c9f51877d754863417a98e9f44efd12986bea034b612f23f7b9be25f6807",
   "operation": "package_install",
-  "record_entries_verified": 390,
+  "record_entries_verified": 401,
   "schema_version": "p122.canonical_wheel_install.v1",
-  "wheel_checksum": "sha256:aa2e2baa8751d58337605aa63f68d6181ba3473e4eb97e16519d7eaf11bfd2a4"
+  "wheel_checksum": "sha256:a1e78f6ec7b3693d8f0e092116424d578f2e94aa3237957c89fbf68b81f01a91"
 }

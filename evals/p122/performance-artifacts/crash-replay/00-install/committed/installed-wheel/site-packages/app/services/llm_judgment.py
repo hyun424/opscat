@@ -597,6 +597,9 @@ def _route_from_context(context_packet: Mapping[str, Any]) -> str:
     schema = context_packet.get("required_output_schema")
     if isinstance(schema, Mapping):
         routes = _string_sequence(schema.get("allowed_routes"))
+        default_route = context_packet.get("default_route")
+        if isinstance(default_route, str) and default_route in routes:
+            return default_route
         if "human_required" in routes:
             return "human_required"
     return "human_required"

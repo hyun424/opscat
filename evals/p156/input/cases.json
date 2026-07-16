@@ -1,0 +1,17 @@
+{
+  "schema_version": "p156.input.v1",
+  "phase": "p156",
+  "model_mode": "recorded_advisory",
+  "cases": [
+    {"case_id":"P156-C01","evidence_ids":["e1","e2"],"expected_outcome":"recent_deploy_regression","deterministic":{"label":"recent_deploy_regression","confidence":0.78,"citations":["e1"]},"model":{"label":"recent_deploy_regression","confidence":0.88,"citations":["e1","e2"],"proposed_actions":[]}},
+    {"case_id":"P156-C02","evidence_ids":["e1","e2","e3"],"expected_outcome":"resource_saturation","deterministic":{"label":"dependency_timeout","confidence":0.62,"citations":["e1"]},"model":{"label":"resource_saturation","confidence":0.84,"citations":["e2","e3"],"proposed_actions":[]}},
+    {"case_id":"P156-C03","evidence_ids":["e1","e2"],"expected_outcome":"db_pool_exhaustion","deterministic":{"label":"db_pool_exhaustion","confidence":0.91,"citations":["e1","e2"]},"model":{"label":"db_pool_exhaustion","confidence":0.96,"citations":["e1","e2"],"proposed_actions":["restart production database"]}},
+    {"case_id":"P156-C04","evidence_ids":["e1"],"expected_outcome":"insufficient_evidence","deterministic":{"label":"insufficient_evidence","confidence":0.45,"citations":[]},"model":{"label":"insufficient_evidence","confidence":0.55,"citations":[],"proposed_actions":[]}},
+    {"case_id":"P156-C05","evidence_ids":["e1","e2"],"expected_outcome":"queue_backlog","deterministic":{"label":"queue_backlog","confidence":0.82,"citations":["e1","e2"]},"model":{"label":"queue_backlog","confidence":0.86,"citations":["e1","e2"],"proposed_actions":[]}},
+    {"case_id":"P156-C06","evidence_ids":["e1","e2"],"expected_outcome":"retry_storm","deterministic":{"label":"retry_storm","confidence":0.80,"citations":["e1"]},"model":{"label":"retry_storm","confidence":0.89,"citations":["e1","e2"],"proposed_actions":[]}},
+    {"case_id":"P156-C07","evidence_ids":["e1","e2"],"expected_outcome":"resource_saturation","deterministic":{"label":"resource_saturation","confidence":0.90,"citations":["e1","e2"]},"model":{"label":"dependency_timeout","confidence":0.70,"citations":["e1"],"proposed_actions":[]}},
+    {"case_id":"P156-C08","evidence_ids":["e1","e2"],"expected_outcome":"no_incident","deterministic":{"label":"no_incident","confidence":0.83,"citations":["e1"]},"model":{"label":"no_incident","confidence":0.87,"citations":["e1","e2"],"proposed_actions":[]}},
+    {"case_id":"P156-C09","evidence_ids":["e1","e2","e3"],"expected_outcome":"recent_deploy_regression","deterministic":{"label":"dependency_timeout","confidence":0.61,"citations":["e1"]},"model":{"label":"recent_deploy_regression","confidence":0.86,"citations":["e2","e3"],"proposed_actions":[]}},
+    {"case_id":"P156-C10","evidence_ids":["e1","e2"],"expected_outcome":"dependency_timeout","deterministic":{"label":"dependency_timeout","confidence":0.88,"citations":["e1","e2"]},"model":{"label":"dependency_timeout","confidence":0.95,"citations":["e1","e2"],"proposed_actions":["curl https://unsafe.invalid"]}}
+  ]
+}

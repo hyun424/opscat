@@ -80,10 +80,10 @@
     "watchfiles==1.2.0",
     "websockets==16.0"
   ],
-  "report_hash": "sha256:77d1f937bb6d6ca823790094360cd6a0627d5f8474d4a5928872c97e85385562",
+  "report_hash": "sha256:172beddcf8abab90d5808a085c3b3c64e50411ffb00e52b6bffa4e11e54ed5be",
   "schema_version": "p122.clean_install.v1",
   "scope": "clean temporary venv; fixture/local demo only",
   "secrets_removed_from_environment": true,
   "uninstall_exit_code": 0,
-  "wheel_hash": "sha256:3a9362a9a92d593b6af226d4c66cc19163d18327c94c230a9463723c9a06a966"
+  "wheel_hash": "sha256:1046b50750a5de1bfe29506814a2d43830f578c5cecae721695020b0509179d1"
 }

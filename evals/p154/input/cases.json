@@ -1,0 +1,19 @@
+{
+  "schema_version": "p154.input.v1",
+  "phase": "p154",
+  "evidence_origin": "recorded_staging_shaped_sessions",
+  "sessions": [
+    {"session_id":"P154-S01","observed_at":"2026-07-01T00:00:00Z","operator_outcome":"incident","agent_outcome":"incident_likely","operator_root_cause":"recent_deploy_regression","agent_root_cause":"recent_deploy_regression","citation_ids":["prom-01","loki-01","deploy-01"],"citations_valid":true},
+    {"session_id":"P154-S02","observed_at":"2026-07-01T06:00:00Z","operator_outcome":"incident","agent_outcome":"incident_likely","operator_root_cause":"dependency_timeout","agent_root_cause":"dependency_timeout","citation_ids":["prom-02","sentry-02"],"citations_valid":true},
+    {"session_id":"P154-S03","observed_at":"2026-07-01T12:00:00Z","operator_outcome":"no_incident","agent_outcome":"no_incident","operator_root_cause":"no_incident","agent_root_cause":"no_incident","citation_ids":["prom-03","loki-03"],"citations_valid":true},
+    {"session_id":"P154-S04","observed_at":"2026-07-01T18:00:00Z","operator_outcome":"incident","agent_outcome":"incident_likely","operator_root_cause":"resource_saturation","agent_root_cause":"resource_saturation","citation_ids":["prom-04","loki-04"],"citations_valid":true},
+    {"session_id":"P154-S05","observed_at":"2026-07-02T00:00:00Z","operator_outcome":"incident","agent_outcome":"incident_likely","operator_root_cause":"queue_backlog","agent_root_cause":"queue_backlog","citation_ids":["prom-05","loki-05"],"citations_valid":true},
+    {"session_id":"P154-S06","observed_at":"2026-07-02T06:00:00Z","operator_outcome":"no_incident","agent_outcome":"no_incident","operator_root_cause":"no_incident","agent_root_cause":"no_incident","citation_ids":["prom-06","sentry-06"],"citations_valid":true},
+    {"session_id":"P154-S07","observed_at":"2026-07-02T12:00:00Z","operator_outcome":"incident","agent_outcome":"incident_likely","operator_root_cause":"db_pool_exhaustion","agent_root_cause":"db_pool_exhaustion","citation_ids":["prom-07","loki-07","sentry-07"],"citations_valid":true},
+    {"session_id":"P154-S08","observed_at":"2026-07-02T18:00:00Z","operator_outcome":"incident","agent_outcome":"incident_likely","operator_root_cause":"retry_storm","agent_root_cause":"retry_storm","citation_ids":["prom-08","loki-08"],"citations_valid":true},
+    {"session_id":"P154-S09","observed_at":"2026-07-03T00:00:00Z","operator_outcome":"insufficient_evidence","agent_outcome":"insufficient_evidence","operator_root_cause":"insufficient_evidence","agent_root_cause":"insufficient_evidence","citation_ids":["prom-09"],"citations_valid":true},
+    {"session_id":"P154-S10","observed_at":"2026-07-03T06:00:00Z","operator_outcome":"incident","agent_outcome":"incident_likely","operator_root_cause":"recent_deploy_regression","agent_root_cause":"recent_deploy_regression","citation_ids":["prom-10","loki-10","deploy-10"],"citations_valid":true},
+    {"session_id":"P154-S11","observed_at":"2026-07-03T12:00:00Z","operator_outcome":"no_incident","agent_outcome":"no_incident","operator_root_cause":"no_incident","agent_root_cause":"no_incident","citation_ids":["prom-11","loki-11"],"citations_valid":true},
+    {"session_id":"P154-S12","observed_at":"2026-07-03T18:00:00Z","operator_outcome":"incident","agent_outcome":"incident_likely","operator_root_cause":"dependency_timeout","agent_root_cause":"dependency_timeout","citation_ids":["prom-12","sentry-12"],"citations_valid":true}
+  ]
+}

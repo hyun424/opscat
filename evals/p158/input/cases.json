@@ -1,0 +1,13 @@
+{
+  "schema_version": "p158.input.v1",
+  "phase": "p158",
+  "required_modes": [
+    "read_only_monitoring_candidate",
+    "supervised_process_owned_lab_remediation"
+  ],
+  "forbidden_claims": [
+    "unattended_production_operator_replacement",
+    "production_mutation_safety",
+    "real_customer_staging_accuracy"
+  ]
+}

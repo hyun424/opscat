@@ -1552,6 +1552,11 @@
       "size": 54037
     },
     {
+      "hash": "sha256:99a461f0915316f5720ac037e076c8b25b6d558482adc84cfb3a9157f0e0c8f2",
+      "path": "site-packages/app/services/p154_p158_operator_replacement.py",
+      "size": 41406
+    },
+    {
       "hash": "sha256:1620a1f82f164302508495a3b96464cdc2a19c0c6310b401b7a97639df5faf83",
       "path": "site-packages/app/services/policy_calibrator.py",
       "size": 11458
@@ -2018,9 +2023,9 @@
     }
   ],
   "installed_package": "opscat",
-  "manifest_hash": "sha256:5fce824938a5828971eb056b5bdc8c8028e675612d9332465acfdc7b806ce2b6",
+  "manifest_hash": "sha256:ca4a2daeb5327d3c31cf5a7cb21858c4105df0ffc023f07cc4644fb32c743e10",
   "operation": "package_install",
-  "record_entries_verified": 402,
+  "record_entries_verified": 403,
   "schema_version": "p122.canonical_wheel_install.v1",
-  "wheel_checksum": "sha256:3a9362a9a92d593b6af226d4c66cc19163d18327c94c230a9463723c9a06a966"
+  "wheel_checksum": "sha256:1046b50750a5de1bfe29506814a2d43830f578c5cecae721695020b0509179d1"
 }

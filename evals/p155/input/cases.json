@@ -1,0 +1,14 @@
+{
+  "schema_version": "p155.input.v1",
+  "phase": "p155",
+  "cases": [
+    {"case_id":"P155-C01","requests":[{"request_id":"r1","provider":"prometheus","operation":"query_range","response":[{"evidence_id":"e1","diagnosis":"recent_deploy_regression"}]},{"request_id":"r2","provider":"deploy","operation":"list_recent","response":[{"evidence_id":"e2","diagnosis":"recent_deploy_regression"}]}],"expected_outcome":"recent_deploy_regression"},
+    {"case_id":"P155-C02","requests":[{"request_id":"r1","provider":"loki","operation":"query","response":[{"evidence_id":"e1","diagnosis":"dependency_timeout"}]},{"request_id":"r2","provider":"sentry","operation":"issue_events","response":[{"evidence_id":"e2","diagnosis":"dependency_timeout"}]}],"expected_outcome":"dependency_timeout"},
+    {"case_id":"P155-C03","requests":[{"request_id":"r1","provider":"prometheus","operation":"query","response":[{"evidence_id":"e1","diagnosis":"resource_saturation"}]},{"request_id":"r2","provider":"loki","operation":"query_range","response":[{"evidence_id":"e2","diagnosis":"resource_saturation"}]}],"expected_outcome":"resource_saturation"},
+    {"case_id":"P155-C04","requests":[{"request_id":"r1","provider":"prometheus","operation":"query_range","response":[{"evidence_id":"e1","diagnosis":"queue_backlog"}]},{"request_id":"r2","provider":"loki","operation":"query","response":[{"evidence_id":"e2","diagnosis":"queue_backlog"}]}],"expected_outcome":"queue_backlog"},
+    {"case_id":"P155-C05","requests":[{"request_id":"r1","provider":"prometheus","operation":"query","response":[{"evidence_id":"e1","diagnosis":"db_pool_exhaustion"}]},{"request_id":"r2","provider":"sentry","operation":"list_issues","response":[{"evidence_id":"e2","diagnosis":"db_pool_exhaustion"}]}],"expected_outcome":"db_pool_exhaustion"},
+    {"case_id":"P155-C06","requests":[{"request_id":"r1","provider":"loki","operation":"query_range","response":[{"evidence_id":"e1","diagnosis":"retry_storm"}]},{"request_id":"r2","provider":"prometheus","operation":"query","response":[{"evidence_id":"e2","diagnosis":"retry_storm"}]}],"expected_outcome":"retry_storm"},
+    {"case_id":"P155-C07","requests":[{"request_id":"r1","provider":"prometheus","operation":"query","response":[{"evidence_id":"e1","diagnosis":"resource_saturation"}]},{"request_id":"r2","provider":"loki","operation":"query","response":[{"evidence_id":"e2","diagnosis":"dependency_timeout"}]}],"expected_outcome":"insufficient_evidence"},
+    {"case_id":"P155-C08","requests":[{"request_id":"r1","provider":"sentry","operation":"list_issues","response":[]}],"expected_outcome":"insufficient_evidence"}
+  ]
+}

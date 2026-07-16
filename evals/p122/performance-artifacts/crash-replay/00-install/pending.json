@@ -7,14 +7,14 @@
   "ordinal": 0,
   "output_ref": "committed/installed-wheel",
   "output_schema": "p122.wheel_install_transaction.v1",
-  "parent_pid": 69433,
-  "precommit_hash": "sha256:3ed1949d88f1e2b4927e15bf2d746ede00c8ec616fb1634ecf4f2ae0882adc66",
+  "parent_pid": 63356,
+  "precommit_hash": "sha256:c2d695c857c7da0e904f213f553aadd0ef480873a36aaed58cfe9e19e11edcf0",
   "precommit_kind": "directory",
   "precommit_ref": "precommit/installed-wheel",
-  "precommit_validation_hash": "sha256:584402c0916095be23ba460339515582d9e6674cfcf39759c25a48e38468f7bb",
-  "record_hash": "sha256:dbd74e8aad1ed6d32db97fd82a7f99a2ac9707edf8b460cf6713405949be02a0",
+  "precommit_validation_hash": "sha256:22f1b188da67e17948e1d22fca9dc113e7d984ffc74934118f1a72679e000f37",
+  "record_hash": "sha256:16efc4e9168ce5485dec19219ef351eb6346ff0113b1e6a2b976ead1cbde6edd",
   "schema_version": "p122.release_stage_pending.v1",
   "stage": "install",
   "status": "pending",
-  "worker_pid": 69436
+  "worker_pid": 63358
 }

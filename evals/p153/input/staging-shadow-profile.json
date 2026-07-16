@@ -1,0 +1,166 @@
+{
+  "schema_version": "p153.staging_shadow_profile.v1",
+  "environment": "staging",
+  "allowed_hosts": [
+    "prometheus.staging.internal",
+    "loki.staging.internal",
+    "sentry.staging.internal"
+  ],
+  "limits": {
+    "max_sources": 3,
+    "max_follow_up_reads": 3,
+    "max_retries_per_source": 1,
+    "max_response_bytes": 1048576,
+    "max_records_per_source": 1000,
+    "timeout_ms": 2000
+  },
+  "sources": [
+    {
+      "source_id": "prometheus-staging",
+      "provider": "prometheus",
+      "method": "GET",
+      "endpoint": "https://prometheus.staging.internal",
+      "path": "/api/v1/query_range",
+      "credential_env": "",
+      "query": {
+        "query": "sum(rate(http_requests_total{service=\"checkout\",status=~\"5..\"}[5m]))",
+        "start": "1784160000",
+        "end": "1784160300",
+        "step": "60"
+      },
+      "recorded_responses": [
+        {
+          "status_code": 200,
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "status": "success",
+            "data": {
+              "resultType": "matrix",
+              "result": [
+                {
+                  "metric": {
+                    "service": "checkout",
+                    "release": "2026.07.16-rc3",
+                    "signal": "error_rate",
+                    "api_token": "fixture-label-secret"
+                  },
+                  "values": [
+                    [
+                      1784160000,
+                      "0.01"
+                    ],
+                    [
+                      1784160060,
+                      "0.18"
+                    ],
+                    [
+                      1784160120,
+                      "0.24"
+                    ]
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "source_id": "loki-staging",
+      "provider": "loki",
+      "method": "GET",
+      "endpoint": "https://loki.staging.internal",
+      "path": "/loki/api/v1/query_range",
+      "credential_env": "",
+      "query": {
+        "query": "{service=\"checkout\"} |= \"timeout\"",
+        "start": "1784160000000000000",
+        "end": "1784160300000000000",
+        "limit": "100"
+      },
+      "recorded_responses": [
+        {
+          "status_code": 200,
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "status": "success",
+            "data": {
+              "resultType": "streams",
+              "result": [
+                {
+                  "stream": {
+                    "service": "checkout",
+                    "release": "2026.07.16-rc3",
+                    "level": "error",
+                    "password": "fixture-password"
+                  },
+                  "values": [
+                    [
+                      "1784160090000000000",
+                      "upstream payment timeout after deploy token=fixture-secret"
+                    ],
+                    [
+                      "1784160150000000000",
+                      "connection pool wait exceeded 2s"
+                    ]
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "source_id": "sentry-staging",
+      "provider": "sentry",
+      "method": "GET",
+      "endpoint": "https://sentry.staging.internal",
+      "path": "/api/0/organizations/opscat/issues/",
+      "credential_env": "OPSCAT_P153_SENTRY_TOKEN",
+      "query": {
+        "project": "checkout",
+        "environment": "staging",
+        "query": "is:unresolved"
+      },
+      "recorded_responses": [
+        {
+          "status_code": 429,
+          "headers": {
+            "Retry-After": "1"
+          },
+          "body": {
+            "detail": "rate limited"
+          }
+        },
+        {
+          "status_code": 200,
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": [
+            {
+              "id": "SENTRY-P153-1",
+              "project": {
+                "slug": "checkout"
+              },
+              "title": "TimeoutError in checkout.submit",
+              "level": "error",
+              "count": "47",
+              "firstSeen": "2026-07-16T00:01:00Z",
+              "lastSeen": "2026-07-16T00:05:00Z",
+              "metadata": {
+                "release": "2026.07.16-rc3",
+                "dsn": "https://public:secret@sentry.invalid/1"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

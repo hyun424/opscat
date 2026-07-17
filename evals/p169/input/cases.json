@@ -1,0 +1,39 @@
+{
+  "schema_version": "p169.input.v1",
+  "phase": "p169",
+  "attachment_events": [
+    {
+      "request_id": "read-1",
+      "source_id": "source-prometheus",
+      "provider": "prometheus",
+      "source_class": "metrics",
+      "observed_at": "2026-07-17T00:00:00Z",
+      "collected_at": "2026-07-17T00:00:01Z",
+      "response_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "redaction_applied": true,
+      "real_network": false
+    },
+    {
+      "request_id": "read-2",
+      "source_id": "source-loki",
+      "provider": "loki",
+      "source_class": "logs",
+      "observed_at": "2026-07-17T00:00:00Z",
+      "collected_at": "2026-07-17T00:00:02Z",
+      "response_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "redaction_applied": true,
+      "real_network": false
+    },
+    {
+      "request_id": "read-3",
+      "source_id": "source-sentry",
+      "provider": "sentry",
+      "source_class": "errors",
+      "observed_at": "2026-07-17T00:00:00Z",
+      "collected_at": "2026-07-17T00:00:03Z",
+      "response_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "redaction_applied": true,
+      "real_network": false
+    }
+  ]
+}

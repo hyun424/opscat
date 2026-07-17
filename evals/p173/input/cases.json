@@ -1,0 +1,66 @@
+{
+  "schema_version": "p173.input.v1",
+  "phase": "p173",
+  "candidates": [
+    {
+      "request_id": "shadow-valid",
+      "root_cause": "db_pool_exhaustion",
+      "confidence": 0.95,
+      "citations": [
+        {
+          "id": "metric-1",
+          "source_class": "metrics"
+        },
+        {
+          "id": "log-1",
+          "source_class": "logs"
+        }
+      ],
+      "observed_age_seconds": 5,
+      "heartbeat_age_seconds": 5,
+      "deadman_active": true,
+      "kill_switch": false,
+      "target": "staging-shadow"
+    },
+    {
+      "request_id": "shadow-stale",
+      "root_cause": "queue_backlog",
+      "confidence": 0.95,
+      "citations": [
+        {
+          "id": "metric-2",
+          "source_class": "metrics"
+        },
+        {
+          "id": "log-2",
+          "source_class": "logs"
+        }
+      ],
+      "observed_age_seconds": 31,
+      "heartbeat_age_seconds": 5,
+      "deadman_active": true,
+      "kill_switch": false,
+      "target": "staging-shadow"
+    },
+    {
+      "request_id": "shadow-kill",
+      "root_cause": "recent_deploy_regression",
+      "confidence": 0.99,
+      "citations": [
+        {
+          "id": "deploy-1",
+          "source_class": "deploys"
+        },
+        {
+          "id": "error-1",
+          "source_class": "errors"
+        }
+      ],
+      "observed_age_seconds": 5,
+      "heartbeat_age_seconds": 5,
+      "deadman_active": true,
+      "kill_switch": true,
+      "target": "staging-shadow"
+    }
+  ]
+}

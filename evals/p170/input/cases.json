@@ -1,0 +1,24 @@
+{
+  "schema_version": "p170.input.v1",
+  "phase": "p170",
+  "soak": {
+    "started_at": "2026-07-17T00:00:00Z",
+    "ended_at": "2026-07-17T00:01:00Z",
+    "frozen_poll_interval_seconds": 10,
+    "expected_poll_count": 6,
+    "successful_poll_count": 6,
+    "failed_poll_count": 0,
+    "segments": [
+      {
+        "session_id": "session-a",
+        "boot_id": "boot-a",
+        "started_monotonic_ns": 1000000000,
+        "ended_monotonic_ns": 61000000000,
+        "poll_count": 6
+      }
+    ],
+    "wall_clock_24h_completed": false,
+    "restart_resume_verified": false,
+    "duplicate_evidence_count": 0
+  }
+}

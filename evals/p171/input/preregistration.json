@@ -1,0 +1,18 @@
+{
+  "schema_version": "p171.preregistration.v1",
+  "benchmark_id": "p171-canonical-benchmark",
+  "committed_at": "2026-07-16T23:59:00Z",
+  "gates": {
+    "minimum_incident_cases": 30,
+    "minimum_healthy_windows": 300,
+    "minimum_top1_accuracy": 0.8,
+    "minimum_top3_recall": 0.95,
+    "minimum_precursor_recall": 0.8,
+    "maximum_false_alert_rate": 0.0,
+    "maximum_false_alert_95pct_upper": 0.01,
+    "minimum_citation_validity_rate": 1.0
+  },
+  "prediction_artifact_hash": "sha256:b544ca98ddb728d317c3ec6b199e139afd479bf54b44751a33439e4f80e03e3a",
+  "truth_case_ids_hash": "sha256:c395c41b003a0e5adaee136a2c211a4c1c028f80b4395bddcd8a64e72bd3e509",
+  "self_hash": "sha256:a2253a5c4ed3570f403f812f76b908ba3931c303f9d7dd69c81b143271a10957"
+}

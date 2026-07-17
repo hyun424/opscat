@@ -4,6 +4,9 @@
   or emitting an executable approval receipt.
 - Replay healthy, ambiguous, OOD, stale, contradictory, harmful, duplicate, and
   valid fixed-action cases.
+- Reject missing or duplicate scenario labels and require exact duplicate
+  decision reproduction from a hash-bound byte-equivalent copy of the original
+  request content; altered replay content fails closed.
 - Emit counterfactual action, deny/escalate reason, expected post-check,
   rollback plan, authority receipt, expiry receipt, evidence hash, and replay
   hash.

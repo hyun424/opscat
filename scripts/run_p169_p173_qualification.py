@@ -78,7 +78,11 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.review is None:
             raise ValueError("final mode requires --review")
-        canonical_report = validate_report(phase, load_phase_input(output_dir / "report.json", f"{phase}-report"))
+        canonical_report = validate_report(
+            phase,
+            load_phase_input(output_dir / "report.json", f"{phase}-report"),
+            project_root=ROOT,
+        )
         canonical_freeze = validate_freeze_manifest(
             phase,
             load_phase_input(output_dir / "freeze-manifest.json", f"{phase}-freeze"),
@@ -89,7 +93,13 @@ def main(argv: list[str] | None = None) -> int:
             report=canonical_report,
             freeze=canonical_freeze,
         )
-        release = assemble_release_evidence(phase, canonical_report, canonical_freeze, review)
+        release = assemble_release_evidence(
+            phase,
+            canonical_report,
+            canonical_freeze,
+            review,
+            project_root=ROOT,
+        )
         write_canonical_json(output_dir / "release-evidence.json", release)
         validate_release_evidence(
             phase,

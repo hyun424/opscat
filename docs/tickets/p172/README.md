@@ -6,6 +6,10 @@ evidence-gap-investigator adaptation, P169 observed-provider capability
 registry, decision trace, and P172 documentation only until implementation
 begins.
 
+Canonical status without live P169 evidence is
+`p172_attached_capability_registry_ready_not_observed`; P172-local provider
+lists never count as observation.
+
 1. **P172-001 — Capability registry.** Expose only typed read-only queries for
    metrics, logs, traces, deploy history, health, and topology providers
    actually observed in the canonical P169 attachment.

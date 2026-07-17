@@ -1,0 +1,1659 @@
+{
+  "schema_version": "p171.sealed_truth.v1",
+  "benchmark_id": "p171-canonical-benchmark",
+  "sealed_at": "2026-07-16T23:55:00Z",
+  "opened_at": "2026-07-17T00:05:00Z",
+  "cases": [
+    {
+      "case_id": "incident-0",
+      "incident": true,
+      "root_cause": "db_pool_exhaustion"
+    },
+    {
+      "case_id": "incident-1",
+      "incident": true,
+      "root_cause": "queue_backlog"
+    },
+    {
+      "case_id": "incident-2",
+      "incident": true,
+      "root_cause": "recent_deploy_regression"
+    },
+    {
+      "case_id": "incident-3",
+      "incident": true,
+      "root_cause": "db_pool_exhaustion"
+    },
+    {
+      "case_id": "incident-4",
+      "incident": true,
+      "root_cause": "queue_backlog"
+    },
+    {
+      "case_id": "incident-5",
+      "incident": true,
+      "root_cause": "recent_deploy_regression"
+    },
+    {
+      "case_id": "incident-6",
+      "incident": true,
+      "root_cause": "db_pool_exhaustion"
+    },
+    {
+      "case_id": "incident-7",
+      "incident": true,
+      "root_cause": "queue_backlog"
+    },
+    {
+      "case_id": "incident-8",
+      "incident": true,
+      "root_cause": "recent_deploy_regression"
+    },
+    {
+      "case_id": "incident-9",
+      "incident": true,
+      "root_cause": "db_pool_exhaustion"
+    },
+    {
+      "case_id": "incident-10",
+      "incident": true,
+      "root_cause": "queue_backlog"
+    },
+    {
+      "case_id": "incident-11",
+      "incident": true,
+      "root_cause": "recent_deploy_regression"
+    },
+    {
+      "case_id": "incident-12",
+      "incident": true,
+      "root_cause": "db_pool_exhaustion"
+    },
+    {
+      "case_id": "incident-13",
+      "incident": true,
+      "root_cause": "queue_backlog"
+    },
+    {
+      "case_id": "incident-14",
+      "incident": true,
+      "root_cause": "recent_deploy_regression"
+    },
+    {
+      "case_id": "incident-15",
+      "incident": true,
+      "root_cause": "db_pool_exhaustion"
+    },
+    {
+      "case_id": "incident-16",
+      "incident": true,
+      "root_cause": "queue_backlog"
+    },
+    {
+      "case_id": "incident-17",
+      "incident": true,
+      "root_cause": "recent_deploy_regression"
+    },
+    {
+      "case_id": "incident-18",
+      "incident": true,
+      "root_cause": "db_pool_exhaustion"
+    },
+    {
+      "case_id": "incident-19",
+      "incident": true,
+      "root_cause": "queue_backlog"
+    },
+    {
+      "case_id": "incident-20",
+      "incident": true,
+      "root_cause": "recent_deploy_regression"
+    },
+    {
+      "case_id": "incident-21",
+      "incident": true,
+      "root_cause": "db_pool_exhaustion"
+    },
+    {
+      "case_id": "incident-22",
+      "incident": true,
+      "root_cause": "queue_backlog"
+    },
+    {
+      "case_id": "incident-23",
+      "incident": true,
+      "root_cause": "recent_deploy_regression"
+    },
+    {
+      "case_id": "incident-24",
+      "incident": true,
+      "root_cause": "db_pool_exhaustion"
+    },
+    {
+      "case_id": "incident-25",
+      "incident": true,
+      "root_cause": "queue_backlog"
+    },
+    {
+      "case_id": "incident-26",
+      "incident": true,
+      "root_cause": "recent_deploy_regression"
+    },
+    {
+      "case_id": "incident-27",
+      "incident": true,
+      "root_cause": "db_pool_exhaustion"
+    },
+    {
+      "case_id": "incident-28",
+      "incident": true,
+      "root_cause": "queue_backlog"
+    },
+    {
+      "case_id": "incident-29",
+      "incident": true,
+      "root_cause": "recent_deploy_regression"
+    },
+    {
+      "case_id": "healthy-0",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-1",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-2",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-3",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-4",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-5",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-6",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-7",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-8",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-9",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-10",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-11",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-12",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-13",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-14",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-15",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-16",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-17",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-18",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-19",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-20",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-21",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-22",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-23",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-24",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-25",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-26",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-27",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-28",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-29",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-30",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-31",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-32",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-33",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-34",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-35",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-36",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-37",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-38",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-39",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-40",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-41",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-42",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-43",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-44",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-45",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-46",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-47",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-48",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-49",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-50",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-51",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-52",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-53",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-54",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-55",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-56",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-57",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-58",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-59",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-60",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-61",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-62",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-63",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-64",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-65",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-66",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-67",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-68",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-69",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-70",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-71",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-72",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-73",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-74",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-75",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-76",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-77",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-78",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-79",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-80",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-81",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-82",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-83",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-84",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-85",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-86",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-87",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-88",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-89",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-90",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-91",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-92",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-93",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-94",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-95",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-96",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-97",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-98",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-99",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-100",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-101",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-102",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-103",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-104",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-105",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-106",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-107",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-108",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-109",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-110",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-111",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-112",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-113",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-114",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-115",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-116",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-117",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-118",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-119",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-120",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-121",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-122",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-123",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-124",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-125",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-126",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-127",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-128",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-129",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-130",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-131",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-132",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-133",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-134",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-135",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-136",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-137",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-138",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-139",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-140",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-141",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-142",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-143",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-144",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-145",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-146",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-147",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-148",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-149",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-150",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-151",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-152",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-153",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-154",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-155",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-156",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-157",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-158",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-159",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-160",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-161",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-162",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-163",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-164",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-165",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-166",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-167",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-168",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-169",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-170",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-171",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-172",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-173",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-174",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-175",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-176",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-177",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-178",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-179",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-180",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-181",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-182",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-183",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-184",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-185",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-186",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-187",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-188",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-189",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-190",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-191",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-192",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-193",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-194",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-195",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-196",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-197",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-198",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-199",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-200",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-201",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-202",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-203",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-204",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-205",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-206",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-207",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-208",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-209",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-210",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-211",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-212",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-213",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-214",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-215",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-216",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-217",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-218",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-219",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-220",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-221",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-222",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-223",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-224",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-225",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-226",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-227",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-228",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-229",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-230",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-231",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-232",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-233",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-234",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-235",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-236",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-237",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-238",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-239",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-240",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-241",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-242",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-243",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-244",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-245",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-246",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-247",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-248",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-249",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-250",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-251",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-252",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-253",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-254",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-255",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-256",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-257",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-258",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-259",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-260",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-261",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-262",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-263",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-264",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-265",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-266",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-267",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-268",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-269",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-270",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-271",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-272",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-273",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-274",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-275",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-276",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-277",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-278",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-279",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-280",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-281",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-282",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-283",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-284",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-285",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-286",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-287",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-288",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-289",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-290",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-291",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-292",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-293",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-294",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-295",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-296",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-297",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-298",
+      "incident": false,
+      "root_cause": "none"
+    },
+    {
+      "case_id": "healthy-299",
+      "incident": false,
+      "root_cause": "none"
+    }
+  ],
+  "artifact_hash": "sha256:cd97293b370f677532dbbde72d1d9410e61a785b5b39235db0c887237c81f20f"
+}

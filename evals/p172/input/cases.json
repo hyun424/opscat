@@ -1,42 +1,7 @@
 {
   "schema_version": "p172.input.v1",
   "phase": "p172",
-  "observed_sources": [
-    {
-      "provider": "prometheus",
-      "source_class": "metrics",
-      "observed": true
-    },
-    {
-      "provider": "loki",
-      "source_class": "logs",
-      "observed": true
-    },
-    {
-      "provider": "sentry",
-      "source_class": "errors",
-      "observed": false
-    }
-  ],
   "max_tool_calls": 8,
-  "tool_calls": [
-    "prometheus.metrics.read",
-    "loki.logs.read"
-  ],
-  "evidence": [
-    {
-      "id": "metric-1",
-      "provider": "prometheus",
-      "source_class": "metrics",
-      "state": "supporting",
-      "age_seconds": 5
-    },
-    {
-      "id": "log-1",
-      "provider": "loki",
-      "source_class": "logs",
-      "state": "supporting",
-      "age_seconds": 4
-    }
-  ]
+  "tool_calls": [],
+  "evidence": []
 }

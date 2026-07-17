@@ -674,7 +674,7 @@
   "product_claim": "production-grade packaging practices with local/mock/sandbox qualification",
   "public_limitation": "Production autonomy, auth completion, credentials, live connector writes, production/staging mutation, and operator replacement are not proven or enabled.",
   "reasons": [],
-  "release_evidence_hash": "sha256:72fe9be038a466f1441e96c20585788002ce0eb65051cc0c99a1db9e652546a4",
+  "release_evidence_hash": "sha256:0592cd72f35a6e835d99f4719edd125eb99a91360d32533fbaa794d90656d0aa",
   "release_id": "P122-008",
   "release_status": "p122_open_source_local_rc",
   "reproducible_build_hash": "sha256:cb49cc63059abc7814a7dede9ccfb2191d5745c9036a2c0bbdb250bd321ac748",
@@ -715,7 +715,7 @@
   },
   "sbom_hash": "sha256:c0eee3fdf933880009310d4e5c1f0b3e78551d6a95c5eb33dc3f1d7880a827f8",
   "schema_version": "p122.release_evidence.v1",
-  "security_report_hash": "sha256:f5a88b01fbfce6a8bb0a4193ef7a0e5c27618e4bfda775ba12e8f1f35c0736cb",
+  "security_report_hash": "sha256:d5f4eedd1148426e3bd6564c7773688d77414e8faf535f5237bc8dd2e13d2ca5",
   "source_hashes": {
     ".github/ISSUE_TEMPLATE/bug_report.md": "sha256:ab0d3e919dda8dba9bb86bf366e8220252274ffd7e2fd3a1b9f4e33a351ec48a",
     ".github/ISSUE_TEMPLATE/connector_request.md": "sha256:2b79ac2f6007385a251565085a19ca037bff10f181f52a71bb27900050646f52",

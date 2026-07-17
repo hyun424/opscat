@@ -3,18 +3,37 @@
   "phase": "p173",
   "candidates": [
     {
-      "request_id": "shadow-valid",
+      "scenario": "healthy",
+      "request_id": "shadow-healthy",
+      "root_cause": "none",
+      "confidence": 0.1,
+      "citations": [{"id": "health-1", "source_class": "health"}],
+      "observed_age_seconds": 5,
+      "heartbeat_age_seconds": 5,
+      "deadman_active": true,
+      "kill_switch": false,
+      "target": "staging-shadow"
+    },
+    {
+      "scenario": "ambiguous",
+      "request_id": "shadow-ambiguous",
       "root_cause": "db_pool_exhaustion",
-      "confidence": 0.95,
+      "confidence": 0.55,
+      "citations": [{"id": "metric-ambiguous", "source_class": "metrics"}],
+      "observed_age_seconds": 5,
+      "heartbeat_age_seconds": 5,
+      "deadman_active": true,
+      "kill_switch": false,
+      "target": "staging-shadow"
+    },
+    {
+      "scenario": "ood",
+      "request_id": "shadow-ood",
+      "root_cause": "unknown_novel_failure",
+      "confidence": 0.99,
       "citations": [
-        {
-          "id": "metric-1",
-          "source_class": "metrics"
-        },
-        {
-          "id": "log-1",
-          "source_class": "logs"
-        }
+        {"id": "metric-ood", "source_class": "metrics"},
+        {"id": "log-ood", "source_class": "logs"}
       ],
       "observed_age_seconds": 5,
       "heartbeat_age_seconds": 5,
@@ -23,18 +42,13 @@
       "target": "staging-shadow"
     },
     {
+      "scenario": "stale",
       "request_id": "shadow-stale",
       "root_cause": "queue_backlog",
       "confidence": 0.95,
       "citations": [
-        {
-          "id": "metric-2",
-          "source_class": "metrics"
-        },
-        {
-          "id": "log-2",
-          "source_class": "logs"
-        }
+        {"id": "metric-stale", "source_class": "metrics"},
+        {"id": "log-stale", "source_class": "logs"}
       ],
       "observed_age_seconds": 31,
       "heartbeat_age_seconds": 5,
@@ -43,24 +57,71 @@
       "target": "staging-shadow"
     },
     {
-      "request_id": "shadow-kill",
+      "scenario": "contradictory",
+      "request_id": "shadow-contradictory",
+      "root_cause": "db_pool_exhaustion",
+      "confidence": 0.95,
+      "citations": [
+        {"id": "metric-contradictory", "source_class": "metrics"},
+        {"id": "log-contradictory", "source_class": "logs"}
+      ],
+      "contradictory_evidence": true,
+      "observed_age_seconds": 5,
+      "heartbeat_age_seconds": 5,
+      "deadman_active": true,
+      "kill_switch": false,
+      "target": "staging-shadow"
+    },
+    {
+      "scenario": "harmful",
+      "request_id": "shadow-harmful",
       "root_cause": "recent_deploy_regression",
       "confidence": 0.99,
       "citations": [
-        {
-          "id": "deploy-1",
-          "source_class": "deploys"
-        },
-        {
-          "id": "error-1",
-          "source_class": "errors"
-        }
+        {"id": "deploy-harmful", "source_class": "deploys"},
+        {"id": "error-harmful", "source_class": "errors"}
+      ],
+      "harmful_action": true,
+      "observed_age_seconds": 5,
+      "heartbeat_age_seconds": 5,
+      "deadman_active": true,
+      "kill_switch": false,
+      "target": "staging-shadow"
+    },
+    {
+      "scenario": "valid_fixed_action",
+      "request_id": "shadow-valid",
+      "root_cause": "db_pool_exhaustion",
+      "confidence": 0.95,
+      "citations": [
+        {"id": "metric-valid", "source_class": "metrics"},
+        {"id": "log-valid", "source_class": "logs"}
       ],
       "observed_age_seconds": 5,
       "heartbeat_age_seconds": 5,
       "deadman_active": true,
-      "kill_switch": true,
+      "kill_switch": false,
       "target": "staging-shadow"
+    },
+    {
+      "scenario": "duplicate",
+      "replay_of": "shadow-valid",
+      "candidate_hash": "sha256:89b3978488080c214e3b266890c5796059e4502031c61a2bb78eb35db9c00e14",
+      "replay_candidate": {
+        "scenario": "valid_fixed_action",
+        "request_id": "shadow-valid",
+        "root_cause": "db_pool_exhaustion",
+        "confidence": 0.95,
+        "citations": [
+          {"id": "metric-valid", "source_class": "metrics"},
+          {"id": "log-valid", "source_class": "logs"}
+        ],
+        "observed_age_seconds": 5,
+        "heartbeat_age_seconds": 5,
+        "deadman_active": true,
+        "kill_switch": false,
+        "target": "staging-shadow"
+      }
     }
   ]
 }

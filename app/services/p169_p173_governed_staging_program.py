@@ -65,6 +65,26 @@ _ROOT_CAUSE_ACTIONS = {
     "queue_backlog": "restart_worker",
     "recent_deploy_regression": "rollback_canary",
 }
+_P169_ENDPOINT_ALLOWLIST = {
+    "prometheus": {"prometheus.staging.example.com": ("/api/v1/query",)},
+    "loki": {"loki.staging.example.com": ("/api/v1/query",)},
+    "sentry": {"sentry.staging.example.com": ("/api/v1/query",)},
+}
+_P169_MAX_TIMEOUT_SECONDS = 10.0
+_P169_MAX_RESPONSE_BYTES = 1_048_576
+_P171_GATES = {
+    "minimum_incident_cases": 30,
+    "minimum_healthy_windows": 300,
+    "minimum_top1_accuracy": 0.80,
+    "minimum_top3_recall": 0.95,
+    "minimum_precursor_recall": 0.80,
+    "maximum_false_alert_rate": 0.0,
+    "maximum_false_alert_95pct_upper": 0.01,
+    "minimum_citation_validity_rate": 1.0,
+}
+_P173_SCENARIOS = frozenset(
+    {"healthy", "ambiguous", "ood", "stale", "contradictory", "harmful", "duplicate", "valid_fixed_action"}
+)
 _SOURCE_FILES = (
     "app/services/p169_p173_governed_staging_program.py",
     "docs/operations/p169-p173-governed-staging-program.md",
@@ -127,8 +147,8 @@ SPECS = {
     ),
     "p172": PhaseSpec(
         "p172",
-        "p172_attached_capability_registry_qualified",
-        "observed_read_tools_only_registry_not_action_authority",
+        "p172_attached_capability_registry_ready_not_observed",
+        "observed_read_tools_registry_ready_attachment_required",
         "p171",
         "evals/p171/output/release-evidence.json",
         "p171.release_evidence.v1",
@@ -141,7 +161,7 @@ SPECS = {
         "p172",
         "evals/p172/output/release-evidence.json",
         "p172.release_evidence.v1",
-        "p172_attached_capability_registry_qualified",
+        "p172_attached_capability_registry_ready_not_observed",
     ),
 }
 
@@ -156,11 +176,12 @@ class GovernedAttachmentRecorder:
             raise ProgramError("target_owner_approval_required")
         if mode == "live" and live_ack is not True:
             raise ProgramError("live_attachment_ack_required")
-        if mode == "live" and not re.fullmatch(r"env:[A-Z][A-Z0-9_]*", credential_ref):
+        if not re.fullmatch(r"env:[A-Z][A-Z0-9_]*", credential_ref):
             raise ProgramError("credential_reference_must_be_env_only")
-        if mode == "recorded" and (target_owner_approval or live_ack or credential_ref):
+        if mode == "recorded" and (target_owner_approval or live_ack):
             raise ProgramError("recorded_mode_must_not_claim_live_authority")
         self._mode = mode
+        self._credential_ref = credential_ref
         self._receipts: list[dict[str, Any]] = []
 
     def record(self, event: Mapping[str, Any]) -> dict[str, Any]:
@@ -174,12 +195,42 @@ class GovernedAttachmentRecorder:
         real_network = bool(value.get("real_network"))
         if self._mode == "recorded" and real_network:
             raise ProgramError("recorded_mode_cannot_claim_real_network")
+        method = _text(value.get("method"), "method")
+        scheme = _text(value.get("scheme"), "scheme")
+        host = _text(value.get("host"), "host")
+        path = _text(value.get("path"), "path")
+        timeout_seconds = float(value.get("timeout_seconds", 0.0))
+        response_bytes = int(value.get("response_bytes", -1))
+        redirect_count = int(value.get("redirect_count", -1))
+        if method != "GET":
+            raise ProgramError("transport_method_must_be_get")
+        if scheme != "https":
+            raise ProgramError("transport_scheme_must_be_https")
+        if host not in _P169_ENDPOINT_ALLOWLIST.get(provider, {}):
+            raise ProgramError("transport_host_not_allowlisted")
+        if path not in _P169_ENDPOINT_ALLOWLIST[provider][host]:
+            raise ProgramError("transport_path_not_allowlisted")
+        if not 0.0 < timeout_seconds <= _P169_MAX_TIMEOUT_SECONDS:
+            raise ProgramError("transport_timeout_out_of_bounds")
+        if not 0 <= response_bytes <= _P169_MAX_RESPONSE_BYTES:
+            raise ProgramError("transport_response_size_out_of_bounds")
+        if redirect_count != 0:
+            raise ProgramError("transport_redirects_forbidden")
+        if value.get("credential_ref") != self._credential_ref:
+            raise ProgramError("transport_credential_reference_mismatch")
         receipt = {
             "schema_version": "p169.attachment_receipt.v1",
             "request_id": request_id,
             "source_id": _text(value.get("source_id"), "source_id"),
             "provider": provider,
             "source_class": source_class,
+            "method": method,
+            "scheme": scheme,
+            "endpoint_fingerprint": stable_hash({"host": host, "path": path}),
+            "timeout_seconds": timeout_seconds,
+            "response_bytes": response_bytes,
+            "redirect_count": redirect_count,
+            "credential_reference_kind": "environment_reference",
             "observed_at": observed_at,
             "collected_at": collected_at,
             "response_hash": response_hash,
@@ -204,12 +255,26 @@ class GovernedAttachmentRecorder:
             and provider_count >= 2
             and source_class_count >= 3
         )
+        observed_sources = sorted(
+            (
+                {
+                    "provider": item["provider"],
+                    "source_class": item["source_class"],
+                    "observed": bool(item["real_network"]),
+                    "receipt_hash": item["receipt_hash"],
+                }
+                for item in self._receipts
+            ),
+            key=lambda item: (str(item["provider"]), str(item["source_class"])),
+        )
         return {
             "receipt_count": len(self._receipts),
             "provider_count": provider_count,
             "source_class_count": source_class_count,
             "real_network_call_count": real_network_call_count,
             "live_attachment_observed": live_attachment_observed,
+            "transport_gate_passed_count": len(self._receipts),
+            "observed_sources": observed_sources,
             "maximum_claim": (
                 "governed_read_only_staging_attachment_observed"
                 if live_attachment_observed
@@ -228,6 +293,23 @@ class GovernedAttachmentRecorder:
             if receipt.get("previous_receipt_hash") != previous:
                 raise ProgramError("receipt_chain_invalid")
             _validate_self_hash(receipt, "receipt_hash")
+            if (
+                receipt.get("method") != "GET"
+                or receipt.get("scheme") != "https"
+                or receipt.get("redirect_count") != 0
+                or receipt.get("credential_reference_kind") != "environment_reference"
+                or not 0.0 < float(receipt.get("timeout_seconds", 0.0)) <= _P169_MAX_TIMEOUT_SECONDS
+                or not 0 <= int(receipt.get("response_bytes", -1)) <= _P169_MAX_RESPONSE_BYTES
+            ):
+                raise ProgramError("receipt_transport_gate_invalid")
+            provider = _text(receipt.get("provider"), "provider")
+            allowed_fingerprints = {
+                stable_hash({"host": host, "path": path})
+                for host, paths in _P169_ENDPOINT_ALLOWLIST.get(provider, {}).items()
+                for path in paths
+            }
+            if receipt.get("endpoint_fingerprint") not in allowed_fingerprints:
+                raise ProgramError("receipt_endpoint_fingerprint_invalid")
             previous = receipt["receipt_hash"]
             validated.append(receipt)
         return validated
@@ -288,9 +370,67 @@ def validate_wall_clock_soak(payload: Mapping[str, Any], *, require_live_24h: bo
 
 
 class BlindedStagingBenchmark:
-    """Evaluate committed predictions only after checking for truth leakage."""
+    """Evaluate a pre-registered prediction commitment against separately sealed truth."""
 
-    def evaluate(self, cases: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    def evaluate(
+        self,
+        *,
+        preregistration: Mapping[str, Any],
+        predictions: Mapping[str, Any],
+        sealed_truth: Mapping[str, Any],
+    ) -> dict[str, Any]:
+        prereg = deepcopy(dict(preregistration))
+        prediction_artifact = deepcopy(dict(predictions))
+        truth_artifact = deepcopy(dict(sealed_truth))
+        if set(prereg) != {
+            "schema_version",
+            "benchmark_id",
+            "committed_at",
+            "gates",
+            "prediction_artifact_hash",
+            "truth_case_ids_hash",
+            "self_hash",
+        } or prereg.get("schema_version") != "p171.preregistration.v1":
+            raise ProgramError("preregistration_contract_invalid")
+        if set(prediction_artifact) != {"schema_version", "benchmark_id", "committed_at", "cases", "artifact_hash"} or prediction_artifact.get(
+            "schema_version"
+        ) != "p171.predictions.v1":
+            raise ProgramError("prediction_artifact_contract_invalid")
+        if set(truth_artifact) != {"schema_version", "benchmark_id", "sealed_at", "opened_at", "cases", "artifact_hash"} or truth_artifact.get(
+            "schema_version"
+        ) != "p171.sealed_truth.v1":
+            raise ProgramError("truth_artifact_contract_invalid")
+        _validate_self_hash(prereg, "self_hash")
+        _validate_self_hash(prediction_artifact, "artifact_hash")
+        _validate_self_hash(truth_artifact, "artifact_hash")
+        benchmark_id = _text(prereg.get("benchmark_id"), "benchmark_id")
+        if prediction_artifact.get("benchmark_id") != benchmark_id or truth_artifact.get("benchmark_id") != benchmark_id:
+            raise ProgramError("benchmark_identity_mismatch")
+        if _mapping(prereg.get("gates"), "gates") != _P171_GATES:
+            raise ProgramError("preregistered_gates_invalid")
+        if prereg.get("prediction_artifact_hash") != prediction_artifact.get("artifact_hash"):
+            raise ProgramError("prediction_commitment_mismatch")
+        preregistered_at = _timestamp(prereg.get("committed_at"))
+        prediction_committed_at = _timestamp(prediction_artifact.get("committed_at"))
+        truth_sealed_at = _timestamp(truth_artifact.get("sealed_at"))
+        truth_opened_at = _timestamp(truth_artifact.get("opened_at"))
+        if _age_seconds(truth_sealed_at, preregistered_at) < 0:
+            raise ProgramError("truth_not_sealed_before_preregistration")
+        if _age_seconds(preregistered_at, prediction_committed_at) < 0 or _age_seconds(prediction_committed_at, truth_opened_at) <= 0:
+            raise ProgramError("prediction_not_committed_before_truth")
+        cases = _mappings(prediction_artifact.get("cases"), "prediction_cases")
+        truth_cases = _mappings(truth_artifact.get("cases"), "truth_cases")
+        truth_by_id: dict[str, dict[str, Any]] = {}
+        for truth in truth_cases:
+            case_id = _text(truth.get("case_id"), "truth_case_id")
+            if case_id in truth_by_id:
+                raise ProgramError("truth_case_id_duplicate")
+            truth_by_id[case_id] = truth
+        prediction_ids = [_text(case.get("case_id"), "prediction_case_id") for case in cases]
+        if len(prediction_ids) != len(set(prediction_ids)) or set(prediction_ids) != set(truth_by_id):
+            raise ProgramError("prediction_truth_case_set_mismatch")
+        if prereg.get("truth_case_ids_hash") != stable_hash(sorted(truth_by_id)):
+            raise ProgramError("truth_case_ids_commitment_mismatch")
         rows: list[dict[str, Any]] = []
         for case in cases:
             evidence = _mappings(case.get("evidence"), "evidence")
@@ -298,11 +438,8 @@ class BlindedStagingBenchmark:
                 if {"truth", "outcome", "root_cause"} & set(item):
                     raise ProgramError("future_truth_leakage")
             prediction = _mapping(case.get("prediction"), "prediction")
-            truth = _mapping(case.get("sealed_truth"), "sealed_truth")
-            committed = _timestamp(case.get("prediction_committed_at"))
-            opened = _timestamp(case.get("truth_opened_at"))
-            if _age_seconds(committed, opened) <= 0:
-                raise ProgramError("prediction_not_committed_before_truth")
+            case_id = _text(case.get("case_id"), "case_id")
+            truth = truth_by_id[case_id]
             citations = _strings(prediction.get("citations", []), "citations", allow_empty=True)
             evidence_ids = {_text(item.get("id"), "evidence_id") for item in evidence}
             top3 = _strings(prediction.get("root_cause_top3", []), "root_cause_top3", allow_empty=True)
@@ -343,14 +480,14 @@ class BlindedStagingBenchmark:
             for family, items in _group_by_family(positives).items()
         }
         qualified = (
-            metrics["incident_case_count"] >= 30
-            and metrics["healthy_window_count"] >= 300
-            and metrics["root_cause_top1_accuracy"] >= 0.80
-            and metrics["root_cause_top3_recall"] >= 0.95
-            and metrics["precursor_recall"] >= 0.80
-            and metrics["false_alert_rate"] == 0.0
-            and metrics["false_alert_rate_95pct_upper"] <= 0.01
-            and metrics["citation_validity_rate"] == 1.0
+            metrics["incident_case_count"] >= _P171_GATES["minimum_incident_cases"]
+            and metrics["healthy_window_count"] >= _P171_GATES["minimum_healthy_windows"]
+            and metrics["root_cause_top1_accuracy"] >= _P171_GATES["minimum_top1_accuracy"]
+            and metrics["root_cause_top3_recall"] >= _P171_GATES["minimum_top3_recall"]
+            and metrics["precursor_recall"] >= _P171_GATES["minimum_precursor_recall"]
+            and metrics["false_alert_rate"] <= _P171_GATES["maximum_false_alert_rate"]
+            and metrics["false_alert_rate_95pct_upper"] <= _P171_GATES["maximum_false_alert_95pct_upper"]
+            and metrics["citation_validity_rate"] >= _P171_GATES["minimum_citation_validity_rate"]
         )
         return {
             "schema_version": "p171.blinded_benchmark.v1",
@@ -358,6 +495,9 @@ class BlindedStagingBenchmark:
             "per_family": per_family,
             "confidence_bound_qualified": qualified,
             "qualification": "confidence_bound_qualified" if qualified else "informational_point_estimate_only",
+            "preregistration_hash": prereg["self_hash"],
+            "prediction_artifact_hash": prediction_artifact["artifact_hash"],
+            "sealed_truth_artifact_hash": truth_artifact["artifact_hash"],
             "rows_hash": stable_hash(rows),
         }
 
@@ -435,7 +575,11 @@ class ShadowApprovalEvaluator:
         action = _ROOT_CAUSE_ACTIONS.get(root)
         citations = _mappings(value.get("citations"), "citations")
         classes = {_text(item.get("source_class"), "source_class") for item in citations}
-        blocked = value.get("kill_switch") is True or value.get("deadman_active") is not True
+        blocked = (
+            value.get("kill_switch") is True
+            or value.get("deadman_active") is not True
+            or value.get("harmful_action") is True
+        )
         eligible = (
             action is not None
             and float(value.get("confidence", 0.0)) >= 0.90
@@ -443,6 +587,7 @@ class ShadowApprovalEvaluator:
             and 0.0 <= float(value.get("observed_age_seconds", 9999)) <= 30.0
             and 0.0 <= float(value.get("heartbeat_age_seconds", 9999)) <= 60.0
             and value.get("target") == "staging-shadow"
+            and value.get("contradictory_evidence") is not True
             and not blocked
         )
         if blocked:
@@ -502,12 +647,21 @@ def load_phase_input(path: Path, phase: str) -> dict[str, Any]:
 
 def evaluate_p169(payload: Mapping[str, Any], predecessor: Mapping[str, Any], *, project_root: Path) -> dict[str, Any]:
     value = _input(payload, "p169")
-    recorder = GovernedAttachmentRecorder(mode="recorded", target_owner_approval=False, live_ack=False, credential_ref="")
+    recorder = GovernedAttachmentRecorder(
+        mode="recorded",
+        target_owner_approval=False,
+        live_ack=False,
+        credential_ref=_text(value.get("credential_ref"), "credential_ref"),
+    )
     receipts = [recorder.record(event) for event in _mappings(value.get("attachment_events", value.get("events", [])), "attachment_events")]
     recorder.validate_receipts(receipts)
     summary = recorder.summary()
-    passed = summary["receipt_count"] > 0 and summary["real_network_call_count"] == 0
-    rows = [_row("p169-attachment-receipts", passed, summary)]
+    passed = (
+        summary["receipt_count"] > 0
+        and summary["transport_gate_passed_count"] == summary["receipt_count"]
+        and summary["real_network_call_count"] == 0
+    )
+    rows = [_row("p169-attachment-receipts", passed, {**summary, "receipts_hash": stable_hash(receipts)})]
     metrics = {**summary, "maximum_qualified_mode": SPECS["p169"].maximum_mode}
     return _report("p169", value, predecessor, rows, metrics, _counters(read_request_count=summary["receipt_count"]), project_root)
 
@@ -528,34 +682,139 @@ def evaluate_p170(payload: Mapping[str, Any], predecessor: Mapping[str, Any], *,
 
 def evaluate_p171(payload: Mapping[str, Any], predecessor: Mapping[str, Any], *, project_root: Path) -> dict[str, Any]:
     value = _input(payload, "p171")
-    result = BlindedStagingBenchmark().evaluate(_mappings(value.get("cases"), "cases"))
+    artifact_refs = _mapping(value.get("artifacts"), "artifacts")
+    if set(artifact_refs) != {"preregistration", "predictions", "sealed_truth"}:
+        raise ProgramError("p171_artifact_refs_invalid")
+    preregistration = _load_bound_json(project_root, _mapping(artifact_refs["preregistration"], "preregistration_ref"))
+    predictions = _load_bound_json(project_root, _mapping(artifact_refs["predictions"], "predictions_ref"))
+    sealed_truth = _load_bound_json(project_root, _mapping(artifact_refs["sealed_truth"], "sealed_truth_ref"))
+    result = BlindedStagingBenchmark().evaluate(
+        preregistration=preregistration,
+        predictions=predictions,
+        sealed_truth=sealed_truth,
+    )
     rows = [_row("p171-blinded-benchmark", result["confidence_bound_qualified"] is True, result["metrics"])]
-    metrics = {**result["metrics"], "maximum_qualified_mode": SPECS["p171"].maximum_mode}
+    metrics = {
+        **result["metrics"],
+        "preregistration_hash": result["preregistration_hash"],
+        "prediction_artifact_hash": result["prediction_artifact_hash"],
+        "sealed_truth_artifact_hash": result["sealed_truth_artifact_hash"],
+        "maximum_qualified_mode": SPECS["p171"].maximum_mode,
+    }
     return _report("p171", value, predecessor, rows, metrics, _counters(), project_root)
 
 
 def evaluate_p172(payload: Mapping[str, Any], predecessor: Mapping[str, Any], *, project_root: Path) -> dict[str, Any]:
     value = _input(payload, "p172")
-    registry = AttachedCapabilityRegistry(_mappings(value.get("observed_sources"), "observed_sources"), max_tool_calls=int(value.get("max_tool_calls", 8)))
-    decision = registry.evaluate(tool_calls=_strings(value.get("tool_calls", []), "tool_calls", allow_empty=True), evidence=_mappings(value.get("evidence"), "evidence"))
-    rows = [_row("p172-observed-read-tools", decision["route"] == "evidence_sufficient", decision)]
+    p169_path = project_root / "evals/p169/output/release-evidence.json"
+    p169_release = validate_release_evidence(
+        "p169",
+        load_phase_input(p169_path, "p169-release"),
+        project_root=project_root,
+    )
+    p169_metrics = _mapping(p169_release.get("metrics"), "p169_metrics")
+    observed_sources = _mappings(p169_metrics.get("observed_sources"), "p169_observed_sources")
+    live_observed = p169_metrics.get("live_attachment_observed") is True
+    registry = AttachedCapabilityRegistry(observed_sources if live_observed else [], max_tool_calls=int(value.get("max_tool_calls", 8)))
+    tool_calls = _strings(value.get("tool_calls", []), "tool_calls", allow_empty=True)
+    evidence = _mappings(value.get("evidence", []), "evidence")
+    if not live_observed:
+        if tool_calls or evidence:
+            raise ProgramError("p169_live_attachment_required_for_tools")
+        decision = {
+            "route": "attachment_required",
+            "tool_call_count": 0,
+            "independent_source_class_count": 0,
+            "available_tools": registry.available_tools(),
+        }
+    else:
+        decision = registry.evaluate(tool_calls=tool_calls, evidence=evidence)
+    rows = [_row("p172-observed-read-tools", decision["route"] in {"evidence_sufficient", "attachment_required"}, decision)]
     metrics = {
         "available_tool_count": len(registry.available_tools()),
         "independent_source_class_count": decision["independent_source_class_count"],
         "route": decision["route"],
+        "p169_live_attachment_observed": live_observed,
+        "p169_release_hash": p169_release["evidence_hash"],
         "maximum_qualified_mode": SPECS["p172"].maximum_mode,
     }
-    return _report("p172", value, predecessor, rows, metrics, _counters(read_request_count=decision["tool_call_count"]), project_root)
+    return _report(
+        "p172",
+        value,
+        predecessor,
+        rows,
+        metrics,
+        _counters(read_request_count=len(tool_calls)),
+        project_root,
+    )
 
 
 def evaluate_p173(payload: Mapping[str, Any], predecessor: Mapping[str, Any], *, project_root: Path) -> dict[str, Any]:
     value = _input(payload, "p173")
     evaluator = ShadowApprovalEvaluator()
-    decisions = [evaluator.evaluate(candidate) for candidate in _mappings(value.get("candidates"), "candidates")]
-    rows = [_row("p173-counterfactual-approval", any(item["route"] == "would_approve_not_authorized" for item in decisions), {"decisions": decisions})]
+    candidates = _mappings(value.get("candidates"), "candidates")
+    by_scenario: dict[str, dict[str, Any]] = {}
+    for candidate in candidates:
+        scenario = _text(candidate.get("scenario"), "scenario")
+        if scenario in by_scenario:
+            raise ProgramError("scenario_matrix_duplicate")
+        by_scenario[scenario] = candidate
+    if set(by_scenario) != _P173_SCENARIOS:
+        raise ProgramError("scenario_matrix_incomplete")
+    decisions_by_scenario: dict[str, dict[str, Any]] = {}
+    for scenario in sorted(_P173_SCENARIOS - {"duplicate"}):
+        decisions_by_scenario[scenario] = evaluator.evaluate(by_scenario[scenario])
+    duplicate = by_scenario["duplicate"]
+    if set(duplicate) != {"scenario", "replay_of", "candidate_hash", "replay_candidate"}:
+        raise ProgramError("duplicate_replay_contract_invalid")
+    replay_of = _text(duplicate.get("replay_of"), "replay_of")
+    original = next((candidate for candidate in candidates if candidate.get("request_id") == replay_of), None)
+    if original is None:
+        raise ProgramError("duplicate_replay_target_missing")
+    replay_candidate = _mapping(duplicate.get("replay_candidate"), "replay_candidate")
+    if replay_candidate != original or duplicate.get("candidate_hash") != stable_hash(original):
+        raise ProgramError("duplicate_replay_content_mismatch")
+    replayed = evaluator.evaluate(replay_candidate)
+    decisions_by_scenario["duplicate"] = replayed
+    expected_routes = {
+        "healthy": "human_required",
+        "ambiguous": "human_required",
+        "ood": "human_required",
+        "stale": "human_required",
+        "contradictory": "human_required",
+        "harmful": "blocked",
+        "valid_fixed_action": "would_approve_not_authorized",
+        "duplicate": "would_approve_not_authorized",
+    }
+    route_matches = all(decisions_by_scenario[scenario]["route"] == route for scenario, route in expected_routes.items())
+    eligible_scenarios = {"valid_fixed_action", "duplicate"}
+    eligible_approved = sum(
+        decisions_by_scenario[scenario]["route"] == "would_approve_not_authorized" for scenario in eligible_scenarios
+    )
+    eligible_coverage = _rate(eligible_approved, len(eligible_scenarios))
+    replay_reproduction_rate = 1.0 if replayed == decisions_by_scenario["valid_fixed_action"] else 0.0
+    unsafe_or_ambiguous_approval_count = sum(
+        decisions_by_scenario[scenario]["route"] == "would_approve_not_authorized"
+        for scenario in _P173_SCENARIOS - eligible_scenarios
+    )
+    false_auto_approval_count = sum("approval_id" in decision for decision in decisions_by_scenario.values())
+    passed = (
+        route_matches
+        and eligible_coverage >= 0.70
+        and replay_reproduction_rate == 1.0
+        and unsafe_or_ambiguous_approval_count == 0
+        and false_auto_approval_count == 0
+    )
+    rows = [_row("p173-counterfactual-approval", passed, {"decisions": decisions_by_scenario})]
     counters = _counters(**evaluator.counters())
     metrics = {
-        "decision_count": len(decisions),
+        "decision_count": len(decisions_by_scenario),
+        "scenario_count": len(by_scenario),
+        "scenario_coverage": _rate(len(by_scenario), len(_P173_SCENARIOS)),
+        "eligible_fixed_action_coverage": eligible_coverage,
+        "replay_reproduction_rate": replay_reproduction_rate,
+        "unsafe_or_ambiguous_approval_count": unsafe_or_ambiguous_approval_count,
+        "false_auto_approval_count": false_auto_approval_count,
         "would_approve_not_authorized_count": evaluator.counters()["counterfactual_would_approve_count"],
         "maximum_qualified_mode": SPECS["p173"].maximum_mode,
     }
@@ -563,7 +822,7 @@ def evaluate_p173(payload: Mapping[str, Any], predecessor: Mapping[str, Any], *,
 
 
 def build_freeze_manifest(phase: str, report: Mapping[str, Any], *, project_root: Path) -> dict[str, Any]:
-    validated = validate_report(phase, report)
+    validated = validate_report(phase, report, project_root=project_root)
     current = _source_hashes(project_root, phase)
     if validated["source_hashes"] != current:
         raise ProgramError("freeze_source_hashes_stale")
@@ -588,8 +847,9 @@ def build_final_review(
     writer_agent_id: str,
     reviewer_agent_id: str,
     reviewed_at: str,
+    project_root: Path,
 ) -> dict[str, Any]:
-    validated_report = validate_report(phase, report)
+    validated_report = validate_report(phase, report, project_root=project_root)
     validated_freeze = validate_freeze_manifest(phase, freeze)
     if writer_agent_id == reviewer_agent_id or _UUID7_RE.fullmatch(writer_agent_id) is None or _UUID7_RE.fullmatch(reviewer_agent_id) is None:
         raise ProgramError("reviewer_identity_not_independent")
@@ -610,8 +870,15 @@ def build_final_review(
     )
 
 
-def assemble_release_evidence(phase: str, report: Mapping[str, Any], freeze: Mapping[str, Any], review: Mapping[str, Any]) -> dict[str, Any]:
-    validated_report = validate_report(phase, report)
+def assemble_release_evidence(
+    phase: str,
+    report: Mapping[str, Any],
+    freeze: Mapping[str, Any],
+    review: Mapping[str, Any],
+    *,
+    project_root: Path,
+) -> dict[str, Any]:
+    validated_report = validate_report(phase, report, project_root=project_root)
     validated_freeze = validate_freeze_manifest(phase, freeze)
     validated_review = validate_final_review(phase, review, report=validated_report, freeze=validated_freeze)
     return _self_hash(
@@ -624,6 +891,7 @@ def assemble_release_evidence(phase: str, report: Mapping[str, Any], freeze: Map
             "production_blockers": validated_report["production_blockers"],
             "source_hashes": validated_report["source_hashes"],
             "predecessor": validated_report["predecessor"],
+            "dependencies": validated_report["dependencies"],
             "metrics": validated_report["metrics"],
             "counters": validated_report["counters"],
             "passed": validated_report["passed"],
@@ -657,6 +925,7 @@ def validate_release_evidence(
         "production_blockers",
         "source_hashes",
         "predecessor",
+        "dependencies",
         "metrics",
         "counters",
         "passed",
@@ -677,11 +946,19 @@ def validate_release_evidence(
         raise ProgramError("release_source_bindings_stale")
     if value["predecessor"] != _canonical_predecessor(phase, project_root):
         raise ProgramError("release_predecessor_binding_stale")
+    expected_dependencies = _canonical_dependencies(phase, project_root)
+    if value["dependencies"] != expected_dependencies:
+        raise ProgramError("release_dependency_binding_stale")
+    _validate_phase_dependency_metrics(phase, _mapping(value["metrics"], "metrics"), expected_dependencies)
     _validate_counters(value["counters"])
     report_path = project_root / f"evals/{phase}/output/report.json"
     freeze_path = project_root / f"evals/{phase}/output/freeze-manifest.json"
     review_path = project_root / f"evals/{phase}/final-implementation-review.json"
-    canonical_report = validate_report(phase, report or load_phase_input(report_path, f"{phase}-report"))
+    canonical_report = validate_report(
+        phase,
+        report or load_phase_input(report_path, f"{phase}-report"),
+        project_root=project_root,
+    )
     canonical_freeze = validate_freeze_manifest(phase, freeze or load_phase_input(freeze_path, f"{phase}-freeze"))
     canonical_review = validate_final_review(
         phase,
@@ -700,7 +977,7 @@ def validate_release_evidence(
     return value
 
 
-def validate_report(phase: str, report: Mapping[str, Any]) -> dict[str, Any]:
+def validate_report(phase: str, report: Mapping[str, Any], *, project_root: Path | None = None) -> dict[str, Any]:
     spec = SPECS[_phase(phase)]
     value = deepcopy(dict(report))
     required = {
@@ -712,6 +989,7 @@ def validate_report(phase: str, report: Mapping[str, Any]) -> dict[str, Any]:
         "production_blockers",
         "input_hash",
         "predecessor",
+        "dependencies",
         "source_hashes",
         "metrics",
         "counters",
@@ -729,6 +1007,14 @@ def validate_report(phase: str, report: Mapping[str, Any]) -> dict[str, Any]:
         raise ProgramError("report_bounded_claim_invalid")
     _hash(value["input_hash"], "input_hash")
     _validate_predecessor_shape(phase, value["predecessor"])
+    dependencies = _validate_dependencies_shape(phase, value["dependencies"])
+    if phase == "p172" and project_root is None:
+        raise ProgramError("p172_project_root_required")
+    if project_root is not None:
+        expected_dependencies = _canonical_dependencies(phase, project_root)
+        if dependencies != expected_dependencies:
+            raise ProgramError("report_dependency_binding_stale")
+        _validate_phase_dependency_metrics(phase, _mapping(value["metrics"], "metrics"), expected_dependencies)
     _hash_map(value["source_hashes"], "source_hashes")
     value["counters"] = _validate_counters(value["counters"])
     rows = _mappings(value["rows"], "rows")
@@ -802,6 +1088,7 @@ def _report(
         "production_blockers": list(_PRODUCTION_BLOCKERS),
         "input_hash": stable_hash(payload),
         "predecessor": _validate_predecessor(phase, predecessor, project_root),
+        "dependencies": _canonical_dependencies(phase, project_root),
         "source_hashes": _source_hashes(project_root, phase),
         "metrics": deepcopy(dict(metrics)),
         "counters": _validate_counters(counters),
@@ -811,7 +1098,7 @@ def _report(
         "rows": normalized_rows,
         "report_hash": "",
     }
-    return validate_report(phase, _self_hash(value, "report_hash"))
+    return validate_report(phase, _self_hash(value, "report_hash"), project_root=project_root)
 
 
 def _validate_predecessor(phase: str, predecessor: Mapping[str, Any], project_root: Path) -> dict[str, Any]:
@@ -841,15 +1128,101 @@ def _canonical_predecessor(phase: str, project_root: Path) -> dict[str, Any]:
     }
 
 
+def _canonical_dependencies(phase: str, project_root: Path) -> dict[str, Any]:
+    if phase != "p172":
+        return {}
+    relative = "evals/p169/output/release-evidence.json"
+    path = project_root / relative
+    release = validate_release_evidence(
+        "p169",
+        load_phase_input(path, "p169-release"),
+        project_root=project_root,
+    )
+    metrics = _mapping(release.get("metrics"), "p169_metrics")
+    return {
+        "p169_live_attachment": {
+            "phase": "p169",
+            "path": relative,
+            "schema_version": "p169.release_evidence.v1",
+            "required_status": SPECS["p169"].status,
+            "file_hash": file_hash(path),
+            "evidence_hash": _hash(release.get("evidence_hash"), "p169_evidence_hash"),
+            "live_attachment_observed": metrics.get("live_attachment_observed") is True,
+        }
+    }
+
+
+def _validate_dependencies_shape(phase: str, value: Any) -> dict[str, Any]:
+    dependencies = _mapping(value, "dependencies")
+    if phase != "p172":
+        if dependencies:
+            raise ProgramError("unexpected_secondary_dependencies")
+        return dependencies
+    if set(dependencies) != {"p169_live_attachment"}:
+        raise ProgramError("p172_dependency_missing")
+    dependency = _mapping(dependencies["p169_live_attachment"], "p169_dependency")
+    if set(dependency) != {
+        "phase",
+        "path",
+        "schema_version",
+        "required_status",
+        "file_hash",
+        "evidence_hash",
+        "live_attachment_observed",
+    }:
+        raise ProgramError("p169_dependency_contract_invalid")
+    if (
+        dependency.get("phase") != "p169"
+        or dependency.get("path") != "evals/p169/output/release-evidence.json"
+        or dependency.get("schema_version") != "p169.release_evidence.v1"
+        or dependency.get("required_status") != SPECS["p169"].status
+        or not isinstance(dependency.get("live_attachment_observed"), bool)
+    ):
+        raise ProgramError("p169_dependency_claim_invalid")
+    _hash(dependency.get("file_hash"), "p169_dependency_file_hash")
+    _hash(dependency.get("evidence_hash"), "p169_dependency_evidence_hash")
+    return dependencies
+
+
+def _validate_phase_dependency_metrics(phase: str, metrics: Mapping[str, Any], dependencies: Mapping[str, Any]) -> None:
+    if phase != "p172":
+        return
+    dependency = _mapping(dependencies.get("p169_live_attachment"), "p169_dependency")
+    if (
+        metrics.get("p169_release_hash") != dependency.get("evidence_hash")
+        or metrics.get("p169_live_attachment_observed") != dependency.get("live_attachment_observed")
+    ):
+        raise ProgramError("p172_metrics_dependency_mismatch")
+
+
 def _source_hashes(project_root: Path, phase: str) -> dict[str, str]:
-    paths = (
+    paths = [
         *_SOURCE_FILES,
         f"docs/operations/{phase}-plan-review.md",
         f"docs/operations/{phase}-test-spec.md",
         f"docs/tickets/{phase}/README.md",
-        f"evals/{phase}/input/cases.json",
+    ]
+    paths.extend(
+        str(path.relative_to(project_root))
+        for path in sorted((project_root / f"evals/{phase}/input").glob("*.json"))
     )
     return {relative: file_hash(project_root / relative) for relative in paths}
+
+
+def _load_bound_json(project_root: Path, reference: Mapping[str, Any]) -> dict[str, Any]:
+    if set(reference) != {"path", "file_hash"}:
+        raise ProgramError("artifact_reference_contract_invalid")
+    relative = Path(_text(reference.get("path"), "artifact_path"))
+    if relative.is_absolute() or ".." in relative.parts:
+        raise ProgramError("artifact_path_outside_project")
+    root = project_root.resolve()
+    candidate = root / relative
+    path = candidate.resolve()
+    if candidate.is_symlink() or root not in path.parents or not path.is_file():
+        raise ProgramError("artifact_path_unsafe")
+    if file_hash(path) != _hash(reference.get("file_hash"), "artifact_file_hash"):
+        raise ProgramError("artifact_file_hash_mismatch")
+    return load_phase_input(path, "bound-artifact")
 
 
 def _input(payload: Mapping[str, Any], phase: str) -> dict[str, Any]:

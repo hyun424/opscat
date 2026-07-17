@@ -1,6 +1,7 @@
 {
   "schema_version": "p169.input.v1",
   "phase": "p169",
+  "credential_ref": "env:OPSCAT_STAGING_TOKEN",
   "attachment_events": [
     {
       "request_id": "read-1",
@@ -9,6 +10,14 @@
       "source_class": "metrics",
       "observed_at": "2026-07-17T00:00:00Z",
       "collected_at": "2026-07-17T00:00:01Z",
+      "method": "GET",
+      "scheme": "https",
+      "host": "prometheus.staging.example.com",
+      "path": "/api/v1/query",
+      "timeout_seconds": 5,
+      "response_bytes": 1024,
+      "redirect_count": 0,
+      "credential_ref": "env:OPSCAT_STAGING_TOKEN",
       "response_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
       "redaction_applied": true,
       "real_network": false
@@ -20,6 +29,14 @@
       "source_class": "logs",
       "observed_at": "2026-07-17T00:00:00Z",
       "collected_at": "2026-07-17T00:00:02Z",
+      "method": "GET",
+      "scheme": "https",
+      "host": "loki.staging.example.com",
+      "path": "/api/v1/query",
+      "timeout_seconds": 5,
+      "response_bytes": 2048,
+      "redirect_count": 0,
+      "credential_ref": "env:OPSCAT_STAGING_TOKEN",
       "response_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
       "redaction_applied": true,
       "real_network": false
@@ -31,6 +48,14 @@
       "source_class": "errors",
       "observed_at": "2026-07-17T00:00:00Z",
       "collected_at": "2026-07-17T00:00:03Z",
+      "method": "GET",
+      "scheme": "https",
+      "host": "sentry.staging.example.com",
+      "path": "/api/v1/query",
+      "timeout_seconds": 5,
+      "response_bytes": 3072,
+      "redirect_count": 0,
+      "credential_ref": "env:OPSCAT_STAGING_TOKEN",
       "response_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
       "redaction_applied": true,
       "real_network": false

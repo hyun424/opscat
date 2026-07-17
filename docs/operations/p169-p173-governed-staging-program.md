@@ -2,16 +2,18 @@
 
 This program moves OpsCat from disposable-lab qualification to governed
 human-on-exception staging evidence without granting production authority.
-P169-P173 prove real read-only attachment, real elapsed endurance, blinded
-judgment quality, active evidence investigation, and counterfactual approval
-quality.
+P169-P173 implement and verify the governed contracts required for real
+read-only attachment, real elapsed endurance, blinded judgment, active evidence
+investigation, and counterfactual approval. The canonical artifacts remain
+readiness/counterfactual evidence until real attachment and elapsed-time gates
+are separately satisfied.
 
 | Phase | Capability | Maximum qualified claim |
 | --- | --- | --- |
 | P169 | Governed read-only staging telemetry attachment | Read-only staging attachment ready, or observed only after real owner-approved reads |
 | P170 | 24-hour real wall-clock shadow soak | Read-only staging shadow endurance |
 | P171 | Blinded staging judgment benchmark | Informational point estimate, or confidence-bound benchmark when sample gates pass |
-| P172 | Active evidence investigation in staging | Bounded read-only investigation utility |
+| P172 | Active evidence investigation in staging | Registry readiness; observed tools only after canonical P169 live evidence |
 | P173 | Shadow approval and counterfactual action evaluation | Counterfactual fixed-action policy quality |
 
 ## Ordered phase contracts
@@ -21,8 +23,8 @@ quality.
 | P169 | canonical P168 release evidence | `p168_accelerated_unattended_lab_soak_qualified` | governed attachment runtime ready; live observation is a separate promotion gate |
 | P170 | canonical P169 readiness evidence | P169 runtime ready | wall-clock soak runtime ready; 24-hour completion is a separate promotion gate |
 | P171 | canonical P170 readiness evidence | P170 runtime ready | blinded staging benchmark ready; confidence-bound promotion remains data-gated |
-| P172 | canonical P171 evidence | P171 informational or confidence-bound benchmark readiness | active read-only investigation ready |
-| P173 | canonical P172 evidence | P172 active investigation ready | counterfactual shadow approval qualified |
+| P172 | canonical P171 evidence plus canonical P169 attachment evidence | P171 benchmark readiness | registry ready; `attachment_required` while P169 is not live-observed |
+| P173 | canonical P172 evidence | P172 registry readiness | counterfactual shadow approval qualified |
 
 P169 may qualify readiness from recorded transport, but observed attachment
 requires target-owner approval, live acknowledgement, indirect scoped credential
@@ -75,18 +77,27 @@ P170 24-hour artifacts exist.
 
 ### P171 benchmark gates
 
-- Fewer than 30 labeled staging incident/precursor episodes or fewer than 200
+- Fewer than 30 labeled staging incident/precursor episodes or fewer than 300
   healthy windows can produce only an informational point-estimate report.
 - Confidence-bound promotion requires a separately pre-registered sample size
   sufficient for requested one-sided 95% bounds, including at least 300 healthy
   windows for a zero-observed-false-alert 1% upper-bound claim.
 - Root-cause, precursor, citation, calibration, selective accuracy, abstention,
   OOD, and family-specific metrics are reported without hiding failed families.
+- Preregistration, agent-visible predictions, and sealed truth are separate
+  hash-bound artifacts; a prediction commitment mismatch fails closed before
+  truth scoring.
 
 ### P172 investigation gates
 
 - Tool capability registry entries must be backed by providers actually
   observed in the canonical P169 attachment.
+- The P172 input cannot self-assert provider observation. When canonical P169
+  reports no live attachment, the only valid route is `attachment_required`
+  with zero available tools and zero tool calls.
+- P172 release evidence carries canonical P169 as an explicit secondary
+  dependency with current file/evidence hashes; an opaque metrics field cannot
+  replace that binding.
 - Configured-but-unobserved, unknown, or unavailable providers cannot satisfy
   evidence requirements.
 - Action-ready conclusions require at least two independent source classes.
@@ -103,6 +114,10 @@ P170 24-hour artifacts exist.
   real provider actions remain exactly zero.
 - Denials identify the failed evidence, policy, capability, freshness, or
   authority requirement.
+- Qualification requires the complete healthy, ambiguous, OOD, stale,
+  contradictory, harmful, duplicate, and valid-fixed-action replay matrix,
+  eligible coverage at least 0.70, and exact hash-bound duplicate replay
+  reproduction.
 
 ## Release blockers after P173
 

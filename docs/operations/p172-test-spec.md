@@ -2,6 +2,11 @@
 
 - Build the active investigator from the P169 observed-provider capability
   registry.
+- Reject P172-local provider declarations as observation evidence. If canonical
+  P169 has no live-observed attachment, emit `attachment_required` with zero
+  tools and zero tool calls.
+- Bind canonical P169 file hash, release evidence hash, status, and live-observed
+  flag as an explicit P172 secondary dependency validated again at release.
 - Expose only typed allowlisted read-only queries for observed metrics, logs,
   traces, deploy history, health, and topology providers.
 - Record every hypothesis revision, tool choice, result hash, contradiction,

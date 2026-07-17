@@ -1,0 +1,16 @@
+{
+  "schema_version": "p168.input.v1",
+  "phase": "p168",
+  "configuration": {
+    "virtual_cycle_count": 120,
+    "restart_after_cycle": 60,
+    "healthy_cycle_count": 72,
+    "precursor_cycle_count": 18,
+    "incident_cycle_count": 30,
+    "kill_switch_drill_count": 2,
+    "deadman_drill_count": 2,
+    "harmful_action_drill_count": 2,
+    "wall_clock_24h_completed": false,
+    "maximum_ledger_bytes": 1048576
+  }
+}

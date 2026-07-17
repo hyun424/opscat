@@ -1,0 +1,15 @@
+{
+  "schema_version": "p165.input.v1",
+  "phase": "p165",
+  "cycles": [
+    {"cursor":1,"status":"healthy","duplicate":false,"fresh":true},
+    {"cursor":2,"status":"precursor","duplicate":false,"fresh":true},
+    {"cursor":3,"status":"incident","duplicate":false,"fresh":true},
+    {"cursor":4,"status":"telemetry_stale","duplicate":false,"fresh":false},
+    {"cursor":5,"status":"connector_unavailable","duplicate":false,"fresh":false},
+    {"cursor":6,"status":"deadman_expired","duplicate":false,"fresh":false},
+    {"cursor":7,"status":"healthy","duplicate":false,"fresh":true},
+    {"cursor":8,"status":"incident","duplicate":false,"fresh":true}
+  ],
+  "restart_after_cursor": 4
+}

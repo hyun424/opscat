@@ -1,0 +1,12 @@
+{
+  "schema_version": "p164.input.v1",
+  "phase": "p164",
+  "scenarios": [
+    {"case_id":"P164-C01","fault":"db_pool_exhaustion","stages":["healthy","precursor","incident"],"sources":["prometheus","loki","traces","deploys","health","topology"]},
+    {"case_id":"P164-C02","fault":"dependency_timeout","stages":["healthy","precursor","incident"],"sources":["prometheus","loki","traces","deploys","health","topology"]},
+    {"case_id":"P164-C03","fault":"queue_backlog","stages":["healthy","precursor","incident"],"sources":["prometheus","loki","traces","deploys","health","topology"]},
+    {"case_id":"P164-C04","fault":"recent_deploy_regression","stages":["healthy","precursor","incident"],"sources":["prometheus","loki","traces","deploys","health","topology"]},
+    {"case_id":"P164-C05","fault":"retry_storm","stages":["healthy","precursor","incident"],"sources":["prometheus","loki","traces","deploys","health","topology"]},
+    {"case_id":"P164-C06","fault":"resource_saturation","stages":["healthy","precursor","incident"],"sources":["prometheus","loki","traces","deploys","health","topology"]}
+  ]
+}

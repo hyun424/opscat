@@ -1,0 +1,16 @@
+{
+  "schema_version": "p167.input.v1",
+  "phase": "p167",
+  "cases": [
+    {"case_id":"P167-C01","root_cause":"db_pool_exhaustion","citations":["m1","l1"],"confidence":0.95,"fresh":true,"heartbeat_current":true,"kill_switch":false,"expected":"approved","outcome":"recovery_verified"},
+    {"case_id":"P167-C02","root_cause":"queue_backlog","citations":["m2","l2"],"confidence":0.92,"fresh":true,"heartbeat_current":true,"kill_switch":false,"expected":"approved","outcome":"recovery_verified"},
+    {"case_id":"P167-C03","root_cause":"recent_deploy_regression","citations":["d3","m3"],"confidence":0.94,"fresh":true,"heartbeat_current":true,"kill_switch":false,"expected":"approved","outcome":"recovery_verified"},
+    {"case_id":"P167-C04","root_cause":"db_pool_exhaustion","citations":["m4"],"confidence":0.95,"fresh":true,"heartbeat_current":true,"kill_switch":false,"expected":"denied","outcome":"not_executed"},
+    {"case_id":"P167-C05","root_cause":"queue_backlog","citations":["m5","l5"],"confidence":0.40,"fresh":true,"heartbeat_current":true,"kill_switch":false,"expected":"denied","outcome":"not_executed"},
+    {"case_id":"P167-C06","root_cause":"recent_deploy_regression","citations":["d6","m6"],"confidence":0.95,"fresh":false,"heartbeat_current":true,"kill_switch":false,"expected":"denied","outcome":"not_executed"},
+    {"case_id":"P167-C07","root_cause":"db_pool_exhaustion","citations":["m7","l7"],"confidence":0.95,"fresh":true,"heartbeat_current":false,"kill_switch":false,"expected":"denied","outcome":"not_executed"},
+    {"case_id":"P167-C08","root_cause":"queue_backlog","citations":["m8","l8"],"confidence":0.95,"fresh":true,"heartbeat_current":true,"kill_switch":true,"expected":"denied","outcome":"not_executed"},
+    {"case_id":"P167-C09","root_cause":"dependency_timeout","citations":["m9","t9"],"confidence":0.95,"fresh":true,"heartbeat_current":true,"kill_switch":false,"expected":"denied","outcome":"not_executed"},
+    {"case_id":"P167-C10","root_cause":"db_pool_exhaustion","citations":["m10","l10"],"confidence":0.95,"fresh":true,"heartbeat_current":true,"kill_switch":false,"expected":"approved","outcome":"rollback_verified"}
+  ]
+}

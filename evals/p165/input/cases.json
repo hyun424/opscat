@@ -2,14 +2,14 @@
   "schema_version": "p165.input.v1",
   "phase": "p165",
   "cycles": [
-    {"cursor":1,"status":"healthy","duplicate":false,"fresh":true},
-    {"cursor":2,"status":"precursor","duplicate":false,"fresh":true},
-    {"cursor":3,"status":"incident","duplicate":false,"fresh":true},
-    {"cursor":4,"status":"telemetry_stale","duplicate":false,"fresh":false},
-    {"cursor":5,"status":"connector_unavailable","duplicate":false,"fresh":false},
-    {"cursor":6,"status":"deadman_expired","duplicate":false,"fresh":false},
-    {"cursor":7,"status":"healthy","duplicate":false,"fresh":true},
-    {"cursor":8,"status":"incident","duplicate":false,"fresh":true}
+    {"cursor":1,"status":"healthy","duplicate":false,"fresh":true,"observed_at":"2026-07-17T00:00:00Z","now":"2026-07-17T00:00:05Z"},
+    {"cursor":2,"status":"precursor","duplicate":false,"fresh":true,"observed_at":"2026-07-17T00:00:10Z","now":"2026-07-17T00:00:15Z"},
+    {"cursor":3,"status":"incident","duplicate":false,"fresh":true,"observed_at":"2026-07-17T00:00:20Z","now":"2026-07-17T00:00:25Z"},
+    {"cursor":4,"status":"telemetry_stale","duplicate":false,"fresh":false,"observed_at":"2026-07-17T00:00:00Z","now":"2026-07-17T00:02:00Z"},
+    {"cursor":5,"status":"connector_unavailable","duplicate":false,"fresh":false,"observed_at":"2026-07-17T00:02:00Z","now":"2026-07-17T00:02:10Z"},
+    {"cursor":6,"status":"deadman_expired","duplicate":false,"fresh":false,"observed_at":"2026-07-17T00:03:30Z","now":"2026-07-17T00:03:35Z"},
+    {"cursor":7,"status":"healthy","duplicate":false,"fresh":true,"observed_at":"2026-07-17T00:03:40Z","now":"2026-07-17T00:03:45Z"},
+    {"cursor":8,"status":"incident","duplicate":false,"fresh":true,"observed_at":"2026-07-17T00:03:50Z","now":"2026-07-17T00:03:55Z"}
   ],
   "restart_after_cursor": 4
 }

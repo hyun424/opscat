@@ -1,0 +1,72 @@
+{
+  "schema_version": "p176.gcp.reviewed_preflight_readiness.v1",
+  "generated_at": "2026-07-19T10:41:48Z",
+  "status": "ready_for_plan_generation",
+  "mutation_count": 0,
+  "apply_attempted": false,
+  "destroy_attempted": false,
+  "expected_project_id_status": "p176_dedicated",
+  "declared_project_id_present": true,
+  "active_gcloud_project_status": "not_forbidden",
+  "billing_account_visible_open": true,
+  "blocking_reasons": [],
+  "warnings": [],
+  "checks": {
+    "terraform_version": {
+      "status": "pass",
+      "exit_code": null,
+      "stdout_sha256": "161624f07e03392ed3697a5e3145e94147873cb2b8a54da496cfad4691053dcc",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 250,
+      "stderr_bytes": 0
+    },
+    "terraform_fmt": {
+      "status": "pass",
+      "exit_code": null,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    "terraform_validate": {
+      "status": "pass",
+      "exit_code": null,
+      "stdout_sha256": "2ff6f7b7b494d0f8d596def971d585d29ee3e06359aa4662e84c1988f7b74cbb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 55,
+      "stderr_bytes": 0
+    },
+    "gcloud_version": {
+      "status": "pass",
+      "exit_code": null,
+      "stdout_sha256": "0f338222009cf63a5b7c13267b11ae7a096e3a7105ca9149b05b451da003eef8",
+      "stderr_sha256": "bbecf7b76ce5b61861e30256e6d04876af1fd7c6f43f2eaf40451836c54b2bcf",
+      "stdout_bytes": 99,
+      "stderr_bytes": 119
+    },
+    "gcloud_config": {
+      "status": "pass",
+      "exit_code": null,
+      "stdout_sha256": "0c071b731c62a023fdd00eadff621001c3a25d77ec5cf0eda6374ab6adf614d6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 137,
+      "stderr_bytes": 0
+    },
+    "gcloud_auth": {
+      "status": "pass",
+      "exit_code": null,
+      "stdout_sha256": "85fc52ee5b7bc29812902ca116b0b62b0a2a850308561f79d1988e6fe9a208a9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 74,
+      "stderr_bytes": 0
+    },
+    "gcloud_billing_accounts": {
+      "status": "pass",
+      "exit_code": null,
+      "stdout_sha256": "a134e70fe9f131544d3952757cec551e459223b9386cb778f025a3da571108e6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 198,
+      "stderr_bytes": 0
+    }
+  }
+}

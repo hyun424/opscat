@@ -1,0 +1,143 @@
+{
+  "schema_version": "p176.live_topology.v1",
+  "phase": "P176-LIVE-002",
+  "service_order": [
+    "web-gateway",
+    "checkout-api",
+    "catalog-api",
+    "order-worker",
+    "event-queue",
+    "notification-worker",
+    "postgres-db",
+    "redis-cache"
+  ],
+  "public_application_ingress": false,
+  "services": {
+    "web-gateway": {
+      "criticality_tier": "tier0",
+      "ownership_domain": "experience",
+      "independently_deployable": true,
+      "depends_on": ["checkout-api", "catalog-api"]
+    },
+    "checkout-api": {
+      "criticality_tier": "tier0",
+      "ownership_domain": "commerce",
+      "independently_deployable": true,
+      "depends_on": ["order-worker", "postgres-db", "redis-cache"]
+    },
+    "catalog-api": {
+      "criticality_tier": "tier1",
+      "ownership_domain": "commerce",
+      "independently_deployable": true,
+      "depends_on": ["postgres-db", "redis-cache"]
+    },
+    "order-worker": {
+      "criticality_tier": "tier0",
+      "ownership_domain": "platform",
+      "independently_deployable": true,
+      "depends_on": ["event-queue", "postgres-db"]
+    },
+    "event-queue": {
+      "criticality_tier": "tier1",
+      "ownership_domain": "platform",
+      "independently_deployable": true,
+      "depends_on": ["notification-worker"]
+    },
+    "notification-worker": {
+      "criticality_tier": "tier2",
+      "ownership_domain": "experience",
+      "independently_deployable": true,
+      "depends_on": []
+    },
+    "postgres-db": {
+      "criticality_tier": "tier0",
+      "ownership_domain": "platform",
+      "independently_deployable": true,
+      "depends_on": []
+    },
+    "redis-cache": {
+      "criticality_tier": "tier1",
+      "ownership_domain": "platform",
+      "independently_deployable": true,
+      "depends_on": []
+    }
+  },
+  "telemetry_classes": [
+    "metrics",
+    "logs",
+    "traces",
+    "deploy_history",
+    "host_state",
+    "container_state",
+    "topology",
+    "dependency_health"
+  ],
+  "support_components": {
+    "telemetry-collector": {
+      "purpose": "support-only telemetry collection for the local lab",
+      "canonical_service": false,
+      "mutation_authority": "none",
+      "source_classes": [
+        "metrics",
+        "logs",
+        "traces",
+        "deploy_history",
+        "host_state",
+        "container_state",
+        "topology",
+        "dependency_health"
+      ]
+    },
+    "fault-controller": {
+      "purpose": "support-only harness fault and cleanup endpoint for the local lab",
+      "canonical_service": false,
+      "mutation_authority": "harness-only",
+      "opscat_mutation_allowed": false,
+      "cleanup_verb": "cleanup_fault_lease",
+      "allowed_fault_verbs": [
+        "inject_http_5xx_spike",
+        "inject_request_timeout_regression",
+        "inject_schema_contract_rejection",
+        "inject_authz_dependency_denial",
+        "inject_idempotency_key_conflict",
+        "inject_retry_storm",
+        "inject_job_handler_exception",
+        "inject_dead_letter_growth",
+        "inject_scheduler_lag",
+        "inject_partial_batch_commit",
+        "inject_connection_pool_exhaustion",
+        "inject_lock_wait_saturation",
+        "inject_replica_lag",
+        "inject_query_plan_regression",
+        "inject_cache_hot_key",
+        "inject_queue_backlog",
+        "inject_message_visibility_timeout",
+        "inject_cache_eviction_storm",
+        "inject_bad_config_rollout",
+        "inject_image_pull_backoff",
+        "inject_canary_error_regression",
+        "inject_feature_flag_mismatch",
+        "inject_packet_loss",
+        "inject_dns_resolution_failure",
+        "inject_tls_handshake_regression",
+        "inject_egress_rate_limit",
+        "inject_third_party_latency",
+        "inject_payment_provider_5xx",
+        "inject_object_store_throttle",
+        "inject_webhook_delivery_delay"
+      ]
+    },
+    "traffic-driver": {
+      "purpose": "support-only local traffic shape generator",
+      "canonical_service": false,
+      "mutation_authority": "none",
+      "traffic_shapes": ["steady", "bursty", "batch_queue"]
+    },
+    "topology-exporter": {
+      "purpose": "support-only topology and dependency-health exporter",
+      "canonical_service": false,
+      "mutation_authority": "none",
+      "source_classes": ["topology", "dependency_health"]
+    }
+  }
+}

@@ -1,0 +1,92 @@
+name: opscat-p174-observer
+
+x-observer-hardened: &observer-hardened
+  restart: unless-stopped
+  read_only: true
+  cpus: 1.0
+  mem_limit: 512m
+  pids_limit: 128
+  user: "65532:65532"
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  tmpfs:
+    - /tmp:size=64m,mode=1777
+
+x-observer-health: &observer-health
+  interval: 10s
+  timeout: 3s
+  retries: 12
+  start_period: 10s
+
+services:
+  receipt-init:
+    image: alpine:3.20
+    user: "0:0"
+    read_only: true
+    cpus: 0.25
+    mem_limit: 64m
+    pids_limit: 32
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+    command: ["chown", "-R", "65532:65532", "/var/lib/p174-observer"]
+    volumes:
+      - p174_observer_receipts:/var/lib/p174-observer
+    restart: "no"
+
+  observer:
+    <<: *observer-hardened
+    build:
+      context: ./observer
+    environment:
+      P174_ROLE: observer
+      TARGET_PROMETHEUS_URL: ${P174_TARGET_PROMETHEUS_URL:-http://10.174.0.10:9090}
+      TARGET_LOKI_URL: ${P174_TARGET_LOKI_URL:-http://10.174.0.10:3100}
+      TARGET_API_URL: ${P174_TARGET_API_URL:-http://10.174.0.10:8000}
+      P174_SESSION_ID: ${P174_SESSION_ID:-}
+      P174_MANIFEST_SHA256: ${P174_MANIFEST_SHA256:-}
+      RECEIPT_DIR: /var/lib/p174-observer
+    volumes:
+      - p174_observer_receipts:/var/lib/p174-observer
+    depends_on:
+      receipt-init:
+        condition: service_completed_successfully
+    expose:
+      - "8030"
+    ports:
+      - "127.0.0.1:8030:8030"
+    healthcheck:
+      <<: *observer-health
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8030/health', timeout=2).read()"]
+
+  evaluator:
+    <<: *observer-hardened
+    build:
+      context: ./observer
+    environment:
+      P174_ROLE: evaluator
+      OBSERVER_URL: http://observer:8030
+      P174_SESSION_ID: ${P174_SESSION_ID:-}
+      P174_MANIFEST_SHA256: ${P174_MANIFEST_SHA256:-}
+      RECEIPT_DIR: /var/lib/p174-observer
+    volumes:
+      - p174_observer_receipts:/var/lib/p174-observer
+    depends_on:
+      receipt-init:
+        condition: service_completed_successfully
+      observer:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os; raise SystemExit(0 if os.path.exists('/tmp/evaluator.healthy') else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
+
+volumes:
+  p174_observer_receipts:

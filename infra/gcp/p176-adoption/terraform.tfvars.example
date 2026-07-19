@@ -1,0 +1,5 @@
+billing_account_id        = "ABCDEF-123456-789ABC"
+control_project_id        = "opscat-p176-admin-adopt01"
+workload_project_id       = "opscat-p174-lab-base01"
+workload_project_number   = "123456789012"
+workload_network_self_link = "projects/opscat-p174-lab-base01/global/networks/p174-workload-vpc"

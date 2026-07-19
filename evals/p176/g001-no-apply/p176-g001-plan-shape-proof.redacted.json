@@ -1,0 +1,39 @@
+{
+  "schema_version": "p176.g001.no_apply.plan_shape_proof.v1",
+  "generated_at": "2026-07-18T17:21:47Z",
+  "identifier_output": "redacted",
+  "mutation_count": 0,
+  "apply_attempted": false,
+  "destroy_attempted": false,
+  "cost_foundation": {
+    "resource_changes": 38,
+    "google_project_count": 2,
+    "google_billing_budget_count": 1,
+    "create_only": true,
+    "forbidden_security_patterns": [],
+    "guard_passed": true
+  },
+  "live_consumer": {
+    "resource_changes": 20,
+    "google_project_count": 0,
+    "google_billing_budget_count": 0,
+    "create_only": true,
+    "refresh": false,
+    "forbidden_security_patterns": [],
+    "guard_passed": true
+  },
+  "guard_checks": [
+    {
+      "name": "cost_verify_apply_plan_jq",
+      "exit_code": 0,
+      "stdout_bytes": 5,
+      "stderr_bytes": 0
+    },
+    {
+      "name": "live_verify_apply_plan_jq",
+      "exit_code": 0,
+      "stdout_bytes": 5,
+      "stderr_bytes": 0
+    }
+  ]
+}

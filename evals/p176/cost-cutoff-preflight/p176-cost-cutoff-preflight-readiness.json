@@ -1,0 +1,7 @@
+{
+  "status": "review_required",
+  "blocking_reasons": ["reviewed_plan_digest_required"],
+  "mutation_count": 0,
+  "apply_attempted": false,
+  "destroy_attempted": false
+}

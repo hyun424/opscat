@@ -1,0 +1,21 @@
+{
+  "schema_version": "p176.g001.no_apply.cost_plan_receipt.v1",
+  "started_at": "2026-07-18T17:20:29Z",
+  "finished_at": "2026-07-18T17:20:31Z",
+  "module": "p176-cost-cutoff",
+  "mode": "plan_only",
+  "refresh": false,
+  "apply_attempted": false,
+  "destroy_attempted": false,
+  "exit_code": 0,
+  "artifacts": [
+    {
+      "logical_name": "p176-cost-cutoff-plan-stdout",
+      "digest": "sha256:cb083c29cf16048fe89d0d3685710f223a585100cd7ab0287043e85adf8b8e97"
+    },
+    {
+      "logical_name": "p176-cost-cutoff-plan-stderr",
+      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -1,0 +1,390 @@
+{
+  "name": "opscat-p176-live-local",
+  "services": {
+    "web-gateway": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 128,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./service_stub.py:/service_stub.py:ro"],
+      "command": ["python", "/service_stub.py"],
+      "environment": {
+        "P176_SERVICE_ID": "web-gateway",
+        "P176_LIVE_ROLE": "canonical-service",
+        "P176_PORT": "8080",
+        "P176_CRITICALITY_TIER": "tier0",
+        "P176_OWNERSHIP_DOMAIN": "experience",
+        "P176_DEPENDS_ON": "checkout-api,catalog-api"
+      },
+      "expose": ["8080"],
+      "depends_on": {
+        "checkout-api": {"condition": "service_healthy"},
+        "catalog-api": {"condition": "service_healthy"}
+      },
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {
+        "opscat.p176.live.role": "canonical-service",
+        "opscat.p176.live.service_id": "web-gateway"
+      }
+    },
+    "checkout-api": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.75,
+      "mem_limit": "384m",
+      "pids_limit": 160,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./service_stub.py:/service_stub.py:ro"],
+      "command": ["python", "/service_stub.py"],
+      "environment": {
+        "P176_SERVICE_ID": "checkout-api",
+        "P176_LIVE_ROLE": "canonical-service",
+        "P176_PORT": "8080",
+        "P176_CRITICALITY_TIER": "tier0",
+        "P176_OWNERSHIP_DOMAIN": "commerce",
+        "P176_DEPENDS_ON": "order-worker,postgres-db,redis-cache"
+      },
+      "expose": ["8080"],
+      "depends_on": {
+        "order-worker": {"condition": "service_healthy"},
+        "postgres-db": {"condition": "service_healthy"},
+        "redis-cache": {"condition": "service_healthy"}
+      },
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {
+        "opscat.p176.live.role": "canonical-service",
+        "opscat.p176.live.service_id": "checkout-api"
+      }
+    },
+    "catalog-api": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 128,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./service_stub.py:/service_stub.py:ro"],
+      "command": ["python", "/service_stub.py"],
+      "environment": {
+        "P176_SERVICE_ID": "catalog-api",
+        "P176_LIVE_ROLE": "canonical-service",
+        "P176_PORT": "8080",
+        "P176_CRITICALITY_TIER": "tier1",
+        "P176_OWNERSHIP_DOMAIN": "commerce",
+        "P176_DEPENDS_ON": "postgres-db,redis-cache"
+      },
+      "expose": ["8080"],
+      "depends_on": {
+        "postgres-db": {"condition": "service_healthy"},
+        "redis-cache": {"condition": "service_healthy"}
+      },
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {
+        "opscat.p176.live.role": "canonical-service",
+        "opscat.p176.live.service_id": "catalog-api"
+      }
+    },
+    "order-worker": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.75,
+      "mem_limit": "384m",
+      "pids_limit": 160,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./service_stub.py:/service_stub.py:ro"],
+      "command": ["python", "/service_stub.py"],
+      "environment": {
+        "P176_SERVICE_ID": "order-worker",
+        "P176_LIVE_ROLE": "canonical-service",
+        "P176_PORT": "8080",
+        "P176_CRITICALITY_TIER": "tier0",
+        "P176_OWNERSHIP_DOMAIN": "platform",
+        "P176_DEPENDS_ON": "event-queue,postgres-db"
+      },
+      "expose": ["8080"],
+      "depends_on": {
+        "event-queue": {"condition": "service_healthy"},
+        "postgres-db": {"condition": "service_healthy"}
+      },
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {
+        "opscat.p176.live.role": "canonical-service",
+        "opscat.p176.live.service_id": "order-worker"
+      }
+    },
+    "event-queue": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 128,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./service_stub.py:/service_stub.py:ro"],
+      "command": ["python", "/service_stub.py"],
+      "environment": {
+        "P176_SERVICE_ID": "event-queue",
+        "P176_LIVE_ROLE": "canonical-service",
+        "P176_PORT": "8080",
+        "P176_CRITICALITY_TIER": "tier1",
+        "P176_OWNERSHIP_DOMAIN": "platform",
+        "P176_DEPENDS_ON": "notification-worker"
+      },
+      "expose": ["8080"],
+      "depends_on": {"notification-worker": {"condition": "service_healthy"}},
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {
+        "opscat.p176.live.role": "canonical-service",
+        "opscat.p176.live.service_id": "event-queue"
+      }
+    },
+    "notification-worker": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 128,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./service_stub.py:/service_stub.py:ro"],
+      "command": ["python", "/service_stub.py"],
+      "environment": {
+        "P176_SERVICE_ID": "notification-worker",
+        "P176_LIVE_ROLE": "canonical-service",
+        "P176_PORT": "8080",
+        "P176_CRITICALITY_TIER": "tier2",
+        "P176_OWNERSHIP_DOMAIN": "experience",
+        "P176_DEPENDS_ON": ""
+      },
+      "expose": ["8080"],
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {
+        "opscat.p176.live.role": "canonical-service",
+        "opscat.p176.live.service_id": "notification-worker"
+      }
+    },
+    "postgres-db": {
+      "image": "postgres:16-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 1.0,
+      "mem_limit": "768m",
+      "pids_limit": 256,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=64m,mode=1777", "/var/run/postgresql:size=64m,uid=70,gid=70,mode=0775"],
+      "volumes": ["p176-postgres:/var/lib/postgresql/data"],
+      "environment": {
+        "POSTGRES_USER": "opscat",
+        "POSTGRES_PASSWORD": "opscat_p176_live_local_only",
+        "POSTGRES_DB": "opscat_p176",
+        "P176_SERVICE_ID": "postgres-db",
+        "P176_CRITICALITY_TIER": "tier0",
+        "P176_OWNERSHIP_DOMAIN": "platform"
+      },
+      "expose": ["5432"],
+      "healthcheck": {
+        "test": ["CMD-SHELL", "pg_isready -U opscat -d opscat_p176"],
+        "interval": "10s",
+        "timeout": "5s",
+        "retries": 12,
+        "start_period": "15s"
+      },
+      "labels": {
+        "opscat.p176.live.role": "canonical-service",
+        "opscat.p176.live.service_id": "postgres-db"
+      }
+    },
+    "redis-cache": {
+      "image": "redis:7-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "user": "999:999",
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 128,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/data:size=64m,uid=999,gid=999,mode=0700"],
+      "command": ["redis-server", "--save", "", "--appendonly", "no"],
+      "expose": ["6379"],
+      "healthcheck": {
+        "test": ["CMD", "redis-cli", "ping"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {
+        "opscat.p176.live.role": "canonical-service",
+        "opscat.p176.live.service_id": "redis-cache"
+      }
+    },
+    "telemetry-collector": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 128,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./service_stub.py:/service_stub.py:ro", "./topology.json:/topology.json:ro"],
+      "command": ["python", "/service_stub.py"],
+      "environment": {"P176_SERVICE_ID": "telemetry-collector", "P176_LIVE_ROLE": "support-only", "P176_PORT": "8090"},
+      "expose": ["8090"],
+      "depends_on": {
+        "web-gateway": {"condition": "service_healthy"},
+        "checkout-api": {"condition": "service_healthy"},
+        "catalog-api": {"condition": "service_healthy"},
+        "order-worker": {"condition": "service_healthy"},
+        "event-queue": {"condition": "service_healthy"},
+        "notification-worker": {"condition": "service_healthy"},
+        "postgres-db": {"condition": "service_healthy"},
+        "redis-cache": {"condition": "service_healthy"}
+      },
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {"opscat.p176.live.role": "support-only", "opscat.p176.live.canonical_service": "false"}
+    },
+    "fault-controller": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 128,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./service_stub.py:/service_stub.py:ro", "./topology.json:/topology.json:ro"],
+      "command": ["python", "/service_stub.py"],
+      "environment": {
+        "P176_SERVICE_ID": "fault-controller",
+        "P176_LIVE_ROLE": "support-only",
+        "P176_PORT": "8091",
+        "P176_MUTATION_AUTHORITY": "harness-only"
+      },
+      "expose": ["8091"],
+      "depends_on": {"telemetry-collector": {"condition": "service_healthy"}},
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8091/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {"opscat.p176.live.role": "support-only", "opscat.p176.live.canonical_service": "false"}
+    },
+    "traffic-driver": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 128,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./service_stub.py:/service_stub.py:ro"],
+      "command": ["python", "/service_stub.py"],
+      "environment": {"P176_SERVICE_ID": "traffic-driver", "P176_LIVE_ROLE": "support-only", "P176_PORT": "8092"},
+      "expose": ["8092"],
+      "depends_on": {"web-gateway": {"condition": "service_healthy"}},
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8092/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {"opscat.p176.live.role": "support-only", "opscat.p176.live.canonical_service": "false"}
+    },
+    "topology-exporter": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.25,
+      "mem_limit": "128m",
+      "pids_limit": 64,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./service_stub.py:/service_stub.py:ro", "./topology.json:/topology.json:ro"],
+      "command": ["python", "/service_stub.py"],
+      "environment": {"P176_SERVICE_ID": "topology-exporter", "P176_LIVE_ROLE": "support-only", "P176_PORT": "8093"},
+      "expose": ["8093"],
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8093/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {"opscat.p176.live.role": "support-only", "opscat.p176.live.canonical_service": "false"}
+    }
+  },
+  "volumes": {
+    "p176-postgres": {}
+  }
+}

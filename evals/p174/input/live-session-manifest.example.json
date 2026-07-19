@@ -1,0 +1,30 @@
+{
+  "schema_version": "p174.live_session_manifest.v1",
+  "organization_id": "000000000000",
+  "billing_account_id": "000000-000000-000000",
+  "project_id": "opscat-p174-sample-lab",
+  "target_id": "p174-target",
+  "run_id": "p174-live-20260717",
+  "zone": "asia-northeast3-a",
+  "allowed_actions": [
+    "tune_pool",
+    "restart_worker",
+    "rollback_canary"
+  ],
+  "allowed_targets": [
+    "p174-target"
+  ],
+  "forbidden_project_ids": [
+    "forbidden-existing-project-a",
+    "forbidden-existing-project-b",
+    "forbidden-existing-project-c"
+  ],
+  "lease_ttl_seconds": 300,
+  "deadman_seconds": 120,
+  "kill_switch": false,
+  "dry_run": false,
+  "production_mutation_allowed": false,
+  "user_staging_mutation_allowed": false,
+  "service_account_keys_allowed": false,
+  "live_apply_acknowledged": false
+}

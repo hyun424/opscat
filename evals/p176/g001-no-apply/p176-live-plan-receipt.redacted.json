@@ -1,0 +1,21 @@
+{
+  "schema_version": "p176.g001.no_apply.live_plan_receipt.v1",
+  "started_at": "2026-07-18T17:20:58Z",
+  "finished_at": "2026-07-18T17:21:00Z",
+  "module": "p176-live",
+  "mode": "plan_only",
+  "refresh": false,
+  "apply_attempted": false,
+  "destroy_attempted": false,
+  "exit_code": 0,
+  "artifacts": [
+    {
+      "logical_name": "p176-live-plan-stdout",
+      "digest": "sha256:f7259e76a2a3537130321ba43e8d12616de71ca613e21b5a23932e96c141cdea"
+    },
+    {
+      "logical_name": "p176-live-plan-stderr",
+      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

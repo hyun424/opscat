@@ -1,0 +1,5 @@
+organization_id    = "000000000000"
+billing_account_id = "000000-000000-000000"
+project_id         = "opscat-p174-sample-lab"
+budget_alert_email = "p174-budget-alert@example.invalid"
+ssh_admin_members  = ["user:p174-admin@example.invalid"]

@@ -1,0 +1,32 @@
+{
+  "schema_version": "p176.g001.no_apply.review_manifest.v1",
+  "generated_at": "2026-07-18T17:23:10Z",
+  "identifier_output": "redacted",
+  "mutation_count": 0,
+  "apply_attempted": false,
+  "destroy_attempted": false,
+  "artifacts": [
+    {
+      "logical_name": "p176-live-plan-receipt",
+      "digest": "sha256:7599d4257e59d83cd9ad01040a1def93de38d75dd3d7de4d4605a7b5e474917d"
+    },
+    {
+      "logical_name": "p176-cost-cutoff-plan-receipt",
+      "digest": "sha256:65864ef48350465a731d752c1640b6c206b209ae570771c97df3fac3cd4f3ddc"
+    },
+    {
+      "logical_name": "p176-g001-plan-shape-proof",
+      "digest": "sha256:1ff775c705d887148a8ff1405ecde4101eb5251071acb96333916848cbff250c"
+    }
+  ],
+  "guard_checks": [
+    {
+      "name": "artifact_cost_guard",
+      "exit_code": 0
+    },
+    {
+      "name": "artifact_live_guard",
+      "exit_code": 0
+    }
+  ]
+}

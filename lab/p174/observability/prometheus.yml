@@ -1,0 +1,39 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: p174-api
+    static_configs:
+      - targets: ["api:8000"]
+        labels:
+          service: api
+          purpose: opscat-lab
+
+  - job_name: p174-worker
+    static_configs:
+      - targets: ["worker:8010"]
+        labels:
+          service: worker
+          purpose: opscat-lab
+
+  - job_name: p174-fault-controller
+    static_configs:
+      - targets: ["fault-controller:8020"]
+        labels:
+          service: fault-controller
+          purpose: opscat-lab
+
+  - job_name: p174-node
+    static_configs:
+      - targets: ["node-exporter:9100"]
+        labels:
+          service: node-exporter
+          purpose: opscat-lab
+
+  - job_name: p174-containers
+    static_configs:
+      - targets: ["cadvisor:8080"]
+        labels:
+          service: cadvisor
+          purpose: opscat-lab

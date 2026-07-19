@@ -1,0 +1,24 @@
+{
+  "schema_version": "p176.gcp.reviewed_preflight_receipts.v1",
+  "generated_at": "2026-07-19T10:41:50Z",
+  "mutation_count": 0,
+  "receipts": {
+    "readiness": {
+      "path": "evals/p176/live-preflight/p176-live-preflight-readiness.json",
+      "sha256": "b3aa0656257551fb9973a6e0e4a3ea7234f6e3791855b46f5926fdbf946845b6"
+    },
+    "blocked_boundary": null,
+    "plan_generation_procedure": {
+      "path": "evals/p176/live-preflight/p176-live-plan-generation-procedure.md",
+      "sha256": "09b940b4eb828e6ac97a2cecae24dad8f023292edfe43502e475f032ca3c98ee"
+    },
+    "reviewed_plan": {
+      "path": "infra/gcp/p176-live/p176-live.tfplan",
+      "sha256": "3fa3d7e0815cdd6672429941d1739e3bb80081d545e8e9a707cc87ae1c264bc9"
+    },
+    "reviewed_plan_json": {
+      "path": "infra/gcp/p176-live/p176-live.tfplan.json",
+      "sha256": "77394e11e3fd6811c1535ea2a5863c906fbfb28face376ea5a83a030cde9cc66"
+    }
+  }
+}

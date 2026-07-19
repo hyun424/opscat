@@ -1,0 +1,20 @@
+{
+  "schema_version": "p179.input_manifest.v1",
+  "phase": "p179",
+  "mode": "offline_substrate_only",
+  "network_allowed": false,
+  "credential_material_allowed": false,
+  "production_mutation_allowed": false,
+  "scenarios": [
+    "process_crash",
+    "clock_skew",
+    "provider_timeout",
+    "storage_corruption",
+    "kill_switch"
+  ],
+  "required_predecessor": {
+    "phase": "p178",
+    "schema_version": "p178.release_evidence.v1",
+    "claim": "bounded_prevention_shadow_qualified"
+  }
+}

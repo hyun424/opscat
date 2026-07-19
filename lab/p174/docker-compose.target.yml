@@ -1,0 +1,281 @@
+name: opscat-p174-target
+
+x-hardened: &hardened
+  restart: unless-stopped
+  read_only: true
+  cpus: 1.0
+  mem_limit: 1g
+  pids_limit: 256
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  tmpfs:
+    - /tmp:size=64m,mode=1777
+
+x-health-http: &health-http
+  interval: 10s
+  timeout: 3s
+  retries: 12
+  start_period: 10s
+
+services:
+  api:
+    <<: *hardened
+    build:
+      context: ./workload
+    environment:
+      P174_ROLE: api
+      P174_PROJECT_ID: ${P174_PROJECT_ID:-p174-project}
+      P174_TARGET_ID: ${P174_TARGET_ID:-target-a}
+      P174_RUN_ID: ${P174_RUN_ID:-run-1}
+      P174_POLICY_VERSION: ${P174_POLICY_VERSION:-p174-policy-v1}
+      # Baseline capacity must exceed the 4 req/s synthetic load and absorb the
+      # bounded backlog left by a 30-second worker-pause scenario before the
+      # next independent scenario begins.
+      P174_INITIAL_POOL_SIZE: "16"
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+      CANARY_VERSION: stable
+    expose:
+      - "8000"
+    ports:
+      - "${P174_TARGET_BIND_IP:-127.0.0.1}:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      <<: *health-http
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).read()"]
+
+  worker:
+    <<: *hardened
+    build:
+      context: ./workload
+    environment:
+      P174_ROLE: worker
+      P174_PROJECT_ID: ${P174_PROJECT_ID:-p174-project}
+      P174_TARGET_ID: ${P174_TARGET_ID:-target-a}
+      P174_RUN_ID: ${P174_RUN_ID:-run-1}
+      P174_POLICY_VERSION: ${P174_POLICY_VERSION:-p174-policy-v1}
+      REDIS_HOST: redis
+    expose:
+      - "8010"
+    depends_on:
+      api:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      <<: *health-http
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/health', timeout=2).read()"]
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    cpus: 2.0
+    mem_limit: 2g
+    pids_limit: 512
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      POSTGRES_USER: opscat
+      POSTGRES_PASSWORD: opscat_lab_only
+      POSTGRES_DB: opscat_p174
+    volumes:
+      - p174-postgres:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U opscat -d opscat_p174"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 512m
+    pids_limit: 256
+    read_only: true
+    user: "999:999"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /data:size=64m,uid=999,gid=999,mode=0700
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+  prometheus:
+    <<: *hardened
+    image: prom/prometheus:v2.55.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=48h
+      - --web.enable-lifecycle
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - p174-prometheus:/prometheus
+    expose:
+      - "9090"
+    ports:
+      - "${P174_TARGET_BIND_IP:-127.0.0.1}:9090:9090"
+    depends_on:
+      api:
+        condition: service_healthy
+      worker:
+        condition: service_healthy
+      node-exporter:
+        condition: service_started
+      cadvisor:
+        condition: service_started
+    healthcheck:
+      <<: *health-http
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9090/-/ready"]
+
+  loki:
+    <<: *hardened
+    image: grafana/loki:2.9.8
+    command: ["-config.file=/etc/loki/loki.yml"]
+    volumes:
+      - ./observability/loki.yml:/etc/loki/loki.yml:ro
+      - p174-loki:/loki
+    expose:
+      - "3100"
+    ports:
+      - "${P174_TARGET_BIND_IP:-127.0.0.1}:3100:3100"
+    healthcheck:
+      <<: *health-http
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3100/ready"]
+
+  promtail:
+    <<: *hardened
+    image: grafana/promtail:2.9.8
+    command: ["-config.file=/etc/promtail/promtail.yml"]
+    volumes:
+      - ./observability/promtail.yml:/etc/promtail/promtail.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    depends_on:
+      loki:
+        condition: service_healthy
+    expose:
+      - "9080"
+    healthcheck:
+      <<: *health-http
+      test: ["CMD", "/usr/bin/promtail", "-version"]
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 256m
+    pids_limit: 128
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pid: host
+    command:
+      - --path.rootfs=/host
+    volumes:
+      - /:/host:ro
+    expose:
+      - "9100"
+    healthcheck:
+      <<: *health-http
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9100/metrics"]
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 1g
+    pids_limit: 256
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    privileged: false
+    devices:
+      - /dev/kmsg:/dev/kmsg:ro
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    expose:
+      - "8080"
+    healthcheck:
+      <<: *health-http
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+
+  fault-controller:
+    <<: *hardened
+    build:
+      context: ./workload
+    environment:
+      P174_ROLE: fault-controller
+      P174_PROJECT_ID: ${P174_PROJECT_ID:-p174-project}
+      P174_TARGET_ID: ${P174_TARGET_ID:-target-a}
+      P174_RUN_ID: ${P174_RUN_ID:-run-1}
+      P174_POLICY_VERSION: ${P174_POLICY_VERSION:-p174-policy-v1}
+      P174_ACTION_CAPABILITY: ${P174_ACTION_CAPABILITY:-p174-local-capability-0000000000000000}
+      P174_FAULT_CAPABILITY: ${P174_FAULT_CAPABILITY:-p174-local-fault-capability-00000000000000}
+      REDIS_HOST: redis
+    expose:
+      - "8020"
+    ports:
+      - "${P174_TARGET_BIND_IP:-127.0.0.1}:8020:8020"
+    depends_on:
+      api:
+        condition: service_healthy
+      worker:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      <<: *health-http
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8020/health', timeout=2).read()"]
+
+  loadgen:
+    <<: *hardened
+    build:
+      context: ./workload
+    environment:
+      P174_ROLE: loadgen
+      P174_PROJECT_ID: ${P174_PROJECT_ID:-p174-project}
+      P174_TARGET_ID: ${P174_TARGET_ID:-target-a}
+      P174_RUN_ID: ${P174_RUN_ID:-run-1}
+      P174_POLICY_VERSION: ${P174_POLICY_VERSION:-p174-policy-v1}
+      REDIS_HOST: redis
+      REQUEST_INTERVAL_SECONDS: "0.25"
+    depends_on:
+      api:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os; raise SystemExit(0 if os.path.exists('/tmp/loadgen.healthy') else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
+
+volumes:
+  p174-postgres:
+  p174-prometheus:
+  p174-loki:

@@ -1,0 +1,8 @@
+admin_project_id   = "opscat-p176-admin-<fresh-suffix>"
+org_id             = "<gcp-organization-id>"
+lab_project_id     = "opscat-p176-live-<fresh-suffix>"
+billing_account_id = "<gcp-billing-account-id>"
+budget_alert_email = "<budget-alert-email>"
+soft_stop_krw      = 24000
+hard_cutoff_krw    = 27000
+budget_krw         = 30000

@@ -1,0 +1,7 @@
+billing_account_id = "<gcp-billing-account-id>"
+project_id         = "opscat-p176-live-<fresh-suffix>"
+ssh_admin_members  = ["user:<iap-oslogin-admin-email>"]
+opscat_principal   = ""
+
+# External admin-project topic exported by ../p176-cost-cutoff. The lab budget binds to this topic.
+cost_cutoff_budget_topic_name = "projects/opscat-p176-admin-<fresh-suffix>/topics/p176-cost-cutoff-budget"

@@ -221,13 +221,17 @@
       "image": "postgres:16-alpine",
       "restart": "unless-stopped",
       "read_only": true,
+      "user": "70:70",
       "cpus": 1.0,
       "mem_limit": "768m",
       "pids_limit": 256,
       "security_opt": ["no-new-privileges:true"],
       "cap_drop": ["ALL"],
-      "tmpfs": ["/tmp:size=64m,mode=1777", "/var/run/postgresql:size=64m,uid=70,gid=70,mode=0775"],
-      "volumes": ["p176-postgres:/var/lib/postgresql/data"],
+      "tmpfs": [
+        "/tmp:size=64m,mode=1777",
+        "/var/run/postgresql:size=64m,uid=70,gid=70,mode=0775",
+        "/var/lib/postgresql/data:size=512m,uid=70,gid=70,mode=0700"
+      ],
       "environment": {
         "POSTGRES_USER": "opscat",
         "POSTGRES_PASSWORD": "opscat_p176_live_local_only",
@@ -284,8 +288,11 @@
       "security_opt": ["no-new-privileges:true"],
       "cap_drop": ["ALL"],
       "tmpfs": ["/tmp:size=32m,mode=1777"],
-      "volumes": ["./service_stub.py:/service_stub.py:ro", "./topology.json:/topology.json:ro"],
-      "command": ["python", "/service_stub.py"],
+      "volumes": [
+        "./telemetry_collector.py:/telemetry_collector.py:ro",
+        "./topology.json:/topology.json:ro"
+      ],
+      "command": ["python", "/telemetry_collector.py"],
       "environment": {"P176_SERVICE_ID": "telemetry-collector", "P176_LIVE_ROLE": "support-only", "P176_PORT": "8090"},
       "expose": ["8090"],
       "depends_on": {
@@ -317,8 +324,8 @@
       "security_opt": ["no-new-privileges:true"],
       "cap_drop": ["ALL"],
       "tmpfs": ["/tmp:size=32m,mode=1777"],
-      "volumes": ["./service_stub.py:/service_stub.py:ro", "./topology.json:/topology.json:ro"],
-      "command": ["python", "/service_stub.py"],
+      "volumes": ["./fault_controller.py:/fault_controller.py:ro", "./topology.json:/topology.json:ro"],
+      "command": ["python", "/fault_controller.py"],
       "environment": {
         "P176_SERVICE_ID": "fault-controller",
         "P176_LIVE_ROLE": "support-only",
@@ -383,8 +390,5 @@
       },
       "labels": {"opscat.p176.live.role": "support-only", "opscat.p176.live.canonical_service": "false"}
     }
-  },
-  "volumes": {
-    "p176-postgres": {}
   }
 }

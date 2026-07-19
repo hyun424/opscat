@@ -9,6 +9,7 @@ locals {
   }
 
   required_admin_services = toset([
+    "billingbudgets.googleapis.com",
     "cloudbilling.googleapis.com",
     "cloudscheduler.googleapis.com",
     "compute.googleapis.com",
@@ -22,7 +23,6 @@ locals {
   ])
 
   required_lab_services = toset([
-    "billingbudgets.googleapis.com",
     "compute.googleapis.com",
     "iam.googleapis.com",
     "iap.googleapis.com",
@@ -30,8 +30,6 @@ locals {
     "monitoring.googleapis.com",
     "oslogin.googleapis.com",
   ])
-
-  budget_notification_publisher_member = "serviceAccount:${join("@", ["billing-budget-notifications", "system.gserviceaccount.com"])}"
 
   workflow_source = <<-YAML
     main:
@@ -53,7 +51,7 @@ locals {
               - now: $${time.format(now_epoch)}
               - notification_time: $${default(map.get(event, "time"), now)}
               - notification_age_seconds: $${now_epoch - time.parse(notification_time)}
-              - payload: $${default(map.get(event, "data"), {})}
+              - payload: $${default(map.get(event, "data"), json.decode("{}"))}
               - trigger_kind: $${default(map.get(payload, "triggerKind"), "budget_event")}
               - state_object: "state/latest.json"
               - provider_receipt_object: $${"state/provider-" + now + ".json"}
@@ -337,7 +335,7 @@ locals {
                   actual_amount_krw: $${actual_amount_krw}
                   forecast_amount_krw: $${forecast_amount_krw}
                   effective_amount_krw: $${effective_amount_krw}
-        - stop_compute_before_disable_billing:
+        - stop_compute_before_delete_project:
             call: googleapis.compute.v1.instances.aggregatedList
             args:
               project: $${lab_project_id}
@@ -345,7 +343,7 @@ locals {
         - stopEachZone:
             for:
               value: zone_entry
-              in: $${keys(default(map.get(aggregated_instances, "items"), {}))}
+              in: $${keys(default(map.get(aggregated_instances, "items"), json.decode("{}")))}
               steps:
                 - stopEachInstance:
                     for:
@@ -362,12 +360,10 @@ locals {
             switch:
               - condition: $${effective_amount_krw >= hard_cutoff_krw}
                 steps:
-                  - disableBillingAfterComputeStop:
-                      call: googleapis.cloudbilling.v1.projects.updateBillingInfo
+                  - deleteDisposableProjectAfterComputeStop:
+                      call: googleapis.cloudresourcemanager.v3.projects.delete
                       args:
                         name: $${"projects/" + lab_project_id}
-                        body:
-                          billingAccountName: null
         - writeTerminalReceipt:
             call: googleapis.storage.v1.objects.insert
             args:
@@ -390,7 +386,7 @@ locals {
         - done:
             return:
               status: $${if(effective_amount_krw >= hard_cutoff_krw, "hard_cutoff", "soft_stop")}
-              ordering: stop_compute_before_disable_billing
+              ordering: stop_compute_before_delete_project
               budget_krw: $${budget_krw}
               soft_stop_krw: $${soft_stop_krw}
               hard_cutoff_krw: $${hard_cutoff_krw}
@@ -479,13 +475,6 @@ resource "google_pubsub_topic" "budget_notifications" {
   depends_on = [google_project_service.admin]
 }
 
-resource "google_pubsub_topic_iam_member" "budget_notifications_publisher" {
-  project = google_project.admin.project_id
-  topic   = google_pubsub_topic.budget_notifications.name
-  role    = "roles/pubsub.publisher"
-  member  = local.budget_notification_publisher_member
-}
-
 resource "google_monitoring_notification_channel" "budget_email" {
   project      = google_project.lab.project_id
   display_name = "P176 live budget email"
@@ -540,6 +529,14 @@ resource "google_billing_budget" "lab" {
     pubsub_topic                     = google_pubsub_topic.budget_notifications.id
     disable_default_iam_recipients   = true
   }
+
+  # The Budget API connects Cloud Billing to the topic using the caller's
+  # pubsub.topics.setIamPolicy authority. The legacy system service-account
+  # principals are no longer valid identities and must not be granted here.
+  depends_on = [
+    google_project_service.admin,
+    google_pubsub_topic.budget_notifications,
+  ]
 }
 
 resource "google_storage_bucket" "receipts" {
@@ -604,12 +601,11 @@ resource "google_project_iam_custom_role" "lab_controller" {
   title       = "P176 Cost Cutoff Lab Controller"
   description = "Exact P176 cost cutoff permissions for the disposable lab project only."
   permissions = [
-    "billing.resourceAssociations.delete",
-    "billing.resourceAssociations.get",
     "compute.instances.get",
     "compute.instances.list",
     "compute.instances.stop",
     "compute.zoneOperations.get",
+    "resourcemanager.projects.delete",
     "resourcemanager.projects.get",
   ]
 
@@ -626,7 +622,7 @@ resource "google_workflows_workflow" "cutoff" {
   project         = google_project.admin.project_id
   name            = "p176-cost-cutoff"
   region          = var.region
-  description     = "Out-of-band P176 cost cutoff control plane; stop compute before disabling billing."
+  description     = "Out-of-band P176 cost cutoff control plane; stop compute before deleting the disposable lab project."
   service_account = google_service_account.workflow.id
   labels          = local.labels
   source_contents = local.workflow_source

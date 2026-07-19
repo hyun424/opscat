@@ -96,8 +96,9 @@ def test_cost_cutoff_resources_cover_budget_eventarc_workflow_scheduler_and_rece
     assert "cloudresourcemanager.googleapis.com" not in terraform
     assert 'resource "google_pubsub_topic" "budget_notifications"' in terraform
     assert 'name    = "p176-cost-cutoff-budget"' in terraform
-    assert 'budget_notification_publisher_member = "serviceAccount:${join("@", ["billing-budget-notifications", "system.gserviceaccount.com"])}"' in terraform
-    assert 'role    = "roles/pubsub.publisher"' in terraform
+    assert "billing-budget-notifications@system.gserviceaccount.com" not in terraform
+    assert "billing-budgets@system.gserviceaccount.com" not in terraform
+    assert 'resource "google_pubsub_topic_iam_member" "budget_notifications_publisher"' not in terraform
     assert 'resource "google_eventarc_trigger" "budget_to_workflow"' in terraform
     assert 'value     = "google.cloud.pubsub.topic.v1.messagePublished"' in terraform
     assert 'workflow = google_workflows_workflow.cutoff.name' in terraform
@@ -121,6 +122,16 @@ def test_cost_cutoff_resources_cover_budget_eventarc_workflow_scheduler_and_rece
     assert 'resource "google_monitoring_notification_channel" "budget_email"' in terraform
 
 
+def test_destroy_guard_allows_every_admin_service_created_by_the_module() -> None:
+    guard = _read(CUTOFF / "verify-destroy-plan.jq")
+    terraform = _terraform()
+    admin_services = set(re.findall(r'"([a-z0-9.-]+\.googleapis\.com)"', terraform.split("lab_services", 1)[0]))
+
+    assert "billingbudgets.googleapis.com" in admin_services
+    admin_guard = guard.split("def allowed_admin_service", 1)[1].split("def allowed_lab_service", 1)[0]
+    assert admin_services <= set(re.findall(r'"([a-z0-9.-]+\.googleapis\.com)"', admin_guard))
+
+
 def test_cost_cutoff_workflow_contract_has_thresholds_ordering_and_durable_dedupe() -> None:
     terraform = _terraform()
     assert "var.soft_stop_krw == 24000" in terraform
@@ -131,13 +142,33 @@ def test_cost_cutoff_workflow_contract_has_thresholds_ordering_and_durable_dedup
     assert "var.absolute_lease_seconds == 172800" in terraform
     assert "ifGenerationMatch: 0" in terraform
     assert "alreadyExists" in terraform
-    assert "stop_compute_before_disable_billing" in terraform
+    assert "stop_compute_before_delete_project" in terraform
     assert "googleapis.compute.v1.instances.stop" in terraform
-    assert "googleapis.cloudbilling.v1.projects.updateBillingInfo" in terraform
+    assert "googleapis.cloudresourcemanager.v3.projects.delete" in terraform
     assert terraform.index("googleapis.compute.v1.instances.stop") < terraform.index(
-        "googleapis.cloudbilling.v1.projects.updateBillingInfo"
+        "googleapis.cloudresourcemanager.v3.projects.delete"
     )
-    assert "billingAccountName: null" in terraform
+    assert 'name: $${"projects/" + lab_project_id}' in terraform
+    assert "cloudbilling.googleapis.com/v1/projects/" not in terraform
+
+
+def test_cost_cutoff_workflow_done_result_fields_have_consistent_yaml_indentation() -> None:
+    main = _read(CUTOFF / "main.tf")
+    match = re.search(r"workflow_source\s*=\s*<<-YAML\n(?P<body>.*?)\n\s*YAML", main, flags=re.DOTALL)
+    assert match is not None
+
+    lines = match.group("body").splitlines()
+    done_index = next(index for index, line in enumerate(lines) if line.strip() == "- done:")
+    return_index = next(index for index in range(done_index + 1, len(lines)) if lines[index].strip() == "return:")
+    status_index = next(index for index in range(return_index + 1, len(lines)) if lines[index].strip().startswith("status:"))
+    ordering_index = next(
+        index for index in range(status_index + 1, len(lines)) if lines[index].strip().startswith("ordering:")
+    )
+
+    def indent(line: str) -> int:
+        return len(line) - len(line.lstrip())
+    assert indent(lines[status_index]) == indent(lines[ordering_index])
+    assert lines[ordering_index].strip() == "ordering: stop_compute_before_delete_project"
 
 
 def test_cost_cutoff_runtime_uses_durable_state_and_conservative_forecast() -> None:
@@ -258,6 +289,14 @@ def test_cost_cutoff_timer_events_remain_separate_from_budget_envelopes() -> Non
     )
 
 
+def test_cost_cutoff_workflow_uses_parser_safe_empty_maps() -> None:
+    terraform = _terraform()
+    assert 'default(map.get(event, "data"), {})' not in terraform
+    assert 'default(map.get(aggregated_instances, "items"), {})' not in terraform
+    assert 'default(map.get(event, "data"), json.decode("{}"))' in terraform
+    assert 'default(map.get(aggregated_instances, "items"), json.decode("{}"))' in terraform
+
+
 def test_cost_cutoff_duplicate_lease_retries_until_terminal_success() -> None:
     terraform = _terraform()
     assert "status: in_progress" in terraform
@@ -267,10 +306,10 @@ def test_cost_cutoff_duplicate_lease_retries_until_terminal_success() -> None:
     assert "terminal_receipt_success" in terraform
     assert "retryDuplicateNonTerminal" in terraform
     assert terraform.index("inspectTerminalReceiptForDuplicate") < terraform.index(
-        "stop_compute_before_disable_billing"
+        "stop_compute_before_delete_project"
     )
     assert terraform.index("retryDuplicateNonTerminal") < terraform.index(
-        "stop_compute_before_disable_billing"
+        "stop_compute_before_delete_project"
     )
 
 
@@ -286,8 +325,7 @@ def test_cost_cutoff_iam_is_dedicated_and_least_privilege_without_opscat_mutatio
         "compute.instances.stop",
         "compute.zoneOperations.get",
         "resourcemanager.projects.get",
-        "billing.resourceAssociations.get",
-        "billing.resourceAssociations.delete",
+        "resourcemanager.projects.delete",
     ):
         assert permission in terraform
     assert "roles/eventarc.eventReceiver" in terraform
@@ -489,6 +527,16 @@ def test_cost_cutoff_plan_guard_accepts_only_control_plane_shape() -> None:
     assert _run_jq_guard("verify-apply-plan.jq", _valid_apply_plan()).returncode == 0
 
 
+def test_cost_cutoff_plan_guard_rejects_eventarc_trigger_from_wrong_fully_qualified_prefix() -> None:
+    plan = _valid_apply_plan()
+    trigger = next(change for change in plan["resource_changes"] if change["address"] == "google_eventarc_trigger.budget_to_workflow")
+    trigger["change"]["after"]["name"] = (
+        "projects/opscat-p176-admin-foreign1/locations/asia-northeast3/triggers/p176-cost-cutoff-budget-to-workflow"
+    )
+
+    assert _run_jq_guard("verify-apply-plan.jq", plan).returncode != 0
+
+
 def test_cost_cutoff_plan_guard_accepts_same_plan_computed_budget_links() -> None:
     plan = _valid_apply_plan()
     budget = _find_change(plan, "google_billing_budget", "lab")["change"]
@@ -654,6 +702,31 @@ def test_cost_cutoff_destroy_guard_rejects_budget_filter_bound_to_foreign_projec
     budget_change["change"]["before"]["budget_filter"][0]["projects"] = ["projects/999999"]
 
     assert _run_jq_guard("verify-destroy-plan.jq", foreign_budget_filter).returncode != 0
+
+
+def test_cost_cutoff_destroy_guard_binds_projectless_bucket_iam_to_admin_receipt_bucket() -> None:
+    valid = _valid_destroy_plan()
+    valid["resource_changes"].append(
+        {
+            "address": "google_storage_bucket_iam_member.workflow_receipt_viewer",
+            "type": "google_storage_bucket_iam_member",
+            "name": "workflow_receipt_viewer",
+            "change": {
+                "actions": ["delete"],
+                "before": {
+                    "bucket": f"b/{ADMIN_PROJECT}-p176-cost-cutoff-receipts",
+                    "member": f"serviceAccount:p176-cost-cutoff-workflow@{ADMIN_PROJECT}.iam.gserviceaccount.com",
+                    "role": "roles/storage.objectViewer",
+                },
+                "after": None,
+            },
+        }
+    )
+    assert _run_jq_guard("verify-destroy-plan.jq", valid).returncode == 0
+
+    foreign = deepcopy(valid)
+    foreign["resource_changes"][-1]["change"]["before"]["bucket"] = "foreign-receipts"
+    assert _run_jq_guard("verify-destroy-plan.jq", foreign).returncode != 0
 
 
 def test_live_preflight_public_evidence_uses_logical_repo_relative_paths() -> None:
@@ -917,6 +990,7 @@ def _valid_apply_plan() -> dict[str, Any]:
             "org_id": {"value": ORG_ID},
             "lab_project_id": {"value": LAB_PROJECT},
             "billing_account_id": {"value": BILLING_ACCOUNT},
+            "region": {"value": "asia-northeast3"},
             "soft_stop_krw": {"value": 24000},
             "hard_cutoff_krw": {"value": 27000},
             "budget_krw": {"value": 30000},
@@ -949,6 +1023,7 @@ def _valid_apply_plan() -> dict[str, Any]:
             *[
                 _change("google_project_service", "admin", {"project": ADMIN_PROJECT, "service": service})
                 for service in (
+                    "billingbudgets.googleapis.com",
                     "cloudbilling.googleapis.com",
                     "cloudscheduler.googleapis.com",
                     "compute.googleapis.com",
@@ -964,7 +1039,6 @@ def _valid_apply_plan() -> dict[str, Any]:
             *[
                 _change("google_project_service", "lab", {"project": LAB_PROJECT, "service": service})
                 for service in (
-                    "billingbudgets.googleapis.com",
                     "compute.googleapis.com",
                     "iam.googleapis.com",
                     "iap.googleapis.com",
@@ -1000,7 +1074,14 @@ def _valid_apply_plan() -> dict[str, Any]:
                     ],
                 },
             ),
-            _change("google_eventarc_trigger", "budget_to_workflow", {"project": ADMIN_PROJECT, "name": "p176-cost-cutoff-budget-to-workflow"}),
+            _change(
+                "google_eventarc_trigger",
+                "budget_to_workflow",
+                {
+                    "project": ADMIN_PROJECT,
+                    "name": f"projects/{ADMIN_PROJECT}/locations/asia-northeast3/triggers/p176-cost-cutoff-budget-to-workflow",
+                },
+            ),
             _change(
                 "google_storage_bucket",
                 "receipts",
@@ -1027,10 +1108,10 @@ def _valid_apply_plan() -> dict[str, Any]:
                             "forecast_amount_krw * 1.15",
                             "duplicate_terminal_success",
                             "alreadyExists",
-                            "stop_compute_before_disable_billing",
+                            "stop_compute_before_delete_project",
                             "googleapis.compute.v1.instances.stop",
-                            "googleapis.cloudbilling.v1.projects.updateBillingInfo",
-                            "billingAccountName: null",
+                            "googleapis.cloudresourcemanager.v3.projects.delete",
+                            'name: ${"projects/" + lab_project_id}',
                         )
                     ),
                 },
@@ -1057,8 +1138,7 @@ def _valid_apply_plan() -> dict[str, Any]:
                         "compute.instances.stop",
                         "compute.zoneOperations.get",
                         "resourcemanager.projects.get",
-                        "billing.resourceAssociations.get",
-                        "billing.resourceAssociations.delete",
+                        "resourcemanager.projects.delete",
                     ],
                 },
             ),

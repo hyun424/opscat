@@ -42,6 +42,7 @@ SOURCE_PATHS = (
     "app/services/p176_evaluator.py",
     "app/services/p176_live_bridge.py",
     "app/services/p176_live_gates.py",
+    "app/services/p176_runtime_bridge.py",
     "app/services/p176_action_eligibility.py",
     "app/services/p176_release.py",
     "docs/tickets/p176/live-lab/PRD.md",
@@ -55,6 +56,7 @@ SOURCE_PATHS = (
     "docs/tickets/p176/test-spec.md",
     "scripts/run_p176_live_bridge.py",
     "scripts/run_p176_live_qualification.py",
+    "scripts/run_p176_live_runtime_bridge.py",
     "scripts/run_p176_qualification.py",
     "scripts/verify_p176.sh",
     "infra/gcp/p176-live/.terraform.lock.hcl",
@@ -65,6 +67,7 @@ SOURCE_PATHS = (
     "infra/gcp/p176-live/observer-startup.sh",
     "infra/gcp/p176-live/outputs.tf",
     "infra/gcp/p176-live/preflight.sh",
+    "infra/gcp/p176-live/runtime-iap.sh",
     "infra/gcp/p176-live/target-startup.sh",
     "infra/gcp/p176-live/terraform.tfvars.example",
     "infra/gcp/p176-live/terraform.tfvars.template",
@@ -92,15 +95,22 @@ SOURCE_PATHS = (
     "infra/gcp/p176-adoption/variables.tf",
     "infra/gcp/p176-adoption/versions.tf",
     "lab/p176/live/docker-compose.yml",
+    "lab/p176/live/docker-compose.runtime.yml",
+    "lab/p176/live/fault_controller.py",
     "lab/p176/live/service_stub.py",
+    "lab/p176/live/telemetry_collector.py",
     "lab/p176/live/topology.json",
+    "lab/p176/observer/docker-compose.yml",
     "tests/test_p176_live_bridge.py",
     "tests/test_p176_live_campaign.py",
     "tests/test_p176_cost_cutoff.py",
+    "tests/test_p176_live_fault_controller.py",
     "tests/test_p176_live_gates.py",
     "tests/test_p176_live_infra_plan.py",
     "tests/test_p176_live_release.py",
+    "tests/test_p176_live_runtime_bridge.py",
     "tests/test_p176_live_topology.py",
+    "tests/test_p176_runtime_iap_script.py",
     "tests/test_p176_release.py",
     "tests/test_p176_runner.py",
 )
@@ -125,6 +135,8 @@ LIVE_RELEASE_INPUTS_MANIFEST_FIELDS = frozenset(
         "agent_visible_ledger_chain_hash",
         "evaluator_only_ledger_chain_hash",
         "strata_reconciliation_hash",
+        "runtime_collection_receipt_hash",
+        "runtime_finalization_receipt_hash",
         "build_release_artifacts_target",
         "manifest_hash",
     }
@@ -152,6 +164,8 @@ LIVE_ARTIFACT_MANIFEST_FIELDS = frozenset(
         "billing_report_hash",
         "teardown_proof_hash",
         "strata_reconciliation_hash",
+        "runtime_collection_receipt_hash",
+        "runtime_finalization_receipt_hash",
         "manifest_hash",
     }
 )
@@ -647,6 +661,8 @@ def _validate_live_release_inputs_manifest(
         "agent_visible_ledger_chain_hash",
         "evaluator_only_ledger_chain_hash",
         "strata_reconciliation_hash",
+        "runtime_collection_receipt_hash",
+        "runtime_finalization_receipt_hash",
     ):
         if manifest.get(field) != live_artifact_manifest.get(field):
             raise P176ReleaseError(f"live_manifest_binding_mismatch:{field}")

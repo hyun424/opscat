@@ -83,3 +83,46 @@ def test_support_components_are_support_only_and_fault_controller_is_harness_onl
     assert fault_controller["cleanup_verb"] == "cleanup_fault_lease"
     assert len(fault_controller["allowed_fault_verbs"]) == 30
     assert all(verb.startswith("inject_") for verb in fault_controller["allowed_fault_verbs"])
+
+
+def test_live_support_components_use_real_read_only_entrypoints_without_host_ports() -> None:
+    compose = _read_json(LIVE_LAB / "docker-compose.yml")
+    services = compose["services"]
+
+    assert services["telemetry-collector"]["command"] == ["python", "/telemetry_collector.py"]
+    assert services["fault-controller"]["command"] == ["python", "/fault_controller.py"]
+    assert "./telemetry_collector.py:/telemetry_collector.py:ro" in services["telemetry-collector"]["volumes"]
+    assert "./fault_controller.py:/fault_controller.py:ro" in services["fault-controller"]["volumes"]
+
+    for component_id in ("telemetry-collector", "fault-controller"):
+        component = services[component_id]
+        assert "ports" not in component
+        assert component["read_only"] is True
+        assert component["cap_drop"] == ["ALL"]
+        assert component["security_opt"] == ["no-new-privileges:true"]
+
+
+def test_postgres_runs_unprivileged_with_ephemeral_writable_data_mount() -> None:
+    compose = _read_json(LIVE_LAB / "docker-compose.yml")
+    postgres = compose["services"]["postgres-db"]
+
+    assert postgres["user"] == "70:70"
+    assert "/var/lib/postgresql/data:size=512m,uid=70,gid=70,mode=0700" in postgres["tmpfs"]
+    assert "volumes" not in postgres
+    assert "volumes" not in compose
+
+
+def test_runtime_bindings_are_private_and_observer_is_separate_from_target_workload() -> None:
+    runtime = _read_json(LIVE_LAB / "docker-compose.runtime.yml")
+    observer = _read_json(ROOT / "lab/p176/observer/docker-compose.yml")
+
+    assert runtime["services"]["fault-controller"]["ports"] == ["10.176.0.10:8020:8091"]
+    assert runtime["services"]["telemetry-collector"]["ports"] == ["10.176.0.10:8000:8090"]
+    assert set(runtime["services"]) == {"fault-controller", "telemetry-collector"}
+
+    observer_service = observer["services"]["observer-telemetry"]
+    assert observer_service["ports"] == ["127.0.0.1:8030:8090"]
+    assert observer_service["environment"]["P176_UPSTREAM_ENDPOINT"] == "http://10.176.0.10:8000"
+    assert observer_service["read_only"] is True
+    assert observer_service["cap_drop"] == ["ALL"]
+    assert observer_service["security_opt"] == ["no-new-privileges:true"]

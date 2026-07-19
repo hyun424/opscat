@@ -23,6 +23,8 @@ from app.services.p176_live_bridge import (
     HEALTHY_WINDOW_OBSERVATIONS_PATH,
     LIVE_SAFETY_COUNTER_KEYS,
     LIVE_SAFETY_REPORT_PATH,
+    RUNTIME_COLLECTION_RECEIPT_PATH,
+    RUNTIME_FINALIZATION_RECEIPT_PATH,
     P176LiveBridgeError,
     P176LiveBridgeResult,
     load_json,
@@ -102,6 +104,22 @@ def test_bridge_binds_four_reviewed_plan_hashes_to_supplied_terraform_artifacts(
     assert live_manifest
     assert live_manifest["terraform_plan_artifact_bindings"] == release_manifest["terraform_plan_artifact_bindings"]
     assert str(tmp_path) not in json.dumps(release_manifest, sort_keys=True)
+
+
+def test_bridge_requires_hash_sealed_runtime_lifecycle_receipts(tmp_path: Path) -> None:
+    missing = _write_trusted_live_run(tmp_path / "missing-runtime-receipt")
+    plan_paths = _write_reviewed_plan_artifacts(missing)
+    (missing / RUNTIME_FINALIZATION_RECEIPT_PATH).unlink()
+    with pytest.raises(P176LiveBridgeError, match="missing_or_unsafe_json"):
+        _materialize_live_release_inputs(missing, plan_paths=plan_paths)
+
+    tampered = _write_trusted_live_run(tmp_path / "tampered-runtime-receipt")
+    plan_paths = _write_reviewed_plan_artifacts(tampered)
+    receipt = load_json(tampered / RUNTIME_COLLECTION_RECEIPT_PATH)
+    receipt["runtime_config_hash"] = _hash("tampered-config")
+    write_json(tampered / RUNTIME_COLLECTION_RECEIPT_PATH, receipt)
+    with pytest.raises(P176LiveBridgeError, match="runtime_collection_receipt_self_hash_invalid"):
+        _materialize_live_release_inputs(tampered, plan_paths=plan_paths)
 
 
 def test_bridge_fails_closed_for_mismatched_missing_or_tampered_plan_artifacts(tmp_path: Path) -> None:
@@ -320,6 +338,12 @@ def test_bridge_enforces_teardown_collection_and_lease_timing(tmp_path: Path) ->
     concurrency_proven["concurrency_plan_proven"] = True
     concurrency_proven["teardown_hash"] = stable_hash({key: value for key, value in concurrency_proven.items() if key != "teardown_hash"})
     write_json(short_collection / "teardown-proof.json", concurrency_proven)
+    finalization_receipt = load_json(short_collection / RUNTIME_FINALIZATION_RECEIPT_PATH)
+    finalization_receipt["artifact_hashes"]["teardown-proof.json"] = _file_hash(short_collection / "teardown-proof.json")
+    finalization_receipt["finalization_receipt_hash"] = stable_hash(
+        {key: value for key, value in finalization_receipt.items() if key != "finalization_receipt_hash"}
+    )
+    write_json(short_collection / RUNTIME_FINALIZATION_RECEIPT_PATH, finalization_receipt)
     assert _materialize_live_release_inputs(short_collection).subordinate_status
 
     long_lease = _write_trusted_live_run(tmp_path / "long-lease")
@@ -357,6 +381,7 @@ def test_live_bridge_cli_writes_outputs_and_returns_manifest_hash(tmp_path: Path
     billing["latest_poll_at"] = _to_z(datetime.now(UTC).replace(microsecond=0))
     _rehash_billing(billing)
     write_json(run_dir / "billing-report.json", billing)
+    _refresh_runtime_receipts(run_dir)
 
     result = subprocess.run(
         [
@@ -553,6 +578,49 @@ def _write_valid_live_run(run_dir: Path, *, latest_poll_at: datetime | None = No
         run_dir / HEALTHY_WINDOW_OBSERVATIONS_PATH,
         [_healthy_observation(run_id, window, agent, evaluator) for window in campaign["healthy_windows"]],
     )
+    collection = _self_hash(
+        {
+            "schema_version": "p176.runtime_collection_receipt.v1",
+            "phase": "p176",
+            "run_id": run_id,
+            "project_id": project_id,
+            "runtime_config_hash": _hash("runtime-config"),
+            "artifact_hashes": {
+                path: _file_hash(run_dir / path)
+                for path in (
+                    "input-manifest.json",
+                    "project-binding.json",
+                    "fault-registry.json",
+                    "live-safety-report.json",
+                    "agent-visible-ledger.jsonl",
+                    "evaluator-only-ledger.jsonl",
+                    "episode-observations.jsonl",
+                    "healthy-window-observations.jsonl",
+                )
+            },
+            "collection_receipt_hash": "",
+        },
+        "collection_receipt_hash",
+    )
+    write_json(run_dir / RUNTIME_COLLECTION_RECEIPT_PATH, collection)
+    write_json(
+        run_dir / RUNTIME_FINALIZATION_RECEIPT_PATH,
+        _self_hash(
+            {
+                "schema_version": "p176.runtime_finalization_receipt.v1",
+                "phase": "p176",
+                "run_id": run_id,
+                "collection_receipt_hash": collection["collection_receipt_hash"],
+                "artifact_hashes": {
+                    path: _file_hash(run_dir / path)
+                    for path in ("billing-report.json", "teardown-proof.json")
+                },
+                "finalized_at": _to_z(TRUSTED_NOW),
+                "finalization_receipt_hash": "",
+            },
+            "finalization_receipt_hash",
+        ),
+    )
     return run_dir
 
 
@@ -674,7 +742,35 @@ def _write_reviewed_plan_artifacts(run_dir: Path) -> dict[str, Path]:
     plan_paths["cost_cutoff_apply"].write_bytes(b'{"format_version":"1.2","cost_cutoff_resource_changes":[]}\n')
     plan_paths["cost_cutoff_destroy"].write_bytes(b"terraform cost cutoff destroy binary plan receipt")
     _bind_plan_hashes(run_dir, plan_paths=plan_paths)
+    _refresh_runtime_receipts(run_dir)
     return plan_paths
+
+
+def _refresh_runtime_receipts(run_dir: Path) -> None:
+    collection_path = run_dir / RUNTIME_COLLECTION_RECEIPT_PATH
+    finalization_path = run_dir / RUNTIME_FINALIZATION_RECEIPT_PATH
+    if not collection_path.is_file() or not finalization_path.is_file():
+        return
+    collection = load_json(collection_path)
+    collection_paths = tuple(collection["artifact_hashes"])
+    if not all((run_dir / path).is_file() for path in collection_paths):
+        return
+    collection["artifact_hashes"] = {path: _file_hash(run_dir / path) for path in collection_paths}
+    collection["collection_receipt_hash"] = stable_hash(
+        {key: value for key, value in collection.items() if key != "collection_receipt_hash"}
+    )
+    write_json(collection_path, collection)
+
+    finalization = load_json(finalization_path)
+    finalization_paths = tuple(finalization["artifact_hashes"])
+    if not all((run_dir / path).is_file() for path in finalization_paths):
+        return
+    finalization["collection_receipt_hash"] = collection["collection_receipt_hash"]
+    finalization["artifact_hashes"] = {path: _file_hash(run_dir / path) for path in finalization_paths}
+    finalization["finalization_receipt_hash"] = stable_hash(
+        {key: value for key, value in finalization.items() if key != "finalization_receipt_hash"}
+    )
+    write_json(finalization_path, finalization)
 
 
 def _expected_plan_bindings(plan_paths: dict[str, Path]) -> dict[str, str]:

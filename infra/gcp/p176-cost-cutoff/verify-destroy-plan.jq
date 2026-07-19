@@ -3,6 +3,7 @@ def before_project: .change.before.project? // "";
 def before_project_id: .change.before.project_id? // "";
 def allowed_admin_service($service):
   ([
+    "billingbudgets.googleapis.com",
     "cloudbilling.googleapis.com",
     "cloudscheduler.googleapis.com",
     "compute.googleapis.com",
@@ -110,6 +111,13 @@ and all(.resource_changes[] | select(has_action("delete"));
          or .change.before.billing_account == ("billingAccounts/" + $billing_account))
          and .change.before.display_name == "P176 disposable live lab budget"
          and .change.before.budget_filter[0].projects == [("projects/" + $lab_project_number)]
+       elif .type == "google_storage_bucket_iam_member"
+       then ((.change.before.bucket == ($admin_project + "-p176-cost-cutoff-receipts"))
+         or (.change.before.bucket == ("b/" + $admin_project + "-p176-cost-cutoff-receipts")))
+         and .change.before.member == ("serviceAccount:p176-cost-cutoff-workflow@" + $admin_project + ".iam.gserviceaccount.com")
+         and (if .name == "workflow_receipt_creator"
+              then .change.before.role == "roles/storage.objectCreator"
+              else .change.before.role == "roles/storage.objectViewer" end)
        elif .type == "google_project_iam_custom_role" or .name == "workflow_lab_controller"
        then before_project == $lab_project
        else before_project == $admin_project end))

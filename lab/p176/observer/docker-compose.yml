@@ -1,0 +1,35 @@
+{
+  "services": {
+    "observer-telemetry": {
+      "image": "python:3.14-alpine",
+      "restart": "unless-stopped",
+      "read_only": true,
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "pids_limit": 128,
+      "security_opt": ["no-new-privileges:true"],
+      "cap_drop": ["ALL"],
+      "tmpfs": ["/tmp:size=32m,mode=1777"],
+      "volumes": ["./telemetry_collector.py:/telemetry_collector.py:ro"],
+      "command": ["python", "/telemetry_collector.py"],
+      "environment": {
+        "P176_SERVICE_ID": "observer-telemetry",
+        "P176_LIVE_ROLE": "observer-read-only",
+        "P176_PORT": "8090",
+        "P176_UPSTREAM_ENDPOINT": "http://10.176.0.10:8000"
+      },
+      "ports": ["127.0.0.1:8030:8090"],
+      "healthcheck": {
+        "test": ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/health', timeout=2).read()"],
+        "interval": "10s",
+        "timeout": "3s",
+        "retries": 12,
+        "start_period": "10s"
+      },
+      "labels": {
+        "opscat.p176.live.role": "observer-read-only",
+        "opscat.p176.live.canonical_service": "false"
+      }
+    }
+  }
+}

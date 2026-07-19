@@ -1,9 +1,9 @@
-# P176 Live Qualification Lab Planning Package
+# P176 Live Qualification Lab
 
 ## Goal
 
-Plan a reviewed-ready disposable GCP live lab for P176 without implementing
-runtime code. The live lab is a deterministic evidence producer for the existing
+Provide a reviewed, disposable GCP live lab and a fail-closed runtime bridge for
+P176. The live lab is a deterministic evidence producer for the existing
 `app/services/p176_release.py` path; it does not create a parallel release
 claim.
 
@@ -24,6 +24,44 @@ A live-lab success may only appear as the subordinate evidence status
   `agent_visible_ledger`, and `evaluator_only_ledger`.
 - Preserve existing `p176_release` source-hash ownership by extending
   `app/services/p176_release.py`; do not add a separate live-release claim path.
+
+## Implemented Runtime Boundary
+
+- `infra/gcp/p176-live/runtime-iap.sh` separates digest-bound `plan` from `run`,
+  deploys only to the two disposable private VMs, and uses IAP loopback tunnels.
+- `app/services/p176_runtime_bridge.py` separates `collect` from `finalize`.
+  Collection cannot claim billing or teardown evidence; finalization cannot
+  collect or mutate the lab.
+- `app/services/p176_live_runtime.py` binds bounded HTTP evidence, a closed
+  harness capability, cleanup-dominant fault execution, NVIDIA advisory
+  diagnosis, and deterministic local scoring. The model receives redacted
+  summaries and allowed labels only; it receives no evaluator truth, fault verb,
+  action authority, or execution surface.
+- `lab/p176/live/fault_controller.py` owns the harness-only lease registry and an
+  independent deadman watchdog. A dead client cannot leave an expired effect
+  active.
+- Healthy evaluation includes quiet and benign baseline-variance windows. The
+  runtime applies the profile to the telemetry source; it does not expose the
+  campaign's `noisy` label to the model.
+
+## External Provider Warning
+
+Collection with the NVIDIA provider sends redacted synthetic-lab evidence and
+service metadata to NVIDIA's external API. It is explicit opt-in and must not be
+used with customer or production telemetry without a separately reviewed data
+processing boundary. Normal tests use injected clients and perform no external
+model calls.
+
+The runtime requires an explicit `P176_LLM_PROVIDER=nvidia`, a locally exported
+`NVIDIA_API_KEY`, the dedicated project and billing bindings, and a reviewed
+runtime-plan digest. Secrets are inherited by the local Python process only;
+they are not written into the runtime plan or sent to either VM. Fault capability
+tokens are generated per run, installed with restrictive permissions, and
+removed locally and remotely on exit.
+
+Finalization is a separate `P176_RUNTIME_PHASE=finalize` invocation. It requires
+regular, non-symlink billing and teardown snapshot files and revalidates the
+collection receipt before producing any downstream release input.
 
 ## Exact Campaign Constants
 

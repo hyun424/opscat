@@ -32,6 +32,7 @@ def allowed_admin_service:
   (.change.after.service? // "") as $service
   |
   ([
+    "billingbudgets.googleapis.com",
     "cloudbilling.googleapis.com",
     "cloudscheduler.googleapis.com",
     "compute.googleapis.com",
@@ -47,7 +48,6 @@ def allowed_lab_service:
   (.change.after.service? // "") as $service
   |
   ([
-    "billingbudgets.googleapis.com",
     "compute.googleapis.com",
     "iam.googleapis.com",
     "iap.googleapis.com",
@@ -82,11 +82,11 @@ def source_contract:
   and ($source | contains("forecast_amount_krw * 1.15"))
   and ($source | contains("duplicate_terminal_success"))
   and ($source | contains("alreadyExists"))
-  and ($source | contains("stop_compute_before_disable_billing"))
+  and ($source | contains("stop_compute_before_delete_project"))
   and ($source | contains("googleapis.compute.v1.instances.stop"))
-  and ($source | contains("googleapis.cloudbilling.v1.projects.updateBillingInfo"))
-  and ($source | contains("billingAccountName: null"))
-  and (($source | index("googleapis.compute.v1.instances.stop")) < ($source | index("googleapis.cloudbilling.v1.projects.updateBillingInfo")));
+  and ($source | contains("googleapis.cloudresourcemanager.v3.projects.delete"))
+  and ($source | contains("name: ${\"projects/\" + lab_project_id}"))
+  and (($source | index("googleapis.compute.v1.instances.stop")) < ($source | index("googleapis.cloudresourcemanager.v3.projects.delete")));
 def budget_projects_are_lab:
   (.change.after.budget_filter[0].projects? // []) as $projects
   | (($projects | length) == 1 and ($projects[0] | startswith("projects/")))
@@ -97,6 +97,8 @@ def budget_pubsub_topic_is_admin_topic:
     or (.change.after_unknown.all_updates_rule[0].pubsub_topic == true);
 
 (.variables.billing_account_id.value) as $billing_account
+|
+(.variables.region.value) as $region
 |
 (.variables.admin_project_id.value == $admin_project)
 and (.variables.lab_project_id.value == $lab_project)
@@ -138,10 +140,10 @@ and (changes("google_project"; "lab")
   | length) == 1
 and (changes("google_project_service"; "admin")
   | map(select(.change.after.project == $admin_project and allowed_admin_service))
-  | length) == 10
+  | length) == 11
 and (changes("google_project_service"; "lab")
   | map(select(.change.after.project == $lab_project and allowed_lab_service))
-  | length) == 7
+  | length) == 6
 and ([.resource_changes[] | select(.type == "google_project_service" and (allowed_service | not))] | length) == 0
 and (changes("google_monitoring_notification_channel"; "budget_email")
   | map(select(.change.after.project == $lab_project and .change.after.display_name == "P176 live budget email"))
@@ -158,7 +160,9 @@ and (changes("google_pubsub_topic"; "budget_notifications")
   | map(select(.change.after.project == $admin_project and .change.after.name == "p176-cost-cutoff-budget"))
   | length) == 1
 and (changes("google_eventarc_trigger"; "budget_to_workflow")
-  | map(select(.change.after.project == $admin_project and .change.after.name == "p176-cost-cutoff-budget-to-workflow"))
+  | map(select(.change.after.project == $admin_project
+    and (.change.after.name == "p176-cost-cutoff-budget-to-workflow"
+      or .change.after.name == ("projects/" + $admin_project + "/locations/" + $region + "/triggers/p176-cost-cutoff-budget-to-workflow"))))
   | length) == 1
 and (changes("google_storage_bucket"; "receipts")
   | map(select(.change.after.project == $admin_project
@@ -176,12 +180,11 @@ and (changes("google_project_iam_custom_role"; "lab_controller")
   | map(select(.change.after.project == $lab_project
     and .change.after.role_id == "p176CostCutoffLabController"
     and ((.change.after.permissions | sort) == ([
-      "billing.resourceAssociations.delete",
-      "billing.resourceAssociations.get",
       "compute.instances.get",
       "compute.instances.list",
       "compute.instances.stop",
       "compute.zoneOperations.get",
+      "resourcemanager.projects.delete",
       "resourcemanager.projects.get"
     ] | sort))))
   | length) == 1

@@ -202,6 +202,8 @@ def _live_manifests(
             "denominators": campaign["denominators"],
         }
     )
+    runtime_collection_receipt_hash = stable_hash({"receipt": "runtime-collection"})
+    runtime_finalization_receipt_hash = stable_hash({"receipt": "runtime-finalization"})
     live_artifact_manifest = {
         "schema_version": "p176.live_artifact_manifest.v1",
         "phase": "p176",
@@ -223,6 +225,8 @@ def _live_manifests(
         "billing_report_hash": billing_report["billing_report_hash"],
         "teardown_proof_hash": teardown_proof["teardown_hash"],
         "strata_reconciliation_hash": strata_hash,
+        "runtime_collection_receipt_hash": runtime_collection_receipt_hash,
+        "runtime_finalization_receipt_hash": runtime_finalization_receipt_hash,
         "terraform_plan_artifact_bindings": _terraform_plan_artifact_bindings(teardown_proof),
         "manifest_hash": "",
     }
@@ -243,6 +247,8 @@ def _live_manifests(
         "agent_visible_ledger_chain_hash": agent_chain,
         "evaluator_only_ledger_chain_hash": evaluator_chain,
         "strata_reconciliation_hash": strata_hash,
+        "runtime_collection_receipt_hash": runtime_collection_receipt_hash,
+        "runtime_finalization_receipt_hash": runtime_finalization_receipt_hash,
         "build_release_artifacts_target": "app.services.p176_release.build_release_artifacts",
         "terraform_plan_artifact_bindings": _terraform_plan_artifact_bindings(teardown_proof),
         "manifest_hash": "",
@@ -327,6 +333,8 @@ def test_live_lab_evidence_is_subordinate_and_bound_to_existing_release_claim() 
     required_sources = {
         "app/services/p176_live_bridge.py",
         "app/services/p176_live_gates.py",
+        "app/services/p176_runtime_bridge.py",
+        "scripts/run_p176_live_runtime_bridge.py",
         "scripts/run_p176_live_qualification.py",
         "infra/gcp/p176-live/.terraform.lock.hcl",
         "infra/gcp/p176-live/README.md",
@@ -336,6 +344,7 @@ def test_live_lab_evidence_is_subordinate_and_bound_to_existing_release_claim() 
         "infra/gcp/p176-live/observer-startup.sh",
         "infra/gcp/p176-live/outputs.tf",
         "infra/gcp/p176-live/preflight.sh",
+        "infra/gcp/p176-live/runtime-iap.sh",
         "infra/gcp/p176-live/target-startup.sh",
         "infra/gcp/p176-live/terraform.tfvars.example",
         "infra/gcp/p176-live/terraform.tfvars.template",
@@ -357,15 +366,22 @@ def test_live_lab_evidence_is_subordinate_and_bound_to_existing_release_claim() 
         "infra/gcp/p176-cost-cutoff/verify-destroy-plan.jq",
         "infra/gcp/p176-cost-cutoff/versions.tf",
         "lab/p176/live/docker-compose.yml",
+        "lab/p176/live/docker-compose.runtime.yml",
+        "lab/p176/live/fault_controller.py",
         "lab/p176/live/service_stub.py",
+        "lab/p176/live/telemetry_collector.py",
         "lab/p176/live/topology.json",
+        "lab/p176/observer/docker-compose.yml",
         "tests/test_p176_live_bridge.py",
         "tests/test_p176_live_campaign.py",
         "tests/test_p176_cost_cutoff.py",
+        "tests/test_p176_live_fault_controller.py",
         "tests/test_p176_live_gates.py",
         "tests/test_p176_live_infra_plan.py",
         "tests/test_p176_live_release.py",
+        "tests/test_p176_live_runtime_bridge.py",
         "tests/test_p176_live_topology.py",
+        "tests/test_p176_runtime_iap_script.py",
     }
     assert required_sources.issubset(SOURCE_PATHS)
     assert validated["qualified"] is True

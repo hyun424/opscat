@@ -54,6 +54,8 @@ LIVE_ARTIFACT_MANIFEST_PATH = "live-artifact-manifest.json"
 RELEASE_INPUTS_MANIFEST_PATH = "release-inputs-manifest.json"
 LIVE_BRIDGE_SUMMARY_PATH = "live-bridge-summary.json"
 RUN_INPUT_MANIFEST_PATH = "input-manifest.json"
+RUNTIME_COLLECTION_RECEIPT_PATH = "runtime-collection-receipt.json"
+RUNTIME_FINALIZATION_RECEIPT_PATH = "runtime-finalization-receipt.json"
 ADOPTION_BASELINE_BINDING_PATH = "adoption-baseline-binding.json"
 CANONICAL_INPUT_MANIFEST_PATH = Path(__file__).resolve().parents[2] / "evals/p176/input/manifest.json"
 REVIEWED_LAB_APPLY_PLAN_LOGICAL_NAME = "reviewed_lab_apply_plan"
@@ -345,6 +347,8 @@ def materialize_live_release_inputs(
         episode_observations=episode_observations,
         healthy_observations=healthy_observations,
     )
+    input_manifest_hash = _required_canonical_input_manifest_hash(directory)
+    runtime_receipts = _validate_runtime_receipts(directory, run_id=run_id, project_id=str(project_binding["project_id"]))
 
     write_jsonl(directory / LIVE_OUTCOMES_PATH, outcomes)
     write_jsonl(directory / LIVE_HEALTHY_RESULTS_PATH, healthy_results)
@@ -353,7 +357,7 @@ def materialize_live_release_inputs(
 
     hashes = {
         "campaign_hash": str(campaign["campaign_hash"]),
-        "input_manifest_hash": _required_canonical_input_manifest_hash(directory),
+        "input_manifest_hash": input_manifest_hash,
         "project_binding_hash": str(project_binding["binding_hash"]),
         "fault_registry_hash": str(fault_registry["registry_hash"]),
         "episode_observations_hash": stable_hash(episode_observations),
@@ -367,6 +371,8 @@ def materialize_live_release_inputs(
         "outcomes_hash": stable_hash(outcomes),
         "healthy_results_hash": stable_hash(healthy_results),
         "canonical_safety_counters_hash": stable_hash(safety_counters),
+        "runtime_collection_receipt_hash": runtime_receipts["collection_receipt_hash"],
+        "runtime_finalization_receipt_hash": runtime_receipts["finalization_receipt_hash"],
     }
     live_manifest_payload = {
         "schema_version": "p176.live_artifact_manifest.v1",
@@ -388,6 +394,8 @@ def materialize_live_release_inputs(
         "live_safety_hash": hashes["live_safety_hash"],
         "billing_report_hash": hashes["billing_report_hash"],
         "teardown_proof_hash": hashes["teardown_proof_hash"],
+        "runtime_collection_receipt_hash": hashes["runtime_collection_receipt_hash"],
+        "runtime_finalization_receipt_hash": hashes["runtime_finalization_receipt_hash"],
         "strata_reconciliation_hash": hashes["strata_reconciliation_hash"],
         "manifest_hash": "",
     }
@@ -408,6 +416,8 @@ def materialize_live_release_inputs(
         "agent_visible_ledger_chain_hash": hashes["agent_visible_ledger_chain_hash"],
         "evaluator_only_ledger_chain_hash": hashes["evaluator_only_ledger_chain_hash"],
         "strata_reconciliation_hash": hashes["strata_reconciliation_hash"],
+        "runtime_collection_receipt_hash": hashes["runtime_collection_receipt_hash"],
+        "runtime_finalization_receipt_hash": hashes["runtime_finalization_receipt_hash"],
         "build_release_artifacts_target": BUILD_RELEASE_ARTIFACTS_TARGET,
         "manifest_hash": "",
     }
@@ -429,6 +439,8 @@ def materialize_live_release_inputs(
         "live_safety_hash": hashes["live_safety_hash"],
         "billing_report_hash": hashes["billing_report_hash"],
         "teardown_proof_hash": hashes["teardown_proof_hash"],
+        "runtime_collection_receipt_hash": hashes["runtime_collection_receipt_hash"],
+        "runtime_finalization_receipt_hash": hashes["runtime_finalization_receipt_hash"],
         "summary_hash": "",
     }
     summary_payload["terraform_plan_artifact_bindings"] = plan_artifact_bindings
@@ -533,6 +545,87 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
     if not rows:
         raise P176LiveBridgeError(f"empty_jsonl:{path}")
     return rows
+
+
+def _validate_runtime_receipts(directory: Path, *, run_id: str, project_id: str) -> dict[str, str]:
+    collection = load_json(directory / RUNTIME_COLLECTION_RECEIPT_PATH)
+    finalization = load_json(directory / RUNTIME_FINALIZATION_RECEIPT_PATH)
+    collection_fields = {
+        "schema_version",
+        "phase",
+        "run_id",
+        "project_id",
+        "runtime_config_hash",
+        "artifact_hashes",
+        "collection_receipt_hash",
+    }
+    finalization_fields = {
+        "schema_version",
+        "phase",
+        "run_id",
+        "collection_receipt_hash",
+        "artifact_hashes",
+        "finalized_at",
+        "finalization_receipt_hash",
+    }
+    if not isinstance(collection, dict) or set(collection) != collection_fields:
+        raise P176LiveBridgeError("runtime_collection_receipt_keyset_invalid")
+    if not isinstance(finalization, dict) or set(finalization) != finalization_fields:
+        raise P176LiveBridgeError("runtime_finalization_receipt_keyset_invalid")
+    if collection["schema_version"] != "p176.runtime_collection_receipt.v1" or collection["phase"] != "p176":
+        raise P176LiveBridgeError("runtime_collection_receipt_schema_invalid")
+    if finalization["schema_version"] != "p176.runtime_finalization_receipt.v1" or finalization["phase"] != "p176":
+        raise P176LiveBridgeError("runtime_finalization_receipt_schema_invalid")
+    if collection["run_id"] != run_id or finalization["run_id"] != run_id:
+        raise P176LiveBridgeError("runtime_receipt_run_id_mismatch")
+    if collection["project_id"] != project_id:
+        raise P176LiveBridgeError("runtime_collection_receipt_project_id_mismatch")
+    _require_runtime_self_hash(collection, "collection_receipt_hash", "runtime_collection_receipt")
+    _require_runtime_self_hash(finalization, "finalization_receipt_hash", "runtime_finalization_receipt")
+    if finalization["collection_receipt_hash"] != collection["collection_receipt_hash"]:
+        raise P176LiveBridgeError("runtime_finalization_collection_receipt_mismatch")
+    _require_artifact_hashes(
+        directory,
+        collection.get("artifact_hashes"),
+        (
+            RUN_INPUT_MANIFEST_PATH,
+            PROJECT_BINDING_PATH,
+            FAULT_REGISTRY_PATH,
+            LIVE_SAFETY_REPORT_PATH,
+            AGENT_VISIBLE_LEDGER_PATH,
+            EVALUATOR_ONLY_LEDGER_PATH,
+            EPISODE_OBSERVATIONS_PATH,
+            HEALTHY_WINDOW_OBSERVATIONS_PATH,
+        ),
+        "runtime_collection_artifact_hash_mismatch",
+    )
+    _require_artifact_hashes(
+        directory,
+        finalization.get("artifact_hashes"),
+        (BILLING_REPORT_PATH, TEARDOWN_PROOF_PATH),
+        "runtime_finalization_artifact_hash_mismatch",
+    )
+    return {
+        "collection_receipt_hash": str(collection["collection_receipt_hash"]),
+        "finalization_receipt_hash": str(finalization["finalization_receipt_hash"]),
+    }
+
+
+def _require_runtime_self_hash(value: Mapping[str, Any], field: str, label: str) -> None:
+    expected = stable_hash({key: item for key, item in value.items() if key != field})
+    if value.get(field) != expected:
+        raise P176LiveBridgeError(f"{label}_self_hash_invalid")
+
+
+def _require_artifact_hashes(directory: Path, actual: Any, paths: Sequence[str], error: str) -> None:
+    if not isinstance(actual, dict) or set(actual) != set(paths):
+        raise P176LiveBridgeError(error)
+    try:
+        expected = {path: file_hash(directory / path) for path in paths}
+    except (OSError, ValueError) as exc:
+        raise P176LiveBridgeError(error) from exc
+    if actual != expected:
+        raise P176LiveBridgeError(error)
 
 
 def write_json(path: Path, value: Mapping[str, Any]) -> Path:
@@ -1110,6 +1203,8 @@ __all__ = [
     "LIVE_SAFETY_REPORT_PATH",
     "P176LiveBridgeError",
     "P176LiveBridgeResult",
+    "RUNTIME_COLLECTION_RECEIPT_PATH",
+    "RUNTIME_FINALIZATION_RECEIPT_PATH",
     "load_json",
     "load_jsonl",
     "materialize_live_release_inputs",

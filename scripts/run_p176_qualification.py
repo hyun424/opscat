@@ -32,6 +32,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--safety-counters", type=Path)
     parser.add_argument("--agent-ledger", type=Path)
     parser.add_argument("--evaluator-ledger", type=Path)
+    parser.add_argument("--release-inputs-manifest", type=Path)
+    parser.add_argument("--live-artifact-manifest", type=Path)
+    parser.add_argument("--billing-report", type=Path)
+    parser.add_argument("--teardown-proof", type=Path)
+    parser.add_argument("--terminal-stop-at")
     parser.add_argument("--review", type=Path)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "evals/p176/output")
     args = parser.parse_args(argv)
@@ -51,6 +56,18 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if any(item is None for item in supplied):
             raise ValueError("preliminary/final modes require --outcomes --healthy-results --safety-counters --agent-ledger --evaluator-ledger")
+        live_supplied = [
+            args.release_inputs_manifest,
+            args.live_artifact_manifest,
+            args.billing_report,
+            args.teardown_proof,
+            args.terminal_stop_at,
+        ]
+        if any(item is not None for item in live_supplied) and any(item is None for item in live_supplied):
+            raise ValueError(
+                "live evidence args require all or none: --release-inputs-manifest --live-artifact-manifest "
+                "--billing-report --teardown-proof --terminal-stop-at"
+            )
 
         artifacts = build_release_artifacts(
             project_root=ROOT,
@@ -59,6 +76,19 @@ def main(argv: list[str] | None = None) -> int:
             safety_counters=_mapping(load_json(args.safety_counters), "safety_counters"),
             agent_visible_ledger=_sequence(load_json(args.agent_ledger), "agent_ledger"),
             evaluator_only_ledger=_sequence(load_json(args.evaluator_ledger), "evaluator_ledger"),
+            release_inputs_manifest=(
+                _mapping(load_json(args.release_inputs_manifest), "release_inputs_manifest")
+                if args.release_inputs_manifest is not None
+                else None
+            ),
+            live_artifact_manifest=(
+                _mapping(load_json(args.live_artifact_manifest), "live_artifact_manifest")
+                if args.live_artifact_manifest is not None
+                else None
+            ),
+            billing_report=_mapping(load_json(args.billing_report), "billing_report") if args.billing_report is not None else None,
+            teardown_proof=_mapping(load_json(args.teardown_proof), "teardown_proof") if args.teardown_proof is not None else None,
+            terminal_stop_at=args.terminal_stop_at,
         )
         write_canonical_json(args.output_dir / "report.json", artifacts["report"])
         write_canonical_json(args.output_dir / "denominator-report.json", artifacts["denominator_report"])

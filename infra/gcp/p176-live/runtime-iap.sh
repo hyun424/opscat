@@ -281,6 +281,27 @@ copy_reviewed_artifact() {
   [[ "$(sha256_file "${destination}")" == "${expected_digest}" ]] || die "copied run artifact digest mismatch: ${label}"
 }
 
+retry_iap_scp() {
+  local source="$1"
+  local destination="$2"
+  local retry_base_seconds="${P176_IAP_RETRY_BASE_SECONDS:-2}"
+  local attempt
+  [[ "${retry_base_seconds}" =~ ^([0-9]|[12][0-9]|30)$ ]] || die "P176_IAP_RETRY_BASE_SECONDS must be an integer from 0 to 30"
+  for attempt in 1 2 3; do
+    if gcloud compute scp "${source}" "${destination}" \
+      --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet \
+      --scp-flag="-oConnectTimeout=15" \
+      --scp-flag="-oServerAliveInterval=10" \
+      --scp-flag="-oServerAliveCountMax=3"; then
+      return 0
+    fi
+    if [[ "${attempt}" -lt 3 ]]; then
+      sleep "$((retry_base_seconds * attempt))"
+    fi
+  done
+  die "IAP SCP failed after bounded retries"
+}
+
 materialize_reviewed_artifacts() {
   local run_dir="$1"
   [[ ! -L "${run_dir}" ]] || die "P176_RUNTIME_RUN_DIR must not be a symlink"
@@ -317,16 +338,13 @@ deploy_runtime_services() (
   tar -C "${observer_staging}" -czf "${observer_bundle}" .
   chmod 0400 "${target_bundle}" "${observer_bundle}"
 
-  gcloud compute scp "${target_bundle}" "${TARGET_VM}:/tmp/p176-target-runtime.tgz" \
-    --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet
-  gcloud compute scp "${capability_file}" "${TARGET_VM}:/tmp/p176-runtime-capability.env" \
-    --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet
+  retry_iap_scp "${target_bundle}" "${TARGET_VM}:/tmp/p176-target-runtime.tgz"
+  retry_iap_scp "${capability_file}" "${TARGET_VM}:/tmp/p176-runtime-capability.env"
   gcloud compute ssh "${TARGET_VM}" \
     --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet \
     --command "sudo install -d -m 0755 /opt/opscat/p176-live/workload && sudo tar -xzf /tmp/p176-target-runtime.tgz -C /opt/opscat/p176-live/workload && sudo install -m 0400 /tmp/p176-runtime-capability.env /opt/opscat/p176-live/runtime-capability.env && sudo rm -f /tmp/p176-target-runtime.tgz /tmp/p176-runtime-capability.env && sudo docker compose --env-file /opt/opscat/p176-live/runtime-capability.env --project-directory /opt/opscat/p176-live/workload -f /opt/opscat/p176-live/workload/docker-compose.yml -f /opt/opscat/p176-live/workload/docker-compose.runtime.yml up -d --remove-orphans --force-recreate"
 
-  gcloud compute scp "${observer_bundle}" "${OBSERVER_VM}:/tmp/p176-observer-runtime.tgz" \
-    --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet
+  retry_iap_scp "${observer_bundle}" "${OBSERVER_VM}:/tmp/p176-observer-runtime.tgz"
   gcloud compute ssh "${OBSERVER_VM}" \
     --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet \
     --command "sudo install -d -m 0755 /opt/opscat/p176-live/observer && sudo tar -xzf /tmp/p176-observer-runtime.tgz -C /opt/opscat/p176-live/observer && sudo chmod 0755 /opt/opscat/p176-live/observer && sudo chmod 0444 /opt/opscat/p176-live/observer/telemetry_collector.py && sudo chmod 0400 /opt/opscat/p176-live/observer/docker-compose.yml && sudo rm -f /tmp/p176-observer-runtime.tgz && sudo docker compose --project-directory /opt/opscat/p176-live/observer -f /opt/opscat/p176-live/observer/docker-compose.yml up -d --remove-orphans --force-recreate"

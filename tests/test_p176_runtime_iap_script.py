@@ -57,6 +57,11 @@ def test_runtime_iap_script_keeps_p176_live_iap_and_no_terraform_mutation_contra
     assert '"http://127.0.0.1:${observer_local_port}/v1/capabilities" "observer evidence API"' in script
     assert 'mktemp -d "${TMPDIR:-/tmp}/p176-runtime-deploy.XXXXXX"' in script
     assert "runtime-deploy-bundles" not in script
+    assert "retry_iap_scp" in script
+    assert 'P176_IAP_RETRY_BASE_SECONDS:-2' in script
+    assert '--scp-flag="-oConnectTimeout=15"' in script
+    assert '--scp-flag="-oServerAliveInterval=10"' in script
+    assert '--scp-flag="-oServerAliveCountMax=3"' in script
 
 
 def test_runtime_plan_is_digest_bound_and_rejects_wrong_project(tmp_path: Path) -> None:
@@ -113,6 +118,8 @@ def test_runtime_run_uses_fake_iap_tunnels_and_invokes_bridge_without_real_gcp(t
     env["EXPECTED_P176_RUNTIME_PLAN_SHA256"] = plan_sha
     env["P176_RUNTIME_RUN_DIR"] = str(run_dir)
     env["PYTHON_BIN"] = "python3"
+    env["P176_IAP_RETRY_BASE_SECONDS"] = "0"
+    env["FAKE_GCLOUD_FAIL_FIRST_SCP_MARKER"] = str(tmp_path / "first-scp-failed")
     result = subprocess.run([str(RUNTIME_IAP), "run"], env=env, text=True, capture_output=True, check=False, timeout=20)
 
     assert result.returncode == 0, result.stderr
@@ -124,7 +131,8 @@ def test_runtime_run_uses_fake_iap_tunnels_and_invokes_bridge_without_real_gcp(t
     assert all("--tunnel-through-iap" in call["args"] for call in tunnel_calls)
     assert any("p176-live-target" in call["args"] for call in tunnel_calls)
     assert any("p176-live-observer" in call["args"] for call in tunnel_calls)
-    assert sum("scp" in call["args"] for call in deploy_calls) == 3
+    assert sum("scp" in call["args"] for call in deploy_calls) == 4
+    assert all("--scp-flag=-oConnectTimeout=15" in call["args"] for call in deploy_calls if "scp" in call["args"])
     assert sum("ssh" in call["args"] for call in deploy_calls) >= 3
     assert any("docker compose" in " ".join(call["args"]) and "p176-live-target" in call["args"] for call in deploy_calls)
     assert any("docker compose" in " ".join(call["args"]) and "p176-live-observer" in call["args"] for call in deploy_calls)
@@ -354,6 +362,10 @@ set -euo pipefail
 {_log_line("gcloud", command_log)}
 if [[ " $* " == *" -N "* ]]; then
   while true; do sleep 1; done
+fi
+if [[ " $* " == *" scp "* && -n "${{FAKE_GCLOUD_FAIL_FIRST_SCP_MARKER:-}}" && ! -e "${{FAKE_GCLOUD_FAIL_FIRST_SCP_MARKER}}" ]]; then
+  touch "${{FAKE_GCLOUD_FAIL_FIRST_SCP_MARKER}}"
+  exit 75
 fi
 exit 0
 """,

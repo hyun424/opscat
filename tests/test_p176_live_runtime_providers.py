@@ -161,6 +161,29 @@ class _FakeClient:
         self.chat = type("Chat", (), {"completions": completions})()
 
 
+class _TransientProviderError(RuntimeError):
+    status_code = 503
+
+
+class _SequencedCompletions:
+    def __init__(self, outcomes: list[Exception | _FakeCompletion]) -> None:
+        self.outcomes = outcomes
+        self.calls = 0
+
+    def create(self, **_kwargs: Any) -> _FakeCompletion:
+        outcome = self.outcomes[self.calls]
+        self.calls += 1
+        if isinstance(outcome, Exception):
+            raise outcome
+        return outcome
+
+
+class _SequencedClient:
+    def __init__(self, outcomes: list[Exception | _FakeCompletion]) -> None:
+        self.completions = _SequencedCompletions(outcomes)
+        self.chat = type("Chat", (), {"completions": self.completions})()
+
+
 def test_nvidia_agent_is_advisory_json_only_and_rejects_unknown_labels_or_citations() -> None:
     campaign = generate_p176_campaign()
     family_id = campaign["fault_families"][0]["family_id"]
@@ -215,6 +238,82 @@ def test_nvidia_agent_is_advisory_json_only_and_rejects_unknown_labels_or_citati
                 allowed_service_ids=[service_id],
                 client=_FakeClient(json.dumps(bad)),
             ).diagnose(evidence=evidence)
+
+
+def test_nvidia_agent_retries_transient_capacity_errors_with_bounded_exponential_backoff() -> None:
+    campaign = generate_p176_campaign()
+    family_id = campaign["fault_families"][0]["family_id"]
+    service_id = campaign["topology"][0]["service_id"]
+    evidence = {
+        "logs": EvidenceSnapshot(
+            observed_at="2026-07-20T00:00:00Z",
+            received_at="2026-07-20T00:00:01Z",
+            freshness_bound_seconds=60,
+            content_hash=stable_hash("logs-retry"),
+            redaction_receipt_hash=stable_hash("redacted-logs-retry"),
+            summary={"status": "degraded", "signal_codes": ["5xx"]},
+        )
+    }
+    valid = _FakeCompletion(
+        json.dumps(
+            {
+                "incident_detected": True,
+                "diagnosed_family_id": family_id,
+                "routed_service_id": service_id,
+                "confidence": 0.8,
+                "evidence_citations": [evidence["logs"].content_hash],
+                "human_required": False,
+            }
+        )
+    )
+    client = _SequencedClient([_TransientProviderError(), _TransientProviderError(), valid])
+    delays: list[float] = []
+    agent = NvidiaP176DiagnosisAgent(
+        api_key="test-key",
+        allowed_family_ids=[family_id],
+        allowed_service_ids=[service_id],
+        client=client,
+        sleeper=delays.append,
+        jitter=lambda: 0.5,
+    )
+
+    decision = agent.diagnose(evidence=evidence)
+
+    assert decision.diagnosed_family_id == family_id
+    assert client.completions.calls == 3
+    assert delays == [2.0, 4.0]
+
+
+def test_nvidia_agent_fails_closed_after_bounded_transient_retries() -> None:
+    campaign = generate_p176_campaign()
+    family_id = campaign["fault_families"][0]["family_id"]
+    service_id = campaign["topology"][0]["service_id"]
+    evidence = {
+        "logs": EvidenceSnapshot(
+            observed_at="2026-07-20T00:00:00Z",
+            received_at="2026-07-20T00:00:01Z",
+            freshness_bound_seconds=60,
+            content_hash=stable_hash("logs-retry-exhausted"),
+            redaction_receipt_hash=stable_hash("redacted-logs-retry-exhausted"),
+            summary={"status": "degraded", "signal_codes": ["5xx"]},
+        )
+    }
+    client = _SequencedClient([_TransientProviderError() for _ in range(6)])
+    delays: list[float] = []
+    agent = NvidiaP176DiagnosisAgent(
+        api_key="test-key",
+        allowed_family_ids=[family_id],
+        allowed_service_ids=[service_id],
+        client=client,
+        sleeper=delays.append,
+        jitter=lambda: 0.5,
+    )
+
+    with pytest.raises(P176LiveRuntimeError, match="nvidia_transient_retries_exhausted:503"):
+        agent.diagnose(evidence=evidence)
+
+    assert client.completions.calls == 6
+    assert delays == [2.0, 4.0, 8.0, 16.0, 30.0]
 
 
 @dataclass

@@ -9,8 +9,10 @@ from __future__ import annotations
 
 import json
 import os
+import random
 import re
-from collections.abc import Mapping, Sequence
+import time
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -41,6 +43,10 @@ from app.services.p176_runtime_bridge import (
 
 MAX_HTTP_RESPONSE_BYTES = 64 * 1024
 HTTP_TIMEOUT_SECONDS = 10.0
+NVIDIA_TRANSIENT_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
+NVIDIA_MAX_ATTEMPTS = 6
+NVIDIA_RETRY_BASE_SECONDS = 2.0
+NVIDIA_RETRY_MAX_SECONDS = 30.0
 DECISION_FIELDS = frozenset(
     {
         "incident_detected",
@@ -253,6 +259,8 @@ class NvidiaP176DiagnosisAgent:
         allowed_service_ids: Sequence[str],
         client: Any | None = None,
         model: str = NVIDIA_DEFAULT_MODEL,
+        sleeper: Callable[[float], None] = time.sleep,
+        jitter: Callable[[], float] = random.random,
     ) -> None:
         if not api_key:
             raise P176LiveRuntimeError("nvidia_api_key_required")
@@ -263,6 +271,8 @@ class NvidiaP176DiagnosisAgent:
         self._allowed_service_ids = frozenset(str(item) for item in allowed_service_ids)
         self._client = client
         self.model = model
+        self._sleeper = sleeper
+        self._jitter = jitter
 
     def diagnose(self, *, evidence: Mapping[str, EvidenceSnapshot]) -> P176DiagnosisDecision:
         if not evidence:
@@ -299,24 +309,42 @@ class NvidiaP176DiagnosisAgent:
                 ),
             },
         ]
-        completion = (self._client or self._build_client()).chat.completions.create(
-            model=self.model,
-            messages=messages,
-            temperature=1,
-            top_p=0.95,
-            max_tokens=NVIDIA_MAX_TOKENS,
-            extra_body={
-                "chat_template_kwargs": {"enable_thinking": True},
-                "reasoning_budget": NVIDIA_REASONING_BUDGET,
-            },
-            stream=False,
-        )
+        completion = self._request_completion(messages)
         raw = _completion_text(completion)
         try:
             parsed = json.loads(raw)
         except json.JSONDecodeError as exc:
             raise P176LiveRuntimeError("diagnosis_json_invalid") from exc
         return self._validate_decision(parsed, evidence=evidence)
+
+    def _request_completion(self, messages: list[dict[str, str]]) -> Any:
+        client = self._client or self._build_client()
+        for attempt in range(NVIDIA_MAX_ATTEMPTS):
+            try:
+                return client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    temperature=1,
+                    top_p=0.95,
+                    max_tokens=NVIDIA_MAX_TOKENS,
+                    extra_body={
+                        "chat_template_kwargs": {"enable_thinking": True},
+                        "reasoning_budget": NVIDIA_REASONING_BUDGET,
+                    },
+                    stream=False,
+                )
+            except Exception as exc:
+                status_code = getattr(exc, "status_code", None)
+                if status_code not in NVIDIA_TRANSIENT_STATUS_CODES:
+                    raise P176LiveRuntimeError("nvidia_request_failed") from exc
+                if attempt == NVIDIA_MAX_ATTEMPTS - 1:
+                    raise P176LiveRuntimeError(
+                        f"nvidia_transient_retries_exhausted:{status_code}"
+                    ) from exc
+                jitter_factor = 0.75 + (0.5 * min(max(float(self._jitter()), 0.0), 1.0))
+                delay = min(NVIDIA_RETRY_MAX_SECONDS, NVIDIA_RETRY_BASE_SECONDS * (2**attempt) * jitter_factor)
+                self._sleeper(delay)
+        raise AssertionError("unreachable")
 
     def _validate_decision(
         self,

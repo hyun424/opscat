@@ -141,8 +141,14 @@ class _FakeMessage:
 
 
 class _FakeCompletion:
-    def __init__(self, content: str) -> None:
-        self.choices = [type("Choice", (), {"message": _FakeMessage(content)})()]
+    def __init__(self, content: str, *, finish_reason: str = "stop") -> None:
+        self.choices = [
+            type(
+                "Choice",
+                (),
+                {"message": _FakeMessage(content), "finish_reason": finish_reason},
+            )()
+        ]
 
 
 class _FakeCompletions:
@@ -168,11 +174,11 @@ class _TransientProviderError(RuntimeError):
 class _SequencedCompletions:
     def __init__(self, outcomes: list[Exception | _FakeCompletion]) -> None:
         self.outcomes = outcomes
-        self.calls = 0
+        self.calls: list[dict[str, Any]] = []
 
-    def create(self, **_kwargs: Any) -> _FakeCompletion:
-        outcome = self.outcomes[self.calls]
-        self.calls += 1
+    def create(self, **kwargs: Any) -> _FakeCompletion:
+        outcome = self.outcomes[len(self.calls)]
+        self.calls.append(kwargs)
         if isinstance(outcome, Exception):
             raise outcome
         return outcome
@@ -224,7 +230,8 @@ def test_nvidia_agent_is_advisory_json_only_and_rejects_unknown_labels_or_citati
     assert "fault_verb" not in prompt
     assert call["stream"] is False
     assert call["temperature"] == 0.0
-    assert call["max_tokens"] == 512
+    assert call["max_tokens"] == 1024
+    assert call["response_format"] == {"type": "json_object"}
     assert call["extra_body"] == {
         "chat_template_kwargs": {"enable_thinking": True},
         "reasoning_budget": 64,
@@ -286,7 +293,7 @@ def test_nvidia_agent_retries_transient_capacity_errors_with_bounded_exponential
     decision = agent.diagnose(evidence=evidence)
 
     assert decision.diagnosed_family_id == family_id
-    assert client.completions.calls == 3
+    assert len(client.completions.calls) == 3
     assert delays == [2.0, 4.0]
 
 
@@ -318,8 +325,84 @@ def test_nvidia_agent_fails_closed_after_bounded_transient_retries() -> None:
     with pytest.raises(P176LiveRuntimeError, match="nvidia_transient_retries_exhausted:503"):
         agent.diagnose(evidence=evidence)
 
-    assert client.completions.calls == 6
+    assert len(client.completions.calls) == 6
     assert delays == [2.0, 4.0, 8.0, 16.0, 30.0]
+
+
+def test_nvidia_agent_repairs_one_truncated_json_response_without_thinking() -> None:
+    campaign = generate_p176_campaign()
+    family_id = campaign["fault_families"][0]["family_id"]
+    service_id = campaign["topology"][0]["service_id"]
+    evidence = {
+        "logs": EvidenceSnapshot(
+            observed_at="2026-07-20T00:00:00Z",
+            received_at="2026-07-20T00:00:01Z",
+            freshness_bound_seconds=60,
+            content_hash=stable_hash("logs-repair"),
+            redaction_receipt_hash=stable_hash("redacted-logs-repair"),
+            summary={"status": "degraded", "signal_codes": ["5xx"]},
+        )
+    }
+    valid = json.dumps(
+        {
+            "incident_detected": True,
+            "diagnosed_family_id": family_id,
+            "routed_service_id": service_id,
+            "confidence": 0.82,
+            "evidence_citations": [evidence["logs"].content_hash],
+            "human_required": False,
+        }
+    )
+    client = _SequencedClient(
+        [
+            _FakeCompletion('{"incident_detected": true, "diagnosed_family_id": "', finish_reason="length"),
+            _FakeCompletion(valid),
+        ]
+    )
+    agent = NvidiaP176DiagnosisAgent(
+        api_key="test-key",
+        allowed_family_ids=[family_id],
+        allowed_service_ids=[service_id],
+        client=client,
+    )
+
+    decision = agent.diagnose(evidence=evidence)
+
+    assert decision.diagnosed_family_id == family_id
+    assert len(client.completions.calls) == 2
+    repair_call = client.completions.calls[1]
+    assert repair_call["max_tokens"] == 1024
+    assert repair_call["response_format"] == {"type": "json_object"}
+    assert repair_call["extra_body"] == {"chat_template_kwargs": {"enable_thinking": False}}
+    assert "Previous response was incomplete" in repair_call["messages"][-1]["content"]
+
+
+def test_nvidia_agent_fails_closed_after_one_invalid_json_repair() -> None:
+    campaign = generate_p176_campaign()
+    family_id = campaign["fault_families"][0]["family_id"]
+    service_id = campaign["topology"][0]["service_id"]
+    evidence = {
+        "logs": EvidenceSnapshot(
+            observed_at="2026-07-20T00:00:00Z",
+            received_at="2026-07-20T00:00:01Z",
+            freshness_bound_seconds=60,
+            content_hash=stable_hash("logs-invalid-repair"),
+            redaction_receipt_hash=stable_hash("redacted-logs-invalid-repair"),
+            summary={"status": "degraded", "signal_codes": ["5xx"]},
+        )
+    }
+    client = _SequencedClient([_FakeCompletion("{"), _FakeCompletion("still-not-json")])
+    agent = NvidiaP176DiagnosisAgent(
+        api_key="test-key",
+        allowed_family_ids=[family_id],
+        allowed_service_ids=[service_id],
+        client=client,
+    )
+
+    with pytest.raises(P176LiveRuntimeError, match="diagnosis_json_invalid"):
+        agent.diagnose(evidence=evidence)
+
+    assert len(client.completions.calls) == 2
 
 
 @dataclass

@@ -45,7 +45,7 @@ NVIDIA_TRANSIENT_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
 NVIDIA_MAX_ATTEMPTS = 6
 NVIDIA_RETRY_BASE_SECONDS = 2.0
 NVIDIA_RETRY_MAX_SECONDS = 30.0
-P176_NVIDIA_MAX_TOKENS = 512
+P176_NVIDIA_MAX_TOKENS = 1024
 P176_NVIDIA_REASONING_BUDGET = 64
 P176_NVIDIA_HTTP_TIMEOUT_SECONDS = 90.0
 DECISION_FIELDS = frozenset(
@@ -310,15 +310,30 @@ class NvidiaP176DiagnosisAgent:
                 ),
             },
         ]
-        completion = self._request_completion(messages)
+        completion = self._request_completion(messages, repair=False)
         raw = _completion_text(completion)
         try:
             parsed = json.loads(raw)
-        except json.JSONDecodeError as exc:
-            raise P176LiveRuntimeError("diagnosis_json_invalid") from exc
+        except json.JSONDecodeError:
+            repair_messages = [
+                *messages,
+                {
+                    "role": "user",
+                    "content": (
+                        "Previous response was incomplete or invalid JSON. Regenerate the complete "
+                        "decision from the same evidence. Return one JSON object only, with exactly "
+                        "the six required fields and no commentary."
+                    ),
+                },
+            ]
+            repaired = self._request_completion(repair_messages, repair=True)
+            try:
+                parsed = json.loads(_completion_text(repaired))
+            except json.JSONDecodeError as exc:
+                raise P176LiveRuntimeError("diagnosis_json_invalid") from exc
         return self._validate_decision(parsed, evidence=evidence)
 
-    def _request_completion(self, messages: list[dict[str, str]]) -> Any:
+    def _request_completion(self, messages: list[dict[str, str]], *, repair: bool) -> Any:
         client = self._client or self._build_client()
         for attempt in range(NVIDIA_MAX_ATTEMPTS):
             try:
@@ -328,10 +343,15 @@ class NvidiaP176DiagnosisAgent:
                     temperature=0.0,
                     top_p=0.95,
                     max_tokens=P176_NVIDIA_MAX_TOKENS,
-                    extra_body={
-                        "chat_template_kwargs": {"enable_thinking": True},
-                        "reasoning_budget": P176_NVIDIA_REASONING_BUDGET,
-                    },
+                    response_format={"type": "json_object"},
+                    extra_body=(
+                        {"chat_template_kwargs": {"enable_thinking": False}}
+                        if repair
+                        else {
+                            "chat_template_kwargs": {"enable_thinking": True},
+                            "reasoning_budget": P176_NVIDIA_REASONING_BUDGET,
+                        }
+                    ),
                     stream=False,
                 )
             except Exception as exc:

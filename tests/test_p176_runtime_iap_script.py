@@ -62,6 +62,9 @@ def test_runtime_iap_script_keeps_p176_live_iap_and_no_terraform_mutation_contra
     assert '--scp-flag="-oConnectTimeout=15"' in script
     assert '--scp-flag="-oServerAliveInterval=10"' in script
     assert '--scp-flag="-oServerAliveCountMax=3"' in script
+    assert "prepare_remote_upload_paths" in script
+    assert "sudo rm -f /tmp/p176-target-runtime.tgz /tmp/p176-runtime-capability.env" in script
+    assert "sudo rm -f /tmp/p176-observer-runtime.tgz" in script
 
 
 def test_runtime_plan_is_digest_bound_and_rejects_wrong_project(tmp_path: Path) -> None:
@@ -133,6 +136,8 @@ def test_runtime_run_uses_fake_iap_tunnels_and_invokes_bridge_without_real_gcp(t
     assert any("p176-live-observer" in call["args"] for call in tunnel_calls)
     assert sum("scp" in call["args"] for call in deploy_calls) == 4
     assert all("--scp-flag=-oConnectTimeout=15" in call["args"] for call in deploy_calls if "scp" in call["args"])
+    first_scp = next(index for index, call in enumerate(deploy_calls) if "scp" in call["args"])
+    assert any("sudo rm -f /tmp/p176-target-runtime.tgz" in " ".join(call["args"]) for call in deploy_calls[:first_scp])
     assert sum("ssh" in call["args"] for call in deploy_calls) >= 3
     assert any("docker compose" in " ".join(call["args"]) and "p176-live-target" in call["args"] for call in deploy_calls)
     assert any("docker compose" in " ".join(call["args"]) and "p176-live-observer" in call["args"] for call in deploy_calls)

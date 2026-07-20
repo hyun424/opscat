@@ -302,6 +302,21 @@ retry_iap_scp() {
   die "IAP SCP failed after bounded retries"
 }
 
+prepare_remote_upload_paths() {
+  gcloud compute ssh "${TARGET_VM}" \
+    --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet \
+    --ssh-flag="-oConnectTimeout=15" \
+    --ssh-flag="-oServerAliveInterval=10" \
+    --ssh-flag="-oServerAliveCountMax=3" \
+    --command "sudo rm -f /tmp/p176-target-runtime.tgz /tmp/p176-runtime-capability.env"
+  gcloud compute ssh "${OBSERVER_VM}" \
+    --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet \
+    --ssh-flag="-oConnectTimeout=15" \
+    --ssh-flag="-oServerAliveInterval=10" \
+    --ssh-flag="-oServerAliveCountMax=3" \
+    --command "sudo rm -f /tmp/p176-observer-runtime.tgz"
+}
+
 materialize_reviewed_artifacts() {
   local run_dir="$1"
   [[ ! -L "${run_dir}" ]] || die "P176_RUNTIME_RUN_DIR must not be a symlink"
@@ -338,6 +353,7 @@ deploy_runtime_services() (
   tar -C "${observer_staging}" -czf "${observer_bundle}" .
   chmod 0400 "${target_bundle}" "${observer_bundle}"
 
+  prepare_remote_upload_paths
   retry_iap_scp "${target_bundle}" "${TARGET_VM}:/tmp/p176-target-runtime.tgz"
   retry_iap_scp "${capability_file}" "${TARGET_VM}:/tmp/p176-runtime-capability.env"
   gcloud compute ssh "${TARGET_VM}" \

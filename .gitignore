@@ -132,6 +132,7 @@ infra/gcp/p176-cost-cutoff/*.log
 lab/p176/live/.env
 lab/p176/live/runtime/
 evals/p176/live/
+evals/p176/live-runtime/
 
 # P176 G001 public evidence may contain only redacted review JSON. Keep raw
 # plans, plan JSON, logs, tfvars, and digest sidecars in local Terraform

@@ -173,6 +173,10 @@ class _TransientProviderError(RuntimeError):
     status_code = 503
 
 
+class _PermanentProviderError(RuntimeError):
+    status_code = 400
+
+
 class _SequencedCompletions:
     def __init__(self, outcomes: list[Exception | _FakeCompletion]) -> None:
         self.outcomes = outcomes
@@ -306,6 +310,48 @@ def test_nvidia_agent_retries_transient_capacity_errors_with_bounded_exponential
     assert delays == [2.0, 4.0]
 
 
+def test_nvidia_agent_retries_transient_transport_timeouts() -> None:
+    campaign = generate_p176_campaign()
+    family_id = campaign["fault_families"][0]["family_id"]
+    service_id = campaign["topology"][0]["service_id"]
+    evidence = {
+        "logs": EvidenceSnapshot(
+            observed_at="2026-07-20T00:00:00Z",
+            received_at="2026-07-20T00:00:01Z",
+            freshness_bound_seconds=60,
+            content_hash=stable_hash("logs-timeout-retry"),
+            redaction_receipt_hash=stable_hash("redacted-logs-timeout-retry"),
+            summary={"status": "degraded", "signal_codes": ["5xx"]},
+        )
+    }
+    valid = _FakeCompletion(
+        json.dumps(
+            {
+                "incident_detected": True,
+                "diagnosed_family_id": family_id,
+                "routed_service_id": service_id,
+                "confidence": 0.8,
+                "evidence_citations": [evidence["logs"].content_hash],
+                "human_required": False,
+            }
+        )
+    )
+    client = _SequencedClient([TimeoutError("read timed out"), valid])
+    delays: list[float] = []
+    agent = NvidiaP176DiagnosisAgent(
+        api_key="test-key",
+        allowed_family_ids=[family_id],
+        allowed_service_ids=[service_id],
+        client=client,
+        sleeper=delays.append,
+        jitter=lambda: 0.5,
+    )
+
+    assert agent.diagnose(evidence=evidence).diagnosed_family_id == family_id
+    assert len(client.completions.calls) == 2
+    assert delays == [2.0]
+
+
 def test_nvidia_agent_fails_closed_after_bounded_transient_retries() -> None:
     campaign = generate_p176_campaign()
     family_id = campaign["fault_families"][0]["family_id"]
@@ -336,6 +382,36 @@ def test_nvidia_agent_fails_closed_after_bounded_transient_retries() -> None:
 
     assert len(client.completions.calls) == 6
     assert delays == [2.0, 4.0, 8.0, 16.0, 30.0]
+
+
+def test_nvidia_agent_does_not_retry_permanent_provider_errors() -> None:
+    campaign = generate_p176_campaign()
+    client = _SequencedClient([_PermanentProviderError()])
+    delays: list[float] = []
+    agent = NvidiaP176DiagnosisAgent(
+        api_key="test-key",
+        allowed_family_ids=[campaign["fault_families"][0]["family_id"]],
+        allowed_service_ids=[campaign["topology"][0]["service_id"]],
+        client=client,
+        sleeper=delays.append,
+    )
+
+    with pytest.raises(P176LiveRuntimeError, match="nvidia_request_failed"):
+        agent.diagnose(
+            evidence={
+                "logs": EvidenceSnapshot(
+                    observed_at="2026-07-20T00:00:00Z",
+                    received_at="2026-07-20T00:00:01Z",
+                    freshness_bound_seconds=60,
+                    content_hash=stable_hash("logs-permanent-error"),
+                    redaction_receipt_hash=stable_hash("redacted-logs-permanent-error"),
+                    summary={"status": "degraded", "signal_codes": ["5xx"]},
+                )
+            }
+        )
+
+    assert len(client.completions.calls) == 1
+    assert delays == []
 
 
 def test_nvidia_agent_repairs_one_truncated_json_response_without_thinking() -> None:

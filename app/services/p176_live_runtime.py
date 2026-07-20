@@ -42,6 +42,20 @@ from app.services.p176_runtime_bridge import (
 MAX_HTTP_RESPONSE_BYTES = 64 * 1024
 HTTP_TIMEOUT_SECONDS = 10.0
 NVIDIA_TRANSIENT_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
+NVIDIA_TRANSIENT_TRANSPORT_ERROR_NAMES = frozenset(
+    {
+        "APIConnectionError",
+        "APITimeoutError",
+        "ConnectError",
+        "ConnectTimeout",
+        "PoolTimeout",
+        "ReadError",
+        "ReadTimeout",
+        "RemoteProtocolError",
+        "WriteError",
+        "WriteTimeout",
+    }
+)
 NVIDIA_MAX_ATTEMPTS = 6
 NVIDIA_RETRY_BASE_SECONDS = 2.0
 NVIDIA_RETRY_MAX_SECONDS = 30.0
@@ -368,12 +382,12 @@ class NvidiaP176DiagnosisAgent:
                     stream=False,
                 )
             except Exception as exc:
-                status_code = getattr(exc, "status_code", None)
-                if status_code not in NVIDIA_TRANSIENT_STATUS_CODES:
+                transient_reason = _nvidia_transient_reason(exc)
+                if transient_reason is None:
                     raise P176LiveRuntimeError("nvidia_request_failed") from exc
                 if attempt == NVIDIA_MAX_ATTEMPTS - 1:
                     raise P176LiveRuntimeError(
-                        f"nvidia_transient_retries_exhausted:{status_code}"
+                        f"nvidia_transient_retries_exhausted:{transient_reason}"
                     ) from exc
                 jitter_factor = 0.75 + (0.5 * min(max(float(self._jitter()), 0.0), 1.0))
                 delay = min(NVIDIA_RETRY_MAX_SECONDS, NVIDIA_RETRY_BASE_SECONDS * (2**attempt) * jitter_factor)
@@ -833,6 +847,26 @@ def _completion_text(completion: Any) -> str:
     if not isinstance(content, str) or not content.strip():
         raise P176LiveRuntimeError("diagnosis_completion_invalid")
     return content.strip()
+
+
+def _nvidia_transient_reason(exc: Exception) -> str | None:
+    status_code = getattr(exc, "status_code", None)
+    if status_code is not None:
+        return str(status_code) if status_code in NVIDIA_TRANSIENT_STATUS_CODES else None
+    current: BaseException | None = exc
+    seen: set[int] = set()
+    while current is not None and id(current) not in seen:
+        seen.add(id(current))
+        if isinstance(current, (TimeoutError, ConnectionError, OSError)):
+            return "transport"
+        error_type = type(current)
+        if (
+            error_type.__name__ in NVIDIA_TRANSIENT_TRANSPORT_ERROR_NAMES
+            and error_type.__module__.split(".", 1)[0] in {"openai", "httpx", "httpcore"}
+        ):
+            return "transport"
+        current = current.__cause__ or current.__context__
+    return None
 
 
 def _diagnosis_json_schema(*, family_ids: Collection[str], service_ids: Collection[str]) -> dict[str, Any]:

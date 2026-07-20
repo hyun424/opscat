@@ -223,6 +223,12 @@ def test_nvidia_agent_is_advisory_json_only_and_rejects_unknown_labels_or_citati
     assert "evaluator_truth" not in prompt
     assert "fault_verb" not in prompt
     assert call["stream"] is False
+    assert call["temperature"] == 0.0
+    assert call["max_tokens"] == 512
+    assert call["extra_body"] == {
+        "chat_template_kwargs": {"enable_thinking": True},
+        "reasoning_budget": 64,
+    }
 
     for field, value, error in (
         ("diagnosed_family_id", "unknown-family", "diagnosed_family_id_invalid"),

@@ -24,8 +24,6 @@ from urllib.parse import urlencode, urlsplit
 from app.services.llm_judgment import (
     NVIDIA_BASE_URL,
     NVIDIA_DEFAULT_MODEL,
-    NVIDIA_MAX_TOKENS,
-    NVIDIA_REASONING_BUDGET,
 )
 from app.services.p147_p152_contracts import stable_hash
 from app.services.p176_live_bridge import LIVE_SAFETY_COUNTER_KEYS
@@ -47,6 +45,9 @@ NVIDIA_TRANSIENT_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
 NVIDIA_MAX_ATTEMPTS = 6
 NVIDIA_RETRY_BASE_SECONDS = 2.0
 NVIDIA_RETRY_MAX_SECONDS = 30.0
+P176_NVIDIA_MAX_TOKENS = 512
+P176_NVIDIA_REASONING_BUDGET = 64
+P176_NVIDIA_HTTP_TIMEOUT_SECONDS = 90.0
 DECISION_FIELDS = frozenset(
     {
         "incident_detected",
@@ -324,12 +325,12 @@ class NvidiaP176DiagnosisAgent:
                 return client.chat.completions.create(
                     model=self.model,
                     messages=messages,
-                    temperature=1,
+                    temperature=0.0,
                     top_p=0.95,
-                    max_tokens=NVIDIA_MAX_TOKENS,
+                    max_tokens=P176_NVIDIA_MAX_TOKENS,
                     extra_body={
                         "chat_template_kwargs": {"enable_thinking": True},
-                        "reasoning_budget": NVIDIA_REASONING_BUDGET,
+                        "reasoning_budget": P176_NVIDIA_REASONING_BUDGET,
                     },
                     stream=False,
                 )
@@ -387,7 +388,12 @@ class NvidiaP176DiagnosisAgent:
             from openai import OpenAI
         except ImportError as exc:
             raise P176LiveRuntimeError("openai_client_not_installed") from exc
-        return OpenAI(base_url=NVIDIA_BASE_URL, api_key=self._api_key, timeout=180.0, max_retries=0)
+        return OpenAI(
+            base_url=NVIDIA_BASE_URL,
+            api_key=self._api_key,
+            timeout=P176_NVIDIA_HTTP_TIMEOUT_SECONDS,
+            max_retries=0,
+        )
 
 
 class HttpFaultHarness:

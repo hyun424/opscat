@@ -60,11 +60,20 @@ and ([.resource_changes[]
       and .change.after.source_tags == ["opscat-p176-live-observer"]
       and .change.after.target_tags == ["opscat-p176-live-target"]
       and ((.change.after.allow // []) | length) == 1
-      and any(.change.after.allow[]; .protocol == "tcp" and (.ports | sort) == ["3100", "8000", "8020", "9090"])
+      and any(.change.after.allow[]; .protocol == "tcp" and .ports == ["8000"])
       and ((.change.after.deny // []) | length) == 0)] | length) == 1)
 and ([.resource_changes[]
   | select(.type == "google_compute_firewall" and .change.after.direction == "EGRESS")] as $egress
-  | ($egress | length) == 2
+  | ($egress | length) == 3
+    and ([$egress[] | select(.name == "observer_to_target_private_egress"
+      and .change.after.name == "p176-live-observer-to-target-private-egress"
+      and .change.after.project == $project
+      and .change.after.priority == 900
+      and .change.after.destination_ranges == ["10.176.0.10/32"]
+      and .change.after.target_tags == ["opscat-p176-live-observer"]
+      and ((.change.after.allow // []) | length) == 1
+      and any(.change.after.allow[]; .protocol == "tcp" and .ports == ["8000"])
+      and ((.change.after.deny // []) | length) == 0)] | length) == 1
     and ([$egress[] | select(.name == "bounded_web_dns_egress"
       and .change.after.name == "p176-live-bounded-web-dns-egress"
       and .change.after.project == $project

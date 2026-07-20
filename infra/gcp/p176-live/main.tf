@@ -152,7 +152,23 @@ resource "google_compute_firewall" "observer_to_target_private" {
 
   allow {
     protocol = "tcp"
-    ports    = ["8000", "8020", "9090", "3100"]
+    ports    = ["8000"]
+  }
+}
+
+resource "google_compute_firewall" "observer_to_target_private_egress" {
+  project = var.project_id
+  name    = "p176-live-observer-to-target-private-egress"
+  network = google_compute_network.p176_live.name
+
+  direction          = "EGRESS"
+  priority           = 900
+  destination_ranges = ["10.176.0.10/32"]
+  target_tags        = ["opscat-p176-live-observer"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8000"]
   }
 }
 

@@ -105,7 +105,13 @@ def test_p176_live_network_has_bounded_cloud_nat_and_web_dns_egress_only() -> No
     assert terraform.count("google_compute_firewall.deny_other_egress") == 2
     assert 'name    = "p176-live-bounded-web-dns-egress"' in terraform
     assert 'name    = "p176-live-deny-other-egress"' in terraform
-    assert terraform.count('direction          = "EGRESS"') == 2
+    assert terraform.count('direction          = "EGRESS"') == 3
+    assert 'resource "google_compute_firewall" "observer_to_target_private_egress"' in terraform
+    assert 'name    = "p176-live-observer-to-target-private-egress"' in terraform
+    assert 'destination_ranges = ["10.176.0.10/32"]' in terraform
+    assert 'target_tags        = ["opscat-p176-live-observer"]' in terraform
+    assert 'ports    = ["8000"]' in terraform
+    assert 'ports    = ["8000", "8020", "9090", "3100"]' not in terraform
     assert 'ports    = ["53", "80", "443"]' in terraform
     assert 'ports    = ["53"]' in terraform
     assert 'protocol = "all"' in terraform
@@ -847,7 +853,21 @@ def _valid_apply_plan() -> dict[str, Any]:
                     "source_ranges": [],
                     "source_tags": ["opscat-p176-live-observer"],
                     "target_tags": ["opscat-p176-live-target"],
-                    "allow": [{"protocol": "tcp", "ports": ["8000", "8020", "9090", "3100"]}],
+                    "allow": [{"protocol": "tcp", "ports": ["8000"]}],
+                    "deny": [],
+                },
+            ),
+            _change(
+                "google_compute_firewall",
+                "observer_to_target_private_egress",
+                {
+                    "project": PROJECT_ID,
+                    "name": "p176-live-observer-to-target-private-egress",
+                    "direction": "EGRESS",
+                    "priority": 900,
+                    "destination_ranges": ["10.176.0.10/32"],
+                    "target_tags": ["opscat-p176-live-observer"],
+                    "allow": [{"protocol": "tcp", "ports": ["8000"]}],
                     "deny": [],
                 },
             ),

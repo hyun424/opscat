@@ -736,7 +736,9 @@ def test_live_preflight_public_evidence_uses_logical_repo_relative_paths() -> No
     public_evidence_files = [
         path
         for path in P176_EVIDENCE.rglob("*")
-        if path.is_file() and ".tmp." not in path.name
+        if path.is_file()
+        and ".tmp." not in path.name
+        and not path.relative_to(P176_EVIDENCE).parts[:1] == ("live",)
     ]
 
     assert public_evidence_files

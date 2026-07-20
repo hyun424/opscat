@@ -53,6 +53,10 @@ def test_runtime_iap_script_keeps_p176_live_iap_and_no_terraform_mutation_contra
     assert 'chmod 0444 "${observer_staging}/telemetry_collector.py"' in script
     assert "sudo chmod 0755 /opt/opscat/p176-live/observer" in script
     assert "sudo chmod 0444 /opt/opscat/p176-live/observer/telemetry_collector.py" in script
+    assert script.count("up -d --remove-orphans --force-recreate") == 2
+    assert '"http://127.0.0.1:${observer_local_port}/v1/capabilities" "observer evidence API"' in script
+    assert 'mktemp -d "${TMPDIR:-/tmp}/p176-runtime-deploy.XXXXXX"' in script
+    assert "runtime-deploy-bundles" not in script
 
 
 def test_runtime_plan_is_digest_bound_and_rejects_wrong_project(tmp_path: Path) -> None:

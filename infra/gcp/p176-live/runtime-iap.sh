@@ -298,14 +298,15 @@ materialize_reviewed_artifacts() {
   copy_reviewed_artifact "${REVIEWED_COST_CUTOFF_DESTROY_PLAN_ARTIFACT}" "${REVIEWED_COST_CUTOFF_DESTROY_PLAN_SHA256}" "${RUN_REVIEWED_COST_CUTOFF_DESTROY_PLAN_ARTIFACT}" "cost-cutoff-destroy"
 }
 
-deploy_runtime_services() {
-  local run_dir="$1"
-  local capability_file="$2"
-  local bundle_dir="${run_dir}/runtime-deploy-bundles"
+deploy_runtime_services() (
+  local capability_file="$1"
+  local bundle_dir
+  bundle_dir="$(mktemp -d "${TMPDIR:-/tmp}/p176-runtime-deploy.XXXXXX")"
+  chmod 0700 "${bundle_dir}"
+  trap 'rm -rf -- "${bundle_dir}"' EXIT
   local observer_staging="${bundle_dir}/observer"
   local target_bundle="${bundle_dir}/target-runtime.tgz"
   local observer_bundle="${bundle_dir}/observer-runtime.tgz"
-  mkdir -m 0700 "${bundle_dir}"
   mkdir -m 0700 "${observer_staging}"
 
   tar -C "${LIVE_LAB_DIR}" -czf "${target_bundle}" .
@@ -322,14 +323,14 @@ deploy_runtime_services() {
     --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet
   gcloud compute ssh "${TARGET_VM}" \
     --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet \
-    --command "sudo install -d -m 0755 /opt/opscat/p176-live/workload && sudo tar -xzf /tmp/p176-target-runtime.tgz -C /opt/opscat/p176-live/workload && sudo install -m 0400 /tmp/p176-runtime-capability.env /opt/opscat/p176-live/runtime-capability.env && sudo rm -f /tmp/p176-target-runtime.tgz /tmp/p176-runtime-capability.env && sudo docker compose --env-file /opt/opscat/p176-live/runtime-capability.env --project-directory /opt/opscat/p176-live/workload -f /opt/opscat/p176-live/workload/docker-compose.yml -f /opt/opscat/p176-live/workload/docker-compose.runtime.yml up -d --remove-orphans"
+    --command "sudo install -d -m 0755 /opt/opscat/p176-live/workload && sudo tar -xzf /tmp/p176-target-runtime.tgz -C /opt/opscat/p176-live/workload && sudo install -m 0400 /tmp/p176-runtime-capability.env /opt/opscat/p176-live/runtime-capability.env && sudo rm -f /tmp/p176-target-runtime.tgz /tmp/p176-runtime-capability.env && sudo docker compose --env-file /opt/opscat/p176-live/runtime-capability.env --project-directory /opt/opscat/p176-live/workload -f /opt/opscat/p176-live/workload/docker-compose.yml -f /opt/opscat/p176-live/workload/docker-compose.runtime.yml up -d --remove-orphans --force-recreate"
 
   gcloud compute scp "${observer_bundle}" "${OBSERVER_VM}:/tmp/p176-observer-runtime.tgz" \
     --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet
   gcloud compute ssh "${OBSERVER_VM}" \
     --project "${PROJECT_ID}" --zone "${ZONE}" --tunnel-through-iap --quiet \
-    --command "sudo install -d -m 0755 /opt/opscat/p176-live/observer && sudo tar -xzf /tmp/p176-observer-runtime.tgz -C /opt/opscat/p176-live/observer && sudo chmod 0755 /opt/opscat/p176-live/observer && sudo chmod 0444 /opt/opscat/p176-live/observer/telemetry_collector.py && sudo chmod 0400 /opt/opscat/p176-live/observer/docker-compose.yml && sudo rm -f /tmp/p176-observer-runtime.tgz && sudo docker compose --project-directory /opt/opscat/p176-live/observer -f /opt/opscat/p176-live/observer/docker-compose.yml up -d --remove-orphans"
-}
+    --command "sudo install -d -m 0755 /opt/opscat/p176-live/observer && sudo tar -xzf /tmp/p176-observer-runtime.tgz -C /opt/opscat/p176-live/observer && sudo chmod 0755 /opt/opscat/p176-live/observer && sudo chmod 0444 /opt/opscat/p176-live/observer/telemetry_collector.py && sudo chmod 0400 /opt/opscat/p176-live/observer/docker-compose.yml && sudo rm -f /tmp/p176-observer-runtime.tgz && sudo docker compose --project-directory /opt/opscat/p176-live/observer -f /opt/opscat/p176-live/observer/docker-compose.yml up -d --remove-orphans --force-recreate"
+)
 
 new_capability_file() {
   local path
@@ -425,7 +426,7 @@ run_runtime_entry() {
   [[ "${capability_token}" =~ ^[0-9a-f]{64}$ ]] || die "failed to create runtime capability"
   printf -v cleanup_cmd 'rm -f -- %q' "${capability_file}"
   trap "${cleanup_cmd}" EXIT
-  deploy_runtime_services "${run_dir}" "${capability_file}"
+  deploy_runtime_services "${capability_file}"
 
   target_local_port="$(allocate_loopback_port)"
   observer_local_port="$(allocate_loopback_port)"
@@ -441,6 +442,7 @@ run_runtime_entry() {
   trap "${cleanup_cmd}" EXIT
   wait_loopback_ready "${target_pid}" "${target_log}" "http://127.0.0.1:${target_local_port}/health" "target"
   wait_loopback_ready "${observer_pid}" "${observer_log}" "http://127.0.0.1:${observer_local_port}/health" "observer"
+  wait_loopback_ready "${observer_pid}" "${observer_log}" "http://127.0.0.1:${observer_local_port}/v1/capabilities" "observer evidence API"
 
   (
     cd "${REPO_ROOT}"

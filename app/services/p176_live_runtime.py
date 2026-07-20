@@ -12,7 +12,7 @@ import os
 import random
 import re
 import time
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Collection, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -66,10 +66,16 @@ class P176LiveRuntimeError(RuntimeError):
     """Raised when a live runtime provider violates its frozen contract."""
 
 
-class RuntimeTransport(Protocol):
+class RuntimeReadTransport(Protocol):
     def get(self, path: str) -> dict[str, Any]: ...
 
+
+class RuntimeWriteTransport(Protocol):
     def post(self, path: str, payload: dict[str, Any], *, bearer_token: str) -> dict[str, Any]: ...
+
+
+class RuntimeTransport(RuntimeReadTransport, RuntimeWriteTransport, Protocol):
+    pass
 
 
 class DiagnosisAgent(Protocol):
@@ -151,7 +157,7 @@ class HttpEvidenceProvider:
         endpoint: str,
         run_id: str,
         opener: Any = urllib_request.urlopen,
-        transport: RuntimeTransport | None = None,
+        transport: RuntimeReadTransport | None = None,
     ) -> None:
         if not _RUN_ID_RE.fullmatch(run_id):
             raise P176LiveRuntimeError("run_id_invalid")
@@ -270,6 +276,10 @@ class NvidiaP176DiagnosisAgent:
         self._api_key = api_key
         self._allowed_family_ids = frozenset(str(item) for item in allowed_family_ids)
         self._allowed_service_ids = frozenset(str(item) for item in allowed_service_ids)
+        self._guided_json_schema = _diagnosis_json_schema(
+            family_ids=self._allowed_family_ids,
+            service_ids=self._allowed_service_ids,
+        )
         self._client = client
         self.model = model
         self._sleeper = sleeper
@@ -343,13 +353,16 @@ class NvidiaP176DiagnosisAgent:
                     temperature=0.0,
                     top_p=0.95,
                     max_tokens=P176_NVIDIA_MAX_TOKENS,
-                    response_format={"type": "json_object"},
                     extra_body=(
-                        {"chat_template_kwargs": {"enable_thinking": False}}
+                        {
+                            "chat_template_kwargs": {"enable_thinking": False},
+                            "guided_json": self._guided_json_schema,
+                        }
                         if repair
                         else {
                             "chat_template_kwargs": {"enable_thinking": True},
                             "reasoning_budget": P176_NVIDIA_REASONING_BUDGET,
+                            "guided_json": self._guided_json_schema,
                         }
                     ),
                     stream=False,
@@ -422,7 +435,7 @@ class HttpFaultHarness:
         *,
         run_id: str,
         capability_token: str,
-        transport: RuntimeTransport,
+        transport: RuntimeWriteTransport,
         evidence_provider: HttpEvidenceProvider | Any,
         diagnosis_agent: DiagnosisAgent,
     ) -> None:
@@ -578,7 +591,7 @@ class HttpHealthyObserver:
 
 
 class HttpSafetyMonitor:
-    def __init__(self, *, transport: RuntimeTransport) -> None:
+    def __init__(self, *, transport: RuntimeReadTransport) -> None:
         self.transport = transport
 
     def live_safety(self) -> Mapping[str, int]:
@@ -691,7 +704,10 @@ def build_runtime_producer_from_environment(
         observer_principal=f"p176-live-observer@{project_id}.iam.gserviceaccount.com",
         harness_fault_principal=f"p176-live-harness-fault@{project_id}.iam.gserviceaccount.com",
         opscat_principal=f"opscat-readonly@{project_id}.iam.gserviceaccount.com",
-        **artifact_hashes,
+        reviewed_apply_plan_hash=artifact_hashes["reviewed_apply_plan_hash"],
+        reviewed_teardown_plan_hash=artifact_hashes["reviewed_teardown_plan_hash"],
+        reviewed_cost_cutoff_apply_plan_hash=artifact_hashes["reviewed_cost_cutoff_apply_plan_hash"],
+        reviewed_cost_cutoff_destroy_plan_hash=artifact_hashes["reviewed_cost_cutoff_destroy_plan_hash"],
     )
     if phase == "finalize":
         unavailable = FinalizationOnlyCollaborator()
@@ -817,6 +833,37 @@ def _completion_text(completion: Any) -> str:
     if not isinstance(content, str) or not content.strip():
         raise P176LiveRuntimeError("diagnosis_completion_invalid")
     return content.strip()
+
+
+def _diagnosis_json_schema(*, family_ids: Collection[str], service_ids: Collection[str]) -> dict[str, Any]:
+    fields = sorted(DECISION_FIELDS)
+    return {
+        "type": "object",
+        "properties": {
+            "incident_detected": {"type": "boolean"},
+            "diagnosed_family_id": {
+                "anyOf": [
+                    {"type": "string", "enum": sorted(family_ids)},
+                    {"type": "null"},
+                ]
+            },
+            "routed_service_id": {
+                "anyOf": [
+                    {"type": "string", "enum": sorted(service_ids)},
+                    {"type": "null"},
+                ]
+            },
+            "confidence": {"type": "number"},
+            "evidence_citations": {
+                "type": "array",
+                "minItems": 1,
+                "items": {"type": "string"},
+            },
+            "human_required": {"type": "boolean"},
+        },
+        "required": fields,
+        "additionalProperties": False,
+    }
 
 
 def _validate_inject_receipt(raw: Mapping[str, Any], *, run_id: str, lease_id: str) -> None:

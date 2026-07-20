@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
@@ -14,6 +15,7 @@ from app.services.p176_live_runtime import (
     HttpFaultHarness,
     HttpSafetyMonitor,
     NvidiaP176DiagnosisAgent,
+    P176DiagnosisDecision,
     P176LiveRuntimeError,
     build_runtime_producer_from_environment,
 )
@@ -231,11 +233,18 @@ def test_nvidia_agent_is_advisory_json_only_and_rejects_unknown_labels_or_citati
     assert call["stream"] is False
     assert call["temperature"] == 0.0
     assert call["max_tokens"] == 1024
-    assert call["response_format"] == {"type": "json_object"}
-    assert call["extra_body"] == {
-        "chat_template_kwargs": {"enable_thinking": True},
-        "reasoning_budget": 64,
-    }
+    assert "response_format" not in call
+    assert call["extra_body"]["chat_template_kwargs"] == {"enable_thinking": True}
+    assert call["extra_body"]["reasoning_budget"] == 64
+    schema = call["extra_body"]["guided_json"]
+    assert schema["additionalProperties"] is False
+    assert schema["properties"]["diagnosed_family_id"]["anyOf"][0]["enum"] == sorted(
+        item["family_id"] for item in campaign["fault_families"]
+    )
+    assert schema["properties"]["routed_service_id"]["anyOf"][0]["enum"] == sorted(
+        item["service_id"] for item in campaign["topology"]
+    )
+    assert schema["properties"]["evidence_citations"]["minItems"] == 1
 
     for field, value, error in (
         ("diagnosed_family_id", "unknown-family", "diagnosed_family_id_invalid"),
@@ -372,8 +381,10 @@ def test_nvidia_agent_repairs_one_truncated_json_response_without_thinking() -> 
     assert len(client.completions.calls) == 2
     repair_call = client.completions.calls[1]
     assert repair_call["max_tokens"] == 1024
-    assert repair_call["response_format"] == {"type": "json_object"}
-    assert repair_call["extra_body"] == {"chat_template_kwargs": {"enable_thinking": False}}
+    assert "response_format" not in repair_call
+    assert repair_call["extra_body"]["chat_template_kwargs"] == {"enable_thinking": False}
+    assert "reasoning_budget" not in repair_call["extra_body"]
+    assert repair_call["extra_body"]["guided_json"]["properties"]["evidence_citations"]["minItems"] == 1
     assert "Previous response was incomplete" in repair_call["messages"][-1]["content"]
 
 
@@ -428,22 +439,19 @@ class _DecisionAgent:
         self.events = events
         self.fail = fail
 
-    def diagnose(self, *, evidence: dict[str, EvidenceSnapshot]) -> Any:
+    def diagnose(self, *, evidence: Mapping[str, EvidenceSnapshot]) -> P176DiagnosisDecision:
         self.events.append("diagnose")
         if self.fail:
             raise P176LiveRuntimeError("diagnosis_failed")
         first = next(iter(evidence.values()))
-        return type(
-            "Decision",
-            (),
-            {
-                "incident_detected": True,
-                "diagnosed_family_id": "p176-family-16-queue_backlog",
-                "routed_service_id": "event-queue",
-                "evidence_citations": (first.content_hash,),
-                "human_required": False,
-            },
-        )()
+        return P176DiagnosisDecision(
+            incident_detected=True,
+            diagnosed_family_id="p176-family-16-queue_backlog",
+            routed_service_id="event-queue",
+            confidence=0.9,
+            evidence_citations=(first.content_hash,),
+            human_required=False,
+        )
 
 
 class _Transport:

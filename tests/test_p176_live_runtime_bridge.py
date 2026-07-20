@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -25,11 +26,15 @@ from app.services.p176_runtime_bridge import (
     COLLECTION_IN_PROGRESS_PATH,
     COLLECTION_RECEIPT_PATH,
     EPISODE_EVIDENCE_SOURCE_CLASSES,
+    EPISODE_PHASE_CHECKPOINT_PATH,
     FINALIZATION_RECEIPT_PATH,
     BillingSnapshot,
+    EvidenceProvider,
     EvidenceSnapshot,
     FaultExecution,
+    FaultHarness,
     HealthyObservation,
+    HealthyObserver,
     P176RuntimeArtifactProducer,
     P176RuntimeBridgeError,
     P176RuntimeConfig,
@@ -178,6 +183,66 @@ def test_runtime_collection_crash_marker_prevents_fault_replay(tmp_path: Path) -
     assert harness.call_count == 1
 
 
+def test_runtime_collection_resumes_healthy_phase_without_replaying_completed_faults(tmp_path: Path) -> None:
+    run_dir = tmp_path / "healthy-resume"
+    plan_paths = _write_plan_artifacts(run_dir)
+    harness = CountingFaultHarness()
+    producer = _producer(
+        plan_paths=plan_paths,
+        fault_harness=harness,
+        healthy_observer=CrashingHealthyObserver(),
+    )
+
+    with pytest.raises(RuntimeError, match="simulated healthy observer crash"):
+        producer.collect(run_dir)
+
+    assert harness.call_count == 480
+    assert (run_dir / COLLECTION_IN_PROGRESS_PATH).is_file()
+    assert (run_dir / EPISODE_PHASE_CHECKPOINT_PATH).is_file()
+
+    resumed = _producer(
+        plan_paths=plan_paths,
+        fault_harness=harness,
+        healthy_observer=FakeHealthyObserver(),
+    )
+    assert resumed.collect(run_dir) == run_dir
+
+    assert harness.call_count == 480
+    assert len(load_jsonl(run_dir / "episode-observations.jsonl")) == 480
+    assert len(load_jsonl(run_dir / "healthy-window-observations.jsonl")) == 240
+    assert not (run_dir / EPISODE_PHASE_CHECKPOINT_PATH).exists()
+    assert not (run_dir / COLLECTION_IN_PROGRESS_PATH).exists()
+
+
+def test_runtime_collection_rejects_tampered_episode_phase_checkpoint(tmp_path: Path) -> None:
+    run_dir = tmp_path / "tampered-resume"
+    plan_paths = _write_plan_artifacts(run_dir)
+    producer = _producer(
+        plan_paths=plan_paths,
+        healthy_observer=CrashingHealthyObserver(),
+    )
+    with pytest.raises(RuntimeError, match="simulated healthy observer crash"):
+        producer.collect(run_dir)
+    (run_dir / "agent-visible-ledger.jsonl").write_text("{}\n", encoding="utf-8")
+
+    with pytest.raises(P176RuntimeBridgeError, match="episode_phase_checkpoint_artifact_hash_mismatch"):
+        _producer(plan_paths=plan_paths).collect(run_dir)
+
+
+def test_runtime_collection_cleans_stale_markers_after_verified_terminal_receipt(tmp_path: Path) -> None:
+    run_dir = tmp_path / "terminal-marker-cleanup"
+    plan_paths = _write_plan_artifacts(run_dir)
+    producer = _producer(plan_paths=plan_paths)
+    producer.collect(run_dir)
+    (run_dir / COLLECTION_IN_PROGRESS_PATH).write_text("stale\n", encoding="utf-8")
+    (run_dir / EPISODE_PHASE_CHECKPOINT_PATH).write_text("stale\n", encoding="utf-8")
+
+    assert producer.collect(run_dir) == run_dir
+
+    assert not (run_dir / COLLECTION_IN_PROGRESS_PATH).exists()
+    assert not (run_dir / EPISODE_PHASE_CHECKPOINT_PATH).exists()
+
+
 def test_runtime_finalize_is_idempotent_without_requerying_providers(tmp_path: Path) -> None:
     run_dir = tmp_path / "idempotent-finalize"
     plan_paths = _write_plan_artifacts(run_dir)
@@ -273,8 +338,9 @@ def test_runtime_producer_fails_closed_on_live_safety_counter(tmp_path: Path) ->
 def _producer(
     *,
     plan_paths: dict[str, Path],
-    evidence_provider: Any | None = None,
-    fault_harness: Any | None = None,
+    evidence_provider: EvidenceProvider | None = None,
+    fault_harness: FaultHarness | None = None,
+    healthy_observer: HealthyObserver | None = None,
     billing_provider: Any | None = None,
     teardown_provider: Any | None = None,
     safety_monitor: Any | None = None,
@@ -304,7 +370,7 @@ def _producer(
         config=config,
         evidence_provider=resolved_evidence_provider,
         fault_harness=resolved_fault_harness,
-        healthy_observer=FakeHealthyObserver(),
+        healthy_observer=healthy_observer or FakeHealthyObserver(),
         billing_provider=billing_provider or FakeBillingProvider(),
         teardown_provider=teardown_provider or FakeTeardownProvider(config.reviewed_apply_plan_hash),
         safety_monitor=safety_monitor or FakeSafetyMonitor(),
@@ -352,7 +418,7 @@ class FakeFaultHarness:
     wrong_diagnosis: bool = False
     evidence_provider: Any | None = None
 
-    def execute_fault(self, *, episode: dict[str, Any], fault_verb: str, harness_principal: str) -> FaultExecution:
+    def execute_fault(self, *, episode: Mapping[str, Any], fault_verb: str, harness_principal: str) -> FaultExecution:
         lease_id = "lease-reused" if self.duplicate_lease else f"lease-{episode['episode_id']}"
         source_classes = EPISODE_EVIDENCE_SOURCE_CLASSES[episode["primary_layer"]]
         provider = self.evidence_provider or FakeEvidenceProvider()
@@ -405,14 +471,34 @@ class FakeFaultHarness:
 class CrashingFaultHarness:
     call_count: int = 0
 
-    def execute_fault(self, *, episode: dict[str, Any], fault_verb: str, harness_principal: str) -> FaultExecution:
+    def execute_fault(self, *, episode: Mapping[str, Any], fault_verb: str, harness_principal: str) -> FaultExecution:
         self.call_count += 1
         raise RuntimeError("simulated harness crash")
 
 
+@dataclass
+class CountingFaultHarness:
+    call_count: int = 0
+    delegate: FakeFaultHarness | None = None
+
+    def execute_fault(self, *, episode: Mapping[str, Any], fault_verb: str, harness_principal: str) -> FaultExecution:
+        self.call_count += 1
+        delegate = self.delegate or FakeFaultHarness()
+        return delegate.execute_fault(
+            episode=episode,
+            fault_verb=fault_verb,
+            harness_principal=harness_principal,
+        )
+
+
 class FakeHealthyObserver:
-    def observe_window(self, *, window: dict[str, Any]) -> HealthyObservation:
+    def observe_window(self, *, window: Mapping[str, Any]) -> HealthyObservation:
         return HealthyObservation(false_alert=False, false_action=False)
+
+
+class CrashingHealthyObserver:
+    def observe_window(self, *, window: Mapping[str, Any]) -> HealthyObservation:
+        raise RuntimeError("simulated healthy observer crash")
 
 
 @dataclass

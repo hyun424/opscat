@@ -36,6 +36,7 @@ from app.services.p176_live_bridge import (
     TEARDOWN_PROOF_PATH,
     P176LiveBridgeError,
     load_json,
+    load_jsonl,
     write_json,
     write_jsonl,
 )
@@ -59,6 +60,7 @@ class P176RuntimeBridgeError(ValueError):
 
 
 COLLECTION_IN_PROGRESS_PATH = "runtime-collection-in-progress.json"
+EPISODE_PHASE_CHECKPOINT_PATH = "runtime-episode-phase-checkpoint.json"
 COLLECTION_RECEIPT_PATH = "runtime-collection-receipt.json"
 FINALIZATION_RECEIPT_PATH = "runtime-finalization-receipt.json"
 COLLECTION_ARTIFACT_PATHS = (
@@ -72,6 +74,11 @@ COLLECTION_ARTIFACT_PATHS = (
     HEALTHY_WINDOW_OBSERVATIONS_PATH,
 )
 FINALIZATION_ARTIFACT_PATHS = (BILLING_REPORT_PATH, TEARDOWN_PROOF_PATH)
+EPISODE_PHASE_ARTIFACT_PATHS = (
+    AGENT_VISIBLE_LEDGER_PATH,
+    EVALUATOR_ONLY_LEDGER_PATH,
+    EPISODE_OBSERVATIONS_PATH,
+)
 EVIDENCE_SOURCE_CLASSES = (
     "metrics",
     "logs",
@@ -321,17 +328,8 @@ class P176RuntimeArtifactProducer:
         receipt_path = directory / COLLECTION_RECEIPT_PATH
         if _path_present(receipt_path):
             self._verify_collection_receipt(directory)
+            self._remove_completed_collection_markers(directory)
             return directory
-        if any(
-            _path_present(directory / path)
-            for path in (
-                COLLECTION_IN_PROGRESS_PATH,
-                *COLLECTION_ARTIFACT_PATHS,
-                *FINALIZATION_ARTIFACT_PATHS,
-                FINALIZATION_RECEIPT_PATH,
-            )
-        ):
-            raise P176RuntimeBridgeError("collection_partial_state")
 
         canonical_campaign = generate_p176_campaign()
         try:
@@ -345,34 +343,62 @@ class P176RuntimeArtifactProducer:
         if episodes != canonical_campaign["episodes"] or healthy_windows != canonical_campaign["healthy_windows"]:
             raise P176RuntimeBridgeError("canonical_campaign_order_invalid")
 
-        in_progress = _self_hash(
-            {
-                "schema_version": "p176.runtime_collection_in_progress.v1",
-                "phase": "p176",
-                "run_id": self.config.run_id,
-                "project_id": self.config.project_id,
-                "runtime_config_hash": self._runtime_config_hash(),
-                "campaign_hash": campaign["campaign_hash"],
-                "in_progress_hash": "",
-            },
-            "in_progress_hash",
-        )
-        write_json(directory / COLLECTION_IN_PROGRESS_PATH, in_progress)
-
-        agent_ledger = self._build_ledger("agent_visible")
-        evaluator_ledger = self._build_ledger("evaluator_only")
-
         project_binding = self._build_project_binding()
         fault_registry = build_fault_registry(phase="p176", run_id=self.config.run_id, project_id=self.config.project_id)
         if fault_registry["harness_fault_principal"] != self.config.harness_fault_principal:
             raise P176RuntimeBridgeError("harness_fault_principal_invalid")
 
-        episode_observations = self._build_episode_observations(
-            episodes,
-            fault_registry,
-            agent_ledger,
-            evaluator_ledger,
+        in_progress_path = directory / COLLECTION_IN_PROGRESS_PATH
+        checkpoint_path = directory / EPISODE_PHASE_CHECKPOINT_PATH
+        has_in_progress = _path_present(in_progress_path)
+        has_checkpoint = _path_present(checkpoint_path)
+        has_collection_artifact = any(_path_present(directory / path) for path in COLLECTION_ARTIFACT_PATHS)
+        has_finalization_artifact = any(
+            _path_present(directory / path) for path in (*FINALIZATION_ARTIFACT_PATHS, FINALIZATION_RECEIPT_PATH)
         )
+        if has_finalization_artifact or has_in_progress != has_checkpoint:
+            raise P176RuntimeBridgeError("collection_partial_state")
+
+        if has_checkpoint:
+            agent_ledger, evaluator_ledger, episode_observations = self._load_episode_phase_checkpoint(
+                directory,
+                campaign=campaign,
+                episodes=episodes,
+            )
+            self._build_live_safety_report()
+        else:
+            if has_collection_artifact:
+                raise P176RuntimeBridgeError("collection_partial_state")
+            in_progress = _self_hash(
+                {
+                    "schema_version": "p176.runtime_collection_in_progress.v1",
+                    "phase": "p176",
+                    "run_id": self.config.run_id,
+                    "project_id": self.config.project_id,
+                    "runtime_config_hash": self._runtime_config_hash(),
+                    "campaign_hash": campaign["campaign_hash"],
+                    "in_progress_hash": "",
+                },
+                "in_progress_hash",
+            )
+            write_json(in_progress_path, in_progress)
+            agent_ledger = self._build_ledger("agent_visible")
+            evaluator_ledger = self._build_ledger("evaluator_only")
+            episode_observations = self._build_episode_observations(
+                episodes,
+                fault_registry,
+                agent_ledger,
+                evaluator_ledger,
+            )
+            self._build_live_safety_report()
+            self._write_episode_phase_checkpoint(
+                directory,
+                campaign=campaign,
+                agent_ledger=agent_ledger,
+                evaluator_ledger=evaluator_ledger,
+                episode_observations=episode_observations,
+            )
+
         healthy_observations = self._build_healthy_observations(
             healthy_windows,
             agent_ledger,
@@ -403,8 +429,111 @@ class P176RuntimeArtifactProducer:
             "collection_receipt_hash",
         )
         write_json(receipt_path, receipt)
-        (directory / COLLECTION_IN_PROGRESS_PATH).unlink()
+        checkpoint_path.unlink()
+        in_progress_path.unlink()
         return directory
+
+    @staticmethod
+    def _remove_completed_collection_markers(directory: Path) -> None:
+        for path in (
+            directory / EPISODE_PHASE_CHECKPOINT_PATH,
+            directory / COLLECTION_IN_PROGRESS_PATH,
+        ):
+            if not _path_present(path):
+                continue
+            if not path.is_file() or path.is_symlink():
+                raise P176RuntimeBridgeError("completed_collection_marker_unsafe")
+            path.unlink()
+
+    def _write_episode_phase_checkpoint(
+        self,
+        directory: Path,
+        *,
+        campaign: Mapping[str, Any],
+        agent_ledger: Sequence[Mapping[str, Any]],
+        evaluator_ledger: Sequence[Mapping[str, Any]],
+        episode_observations: Sequence[Mapping[str, Any]],
+    ) -> None:
+        write_jsonl(directory / AGENT_VISIBLE_LEDGER_PATH, agent_ledger)
+        write_jsonl(directory / EVALUATOR_ONLY_LEDGER_PATH, evaluator_ledger)
+        write_jsonl(directory / EPISODE_OBSERVATIONS_PATH, episode_observations)
+        checkpoint = _self_hash(
+            {
+                "schema_version": "p176.runtime_episode_phase_checkpoint.v1",
+                "phase": "p176",
+                "run_id": self.config.run_id,
+                "project_id": self.config.project_id,
+                "runtime_config_hash": self._runtime_config_hash(),
+                "campaign_hash": campaign["campaign_hash"],
+                "completed_episode_count": len(episode_observations),
+                "artifact_hashes": _artifact_hashes(directory, EPISODE_PHASE_ARTIFACT_PATHS),
+                "checkpoint_hash": "",
+            },
+            "checkpoint_hash",
+        )
+        write_json(directory / EPISODE_PHASE_CHECKPOINT_PATH, checkpoint)
+
+    def _load_episode_phase_checkpoint(
+        self,
+        directory: Path,
+        *,
+        campaign: Mapping[str, Any],
+        episodes: Sequence[Mapping[str, Any]],
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+        checkpoint = _load_receipt(
+            directory / EPISODE_PHASE_CHECKPOINT_PATH,
+            "episode_phase_checkpoint_missing",
+        )
+        _verify_receipt_shape(
+            checkpoint,
+            expected_fields={
+                "schema_version",
+                "phase",
+                "run_id",
+                "project_id",
+                "runtime_config_hash",
+                "campaign_hash",
+                "completed_episode_count",
+                "artifact_hashes",
+                "checkpoint_hash",
+            },
+            expected_schema="p176.runtime_episode_phase_checkpoint.v1",
+            hash_field="checkpoint_hash",
+            run_id=self.config.run_id,
+        )
+        if (
+            checkpoint["project_id"] != self.config.project_id
+            or checkpoint["runtime_config_hash"] != self._runtime_config_hash()
+            or checkpoint["campaign_hash"] != campaign["campaign_hash"]
+            or checkpoint["completed_episode_count"] != len(episodes)
+        ):
+            raise P176RuntimeBridgeError("episode_phase_checkpoint_binding_invalid")
+        _verify_artifact_hashes(
+            directory,
+            checkpoint.get("artifact_hashes"),
+            EPISODE_PHASE_ARTIFACT_PATHS,
+            "episode_phase_checkpoint_artifact_hash_mismatch",
+        )
+        try:
+            agent_ledger = load_jsonl(directory / AGENT_VISIBLE_LEDGER_PATH)
+            evaluator_ledger = load_jsonl(directory / EVALUATOR_ONLY_LEDGER_PATH)
+            episode_observations = load_jsonl(directory / EPISODE_OBSERVATIONS_PATH)
+        except P176LiveBridgeError as exc:
+            raise P176RuntimeBridgeError(f"episode_phase_checkpoint_invalid:{exc}") from exc
+        self._validate_ledger(agent_ledger, "agent_visible")
+        self._validate_ledger(evaluator_ledger, "evaluator_only")
+        if len(episode_observations) != len(episodes):
+            raise P176RuntimeBridgeError("episode_phase_checkpoint_observations_invalid")
+        for row, episode in zip(episode_observations, episodes, strict=True):
+            if (
+                row.get("schema_version") != "p176.live_episode_observation.v1"
+                or row.get("run_id") != self.config.run_id
+                or row.get("episode_id") != episode["episode_id"]
+                or row.get("observation_hash")
+                != stable_hash({key: value for key, value in row.items() if key != "observation_hash"})
+            ):
+                raise P176RuntimeBridgeError("episode_phase_checkpoint_observations_invalid")
+        return agent_ledger, evaluator_ledger, episode_observations
 
     def finalize(self, run_dir: str | Path, *, now: datetime) -> Path:
         """Add billing and teardown proof only after immutable collection exists."""

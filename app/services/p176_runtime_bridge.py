@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import os
 import shutil
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -360,10 +360,11 @@ class P176RuntimeArtifactProducer:
             raise P176RuntimeBridgeError("collection_partial_state")
 
         if has_checkpoint:
-            agent_ledger, evaluator_ledger, episode_observations = self._load_episode_phase_checkpoint(
+            agent_ledger, evaluator_ledger, episode_observations, healthy_observations = self._load_episode_phase_checkpoint(
                 directory,
                 campaign=campaign,
                 episodes=episodes,
+                healthy_windows=healthy_windows,
             )
             self._build_live_safety_report()
         else:
@@ -384,25 +385,34 @@ class P176RuntimeArtifactProducer:
             write_json(in_progress_path, in_progress)
             agent_ledger = self._build_ledger("agent_visible")
             evaluator_ledger = self._build_ledger("evaluator_only")
-            episode_observations = self._build_episode_observations(
-                episodes,
-                fault_registry,
-                agent_ledger,
-                evaluator_ledger,
-            )
-            self._build_live_safety_report()
+            episode_observations = []
+            healthy_observations = []
+
+        def checkpoint() -> None:
             self._write_episode_phase_checkpoint(
                 directory,
                 campaign=campaign,
                 agent_ledger=agent_ledger,
                 evaluator_ledger=evaluator_ledger,
                 episode_observations=episode_observations,
+                healthy_observations=healthy_observations,
             )
-
-        healthy_observations = self._build_healthy_observations(
-            healthy_windows,
+        self._build_episode_observations(
+            episodes[len(episode_observations) :],
+            fault_registry,
             agent_ledger,
             evaluator_ledger,
+            rows=episode_observations,
+            checkpoint=checkpoint,
+        )
+        self._build_live_safety_report()
+        checkpoint()
+        self._build_healthy_observations(
+            healthy_windows[len(healthy_observations) :],
+            agent_ledger,
+            evaluator_ledger,
+            rows=healthy_observations,
+            checkpoint=checkpoint,
         )
         self._validate_ledger(agent_ledger, "agent_visible")
         self._validate_ledger(evaluator_ledger, "evaluator_only")
@@ -453,20 +463,26 @@ class P176RuntimeArtifactProducer:
         agent_ledger: Sequence[Mapping[str, Any]],
         evaluator_ledger: Sequence[Mapping[str, Any]],
         episode_observations: Sequence[Mapping[str, Any]],
+        healthy_observations: Sequence[Mapping[str, Any]],
     ) -> None:
         write_jsonl(directory / AGENT_VISIBLE_LEDGER_PATH, agent_ledger)
         write_jsonl(directory / EVALUATOR_ONLY_LEDGER_PATH, evaluator_ledger)
         write_jsonl(directory / EPISODE_OBSERVATIONS_PATH, episode_observations)
+        artifact_paths: tuple[str, ...] = EPISODE_PHASE_ARTIFACT_PATHS
+        if healthy_observations:
+            write_jsonl(directory / HEALTHY_WINDOW_OBSERVATIONS_PATH, healthy_observations)
+            artifact_paths = (*artifact_paths, HEALTHY_WINDOW_OBSERVATIONS_PATH)
         checkpoint = _self_hash(
             {
-                "schema_version": "p176.runtime_episode_phase_checkpoint.v1",
+                "schema_version": "p176.runtime_collection_checkpoint.v2",
                 "phase": "p176",
                 "run_id": self.config.run_id,
                 "project_id": self.config.project_id,
                 "runtime_config_hash": self._runtime_config_hash(),
                 "campaign_hash": campaign["campaign_hash"],
                 "completed_episode_count": len(episode_observations),
-                "artifact_hashes": _artifact_hashes(directory, EPISODE_PHASE_ARTIFACT_PATHS),
+                "completed_healthy_window_count": len(healthy_observations),
+                "artifact_hashes": _artifact_hashes(directory, artifact_paths),
                 "checkpoint_hash": "",
             },
             "checkpoint_hash",
@@ -479,7 +495,8 @@ class P176RuntimeArtifactProducer:
         *,
         campaign: Mapping[str, Any],
         episodes: Sequence[Mapping[str, Any]],
-    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+        healthy_windows: Sequence[Mapping[str, Any]],
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
         checkpoint = _load_receipt(
             directory / EPISODE_PHASE_CHECKPOINT_PATH,
             "episode_phase_checkpoint_missing",
@@ -494,10 +511,11 @@ class P176RuntimeArtifactProducer:
                 "runtime_config_hash",
                 "campaign_hash",
                 "completed_episode_count",
+                "completed_healthy_window_count",
                 "artifact_hashes",
                 "checkpoint_hash",
             },
-            expected_schema="p176.runtime_episode_phase_checkpoint.v1",
+            expected_schema="p176.runtime_collection_checkpoint.v2",
             hash_field="checkpoint_hash",
             run_id=self.config.run_id,
         )
@@ -505,26 +523,38 @@ class P176RuntimeArtifactProducer:
             checkpoint["project_id"] != self.config.project_id
             or checkpoint["runtime_config_hash"] != self._runtime_config_hash()
             or checkpoint["campaign_hash"] != campaign["campaign_hash"]
-            or checkpoint["completed_episode_count"] != len(episodes)
+            or type(checkpoint["completed_episode_count"]) is not int
+            or not 1 <= checkpoint["completed_episode_count"] <= len(episodes)
+            or type(checkpoint["completed_healthy_window_count"]) is not int
+            or not 0 <= checkpoint["completed_healthy_window_count"] <= len(healthy_windows)
+            or (checkpoint["completed_healthy_window_count"] > 0 and checkpoint["completed_episode_count"] != len(episodes))
         ):
             raise P176RuntimeBridgeError("episode_phase_checkpoint_binding_invalid")
+        artifact_paths: tuple[str, ...] = EPISODE_PHASE_ARTIFACT_PATHS
+        if checkpoint["completed_healthy_window_count"] > 0:
+            artifact_paths = (*artifact_paths, HEALTHY_WINDOW_OBSERVATIONS_PATH)
         _verify_artifact_hashes(
             directory,
             checkpoint.get("artifact_hashes"),
-            EPISODE_PHASE_ARTIFACT_PATHS,
+            artifact_paths,
             "episode_phase_checkpoint_artifact_hash_mismatch",
         )
         try:
             agent_ledger = load_jsonl(directory / AGENT_VISIBLE_LEDGER_PATH)
             evaluator_ledger = load_jsonl(directory / EVALUATOR_ONLY_LEDGER_PATH)
             episode_observations = load_jsonl(directory / EPISODE_OBSERVATIONS_PATH)
+            healthy_observations = (
+                load_jsonl(directory / HEALTHY_WINDOW_OBSERVATIONS_PATH)
+                if checkpoint["completed_healthy_window_count"] > 0
+                else []
+            )
         except P176LiveBridgeError as exc:
             raise P176RuntimeBridgeError(f"episode_phase_checkpoint_invalid:{exc}") from exc
         self._validate_ledger(agent_ledger, "agent_visible")
         self._validate_ledger(evaluator_ledger, "evaluator_only")
-        if len(episode_observations) != len(episodes):
+        if len(episode_observations) != checkpoint["completed_episode_count"]:
             raise P176RuntimeBridgeError("episode_phase_checkpoint_observations_invalid")
-        for row, episode in zip(episode_observations, episodes, strict=True):
+        for row, episode in zip(episode_observations, episodes[: len(episode_observations)], strict=True):
             if (
                 row.get("schema_version") != "p176.live_episode_observation.v1"
                 or row.get("run_id") != self.config.run_id
@@ -533,7 +563,18 @@ class P176RuntimeArtifactProducer:
                 != stable_hash({key: value for key, value in row.items() if key != "observation_hash"})
             ):
                 raise P176RuntimeBridgeError("episode_phase_checkpoint_observations_invalid")
-        return agent_ledger, evaluator_ledger, episode_observations
+        if len(healthy_observations) != checkpoint["completed_healthy_window_count"]:
+            raise P176RuntimeBridgeError("healthy_phase_checkpoint_observations_invalid")
+        for row, window in zip(healthy_observations, healthy_windows[: len(healthy_observations)], strict=True):
+            if (
+                row.get("schema_version") != "p176.live_healthy_window_observation.v1"
+                or row.get("run_id") != self.config.run_id
+                or row.get("window_id") != window["window_id"]
+                or row.get("observation_hash")
+                != stable_hash({key: value for key, value in row.items() if key != "observation_hash"})
+            ):
+                raise P176RuntimeBridgeError("healthy_phase_checkpoint_observations_invalid")
+        return agent_ledger, evaluator_ledger, episode_observations, healthy_observations
 
     def finalize(self, run_dir: str | Path, *, now: datetime) -> Path:
         """Add billing and teardown proof only after immutable collection exists."""
@@ -690,19 +731,28 @@ class P176RuntimeArtifactProducer:
         fault_registry: Mapping[str, Any],
         agent_ledger: list[dict[str, Any]],
         evaluator_ledger: list[dict[str, Any]],
+        *,
+        rows: list[dict[str, Any]] | None = None,
+        checkpoint: Callable[[], None] | None = None,
     ) -> list[dict[str, Any]]:
         allowed_verbs = set(fault_registry["allowed_fault_verbs"])
-        seen_leases: set[str] = set()
-        rows: list[dict[str, Any]] = []
+        observations = rows if rows is not None else []
+        seen_leases = {str(row["fault_lease_id"]) for row in observations}
         for episode in episodes:
             fault_verb = _fault_verb_for_episode(episode)
             if fault_verb not in allowed_verbs:
                 raise P176RuntimeBridgeError("fault_verb_not_registered")
-            execution = self.fault_harness.execute_fault(
-                episode=episode,
-                fault_verb=fault_verb,
-                harness_principal=self.config.harness_fault_principal,
-            )
+            try:
+                execution = self.fault_harness.execute_fault(
+                    episode=episode,
+                    fault_verb=fault_verb,
+                    harness_principal=self.config.harness_fault_principal,
+                )
+            except Exception:
+                self._build_live_safety_report()
+                if observations and checkpoint is not None:
+                    checkpoint()
+                raise
             if execution.mutation_principal != self.config.harness_fault_principal:
                 raise P176RuntimeBridgeError("mutation_principal_not_harness")
             if execution.fault_lease_id in seen_leases:
@@ -770,18 +820,30 @@ class P176RuntimeArtifactProducer:
                 "residual_effect_proof_hash": execution.residual_effect_proof_hash,
                 "observation_hash": "",
             }
-            rows.append(_self_hash(row, "observation_hash"))
-        return rows
+            observations.append(_self_hash(row, "observation_hash"))
+            if checkpoint is not None:
+                self._build_live_safety_report()
+                checkpoint()
+        return observations
 
     def _build_healthy_observations(
         self,
         healthy_windows: Sequence[Mapping[str, Any]],
         agent_ledger: list[dict[str, Any]],
         evaluator_ledger: list[dict[str, Any]],
+        *,
+        rows: list[dict[str, Any]] | None = None,
+        checkpoint: Callable[[], None] | None = None,
     ) -> list[dict[str, Any]]:
-        rows: list[dict[str, Any]] = []
+        observations = rows if rows is not None else []
         for window in healthy_windows:
-            observation = self.healthy_observer.observe_window(window=window)
+            try:
+                observation = self.healthy_observer.observe_window(window=window)
+            except Exception:
+                self._build_live_safety_report()
+                if checkpoint is not None:
+                    checkpoint()
+                raise
             source_classes = (str(window["telemetry_class"]),)
             agent_hashes = self._append_evidence_records(
                 agent_ledger,
@@ -808,8 +870,11 @@ class P176RuntimeArtifactProducer:
                 "evaluator_only_record_hashes": evaluator_hashes,
                 "observation_hash": "",
             }
-            rows.append(_self_hash(row, "observation_hash"))
-        return rows
+            observations.append(_self_hash(row, "observation_hash"))
+            if checkpoint is not None:
+                self._build_live_safety_report()
+                checkpoint()
+        return observations
 
     def _build_project_binding(self) -> dict[str, Any]:
         expected_harness = HARNESS_PRINCIPAL_TEMPLATE.format(project_id=self.config.project_id)

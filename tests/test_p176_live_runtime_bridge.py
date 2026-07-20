@@ -214,6 +214,71 @@ def test_runtime_collection_resumes_healthy_phase_without_replaying_completed_fa
     assert not (run_dir / COLLECTION_IN_PROGRESS_PATH).exists()
 
 
+def test_runtime_collection_checkpoints_completed_faults_before_provider_failure(tmp_path: Path) -> None:
+    run_dir = tmp_path / "fault-progress-resume"
+    plan_paths = _write_plan_artifacts(run_dir)
+    failing = FailingAfterFaultHarness(fail_at=12)
+
+    with pytest.raises(RuntimeError, match="simulated diagnosis provider failure"):
+        _producer(plan_paths=plan_paths, fault_harness=failing).collect(run_dir)
+
+    checkpoint = load_json(run_dir / EPISODE_PHASE_CHECKPOINT_PATH)
+    assert checkpoint["completed_episode_count"] == 11
+    assert checkpoint["completed_healthy_window_count"] == 0
+
+    resumed_harness = CountingFaultHarness()
+    _producer(plan_paths=plan_paths, fault_harness=resumed_harness).collect(run_dir)
+
+    assert failing.call_count == 12
+    assert resumed_harness.call_count == 469
+
+
+def test_runtime_collection_does_not_replay_faults_before_post_execution_validation_failure(tmp_path: Path) -> None:
+    run_dir = tmp_path / "post-fault-validation-resume"
+    plan_paths = _write_plan_artifacts(run_dir)
+    failing = BadProofAfterFaultHarness(fail_at=12)
+
+    with pytest.raises(P176RuntimeBridgeError, match="cleanup_receipt_hash_not_bound"):
+        _producer(plan_paths=plan_paths, fault_harness=failing).collect(run_dir)
+
+    checkpoint = load_json(run_dir / EPISODE_PHASE_CHECKPOINT_PATH)
+    assert checkpoint["completed_episode_count"] == 11
+
+    resumed_harness = CountingFaultHarness()
+    _producer(plan_paths=plan_paths, fault_harness=resumed_harness).collect(run_dir)
+
+    assert failing.call_count == 12
+    assert resumed_harness.call_count == 469
+
+
+def test_runtime_collection_checkpoints_completed_healthy_windows(tmp_path: Path) -> None:
+    run_dir = tmp_path / "healthy-progress-resume"
+    plan_paths = _write_plan_artifacts(run_dir)
+    fault_harness = CountingFaultHarness()
+    failing_healthy = FailingAfterHealthyObserver(fail_at=12)
+
+    with pytest.raises(RuntimeError, match="simulated healthy provider failure"):
+        _producer(
+            plan_paths=plan_paths,
+            fault_harness=fault_harness,
+            healthy_observer=failing_healthy,
+        ).collect(run_dir)
+
+    checkpoint = load_json(run_dir / EPISODE_PHASE_CHECKPOINT_PATH)
+    assert checkpoint["completed_episode_count"] == 480
+    assert checkpoint["completed_healthy_window_count"] == 11
+
+    resumed_healthy = CountingHealthyObserver()
+    _producer(
+        plan_paths=plan_paths,
+        fault_harness=fault_harness,
+        healthy_observer=resumed_healthy,
+    ).collect(run_dir)
+
+    assert fault_harness.call_count == 480
+    assert resumed_healthy.call_count == 229
+
+
 def test_runtime_collection_rejects_tampered_episode_phase_checkpoint(tmp_path: Path) -> None:
     run_dir = tmp_path / "tampered-resume"
     plan_paths = _write_plan_artifacts(run_dir)
@@ -491,6 +556,36 @@ class CountingFaultHarness:
         )
 
 
+@dataclass
+class FailingAfterFaultHarness:
+    fail_at: int
+    call_count: int = 0
+
+    def execute_fault(self, *, episode: Mapping[str, Any], fault_verb: str, harness_principal: str) -> FaultExecution:
+        self.call_count += 1
+        if self.call_count == self.fail_at:
+            raise RuntimeError("simulated diagnosis provider failure")
+        return FakeFaultHarness().execute_fault(
+            episode=episode,
+            fault_verb=fault_verb,
+            harness_principal=harness_principal,
+        )
+
+
+@dataclass
+class BadProofAfterFaultHarness:
+    fail_at: int
+    call_count: int = 0
+
+    def execute_fault(self, *, episode: Mapping[str, Any], fault_verb: str, harness_principal: str) -> FaultExecution:
+        self.call_count += 1
+        return FakeFaultHarness(bad_cleanup_proof=self.call_count == self.fail_at).execute_fault(
+            episode=episode,
+            fault_verb=fault_verb,
+            harness_principal=harness_principal,
+        )
+
+
 class FakeHealthyObserver:
     def observe_window(self, *, window: Mapping[str, Any]) -> HealthyObservation:
         return HealthyObservation(false_alert=False, false_action=False)
@@ -499,6 +594,27 @@ class FakeHealthyObserver:
 class CrashingHealthyObserver:
     def observe_window(self, *, window: Mapping[str, Any]) -> HealthyObservation:
         raise RuntimeError("simulated healthy observer crash")
+
+
+@dataclass
+class FailingAfterHealthyObserver:
+    fail_at: int
+    call_count: int = 0
+
+    def observe_window(self, *, window: Mapping[str, Any]) -> HealthyObservation:
+        self.call_count += 1
+        if self.call_count == self.fail_at:
+            raise RuntimeError("simulated healthy provider failure")
+        return HealthyObservation(false_alert=False, false_action=False)
+
+
+@dataclass
+class CountingHealthyObserver:
+    call_count: int = 0
+
+    def observe_window(self, *, window: Mapping[str, Any]) -> HealthyObservation:
+        self.call_count += 1
+        return HealthyObservation(false_alert=False, false_action=False)
 
 
 @dataclass

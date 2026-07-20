@@ -492,7 +492,6 @@ class HttpFaultHarness:
         if source_classes is None:
             raise P176LiveRuntimeError("episode_primary_layer_unsupported")
 
-        decision: P176DiagnosisDecision | Any
         agent_evidence: dict[str, EvidenceSnapshot] = {}
         evaluator_evidence: dict[str, EvidenceSnapshot] = {}
         primary_error: Exception | None = None
@@ -511,10 +510,8 @@ class HttpFaultHarness:
                 )
                 for source_class in source_classes
             }
-            decision = self.diagnosis_agent.diagnose(evidence=agent_evidence)
         except Exception as exc:
             primary_error = exc
-            decision = None
 
         try:
             cleanup = self.transport.post(
@@ -532,7 +529,7 @@ class HttpFaultHarness:
             raise P176LiveRuntimeError("fault_cleanup_failed") from cleanup_error
         if primary_error is not None:
             raise primary_error
-        assert decision is not None
+        decision = self.diagnosis_agent.diagnose(evidence=agent_evidence)
         return FaultExecution(
             fault_lease_id=lease_id,
             mutation_principal=harness_principal,

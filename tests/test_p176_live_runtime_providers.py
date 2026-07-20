@@ -574,7 +574,7 @@ def _episode() -> dict[str, Any]:
     )
 
 
-def test_fault_harness_collects_while_fault_active_and_cleanup_dominates() -> None:
+def test_fault_harness_collects_while_fault_active_then_cleans_before_diagnosis() -> None:
     events: list[str] = []
     harness = HttpFaultHarness(
         run_id="p176-live-run-1",
@@ -591,8 +591,7 @@ def test_fault_harness_collects_while_fault_active_and_cleanup_dominates() -> No
     )
 
     assert events[0] == "inject"
-    assert events[-1] == "cleanup"
-    assert events.index("diagnose") < events.index("cleanup")
+    assert events.index("cleanup") < events.index("diagnose")
     assert result.residual_effect_count == 0
     assert result.recovery_observed is True
     assert set(result.agent_evidence) == set(EPISODE_EVIDENCE_SOURCE_CLASSES["cache_queue"])
@@ -611,7 +610,7 @@ def test_fault_harness_collects_while_fault_active_and_cleanup_dominates() -> No
             fault_verb="inject_queue_backlog",
             harness_principal="p176-live-harness-fault@example.invalid",
         )
-    assert failing_events[-1] == "cleanup"
+    assert failing_events.index("cleanup") < failing_events.index("diagnose")
 
 
 def test_fault_harness_accepts_real_controller_receipts_and_real_symptom_projection() -> None:
